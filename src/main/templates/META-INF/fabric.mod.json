@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${mod_version}",
+  "name": "${mod_name}",
+  "description": "${mod_description}",
+  "authors": [
+	"${mod_authors}"
+  ],
+  "contact": {
+	"homepage": "${mod_display_url}",
+    "issues": "${mod_issue_tracker_url}"
+  },
+  "license": "${mod_license}",
+  "icon": "icon.png",
+  "mixins": [
+	"${mod_id}.mixins.json"
+  ]
+}

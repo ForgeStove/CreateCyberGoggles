@@ -11,6 +11,7 @@ authors = "${mod_authors}"
 displayURL= "${mod_display_url}"
 description = '''${mod_description}'''
 logoFile = "icon.png"
+logoBlur = false
 
 [[mixins]]
 config = "${mod_id}.mixins.json"

@@ -81,7 +81,10 @@ idea {
     }
 }
 jar {
-    doFirst { ant.move(file: "build/resources/main/META-INF/fabric.mod.json", tofile: "build/resources/main/fabric.mod.json") }
+    doFirst {
+        ant.move(file: "build/resources/main/META-INF/fabric.mod.json", tofile: "build/resources/main/fabric.mod.json")
+        ant.move(file: "build/resources/main/META-INF/pack.mcmeta", tofile: "build/resources/main/pack.mcmeta")
+    }
     from("src/main/resources") {
         include "META-INF/MANIFEST.MF"
         manifest { attributes("MixinConfigs": "${mod_id}.mixins.json") }

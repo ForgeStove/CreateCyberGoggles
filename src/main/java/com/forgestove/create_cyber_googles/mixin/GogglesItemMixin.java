@@ -1,4 +1,4 @@
-package com.ForgeStove.create_cyber_googles.mixin;
+package com.forgestove.create_cyber_googles.mixin;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;

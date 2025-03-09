@@ -82,8 +82,14 @@ idea {
 }
 jar {
     doFirst {
-        ant.move(file: "build/resources/main/META-INF/fabric.mod.json", tofile: "build/resources/main/fabric.mod.json")
-        ant.move(file: "build/resources/main/META-INF/pack.mcmeta", tofile: "build/resources/main/pack.mcmeta")
+        def fabricModJson = file("build/resources/main/META-INF/fabric.mod.json")
+        def packMcmeta = file("build/resources/main/META-INF/pack.mcmeta")
+        if (fabricModJson.exists()) {
+            ant.move(file: fabricModJson, tofile: "build/resources/main/fabric.mod.json")
+        }
+        if (packMcmeta.exists()) {
+            ant.move(file: packMcmeta, tofile: "build/resources/main/pack.mcmeta")
+        }
     }
     from("src/main/resources") {
         include "META-INF/MANIFEST.MF"

@@ -8,6 +8,7 @@
         "ChainConveyorRidingHandlerMixin",
         "GogglesItemMixin",
         "RadialWrenchHandlerMixin",
-        "SimpleBackendMixin"
+        "SimpleBackendMixin",
+        "KineticBlockEntityMixin"
     ]
 }

@@ -1,13 +1,13 @@
 {
-	"required": false,
-	"minVersion": "0",
-	"package": "com.ForgeStove.create_project.mixin",
-	"client": [
-		"ChainConveyorConnectionHandlerMixin",
-		"ChainConveyorInteractionHandlerMixin",
-		"ChainConveyorRidingHandlerMixin",
-		"GogglesItemMixin",
-		"RadialWrenchHandlerMixin",
-		"SimpleBackendMixin"
-	]
+    "required": false,
+    "minVersion": "0",
+    "package": "com.ForgeStove.create_project.mixin",
+    "client": [
+        "ChainConveyorConnectionHandlerMixin",
+        "ChainConveyorInteractionHandlerMixin",
+        "ChainConveyorRidingHandlerMixin",
+        "GogglesItemMixin",
+        "RadialWrenchHandlerMixin",
+        "SimpleBackendMixin"
+    ]
 }

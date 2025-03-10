@@ -77,6 +77,8 @@ idea {
     }
 }
 jar {
+    // For Fabric, not used.
+    /*
     doFirst {
         def fabricModJson = file("build/resources/main/META-INF/fabric.mod.json")
         def packMcmeta = file("build/resources/main/META-INF/pack.mcmeta")
@@ -87,6 +89,7 @@ jar {
             ant.move(file: packMcmeta, tofile: "build/resources/main/pack.mcmeta")
         }
     }
+    */
     from("src/main/resources") {
         include "META-INF/MANIFEST.MF"
         manifest { attributes("MixinConfigs": "${mod_id}.mixins.json") }

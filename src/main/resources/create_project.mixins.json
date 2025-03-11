@@ -7,8 +7,9 @@
         "ChainConveyorInteractionHandlerMixin",
         "ChainConveyorRidingHandlerMixin",
         "GogglesItemMixin",
+        "KineticBlockEntityMixin",
         "RadialWrenchHandlerMixin",
         "SimpleBackendMixin",
-        "KineticBlockEntityMixin"
+        "GeneratingKineticBlockEntityMixin"
     ]
 }

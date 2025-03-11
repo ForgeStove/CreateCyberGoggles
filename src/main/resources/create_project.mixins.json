@@ -3,17 +3,14 @@
     "minVersion": "0",
     "package": "com.ForgeStove.create_project.mixin",
     "client": [
-        "BeltBlockEntityMixin",
         "ChainConveyorConnectionHandlerMixin",
         "ChainConveyorInteractionHandlerMixin",
         "ChainConveyorRidingHandlerMixin",
-        "DirectionalShaftHalvesBlockEntityMixin",
         "GeneratingKineticBlockEntityMixin",
         "GogglesItemMixin",
         "KineticBlockEntityMixin",
         "PoweredShaftBlockEntityMixin",
         "RadialWrenchHandlerMixin",
-        "SimpleBackendMixin",
-        "SpeedControllerBlockEntityMixin"
+        "SimpleBackendMixin"
     ]
 }

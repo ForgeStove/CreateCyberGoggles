@@ -4,7 +4,6 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
@@ -23,10 +22,9 @@ import java.util.List;
 			boolean isPlayerSneaking,
 			CallbackInfoReturnable<Boolean> returnable
 	) {
-		if (!IRotate.StressImpact.isEnabled()) return;
-		float stressBase = calculateAddedStressCapacity();
-		if (Mth.equal(stressBase, 0)) return;
+		returnable.setReturnValue(true);
 		CreateLang.translate("gui.goggles.generator_stats").forGoggles(tooltip, 0);
+		float stressBase = calculateAddedStressCapacity();
 		CreateLang.translate("tooltip.capacityProvided").style(ChatFormatting.GRAY).forGoggles(tooltip, 0);
 		float speed = getTheoreticalSpeed();
 		if (speed != getGeneratedSpeed() && speed != 0) stressBase *= getGeneratedSpeed() / speed;
@@ -37,8 +35,6 @@ import java.util.List;
 				.space()
 				.add(CreateLang.translate("gui.goggles.at_current_speed").style(ChatFormatting.DARK_GRAY))
 				.forGoggles(tooltip, 0);
-
 		super.addToGoggleTooltip(tooltip, isPlayerSneaking);
-		returnable.setReturnValue(true);
 	}
 }

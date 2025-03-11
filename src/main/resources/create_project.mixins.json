@@ -6,10 +6,12 @@
         "ChainConveyorConnectionHandlerMixin",
         "ChainConveyorInteractionHandlerMixin",
         "ChainConveyorRidingHandlerMixin",
+        "GeneratingKineticBlockEntityMixin",
         "GogglesItemMixin",
         "KineticBlockEntityMixin",
+        "PoweredShaftBlockEntityMixin",
         "RadialWrenchHandlerMixin",
         "SimpleBackendMixin",
-        "GeneratingKineticBlockEntityMixin"
+        "SpeedControllerBlockEntityMixin"
     ]
 }

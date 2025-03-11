@@ -13,8 +13,5 @@
         "PoweredShaftBlockEntityMixin",
         "RadialWrenchHandlerMixin",
         "SimpleBackendMixin"
-    ],
-    "mixins": [
-        "CogWheelBlockMixin"
     ]
 }

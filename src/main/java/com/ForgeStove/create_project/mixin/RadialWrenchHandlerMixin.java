@@ -9,9 +9,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.*;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(RadialWrenchHandler.class) public abstract class RadialWrenchHandlerMixin {
-	@Redirect(method = "onKeyInput", at = @At("HEAD"))
-	private static void onKeyInput(int key, boolean pressed) {
+	@Inject(method = "onKeyInput", at = @At("HEAD"), cancellable = true)
+	private static void onKeyInput(int key, boolean pressed, CallbackInfo callbackInfo) {
+		callbackInfo.cancel();
 		if (!pressed || key != AllKeys.ROTATE_MENU.getBoundCode()) return;
 		Minecraft mc = Minecraft.getInstance();
 		LocalPlayer player = mc.player;

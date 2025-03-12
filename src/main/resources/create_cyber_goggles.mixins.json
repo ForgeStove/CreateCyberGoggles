@@ -1,7 +1,7 @@
 {
     "required": false,
     "minVersion": "0",
-    "package": "com.ForgeStove.create_project.mixin",
+    "package": "com.ForgeStove.create_cyber_goggles.mixin",
     "client": [
         "ChainConveyorConnectionHandlerMixin",
         "ChainConveyorInteractionHandlerMixin",

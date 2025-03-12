@@ -1,4 +1,4 @@
-package com.ForgeStove.create_project.mixin;
+package com.ForgeStove.create_cyber_goggles.mixin;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.steamEngine.PoweredShaftBlockEntity;
 import net.minecraft.core.BlockPos;

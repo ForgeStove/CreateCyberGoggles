@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/CreatePROJECT.iml" filepath="$PROJECT_DIR$/.idea/modules/CreatePROJECT.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/CreatePROJECT.main.iml" filepath="$PROJECT_DIR$/.idea/modules/CreatePROJECT.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.ForgeStove.create_cyber_goggles.CreateCyberGoggles.main.iml" filepath="$PROJECT_DIR$/.idea/modules/com.ForgeStove.create_cyber_goggles.CreateCyberGoggles.main.iml" />
     </modules>
   </component>
 </project>

@@ -18,8 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ChainConveyorConnectionHandler.class) public abstract class ChainConveyorConnectionHandlerMixin {
 	@Shadow private static BlockPos firstPos;
 	@Shadow private static ResourceKey<Level> firstDim;
-	@Inject(method = "validateAndConnect", at = @At("HEAD"), cancellable = true)
-	private static void validateAndConnect(
+	@Inject(method = "validateAndConnect", at = @At("HEAD"), cancellable = true) private static void validateAndConnect(
 			LevelAccessor level,
 			BlockPos pos,
 			Player player,
@@ -27,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 			boolean simulate,
 			CallbackInfoReturnable<Boolean> returnable
 	) {
-		if (!Config.AllowEmptyHandToRideChainConveyor.get()) return;
+		if (!Config.EnhancedChainConnection.get()) return;
 		returnable.setReturnValue(false);
 		if (!simulate && player.isShiftKeyDown()) {
 			CreateLang.translate("chain_conveyor.selection_cleared").sendStatus(player);

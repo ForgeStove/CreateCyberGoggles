@@ -1,4 +1,4 @@
-package com.ForgeStove.create_project.mixin;
+package com.ForgeStove.create_cyber_goggles.mixin;
 import dev.engine_room.flywheel.lib.backend.SimpleBackend;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;

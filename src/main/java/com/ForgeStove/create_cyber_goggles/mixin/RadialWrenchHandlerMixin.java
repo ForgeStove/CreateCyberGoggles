@@ -1,4 +1,4 @@
-package com.ForgeStove.create_project.mixin;
+package com.ForgeStove.create_cyber_goggles.mixin;
 import com.simibubi.create.AllKeys;
 import com.simibubi.create.content.contraptions.wrench.*;
 import net.createmod.catnip.gui.ScreenOpener;

@@ -1,4 +1,4 @@
-package com.ForgeStove.create_project.mixin;
+package com.ForgeStove.create_cyber_goggles.mixin;
 import com.simibubi.create.content.kinetics.base.*;
 import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.network.chat.Component;

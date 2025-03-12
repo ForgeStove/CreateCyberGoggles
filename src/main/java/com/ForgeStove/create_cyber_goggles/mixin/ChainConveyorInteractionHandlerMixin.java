@@ -1,4 +1,4 @@
-package com.ForgeStove.create_project.mixin;
+package com.ForgeStove.create_cyber_goggles.mixin;
 import com.simibubi.create.*;
 import com.simibubi.create.content.kinetics.chainConveyor.*;
 import com.simibubi.create.content.logistics.box.PackageItem;

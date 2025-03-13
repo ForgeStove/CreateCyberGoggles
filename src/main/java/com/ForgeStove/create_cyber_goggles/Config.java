@@ -26,7 +26,7 @@ public class Config {
 		AllowEmptyHandToRideChainConveyor = BUILDER.define("AllowEmptyHandToRideChainConveyor", true);
 		EnhancedChainConnection = BUILDER.define("EnhancedChainConnection", true);
 		AllowForcedFlywheelBackend = BUILDER.define("AllowForcedFlywheelBackend", false);
-		CONFIG_SPEC = BUILDER.build();
 		BUILDER.pop();
+		CONFIG_SPEC = BUILDER.build();
 	}
 }

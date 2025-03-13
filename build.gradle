@@ -1,0 +1,82 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public' }
+    }
+    dependencies { classpath 'org.spongepowered:mixingradle:0.7+' }
+}
+plugins {
+    id 'idea'
+    id 'eclipse'
+    id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+}
+apply plugin: 'org.spongepowered.mixin'
+group = mod_group_id
+version = mod_version
+base { archivesName = mod_id }
+java { toolchain.languageVersion = JavaLanguageVersion.of(17) }
+minecraft {
+    mappings channel: 'parchment', version: "${parchment_mappings_version}-${minecraft_version}"
+    copyIdeResources = true
+    runs {
+        configureEach {
+            workingDirectory project.file('run')
+            mods { "${mod_id}" { source sourceSets.main } }
+        }
+        client {
+            property 'forge.enabledGameTestNamespaces', mod_id
+            args '--username', "Dev"
+        }
+        server {
+            property 'forge.enabledGameTestNamespaces', mod_id
+            args '--nogui'
+        }
+        gameTestServer { property 'forge.enabledGameTestNamespaces', mod_id }
+        data {
+            workingDirectory project.file('run-data')
+            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+        }
+    }
+}
+repositories {
+    mavenCentral()
+    maven {
+        name = 'MinecraftForge'
+        url = 'https://maven.minecraftforge.net'
+        content {
+            includeGroup("curse.maven")
+            includeGroup("org.spongepowered")
+        }
+    }
+    maven { url = "https://maven.createmod.net" } // Create, Ponder, Flywheel
+    maven { url = "https://maven.tterrag.com" } // Registrate
+    maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" } // ForgeConfigAPIPort
+}
+dependencies {
+    minecraft("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
+    annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
+    implementation(fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false })
+    implementation(fg.deobf("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}"))
+    compileOnly(fg.deobf("dev.engine-room.flywheel:flywheel-forge-api-${minecraft_version}:${flywheel_version}"))
+    runtimeOnly(fg.deobf("dev.engine-room.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}"))
+    implementation(fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}"))
+    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.1"))
+    implementation("io.github.llamalad7:mixinextras-forge:0.4.1")
+}
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = [minecraft_version    : minecraft_version,
+                             mod_id               : mod_id,
+                             mod_name             : mod_name,
+                             mod_display_url      : mod_display_url,
+                             mod_issue_tracker_url: mod_issue_tracker_url,
+                             mod_license          : mod_license,
+                             mod_version          : mod_version,
+                             mod_authors          : mod_authors,
+                             mod_description      : mod_description]
+
+    inputs.properties replaceProperties
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) { expand replaceProperties + [project: project] }
+}
+tasks.named('jar', Jar).configure { manifest { attributes(["MixinConfigs": mod_id + ".mixins.json"]) } }
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }

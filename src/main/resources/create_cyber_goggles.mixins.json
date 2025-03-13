@@ -1,0 +1,9 @@
+{
+    "required": false,
+    "minVersion": "0",
+    "package": "com.ForgeStove.create_cyber_goggles.mixin",
+    "client": [
+        "GogglesItemMixin",
+        "KineticBlockEntityMixin"
+    ]
+}

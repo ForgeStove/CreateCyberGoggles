@@ -74,9 +74,4 @@ neoForge.ideSyncTask generateModMetadata
 //    publications { register('mavenJava', MavenPublication) { from components.java } }
 //    repositories { maven { url "file://${projectDir}/repo" } }
 //}
-idea {
-    module {
-        downloadSources = true
-        downloadJavadoc = true
-    }
-}
+idea { module { downloadSources = true; downloadJavadoc = true } }

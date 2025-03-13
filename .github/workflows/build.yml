@@ -1,0 +1,44 @@
+name: Build
+
+on: [ workflow_dispatch, push, pull_request ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        run: echo "JAVA_HOME=$JAVA_HOME_17_X64" >> "$GITHUB_ENV"
+
+      - name: NeoGradle Cache
+        uses: actions/cache@v4
+        with:
+          path: "**/.gradle/repositories/"
+          key: "${{ runner.os }}-gradle-${{ hashFiles('**/libs.versions.*', '**/*.gradle*', '**/gradle-wrapper.properties') }}"
+          restore-keys: "${{ runner.os }}-gradle-"
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Validate Gradle Wrapper Integrity
+        uses: gradle/actions/wrapper-validation@v3
+
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./gradlew
+
+      - name: Print working directory
+        run: pwd
+
+      - name: Check file permissions
+        run: ls -l ./gradlew
+
+      - name: Run Gradle build
+        run: ./gradlew build
+        shell: bash
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Artifacts
+          path: build/libs/

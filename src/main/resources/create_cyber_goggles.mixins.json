@@ -6,7 +6,6 @@
         "ChainConveyorConnectionHandlerMixin",
         "ChainConveyorInteractionHandlerMixin",
         "ChainConveyorRidingHandlerMixin",
-        "CogWheelBlockMixin",
         "GeneratingKineticBlockEntityMixin",
         "GogglesItemMixin",
         "KineticBlockEntityMixin",

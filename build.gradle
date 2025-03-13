@@ -1,9 +1,11 @@
 plugins {
     id 'java-library'
-    id 'maven-publish'
+//    id 'maven-publish'
     id 'idea'
     id 'net.neoforged.moddev' version '2.0.78'
 }
+base { archivesName = mod_id }
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 version = minecraft_version + '-' + mod_version
 group = mod_group_id
 repositories {
@@ -12,8 +14,6 @@ repositories {
     maven { url = "https://mvn.devos.one/snapshots" } // Registrate
     maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven" }
 }
-base { archivesName = mod_id }
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 neoForge {
     version = neo_version
     parchment {
@@ -70,10 +70,10 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
 }
 sourceSets.main.resources.srcDir generateModMetadata
 neoForge.ideSyncTask generateModMetadata
-publishing {
-    publications { register('mavenJava', MavenPublication) { from components.java } }
-    repositories { maven { url "file://${projectDir}/repo" } }
-}
+//publishing {
+//    publications { register('mavenJava', MavenPublication) { from components.java } }
+//    repositories { maven { url "file://${projectDir}/repo" } }
+//}
 idea {
     module {
         downloadSources = true

@@ -1,5 +1,5 @@
 package com.ForgeStove.create_cyber_goggles.mixin;
-import com.simibubi.create.content.kinetics.base.*;
+import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
@@ -7,14 +7,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 @Mixin(KineticBlockEntity.class) public abstract class KineticBlockEntityMixin {
-	@Shadow(remap = false) protected boolean overStressed;
-	@Inject(method = "addToGoggleTooltip", remap = false, at = @At("RETURN"))
+	@Inject(method = "addToGoggleTooltip", remap = false, at = @At("RETURN"), cancellable = true)
 	private void addToGoggleTooltip(
 			List<Component> tooltip,
 			boolean isPlayerSneaking,
 			CallbackInfoReturnable<Boolean> returnable
 	) {
-		IRotate.SpeedLevel.getFormattedSpeedText(getSpeed(), overStressed).forGoggles(tooltip);
+		returnable.setReturnValue(true);
 	}
-	@Shadow(remap = false) public abstract float getSpeed();
 }

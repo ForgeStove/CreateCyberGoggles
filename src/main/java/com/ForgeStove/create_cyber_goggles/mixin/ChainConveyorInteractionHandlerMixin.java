@@ -44,9 +44,9 @@ import static com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorIn
 			return;
 		}
 		returnable.setReturnValue(true);
-		LocalPlayer localPlayer = Minecraft.getInstance().player;
-		if (localPlayer == null) return;
-		ItemStack mainHandItem = localPlayer.getMainHandItem();
+		LocalPlayer player = Minecraft.getInstance().player;
+		if (player == null) return;
+		ItemStack mainHandItem = player.getMainHandItem();
 		if (AllBlocks.PACKAGE_FROGPORT.isIn(mainHandItem)) {
 			PackagePortTargetSelectionHandler.exactPositionOfTarget = selectedBakedPosition;
 			PackagePortTargetSelectionHandler.activePackageTarget =
@@ -66,7 +66,7 @@ import static com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorIn
 			));
 			return;
 		}
-		if (!localPlayer.isShiftKeyDown()) {
+		if (!player.isShiftKeyDown()) {
 			ChainConveyorRidingHandler.embark(selectedLift, selectedChainPosition, selectedConnection);
 			return;
 		}

@@ -1,6 +1,5 @@
 plugins {
     id 'java-library'
-//    id 'maven-publish'
     id 'idea'
     id 'net.neoforged.moddev' version '2.0.78'
 }
@@ -14,6 +13,7 @@ repositories {
     maven { url = "https://mvn.devos.one/snapshots" } // Registrate
     maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven" }
 }
+def main = sourceSets.main
 neoForge {
     version = neo_version
     parchment {
@@ -43,9 +43,9 @@ neoForge {
             logLevel = org.slf4j.event.Level.DEBUG
         }
     }
-    mods { "${mod_id}" { sourceSet(sourceSets.main) } }
+    mods { "${mod_id}" { sourceSet(main) } }
 }
-sourceSets.main.resources { srcDir 'src/generated/resources' }
+main.resources { srcDir 'src/generated/resources' }
 dependencies {
     implementation("com.simibubi.create:create-${minecraft_version}:${create_version}") { transitive = false }
     implementation("net.createmod.ponder:Ponder-NeoForge-${minecraft_version}:${ponder_version}") { transitive = false }
@@ -68,10 +68,6 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
     from "src/main/templates"
     into "build/generated/sources/modMetadata"
 }
-sourceSets.main.resources.srcDir generateModMetadata
+main.resources.srcDir generateModMetadata
 neoForge.ideSyncTask generateModMetadata
-//publishing {
-//    publications { register('mavenJava', MavenPublication) { from components.java } }
-//    repositories { maven { url "file://${projectDir}/repo" } }
-//}
 idea { module { downloadSources = true; downloadJavadoc = true } }

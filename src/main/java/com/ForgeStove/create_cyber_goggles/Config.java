@@ -9,27 +9,47 @@ public class Config {
 	public static ConfigValue<Boolean> EnableGogglesWhenSpectator;
 	public static ConfigValue<Boolean> EnableGogglesWhenAdventure;
 	public static ConfigValue<Boolean> EnhancedGogglesInfo;
-	public static ConfigValue<Boolean> AllowEmptyHandToRotate;
-	public static ConfigValue<Boolean> AllowEmptyHandToRideChainConveyor;
+	public static ConfigValue<Boolean> AlwaysAllowRotateBlocks;
+	public static ConfigValue<Boolean> AlwaysAllowRideChainConveyor;
 	public static ConfigValue<Boolean> PreventFallingFromChainConveyor;
 	public static ConfigValue<Integer> ChainConveyorSeparationDistance;
 	public static ConfigValue<Integer> ChainConveyorSeparationHeight;
 	public static ConfigValue<Boolean> EnhancedChainConnection;
 	public static ConfigValue<Boolean> AllowForcedFlywheelBackend;
 	static {
-		BUILDER.push("Client");
-		EnableGogglesWhenSurvival = BUILDER.define("EnableGogglesWhenSurvival", true);
-		EnableGogglesWhenCreative = BUILDER.define("EnableGogglesWhenCreative", true);
-		EnableGogglesWhenSpectator = BUILDER.define("EnableGogglesWhenSpectator", true);
-		EnableGogglesWhenAdventure = BUILDER.define("EnableGogglesWhenAdventure", true);
-		EnhancedGogglesInfo = BUILDER.define("EnhancedGogglesInfo", true);
-		AllowEmptyHandToRotate = BUILDER.define("AllowEmptyHandToRotate", true);
-		AllowEmptyHandToRideChainConveyor = BUILDER.define("AllowEmptyHandToRideChainConveyor", true);
-		PreventFallingFromChainConveyor = BUILDER.define("PreventFallingFromChainConveyor", true);
-		ChainConveyorSeparationDistance = BUILDER.define("ChainConveyorSeparationDistance", 3);
-		ChainConveyorSeparationHeight = BUILDER.define("ChainConveyorSeparationHeight", -1);
-		EnhancedChainConnection = BUILDER.define("EnhancedChainConnection", true);
-		AllowForcedFlywheelBackend = BUILDER.define("AllowForcedFlywheelBackend", false);
+		BUILDER.push("Goggles");
+		EnableGogglesWhenSurvival = BUILDER.comment("Enable Goggles when in survival mode")
+				.define("EnableGogglesWhenSurvival", true);
+		EnableGogglesWhenCreative = BUILDER.comment("Enable Goggles when in creative mode")
+				.define("EnableGogglesWhenCreative", true);
+		EnableGogglesWhenSpectator = BUILDER.comment("Enable Goggles when in spectator mode")
+				.define("EnableGogglesWhenSpectator", true);
+		EnableGogglesWhenAdventure = BUILDER.comment("Enable Goggles when in adventure mode")
+				.define("EnableGogglesWhenAdventure", true);
+		EnhancedGogglesInfo = BUILDER.comment("Show enhanced information in the Goggles overlay")
+				.define("EnhancedGogglesInfo", true);
+		BUILDER.pop();
+		BUILDER.push("Wrench");
+		AlwaysAllowRotateBlocks = BUILDER.comment("Always allow rotating blocks, even if you don't equip the wrench")
+				.define("AlwaysAllowRotateBlocks", true);
+		BUILDER.pop();
+		BUILDER.push("ChainConveyor");
+		AlwaysAllowRideChainConveyor = BUILDER.comment(
+						"Always allow rideable chain conveyors, even if you don't equip the wrench")
+				.define("AlwaysAllowRideChainConveyor", false);
+		PreventFallingFromChainConveyor = BUILDER.comment(
+						"Prevent falling from chain conveyors, may cause issues if you can't go through blocks")
+				.define("PreventFallingFromChainConveyor", false);
+		ChainConveyorSeparationDistance = BUILDER.comment("The separation distance between you and the chain conveyor")
+				.define("ChainConveyorSeparationDistance", 3);
+		ChainConveyorSeparationHeight = BUILDER.comment("The separation height between you and the chain conveyor")
+				.define("ChainConveyorSeparationHeight", -1);
+		EnhancedChainConnection = BUILDER.comment("Enhance connecting between chain conveyors")
+				.define("EnhancedChainConnection", false);
+		BUILDER.pop();
+		BUILDER.push("Flywheel");
+		AllowForcedFlywheelBackend = BUILDER.comment("Allow flywheel backend, even if not compatible with shaders")
+				.define("AllowForcedFlywheelBackend", false);
 		BUILDER.pop();
 		CONFIG_SPEC = BUILDER.build();
 	}

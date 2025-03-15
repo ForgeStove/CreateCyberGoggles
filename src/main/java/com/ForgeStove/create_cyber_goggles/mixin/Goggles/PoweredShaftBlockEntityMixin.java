@@ -1,4 +1,4 @@
-package com.ForgeStove.create_cyber_goggles.mixin;
+package com.ForgeStove.create_cyber_goggles.mixin.Goggles;
 import com.ForgeStove.create_cyber_goggles.Config;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.steamEngine.PoweredShaftBlockEntity;

@@ -1,4 +1,4 @@
-package com.ForgeStove.create_cyber_goggles.mixin;
+package com.ForgeStove.create_cyber_goggles.mixin.ChainConveyor;
 import com.ForgeStove.create_cyber_goggles.Config;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.kinetics.chainConveyor.*;
@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 		if (mc.isPaused()) return;
 		LocalPlayer player = mc.player;
 		if (player == null) return;
-		if (!Config.AllowEmptyHandToRideChainConveyor.get()
+		if (!Config.AlwaysAllowRideChainConveyor.get()
 				&& !AllItemTags.CHAIN_RIDEABLE.matches(mc.player.getMainHandItem())) {
 			stopRiding();
 			return;

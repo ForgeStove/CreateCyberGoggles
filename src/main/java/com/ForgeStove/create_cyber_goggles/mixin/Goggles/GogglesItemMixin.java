@@ -1,4 +1,4 @@
-package com.ForgeStove.create_cyber_goggles.mixin;
+package com.ForgeStove.create_cyber_goggles.mixin.Goggles;
 import com.ForgeStove.create_cyber_goggles.Config;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import net.minecraft.client.Minecraft;
@@ -10,19 +10,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 	@Inject(method = "isWearingGoggles", at = @At("HEAD"), cancellable = true)
 	private static void isWearingGoggles(CallbackInfoReturnable<Boolean> returnable) {
 		MultiPlayerGameMode gameMode = Minecraft.getInstance().gameMode;
-		if (gameMode != null) switch (gameMode.getPlayerMode()) {
-			case SURVIVAL:
+		if (gameMode == null) return;
+		switch (gameMode.getPlayerMode()) {
+			case SURVIVAL -> {
 				if (Config.EnableGogglesWhenSurvival.get()) returnable.setReturnValue(true);
-				break;
-			case CREATIVE:
+			}
+			case CREATIVE -> {
 				if (Config.EnableGogglesWhenCreative.get()) returnable.setReturnValue(true);
-				break;
-			case SPECTATOR:
+			}
+			case SPECTATOR -> {
 				if (Config.EnableGogglesWhenSpectator.get()) returnable.setReturnValue(true);
-				break;
-			case ADVENTURE:
+			}
+			case ADVENTURE -> {
 				if (Config.EnableGogglesWhenAdventure.get()) returnable.setReturnValue(true);
-				break;
+			}
 		}
 	}
 }

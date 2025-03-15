@@ -1,4 +1,4 @@
-package com.ForgeStove.create_cyber_goggles.mixin;
+package com.ForgeStove.create_cyber_goggles.mixin.ChainConveyor;
 import com.ForgeStove.create_cyber_goggles.Config;
 import com.simibubi.create.*;
 import com.simibubi.create.content.kinetics.chainConveyor.*;
@@ -19,7 +19,7 @@ import static com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorIn
 	@Shadow public static BlockPos selectedConnection;
 	@Inject(method = "isActive", at = @At("HEAD"), cancellable = true)
 	private static void isActive(CallbackInfoReturnable<Boolean> returnable) {
-		if (!Config.AllowEmptyHandToRideChainConveyor.get()) return;
+		if (!Config.AlwaysAllowRideChainConveyor.get()) return;
 		returnable.setReturnValue(false);
 		LocalPlayer localPlayer = Minecraft.getInstance().player;
 		Minecraft mc = Minecraft.getInstance();
@@ -38,7 +38,7 @@ import static com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorIn
 	}
 	@Inject(method = "onUse", at = @At("HEAD"), cancellable = true)
 	private static void onUse(CallbackInfoReturnable<Boolean> returnable) {
-		if (!Config.AllowEmptyHandToRideChainConveyor.get()) return;
+		if (!Config.AlwaysAllowRideChainConveyor.get()) return;
 		if (selectedLift == null) {
 			returnable.setReturnValue(false);
 			return;

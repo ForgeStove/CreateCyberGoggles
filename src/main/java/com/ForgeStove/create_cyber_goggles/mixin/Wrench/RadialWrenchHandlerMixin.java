@@ -1,4 +1,4 @@
-package com.ForgeStove.create_cyber_goggles.mixin;
+package com.ForgeStove.create_cyber_goggles.mixin.Wrench;
 import com.ForgeStove.create_cyber_goggles.Config;
 import com.simibubi.create.AllKeys;
 import com.simibubi.create.content.contraptions.wrench.*;
@@ -14,15 +14,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(RadialWrenchHandler.class) public abstract class RadialWrenchHandlerMixin {
 	@Inject(method = "onKeyInput", at = @At("HEAD"), cancellable = true)
 	private static void onKeyInput(int key, boolean pressed, CallbackInfo callbackInfo) {
-		if (!Config.AllowEmptyHandToRotate.get()) return;
+		if (!Config.AlwaysAllowRotateBlocks.get()) return;
 		callbackInfo.cancel();
 		if (!pressed || key != AllKeys.ROTATE_MENU.getBoundCode()) return;
 		Minecraft mc = Minecraft.getInstance();
 		LocalPlayer player = mc.player;
 		if (player == null) return;
 		Level level = player.level();
-		HitResult objectMouseOver = mc.hitResult;
-		if (!(objectMouseOver instanceof BlockHitResult blockHitResult)) return;
+		HitResult hitResult = mc.hitResult;
+		if (!(hitResult instanceof BlockHitResult blockHitResult)) return;
 		BlockPos blockPos = blockHitResult.getBlockPos();
 		RadialWrenchMenu.tryCreateFor(level.getBlockState(blockPos), blockPos, level).ifPresent(ScreenOpener::open);
 	}

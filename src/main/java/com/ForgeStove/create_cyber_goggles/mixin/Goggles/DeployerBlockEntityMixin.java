@@ -1,4 +1,4 @@
-package com.ForgeStove.create_cyber_goggles.mixin;
+package com.ForgeStove.create_cyber_goggles.mixin.Goggles;
 import com.simibubi.create.content.kinetics.base.*;
 import com.simibubi.create.content.kinetics.deployer.DeployerBlockEntity;
 import com.simibubi.create.foundation.item.TooltipHelper;
@@ -26,17 +26,19 @@ import java.util.List;
 			CallbackInfoReturnable<Boolean> returnable
 	) {
 		super.addToTooltip(tooltip, isPlayerSneaking);
-		if (getSpeed() == 0 || overflowItems.isEmpty()) {
+		if (overflowItems.isEmpty()) {
 			returnable.setReturnValue(false);
 			return;
 		}
 		TooltipHelper.addHint(tooltip, "hint.full_deployer");
 		for (ItemStack itemStack : overflowItems)
-			CreateLang.translate(
-					"tooltip.deployer.contains",
-					Component.translatable(itemStack.getDescriptionId()).getString(),
-					itemStack.getCount()
-			).style(ChatFormatting.GREEN).forGoggles(tooltip);
+			CreateLang.builder()
+					.text("%s x%d".formatted(
+							Component.translatable(itemStack.getDescriptionId()).getString(),
+							itemStack.getCount()
+					))
+					.style(ChatFormatting.GREEN)
+					.forGoggles(tooltip);
 		returnable.setReturnValue(true);
 	}
 	@Inject(method = "addToGoggleTooltip", at = @At("RETURN"))

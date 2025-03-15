@@ -3,15 +3,16 @@
     "minVersion": "0",
     "package": "com.ForgeStove.create_cyber_goggles.mixin",
     "client": [
-        "ChainConveyorConnectionHandlerMixin",
-        "ChainConveyorInteractionHandlerMixin",
-        "ChainConveyorRidingHandlerMixin",
-        "DeployerBlockEntityMixin",
-        "GeneratingKineticBlockEntityMixin",
-        "GogglesItemMixin",
-        "KineticBlockEntityMixin",
-        "PoweredShaftBlockEntityMixin",
-        "RadialWrenchHandlerMixin",
-        "SimpleBackendMixin"
+        "ChainConveyor.ChainConveyorConnectionHandlerMixin",
+        "ChainConveyor.ChainConveyorInteractionHandlerMixin",
+        "ChainConveyor.ChainConveyorRidingHandlerMixin",
+        "Flywheel.SimpleBackendMixin",
+        "Goggles.BlueprintOverlayRendererMixin",
+        "Goggles.DeployerBlockEntityMixin",
+        "Goggles.GeneratingKineticBlockEntityMixin",
+        "Goggles.GogglesItemMixin",
+        "Goggles.KineticBlockEntityMixin",
+        "Goggles.PoweredShaftBlockEntityMixin",
+        "Wrench.RadialWrenchHandlerMixin"
     ]
 }

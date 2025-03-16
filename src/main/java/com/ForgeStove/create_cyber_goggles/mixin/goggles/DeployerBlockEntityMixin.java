@@ -1,4 +1,5 @@
-package com.ForgeStove.create_cyber_goggles.mixin.Goggles;
+package com.ForgeStove.create_cyber_goggles.mixin.goggles;
+import com.ForgeStove.create_cyber_goggles.config.Configs;
 import com.simibubi.create.content.kinetics.base.*;
 import com.simibubi.create.content.kinetics.deployer.DeployerBlockEntity;
 import com.simibubi.create.foundation.item.TooltipHelper;
@@ -25,6 +26,7 @@ import java.util.List;
 			boolean isPlayerSneaking,
 			CallbackInfoReturnable<Boolean> returnable
 	) {
+		if (!Configs.client().enhancedInfo.get()) return;
 		super.addToTooltip(tooltip, isPlayerSneaking);
 		if (overflowItems.isEmpty()) {
 			returnable.setReturnValue(false);
@@ -47,6 +49,7 @@ import java.util.List;
 			boolean isPlayerSneaking,
 			CallbackInfoReturnable<Boolean> returnable
 	) {
+		if (!Configs.client().enhancedInfo.get()) return;
 		IRotate.SpeedLevel.getFormattedSpeedText(getSpeed(), overStressed).forGoggles(tooltip);
 	}
 }

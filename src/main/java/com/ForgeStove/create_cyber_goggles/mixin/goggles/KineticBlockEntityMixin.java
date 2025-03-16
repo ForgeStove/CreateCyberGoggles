@@ -1,5 +1,5 @@
-package com.ForgeStove.create_cyber_goggles.mixin.Goggles;
-import com.ForgeStove.create_cyber_goggles.Config;
+package com.ForgeStove.create_cyber_goggles.mixin.goggles;
+import com.ForgeStove.create_cyber_goggles.config.Configs;
 import com.simibubi.create.content.kinetics.base.*;
 import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.network.chat.Component;
@@ -17,7 +17,7 @@ import java.util.List;
 			boolean isPlayerSneaking,
 			CallbackInfoReturnable<Boolean> returnable
 	) {
-		if (!Config.EnhancedGogglesInfo.get()) return;
+		if (!Configs.client().enhancedInfo.get()) return;
 		returnable.setReturnValue(true);
 		CreateLang.translate("gui.goggles.kinetic_stats").forGoggles(tooltip);
 		if (IRotate.StressImpact.isEnabled()) {

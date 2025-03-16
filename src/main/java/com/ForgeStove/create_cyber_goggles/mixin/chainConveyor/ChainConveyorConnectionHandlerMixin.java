@@ -1,5 +1,5 @@
-package com.ForgeStove.create_cyber_goggles.mixin.ChainConveyor;
-import com.ForgeStove.create_cyber_goggles.Config;
+package com.ForgeStove.create_cyber_goggles.mixin.chainConveyor;
+import com.ForgeStove.create_cyber_goggles.config.*;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer;
 import com.simibubi.create.content.kinetics.chainConveyor.*;
@@ -26,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 			boolean simulate,
 			CallbackInfoReturnable<Boolean> returnable
 	) {
-		if (!Config.EnhancedChainConnection.get()) return;
+		if (!Configs.client().enhancedConnection.get()) return;
 		returnable.setReturnValue(false);
 		if (!simulate && player.isShiftKeyDown()) {
 			CreateLang.translate("chain_conveyor.selection_cleared").sendStatus(player);

@@ -1,5 +1,5 @@
-package com.ForgeStove.create_cyber_goggles.mixin.ChainConveyor;
-import com.ForgeStove.create_cyber_goggles.Config;
+package com.ForgeStove.create_cyber_goggles.mixin.chainConveyor;
+import com.ForgeStove.create_cyber_goggles.config.Configs;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.kinetics.chainConveyor.*;
 import net.createmod.catnip.animation.AnimationTickHolder;
@@ -11,19 +11,20 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ChainConveyorRidingHandler.class) public abstract class ChainConveyorRidingHandlerMixin {
 	@Inject(method = "clientTick", at = @At("HEAD"), cancellable = true)
-	private static void clientTick(CallbackInfo callbackInfo) {
+	private static void clientTick(@NotNull CallbackInfo callbackInfo) {
 		callbackInfo.cancel();
 		if (ChainConveyorRidingHandler.ridingChainConveyor == null) return;
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.isPaused()) return;
 		LocalPlayer player = mc.player;
 		if (player == null) return;
-		if (!Config.AlwaysAllowRideChainConveyor.get()
+		if (!Configs.client().alwaysAllowRide.get()
 				&& !AllItemTags.CHAIN_RIDEABLE.matches(mc.player.getMainHandItem())) {
 			stopRiding();
 			return;
@@ -58,10 +59,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 						ChainConveyorRidingHandler.chainPosition,
 						Direction.Axis.Y
 				));
-		if (!Config.PreventFallingFromChainConveyor.get()) {
+		if (!Configs.client().preventFalling.get()) {
 			Vec3 diff = targetPosition.subtract(playerPosition);
-			if (diff.length() > Config.ChainConveyorSeparationDistance.get()
-					|| diff.y < Config.ChainConveyorSeparationHeight.get()) {
+			if (diff.length() > Configs.client().separationDistance.get()
+					|| diff.y < Configs.client().separationHeight.get()) {
 				stopRiding();
 				return;
 			}

@@ -1,6 +1,6 @@
-package com.ForgeStove.create_cyber_goggles.mixin.Goggles;
-import com.ForgeStove.create_cyber_goggles.Config;
-import com.ForgeStove.create_cyber_goggles.Event.KeyInputEvent;
+package com.ForgeStove.create_cyber_goggles.mixin.goggles;
+import com.ForgeStove.create_cyber_goggles.config.Configs;
+import com.ForgeStove.create_cyber_goggles.render.OverlayRenderer;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer;
@@ -10,21 +10,17 @@ import net.createmod.catnip.data.Pair;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.*;
-import net.minecraft.client.gui.*;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.TooltipFlag.Default;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
-import static com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer.drawItemStack;
+import static com.ForgeStove.create_cyber_goggles.event.KeyInputEvent.*;
 @Mixin(BlueprintOverlayRenderer.class) public abstract class BlueprintOverlayRendererMixin {
 	@Shadow static boolean active;
 	@Shadow static boolean empty;
@@ -33,10 +29,9 @@ import static com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRe
 	@Shadow static boolean noOutput;
 	@Shadow static boolean resultCraftable;
 	@Shadow static BlueprintOverlayShopContext shopContext;
-	@Unique private static int createCyberGoggles$index = 1;
 	@Inject(method = "renderOverlay", at = @At("HEAD"), cancellable = true)
 	private static void renderOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo callbackInfo) {
-		if (!Config.EnhancedGogglesInfo.get()) return;
+		if (!Configs.client().enhancedInfo.get()) return;
 		callbackInfo.cancel();
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.options.hideGui || mc.screen != null) return;
@@ -85,7 +80,7 @@ import static com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRe
 			String count = shopContext != null && !shopContext.checkout() || pair.getSecond()
 					? null
 					: ChatFormatting.GOLD.toString() + itemStack.getCount();
-			drawItemStack(guiGraphics, mc, x, y, itemStack, count);
+			BlueprintOverlayRenderer.drawItemStack(guiGraphics, mc, x, y, itemStack, count);
 			x += 21;
 		}
 		if (noOutput) return;
@@ -104,30 +99,19 @@ import static com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRe
 			if (!invalidShop && shopContext != null && shopContext.stockLevel() > shopContext.purchases())
 				slot = AllGuiTextures.HOTSLOT_ACTIVE;
 			slot.render(guiGraphics, resultCraftable ? x - 1 : x, resultCraftable ? y - 1 : y);
-			drawItemStack(guiGraphics, mc, x, y, result, null);
+			BlueprintOverlayRenderer.drawItemStack(guiGraphics, mc, x, y, result, null);
 			x += 21;
 		}
 		if (shopContext == null || shopContext.checkout()) {
 			RenderSystem.disableBlend();
 			return;
 		}
-		createCyberGoggles$index += KeyInputEvent.scrollKeyboard;
-		if (createCyberGoggles$index < 1) createCyberGoggles$index = results.size();
-		else if (createCyberGoggles$index > results.size()) createCyberGoggles$index = 1;
-		KeyInputEvent.scrollKeyboard = 0;
-		ItemStack result = results.get(createCyberGoggles$index - 1);
-		ClientLevel level = mc.level;
-		LocalPlayer player = mc.player;
-		Default tooltipFlag = mc.options.advancedItemTooltips ? TooltipFlag.ADVANCED : TooltipFlag.NORMAL;
-		List<Component> tooltipLines = result.getTooltipLines(TooltipContext.of(level), player, tooltipFlag);
-		Font font = mc.font;
-		int tooltipHeight = tooltipLines.size() * font.lineHeight + 8;
-		int width = guiGraphics.guiWidth() / 2;
-		int height = guiGraphics.guiHeight() / 2;
-		guiGraphics.renderItem(result, width + 10, height - 15);
-		guiGraphics.renderItemDecorations(font, result, width + 10, height - 15);
-		int mouseY = Math.max(0, height - Math.max(0, tooltipHeight - 80));
-		guiGraphics.renderComponentTooltip(font, tooltipLines, width + 20, mouseY);
+		index += scrollDeltaY;
+		scrollDeltaY = 0;
+		if (index < 1) index = results.size();
+		else if (index > results.size()) index = 1;
+		ItemStack result = results.get(index - 1);
+		OverlayRenderer.renderItemStack(guiGraphics, result, mc);
 		RenderSystem.disableBlend();
 	}
 }

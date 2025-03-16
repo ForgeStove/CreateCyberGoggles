@@ -1,5 +1,5 @@
-package com.ForgeStove.create_cyber_goggles.mixin.Goggles;
-import com.ForgeStove.create_cyber_goggles.Config;
+package com.ForgeStove.create_cyber_goggles.mixin.goggles;
+import com.ForgeStove.create_cyber_goggles.config.Configs;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.steamEngine.PoweredShaftBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -22,7 +22,7 @@ import java.util.List;
 			boolean isPlayerSneaking,
 			CallbackInfoReturnable<Boolean> returnable
 	) {
-		if (!Config.EnhancedGogglesInfo.get()) return;
+		if (!Configs.client().enhancedInfo.get()) return;
 		returnable.setReturnValue(true);
 		super.addToGoggleTooltip(tooltip, isPlayerSneaking);
 	}

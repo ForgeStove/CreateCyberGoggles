@@ -1,5 +1,5 @@
 package com.ForgeStove.create_cyber_goggles.mixin.goggles;
-import com.ForgeStove.create_cyber_goggles.config.Configs;
+import com.ForgeStove.create_cyber_goggles.config.*;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
@@ -13,16 +13,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 		if (gameMode == null) return;
 		switch (gameMode.getPlayerMode()) {
 			case SURVIVAL -> {
-				if (Configs.client().enableOnSurvival.get()) returnable.setReturnValue(true);
+				if (Config.enableInSurvival.get()) returnable.setReturnValue(true);
 			}
 			case CREATIVE -> {
-				if (Configs.client().enableOnCreative.get()) returnable.setReturnValue(true);
+				if (Config.enableInCreative.get()) returnable.setReturnValue(true);
 			}
 			case SPECTATOR -> {
-				if (Configs.client().enableOnSpectator.get()) returnable.setReturnValue(true);
+				if (Config.enableInSpectator.get()) returnable.setReturnValue(true);
 			}
 			case ADVENTURE -> {
-				if (Configs.client().enableOnAdventure.get()) returnable.setReturnValue(true);
+				if (Config.enableInAdventure.get()) returnable.setReturnValue(true);
 			}
 		}
 	}

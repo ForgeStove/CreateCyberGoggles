@@ -1,5 +1,5 @@
 package com.ForgeStove.create_cyber_goggles.mixin.chainConveyor;
-import com.ForgeStove.create_cyber_goggles.config.Configs;
+import com.ForgeStove.create_cyber_goggles.config.*;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.kinetics.chainConveyor.*;
 import net.createmod.catnip.animation.AnimationTickHolder;
@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 		if (mc.isPaused()) return;
 		LocalPlayer player = mc.player;
 		if (player == null) return;
-		if (!Configs.client().alwaysAllowRide.get()
+		if (!Config.alwaysAllowRiding.get()
 				&& !AllItemTags.CHAIN_RIDEABLE.matches(mc.player.getMainHandItem())) {
 			stopRiding();
 			return;
@@ -59,10 +59,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 						ChainConveyorRidingHandler.chainPosition,
 						Direction.Axis.Y
 				));
-		if (!Configs.client().preventFalling.get()) {
+		if (!Config.preventFalling.get()) {
 			Vec3 diff = targetPosition.subtract(playerPosition);
-			if (diff.length() > Configs.client().separationDistance.get()
-					|| diff.y < Configs.client().separationHeight.get()) {
+			if (diff.length() > Config.separationDistance.get()
+					|| diff.y < Config.separationHeight.get()) {
 				stopRiding();
 				return;
 			}

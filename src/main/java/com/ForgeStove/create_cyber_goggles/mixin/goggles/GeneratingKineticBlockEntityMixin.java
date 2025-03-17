@@ -1,5 +1,5 @@
 package com.ForgeStove.create_cyber_goggles.mixin.goggles;
-import com.ForgeStove.create_cyber_goggles.config.Configs;
+import com.ForgeStove.create_cyber_goggles.config.*;
 import com.simibubi.create.content.kinetics.base.*;
 import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
@@ -23,7 +23,7 @@ import java.util.List;
 			boolean isPlayerSneaking,
 			CallbackInfoReturnable<Boolean> returnable
 	) {
-		if (!Configs.client().enhancedInfo.get()) return;
+		if (!Config.enhancedInfo.get()) return;
 		returnable.setReturnValue(true);
 		CreateLang.translate("gui.goggles.generator_stats").forGoggles(tooltip, 0);
 		float stressBase = calculateAddedStressCapacity();

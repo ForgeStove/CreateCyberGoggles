@@ -26,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 			boolean simulate,
 			CallbackInfoReturnable<Boolean> returnable
 	) {
-		if (!Configs.client().enhancedConnection.get()) return;
+		if (!Config.enhancedConnection.get()) return;
 		returnable.setReturnValue(false);
 		if (!simulate && player.isShiftKeyDown()) {
 			CreateLang.translate("chain_conveyor.selection_cleared").sendStatus(player);

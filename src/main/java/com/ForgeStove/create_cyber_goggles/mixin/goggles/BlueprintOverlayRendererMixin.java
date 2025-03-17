@@ -1,5 +1,5 @@
 package com.ForgeStove.create_cyber_goggles.mixin.goggles;
-import com.ForgeStove.create_cyber_goggles.config.Configs;
+import com.ForgeStove.create_cyber_goggles.config.*;
 import com.ForgeStove.create_cyber_goggles.render.OverlayRenderer;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.simibubi.create.AllItems;
@@ -31,7 +31,7 @@ import static com.ForgeStove.create_cyber_goggles.event.KeyInputEvent.*;
 	@Shadow static BlueprintOverlayShopContext shopContext;
 	@Inject(method = "renderOverlay", at = @At("HEAD"), cancellable = true)
 	private static void renderOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo callbackInfo) {
-		if (!Configs.client().enhancedInfo.get()) return;
+		if (!Config.enhancedInfo.get()) return;
 		callbackInfo.cancel();
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.options.hideGui || mc.screen != null) return;

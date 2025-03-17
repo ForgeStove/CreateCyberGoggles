@@ -1,5 +1,5 @@
 package com.ForgeStove.create_cyber_goggles.render;
-import com.ForgeStove.create_cyber_goggles.config.Configs;
+import com.ForgeStove.create_cyber_goggles.config.*;
 import com.simibubi.create.content.logistics.depot.*;
 import net.minecraft.client.*;
 import net.minecraft.client.gui.*;
@@ -19,7 +19,7 @@ import java.util.List;
 public class OverlayRenderer {
 	public static final Layer OVERLAY = OverlayRenderer::renderOverlay;
 	public static void renderOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
-		if (!Configs.client().enhancedInfo.get()) return;
+		if (!Config.enhancedInfo.get()) return;
 		Minecraft mc = Minecraft.getInstance();
 		LocalPlayer player = mc.player;
 		if (player != null && player.hasContainerOpen() || mc.isPaused()) return;

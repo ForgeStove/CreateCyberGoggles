@@ -1,5 +1,5 @@
 package com.ForgeStove.create_cyber_goggles.event;
-import com.ForgeStove.create_cyber_goggles.config.Configs;
+import com.ForgeStove.create_cyber_goggles.config.*;
 import com.simibubi.create.content.logistics.tableCloth.TableClothBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -9,7 +9,7 @@ public class KeyInputEvent {
 	public static int index = 1;
 	public static int scrollDeltaY = 0;
 	public static void onMouseScroll(MouseScrollingEvent event) {
-		if (!Configs.client().enhancedInfo.get()) return;
+		if (!Config.enhancedInfo.get()) return;
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.level != null && mc.hitResult instanceof BlockHitResult blockHitResult) {
 			if (blockHitResult.getType() == HitResult.Type.MISS) return;

@@ -1,5 +1,5 @@
 package com.ForgeStove.create_cyber_goggles.mixin.wrench;
-import com.ForgeStove.create_cyber_goggles.config.*;
+import com.ForgeStove.create_cyber_goggles.Config;
 import com.simibubi.create.AllKeys;
 import com.simibubi.create.content.contraptions.wrench.*;
 import net.createmod.catnip.gui.ScreenOpener;

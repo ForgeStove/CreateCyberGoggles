@@ -1,5 +1,5 @@
 package com.ForgeStove.create_cyber_goggles.mixin.goggles;
-import com.ForgeStove.create_cyber_goggles.config.*;
+import com.ForgeStove.create_cyber_goggles.Config;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;

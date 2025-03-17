@@ -1,5 +1,5 @@
 package com.ForgeStove.create_cyber_goggles.render;
-import com.ForgeStove.create_cyber_goggles.config.*;
+import com.ForgeStove.create_cyber_goggles.Config;
 import com.simibubi.create.content.logistics.depot.*;
 import net.minecraft.client.*;
 import net.minecraft.client.gui.*;

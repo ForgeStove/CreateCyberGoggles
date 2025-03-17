@@ -1,5 +1,5 @@
 package com.ForgeStove.create_cyber_goggles.event;
-import com.ForgeStove.create_cyber_goggles.config.*;
+import com.ForgeStove.create_cyber_goggles.Config;
 import com.simibubi.create.content.logistics.tableCloth.TableClothBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.block.entity.BlockEntity;

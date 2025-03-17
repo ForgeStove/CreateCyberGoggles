@@ -1,5 +1,5 @@
 package com.ForgeStove.create_cyber_goggles.mixin.chainConveyor;
-import com.ForgeStove.create_cyber_goggles.config.*;
+import com.ForgeStove.create_cyber_goggles.Config;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.kinetics.chainConveyor.*;
 import net.createmod.catnip.animation.AnimationTickHolder;

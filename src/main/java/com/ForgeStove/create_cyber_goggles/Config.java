@@ -1,9 +1,9 @@
-package com.ForgeStove.create_cyber_goggles.config;
+package com.ForgeStove.create_cyber_goggles;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.common.ModConfigSpec.*;
 public class Config {
 	public static final Builder BUILDER = new Builder();
-	public static final ModConfigSpec CONFIG_SPEC;
+	public static final ModConfigSpec CLIENT_SPEC;
 	public static final ConfigValue<Boolean> alwaysAllowRiding;
 	public static final ConfigValue<Boolean> preventFalling;
 	public static final ConfigValue<Integer> separationDistance;
@@ -37,6 +37,6 @@ public class Config {
 		BUILDER.push("Wrench");
 		alwaysAllowRotating = BUILDER.comment("Always allow rotating block").define("alwaysAllowRotating", true);
 		BUILDER.pop();
-		CONFIG_SPEC = BUILDER.build();
+		CLIENT_SPEC = BUILDER.build();
 	}
 }

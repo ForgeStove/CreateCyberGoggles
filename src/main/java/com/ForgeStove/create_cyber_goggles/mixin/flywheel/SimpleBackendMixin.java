@@ -1,5 +1,5 @@
 package com.ForgeStove.create_cyber_goggles.mixin.flywheel;
-import com.ForgeStove.create_cyber_goggles.config.*;
+import com.ForgeStove.create_cyber_goggles.Config;
 import dev.engine_room.flywheel.lib.backend.SimpleBackend;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;

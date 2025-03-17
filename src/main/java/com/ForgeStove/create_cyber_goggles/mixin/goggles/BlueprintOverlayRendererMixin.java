@@ -13,6 +13,7 @@ import net.minecraft.client.*;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
@@ -94,23 +95,32 @@ import static com.ForgeStove.create_cyber_goggles.event.KeyInputEvent.*;
 		if (results.isEmpty()) {
 			AllGuiTextures.HOTSLOT.render(guiGraphics, x, y);
 			GuiGameElement.of(Items.BARRIER).at(x + 3, y + 3).render(guiGraphics);
-		} else for (ItemStack result : results) {
-			AllGuiTextures slot = resultCraftable ? AllGuiTextures.HOTSLOT_SUPER_ACTIVE : AllGuiTextures.HOTSLOT;
-			if (!invalidShop && shopContext != null && shopContext.stockLevel() > shopContext.purchases())
-				slot = AllGuiTextures.HOTSLOT_ACTIVE;
-			slot.render(guiGraphics, resultCraftable ? x - 1 : x, resultCraftable ? y - 1 : y);
-			BlueprintOverlayRenderer.drawItemStack(guiGraphics, mc, x, y, result, null);
-			x += 21;
+		} else {
+			index += scrollDeltaY;
+			scrollDeltaY = 0;
+			if (index < 1) index = results.size();
+			else if (index > results.size()) index = 1;
+			int selectedX = 0;
+			for (int i = 0, resultsSize = results.size(); i < resultsSize; i++) {
+				ItemStack result = results.get(i);
+				AllGuiTextures slot = resultCraftable ? AllGuiTextures.HOTSLOT_SUPER_ACTIVE : AllGuiTextures.HOTSLOT;
+				if (!invalidShop && shopContext != null && shopContext.stockLevel() > shopContext.purchases())
+					slot = AllGuiTextures.HOTSLOT_ACTIVE;
+				slot.render(guiGraphics, resultCraftable ? x - 1 : x, resultCraftable ? y - 1 : y);
+				BlueprintOverlayRenderer.drawItemStack(guiGraphics, mc, x, y, result, null);
+				if (i == index - 1) selectedX = x;
+				x += 21;
+			}
+			if (selectedX != 0) guiGraphics.blitSprite(
+					ResourceLocation.withDefaultNamespace("hud/hotbar_selection"),
+					selectedX-1,
+					y-1,
+					24,
+					23
+			);
+			OverlayRenderer.renderItemStack(guiGraphics, results.get(index - 1), mc);
 		}
-		if (shopContext == null || shopContext.checkout()) {
-			RenderSystem.disableBlend();
-			return;
-		}
-		index += scrollDeltaY;
-		scrollDeltaY = 0;
-		if (index < 1) index = results.size();
-		else if (index > results.size()) index = 1;
-		OverlayRenderer.renderItemStack(guiGraphics, results.get(index - 1), mc);
+		if (shopContext != null) shopContext.checkout();
 		RenderSystem.disableBlend();
 	}
 }

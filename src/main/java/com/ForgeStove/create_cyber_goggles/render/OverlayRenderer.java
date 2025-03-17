@@ -11,7 +11,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.TooltipFlag.Default;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,8 +27,7 @@ public class OverlayRenderer {
 		if (level != null && mc.hitResult instanceof BlockHitResult blockHitResult) {
 			BlockPos blockPos = blockHitResult.getBlockPos();
 			if (blockHitResult.getType() == HitResult.Type.MISS) return;
-			Block block = level.getBlockState(blockPos).getBlock();
-			if (block instanceof DepotBlock depotBlock) {
+			if (level.getBlockState(blockPos).getBlock() instanceof DepotBlock depotBlock) {
 				DepotBlockEntity blockEntity = depotBlock.getBlockEntity(level, blockPos);
 				if (blockEntity != null) itemStack = blockEntity.getHeldItem();
 			}
@@ -46,6 +44,6 @@ public class OverlayRenderer {
 		int y = guiGraphics.guiHeight() / 2;
 		guiGraphics.renderItem(itemStack, x + 10, y - 15);
 		guiGraphics.renderItemDecorations(font, itemStack, x + 10, y - 15);
-		guiGraphics.renderComponentTooltip(font, tooltipLines, x + 20, y - Math.max(0, tooltipHeight - 80));
+		guiGraphics.renderComponentTooltip(font, tooltipLines, x + 22, y - Math.max(10, tooltipHeight - 75));
 	}
 }

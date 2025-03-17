@@ -110,8 +110,7 @@ import static com.ForgeStove.create_cyber_goggles.event.KeyInputEvent.*;
 		scrollDeltaY = 0;
 		if (index < 1) index = results.size();
 		else if (index > results.size()) index = 1;
-		ItemStack result = results.get(index - 1);
-		OverlayRenderer.renderItemStack(guiGraphics, result, mc);
+		OverlayRenderer.renderItemStack(guiGraphics, results.get(index - 1), mc);
 		RenderSystem.disableBlend();
 	}
 }

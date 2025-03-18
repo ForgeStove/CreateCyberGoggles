@@ -25,6 +25,7 @@
     "create_cyber_goggles.configuration.enableInSpectator": "Enable In Spectator",
     "create_cyber_goggles.configuration.enableInAdventure": "Enable In Adventure",
     "create_cyber_goggles.configuration.enhancedInfo": "Enhanced Info",
+    "create_cyber_goggles.configuration.enableOpenFilterScreen" : "Enable Open Filter Screen",
     "create_cyber_goggles.configuration.alwaysAllowRotating": "Always Allow Rotating",
     "create_cyber_goggles.configuration.separationDistance.tooltip": "Minimum relative falling distance between you and chain conveyor",
     "create_cyber_goggles.configuration.separationHeight.tooltip": "Minimum relative falling height between you and chain conveyor",
@@ -37,5 +38,7 @@
     "create_cyber_goggles.configuration.enableInSpectator.tooltip": "Enable goggles in Spectator mode",
     "create_cyber_goggles.configuration.enableInAdventure.tooltip": "Enable goggles in Adventure mode",
     "create_cyber_goggles.configuration.enhancedInfo.tooltip": "Show more information in the goggles overlay",
-    "create_cyber_goggles.configuration.alwaysAllowRotating.tooltip": "Always allow rotating block without wrench by hotkey"
+    "create_cyber_goggles.configuration.enableOpenFilterScreen.tooltip": "Enable open a container's filter screen by hotkey",
+    "create_cyber_goggles.configuration.alwaysAllowRotating.tooltip": "Always allow rotating block without wrench by hotkey",
+    "create_cyber_goggles.keyInfo.filterMenu": "Open Filter Screen"
 }

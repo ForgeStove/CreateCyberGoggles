@@ -25,6 +25,7 @@
     "create_cyber_goggles.configuration.enableInSpectator": "旁观模式启用",
     "create_cyber_goggles.configuration.enableInAdventure": "冒险模式启用",
     "create_cyber_goggles.configuration.enhancedInfo": "增强信息显示",
+    "create_cyber_goggles.configuration.enableOpenFilterScreen": "快捷过滤器",
     "create_cyber_goggles.configuration.alwaysAllowRotating": "总是允许旋转方块",
     "create_cyber_goggles.configuration.separationDistance.tooltip": "与链式传动轮保持的最小相对距离（方块数）",
     "create_cyber_goggles.configuration.separationHeight.tooltip": "与链式传动轮保持的相对高度（方块数）",
@@ -37,5 +38,7 @@
     "create_cyber_goggles.configuration.enableInSpectator.tooltip": "在旁观模式下启用护目镜",
     "create_cyber_goggles.configuration.enableInAdventure.tooltip": "在冒险模式下启用护目镜",
     "create_cyber_goggles.configuration.enhancedInfo.tooltip": "增强护目镜显示信息",
-    "create_cyber_goggles.configuration.alwaysAllowRotating.tooltip": "无需扳手即可通过快捷键旋转方块"
+    "create_cyber_goggles.configuration.alwaysAllowRotating.tooltip": "无需扳手即可通过快捷键旋转方块",
+    "create_cyber_goggles.configuration.enableOpenFilterScreen.tooltip": "允许使用快捷键打开容器的过滤器界面",
+    "create_cyber_goggles.keyInfo.filterMenu": "打开过滤器界面"
 }

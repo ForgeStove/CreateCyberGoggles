@@ -15,6 +15,7 @@ public class Config {
 	public static final ConfigValue<Boolean> enableInSpectator;
 	public static final ConfigValue<Boolean> enableInAdventure;
 	public static final ConfigValue<Boolean> enhancedInfo;
+	public static final ConfigValue<Boolean> enableOpenFilterScreen;
 	public static final ConfigValue<Boolean> alwaysAllowRotating;
 	static {
 		BUILDER.push("ChainConveyor");
@@ -33,6 +34,7 @@ public class Config {
 		enableInSpectator = BUILDER.comment("Enable goggles in spectator mode").define("enableInSpectator", true);
 		enableInAdventure = BUILDER.comment("Enable goggles in adventure mode").define("enableInAdventure", true);
 		enhancedInfo = BUILDER.comment("Show more information in the goggles overlay").define("enhancedInfo", true);
+		enableOpenFilterScreen = BUILDER.comment("Open filter screen by pressing the key").define("enableOpenFilterScreen", true);
 		BUILDER.pop();
 		BUILDER.push("Wrench");
 		alwaysAllowRotating = BUILDER.comment("Always allow rotating block").define("alwaysAllowRotating", true);

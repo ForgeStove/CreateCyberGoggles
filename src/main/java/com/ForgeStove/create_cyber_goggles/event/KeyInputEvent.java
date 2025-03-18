@@ -38,7 +38,8 @@ public class KeyInputEvent {
 		BlockEntity blockEntity = mc.level.getBlockEntity(blockHitResult.getBlockPos());
 		if (!(blockEntity instanceof SmartBlockEntity smartBlockEntity)) return;
 		if (mc.player == null) return;
-		Collection<BlockEntityBehaviour> behavior = Set.of(smartBlockEntity.getBehaviour(FilteringBehaviour.TYPE));
+		Collection<BlockEntityBehaviour> behavior = Collections.singleton(smartBlockEntity.getBehaviour(
+				FilteringBehaviour.TYPE));
 		BlockEntityBehaviour first = behavior.iterator().next();
 		if (!(first instanceof FilteringBehaviour filteringBehaviour)) return;
 		Inventory inventory = mc.player.getInventory();

@@ -6,8 +6,10 @@ import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.*;
@@ -15,6 +17,7 @@ import net.neoforged.neoforge.client.event.InputEvent.*;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
+import java.util.stream.Stream;
 public class KeyInputEvent {
 	public static int index = 1;
 	public static int scrollDeltaY = 0;
@@ -33,17 +36,28 @@ public class KeyInputEvent {
 	public static void onKeyInput(Key event) {
 		if (event.getKey() != KeyBinds.FILTER_MENU.getBoundCode() || event.getAction() != GLFW.GLFW_PRESS) return;
 		Minecraft mc = Minecraft.getInstance();
-		if (mc.level == null || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return;
-		if (blockHitResult.getType() == HitResult.Type.MISS) return;
-		BlockEntity blockEntity = mc.level.getBlockEntity(blockHitResult.getBlockPos());
-		if (!(blockEntity instanceof SmartBlockEntity smartBlockEntity)) return;
 		if (mc.player == null) return;
-		Collection<BlockEntityBehaviour> behavior = Collections.singleton(smartBlockEntity.getBehaviour(
-				FilteringBehaviour.TYPE));
-		BlockEntityBehaviour first = behavior.iterator().next();
-		if (!(first instanceof FilteringBehaviour filteringBehaviour)) return;
 		Inventory inventory = mc.player.getInventory();
-		ItemStack filter = filteringBehaviour.getFilter(blockHitResult.getDirection());
+		ItemStack filter;
+		if (mc.screen != null) {
+			if (!(mc.screen instanceof AbstractContainerScreen<?> screen)) return;
+			Slot slot = screen.getSlotUnderMouse();
+			if (slot == null) return;
+			ItemStack heldItem = slot.getItem();
+			if (Stream.of("item.create.filter", "item.create.attribute_filter", "item.create.package_filter")
+					.noneMatch(heldItem.getDescriptionId()::equals)) return;
+			filter = heldItem;
+		} else {
+			if (mc.level == null || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return;
+			if (blockHitResult.getType() == HitResult.Type.MISS) return;
+			BlockEntity blockEntity = mc.level.getBlockEntity(blockHitResult.getBlockPos());
+			if (!(blockEntity instanceof SmartBlockEntity smartBlockEntity)) return;
+			Collection<BlockEntityBehaviour> behavior = Collections.singleton(smartBlockEntity.getBehaviour(
+					FilteringBehaviour.TYPE));
+			BlockEntityBehaviour first = behavior.iterator().next();
+			if (!(first instanceof FilteringBehaviour filteringBehaviour)) return;
+			filter = filteringBehaviour.getFilter(blockHitResult.getDirection());
+		}
 		if (filter.isEmpty()) return;
 		try {
 			switch (filter.getDescriptionId()) {

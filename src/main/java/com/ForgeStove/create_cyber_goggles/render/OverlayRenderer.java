@@ -1,5 +1,6 @@
 package com.ForgeStove.create_cyber_goggles.render;
 import com.ForgeStove.create_cyber_goggles.Config;
+import com.simibubi.create.content.logistics.chute.*;
 import com.simibubi.create.content.logistics.depot.*;
 import net.minecraft.client.*;
 import net.minecraft.client.gui.*;
@@ -11,6 +12,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.TooltipFlag.Default;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,9 +29,13 @@ public class OverlayRenderer {
 		if (level != null && mc.hitResult instanceof BlockHitResult blockHitResult) {
 			BlockPos blockPos = blockHitResult.getBlockPos();
 			if (blockHitResult.getType() == HitResult.Type.MISS) return;
-			if (level.getBlockState(blockPos).getBlock() instanceof DepotBlock depotBlock) {
+			Block block = level.getBlockState(blockPos).getBlock();
+			if (block instanceof DepotBlock depotBlock) {
 				DepotBlockEntity blockEntity = depotBlock.getBlockEntity(level, blockPos);
 				if (blockEntity != null) itemStack = blockEntity.getHeldItem();
+			} else if (block instanceof ChuteBlock chuteBlock) {
+				ChuteBlockEntity blockEntity = chuteBlock.getBlockEntity(level, blockPos);
+				if (blockEntity != null) itemStack = blockEntity.getItem();
 			}
 		}
 		renderItemStack(guiGraphics, itemStack, mc);

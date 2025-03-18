@@ -66,7 +66,7 @@ public class KeyInputEvent {
 						));
 			}
 		} catch (Exception error) {
-			mc.player.sendSystemMessage(Component.literal(error.getMessage()));
+			mc.player.sendSystemMessage(Component.nullToEmpty(error.getMessage()));
 		}
 	}
 }

@@ -9,6 +9,7 @@
         "flywheel.SimpleBackendMixin",
         "goggles.AbstractFilterScreenMixin",
         "goggles.BlueprintOverlayRendererMixin",
+        "goggles.CreateLangMixin",
         "goggles.DeployerBlockEntityMixin",
         "goggles.GeneratingKineticBlockEntityMixin",
         "goggles.GogglesItemMixin",

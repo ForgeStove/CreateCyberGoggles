@@ -1,5 +1,5 @@
 package com.ForgeStove.create_cyber_goggles.render;
-import com.ForgeStove.create_cyber_goggles.Config;
+import com.ForgeStove.create_cyber_goggles.*;
 import com.simibubi.create.content.logistics.depot.*;
 import net.minecraft.client.*;
 import net.minecraft.client.gui.*;
@@ -8,16 +8,21 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.TooltipFlag.Default;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.*;
+import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 public class OverlayRenderer {
 	public static final Layer OVERLAY = OverlayRenderer::renderOverlay;
+	public static void register(RegisterGuiLayersEvent event) {
+		event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(CreateCyberGoggles.ID, "overlay"), OVERLAY);
+	}
 	public static void renderOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
 		if (!Config.enableDepotRender.get()) return;
 		Minecraft mc = Minecraft.getInstance();

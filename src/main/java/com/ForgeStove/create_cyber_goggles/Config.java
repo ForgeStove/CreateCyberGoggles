@@ -18,6 +18,7 @@ public class Config {
 	public static final ConfigValue<Boolean> enhancedStoreRender;
 	public static final ConfigValue<Boolean> enableDepotRender;
 	public static final ConfigValue<Boolean> enableOpenFilterScreen;
+	public static final ConfigValue<Boolean> enableKineticEffect;
 	public static final ConfigValue<Boolean> alwaysAllowRotating;
 	static {
 		BUILDER.push("ChainConveyor");
@@ -39,6 +40,7 @@ public class Config {
 		enhancedStoreRender = BUILDER.comment("Enhanced store rendering").define("enhancedStoreRender", true);
 		enableDepotRender = BUILDER.comment("Render item stack tooltip on depot").define("enableDepotRender", true);
 		enableOpenFilterScreen = BUILDER.comment("Open filter by hotkey").define("enableOpenFilterScreen", true);
+		enableKineticEffect = BUILDER.comment("Show target kinetic block effect").define("enableKineticEffect", true);
 		BUILDER.pop();
 		BUILDER.push("Wrench");
 		alwaysAllowRotating = BUILDER.comment("Always allow rotating block").define("alwaysAllowRotating", true);

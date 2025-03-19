@@ -26,8 +26,9 @@
     "create_cyber_goggles.configuration.enableInAdventure": "冒险模式启用",
     "create_cyber_goggles.configuration.enhancedInfo": "增强信息显示",
     "create_cyber_goggles.configuration.enhancedStoreRender": "增强商店渲染",
-    "create_cyber_goggles.configuration.enableDepotRender": "启用置物台渲染",
+    "create_cyber_goggles.configuration.enableDepotRender": "置物台渲染",
     "create_cyber_goggles.configuration.enableOpenFilterScreen": "快捷过滤器",
+    "create_cyber_goggles.configuration.enableKineticEffect": "旋转粒子渲染",
     "create_cyber_goggles.configuration.alwaysAllowRotating": "总是允许旋转方块",
     "create_cyber_goggles.configuration.separationDistance.tooltip": "与链式传动轮保持的最小相对距离（方块数）",
     "create_cyber_goggles.configuration.separationHeight.tooltip": "与链式传动轮保持的相对高度（方块数）",
@@ -43,6 +44,7 @@
     "create_cyber_goggles.configuration.enhancedStoreRender.tooltip": "增强桌布商店渲染效果",
     "create_cyber_goggles.configuration.enableDepotRender.tooltip": "允许渲染置物台上的物品信息",
     "create_cyber_goggles.configuration.enableOpenFilterScreen.tooltip": "允许使用快捷键打开容器的过滤器界面",
+    "create_cyber_goggles.configuration.enableKineticEffect.tooltip": "渲染目标方块的旋转粒子效果",
     "create_cyber_goggles.configuration.alwaysAllowRotating.tooltip": "无需扳手即可通过快捷键旋转方块",
     "create_cyber_goggles.keyInfo.filterMenu": "打开过滤器界面"
 }

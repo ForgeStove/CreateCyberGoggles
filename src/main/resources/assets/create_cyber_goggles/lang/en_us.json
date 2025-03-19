@@ -28,6 +28,7 @@
     "create_cyber_goggles.configuration.enhancedStoreRender": "Enhanced Store Render",
     "create_cyber_goggles.configuration.enableDepotRender": "Enable Depot Render",
     "create_cyber_goggles.configuration.enableOpenFilterScreen": "Enable Open Filter Screen",
+    "create_cyber_goggles.configuration.enableKineticEffect" : "Enable Kinetic Effect",
     "create_cyber_goggles.configuration.alwaysAllowRotating": "Always Allow Rotating",
     "create_cyber_goggles.configuration.separationDistance.tooltip": "Minimum relative falling distance between you and chain conveyor",
     "create_cyber_goggles.configuration.separationHeight.tooltip": "Minimum relative falling height between you and chain conveyor",
@@ -43,6 +44,7 @@
     "create_cyber_goggles.configuration.enhancedStoreRender.tooltip": "Improve the rendering of the table cloth store",
     "create_cyber_goggles.configuration.enableDepotRender.tooltip": "Render item stack tooltip on depot",
     "create_cyber_goggles.configuration.enableOpenFilterScreen.tooltip": "Open filter screen by hotkey",
+    "create_cyber_goggles.configuration.enableKineticEffect.tooltip": "Show target kinetic block effect",
     "create_cyber_goggles.configuration.alwaysAllowRotating.tooltip": "Always allow rotating block without wrench by hotkey",
     "create_cyber_goggles.keyInfo.filterMenu": "Open Filter Screen"
 }

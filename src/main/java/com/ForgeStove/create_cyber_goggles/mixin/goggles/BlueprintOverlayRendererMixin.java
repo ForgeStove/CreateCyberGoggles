@@ -32,7 +32,7 @@ import static com.ForgeStove.create_cyber_goggles.event.KeyInputEvent.*;
 	@Shadow static BlueprintOverlayShopContext shopContext;
 	@Inject(method = "renderOverlay", at = @At("HEAD"), cancellable = true)
 	private static void renderOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo callbackInfo) {
-		if (!Config.enhancedInfo.get()) return;
+		if (!Config.enhancedStoreRender.get()) return;
 		callbackInfo.cancel();
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.options.hideGui || mc.screen != null) return;
@@ -113,12 +113,12 @@ import static com.ForgeStove.create_cyber_goggles.event.KeyInputEvent.*;
 			}
 			if (selectedX != 0) guiGraphics.blitSprite(
 					ResourceLocation.withDefaultNamespace("hud/hotbar_selection"),
-					selectedX-1,
-					y-1,
+					selectedX - 1,
+					y - 1,
 					24,
 					23
 			);
-			OverlayRenderer.renderItemStack(guiGraphics, results.get(index - 1), mc);
+			OverlayRenderer.renderItemStack(guiGraphics, results.get(index - 1));
 		}
 		if (shopContext != null) shopContext.checkout();
 		RenderSystem.disableBlend();

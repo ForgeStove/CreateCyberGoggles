@@ -1,4 +1,5 @@
 package com.ForgeStove.create_cyber_goggles.mixin.goggles;
+import com.ForgeStove.create_cyber_goggles.Config;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -13,6 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 	}
 	@Inject(method = "containerTick", at = @At("HEAD"), cancellable = true)
 	private void containerTick(CallbackInfo callbackInfo) {
+		if (!Config.enableOpenFilterScreen.get()) return;
 		callbackInfo.cancel();
 		super.containerTick();
 		handleTooltips();

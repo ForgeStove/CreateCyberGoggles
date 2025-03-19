@@ -7,6 +7,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
@@ -17,12 +18,11 @@ import net.neoforged.neoforge.client.event.InputEvent.*;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
-import java.util.stream.Stream;
 public class KeyInputEvent {
 	public static int index = 1;
 	public static int scrollDeltaY = 0;
 	public static void onMouseScroll(MouseScrollingEvent event) {
-		if (!Config.enhancedInfo.get()) return;
+		if (!Config.enhancedStoreRender.get()) return;
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.level == null || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return;
 		if (blockHitResult.getType() == HitResult.Type.MISS) return;
@@ -34,19 +34,14 @@ public class KeyInputEvent {
 		else scrollDeltaY = event.getScrollDeltaY() > 0 ? -1 : 1;
 	}
 	public static void onKeyInput(Key event) {
+		if (!Config.enableOpenFilterScreen.get()) return;
 		if (event.getKey() != KeyBinds.FILTER_MENU.getBoundCode() || event.getAction() != GLFW.GLFW_PRESS) return;
 		Minecraft mc = Minecraft.getInstance();
-		if (mc.player == null) return;
-		Inventory inventory = mc.player.getInventory();
-		ItemStack filter;
 		if (mc.screen != null) {
 			if (!(mc.screen instanceof AbstractContainerScreen<?> screen)) return;
 			Slot slot = screen.getSlotUnderMouse();
 			if (slot == null) return;
-			ItemStack heldItem = slot.getItem();
-			if (Stream.of("item.create.filter", "item.create.attribute_filter", "item.create.package_filter")
-					.noneMatch(heldItem.getDescriptionId()::equals)) return;
-			filter = heldItem;
+			setFilterScreen(slot.getItem());
 		} else {
 			if (mc.level == null || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return;
 			if (blockHitResult.getType() == HitResult.Type.MISS) return;
@@ -56,9 +51,15 @@ public class KeyInputEvent {
 					FilteringBehaviour.TYPE));
 			BlockEntityBehaviour first = behavior.iterator().next();
 			if (!(first instanceof FilteringBehaviour filteringBehaviour)) return;
-			filter = filteringBehaviour.getFilter(blockHitResult.getDirection());
+			setFilterScreen(filteringBehaviour.getFilter(blockHitResult.getDirection()));
 		}
+	}
+	public static void setFilterScreen(ItemStack filter) {
 		if (filter.isEmpty()) return;
+		Minecraft mc = Minecraft.getInstance();
+		LocalPlayer player = mc.player;
+		if (player == null) return;
+		Inventory inventory = player.getInventory();
 		try {
 			switch (filter.getDescriptionId()) {
 				case "item.create.filter" -> mc.setScreen(new FilterScreen(
@@ -80,7 +81,7 @@ public class KeyInputEvent {
 						));
 			}
 		} catch (Exception error) {
-			mc.player.sendSystemMessage(Component.nullToEmpty(error.getMessage()));
+			player.sendSystemMessage(Component.nullToEmpty(error.getMessage()));
 		}
 	}
 }

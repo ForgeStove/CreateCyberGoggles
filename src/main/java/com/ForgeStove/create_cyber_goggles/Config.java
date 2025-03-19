@@ -15,6 +15,8 @@ public class Config {
 	public static final ConfigValue<Boolean> enableInSpectator;
 	public static final ConfigValue<Boolean> enableInAdventure;
 	public static final ConfigValue<Boolean> enhancedInfo;
+	public static final ConfigValue<Boolean> enhancedStoreRender;
+	public static final ConfigValue<Boolean> enableDepotRender;
 	public static final ConfigValue<Boolean> enableOpenFilterScreen;
 	public static final ConfigValue<Boolean> alwaysAllowRotating;
 	static {
@@ -23,7 +25,7 @@ public class Config {
 		preventFalling = BUILDER.comment("Prevent falling off chain conveyors").define("preventFalling", false);
 		separationDistance = BUILDER.comment("Minimum relative falling distance").define("separationDistance", 3);
 		separationHeight = BUILDER.comment("Minimum relative falling height").define("separationHeight", -1);
-		enhancedConnection = BUILDER.comment("Enhanced chain conveyor connection").define("enhancedConnection", false);
+		enhancedConnection = BUILDER.comment("Enhanced chain conveyor connection").define("enhancedConnection", true);
 		BUILDER.pop();
 		BUILDER.push("Flywheel");
 		forcedBackend = BUILDER.comment("Force Allow flywheel backend").define("forcedBackend", false);
@@ -34,7 +36,9 @@ public class Config {
 		enableInSpectator = BUILDER.comment("Enable goggles in spectator mode").define("enableInSpectator", true);
 		enableInAdventure = BUILDER.comment("Enable goggles in adventure mode").define("enableInAdventure", true);
 		enhancedInfo = BUILDER.comment("Show more information in the goggles overlay").define("enhancedInfo", true);
-		enableOpenFilterScreen = BUILDER.comment("Open filter screen by pressing the key").define("enableOpenFilterScreen", true);
+		enhancedStoreRender = BUILDER.comment("Enhanced store rendering").define("enhancedStoreRender", true);
+		enableDepotRender = BUILDER.comment("Render item stack tooltip on depot").define("enableDepotRender", true);
+		enableOpenFilterScreen = BUILDER.comment("Open filter by hotkey").define("enableOpenFilterScreen", true);
 		BUILDER.pop();
 		BUILDER.push("Wrench");
 		alwaysAllowRotating = BUILDER.comment("Always allow rotating block").define("alwaysAllowRotating", true);

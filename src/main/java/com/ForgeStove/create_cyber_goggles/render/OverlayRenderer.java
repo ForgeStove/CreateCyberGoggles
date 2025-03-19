@@ -1,6 +1,5 @@
 package com.ForgeStove.create_cyber_goggles.render;
 import com.ForgeStove.create_cyber_goggles.Config;
-import com.simibubi.create.content.logistics.chute.*;
 import com.simibubi.create.content.logistics.depot.*;
 import net.minecraft.client.*;
 import net.minecraft.client.gui.*;
@@ -20,28 +19,25 @@ import java.util.List;
 public class OverlayRenderer {
 	public static final Layer OVERLAY = OverlayRenderer::renderOverlay;
 	public static void renderOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
-		if (!Config.enhancedInfo.get()) return;
+		if (!Config.enableDepotRender.get()) return;
 		Minecraft mc = Minecraft.getInstance();
 		LocalPlayer player = mc.player;
 		if (player != null && player.hasContainerOpen() || mc.isPaused()) return;
 		ItemStack itemStack = ItemStack.EMPTY;
 		ClientLevel level = mc.level;
-		if (level != null && mc.hitResult instanceof BlockHitResult blockHitResult) {
-			BlockPos blockPos = blockHitResult.getBlockPos();
-			if (blockHitResult.getType() == HitResult.Type.MISS) return;
-			Block block = level.getBlockState(blockPos).getBlock();
-			if (block instanceof DepotBlock depotBlock) {
-				DepotBlockEntity blockEntity = depotBlock.getBlockEntity(level, blockPos);
-				if (blockEntity != null) itemStack = blockEntity.getHeldItem();
-			} else if (block instanceof ChuteBlock chuteBlock) {
-				ChuteBlockEntity blockEntity = chuteBlock.getBlockEntity(level, blockPos);
-				if (blockEntity != null) itemStack = blockEntity.getItem();
-			}
-		}
-		renderItemStack(guiGraphics, itemStack, mc);
+		if (level == null || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return;
+		BlockPos blockPos = blockHitResult.getBlockPos();
+		if (blockHitResult.getType() == HitResult.Type.MISS) return;
+		Block block = level.getBlockState(blockPos).getBlock();
+		if (block instanceof DepotBlock depotBlock) {
+			DepotBlockEntity blockEntity = depotBlock.getBlockEntity(level, blockPos);
+			if (blockEntity != null) itemStack = blockEntity.getHeldItem();
+		} else return;
+		renderItemStack(guiGraphics, itemStack);
 	}
-	public static void renderItemStack(GuiGraphics guiGraphics, @NotNull ItemStack itemStack, Minecraft mc) {
+	public static void renderItemStack(GuiGraphics guiGraphics, @NotNull ItemStack itemStack) {
 		if (itemStack.isEmpty()) return;
+		Minecraft mc = Minecraft.getInstance();
 		Font font = mc.font;
 		Default tooltipFlag = mc.options.advancedItemTooltips ? TooltipFlag.ADVANCED : TooltipFlag.NORMAL;
 		List<Component> tooltipLines = itemStack.getTooltipLines(TooltipContext.of(mc.level), mc.player, tooltipFlag);

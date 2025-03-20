@@ -13,8 +13,7 @@ import java.text.NumberFormat;
 		if (!Config.preciseNumbers.get()) return;
 		NumberFormat format = NumberFormat.getNumberInstance();
 		format.setMaximumFractionDigits(8);
-		format.setGroupingUsed(false);
-		String formatted = format.format(d).replaceAll("\\.?0+$", "");
+		String formatted = format.format(d).replace("\u00A0", " ");
 		returnable.setReturnValue(CreateLang.builder().text(formatted));
 	}
 }

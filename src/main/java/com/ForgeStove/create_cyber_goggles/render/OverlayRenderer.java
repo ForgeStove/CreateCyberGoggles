@@ -1,6 +1,5 @@
 package com.ForgeStove.create_cyber_goggles.render;
 import com.ForgeStove.create_cyber_goggles.*;
-import com.simibubi.create.content.fluids.drain.ItemDrainBlockEntity;
 import com.simibubi.create.content.kinetics.base.IRotate.SpeedLevel;
 import com.simibubi.create.content.kinetics.base.*;
 import com.simibubi.create.content.logistics.depot.DepotBlockEntity;
@@ -42,9 +41,7 @@ public class OverlayRenderer {
 			itemStack = depotBlockEntity.getHeldItem();
 		else if (Config.renderExtraItems.get() && blockEntity instanceof PackagerBlockEntity packagerBlockEntity)
 			itemStack = packagerBlockEntity.heldBox;
-		else if (Config.renderExtraItems.get() && blockEntity instanceof ItemDrainBlockEntity itemDrainBlockEntity) {
-			itemStack = itemDrainBlockEntity.getHeldItemStack();
-		} else if (Config.enableKineticEffect.get() && blockEntity instanceof KineticBlockEntity kineticBlockEntity) {
+		else if (Config.enableKineticEffect.get() && blockEntity instanceof KineticBlockEntity kineticBlockEntity) {
 			if (blockHitResult.getType() == Type.MISS) return;
 			if (!blockHitResult.getBlockPos().equals(kineticBlockEntity.getBlockPos())) return;
 			float speed = kineticBlockEntity.getSpeed();

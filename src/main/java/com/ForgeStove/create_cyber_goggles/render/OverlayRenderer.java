@@ -74,11 +74,11 @@ public class OverlayRenderer {
 		Font font = mc.font;
 		Default tooltipFlag = mc.options.advancedItemTooltips ? TooltipFlag.ADVANCED : TooltipFlag.NORMAL;
 		List<Component> tooltipLines = itemStack.getTooltipLines(TooltipContext.of(mc.level), mc.player, tooltipFlag);
-		int tooltipHeight = tooltipLines.size() * font.lineHeight + 8;
+		int tooltipHeight = tooltipLines.size() * font.lineHeight;
 		int x = guiGraphics.guiWidth() / 2;
 		int y = guiGraphics.guiHeight() / 2;
 		guiGraphics.renderItem(itemStack, x + 10, y - 15);
 		guiGraphics.renderItemDecorations(font, itemStack, x + 10, y - 15);
-		guiGraphics.renderComponentTooltip(font, tooltipLines, x + 22, y - Math.max(10, tooltipHeight - 75));
+		guiGraphics.renderComponentTooltip(font, tooltipLines, x + 22, y - Math.max(10, tooltipHeight - 70));
 	}
 }

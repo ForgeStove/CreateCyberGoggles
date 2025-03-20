@@ -11,6 +11,7 @@ import java.text.NumberFormat;
 	@Inject(method = "number", at = @At("HEAD"), cancellable = true)
 	private static void number(double d, CallbackInfoReturnable<LangBuilder> returnable) {
 		if (!Config.preciseNumbers.get()) return;
+		if (d == (long) d) return;
 		NumberFormat format = NumberFormat.getNumberInstance();
 		format.setMaximumFractionDigits(8);
 		String formatted = format.format(d).replace("\u00A0", " ");

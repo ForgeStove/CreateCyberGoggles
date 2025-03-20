@@ -3,6 +3,7 @@ import com.ForgeStove.create_cyber_goggles.*;
 import com.simibubi.create.content.kinetics.base.IRotate.SpeedLevel;
 import com.simibubi.create.content.kinetics.base.*;
 import com.simibubi.create.content.logistics.depot.DepotBlockEntity;
+import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.client.*;
 import net.minecraft.client.gui.*;
@@ -20,7 +21,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.*;
 import net.minecraft.world.phys.HitResult.Type;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 public class OverlayRenderer {
@@ -39,6 +39,8 @@ public class OverlayRenderer {
 		BlockEntity blockEntity = level.getBlockEntity(blockHitResult.getBlockPos());
 		if (Config.enableDepotRender.get() && blockEntity instanceof DepotBlockEntity depotBlockEntity)
 			itemStack = depotBlockEntity.getHeldItem();
+		else if (Config.enableDepotRender.get() && blockEntity instanceof PackagerBlockEntity packagerBlockEntity)
+			itemStack = packagerBlockEntity.heldBox;
 		else if (Config.enableKineticEffect.get() && blockEntity instanceof KineticBlockEntity kineticBlockEntity) {
 			if (blockHitResult.getType() == Type.MISS) return;
 			if (!blockHitResult.getBlockPos().equals(kineticBlockEntity.getBlockPos())) return;
@@ -66,8 +68,8 @@ public class OverlayRenderer {
 		} else return;
 		renderItemStack(guiGraphics, itemStack);
 	}
-	public static void renderItemStack(GuiGraphics guiGraphics, @NotNull ItemStack itemStack) {
-		if (itemStack.isEmpty()) return;
+	public static void renderItemStack(GuiGraphics guiGraphics, ItemStack itemStack) {
+		if (itemStack == null || itemStack.isEmpty()) return;
 		Minecraft mc = Minecraft.getInstance();
 		Font font = mc.font;
 		Default tooltipFlag = mc.options.advancedItemTooltips ? TooltipFlag.ADVANCED : TooltipFlag.NORMAL;

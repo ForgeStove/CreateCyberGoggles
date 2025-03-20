@@ -26,9 +26,9 @@ public class KeyInput {
 		if (blockHitResult.getType() == HitResult.Type.MISS) return;
 		BlockEntity blockEntity = mc.level.getBlockEntity(blockHitResult.getBlockPos());
 		if (!(blockEntity instanceof TableClothBlockEntity)) return;
-		event.setCanceled(true);
 		if (event.getScrollDeltaY() == 0) scrollDeltaY = 0;
 		else scrollDeltaY = event.getScrollDeltaY() > 0 ? -1 : 1;
+		event.setCanceled(true);
 	}
 	public static void onKeyInput(Key event) {
 		if (!Config.enableOpenFilterScreen.get()) return;

@@ -2,7 +2,7 @@
 
 ## 概述 / Overview
 
-> **Create: Cyber Goggles** 是**机械动力**（[**Create**](https://modrinth.com/mod/create) / [**Create Fabric**](https://modrinth.com/mod/create-fabric)）的客户端附属模组，在某些包含**机械动力**的大型整合包中，可能会遇到装备栏不足的情况，因此这个模组绕过了工程师护目镜的存在性检测，允许玩家始终使用**工程师护目镜**的功能。
+> **Create: Cyber Goggles** 是**机械动力**（[**Create**](https://modrinth.com/mod/create) / [**Create Fabric**](https://modrinth.com/mod/create-fabric)）的客户端附属模组，在某些包含**机械动力**的整合包中，可能会遇到装备栏不足的情况，因此这个模组绕过了工程师护目镜的存在性检测，允许玩家始终使用**工程师护目镜**的功能。
 
 > Create: Cyber Goggles is a client-side addon for [**Create**](https://modrinth.com/mod/create) / [**Create Fabric**](https://modrinth.com/mod/create-fabric). In some mod packs that include **Create** / **Create Fabric**, you may run into situations where the equipment slot is not enough, so this mod bypasses the goggles presence detection, allowing you to use their functionality at all times.
 

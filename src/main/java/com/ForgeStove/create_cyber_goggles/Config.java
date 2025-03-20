@@ -16,7 +16,7 @@ public class Config {
 	public static final ConfigValue<Boolean> enableInAdventure;
 	public static final ConfigValue<Boolean> enhancedInfo;
 	public static final ConfigValue<Boolean> enhancedStoreRender;
-	public static final ConfigValue<Boolean> enableDepotRender;
+	public static final ConfigValue<Boolean> renderExtraItems;
 	public static final ConfigValue<Boolean> enableOpenFilterScreen;
 	public static final ConfigValue<Boolean> enableKineticEffect;
 	public static final ConfigValue<Boolean> preciseNumbers;
@@ -39,7 +39,7 @@ public class Config {
 		enableInAdventure = CLIENT.comment("Enable goggles in adventure mode").define("enableInAdventure", true);
 		enhancedInfo = CLIENT.comment("Show more information in the goggles overlay").define("enhancedInfo", true);
 		enhancedStoreRender = CLIENT.comment("Enhanced store rendering").define("enhancedStoreRender", true);
-		enableDepotRender = CLIENT.comment("Render item stack tooltip on depot").define("enableDepotRender", true);
+		renderExtraItems = CLIENT.comment("Render extra item stack in overlay").define("renderExtraItems", true);
 		enableOpenFilterScreen = CLIENT.comment("Open filter by hotkey").define("enableOpenFilterScreen", true);
 		enableKineticEffect = CLIENT.comment("Show target kinetic block effect").define("enableKineticEffect", true);
 		preciseNumbers = CLIENT.comment("Show precise numbers in the goggles overlay").define("preciseNumbers", true);

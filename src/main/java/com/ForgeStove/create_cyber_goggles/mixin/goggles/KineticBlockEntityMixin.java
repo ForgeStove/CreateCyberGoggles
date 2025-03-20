@@ -1,6 +1,7 @@
 package com.ForgeStove.create_cyber_goggles.mixin.goggles;
 import com.ForgeStove.create_cyber_goggles.Config;
-import com.simibubi.create.content.kinetics.base.*;
+import com.simibubi.create.content.kinetics.base.IRotate.*;
+import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -20,11 +21,11 @@ import java.util.List;
 		if (!Config.enhancedInfo.get()) return;
 		returnable.setReturnValue(true);
 		CreateLang.translate("gui.goggles.kinetic_stats").forGoggles(tooltip);
-		if (IRotate.StressImpact.isEnabled()) {
+		if (StressImpact.isEnabled()) {
 			float stressAtBase = calculateStressApplied();
 			if (!Mth.equal(stressAtBase, 0)) addStressImpactStats(tooltip, stressAtBase);
 		}
-		IRotate.SpeedLevel.getFormattedSpeedText(getSpeed(), overStressed).forGoggles(tooltip);
+		SpeedLevel.getFormattedSpeedText(getSpeed(), overStressed).forGoggles(tooltip);
 	}
 	@Shadow public abstract float getSpeed();
 	@Shadow public abstract float calculateStressApplied();

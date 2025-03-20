@@ -20,15 +20,15 @@ import org.jetbrains.annotations.NotNull;
 	}
 	@EventBusSubscriber(value = Dist.CLIENT, bus = Bus.GAME) static class ClientGameEvents {
 		@SubscribeEvent static void onKeyInput(Key event) {
-			KeyInputEvent.onKeyInput(event);
+			KeyInput.onKeyInput(event);
 		}
 		@SubscribeEvent static void onMouseScroll(MouseScrollingEvent event) {
-			KeyInputEvent.onMouseScroll(event);
+			KeyInput.onMouseScroll(event);
 		}
 	}
 	@EventBusSubscriber(value = Dist.CLIENT, bus = Bus.MOD) static class ClientModEvents {
 		@SubscribeEvent static void registerKeyMappings(RegisterKeyMappingsEvent event) {
-			KeyBinds.register(event);
+			KeyBind.register(event);
 		}
 		@SubscribeEvent static void registerGuiOverlays(@NotNull RegisterGuiLayersEvent event) {
 			OverlayRenderer.register(event);

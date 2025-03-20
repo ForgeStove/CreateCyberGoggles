@@ -5,25 +5,25 @@ import net.neoforged.neoforge.client.event.InputEvent.Key;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
-public enum KeyBinds {
+public enum KeyBind {
 	PREVIEW_FILTER("previewFilter", GLFW.GLFW_KEY_LEFT_ALT);
 	private final String description;
 	private final int key;
 	private final boolean modifiable;
 	private KeyMapping keyMapping;
-	KeyBinds(String description, int defaultKey) {
+	KeyBind(String description, int defaultKey) {
 		this.description = CreateCyberGoggles.ID + ".keyInfo." + description;
 		this.key = defaultKey;
 		this.modifiable = !description.isEmpty();
 	}
 	public static void register(RegisterKeyMappingsEvent event) {
-		for (KeyBinds keyBinds : values()) {
-			keyBinds.keyMapping = new KeyMapping(keyBinds.description, keyBinds.key, CreateCyberGoggles.NAME);
-			if (!keyBinds.modifiable) continue;
-			event.register(keyBinds.keyMapping);
+		for (KeyBind keyBind : values()) {
+			keyBind.keyMapping = new KeyMapping(keyBind.description, keyBind.key, CreateCyberGoggles.NAME);
+			if (!keyBind.modifiable) continue;
+			event.register(keyBind.keyMapping);
 		}
 	}
-	public static boolean isKeyDown(@NotNull Key event, @NotNull KeyBinds keyBinds) {
-		return event.getKey() == keyBinds.keyMapping.getKey().getValue() && event.getAction() == GLFW.GLFW_PRESS;
+	public static boolean isKeyDown(@NotNull Key event, @NotNull KeyBind keyBind) {
+		return event.getKey() == keyBind.keyMapping.getKey().getValue() && event.getAction() == GLFW.GLFW_PRESS;
 	}
 }

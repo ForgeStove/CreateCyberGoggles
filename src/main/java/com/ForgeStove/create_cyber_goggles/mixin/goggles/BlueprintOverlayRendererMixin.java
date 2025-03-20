@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
-import static com.ForgeStove.create_cyber_goggles.event.KeyInputEvent.*;
+import static com.ForgeStove.create_cyber_goggles.event.KeyInput.*;
 @Mixin(BlueprintOverlayRenderer.class) public abstract class BlueprintOverlayRendererMixin {
 	@Shadow static boolean active;
 	@Shadow static boolean empty;

@@ -16,7 +16,7 @@ import net.minecraft.world.phys.*;
 import net.neoforged.neoforge.client.event.InputEvent.*;
 
 import java.util.*;
-public class KeyInputEvent {
+public class KeyInput {
 	public static int index = 1;
 	public static int scrollDeltaY = 0;
 	public static void onMouseScroll(MouseScrollingEvent event) {
@@ -32,7 +32,7 @@ public class KeyInputEvent {
 	}
 	public static void onKeyInput(Key event) {
 		if (!Config.enableOpenFilterScreen.get()) return;
-		if (!KeyBinds.isKeyDown(event, KeyBinds.PREVIEW_FILTER)) return;
+		if (!KeyBind.isKeyDown(event, KeyBind.PREVIEW_FILTER)) return;
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.screen != null) {
 			if (!(mc.screen instanceof AbstractContainerScreen<?> screen)) return;

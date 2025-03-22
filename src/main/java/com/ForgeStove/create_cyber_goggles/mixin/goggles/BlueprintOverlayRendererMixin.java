@@ -34,19 +34,19 @@ import static com.ForgeStove.create_cyber_goggles.event.KeyInput.*;
 	private static void renderOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo callbackInfo) {
 		if (!Config.enhancedStoreRender.get()) return;
 		callbackInfo.cancel();
-		Minecraft mc = Minecraft.getInstance();
+		var mc = Minecraft.getInstance();
 		if (mc.options.hideGui || mc.screen != null) return;
 		if (!active || empty) return;
-		boolean invalidShop = shopContext != null && (
+		var invalidShop = shopContext != null && (
 				ingredients.isEmpty() || ingredients.getFirst().getFirst().isEmpty() || shopContext.stockLevel() == 0
 		);
-		int w = 21 * ingredients.size();
+		var w = 21 * ingredients.size();
 		if (!noOutput) {
 			w += 21 * results.size();
 			w += 30;
 		}
-		int x = (guiGraphics.guiWidth() - w) / 2;
-		int y = guiGraphics.guiHeight() - 100;
+		var x = (guiGraphics.guiWidth() - w) / 2;
+		var y = guiGraphics.guiHeight() - 100;
 		if (shopContext != null) {
 			TooltipRenderUtil.renderTooltipBackground(
 					guiGraphics,
@@ -74,11 +74,11 @@ import static com.ForgeStove.create_cyber_goggles.event.KeyInput.*;
 			}
 		}
 		// Ingredients
-		for (Pair<ItemStack, Boolean> pair : ingredients) {
+		for (var pair : ingredients) {
 			RenderSystem.enableBlend();
 			(pair.getSecond() ? AllGuiTextures.HOTSLOT_ACTIVE : AllGuiTextures.HOTSLOT).render(guiGraphics, x, y);
-			ItemStack itemStack = pair.getFirst();
-			String count = shopContext != null && !shopContext.checkout() || pair.getSecond()
+			var itemStack = pair.getFirst();
+			var count = shopContext != null && !shopContext.checkout() || pair.getSecond()
 					? null
 					: ChatFormatting.GOLD.toString() + itemStack.getCount();
 			BlueprintOverlayRenderer.drawItemStack(guiGraphics, mc, x, y, itemStack, count);
@@ -100,10 +100,10 @@ import static com.ForgeStove.create_cyber_goggles.event.KeyInput.*;
 			scrollDeltaY = 0;
 			if (index < 1) index = results.size();
 			else if (index > results.size()) index = 1;
-			int selectedX = 0;
+			var selectedX = 0;
 			for (int i = 0, resultsSize = results.size(); i < resultsSize; i++) {
-				ItemStack result = results.get(i);
-				AllGuiTextures slot = resultCraftable ? AllGuiTextures.HOTSLOT_SUPER_ACTIVE : AllGuiTextures.HOTSLOT;
+				var result = results.get(i);
+				var slot = resultCraftable ? AllGuiTextures.HOTSLOT_SUPER_ACTIVE : AllGuiTextures.HOTSLOT;
 				if (!invalidShop && shopContext != null && shopContext.stockLevel() > shopContext.purchases())
 					slot = AllGuiTextures.HOTSLOT_ACTIVE;
 				slot.render(guiGraphics, resultCraftable ? x - 1 : x, resultCraftable ? y - 1 : y);

@@ -26,11 +26,11 @@ import java.util.List;
 		if (!Config.enhancedInfo.get()) return;
 		returnable.setReturnValue(true);
 		CreateLang.translate("gui.goggles.generator_stats").forGoggles(tooltip, 0);
-		float stressBase = calculateAddedStressCapacity();
+		var stressBase = calculateAddedStressCapacity();
 		CreateLang.translate("tooltip.capacityProvided").style(ChatFormatting.GRAY).forGoggles(tooltip, 0);
-		float speed = getTheoreticalSpeed();
+		var speed = getTheoreticalSpeed();
 		if (speed != getGeneratedSpeed() && speed != 0) stressBase *= getGeneratedSpeed() / speed;
-		float stressTotal = Math.abs(stressBase * speed);
+		var stressTotal = Math.abs(stressBase * speed);
 		CreateLang.number(stressTotal)
 				.translate("generic.unit.stress")
 				.style(ChatFormatting.AQUA)

@@ -1,6 +1,7 @@
 package com.ForgeStove.create_cyber_goggles.mixin.goggles;
 import com.ForgeStove.create_cyber_goggles.Config;
 import com.simibubi.create.content.kinetics.base.*;
+import com.simibubi.create.content.kinetics.base.IRotate.SpeedLevel;
 import com.simibubi.create.content.kinetics.deployer.DeployerBlockEntity;
 import com.simibubi.create.foundation.item.TooltipHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
@@ -33,7 +34,7 @@ import java.util.List;
 			return;
 		}
 		TooltipHelper.addHint(tooltip, "hint.full_deployer");
-		for (ItemStack itemStack : overflowItems)
+		for (var itemStack : overflowItems)
 			CreateLang.builder()
 					.text("%s x%d".formatted(
 							Component.translatable(itemStack.getDescriptionId()).getString(),
@@ -50,6 +51,6 @@ import java.util.List;
 			CallbackInfoReturnable<Boolean> returnable
 	) {
 		if (!Config.enhancedInfo.get()) return;
-		IRotate.SpeedLevel.getFormattedSpeedText(getSpeed(), overStressed).forGoggles(tooltip);
+		SpeedLevel.getFormattedSpeedText(getSpeed(), overStressed).forGoggles(tooltip);
 	}
 }

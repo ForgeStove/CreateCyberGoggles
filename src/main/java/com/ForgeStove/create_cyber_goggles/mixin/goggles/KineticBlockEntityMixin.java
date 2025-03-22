@@ -22,7 +22,7 @@ import java.util.List;
 		returnable.setReturnValue(true);
 		CreateLang.translate("gui.goggles.kinetic_stats").forGoggles(tooltip);
 		if (StressImpact.isEnabled()) {
-			float stressAtBase = calculateStressApplied();
+			var stressAtBase = calculateStressApplied();
 			if (!Mth.equal(stressAtBase, 0)) addStressImpactStats(tooltip, stressAtBase);
 		}
 		SpeedLevel.getFormattedSpeedText(getSpeed(), overStressed).forGoggles(tooltip);

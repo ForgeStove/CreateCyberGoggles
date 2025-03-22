@@ -12,9 +12,9 @@ import java.text.NumberFormat;
 	private static void number(double d, CallbackInfoReturnable<LangBuilder> returnable) {
 		if (!Config.preciseNumbers.get()) return;
 		if (d == (long) d) return;
-		NumberFormat format = NumberFormat.getNumberInstance();
+		var format = NumberFormat.getNumberInstance();
 		format.setMaximumFractionDigits(8);
-		String formatted = format.format(d).replace("\u00A0", " ");
+		var formatted = format.format(d).replace("\u00A0", " ");
 		returnable.setReturnValue(CreateLang.builder().text(formatted));
 	}
 }

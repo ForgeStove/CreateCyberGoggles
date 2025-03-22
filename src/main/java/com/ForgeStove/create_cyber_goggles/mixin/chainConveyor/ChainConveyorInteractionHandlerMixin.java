@@ -3,28 +3,28 @@ import com.ForgeStove.create_cyber_goggles.Config;
 import com.simibubi.create.*;
 import com.simibubi.create.content.kinetics.chainConveyor.*;
 import com.simibubi.create.content.logistics.box.PackageItem;
-import com.simibubi.create.content.logistics.packagePort.*;
+import com.simibubi.create.content.logistics.packagePort.PackagePortTarget;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.BlockHitResult;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorInteractionHandler.*;
+import static com.simibubi.create.content.logistics.packagePort.PackagePortTargetSelectionHandler.*;
 @Mixin(ChainConveyorInteractionHandler.class) public abstract class ChainConveyorInteractionHandlerMixin {
 	@Shadow public static BlockPos selectedConnection;
 	@Inject(method = "isActive", at = @At("HEAD"), cancellable = true)
 	private static void isActive(CallbackInfoReturnable<Boolean> returnable) {
 		if (!Config.alwaysAllowRiding.get()) return;
 		returnable.setReturnValue(false);
-		LocalPlayer localPlayer = Minecraft.getInstance().player;
-		Minecraft mc = Minecraft.getInstance();
+		var localPlayer = Minecraft.getInstance().player;
+		var mc = Minecraft.getInstance();
 		if (localPlayer == null) return;
-		ItemStack mainHandItem = localPlayer.getMainHandItem();
+		var mainHandItem = localPlayer.getMainHandItem();
 		if (mc.level == null
 				|| mc.hitResult == null
 				|| mc.hitResult instanceof BlockHitResult blockHitResult
@@ -44,13 +44,13 @@ import static com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorIn
 			return;
 		}
 		returnable.setReturnValue(true);
-		LocalPlayer player = Minecraft.getInstance().player;
+		var player = Minecraft.getInstance().player;
 		if (player == null) return;
-		ItemStack mainHandItem = player.getMainHandItem();
+		var mainHandItem = player.getMainHandItem();
 		if (AllBlocks.PACKAGE_FROGPORT.isIn(mainHandItem)) {
-			PackagePortTargetSelectionHandler.exactPositionOfTarget = selectedBakedPosition;
-			PackagePortTargetSelectionHandler.activePackageTarget =
-					new PackagePortTarget.ChainConveyorFrogportTarget(selectedLift,
+			exactPositionOfTarget = selectedBakedPosition;
+			activePackageTarget = new PackagePortTarget.ChainConveyorFrogportTarget(
+					selectedLift,
 					selectedChainPosition,
 					selectedConnection,
 					false

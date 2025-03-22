@@ -17,7 +17,7 @@ public enum KeyBind {
 		this.modifiable = !description.isEmpty();
 	}
 	public static void register(RegisterKeyMappingsEvent event) {
-		for (KeyBind keyBind : values()) {
+		for (var keyBind : values()) {
 			keyBind.keyMapping = new KeyMapping(keyBind.description, keyBind.key, CreateCyberGoggles.NAME);
 			if (!keyBind.modifiable) continue;
 			event.register(keyBind.keyMapping);

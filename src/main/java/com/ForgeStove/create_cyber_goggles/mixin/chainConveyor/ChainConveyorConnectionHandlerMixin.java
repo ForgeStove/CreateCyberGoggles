@@ -37,9 +37,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 			CreateLang.translate("chain_conveyor.too_far").style(ChatFormatting.RED).sendStatus(player);
 			return;
 		}
-		ChainConveyorBlock chainConveyorBlock = AllBlocks.CHAIN_CONVEYOR.get();
-		ChainConveyorBlockEntity sourceLift = chainConveyorBlock.getBlockEntity(level, firstPos);
-		ChainConveyorBlockEntity targetLift = chainConveyorBlock.getBlockEntity(level, pos);
+		var chainConveyorBlock = AllBlocks.CHAIN_CONVEYOR.get();
+		var sourceLift = chainConveyorBlock.getBlockEntity(level, firstPos);
+		var targetLift = chainConveyorBlock.getBlockEntity(level, pos);
 		if (sourceLift == null || targetLift == null) {
 			CreateLang.translate("chain_conveyor.blocks_invalid").style(ChatFormatting.RED).sendStatus(player);
 			return;
@@ -55,8 +55,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 			return;
 		}
 		if (!player.isCreative()) {
-			int chainCost = ChainConveyorBlockEntity.getChainCost(pos.subtract(firstPos));
-			boolean hasEnough = ChainConveyorBlockEntity.getChainsFromInventory(player, chain, chainCost, true);
+			var chainCost = ChainConveyorBlockEntity.getChainCost(pos.subtract(firstPos));
+			var hasEnough = ChainConveyorBlockEntity.getChainsFromInventory(player, chain, chainCost, true);
 			if (simulate) BlueprintOverlayRenderer.displayChainRequirements(chain.getItem(), chainCost, hasEnough);
 			if (!hasEnough) {
 				CreateLang.translate("chain_conveyor.not_enough_chains").style(ChatFormatting.RED).sendStatus(player);

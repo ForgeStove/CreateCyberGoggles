@@ -2,14 +2,13 @@ package com.ForgeStove.create_cyber_goggles.mixin.goggles;
 import com.ForgeStove.create_cyber_goggles.Config;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(GogglesItem.class) public abstract class GogglesItemMixin {
 	@Inject(method = "isWearingGoggles", at = @At("HEAD"), cancellable = true)
 	private static void isWearingGoggles(CallbackInfoReturnable<Boolean> returnable) {
-		MultiPlayerGameMode gameMode = Minecraft.getInstance().gameMode;
+		var gameMode = Minecraft.getInstance().gameMode;
 		if (gameMode == null) return;
 		switch (gameMode.getPlayerMode()) {
 			case SURVIVAL -> {

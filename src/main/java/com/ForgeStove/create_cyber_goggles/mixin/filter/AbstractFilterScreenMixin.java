@@ -1,4 +1,4 @@
-package com.ForgeStove.create_cyber_goggles.mixin.goggles;
+package com.ForgeStove.create_cyber_goggles.mixin.filter;
 import com.ForgeStove.create_cyber_goggles.Config;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;

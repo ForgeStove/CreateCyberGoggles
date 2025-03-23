@@ -1,4 +1,4 @@
-package com.ForgeStove.create_cyber_goggles.event;
+package com.ForgeStove.create_cyber_goggles.content.event;
 import com.ForgeStove.create_cyber_goggles.Config;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.tableCloth.TableClothBlockEntity;
@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import net.neoforged.neoforge.client.event.InputEvent.*;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.Collections;
 public class KeyInput {
@@ -28,7 +29,7 @@ public class KeyInput {
 	}
 	public static void onKeyInput(Key event) {
 		if (!Config.enableOpenFilterScreen.get()) return;
-		if (!KeyBind.isKeyDown(event, KeyBind.PREVIEW_FILTER)) return;
+		if (!KeyBind.isAction(event, KeyBind.PREVIEW_FILTER, GLFW.GLFW_PRESS)) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) {
 			if (!(mc.screen instanceof AbstractContainerScreen<?> screen)) return;
@@ -42,8 +43,8 @@ public class KeyInput {
 			if (!(blockEntity instanceof SmartBlockEntity smartBlockEntity)) return;
 			var behavior = Collections.singleton(smartBlockEntity.getBehaviour(FilteringBehaviour.TYPE));
 			var first = behavior.iterator().next();
-			if (!(first instanceof FilteringBehaviour filteringBehaviour)) return;
-			setFilterScreen(filteringBehaviour.getFilter(blockHitResult.getDirection()));
+			if (!(first instanceof FilteringBehaviour)) return;
+			setFilterScreen(first.getFilter(blockHitResult.getDirection()));
 		}
 	}
 	public static void setFilterScreen(ItemStack filter) {

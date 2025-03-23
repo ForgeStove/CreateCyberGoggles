@@ -1,4 +1,4 @@
-package com.ForgeStove.create_cyber_goggles.event;
+package com.ForgeStove.create_cyber_goggles.content.event;
 import com.ForgeStove.create_cyber_goggles.CreateCyberGoggles;
 import net.minecraft.client.KeyMapping;
 import net.neoforged.neoforge.client.event.InputEvent.Key;
@@ -23,7 +23,7 @@ public enum KeyBind {
 			event.register(keyBind.keyMapping);
 		}
 	}
-	public static boolean isKeyDown(@NotNull Key event, @NotNull KeyBind keyBind) {
-		return event.getKey() == keyBind.keyMapping.getKey().getValue() && event.getAction() == GLFW.GLFW_PRESS;
+	public static boolean isAction(@NotNull Key event, @NotNull KeyBind keyBind, int press) {
+		return event.getKey() == keyBind.keyMapping.getKey().getValue() && event.getAction() == press;
 	}
 }

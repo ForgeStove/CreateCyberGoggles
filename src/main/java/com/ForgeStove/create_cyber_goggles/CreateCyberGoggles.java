@@ -1,6 +1,6 @@
 package com.ForgeStove.create_cyber_goggles;
-import com.ForgeStove.create_cyber_goggles.event.*;
-import com.ForgeStove.create_cyber_goggles.render.OverlayRenderer;
+import com.ForgeStove.create_cyber_goggles.content.event.*;
+import com.ForgeStove.create_cyber_goggles.content.render.OverlayRenderer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -18,19 +18,19 @@ import org.jetbrains.annotations.NotNull;
 		modContainer.registerConfig(Type.CLIENT, Config.CLIENT_SPEC);
 		modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
 	}
-	@EventBusSubscriber(value = Dist.CLIENT, bus = Bus.GAME) static class ClientGameEvents {
-		@SubscribeEvent static void onKeyInput(Key event) {
+	@EventBusSubscriber(value = Dist.CLIENT, bus = Bus.GAME) public static class ClientGameEvents {
+		@SubscribeEvent public static void onKeyInput(Key event) {
 			KeyInput.onKeyInput(event);
 		}
-		@SubscribeEvent static void onMouseScroll(MouseScrollingEvent event) {
+		@SubscribeEvent public static void onMouseScroll(MouseScrollingEvent event) {
 			KeyInput.onMouseScroll(event);
 		}
 	}
-	@EventBusSubscriber(value = Dist.CLIENT, bus = Bus.MOD) static class ClientModEvents {
-		@SubscribeEvent static void registerKeyMappings(RegisterKeyMappingsEvent event) {
+	@EventBusSubscriber(value = Dist.CLIENT, bus = Bus.MOD) public static class ClientModEvents {
+		@SubscribeEvent public static void registerKeyMappings(RegisterKeyMappingsEvent event) {
 			KeyBind.register(event);
 		}
-		@SubscribeEvent static void registerGuiOverlays(@NotNull RegisterGuiLayersEvent event) {
+		@SubscribeEvent public static void registerGuiOverlays(@NotNull RegisterGuiLayersEvent event) {
 			OverlayRenderer.register(event);
 		}
 	}

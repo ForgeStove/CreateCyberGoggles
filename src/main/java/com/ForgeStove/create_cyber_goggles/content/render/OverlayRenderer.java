@@ -1,4 +1,4 @@
-package com.ForgeStove.create_cyber_goggles.render;
+package com.ForgeStove.create_cyber_goggles.content.render;
 import com.ForgeStove.create_cyber_goggles.*;
 import com.simibubi.create.content.kinetics.base.IRotate.SpeedLevel;
 import com.simibubi.create.content.kinetics.base.*;
@@ -43,8 +43,7 @@ public class OverlayRenderer {
 			if (rotationAxis == null) return;
 			var center = VecHelper.getCenterOf(kineticBlockEntity.getBlockPos());
 			var speedLevel = SpeedLevel.of(speed);
-			var particleSpeed = Math.max(15, speedLevel.getParticleSpeed());
-			var v = particleSpeed * Math.signum(speed);
+			var v = Math.max(15, speedLevel.getParticleSpeed()) * Math.signum(speed);
 			level.addParticle(
 					new RotationIndicatorParticleData(
 							speedLevel.getColor(),

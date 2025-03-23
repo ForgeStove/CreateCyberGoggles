@@ -50,6 +50,7 @@
         <header value="MixinConfigs" />
       </option>
     </inspection_tool>
+    <inspection_tool class="RedundantExplicitVariableType" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES" />
     <inspection_tool class="SameParameterValue" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="minimalUsageCount" value="2" />
     </inspection_tool>

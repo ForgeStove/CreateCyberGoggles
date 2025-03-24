@@ -11,12 +11,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.*;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult.Type;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 public class OverlayRenderer {
 	public static void register(RegisterGuiLayersEvent event) {
-		event.registerAboveAll(
-				ResourceLocation.fromNamespaceAndPath(CreateCyberGoggles.ID, "render_overlay"),
+		event.registerAbove(
+				VanillaGuiLayers.HOTBAR,
+				ResourceLocation.fromNamespaceAndPath(CreateCyberGoggles.ID, "goggle_overlay"),
 				OverlayRenderer::renderOverlay
 		);
 	}
@@ -27,7 +28,6 @@ public class OverlayRenderer {
 		ItemStack itemStack;
 		var level = mc.level;
 		if (level == null || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return;
-		if (blockHitResult.getType() != Type.BLOCK) return;
 		var blockEntity = level.getBlockEntity(blockHitResult.getBlockPos());
 		if (Config.renderExtraItems.get() && blockEntity instanceof DepotBlockEntity depotBlockEntity)
 			itemStack = depotBlockEntity.getHeldItem();

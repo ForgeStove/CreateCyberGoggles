@@ -64,11 +64,11 @@ public class OverlayRenderer {
 		var font = mc.font;
 		var tooltipFlag = mc.options.advancedItemTooltips ? TooltipFlag.ADVANCED : TooltipFlag.NORMAL;
 		var tooltipLines = itemStack.getTooltipLines(TooltipContext.of(mc.level), mc.player, tooltipFlag);
-		var height = Math.max(10, tooltipLines.size() * font.lineHeight - 70);
+		var height = Math.max(10, tooltipLines.size() * font.lineHeight - 60);
 		var x = guiGraphics.guiWidth() / 2;
 		var y = guiGraphics.guiHeight() / 2;
 		guiGraphics.renderItem(itemStack, x + 10, y - 15);
 		guiGraphics.renderItemDecorations(font, itemStack, x + 10, y - 15);
-		guiGraphics.renderComponentTooltip(font, tooltipLines, x + 22, y - height);
+		guiGraphics.renderTooltip(font, itemStack, x + 22, y - height);
 	}
 }

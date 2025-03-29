@@ -60,5 +60,6 @@
     "create_cyber_goggles.configuration.separationHeight": "Separation Height",
     "create_cyber_goggles.configuration.separationHeight.tooltip": "Minimum relative falling height between you and chain conveyor",
     "create_cyber_goggles.configuration.title": "Create: Cyber Goggles",
-    "create_cyber_goggles.keyInfo.previewFilter": "Preview Filter Screen"
+    "create_cyber_goggles.key.openConfig": "Open Config",
+    "create_cyber_goggles.key.previewFilter": "Preview Filter Screen"
 }

@@ -60,5 +60,6 @@
     "create_cyber_goggles.configuration.separationHeight": "最小相对分离高度",
     "create_cyber_goggles.configuration.separationHeight.tooltip": "与链式传动轮保持的相对高度（方块数）",
     "create_cyber_goggles.configuration.title": "机械动力：赛博护目镜",
-    "create_cyber_goggles.keyInfo.previewFilter": "预览过滤器"
+    "create_cyber_goggles.key.openConfig": "打开配置",
+    "create_cyber_goggles.key.previewFilter": "预览过滤器"
 }

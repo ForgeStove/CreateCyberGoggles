@@ -10,7 +10,8 @@ plugins {
 }
 base { archivesName = mod_id }
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
-version = minecraft_version + '-' + mod_version
+def platform = "NeoForge"
+version = "$minecraft_version-$mod_version+$platform"
 group = mod_group_id
 repositories {
     mavenLocal()
@@ -18,7 +19,6 @@ repositories {
     maven { url = "https://mvn.devos.one/snapshots" } // Registrate
     maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven" }
 }
-def main = sourceSets.main
 neoForge {
     version = neo_version
     parchment {
@@ -40,9 +40,9 @@ neoForge {
             logLevel = org.slf4j.event.Level.DEBUG
         }
     }
-    mods { "${mod_id}" { sourceSet(main) } }
+    mods { "${mod_id}" { sourceSet(sourceSets.main) } }
 }
-main.resources { srcDir 'src/generated/resources' }
+sourceSets.main.resources { srcDir 'src/generated/resources' }
 dependencies {
     implementation("com.simibubi.create:create-${minecraft_version}:${create_version}") { transitive = false }
     implementation("net.createmod.ponder:Ponder-NeoForge-${minecraft_version}:${ponder_version}") { transitive = false }
@@ -65,16 +65,16 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
     from "src/main/templates"
     into "build/generated/sources/modMetadata"
 }
-main.resources.srcDir generateModMetadata
+sourceSets.main.resources.srcDir generateModMetadata
 neoForge.ideSyncTask generateModMetadata
 idea { module { downloadSources = true; downloadJavadoc = true } }
 publishMods {
     file = jar.archiveFile
     changelog = file("CHANGELOG.md").text
     type = STABLE
-    version = "NeoForge-$mod_version"
-    displayName = "$mod_name-NeoForge-$mod_version"
-    modLoaders.add("NeoForge")
+    version = "$minecraft_version-$mod_version+$platform"
+    displayName = "[$platform] $mod_name $mod_version+$minecraft_version"
+    modLoaders.add("$platform")
     modrinth {
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")
         projectId = "TlQAWQCY"

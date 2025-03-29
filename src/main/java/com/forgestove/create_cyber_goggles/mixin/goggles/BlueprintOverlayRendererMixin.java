@@ -1,5 +1,6 @@
 package com.forgestove.create_cyber_goggles.mixin.goggles;
 import com.forgestove.create_cyber_goggles.Config;
+import com.forgestove.create_cyber_goggles.content.event.MoseScroll;
 import com.forgestove.create_cyber_goggles.content.render.OverlayRenderer;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.simibubi.create.AllItems;
@@ -20,8 +21,6 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
-
-import static com.forgestove.create_cyber_goggles.content.event.KeyInput.*;
 @Mixin(BlueprintOverlayRenderer.class) public abstract class BlueprintOverlayRendererMixin {
 	@Shadow static boolean active;
 	@Shadow static boolean empty;
@@ -96,10 +95,10 @@ import static com.forgestove.create_cyber_goggles.content.event.KeyInput.*;
 			AllGuiTextures.HOTSLOT.render(guiGraphics, x, y);
 			GuiGameElement.of(Items.BARRIER).at(x + 3, y + 3).render(guiGraphics);
 		} else {
-			index += scrollDeltaY;
-			scrollDeltaY = 0;
-			if (index < 1) index = results.size();
-			else if (index > results.size()) index = 1;
+			MoseScroll.index += MoseScroll.scrollDeltaY;
+			MoseScroll.scrollDeltaY = 0;
+			if (MoseScroll.index < 1) MoseScroll.index = results.size();
+			else if (MoseScroll.index > results.size()) MoseScroll.index = 1;
 			var selectedX = 0;
 			for (int i = 0, resultsSize = results.size(); i < resultsSize; i++) {
 				var result = results.get(i);
@@ -108,7 +107,7 @@ import static com.forgestove.create_cyber_goggles.content.event.KeyInput.*;
 					slot = AllGuiTextures.HOTSLOT_ACTIVE;
 				slot.render(guiGraphics, resultCraftable ? x - 1 : x, resultCraftable ? y - 1 : y);
 				BlueprintOverlayRenderer.drawItemStack(guiGraphics, mc, x, y, result, null);
-				if (i == index - 1) selectedX = x;
+				if (i == MoseScroll.index - 1) selectedX = x;
 				x += 21;
 			}
 			if (selectedX != 0) guiGraphics.blitSprite(
@@ -118,7 +117,7 @@ import static com.forgestove.create_cyber_goggles.content.event.KeyInput.*;
 					24,
 					23
 			);
-			OverlayRenderer.renderItemStack(guiGraphics, results.get(index - 1));
+			OverlayRenderer.renderItemStack(guiGraphics, results.get(MoseScroll.index - 1));
 		}
 		if (shopContext != null) shopContext.checkout();
 		RenderSystem.disableBlend();

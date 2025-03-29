@@ -1,0 +1,1 @@
+- Fixed the stress calculation logic when the generating kinetic block entity speed is mismatched.

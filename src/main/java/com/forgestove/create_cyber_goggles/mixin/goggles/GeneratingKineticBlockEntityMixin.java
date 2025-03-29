@@ -5,6 +5,7 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,19 +25,20 @@ import java.util.List;
 			CallbackInfoReturnable<Boolean> returnable
 	) {
 		if (!Config.enhancedInfo.get()) return;
-		returnable.setReturnValue(true);
-		CreateLang.translate("gui.goggles.generator_stats").forGoggles(tooltip, 0);
 		var stressBase = calculateAddedStressCapacity();
-		CreateLang.translate("tooltip.capacityProvided").style(ChatFormatting.GRAY).forGoggles(tooltip, 0);
-		var speed = getTheoreticalSpeed();
-		if (speed != getGeneratedSpeed() && speed != 0) stressBase *= getGeneratedSpeed() / speed;
-		var stressTotal = Math.abs(stressBase * speed);
-		CreateLang.number(stressTotal)
-				.translate("generic.unit.stress")
-				.style(ChatFormatting.AQUA)
-				.space()
-				.add(CreateLang.translate("gui.goggles.at_current_speed").style(ChatFormatting.DARK_GRAY))
-				.forGoggles(tooltip, 0);
-		super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+		if (!Mth.equal(stressBase, 0)) {
+			CreateLang.translate("gui.goggles.generator_stats").forGoggles(tooltip);
+			CreateLang.translate("tooltip.capacityProvided").style(ChatFormatting.GRAY).forGoggles(tooltip);
+			var speed = getTheoreticalSpeed();
+			if (speed != getGeneratedSpeed() && speed != 0) stressBase *= getGeneratedSpeed() / speed;
+			CreateLang.number(Math.abs(stressBase * speed))
+					  .translate("generic.unit.stress")
+					  .style(ChatFormatting.AQUA)
+					  .space()
+					  .add(CreateLang.translate("gui.goggles.at_current_speed").style(ChatFormatting.DARK_GRAY))
+					  .forGoggles(tooltip);
+		}
+		var added = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+		returnable.setReturnValue(added);
 	}
 }

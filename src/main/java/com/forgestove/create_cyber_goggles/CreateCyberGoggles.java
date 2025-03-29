@@ -9,6 +9,7 @@ import net.neoforged.fml.common.EventBusSubscriber.Bus;
 import net.neoforged.fml.config.ModConfig.Type;
 import net.neoforged.neoforge.client.event.InputEvent.*;
 import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.event.ScreenEvent.Closing;
 import net.neoforged.neoforge.client.gui.*;
 import org.jetbrains.annotations.NotNull;
 @Mod(CreateCyberGoggles.ID) public class CreateCyberGoggles {
@@ -20,17 +21,17 @@ import org.jetbrains.annotations.NotNull;
 	}
 	@EventBusSubscriber(value = Dist.CLIENT, bus = Bus.GAME) public static class ClientGameEvents {
 		@SubscribeEvent public static void onKeyInput(Key event) {
-			KeyInput.onKeyInput(event);
+			KeyInput.openFilterScreen(event);
+			KeyInput.openConfigScreen(event);
 		}
-		@SubscribeEvent public static void onMouseScroll(MouseScrollingEvent event) {
-			KeyInput.onMouseScroll(event);
-		}
+		@SubscribeEvent public static void onMouseScroll(MouseScrollingEvent event) {MoseScroll.onMouseScroll(event);}
+		@SubscribeEvent public static void onCloseScreen(Closing event) {CloseScreen.onCloseScreen(event);}
 	}
 	@EventBusSubscriber(value = Dist.CLIENT, bus = Bus.MOD) public static class ClientModEvents {
 		@SubscribeEvent public static void registerKeyMappings(RegisterKeyMappingsEvent event) {
 			KeyBind.register(event);
 		}
-		@SubscribeEvent public static void registerGuiOverlays(@NotNull RegisterGuiLayersEvent event) {
+		@SubscribeEvent public static void registerGuiOverlays(RegisterGuiLayersEvent event) {
 			OverlayRenderer.register(event);
 		}
 	}

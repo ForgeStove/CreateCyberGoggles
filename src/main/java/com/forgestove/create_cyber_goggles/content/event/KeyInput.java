@@ -1,7 +1,6 @@
 package com.forgestove.create_cyber_goggles.content.event;
-import com.forgestove.create_cyber_goggles.Config;
+import com.forgestove.create_cyber_goggles.*;
 import com.simibubi.create.content.logistics.filter.*;
-import com.simibubi.create.content.logistics.tableCloth.TableClothBlockEntity;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import net.minecraft.client.Minecraft;
@@ -9,25 +8,24 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
+import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.client.event.InputEvent.*;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.Collections;
 public class KeyInput {
-	public static int index = 1;
-	public static int scrollDeltaY = 0;
-	public static void onMouseScroll(MouseScrollingEvent event) {
-		if (!Config.enhancedStoreRender.get()) return;
+	public static void openConfigScreen(Key event) {
+		if (!KeyBind.isAction(event, KeyBind.OPEN_CONFIG, GLFW.GLFW_PRESS)) return;
 		var mc = Minecraft.getInstance();
-		if (mc.level == null || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return;
-		if (blockHitResult.getType() == Type.MISS) return;
-		var blockEntity = mc.level.getBlockEntity(blockHitResult.getBlockPos());
-		if (!(blockEntity instanceof TableClothBlockEntity)) return;
-		if (event.getScrollDeltaY() == 0) scrollDeltaY = 0;
-		else scrollDeltaY = event.getScrollDeltaY() > 0 ? -1 : 1;
-		event.setCanceled(true);
+		if (mc.screen != null) return;
+		var modContainerById = ModList.get().getModContainerById(CreateCyberGoggles.ID);
+		if (modContainerById.isEmpty()) return;
+		var modContainer = modContainerById.get();
+		mc.pushGuiLayer(new ConfigurationScreen(modContainer, mc.screen));
 	}
-	public static void onKeyInput(Key event) {
+	public static void openFilterScreen(Key event) {
 		if (!Config.enableOpenFilterScreen.get()) return;
 		if (!KeyBind.isAction(event, KeyBind.PREVIEW_FILTER, GLFW.GLFW_PRESS)) return;
 		var mc = Minecraft.getInstance();
@@ -47,7 +45,7 @@ public class KeyInput {
 			setFilterScreen(first.getFilter(blockHitResult.getDirection()));
 		}
 	}
-	public static void setFilterScreen(ItemStack filter) {
+	public static void setFilterScreen(@NotNull ItemStack filter) {
 		if (filter.isEmpty()) return;
 		var mc = Minecraft.getInstance();
 		var player = mc.player;

@@ -1,7 +1,12 @@
+//file:noinspection SpellCheckingInspection
 plugins {
-    id 'java-library'
     id 'idea'
-    id 'net.neoforged.moddev' version '2.0.80'
+    id "eclipse"
+    id 'java-library'
+    id "maven-publish"
+    id 'net.neoforged.moddev' version '+'
+    id "me.modmuss50.mod-publish-plugin" version "+"
+    id "org.jetbrains.gradle.plugin.idea-ext" version "+"
 }
 base { archivesName = mod_id }
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
@@ -63,3 +68,17 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
 main.resources.srcDir generateModMetadata
 neoForge.ideSyncTask generateModMetadata
 idea { module { downloadSources = true; downloadJavadoc = true } }
+publishMods {
+    file = jar.archiveFile
+    changelog = file("CHANGELOG.md").text
+    type = STABLE
+    version = "NeoForge-$mod_version"
+    displayName = "$mod_name-NeoForge-$mod_version"
+    modLoaders.add("NeoForge")
+    modrinth {
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        projectId = "TlQAWQCY"
+        minecraftVersions.add(minecraft_version)
+        requires("create")
+    }
+}

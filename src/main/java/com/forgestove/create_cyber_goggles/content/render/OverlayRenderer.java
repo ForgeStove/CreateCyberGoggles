@@ -26,14 +26,14 @@ public class OverlayRenderer {
 		var mc = Minecraft.getInstance();
 		var player = mc.player;
 		if (player == null || player.hasContainerOpen() || mc.isPaused() || mc.screen != null) return;
-		ItemStack itemStack;
 		var level = mc.level;
 		if (level == null || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return;
 		var blockEntity = level.getBlockEntity(blockHitResult.getBlockPos());
-		if (Config.renderExtraItems.get() && blockEntity instanceof DepotBlockEntity depotBlockEntity)
-			itemStack = depotBlockEntity.getHeldItem();
-		else if (Config.renderExtraItems.get() && blockEntity instanceof PackagerBlockEntity packagerBlockEntity)
-			itemStack = packagerBlockEntity.heldBox;
+		boolean renderExtraItems = Config.renderExtraItems.get();
+		if (renderExtraItems && blockEntity instanceof DepotBlockEntity depotBlockEntity)
+			renderItemStack(guiGraphics, depotBlockEntity.getHeldItem());
+		else if (renderExtraItems && blockEntity instanceof PackagerBlockEntity packagerBlockEntity)
+			renderItemStack(guiGraphics, packagerBlockEntity.heldBox);
 		else if (Config.enableKineticEffect.get() && blockEntity instanceof KineticBlockEntity kineticBlockEntity) {
 			if (!blockHitResult.getBlockPos().equals(kineticBlockEntity.getBlockPos())) return;
 			var speed = kineticBlockEntity.getSpeed();
@@ -44,20 +44,17 @@ public class OverlayRenderer {
 			if (rotationAxis == null) return;
 			var center = VecHelper.getCenterOf(kineticBlockEntity.getBlockPos());
 			var speedLevel = SpeedLevel.of(speed);
-			var v = Math.max(15, speedLevel.getParticleSpeed()) * Math.signum(speed);
 			level.addParticle(
 					new RotationIndicatorParticleData(
 							speedLevel.getColor(),
-							v,
+							Math.max(15, speedLevel.getParticleSpeed()) * Math.signum(speed),
 							kineticBlock.getParticleInitialRadius(),
 							kineticBlock.getParticleTargetRadius(),
 							10,
 							rotationAxis
 					), center.x, center.y, center.z, 0, 0, 0
 			);
-			return;
-		} else return;
-		renderItemStack(guiGraphics, itemStack);
+		}
 	}
 	public static void renderItemStack(GuiGraphics guiGraphics, ItemStack itemStack) {
 		if (itemStack == null || itemStack.isEmpty()) return;

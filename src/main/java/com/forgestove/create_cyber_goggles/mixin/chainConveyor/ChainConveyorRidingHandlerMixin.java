@@ -6,7 +6,7 @@ import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.math.VecHelper;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.*;
@@ -37,7 +37,8 @@ import static com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorRi
 			return;
 		}
 		chainConveyorBlockEntity.prepareStats();
-		var playerPosition = player.position().add(0, player.getBoundingBox().getYsize() + 0.5, 0);
+		var chainYOffset = 0.5f * mc.player.getScale();
+		var playerPosition = mc.player.position().add(0, mc.player.getBoundingBox().getYsize() + chainYOffset, 0);
 		updateTargetPosition(mc, chainConveyorBlockEntity);
 		blockEntity = clientLevel.getBlockEntity(ridingChainConveyor);
 		if (!(blockEntity instanceof ChainConveyorBlockEntity)) return;
@@ -50,17 +51,16 @@ import static com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorRi
 					stats.end().subtract(stats.start())
 			).normalize().scale(Math.min(stats.chainLength(), chainPosition)));
 		} else targetPosition = Vec3.atBottomCenterOf(ridingChainConveyor)
-				.add(VecHelper.rotate(new Vec3(0, 0.25, 1), chainPosition, Direction.Axis.Y));
-		if (!Config.preventFalling.get()) {
-			var diff = targetPosition.subtract(playerPosition);
+				.add(VecHelper.rotate(new Vec3(0, 0.25, 1), chainPosition, Axis.Y));
+		if (catchingUp > 0) catchingUp--;
+		var diff = targetPosition.subtract(playerPosition);
+		if (catchingUp == 0 && !Config.preventFalling.get()) {
 			if (diff.length() > Config.separationDistance.get() || diff.y < Config.separationHeight.get()) {
 				stopRiding();
 				return;
 			}
 		}
-		player.setDeltaMovement(player.getDeltaMovement()
-				.scale(0.75)
-				.add(targetPosition.subtract(playerPosition).scale(0.25)));
+		player.setDeltaMovement(player.getDeltaMovement().scale(0.75).add(diff.scale(0.25)));
 		if (AnimationTickHolder.getTicks() % 10 == 0)
 			CatnipServices.NETWORK.sendToServer(new ServerboundChainConveyorRidingPacket(ridingChainConveyor, false));
 	}

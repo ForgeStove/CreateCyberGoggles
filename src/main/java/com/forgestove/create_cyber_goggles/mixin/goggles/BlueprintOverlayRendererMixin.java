@@ -1,6 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.goggles;
 import com.forgestove.create_cyber_goggles.Config;
-import com.forgestove.create_cyber_goggles.content.event.MoseScroll;
 import com.forgestove.create_cyber_goggles.content.render.OverlayRenderer;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.simibubi.create.AllItems;
@@ -21,6 +20,8 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
+
+import static com.forgestove.create_cyber_goggles.content.event.MoseScroll.*;
 @Mixin(BlueprintOverlayRenderer.class) public abstract class BlueprintOverlayRendererMixin {
 	@Shadow static boolean active;
 	@Shadow static boolean empty;
@@ -91,14 +92,16 @@ import java.util.List;
 		else AllGuiTextures.HOTSLOT_ARROW.render(guiGraphics, x, y + 4);
 		x += 25;
 		// Outputs
+		var hotbarOffHandLeft = ResourceLocation.withDefaultNamespace("hud/hotbar_offhand_left");
+		var hotbarSelection = ResourceLocation.withDefaultNamespace("hud/hotbar_selection");
 		if (results.isEmpty()) {
-			AllGuiTextures.HOTSLOT.render(guiGraphics, x, y);
+			guiGraphics.blitSprite(hotbarOffHandLeft, x, y, 24, 23);
 			GuiGameElement.of(Items.BARRIER).at(x + 3, y + 3).render(guiGraphics);
 		} else {
-			MoseScroll.index += MoseScroll.scrollDeltaY;
-			MoseScroll.scrollDeltaY = 0;
-			if (MoseScroll.index < 1) MoseScroll.index = results.size();
-			else if (MoseScroll.index > results.size()) MoseScroll.index = 1;
+			index += scrollDeltaY;
+			scrollDeltaY = 0;
+			if (index < 1) index = results.size();
+			else if (index > results.size()) index = 1;
 			var selectedX = 0;
 			for (int i = 0, resultsSize = results.size(); i < resultsSize; i++) {
 				var result = results.get(i);
@@ -107,17 +110,11 @@ import java.util.List;
 					slot = AllGuiTextures.HOTSLOT_ACTIVE;
 				slot.render(guiGraphics, resultCraftable ? x - 1 : x, resultCraftable ? y - 1 : y);
 				BlueprintOverlayRenderer.drawItemStack(guiGraphics, mc, x, y, result, null);
-				if (i == MoseScroll.index - 1) selectedX = x;
+				if (i == index - 1) selectedX = x;
 				x += 21;
 			}
-			if (selectedX != 0) guiGraphics.blitSprite(
-					ResourceLocation.withDefaultNamespace("hud/hotbar_selection"),
-					selectedX - 1,
-					y - 1,
-					24,
-					23
-			);
-			OverlayRenderer.renderItemStack(guiGraphics, results.get(MoseScroll.index - 1));
+			if (selectedX != 0) guiGraphics.blitSprite(hotbarSelection, selectedX - 1, y - 1, 24, 23);
+			OverlayRenderer.renderItemStack(guiGraphics, results.get(index - 1));
 		}
 		if (shopContext != null) shopContext.checkout();
 		RenderSystem.disableBlend();

@@ -5,7 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import net.neoforged.neoforge.client.event.InputEvent;
-public class MoseScroll {
+public class MouseScroll {
 	public static int index = 1;
 	public static int scrollDeltaY = 0;
 	public static void onMouseScroll(InputEvent.MouseScrollingEvent event) {

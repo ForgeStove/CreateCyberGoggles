@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 			KeyInput.openConfigScreen(event);
 		}
 		@SubscribeEvent public static void mouseScrollingEvent(MouseScrollingEvent event) {
-			MoseScroll.onMouseScroll(event);
+			MouseScroll.onMouseScroll(event);
 		}
 		@SubscribeEvent public static void closing(Closing event) {CloseScreen.onCloseScreen(event);}
 	}

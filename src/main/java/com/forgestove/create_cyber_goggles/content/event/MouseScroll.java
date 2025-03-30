@@ -4,11 +4,11 @@ import com.simibubi.create.content.logistics.tableCloth.TableClothBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
-import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent;
 public class MouseScroll {
 	public static int index = 1;
 	public static int scrollDeltaY = 0;
-	public static void onMouseScroll(InputEvent.MouseScrollingEvent event) {
+	public static void onMouseScroll(MouseScrollingEvent event) {
 		if (!Config.enhancedStoreRender.get()) return;
 		var mc = Minecraft.getInstance();
 		var level = mc.level;

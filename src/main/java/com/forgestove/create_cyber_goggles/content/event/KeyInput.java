@@ -55,7 +55,6 @@ public class KeyInput {
 			var field = FilterItem.class.getDeclaredField("type");
 			field.setAccessible(true);
 			if (!(filter.getItem() instanceof FilterItem filterItem)) return;
-			var type = field.get(filterItem);
 			if (!field.getType().isEnum()) return;
 			var mc = Minecraft.getInstance();
 			var player = mc.player;
@@ -63,7 +62,7 @@ public class KeyInput {
 			var inv = player.getInventory();
 			var name = filter.getHoverName();
 			Screen screen;
-			switch (((Enum<?>) type).ordinal()) {
+			switch (((Enum<?>) field.get(filterItem)).ordinal()) {
 				case 0 -> screen = new FilterScreen(FilterMenu.create(-1, inv, filter), inv, name);
 				case 1 -> screen = new AttributeFilterScreen(AttributeFilterMenu.create(-1, inv, filter), inv, name);
 				case 2 -> screen = new PackageFilterScreen(PackageFilterMenu.create(-1, inv, filter), inv, name);

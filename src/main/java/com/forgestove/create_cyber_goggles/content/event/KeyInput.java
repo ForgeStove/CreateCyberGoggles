@@ -4,12 +4,13 @@ import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import net.neoforged.fml.ModList;
-import net.neoforged.neoforge.client.event.InputEvent.*;
+import net.neoforged.neoforge.client.event.InputEvent.Key;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
@@ -23,7 +24,7 @@ public class KeyInput {
 		var modContainerById = ModList.get().getModContainerById(CreateCyberGoggles.ID);
 		if (modContainerById.isEmpty()) return;
 		var modContainer = modContainerById.get();
-		mc.pushGuiLayer(new ConfigurationScreen(modContainer, mc.screen));
+		mc.setScreen(new ConfigurationScreen(modContainer, mc.screen));
 	}
 	public static void openFilterScreen(Key event) {
 		if (!Config.enableOpenFilterScreen.get()) return;
@@ -33,7 +34,9 @@ public class KeyInput {
 			if (!(mc.screen instanceof AbstractContainerScreen<?> screen)) return;
 			var slot = screen.getSlotUnderMouse();
 			if (slot == null) return;
-			setFilterScreen(slot.getItem());
+			var item = slot.getItem();
+			if (!(item.getItem() instanceof FilterItem)) return;
+			setFilterScreen(item);
 		} else {
 			if (mc.level == null || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return;
 			if (blockHitResult.getType() == Type.MISS) return;
@@ -42,29 +45,34 @@ public class KeyInput {
 			var behavior = Collections.singleton(smartBlockEntity.getBehaviour(FilteringBehaviour.TYPE));
 			var first = behavior.iterator().next();
 			if (!(first instanceof FilteringBehaviour)) return;
-			setFilterScreen(first.getFilter(blockHitResult.getDirection()));
+			var item = first.getFilter(blockHitResult.getDirection());
+			if (!(item.getItem() instanceof FilterItem)) return;
+			setFilterScreen(item);
 		}
 	}
 	public static void setFilterScreen(@NotNull ItemStack filter) {
-		if (filter.isEmpty()) return;
-		var mc = Minecraft.getInstance();
-		var player = mc.player;
-		if (player == null) return;
-		var inventory = player.getInventory();
-		var hoverName = filter.getHoverName();
-		switch (filter.getDescriptionId()) {
-			case "item.create.filter" -> {
-				var menu = FilterMenu.create(0, inventory, filter);
-				mc.setScreen(new FilterScreen(menu, inventory, hoverName));
+		try {
+			var field = FilterItem.class.getDeclaredField("type");
+			field.setAccessible(true);
+			if (!(filter.getItem() instanceof FilterItem filterItem)) return;
+			var type = field.get(filterItem);
+			if (!field.getType().isEnum()) return;
+			var mc = Minecraft.getInstance();
+			var player = mc.player;
+			if (player == null) return;
+			var inv = player.getInventory();
+			var name = filter.getHoverName();
+			Screen screen;
+			switch (((Enum<?>) type).ordinal()) {
+				case 0 -> screen = new FilterScreen(FilterMenu.create(-1, inv, filter), inv, name);
+				case 1 -> screen = new AttributeFilterScreen(AttributeFilterMenu.create(-1, inv, filter), inv, name);
+				case 2 -> screen = new PackageFilterScreen(PackageFilterMenu.create(-1, inv, filter), inv, name);
+				default -> {
+					return;
+				}
 			}
-			case "item.create.attribute_filter" -> {
-				var menu = AttributeFilterMenu.create(0, inventory, filter);
-				mc.setScreen(new AttributeFilterScreen(menu, inventory, hoverName));
-			}
-			case "item.create.package_filter" -> {
-				var menu = PackageFilterMenu.create(0, inventory, filter);
-				mc.setScreen(new PackageFilterScreen(menu, inventory, hoverName));
-			}
+			mc.setScreen(screen);
+		} catch (Exception ignored) {
 		}
 	}
 }

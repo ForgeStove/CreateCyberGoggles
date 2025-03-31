@@ -11,8 +11,8 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
-@Mixin(PoweredShaftBlockEntity.class) public abstract class PoweredShaftBlockEntityMixin
-		extends GeneratingKineticBlockEntity {
+@Mixin(PoweredShaftBlockEntity.class)
+public abstract class PoweredShaftBlockEntityMixin extends GeneratingKineticBlockEntity {
 	public PoweredShaftBlockEntityMixin(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
 	}

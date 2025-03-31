@@ -7,8 +7,8 @@ import net.minecraft.world.entity.player.Inventory;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-@Mixin(AbstractFilterScreen.class) public abstract class AbstractFilterScreenMixin<F extends AbstractFilterMenu>
-		extends AbstractSimiContainerScreen<F> {
+@Mixin(AbstractFilterScreen.class)
+public abstract class AbstractFilterScreenMixin<F extends AbstractFilterMenu> extends AbstractSimiContainerScreen<F> {
 	public AbstractFilterScreenMixin(F container, Inventory inv, Component title) {
 		super(container, inv, title);
 	}
@@ -20,6 +20,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 		handleTooltips();
 		handleIndicators();
 	}
-	@Shadow protected abstract void handleTooltips();
-	@Shadow public abstract void handleIndicators();
+	@Shadow
+	protected abstract void handleTooltips();
+	@Shadow
+	public abstract void handleIndicators();
 }

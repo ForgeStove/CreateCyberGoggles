@@ -7,7 +7,8 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.text.NumberFormat;
-@Mixin(CreateLang.class) public abstract class CreateLangMixin {
+@Mixin(CreateLang.class)
+public abstract class CreateLangMixin {
 	@Inject(method = "number", at = @At("HEAD"), cancellable = true)
 	private static void number(double d, CallbackInfoReturnable<LangBuilder> returnable) {
 		if (!Config.preciseNumbers.get()) return;

@@ -8,7 +8,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-@Mixin(RadialWrenchHandler.class) public abstract class RadialWrenchHandlerMixin {
+@Mixin(RadialWrenchHandler.class)
+public abstract class RadialWrenchHandlerMixin {
 	@Inject(method = "onKeyInput", at = @At("HEAD"), cancellable = true)
 	private static void onKeyInput(int key, boolean pressed, CallbackInfo callbackInfo) {
 		if (!Config.alwaysAllowRotating.get()) return;

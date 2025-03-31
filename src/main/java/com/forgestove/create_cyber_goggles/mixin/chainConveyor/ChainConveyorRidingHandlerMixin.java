@@ -14,7 +14,8 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorRidingHandler.*;
-@Mixin(ChainConveyorRidingHandler.class) public abstract class ChainConveyorRidingHandlerMixin {
+@Mixin(ChainConveyorRidingHandler.class)
+public abstract class ChainConveyorRidingHandlerMixin {
 	@Inject(method = "clientTick", at = @At("HEAD"), cancellable = true)
 	private static void clientTick(@NotNull CallbackInfo callbackInfo) {
 		callbackInfo.cancel();
@@ -27,9 +28,9 @@ import static com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorRi
 			stopRiding();
 			return;
 		}
-		var clientLevel = mc.level;
-		if (clientLevel == null) return;
-		var blockEntity = clientLevel.getBlockEntity(ridingChainConveyor);
+		var level = mc.level;
+		if (level == null) return;
+		var blockEntity = level.getBlockEntity(ridingChainConveyor);
 		if (player.isShiftKeyDown()
 				|| !(blockEntity instanceof ChainConveyorBlockEntity chainConveyorBlockEntity)
 				|| ridingConnection != null && !chainConveyorBlockEntity.connections.contains(ridingConnection)) {
@@ -40,7 +41,7 @@ import static com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorRi
 		var chainYOffset = 0.5f * mc.player.getScale();
 		var playerPosition = mc.player.position().add(0, mc.player.getBoundingBox().getYsize() + chainYOffset, 0);
 		updateTargetPosition(mc, chainConveyorBlockEntity);
-		blockEntity = clientLevel.getBlockEntity(ridingChainConveyor);
+		blockEntity = level.getBlockEntity(ridingChainConveyor);
 		if (!(blockEntity instanceof ChainConveyorBlockEntity)) return;
 		chainConveyorBlockEntity = (ChainConveyorBlockEntity) blockEntity;
 		chainConveyorBlockEntity.prepareStats();
@@ -51,7 +52,7 @@ import static com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorRi
 					stats.end().subtract(stats.start())
 			).normalize().scale(Math.min(stats.chainLength(), chainPosition)));
 		} else targetPosition = Vec3.atBottomCenterOf(ridingChainConveyor)
-				.add(VecHelper.rotate(new Vec3(0, 0.25, 1), chainPosition, Axis.Y));
+									.add(VecHelper.rotate(new Vec3(0, 0.25, 1), chainPosition, Axis.Y));
 		if (catchingUp > 0) catchingUp--;
 		var diff = targetPosition.subtract(playerPosition);
 		if (catchingUp == 0 && !Config.preventFalling.get()) {
@@ -64,8 +65,10 @@ import static com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorRi
 		if (AnimationTickHolder.getTicks() % 10 == 0)
 			CatnipServices.NETWORK.sendToServer(new ServerboundChainConveyorRidingPacket(ridingChainConveyor, false));
 	}
-	@Shadow private static void stopRiding() {
+	@Shadow
+	private static void stopRiding() {
 	}
-	@Shadow private static void updateTargetPosition(Minecraft mc, ChainConveyorBlockEntity chainConveyorBlockEntity) {
+	@Shadow
+	private static void updateTargetPosition(Minecraft mc, ChainConveyorBlockEntity chainConveyorBlockEntity) {
 	}
 }

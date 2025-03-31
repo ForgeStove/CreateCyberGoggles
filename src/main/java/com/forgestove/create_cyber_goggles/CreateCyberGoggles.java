@@ -12,28 +12,36 @@ import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.event.ScreenEvent.Closing;
 import net.neoforged.neoforge.client.gui.*;
 import org.jetbrains.annotations.NotNull;
-@Mod(CreateCyberGoggles.ID) public class CreateCyberGoggles {
+@Mod(CreateCyberGoggles.ID)
+public class CreateCyberGoggles {
 	public static final String ID = "create_cyber_goggles";
 	public static final String NAME = "Create: Cyber Goggles";
 	public CreateCyberGoggles(@NotNull ModContainer modContainer) {
 		modContainer.registerConfig(Type.CLIENT, Config.CLIENT_SPEC);
 		modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
 	}
-	@EventBusSubscriber(value = Dist.CLIENT, bus = Bus.GAME) public static class ClientGameEvents {
-		@SubscribeEvent public static void key(Key event) {
+	@EventBusSubscriber(value = Dist.CLIENT, bus = Bus.GAME)
+	public static class ClientGameEvents {
+		@SubscribeEvent
+		public static void key(Key event) {
 			KeyInput.openFilterScreen(event);
 			KeyInput.openConfigScreen(event);
 		}
-		@SubscribeEvent public static void mouseScrollingEvent(MouseScrollingEvent event) {
+		@SubscribeEvent
+		public static void mouseScrollingEvent(MouseScrollingEvent event) {
 			MouseScroll.onMouseScroll(event);
 		}
-		@SubscribeEvent public static void closing(Closing event) {CloseScreen.onCloseScreen(event);}
+		@SubscribeEvent
+		public static void closing(Closing event) {CloseScreen.onCloseScreen(event);}
 	}
-	@EventBusSubscriber(value = Dist.CLIENT, bus = Bus.MOD) public static class ClientModEvents {
-		@SubscribeEvent public static void registerKeyMappingsEvent(RegisterKeyMappingsEvent event) {
+	@EventBusSubscriber(value = Dist.CLIENT, bus = Bus.MOD)
+	public static class ClientModEvents {
+		@SubscribeEvent
+		public static void registerKeyMappingsEvent(RegisterKeyMappingsEvent event) {
 			KeyBind.register(event);
 		}
-		@SubscribeEvent public static void registerGuiLayersEvent(RegisterGuiLayersEvent event) {
+		@SubscribeEvent
+		public static void registerGuiLayersEvent(RegisterGuiLayersEvent event) {
 			OverlayRenderer.register(event);
 		}
 	}

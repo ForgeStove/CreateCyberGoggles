@@ -15,10 +15,12 @@ import net.minecraft.world.level.*;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-@Mixin(ChainConveyorConnectionHandler.class) public abstract class ChainConveyorConnectionHandlerMixin {
+@Mixin(ChainConveyorConnectionHandler.class)
+public abstract class ChainConveyorConnectionHandlerMixin {
 	@Shadow private static BlockPos firstPos;
 	@Shadow private static ResourceKey<Level> firstDim;
-	@Inject(method = "validateAndConnect", at = @At("HEAD"), cancellable = true) private static void validateAndConnect(
+	@Inject(method = "validateAndConnect", at = @At("HEAD"), cancellable = true)
+	private static void validateAndConnect(
 			LevelAccessor level,
 			BlockPos pos,
 			Player player,
@@ -46,8 +48,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 		}
 		if (targetLift.connections.size() >= AllConfigs.server().kinetics.maxChainConveyorConnections.get()) {
 			CreateLang.translate("chain_conveyor.cannot_add_more_connections")
-					.style(ChatFormatting.RED)
-					.sendStatus(player);
+					  .style(ChatFormatting.RED)
+					  .sendStatus(player);
 			return;
 		}
 		if (targetLift.connections.contains(firstPos.subtract(pos))) {

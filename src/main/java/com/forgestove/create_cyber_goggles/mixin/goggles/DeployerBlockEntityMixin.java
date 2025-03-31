@@ -1,7 +1,7 @@
 package com.forgestove.create_cyber_goggles.mixin.goggles;
 import com.forgestove.create_cyber_goggles.Config;
-import com.simibubi.create.content.kinetics.base.*;
 import com.simibubi.create.content.kinetics.base.IRotate.SpeedLevel;
+import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.deployer.DeployerBlockEntity;
 import com.simibubi.create.foundation.item.TooltipHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
@@ -16,7 +16,8 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
-@Mixin(DeployerBlockEntity.class) public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
+@Mixin(DeployerBlockEntity.class)
+public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 	@Shadow protected List<ItemStack> overflowItems;
 	public DeployerBlockEntityMixin(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
 		super(typeIn, pos, state);
@@ -36,12 +37,12 @@ import java.util.List;
 		TooltipHelper.addHint(tooltip, "hint.full_deployer");
 		for (var itemStack : overflowItems)
 			CreateLang.builder()
-					.text("%s x%d".formatted(
-							Component.translatable(itemStack.getDescriptionId()).getString(),
-							itemStack.getCount()
-					))
-					.style(ChatFormatting.GREEN)
-					.forGoggles(tooltip);
+					  .text("%s x%d".formatted(
+							  Component.translatable(itemStack.getDescriptionId()).getString(),
+							  itemStack.getCount()
+					  ))
+					  .style(ChatFormatting.GREEN)
+					  .forGoggles(tooltip);
 		returnable.setReturnValue(true);
 	}
 	@Inject(method = "addToGoggleTooltip", at = @At("RETURN"))

@@ -22,7 +22,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.List;
 
 import static com.forgestove.create_cyber_goggles.content.event.MouseScroll.*;
-@Mixin(BlueprintOverlayRenderer.class) public abstract class BlueprintOverlayRendererMixin {
+@Mixin(BlueprintOverlayRenderer.class)
+public abstract class BlueprintOverlayRendererMixin {
 	@Shadow static boolean active;
 	@Shadow static boolean empty;
 	@Shadow static List<Pair<ItemStack, Boolean>> ingredients;

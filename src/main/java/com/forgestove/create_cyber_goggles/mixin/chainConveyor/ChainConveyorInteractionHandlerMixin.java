@@ -15,7 +15,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorInteractionHandler.*;
 import static com.simibubi.create.content.logistics.packagePort.PackagePortTargetSelectionHandler.*;
-@Mixin(ChainConveyorInteractionHandler.class) public abstract class ChainConveyorInteractionHandlerMixin {
+@Mixin(ChainConveyorInteractionHandler.class)
+public abstract class ChainConveyorInteractionHandlerMixin {
 	@Shadow public static BlockPos selectedConnection;
 	@Inject(method = "isActive", at = @At("HEAD"), cancellable = true)
 	private static void isActive(CallbackInfoReturnable<Boolean> returnable) {

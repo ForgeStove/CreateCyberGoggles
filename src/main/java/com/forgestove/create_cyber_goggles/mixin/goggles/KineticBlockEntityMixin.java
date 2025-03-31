@@ -10,7 +10,8 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
-@Mixin(KineticBlockEntity.class) public abstract class KineticBlockEntityMixin {
+@Mixin(KineticBlockEntity.class)
+public abstract class KineticBlockEntityMixin {
 	@Shadow protected boolean overStressed;
 	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), cancellable = true)
 	private void addToGoggleTooltip(
@@ -27,7 +28,10 @@ import java.util.List;
 		}
 		SpeedLevel.getFormattedSpeedText(getSpeed(), overStressed).forGoggles(tooltip);
 	}
-	@Shadow public abstract float getSpeed();
-	@Shadow public abstract float calculateStressApplied();
-	@Shadow protected abstract void addStressImpactStats(List<Component> tooltip, float stressAtBase);
+	@Shadow
+	public abstract float getSpeed();
+	@Shadow
+	public abstract float calculateStressApplied();
+	@Shadow
+	protected abstract void addStressImpactStats(List<Component> tooltip, float stressAtBase);
 }

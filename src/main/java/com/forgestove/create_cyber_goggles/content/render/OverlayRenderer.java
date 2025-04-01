@@ -25,7 +25,7 @@ public class OverlayRenderer {
 	public static void renderOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
 		var mc = Minecraft.getInstance();
 		var player = mc.player;
-		if (player == null || player.hasContainerOpen() || mc.isPaused() || mc.screen != null) return;
+		if (player == null || mc.isPaused() || mc.screen != null) return;
 		var level = mc.level;
 		if (level == null || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return;
 		var blockEntity = level.getBlockEntity(blockHitResult.getBlockPos());

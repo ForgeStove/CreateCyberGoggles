@@ -1,1 +1,1 @@
-- Fix issues
+- Fixed an issue where rotating particles could not be rendered after entering a ponder screen

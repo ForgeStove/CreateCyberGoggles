@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.goggles;
-import com.forgestove.create_cyber_goggles.Config;
+import com.forgestove.create_cyber_goggles.content.util.GameModeType;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import net.minecraft.client.Minecraft;
 import org.spongepowered.asm.mixin.Mixin;
@@ -11,19 +11,7 @@ public abstract class GogglesItemMixin {
 	private static void isWearingGoggles(CallbackInfoReturnable<Boolean> returnable) {
 		var gameMode = Minecraft.getInstance().gameMode;
 		if (gameMode == null) return;
-		switch (gameMode.getPlayerMode()) {
-			case SURVIVAL -> {
-				if (Config.enableInSurvival.get()) returnable.setReturnValue(true);
-			}
-			case CREATIVE -> {
-				if (Config.enableInCreative.get()) returnable.setReturnValue(true);
-			}
-			case SPECTATOR -> {
-				if (Config.enableInSpectator.get()) returnable.setReturnValue(true);
-			}
-			case ADVENTURE -> {
-				if (Config.enableInAdventure.get()) returnable.setReturnValue(true);
-			}
-		}
+		if (!GameModeType.MODE_CONFIG.get(gameMode.getPlayerMode())) return;
+		returnable.setReturnValue(true);
 	}
 }

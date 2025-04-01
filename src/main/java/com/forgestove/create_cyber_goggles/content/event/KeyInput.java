@@ -3,6 +3,7 @@ import com.forgestove.create_cyber_goggles.*;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
+import net.createmod.catnip.gui.ScreenOpener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -70,7 +71,7 @@ public class KeyInput {
 					return;
 				}
 			}
-			mc.setScreen(screen);
+			ScreenOpener.open(screen);
 		} catch (Exception ignored) {
 		}
 	}

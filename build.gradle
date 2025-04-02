@@ -75,10 +75,16 @@ publishMods {
     type = STABLE
     version = "$minecraft_version-$mod_version+$platform"
     displayName = "[$platform] $mod_name $mod_version+$minecraft_version"
-    modLoaders.add("$platform")
+    modLoaders.addAll("$platform")
     modrinth {
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")
         projectId = "TlQAWQCY"
+        minecraftVersions.add(minecraft_version)
+        requires("create")
+    }
+    curseforge {
+        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+        projectId = "1233804"
         minecraftVersions.add(minecraft_version)
         requires("create")
     }

@@ -35,17 +35,17 @@ neoForge {
             programArgument '--nogui'
             systemProperty 'neoforge.enabledGameTestNamespaces', "${mod_id}"
         }
-        configureEach {
-            systemProperty 'forge.logging.markers', 'REGISTRIES'
-            logLevel = org.slf4j.event.Level.DEBUG
-        }
+//        configureEach {
+//            systemProperty 'forge.logging.markers', 'REGISTRIES'
+//            logLevel = org.slf4j.event.Level.DEBUG
+//        }
     }
     mods { "${mod_id}" { sourceSet(sourceSets.main) } }
 }
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 dependencies {
     implementation("net.lenni0451:Reflect:+")
-    implementation("com.simibubi.create:create-${minecraft_version}:${create_version}") { transitive = false }
+    implementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
     implementation("net.createmod.ponder:Ponder-NeoForge-${minecraft_version}:${ponder_version}") { transitive = false }
     implementation("com.tterrag.registrate:Registrate:${registrate_version}")
     compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")

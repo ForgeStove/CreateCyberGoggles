@@ -1,5 +1,4 @@
 package com.forgestove.create_cyber_goggles.mixin.filter;
-import com.forgestove.create_cyber_goggles.Config;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -14,7 +13,6 @@ public abstract class AbstractFilterScreenMixin<F extends AbstractFilterMenu> ex
 	}
 	@Inject(method = "containerTick", at = @At("HEAD"), cancellable = true)
 	private void containerTick(CallbackInfo callbackInfo) {
-		if (!Config.enableOpenFilterScreen.get()) return;
 		callbackInfo.cancel();
 		super.containerTick();
 		handleTooltips();

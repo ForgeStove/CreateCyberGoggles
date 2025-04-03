@@ -18,6 +18,7 @@
         "goggles.GogglesItemMixin",
         "goggles.KineticBlockEntityMixin",
         "goggles.PoweredShaftBlockEntityMixin",
+        "stockKeeper.StockKeeperRequestScreenMixin",
         "wrench.RadialWrenchHandlerMixin"
     ]
 }

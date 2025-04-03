@@ -26,6 +26,7 @@ public class CreateCyberGoggles {
 		public static void key(Key event) {
 			KeyInput.openFilterScreen(event);
 			KeyInput.openConfigScreen(event);
+			KeyInput.openStockScreen(event);
 		}
 		@SubscribeEvent
 		public static void mouseScrollingEvent(MouseScrollingEvent event) {

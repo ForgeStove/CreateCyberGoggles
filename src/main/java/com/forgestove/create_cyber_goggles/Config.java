@@ -20,7 +20,6 @@ public class Config {
 	public static final ConfigValue<Boolean> enhancedInfo;
 	public static final ConfigValue<Boolean> enhancedStoreRender;
 	public static final ConfigValue<Boolean> renderExtraItems;
-	public static final ConfigValue<Boolean> enableOpenFilterScreen;
 	public static final ConfigValue<Boolean> enableKineticEffect;
 	public static final ConfigValue<Boolean> preciseNumbers;
 	public static final ConfigValue<Boolean> alwaysAllowRotating;
@@ -36,9 +35,6 @@ public class Config {
 		separationDistance = CLIENT.define("separationDistance", 3);
 		separationHeight = CLIENT.define("separationHeight", -1);
 		enhancedConnection = CLIENT.define("enhancedConnection", true);
-		CLIENT.pop();
-		CLIENT.push("Filter");
-		enableOpenFilterScreen = CLIENT.define("enableOpenFilterScreen", true);
 		CLIENT.pop();
 		CLIENT.push("Flywheel");
 		forcedBackend = CLIENT.define("forcedBackend", false);

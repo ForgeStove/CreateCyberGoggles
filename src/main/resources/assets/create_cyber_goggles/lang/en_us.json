@@ -5,9 +5,6 @@
     "create_cyber_goggles.configuration.ChainConveyor": "Chain Conveyor",
     "create_cyber_goggles.configuration.ChainConveyor.button": "Edit",
     "create_cyber_goggles.configuration.ChainConveyor.tooltip": "Chain Conveyor Configuration",
-    "create_cyber_goggles.configuration.Filter": "Filter",
-    "create_cyber_goggles.configuration.Filter.button": "Edit",
-    "create_cyber_goggles.configuration.Filter.tooltip": "Filter Configuration",
     "create_cyber_goggles.configuration.Flywheel": "Flywheel",
     "create_cyber_goggles.configuration.Flywheel.button": "Edit",
     "create_cyber_goggles.configuration.Flywheel.tooltip": "Flywheel Configuration",
@@ -31,8 +28,6 @@
     "create_cyber_goggles.configuration.enableInSurvival.tooltip": "Always enable goggles in Survival mode",
     "create_cyber_goggles.configuration.enableKineticEffect": "Enable Kinetic Effect",
     "create_cyber_goggles.configuration.enableKineticEffect.tooltip": "Show target kinetic block effect",
-    "create_cyber_goggles.configuration.enableOpenFilterScreen": "Enable Preview Filter Screen",
-    "create_cyber_goggles.configuration.enableOpenFilterScreen.tooltip": "Preview filter screen by hotkey",
     "create_cyber_goggles.configuration.enhancedConnection": "Enhanced Connection",
     "create_cyber_goggles.configuration.enhancedConnection.tooltip": "Remove the minimum connection distance restriction and maximum angle limitation for chain conveyor",
     "create_cyber_goggles.configuration.enhancedInfo": "Enhanced Info",
@@ -61,5 +56,6 @@
     "create_cyber_goggles.configuration.separationHeight.tooltip": "Minimum relative falling height between you and chain conveyor",
     "create_cyber_goggles.configuration.title": "Create: Cyber Goggles",
     "create_cyber_goggles.key.openConfig": "Open Config",
+    "create_cyber_goggles.key.openStock": "Open Stock",
     "create_cyber_goggles.key.previewFilter": "Preview Filter Screen"
 }

@@ -48,7 +48,6 @@ public class KeyInput {
 		mc.setScreen(new StockKeeperRequestScreen(menu, inv, Component.nullToEmpty("")));
 	}
 	public static void openFilterScreen(Key event) {
-		if (!Config.enableOpenFilterScreen.get()) return;
 		if (!KeyBind.isAction(event, KeyBind.PREVIEW_FILTER, GLFW.GLFW_PRESS)) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) {

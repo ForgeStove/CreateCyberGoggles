@@ -1,1 +1,1 @@
-- Fixed an issue where rotating particles could not be rendered after entering a ponder screen
+- Add shortcut key allows opening the stock ticker that was last opened with a shortcut key

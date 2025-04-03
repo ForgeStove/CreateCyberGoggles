@@ -56,6 +56,17 @@ public class OverlayRenderer {
 			);
 		}
 	}
+	/**
+	 * 在屏幕中央区域渲染指定物品堆的图标及关联的悬浮提示信息。
+	 *
+	 * @param guiGraphics GUI渲染上下文对象，用于执行图形绘制操作
+	 * @param itemStack   需要渲染的物品堆实例。若值为null或空物品堆叠时方法立即返回
+	 * @implNote 渲染位置逻辑：
+	 * 		<p>物品图标绘制在屏幕水平中央偏右10像素、垂直中央偏上15像素的位置
+	 * 		<p>物品装饰层（如数量文本）叠加在图标相同位置
+	 * 		<p>悬浮提示框根据提示行数自适应高度，水平位置位于图标右侧12像素
+	 * 		<p>垂直位置根据提示行数动态计算以避免溢出屏幕
+	 */
 	public static void renderItemStack(GuiGraphics guiGraphics, ItemStack itemStack) {
 		if (itemStack == null || itemStack.isEmpty()) return;
 		var mc = Minecraft.getInstance();

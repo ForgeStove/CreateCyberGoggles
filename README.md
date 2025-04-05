@@ -2,7 +2,7 @@
 <p align="center"><img src="https://cdn.modrinth.com/data/TlQAWQCY/images/cb3a53ce81e1e9509a78b41e776caeb718162faa.png" alt="Logo" width="200"/></p>
 <h1 align="center">Create: Cyber Goggles<br>
 <a href="https://www.curseforge.com/minecraft/mc-mods/create-cyber-goggles/files"><img src="https://cf.way2muchnoise.eu/versions/1233804(c70039).svg" alt="Supported Versions"></a>
-<a href="https://github.com/ForgeStove/CreateCyberGoggles/blob/main/LICENSE"><img src="https://img.shields.io/github/license/ForgeStove/CreateCyberGoggles?style=flat&color=900c3f" alt="License"></a>
+<a href="https://github.com/ForgeStove/CreateCyberGoggles?tab=readme-ov-file#MIT-1-ov-file"><img src="https://img.shields.io/github/license/ForgeStove/CreateCyberGoggles?style=flat&color=900c3f" alt="License"></a>
 <a href="https://www.curseforge.com/minecraft/mc-mods/create-cyber-goggles"><img src="http://cf.way2muchnoise.eu/1233804.svg" alt="CurseForge"></a>
 <a href="https://modrinth.com/mod/create-cyber-goggles"><img src="https://img.shields.io/modrinth/dt/create-cyber-goggles?logo=modrinth&label=&suffix=%20&style=flat&color=242629&labelColor=5ca424&logoColor=1c1c1c" alt="Modrinth"></a>
 </h1>

@@ -30,6 +30,11 @@ public class BoolValue {
 		GAME_TYPE_MAP.put(SPECTATOR, Config.enableInSpectator.get());
 		GAME_TYPE_MAP.put(ADVENTURE, Config.enableInAdventure.get());
 	}
+	/**
+	 * 测试玩家是否处于穿着全套纸板盔甲并且不在飞行状态。
+	 *
+	 * @param player 本地玩家实体
+	 */
 	public static boolean testForStealth(LocalPlayer player) {
 		return Config.cardBoardedYourself.get()
 				&& !player.getAbilities().flying

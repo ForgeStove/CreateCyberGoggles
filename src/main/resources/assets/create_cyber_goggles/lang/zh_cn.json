@@ -18,6 +18,8 @@
     "create_cyber_goggles.configuration.alwaysAllowRiding.tooltip": "无需扳手即可悬挂在链式传动轮上",
     "create_cyber_goggles.configuration.alwaysAllowRotating": "总是允许旋转方块",
     "create_cyber_goggles.configuration.alwaysAllowRotating.tooltip": "无需扳手即可通过快捷键旋转方块",
+    "create_cyber_goggles.configuration.cardBoardedYourself": "自动打包你自己",
+    "create_cyber_goggles.configuration.cardBoardedYourself.tooltip": "在你挂上锁链的时候自动把你变成纸箱",
     "create_cyber_goggles.configuration.enableInAdventure": "冒险模式启用",
     "create_cyber_goggles.configuration.enableInAdventure.tooltip": "在冒险模式下始终启用护目镜",
     "create_cyber_goggles.configuration.enableInCreative": "创造模式启用",

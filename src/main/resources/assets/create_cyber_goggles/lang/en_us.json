@@ -18,6 +18,8 @@
     "create_cyber_goggles.configuration.alwaysAllowRiding.tooltip": "Always allow riding Chain Conveyor",
     "create_cyber_goggles.configuration.alwaysAllowRotating": "Always Allow Rotating",
     "create_cyber_goggles.configuration.alwaysAllowRotating.tooltip": "Always allow rotating block without wrench by hotkey",
+    "create_cyber_goggles.configuration.cardBoardedYourself": "Card Boarded Yourself",
+    "create_cyber_goggles.configuration.cardBoardedYourself.tooltip": "Turn you into a cardboard box when you put on the chain",
     "create_cyber_goggles.configuration.enableInAdventure": "Enable In Adventure",
     "create_cyber_goggles.configuration.enableInAdventure.tooltip": "Always enable goggles in Adventure mode",
     "create_cyber_goggles.configuration.enableInCreative": "Enable In Creative",

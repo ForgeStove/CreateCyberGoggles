@@ -1,1 +1,1 @@
-- Add shortcut key allows opening the stock ticker that was last opened with a shortcut key
+- Turn you into a cardboard box when you put on the chain

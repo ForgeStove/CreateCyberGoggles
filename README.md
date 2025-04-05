@@ -1,20 +1,17 @@
 # Create: Cyber Goggles
 
+![icon.png](src/main/resources/icon.png)
+
 ## 概述 / Overview
 
-[中文]
+> **Create: Cyber Goggles** 是[**机械动力**](https://modrinth.com/mod/create)的客户端附属模组。
 
-> **Create: Cyber Goggles** 是[**机械动力**][Create]的客户端附属模组。
-
-[English]
-
-> **Create: Cyber Goggles** is a client-side addon for [**Create**][Create]
+> **Create: Cyber Goggles** is a client-side addon for [**Create**](https://modrinth.com/mod/create).
 
 ## 功能 / Features
 
-[中文]
+该模组提供以下功能配置项：
 
-* 该模组提供以下功能配置项：
 * 护甲/链式传动轮/飞轮/护目镜/扳手的独立配置模块
 * 链式传动轮悬挂机制调整（无扳手悬挂、防跌落、连接距离/高度/角度限制解除）
 * 护目镜功能模式开关（生存/创造/冒险/旁观模式强制启用）
@@ -24,9 +21,8 @@
 * 渲染后端优化（强制飞轮渲染开关）
 * 快捷键支持（配置界面/库存界面/过滤器预览快速访问）
 
-[English]
+This mod provides the following configurable features:
 
-* This mod provides the following configurable features:
 * Independent configuration modules for armor, chain drive wheels, flywheels, goggles, and wrenches
 * Chain drive wheel suspension mechanism adjustments (wrench-free suspension, anti-fall protection, removal of
   connection distance/height/angle limits)
@@ -38,24 +34,25 @@
 * Rendering backend optimizations (forced flywheel rendering toggle)
 * Hotkey support (quick access to config UI/inventory UI/filter preview)
 
+## 画廊 / Gallery
+
+![CreativeMotor.png](https://cdn.modrinth.com/data/TlQAWQCY/images/c43083ded90cbc003f8106da20efc555d98fc011.png)
+![Goggles.png](https://cdn.modrinth.com/data/TlQAWQCY/images/24a78978d9f6c90ee5066a12c32c4079fa28d0b7.gif)
+
 ## 注意 / Notice
 
-[中文]
 > 主要在 1.21.1 NeoForge 上开发额外功能
 >
 > 部分功能已经移植至 1.20.1 Forge 版本
 
-[English]
 > Extra features are mainly developed in 1.21.1 NeoForge
 >
 > Some features have been ported to 1.20.1 Forge version
 
 ## 版本 / Versions
 
-[中文]
 > 1.0版本之后模组支持的MineCraft版本列表：
 
-[English]
 > Supported Minecraft version list of the mod version 1.0 or later:
 
 |        | Forge | Fabric/Quilt | NeoForge |
@@ -65,10 +62,8 @@
 | 1.19.2 |   ✅   |      ✅       |          |
 | 1.18.2 |   ✅   |      ✅       |          |
 
-[中文]
 > 2.0版本之后模组支持的MineCraft版本列表：
 
-[English]
 > Supported Minecraft version list of the mod version 2.0 or later:
 
 |        | Forge | Fabric/Quilt | NeoForge |
@@ -77,5 +72,3 @@
 | 1.20.1 |   ✅   |      ❌       |    ✅     |
 | 1.19.2 |   ❌   |      ❌       |          |
 | 1.18.2 |   ❌   |      ❌       |          |
-
-[Create]: https://modrinth.com/mod/create

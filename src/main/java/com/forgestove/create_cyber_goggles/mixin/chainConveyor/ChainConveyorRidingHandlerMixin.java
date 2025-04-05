@@ -1,6 +1,7 @@
 package com.forgestove.create_cyber_goggles.mixin.chainConveyor;
 import com.forgestove.create_cyber_goggles.Config;
 import com.simibubi.create.AllTags.AllItemTags;
+import com.simibubi.create.content.equipment.armor.CardboardArmorHandler;
 import com.simibubi.create.content.kinetics.chainConveyor.*;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.math.VecHelper;
@@ -55,20 +56,18 @@ public abstract class ChainConveyorRidingHandlerMixin {
 									.add(VecHelper.rotate(new Vec3(0, 0.25, 1), chainPosition, Axis.Y));
 		if (catchingUp > 0) catchingUp--;
 		var diff = targetPosition.subtract(playerPosition);
-		if (catchingUp == 0 && !Config.preventFalling.get()) {
-			if (diff.length() > Config.separationDistance.get() || diff.y < Config.separationHeight.get()) {
-				stopRiding();
-				return;
-			}
+		if (catchingUp == 0 && !Config.preventFalling.get() && (
+				diff.length() > Config.separationDistance.get() || diff.y < Config.separationHeight.get()
+		)) {
+			stopRiding();
+			return;
 		}
 		player.setDeltaMovement(player.getDeltaMovement().scale(0.75).add(diff.scale(0.25)));
 		if (AnimationTickHolder.getTicks() % 10 == 0)
 			CatnipServices.NETWORK.sendToServer(new ServerboundChainConveyorRidingPacket(ridingChainConveyor, false));
 	}
 	@Shadow
-	private static void stopRiding() {
-	}
+	private static void stopRiding() {}
 	@Shadow
-	private static void updateTargetPosition(Minecraft mc, ChainConveyorBlockEntity chainConveyorBlockEntity) {
-	}
+	private static void updateTargetPosition(Minecraft mc, ChainConveyorBlockEntity chainConveyorBlockEntity) {}
 }

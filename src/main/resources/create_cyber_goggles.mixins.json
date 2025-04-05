@@ -20,5 +20,8 @@
         "goggles.PoweredShaftBlockEntityMixin",
         "stockKeeper.StockKeeperRequestScreenMixin",
         "wrench.RadialWrenchHandlerMixin"
+    ],
+    "mixins": [
+        "armor.CardboardArmorHandlerMixin"
     ]
 }

@@ -1,5 +1,5 @@
 <!--suppress HtmlDeprecatedAttribute -->
-<p align="center"><img src="https://cdn.modrinth.com/data/TlQAWQCY/images/cb3a53ce81e1e9509a78b41e776caeb718162faa.png" alt="Logo" width="200"/></p>
+<p align="center"><img src="https://cdn.modrinth.com/data/TlQAWQCY/images/0618dbb06f9d60238573f58e96612666f133d358.png" alt="Logo" width="200"/></p>
 <h1 align="center">Create: Cyber Goggles<br>
 <a href="https://www.curseforge.com/minecraft/mc-mods/create-cyber-goggles/files"><img src="https://cf.way2muchnoise.eu/versions/1233804(c70039).svg" alt="Supported Versions"></a>
 <a href="https://github.com/ForgeStove/CreateCyberGoggles?tab=readme-ov-file#MIT-1-ov-file"><img src="https://img.shields.io/github/license/ForgeStove/CreateCyberGoggles?style=flat&color=900c3f" alt="License"></a>

@@ -38,6 +38,8 @@
     "create_cyber_goggles.configuration.enhancedStoreRender.tooltip": "增强桌布商店渲染以及操作逻辑",
     "create_cyber_goggles.configuration.forcedBackend": "强制飞轮优化",
     "create_cyber_goggles.configuration.forcedBackend.tooltip": "强制启用飞轮渲染后端（与着色器冲突，除非你知道你在做什么）",
+    "create_cyber_goggles.configuration.nbtFix": "NBT修复",
+    "create_cyber_goggles.configuration.nbtFix.tooltip": "修复NBT过大导致的崩溃，可能导致卡顿",
     "create_cyber_goggles.configuration.preciseNumbers": "精准数字",
     "create_cyber_goggles.configuration.preciseNumbers.tooltip": "显示更精准的数字",
     "create_cyber_goggles.configuration.preventFalling": "防止玩家分离",

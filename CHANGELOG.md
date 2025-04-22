@@ -1,1 +1,1 @@
-- Turn you into a cardboard box when you put on the chain
+- Add new configuration: Fix NBT too big crash, may cause lag

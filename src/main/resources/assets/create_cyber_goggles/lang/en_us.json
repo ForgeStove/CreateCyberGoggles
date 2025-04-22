@@ -38,6 +38,8 @@
     "create_cyber_goggles.configuration.enhancedStoreRender.tooltip": "Enhance the rendering of the tablecloth store as well as the operation logic",
     "create_cyber_goggles.configuration.forcedBackend": "Forced Backend",
     "create_cyber_goggles.configuration.forcedBackend.tooltip": "Allow flywheel backend, even if not compatible with shaders (Unless you know what you are doing)",
+    "create_cyber_goggles.configuration.nbtFix": "NBT Fix",
+    "create_cyber_goggles.configuration.nbtFix.tooltip": "Fix NBT too big crash, may cause lag",
     "create_cyber_goggles.configuration.preciseNumbers": "Precise Numbers",
     "create_cyber_goggles.configuration.preciseNumbers.tooltip": "Show precise numbers in the goggles overlay",
     "create_cyber_goggles.configuration.preventFalling": "Prevent Falling",

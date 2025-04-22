@@ -19,6 +19,7 @@
         "goggles.GogglesItemMixin",
         "goggles.KineticBlockEntityMixin",
         "goggles.PoweredShaftBlockEntityMixin",
+        "nbt.NbtAccounterMixin",
         "stockKeeper.StockKeeperRequestScreenMixin",
         "wrench.RadialWrenchHandlerMixin"
     ]

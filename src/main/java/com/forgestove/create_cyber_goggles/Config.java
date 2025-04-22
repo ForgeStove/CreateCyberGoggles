@@ -23,6 +23,7 @@ public class Config {
 	public static final ConfigValue<Boolean> renderExtraItems;
 	public static final ConfigValue<Boolean> enableKineticEffect;
 	public static final ConfigValue<Boolean> preciseNumbers;
+	public static final ConfigValue<Boolean> nbtFix;
 	public static final ConfigValue<Boolean> alwaysAllowRotating;
 	static {
 		CLIENT.push("Armor");
@@ -51,6 +52,9 @@ public class Config {
 		renderExtraItems = CLIENT.define("renderExtraItems", true);
 		enableKineticEffect = CLIENT.define("enableKineticEffect", true);
 		preciseNumbers = CLIENT.define("preciseNumbers", true);
+		CLIENT.pop();
+		CLIENT.push("Nbt");
+		nbtFix = CLIENT.define("nbtFix", false);
 		CLIENT.pop();
 		CLIENT.push("Wrench");
 		alwaysAllowRotating = CLIENT.define("alwaysAllowRotating", true);

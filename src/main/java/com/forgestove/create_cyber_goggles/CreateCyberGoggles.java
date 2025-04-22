@@ -12,7 +12,7 @@ import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.event.ScreenEvent.Closing;
 import net.neoforged.neoforge.client.gui.*;
 import org.jetbrains.annotations.NotNull;
-@Mod(CreateCyberGoggles.ID)
+@Mod(value = CreateCyberGoggles.ID, dist = Dist.CLIENT)
 public class CreateCyberGoggles {
 	public static final String ID = "create_cyber_goggles";
 	public static final String NAME = "Create: Cyber Goggles";

@@ -3,6 +3,7 @@
     "minVersion": "0",
     "package": "com.forgestove.create_cyber_goggles.mixin",
     "client": [
+        "armor.CardboardArmorHandlerMixin",
         "armor.CardboardArmorStealthOverlayMixin",
         "armor.DivingBootsItemMixin",
         "armor.NetheriteBacktankFirstPersonRendererMixin",
@@ -17,6 +18,8 @@
         "goggles.GogglesItemMixin",
         "goggles.KineticBlockEntityMixin",
         "goggles.PoweredShaftBlockEntityMixin",
+        "nbt.NbtAccounterMixin",
+        "stockKeeper.StockKeeperRequestScreenMixin",
         "wrench.RadialWrenchHandlerMixin"
     ]
 }

@@ -12,6 +12,7 @@ public class Config {
 	public static final ConfigValue<Integer> separationDistance;
 	public static final ConfigValue<Integer> separationHeight;
 	public static final ConfigValue<Boolean> enhancedConnection;
+	public static final ConfigValue<Boolean> cardBoardedYourself;
 	public static final ConfigValue<Boolean> forcedBackend;
 	public static final ConfigValue<Boolean> enableInSurvival;
 	public static final ConfigValue<Boolean> enableInCreative;
@@ -20,13 +21,13 @@ public class Config {
 	public static final ConfigValue<Boolean> enhancedInfo;
 	public static final ConfigValue<Boolean> enhancedStoreRender;
 	public static final ConfigValue<Boolean> renderExtraItems;
-	public static final ConfigValue<Boolean> enableOpenFilterScreen;
 	public static final ConfigValue<Boolean> enableKineticEffect;
 	public static final ConfigValue<Boolean> preciseNumbers;
+	public static final ConfigValue<Boolean> nbtFix;
 	public static final ConfigValue<Boolean> alwaysAllowRotating;
 	static {
 		CLIENT.push("Armor");
-		removeBoxOverlay = CLIENT.define("removeBoxOverlay", false);
+		removeBoxOverlay = CLIENT.define("removeBoxOverlay", true);
 		removeNetheriteFirstPerson = CLIENT.define("removeNetheriteFirstPerson", false);
 		removeDivingBootsAffect = CLIENT.define("removeDivingBootsAffect", false);
 		CLIENT.pop();
@@ -36,9 +37,7 @@ public class Config {
 		separationDistance = CLIENT.define("separationDistance", 3);
 		separationHeight = CLIENT.define("separationHeight", -1);
 		enhancedConnection = CLIENT.define("enhancedConnection", true);
-		CLIENT.pop();
-		CLIENT.push("Filter");
-		enableOpenFilterScreen = CLIENT.define("enableOpenFilterScreen", true);
+		cardBoardedYourself = CLIENT.define("cardBoardedYourself", true);
 		CLIENT.pop();
 		CLIENT.push("Flywheel");
 		forcedBackend = CLIENT.define("forcedBackend", false);
@@ -53,6 +52,9 @@ public class Config {
 		renderExtraItems = CLIENT.define("renderExtraItems", true);
 		enableKineticEffect = CLIENT.define("enableKineticEffect", true);
 		preciseNumbers = CLIENT.define("preciseNumbers", true);
+		CLIENT.pop();
+		CLIENT.push("Nbt");
+		nbtFix = CLIENT.define("nbtFix", false);
 		CLIENT.pop();
 		CLIENT.push("Wrench");
 		alwaysAllowRotating = CLIENT.define("alwaysAllowRotating", true);

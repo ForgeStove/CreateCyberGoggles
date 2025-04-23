@@ -88,7 +88,7 @@ tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
 publishMods {
     file = jar.archiveFile
     changelog = file("CHANGELOG.md").text
-    type = STABLE
+    type = BETA
     version = "$minecraft_version-$mod_version+$platform"
     displayName = "[$platform] $mod_name $mod_version+$minecraft_version"
     modLoaders.addAll("$platform", "Neo$platform")

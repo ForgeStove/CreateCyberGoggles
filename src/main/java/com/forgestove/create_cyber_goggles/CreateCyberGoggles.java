@@ -23,6 +23,7 @@ public class CreateCyberGoggles {
 		@SubscribeEvent
 		public static void key(Key event) {
 			KeyInput.openFilterScreen(event);
+			KeyInput.openStockScreen(event);
 		}
 	}
 	@EventBusSubscriber(value = Dist.CLIENT, bus = Bus.MOD)

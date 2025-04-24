@@ -28,17 +28,13 @@ minecraft {
             mods { "${mod_id}" { source sourceSets.main } }
         }
         client {
+            workingDirectory project.file('run')
             property 'forge.enabledGameTestNamespaces', mod_id
-            args '--username', "Dev"
+            args '--username', "Dev", "-mixin.config=" + mod_id + ".mixins.json"
         }
         server {
             property 'forge.enabledGameTestNamespaces', mod_id
-            args '--nogui'
-        }
-        gameTestServer { property 'forge.enabledGameTestNamespaces', mod_id }
-        data {
-            workingDirectory project.file('run-data')
-            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+            args '--nogui', "-mixin.config=" + mod_id + ".mixins.json"
         }
     }
 }
@@ -80,11 +76,17 @@ tasks.named('processResources', ProcessResources).configure {
     inputs.properties replaceProperties
     filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) { expand replaceProperties + [project: project] }
 }
-tasks.named('jar', Jar).configure {
-    manifest { attributes(["MixinConfigs": mod_id + ".mixins.json"]) }
-}
+tasks.named('jar', Jar).configure { exclude('mixin.refmap.json') }
 tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
-//idea { module { downloadSources = true; downloadJavadoc = true } }
+jar { manifest { attributes(["MixinConfigs": mod_id + ".mixins.json"]) } }
+jar.finalizedBy('reobfJar')
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    archiveBaseName.set(project.archivesBaseName)
+    archiveVersion.set("${project.version}")
+    archiveClassifier.set('sources')
+}
+artifacts { archives jar, sourcesJar }
 publishMods {
     file = jar.archiveFile
     changelog = file("CHANGELOG.md").text

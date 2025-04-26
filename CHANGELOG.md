@@ -1,1 +1,1 @@
-- Fix crash
+- Update to 3.0, depends on cloth config api

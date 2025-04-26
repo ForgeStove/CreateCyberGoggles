@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.chainConveyor;
-import com.forgestove.create_cyber_goggles.Config;
+import com.forgestove.create_cyber_goggles.config.Config;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.kinetics.chainConveyor.*;
@@ -24,7 +24,8 @@ public abstract class ChainConveyorRidingHandlerMixin {
 		if (mc.isPaused()) return;
 		var player = mc.player;
 		if (player == null) return;
-		if (!Config.alwaysAllowRiding.get() && !AllItemTags.CHAIN_RIDEABLE.matches(mc.player.getMainHandItem())) {
+		var chainConveyor = Config.data.chainConveyor;
+		if (!chainConveyor.alwaysAllowRiding && !AllItemTags.CHAIN_RIDEABLE.matches(mc.player.getMainHandItem())) {
 			stopRiding();
 			return;
 		}
@@ -55,8 +56,8 @@ public abstract class ChainConveyorRidingHandlerMixin {
 									.add(VecHelper.rotate(new Vec3(0, 0.25, 1), chainPosition, Axis.Y));
 		if (catchingUp > 0) catchingUp--;
 		var diff = targetPosition.subtract(playerPosition);
-		if (catchingUp == 0 && !Config.preventFalling.get()) {
-			if (diff.length() > Config.separationDistance.get() || diff.y < Config.separationHeight.get()) {
+		if (catchingUp == 0 && !chainConveyor.preventFalling) {
+			if (diff.length() > chainConveyor.separationDistance || diff.y < chainConveyor.separationHeight) {
 				stopRiding();
 				return;
 			}

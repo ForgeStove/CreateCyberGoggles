@@ -6,15 +6,16 @@ import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 public enum KeyBind {
-	//	OPEN_CONFIG("openConfig", GLFW.GLFW_KEY_UNKNOWN),
+	OPEN_CONFIG("openConfig", GLFW.GLFW_KEY_UNKNOWN),
 	OPEN_STOCK("openStock", GLFW.GLFW_KEY_UNKNOWN),
-	PREVIEW_FILTER("previewFilter", GLFW.GLFW_KEY_LEFT_ALT);
+	PREVIEW_FILTER("previewFilter", GLFW.GLFW_KEY_UNKNOWN),
+	TOGGLE_DIVING("toggleDiving", GLFW.GLFW_KEY_UNKNOWN);
 	private final String description;
 	private final int key;
 	private final boolean modifiable;
 	private KeyMapping keyMapping;
 	KeyBind(String description, int defaultKey) {
-		this.description = "%s.key.%s".formatted(CreateCyberGoggles.ID, description);
+		this.description = "key.%s.%s".formatted(CreateCyberGoggles.ID, description);
 		this.key = defaultKey;
 		this.modifiable = !description.isEmpty();
 	}

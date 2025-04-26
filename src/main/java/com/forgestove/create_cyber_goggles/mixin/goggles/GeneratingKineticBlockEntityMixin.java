@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.goggles;
-import com.forgestove.create_cyber_goggles.Config;
+import com.forgestove.create_cyber_goggles.config.Config;
 import com.simibubi.create.content.kinetics.base.*;
 import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
@@ -24,7 +24,7 @@ public abstract class GeneratingKineticBlockEntityMixin extends KineticBlockEnti
 			boolean isPlayerSneaking,
 			CallbackInfoReturnable<Boolean> returnable
 	) {
-		if (!Config.enhancedInfo.get()) return;
+		if (!Config.data.goggles.enhancedInfo) return;
 		var stressBase = calculateAddedStressCapacity();
 		if (!Mth.equal(stressBase, 0)) {
 			CreateLang.translate("gui.goggles.generator_stats").forGoggles(tooltip);

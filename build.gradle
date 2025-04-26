@@ -50,7 +50,7 @@ repositories {
     }
     maven { url = "https://maven.createmod.net" } // Create, Ponder, Flywheel
     maven { url = "https://maven.tterrag.com" } // Registrate
-    maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" } // ForgeConfigAPIPort
+    maven { url = "https://maven.shedaniel.me" } // Cloth Config API
 }
 dependencies {
     minecraft("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
@@ -62,6 +62,7 @@ dependencies {
     implementation(fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}"))
     compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:+"))
     implementation("io.github.llamalad7:mixinextras-forge:+")
+    implementation(fg.deobf("me.shedaniel.cloth:cloth-config-forge:11.1.136"))
 }
 tasks.named('processResources', ProcessResources).configure {
     var replaceProperties = [minecraft_version: minecraft_version,

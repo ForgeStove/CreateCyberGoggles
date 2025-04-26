@@ -12,6 +12,7 @@
         "chainConveyor.ChainConveyorRidingHandlerMixin",
         "filter.AbstractFilterScreenMixin",
         "flywheel.SimpleBackendMixin",
+        "goggles.BlueprintOverlayRendererMixin",
         "goggles.CreateLangMixin",
         "goggles.DeployerBlockEntityMixin",
         "goggles.GeneratingKineticBlockEntityMixin",

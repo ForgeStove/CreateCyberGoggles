@@ -1,1 +1,1 @@
-- Add new hot key for toggling the diving boots affect
+- Add new hot key for toggling the diving boots affect [#9](https://github.com/ForgeStove/CreateCyberGoggles/issues/9)

@@ -1,4 +1,4 @@
-//file:noinspection SpellCheckingInspection
+//file:noinspection All
 plugins {
     id 'idea'
     id "eclipse"

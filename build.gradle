@@ -6,7 +6,6 @@ plugins {
     id "maven-publish"
     id 'net.neoforged.moddev' version '+'
     id "me.modmuss50.mod-publish-plugin" version "+"
-    id "org.jetbrains.gradle.plugin.idea-ext" version "+"
 }
 base { archivesName = mod_id }
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
@@ -63,6 +62,13 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
 }
 sourceSets.main.resources.srcDir generateModMetadata
 neoForge.ideSyncTask generateModMetadata
+tasks.register('sourcesJar', Jar) {
+    from sourceSets.main.allSource
+    archiveBaseName.set(mod_id)
+    archiveVersion.set("${project.version}")
+    archiveClassifier.set('sources')
+}
+artifacts { archives jar, sourcesJar }
 idea { module { downloadSources = true; downloadJavadoc = true } }
 publishMods {
     file = jar.archiveFile

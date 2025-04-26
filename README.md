@@ -25,6 +25,7 @@
 * 特殊交互功能（自动纸箱化悬挂、无扳手旋转方块、增强商店界面）
 * 渲染后端优化（强制飞轮渲染开关）
 * 快捷键支持（配置界面/仓库界面/过滤器预览快速访问）
+* NBT修复（对原版的修复，不稳定）
 
 This mod provides the following configurable features:
 
@@ -38,6 +39,7 @@ This mod provides the following configurable features:
 * Special interaction features (automatic box suspension, wrench-free block rotation, enhanced shop interface)
 * Rendering backend optimizations (forced flywheel rendering toggle)
 * Hotkey support (quick access to config UI/inventory UI/filter preview)
+* NBT fix (fix to the Vanilla, unstable)
 
 ## 注意 / Notice
 

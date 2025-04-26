@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(NetheriteBacktankFirstPersonRenderer.class)
-public class NetheriteBacktankFirstPersonRendererMixin {
+public abstract class NetheriteBacktankFirstPersonRendererMixin {
 	@Shadow(remap = false) private static boolean rendererActive;
 	@Inject(method = "clientTick", at = @At("HEAD"), remap = false, cancellable = true)
 	private static void clientTick(CallbackInfo callbackInfo) {

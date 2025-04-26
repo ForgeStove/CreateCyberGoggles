@@ -23,11 +23,7 @@ public class CreateCyberGoggles {
 	@EventBusSubscriber(value = Dist.CLIENT, bus = Bus.GAME)
 	public static class ClientGameEvents {
 		@SubscribeEvent
-		public static void key(Key event) {
-			KeyInput.openFilterScreen(event);
-			KeyInput.openConfigScreen(event);
-			KeyInput.openStockScreen(event);
-		}
+		public static void key(Key event) {KeyInput.onKeyInput(event);}
 		@SubscribeEvent
 		public static void mouseScrollingEvent(MouseScrollingEvent event) {
 			MouseScroll.onMouseScroll(event);

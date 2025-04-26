@@ -64,5 +64,8 @@
     "create_cyber_goggles.configuration.title": "机械动力：赛博护目镜",
     "create_cyber_goggles.key.openConfig": "打开配置",
     "create_cyber_goggles.key.openStock": "打开库存",
-    "create_cyber_goggles.key.previewFilter": "预览过滤器"
+    "create_cyber_goggles.key.previewFilter": "预览过滤器",
+    "create_cyber_goggles.key.toggleDiving": "切换潜水模式",
+    "create_cyber_goggles.message.disableDivingAffect": "已禁用潜水靴影响",
+    "create_cyber_goggles.message.enableDivingAffect": "已启用潜水靴影响"
 }

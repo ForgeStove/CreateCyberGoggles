@@ -7,8 +7,9 @@ import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 public enum KeyBind {
 	OPEN_CONFIG("openConfig", GLFW.GLFW_KEY_UNKNOWN),
-	PREVIEW_FILTER("previewFilter", GLFW.GLFW_KEY_LEFT_ALT),
-	OPEN_STOCK("openStock", GLFW.GLFW_KEY_UNKNOWN);
+	PREVIEW_FILTER("previewFilter", GLFW.GLFW_KEY_UNKNOWN),
+	OPEN_STOCK("openStock", GLFW.GLFW_KEY_UNKNOWN),
+	TOGGLE_DIVING("toggleDiving", GLFW.GLFW_KEY_UNKNOWN);
 	private final String description;
 	private final int key;
 	private final boolean modifiable;

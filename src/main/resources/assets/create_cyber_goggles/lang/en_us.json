@@ -64,5 +64,8 @@
     "create_cyber_goggles.configuration.title": "Create: Cyber Goggles",
     "create_cyber_goggles.key.openConfig": "Open Config",
     "create_cyber_goggles.key.openStock": "Open Stock",
-    "create_cyber_goggles.key.previewFilter": "Preview Filter Screen"
+    "create_cyber_goggles.key.previewFilter": "Preview Filter Screen",
+    "create_cyber_goggles.key.toggleDiving": "Toggle Diving Boots Affect",
+    "create_cyber_goggles.message.disableDivingAffect": "Diving Boots Affect Disabled",
+    "create_cyber_goggles.message.enableDivingAffect": "Diving Boots Affect Enabled"
 }

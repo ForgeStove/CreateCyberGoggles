@@ -22,6 +22,23 @@ import org.lwjgl.glfw.GLFW;
 import java.util.Collections;
 public class KeyInput {
 	public static StockTickerBlockEntity lastBlockEntity = null;
+	public static void onKeyInput(Key event) {
+		toggleDiving(event);
+		openConfigScreen(event);
+		openStockScreen(event);
+		openFilterScreen(event);
+	}
+	public static void toggleDiving(Key event) {
+		if (!KeyBind.isAction(event, KeyBind.TOGGLE_DIVING, GLFW.GLFW_PRESS)) return;
+		var affect = Config.removeDivingBootsAffect;
+		var enabled = affect.get();
+		affect.set(!enabled);
+		var player = Minecraft.getInstance().player;
+		if (player == null) return;
+		player.sendSystemMessage(Component.translatable(CreateCyberGoggles.ID + ".message." + (
+				enabled ? "enableDivingAffect" : "disableDivingAffect"
+		)));
+	}
 	public static void openConfigScreen(Key event) {
 		if (!KeyBind.isAction(event, KeyBind.OPEN_CONFIG, GLFW.GLFW_PRESS)) return;
 		var mc = Minecraft.getInstance();

@@ -1,1 +1,1 @@
-- Add new configuration: Fix NBT too big crash, may cause lag
+- Add new hot key for toggling the diving boots affect

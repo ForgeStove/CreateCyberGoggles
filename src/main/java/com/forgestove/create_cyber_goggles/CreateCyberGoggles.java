@@ -12,7 +12,7 @@ public class CreateCyberGoggles {
 	public CreateCyberGoggles() {
 		ModLoadingContext.get().registerExtensionPoint(
 				ConfigScreenFactory.class,
-				() -> new ConfigScreenFactory((m, s) -> AutoConfig.getConfigScreen(ModConfig.class, s).get())
+				() -> new ConfigScreenFactory((minecraft, screen) -> AutoConfig.getConfigScreen(ModConfig.class, screen).get())
 		);
 	}
 }

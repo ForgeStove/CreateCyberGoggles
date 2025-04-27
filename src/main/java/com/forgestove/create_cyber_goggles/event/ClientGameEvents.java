@@ -9,10 +9,10 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 public class ClientGameEvents {
 	@SubscribeEvent
 	public static void key(Key event) {
-		KeyInput.toggleDiving(event);
-		KeyInput.openConfigScreen(event);
-		KeyInput.openStockScreen(event);
-		KeyInput.openFilterScreen(event);
+		KeyInput.toggleDiving();
+		KeyInput.openConfigScreen();
+		KeyInput.openStockScreen();
+		KeyInput.openFilterScreen();
 	}
 	@SubscribeEvent
 	public static void mouseScrollingEvent(MouseScrollingEvent event) {

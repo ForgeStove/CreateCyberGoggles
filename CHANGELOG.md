@@ -1,1 +1,1 @@
-- Update to 3.0, depends on cloth config api
+- Update to 4.0, synchronized with 1.21.1 NeoForge

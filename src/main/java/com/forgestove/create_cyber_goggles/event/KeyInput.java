@@ -1,6 +1,6 @@
-package com.forgestove.create_cyber_goggles.content.event;
+package com.forgestove.create_cyber_goggles.event;
 import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
-import com.forgestove.create_cyber_goggles.config.*;
+import com.forgestove.create_cyber_goggles.config.ModConfig;
 import com.simibubi.create.AllMenuTypes;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.stockTicker.*;
@@ -22,19 +22,13 @@ import org.lwjgl.glfw.GLFW;
 import java.util.Collections;
 public class KeyInput {
 	public static StockTickerBlockEntity lastBlockEntity = null;
-	public static void onKeyInput(Key event) {
-		toggleDiving(event);
-		openStockScreen(event);
-		openFilterScreen(event);
-		openConfigScreen(event);
-	}
 	public static void toggleDiving(Key event) {
 		if (!KeyBind.isAction(event, KeyBind.TOGGLE_DIVING, GLFW.GLFW_PRESS)) return;
 		var mc = Minecraft.getInstance();
 		var player = mc.player;
 		if (player == null || mc.screen != null) return;
-		var enabled = Config.data.armor.removeDivingBootsAffect;
-		Config.data.armor.removeDivingBootsAffect = !enabled;
+		var enabled = CreateCyberGoggles.config.armor.removeDivingBootsAffect;
+		CreateCyberGoggles.config.armor.removeDivingBootsAffect = !enabled;
 		player.displayClientMessage(
 				Component.translatable("message.%s.%s".formatted(
 						CreateCyberGoggles.ID,
@@ -46,7 +40,7 @@ public class KeyInput {
 		if (!KeyBind.isAction(event, KeyBind.OPEN_CONFIG, GLFW.GLFW_PRESS)) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) return;
-		mc.setScreen(AutoConfig.getConfigScreen(ModConfigData.class, null).get());
+		mc.setScreen(AutoConfig.getConfigScreen(ModConfig.class, null).get());
 	}
 	public static void openStockScreen(Key event) {
 		if (!KeyBind.isAction(event, KeyBind.OPEN_STOCK, GLFW.GLFW_PRESS)) return;

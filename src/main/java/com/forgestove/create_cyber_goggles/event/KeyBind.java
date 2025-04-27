@@ -1,4 +1,4 @@
-package com.forgestove.create_cyber_goggles.content.event;
+package com.forgestove.create_cyber_goggles.event;
 import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
 import net.minecraft.client.KeyMapping;
 import net.minecraftforge.client.event.InputEvent.Key;

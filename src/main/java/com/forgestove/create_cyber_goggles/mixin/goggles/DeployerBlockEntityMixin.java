@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.goggles;
-import com.forgestove.create_cyber_goggles.config.Config;
+import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
 import com.simibubi.create.content.kinetics.base.IRotate.SpeedLevel;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.deployer.DeployerBlockEntity;
@@ -28,7 +28,7 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 			boolean isPlayerSneaking,
 			CallbackInfoReturnable<Boolean> returnable
 	) {
-		if (!Config.data.goggles.enhancedInfo) return;
+		if (!CreateCyberGoggles.config.goggles.enhancedInfo) return;
 		super.addToTooltip(tooltip, isPlayerSneaking);
 		if (overflowItems.isEmpty()) {
 			returnable.setReturnValue(false);
@@ -51,7 +51,7 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 			boolean isPlayerSneaking,
 			CallbackInfoReturnable<Boolean> returnable
 	) {
-		if (!Config.data.goggles.enhancedInfo) return;
+		if (!CreateCyberGoggles.config.goggles.enhancedInfo) return;
 		SpeedLevel.getFormattedSpeedText(getSpeed(), overStressed).forGoggles(tooltip);
 	}
 }

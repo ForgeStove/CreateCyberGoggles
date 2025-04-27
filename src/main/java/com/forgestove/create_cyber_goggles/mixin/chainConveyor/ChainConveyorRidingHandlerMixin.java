@@ -1,5 +1,6 @@
 package com.forgestove.create_cyber_goggles.mixin.chainConveyor;
-import com.forgestove.create_cyber_goggles.config.Config;
+import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
+import com.forgestove.create_cyber_goggles.util.Util;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.kinetics.chainConveyor.*;
@@ -7,6 +8,8 @@ import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
+import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket.Action;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.*;
@@ -24,7 +27,7 @@ public abstract class ChainConveyorRidingHandlerMixin {
 		if (mc.isPaused()) return;
 		var player = mc.player;
 		if (player == null) return;
-		var chainConveyor = Config.data.chainConveyor;
+		var chainConveyor = CreateCyberGoggles.config.chainConveyor;
 		if (!chainConveyor.alwaysAllowRiding && !AllItemTags.CHAIN_RIDEABLE.matches(mc.player.getMainHandItem())) {
 			stopRiding();
 			return;
@@ -63,13 +66,13 @@ public abstract class ChainConveyorRidingHandlerMixin {
 			}
 		}
 		player.setDeltaMovement(player.getDeltaMovement().scale(0.75).add(diff.scale(0.25)));
+		if (Util.testForStealth(player))
+			player.connection.send(new ServerboundPlayerCommandPacket(player, Action.PRESS_SHIFT_KEY));
 		if (AnimationTickHolder.getTicks() % 10 == 0)
 			AllPackets.getChannel().sendToServer(new ServerboundChainConveyorRidingPacket(ridingChainConveyor, false));
 	}
 	@Shadow(remap = false)
-	private static void stopRiding() {
-	}
+	private static void stopRiding() {}
 	@Shadow(remap = false)
-	private static void updateTargetPosition(Minecraft mc, ChainConveyorBlockEntity chainConveyorBlockEntity) {
-	}
+	private static void updateTargetPosition(Minecraft mc, ChainConveyorBlockEntity chainConveyorBlockEntity) {}
 }

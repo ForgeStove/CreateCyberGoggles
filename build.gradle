@@ -91,7 +91,7 @@ artifacts { archives jar, sourcesJar }
 publishMods {
     file = jar.archiveFile
     changelog = file("CHANGELOG.md").text
-    type = BETA
+    type = STABLE
     version = "$minecraft_version-$mod_version+$platform"
     displayName = "[$platform] $mod_name $mod_version+$minecraft_version"
     modLoaders.addAll("$platform", "Neo$platform")

@@ -4,11 +4,11 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.EventBusSubscriber.Bus;
-import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent;
+import net.neoforged.neoforge.client.event.InputEvent.*;
 @EventBusSubscriber(modid = CreateCyberGoggles.ID, value = Dist.CLIENT, bus = Bus.GAME)
 public class ClientGameEvents {
 	@SubscribeEvent
-	public static void key() {
+	public static void key(Key event) {
 		KeyInput.toggleDiving();
 		KeyInput.openConfigScreen();
 		KeyInput.openStockScreen();

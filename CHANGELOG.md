@@ -1,1 +1,1 @@
-- Update to 4.0, synchronized with 1.21.1 NeoForge
+- use lazy keymapping

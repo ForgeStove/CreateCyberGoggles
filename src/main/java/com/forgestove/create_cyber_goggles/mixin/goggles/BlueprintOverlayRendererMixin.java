@@ -49,18 +49,7 @@ public abstract class BlueprintOverlayRendererMixin {
 		var x = (guiGraphics.guiWidth() - w) / 2;
 		var y = guiGraphics.guiHeight() - 100;
 		if (shopContext != null) {
-			TooltipRenderUtil.renderTooltipBackground(
-					guiGraphics,
-					x - 2,
-					y + 1,
-					w + 4,
-					19,
-					0,
-					0x55_000000,
-					0x55_000000,
-					0,
-					0
-			);
+			TooltipRenderUtil.renderTooltipBackground(guiGraphics, x - 2, y + 1, w + 4, 19, 0, 0x55_000000, 0x55_000000, 0, 0);
 			AllGuiTextures.TRADE_OVERLAY.render(guiGraphics, guiGraphics.guiWidth() / 2 - 48, y - 19);
 			if (shopContext.purchases() > 0) {
 				guiGraphics.renderItem(AllItems.SHOPPING_LIST.asStack(), guiGraphics.guiWidth() / 2 + 20, y - 20);

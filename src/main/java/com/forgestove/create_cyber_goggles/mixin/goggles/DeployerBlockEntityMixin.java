@@ -23,11 +23,7 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 		super(typeIn, pos, state);
 	}
 	@Inject(method = "addToTooltip", at = @At("HEAD"), cancellable = true)
-	private void addToTooltip(
-			List<Component> tooltip,
-			boolean isPlayerSneaking,
-			CallbackInfoReturnable<Boolean> returnable
-	) {
+	private void addToTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
 		if (!CreateCyberGoggles.config.goggles.enhancedInfo) return;
 		super.addToTooltip(tooltip, isPlayerSneaking);
 		if (overflowItems.isEmpty()) {
@@ -37,20 +33,12 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 		TooltipHelper.addHint(tooltip, "hint.full_deployer");
 		for (var itemStack : overflowItems)
 			CreateLang.builder()
-					  .text("%s x%d".formatted(
-							  Component.translatable(itemStack.getDescriptionId()).getString(),
-							  itemStack.getCount()
-					  ))
-					  .style(ChatFormatting.GREEN)
-					  .forGoggles(tooltip);
+					  .text("%s x%d".formatted(Component.translatable(itemStack.getDescriptionId()).getString(), itemStack.getCount()))
+					  .style(ChatFormatting.GREEN).forGoggles(tooltip);
 		returnable.setReturnValue(true);
 	}
 	@Inject(method = "addToGoggleTooltip", at = @At("RETURN"))
-	private void addToGoggleTooltip(
-			List<Component> tooltip,
-			boolean isPlayerSneaking,
-			CallbackInfoReturnable<Boolean> returnable
-	) {
+	private void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
 		if (!CreateCyberGoggles.config.goggles.enhancedInfo) return;
 		SpeedLevel.getFormattedSpeedText(getSpeed(), overStressed).forGoggles(tooltip);
 	}

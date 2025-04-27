@@ -58,8 +58,7 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 			refreshSearchResults(moveToTopNextTick);
 		}
 		itemScroll.tickChaser();
-		if (Math.abs(itemScroll.getValue() - itemScroll.getChaseTarget()) < 1 / 16f)
-			itemScroll.setValue(itemScroll.getChaseTarget());
+		if (Math.abs(itemScroll.getValue() - itemScroll.getChaseTarget()) < 1 / 16f) itemScroll.setValue(itemScroll.getChaseTarget());
 		blockEntity.refreshClientStockSnapshot();
 	}
 	@Shadow

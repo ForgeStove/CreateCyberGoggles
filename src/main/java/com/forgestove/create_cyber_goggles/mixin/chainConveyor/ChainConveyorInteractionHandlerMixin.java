@@ -26,14 +26,9 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 		var mc = Minecraft.getInstance();
 		if (localPlayer == null) return;
 		var mainHandItem = localPlayer.getMainHandItem();
-		if (mc.level == null
-				|| mc.hitResult == null
-				|| mc.hitResult instanceof BlockHitResult blockHitResult
-				&& mc.level.getBlockState(blockHitResult.getBlockPos()).getBlock() instanceof ChainConveyorBlock
-				&& (
-				localPlayer.isShiftKeyDown()
-						|| mainHandItem.getItem().equals(Items.CHAIN)
-						|| AllBlocks.CHAIN_CONVEYOR.isIn(mainHandItem)
+		if (mc.level == null || mc.hitResult == null || mc.hitResult instanceof BlockHitResult blockHitResult && mc.level.getBlockState(
+				blockHitResult.getBlockPos()).getBlock() instanceof ChainConveyorBlock && (
+				localPlayer.isShiftKeyDown() || mainHandItem.getItem().equals(Items.CHAIN) || AllBlocks.CHAIN_CONVEYOR.isIn(mainHandItem)
 		)) return;
 		returnable.setReturnValue(true);
 	}

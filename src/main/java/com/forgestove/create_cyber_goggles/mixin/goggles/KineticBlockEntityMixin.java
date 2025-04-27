@@ -14,11 +14,7 @@ import java.util.List;
 public abstract class KineticBlockEntityMixin {
 	@Shadow protected boolean overStressed;
 	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), cancellable = true)
-	private void addToGoggleTooltip(
-			List<Component> tooltip,
-			boolean isPlayerSneaking,
-			CallbackInfoReturnable<Boolean> returnable
-	) {
+	private void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
 		if (!CreateCyberGoggles.config.goggles.enhancedInfo) return;
 		returnable.setReturnValue(true);
 		CreateLang.translate("gui.goggles.kinetic_stats").forGoggles(tooltip);

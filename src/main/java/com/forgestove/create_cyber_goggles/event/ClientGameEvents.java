@@ -8,19 +8,10 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 @Mod.EventBusSubscriber(modid = CreateCyberGoggles.ID, value = Dist.CLIENT, bus = Bus.FORGE)
 public class ClientGameEvents {
 	@SubscribeEvent
-	public static void toggleDiving(Key event) {
+	public static void key(Key event) {
 		KeyInput.toggleDiving(event);
-	}
-	@SubscribeEvent
-	public static void openConfigScreen(Key event) {
 		KeyInput.openConfigScreen(event);
-	}
-	@SubscribeEvent
-	public static void openStockScreen(Key event) {
 		KeyInput.openStockScreen(event);
-	}
-	@SubscribeEvent
-	public static void openFilterScreen(Key event) {
 		KeyInput.openFilterScreen(event);
 	}
 	@SubscribeEvent

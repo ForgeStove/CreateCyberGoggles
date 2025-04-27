@@ -17,11 +17,7 @@ public abstract class PoweredShaftBlockEntityMixin extends GeneratingKineticBloc
 		super(type, pos, state);
 	}
 	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), remap = false, cancellable = true)
-	private void addToGoggleTooltip(
-			List<Component> tooltip,
-			boolean isPlayerSneaking,
-			CallbackInfoReturnable<Boolean> returnable
-	) {
+	private void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
 		if (!CreateCyberGoggles.config.goggles.enhancedInfo) return;
 		returnable.setReturnValue(true);
 		super.addToGoggleTooltip(tooltip, isPlayerSneaking);

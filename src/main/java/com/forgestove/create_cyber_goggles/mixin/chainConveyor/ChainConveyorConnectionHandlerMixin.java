@@ -46,9 +46,7 @@ public abstract class ChainConveyorConnectionHandlerMixin {
 			return;
 		}
 		if (targetLift.connections.size() >= AllConfigs.server().kinetics.maxChainConveyorConnections.get()) {
-			CreateLang.translate("chain_conveyor.cannot_add_more_connections")
-					  .style(ChatFormatting.RED)
-					  .sendStatus(player);
+			CreateLang.translate("chain_conveyor.cannot_add_more_connections").style(ChatFormatting.RED).sendStatus(player);
 			return;
 		}
 		if (targetLift.connections.contains(firstPos.subtract(pos))) {

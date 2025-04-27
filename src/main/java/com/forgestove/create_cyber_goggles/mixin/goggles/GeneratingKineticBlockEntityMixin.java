@@ -19,11 +19,7 @@ public abstract class GeneratingKineticBlockEntityMixin extends KineticBlockEnti
 		super(typeIn, pos, state);
 	}
 	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), remap = false, cancellable = true)
-	private void addToGoggleTooltip(
-			List<Component> tooltip,
-			boolean isPlayerSneaking,
-			CallbackInfoReturnable<Boolean> returnable
-	) {
+	private void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
 		if (!CreateCyberGoggles.config.goggles.enhancedInfo) return;
 		var stressBase = calculateAddedStressCapacity();
 		if (!Mth.equal(stressBase, 0)) {
@@ -31,12 +27,8 @@ public abstract class GeneratingKineticBlockEntityMixin extends KineticBlockEnti
 			CreateLang.translate("tooltip.capacityProvided").style(ChatFormatting.GRAY).forGoggles(tooltip);
 			var speed = getTheoreticalSpeed();
 			if (speed != getGeneratedSpeed() && speed != 0) stressBase *= getGeneratedSpeed() / speed;
-			CreateLang.number(Math.abs(stressBase * speed))
-					  .translate("generic.unit.stress")
-					  .style(ChatFormatting.AQUA)
-					  .space()
-					  .add(CreateLang.translate("gui.goggles.at_current_speed").style(ChatFormatting.DARK_GRAY))
-					  .forGoggles(tooltip);
+			CreateLang.number(Math.abs(stressBase * speed)).translate("generic.unit.stress").style(ChatFormatting.AQUA).space()
+					  .add(CreateLang.translate("gui.goggles.at_current_speed").style(ChatFormatting.DARK_GRAY)).forGoggles(tooltip);
 		}
 		var added = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
 		returnable.setReturnValue(added);

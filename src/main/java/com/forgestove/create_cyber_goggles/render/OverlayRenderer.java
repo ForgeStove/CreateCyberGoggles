@@ -27,8 +27,7 @@ public class OverlayRenderer {
 			Util.renderItemStack(guiGraphics, depotBlockEntity.getHeldItem());
 		else if (renderExtraItems && blockEntity instanceof PackagerBlockEntity packagerBlockEntity)
 			Util.renderItemStack(guiGraphics, packagerBlockEntity.heldBox);
-		else if (CreateCyberGoggles.config.goggles.enableKineticEffect
-				&& blockEntity instanceof KineticBlockEntity kineticBlockEntity) {
+		else if (CreateCyberGoggles.config.goggles.enableKineticEffect && blockEntity instanceof KineticBlockEntity kineticBlockEntity) {
 			if (!blockHitResult.getBlockPos().equals(kineticBlockEntity.getBlockPos())) return;
 			var speed = kineticBlockEntity.getSpeed();
 			if (speed == 0) return;

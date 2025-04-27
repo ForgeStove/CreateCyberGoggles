@@ -55,8 +55,8 @@ public abstract class ChainConveyorRidingHandlerMixin {
 			targetPosition = stats.start().add((
 					stats.end().subtract(stats.start())
 			).normalize().scale(Math.min(stats.chainLength(), chainPosition)));
-		} else targetPosition = Vec3.atBottomCenterOf(ridingChainConveyor)
-									.add(VecHelper.rotate(new Vec3(0, 0.25, 1), chainPosition, Axis.Y));
+		} else
+			targetPosition = Vec3.atBottomCenterOf(ridingChainConveyor).add(VecHelper.rotate(new Vec3(0, 0.25, 1), chainPosition, Axis.Y));
 		if (catchingUp > 0) catchingUp--;
 		var diff = targetPosition.subtract(playerPosition);
 		if (catchingUp == 0 && !chainConveyor.preventFalling) {
@@ -66,8 +66,7 @@ public abstract class ChainConveyorRidingHandlerMixin {
 			}
 		}
 		player.setDeltaMovement(player.getDeltaMovement().scale(0.75).add(diff.scale(0.25)));
-		if (Util.testForStealth(player))
-			player.connection.send(new ServerboundPlayerCommandPacket(player, Action.PRESS_SHIFT_KEY));
+		if (Util.testForStealth(player)) player.connection.send(new ServerboundPlayerCommandPacket(player, Action.PRESS_SHIFT_KEY));
 		if (AnimationTickHolder.getTicks() % 10 == 0)
 			AllPackets.getChannel().sendToServer(new ServerboundChainConveyorRidingPacket(ridingChainConveyor, false));
 	}

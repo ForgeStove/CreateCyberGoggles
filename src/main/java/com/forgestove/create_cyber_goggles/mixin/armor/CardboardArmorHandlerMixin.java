@@ -12,9 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class CardboardArmorHandlerMixin {
 	@Inject(method = "testForStealth", at = @At("HEAD"), remap = false, cancellable = true)
 	private static void testForStealth(Entity entityIn, @NotNull CallbackInfoReturnable<Boolean> returnable) {
-		if (ChainConveyorRidingHandler.ridingChainConveyor == null
-				|| !(entityIn instanceof LocalPlayer player)
-				|| !Util.testForStealth(player)) return;
+		if (ChainConveyorRidingHandler.ridingChainConveyor == null || !(entityIn instanceof LocalPlayer player) || !Util.testForStealth(
+				player)) return;
 		returnable.setReturnValue(true);
 	}
 }

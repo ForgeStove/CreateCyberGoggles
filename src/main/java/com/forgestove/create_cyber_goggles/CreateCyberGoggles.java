@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod(CreateCyberGoggles.ID)
 public class CreateCyberGoggles {
 	public static final String ID = "create_cyber_goggles";
-	public static final String NAME = "Create: Cyber Goggles";
+	@SuppressWarnings("unused") public static final String NAME = "Create: Cyber Goggles";
 	public static ModConfig config = AutoConfig.register(ModConfig.class, Toml4jConfigSerializer::new).getConfig();
 	public CreateCyberGoggles() {
 		ModLoadingContext.get().registerExtensionPoint(

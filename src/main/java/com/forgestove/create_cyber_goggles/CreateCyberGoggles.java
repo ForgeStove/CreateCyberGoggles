@@ -14,8 +14,7 @@ public class CreateCyberGoggles {
 	public static ModConfig config = AutoConfig.register(ModConfig.class, Toml4jConfigSerializer::new).getConfig();
 	public CreateCyberGoggles(@NotNull ModContainer container) {
 		container.registerExtensionPoint(
-				IConfigScreenFactory.class,
-				(client, parent) -> AutoConfig.getConfigScreen(ModConfig.class, parent).get()
+				IConfigScreenFactory.class, (m, s) -> AutoConfig.getConfigScreen(ModConfig.class, s).get()
 		);
 	}
 }

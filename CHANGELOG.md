@@ -1,1 +1,1 @@
-- Fix crash [#13](https://github.com/ForgeStove/CreateCyberGoggles/issues/13)
+updated to 4.0, requires cloth config api

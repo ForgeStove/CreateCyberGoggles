@@ -1,6 +1,6 @@
 package com.forgestove.create_cyber_goggles.mixin.goggles;
-import com.forgestove.create_cyber_goggles.Config;
-import com.forgestove.create_cyber_goggles.content.render.OverlayRenderer;
+import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
+import com.forgestove.create_cyber_goggles.util.Util;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer;
@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
-import static com.forgestove.create_cyber_goggles.content.event.MouseScroll.*;
+import static com.forgestove.create_cyber_goggles.event.MouseScroll.*;
 @Mixin(BlueprintOverlayRenderer.class)
 public abstract class BlueprintOverlayRendererMixin {
 	@Shadow static boolean active;
@@ -33,7 +33,7 @@ public abstract class BlueprintOverlayRendererMixin {
 	@Shadow static BlueprintOverlayShopContext shopContext;
 	@Inject(method = "renderOverlay", at = @At("HEAD"), cancellable = true)
 	private static void renderOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo callbackInfo) {
-		if (!Config.enhancedStoreRender.get()) return;
+		if (!CreateCyberGoggles.config.goggles.enhancedStoreRender) return;
 		callbackInfo.cancel();
 		var mc = Minecraft.getInstance();
 		if (mc.options.hideGui || mc.screen != null) return;
@@ -115,9 +115,8 @@ public abstract class BlueprintOverlayRendererMixin {
 				x += 21;
 			}
 			if (selectedX != 0) guiGraphics.blitSprite(hotbarSelection, selectedX - 1, y - 1, 24, 23);
-			OverlayRenderer.renderItemStack(guiGraphics, results.get(index - 1));
+			Util.renderItemStack(guiGraphics, results.get(index - 1));
 		}
-		if (shopContext != null) shopContext.checkout();
 		RenderSystem.disableBlend();
 	}
 }

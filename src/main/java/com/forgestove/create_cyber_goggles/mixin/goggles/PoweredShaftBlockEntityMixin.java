@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.goggles;
-import com.forgestove.create_cyber_goggles.Config;
+import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.steamEngine.PoweredShaftBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -22,7 +22,7 @@ public abstract class PoweredShaftBlockEntityMixin extends GeneratingKineticBloc
 			boolean isPlayerSneaking,
 			CallbackInfoReturnable<Boolean> returnable
 	) {
-		if (!Config.enhancedInfo.get()) return;
+		if (!CreateCyberGoggles.config.goggles.enhancedInfo) return;
 		returnable.setReturnValue(true);
 		super.addToGoggleTooltip(tooltip, isPlayerSneaking);
 	}

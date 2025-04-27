@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.goggles;
-import com.forgestove.create_cyber_goggles.Config;
+import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
 import com.simibubi.create.content.kinetics.base.IRotate.*;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.utility.CreateLang;
@@ -19,7 +19,7 @@ public abstract class KineticBlockEntityMixin {
 			boolean isPlayerSneaking,
 			CallbackInfoReturnable<Boolean> returnable
 	) {
-		if (!Config.enhancedInfo.get()) return;
+		if (!CreateCyberGoggles.config.goggles.enhancedInfo) return;
 		returnable.setReturnValue(true);
 		CreateLang.translate("gui.goggles.kinetic_stats").forGoggles(tooltip);
 		if (StressImpact.isEnabled()) {

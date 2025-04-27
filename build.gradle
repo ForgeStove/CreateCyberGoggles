@@ -16,7 +16,7 @@ repositories {
     mavenLocal()
     maven { url = "https://maven.createmod.net" } // Create, Ponder, Flywheel
     maven { url = "https://mvn.devos.one/snapshots" } // Registrate
-    maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven" }
+    maven { url = "https://maven.shedaniel.me" } // Cloth Config API
 }
 neoForge {
     version = neo_version
@@ -44,6 +44,7 @@ dependencies {
     implementation("com.tterrag.registrate:Registrate:${registrate_version}")
     compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
     runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")
+    implementation("me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}")
 }
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
     var replaceProperties = [minecraft_version    : minecraft_version,
@@ -81,12 +82,12 @@ publishMods {
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")
         projectId = "TlQAWQCY"
         minecraftVersions.add(minecraft_version)
-        requires("create")
+        requires("create", "cloth-config")
     }
     curseforge {
         accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
         projectId = "1233804"
         minecraftVersions.add(minecraft_version)
-        requires("create")
+        requires("create", "cloth-config")
     }
 }

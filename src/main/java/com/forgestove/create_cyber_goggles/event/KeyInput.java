@@ -1,10 +1,12 @@
-package com.forgestove.create_cyber_goggles.content.event;
-import com.forgestove.create_cyber_goggles.*;
+package com.forgestove.create_cyber_goggles.event;
+import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
+import com.forgestove.create_cyber_goggles.config.ModConfig;
 import com.simibubi.create.AllMenuTypes;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.stockTicker.*;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
+import me.shedaniel.autoconfig.AutoConfig;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -13,40 +15,32 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
-import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.client.event.InputEvent.Key;
-import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.Collections;
 public class KeyInput {
 	public static StockTickerBlockEntity lastBlockEntity = null;
-	public static void onKeyInput(Key event) {
-		toggleDiving(event);
-		openConfigScreen(event);
-		openStockScreen(event);
-		openFilterScreen(event);
-	}
 	public static void toggleDiving(Key event) {
 		if (!KeyBind.isAction(event, KeyBind.TOGGLE_DIVING, GLFW.GLFW_PRESS)) return;
-		var affect = Config.removeDivingBootsAffect;
-		var enabled = affect.get();
-		affect.set(!enabled);
-		var player = Minecraft.getInstance().player;
-		if (player == null) return;
-		player.sendSystemMessage(Component.translatable(CreateCyberGoggles.ID + ".message." + (
-				enabled ? "enableDivingAffect" : "disableDivingAffect"
-		)));
+		var mc = Minecraft.getInstance();
+		var player = mc.player;
+		if (player == null || mc.screen != null) return;
+		var enabled = CreateCyberGoggles.config.armor.removeDivingBootsAffect;
+		CreateCyberGoggles.config.armor.removeDivingBootsAffect = !enabled;
+		player.displayClientMessage(
+				Component.translatable("message.%s.%s".formatted(
+						CreateCyberGoggles.ID,
+						enabled ? "enableDivingAffect" : "disableDivingAffect"
+				)), true
+		);
 	}
 	public static void openConfigScreen(Key event) {
 		if (!KeyBind.isAction(event, KeyBind.OPEN_CONFIG, GLFW.GLFW_PRESS)) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) return;
-		var modContainerById = ModList.get().getModContainerById(CreateCyberGoggles.ID);
-		if (modContainerById.isEmpty()) return;
-		var modContainer = modContainerById.get();
-		mc.setScreen(new ConfigurationScreen(modContainer, mc.screen));
+		mc.setScreen(AutoConfig.getConfigScreen(ModConfig.class, null).get());
 	}
 	public static void openStockScreen(Key event) {
 		if (!KeyBind.isAction(event, KeyBind.OPEN_STOCK, GLFW.GLFW_PRESS)) return;
@@ -62,7 +56,7 @@ public class KeyInput {
 		var type = AllMenuTypes.STOCK_KEEPER_REQUEST.get();
 		var inv = player.getInventory();
 		var menu = new StockKeeperRequestMenu(type, -1, inv, lastBlockEntity);
-		mc.setScreen(new StockKeeperRequestScreen(menu, inv, Component.nullToEmpty("")));
+		mc.setScreen(new StockKeeperRequestScreen(menu, inv, lastBlockEntity.getBlockState().getBlock().getName()));
 	}
 	public static void openFilterScreen(Key event) {
 		if (!KeyBind.isAction(event, KeyBind.PREVIEW_FILTER, GLFW.GLFW_PRESS)) return;

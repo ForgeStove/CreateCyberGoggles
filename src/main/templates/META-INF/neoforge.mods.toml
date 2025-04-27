@@ -33,3 +33,10 @@ modId = "create"
 type = "required"
 ordering = "NONE"
 side = "CLIENT"
+
+[[dependencies."${mod_id}"]]
+modId = "cloth_config"
+mandatory = true
+versionRange = "0"
+ordering = "NONE"
+side = "CLIENT"

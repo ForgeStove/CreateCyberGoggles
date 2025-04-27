@@ -47,11 +47,15 @@ public class KeyInput {
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) return;
 		var player = mc.player;
-		if (player == null || mc.level == null || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return;
-		if (blockHitResult.getType() == Type.MISS) return;
-		var blockEntity = mc.level.getBlockEntity(blockHitResult.getBlockPos());
-		if ((blockEntity instanceof StockTickerBlockEntity stockTickerBlockEntity))
-			lastBlockEntity = stockTickerBlockEntity;
+		if (player == null) return;
+		if (mc.hitResult == null) return;
+		if (mc.hitResult instanceof BlockHitResult blockHitResult && (
+				lastBlockEntity == null || blockHitResult.getType() == Type.BLOCK
+		)) {
+			if (mc.level == null) return;
+			if ((mc.level.getBlockEntity(blockHitResult.getBlockPos()) instanceof StockTickerBlockEntity stockTickerBlockEntity))
+				lastBlockEntity = stockTickerBlockEntity;
+		}
 		if (lastBlockEntity == null) return;
 		var type = AllMenuTypes.STOCK_KEEPER_REQUEST.get();
 		var inv = player.getInventory();

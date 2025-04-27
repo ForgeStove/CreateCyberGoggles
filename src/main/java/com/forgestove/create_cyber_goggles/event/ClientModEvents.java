@@ -10,7 +10,7 @@ import net.neoforged.neoforge.client.event.*;
 public class ClientModEvents {
 	@SubscribeEvent
 	public static void registerKeyMappingsEvent(RegisterKeyMappingsEvent event) {
-		KeyBind.register(event);
+		ModKeyMapping.register(event);
 	}
 	@SubscribeEvent
 	public static void registerGuiLayersEvent(RegisterGuiLayersEvent event) {

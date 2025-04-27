@@ -10,12 +10,10 @@ import org.jetbrains.annotations.NotNull;
 @Mod(value = CreateCyberGoggles.ID, dist = Dist.CLIENT)
 public class CreateCyberGoggles {
 	public static final String ID = "create_cyber_goggles";
-	public static final String NAME = "Create: Cyber Goggles";
 	public static ModConfig config = AutoConfig.register(ModConfig.class, Toml4jConfigSerializer::new).getConfig();
 	public CreateCyberGoggles(@NotNull ModContainer container) {
 		container.registerExtensionPoint(
-				IConfigScreenFactory.class,
-				(m, s) -> AutoConfig.getConfigScreen(ModConfig.class, s).get()
+				IConfigScreenFactory.class, (modContainer, screen) -> AutoConfig.getConfigScreen(ModConfig.class, screen).get()
 		);
 	}
 }

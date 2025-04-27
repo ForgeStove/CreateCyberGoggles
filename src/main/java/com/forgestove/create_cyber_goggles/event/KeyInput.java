@@ -15,15 +15,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
-import net.neoforged.neoforge.client.event.InputEvent.Key;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.Collections;
 public class KeyInput {
 	public static StockTickerBlockEntity lastBlockEntity = null;
-	public static void toggleDiving(Key event) {
-		if (!KeyBind.isAction(event, KeyBind.TOGGLE_DIVING, GLFW.GLFW_PRESS)) return;
+	public static void toggleDiving() {
+		if (!ModKeyMapping.TOGGLE_DIVING.get().isDown()) return;
 		var mc = Minecraft.getInstance();
 		var player = mc.player;
 		if (player == null || mc.screen != null) return;
@@ -36,14 +34,14 @@ public class KeyInput {
 				)), true
 		);
 	}
-	public static void openConfigScreen(Key event) {
-		if (!KeyBind.isAction(event, KeyBind.OPEN_CONFIG, GLFW.GLFW_PRESS)) return;
+	public static void openConfigScreen() {
+		if (!ModKeyMapping.OPEN_CONFIG.get().isDown()) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) return;
 		mc.setScreen(AutoConfig.getConfigScreen(ModConfig.class, null).get());
 	}
-	public static void openStockScreen(Key event) {
-		if (!KeyBind.isAction(event, KeyBind.OPEN_STOCK, GLFW.GLFW_PRESS)) return;
+	public static void openStockScreen() {
+		if (!ModKeyMapping.OPEN_STOCK.get().isDown()) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) return;
 		var player = mc.player;
@@ -62,8 +60,8 @@ public class KeyInput {
 		var menu = new StockKeeperRequestMenu(type, -1, inv, lastBlockEntity);
 		mc.setScreen(new StockKeeperRequestScreen(menu, inv, lastBlockEntity.getBlockState().getBlock().getName()));
 	}
-	public static void openFilterScreen(Key event) {
-		if (!KeyBind.isAction(event, KeyBind.PREVIEW_FILTER, GLFW.GLFW_PRESS)) return;
+	public static void openFilterScreen() {
+		if (!ModKeyMapping.PREVIEW_FILTER.get().isDown()) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) {
 			if (!(mc.screen instanceof AbstractContainerScreen<?> screen)) return;

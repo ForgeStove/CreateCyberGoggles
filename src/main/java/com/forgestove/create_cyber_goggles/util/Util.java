@@ -1,25 +1,8 @@
 package com.forgestove.create_cyber_goggles.util;
-import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
-import com.simibubi.create.AllItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
 public class Util {
-	/**
-	 * 测试玩家是否穿着全套纸板盔甲并且不在飞行状态。
-	 *
-	 * @param player 本地玩家实体
-	 */
-	public static boolean testForStealth(LocalPlayer player) {
-		return CreateCyberGoggles.config.chainConveyor.cardBoardedYourself
-				&& !player.getAbilities().flying
-				&& AllItems.CARDBOARD_HELMET.isIn(player.getItemBySlot(EquipmentSlot.HEAD))
-				&& AllItems.CARDBOARD_CHESTPLATE.isIn(player.getItemBySlot(EquipmentSlot.CHEST))
-				&& AllItems.CARDBOARD_LEGGINGS.isIn(player.getItemBySlot(EquipmentSlot.LEGS))
-				&& AllItems.CARDBOARD_BOOTS.isIn(player.getItemBySlot(EquipmentSlot.FEET));
-	}
 	/**
 	 * 在屏幕中央区域渲染指定物品堆的图标及关联的悬浮提示信息。
 	 *

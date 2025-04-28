@@ -1,14 +1,13 @@
 package com.forgestove.create_cyber_goggles.mixin.goggles;
 import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
-import com.simibubi.create.foundation.utility.CreateLang;
-import net.createmod.catnip.lang.LangBuilder;
+import com.simibubi.create.foundation.utility.*;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.text.NumberFormat;
-@Mixin(CreateLang.class)
-public abstract class CreateLangMixin {
+@Mixin(Lang.class)
+public abstract class LangMixin {
 	@Inject(method = "number", at = @At("HEAD"), remap = false, cancellable = true)
 	private static void number(double d, CallbackInfoReturnable<LangBuilder> returnable) {
 		if (!CreateCyberGoggles.config.goggles.preciseNumbers) return;
@@ -16,6 +15,6 @@ public abstract class CreateLangMixin {
 		var format = NumberFormat.getNumberInstance();
 		format.setMaximumFractionDigits(8);
 		var formatted = format.format(d).replace("\u00A0", " ");
-		returnable.setReturnValue(CreateLang.builder().text(formatted));
+		returnable.setReturnValue(Lang.builder().text(formatted));
 	}
 }

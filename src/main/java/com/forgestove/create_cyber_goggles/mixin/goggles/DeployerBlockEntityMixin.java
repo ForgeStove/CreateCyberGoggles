@@ -4,7 +4,7 @@ import com.simibubi.create.content.kinetics.base.IRotate.SpeedLevel;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.deployer.DeployerBlockEntity;
 import com.simibubi.create.foundation.item.TooltipHelper;
-import com.simibubi.create.foundation.utility.CreateLang;
+import com.simibubi.create.foundation.utility.Lang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -32,9 +32,8 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 		}
 		TooltipHelper.addHint(tooltip, "hint.full_deployer");
 		for (var itemStack : overflowItems)
-			CreateLang.builder()
-					  .text("%s x%d".formatted(Component.translatable(itemStack.getDescriptionId()).getString(), itemStack.getCount()))
-					  .style(ChatFormatting.GREEN).forGoggles(tooltip);
+			Lang.builder().text("%s x%d".formatted(Component.translatable(itemStack.getDescriptionId()).getString(), itemStack.getCount()))
+				.style(ChatFormatting.GREEN).forGoggles(tooltip);
 		returnable.setReturnValue(true);
 	}
 	@Inject(method = "addToGoggleTooltip", at = @At("RETURN"), remap = false)

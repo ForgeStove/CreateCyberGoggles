@@ -1,1 +1,1 @@
-- use lazy keymapping
+- Update to version 2.0, for create-fabric 0.5.1

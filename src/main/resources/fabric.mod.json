@@ -1,0 +1,39 @@
+{
+    "schemaVersion": 1,
+    "id": "create_cyber_goggles",
+    "version": "${mod_version}",
+    "name": "${mod_name}",
+    "description": "${mod_description}",
+    "authors": [
+        "${mod_authors}"
+    ],
+    "contact": {
+        "homepage": "${mod_display_url}",
+        "issues": "${mod_issue_url}"
+    },
+    "license": "MIT",
+    "icon": "icon.png",
+    "environment": "client",
+    "entrypoints": {
+        "client": [
+            "com.forgestove.create_cyber_goggles.CreateCyberGoggles"
+        ],
+        "modmenu": [
+            "com.forgestove.create_cyber_goggles.config.ModMenuIntegration"
+        ]
+    },
+    "mixins": [
+        "create_cyber_goggles.mixins.json"
+    ],
+    "depends": {
+        "fabric": "*",
+        "fabricloader": "*",
+        "minecraft": "*",
+        "create": "*",
+        "cloth-config": "*"
+    },
+    "suggests": {
+        "modmenu": "*"
+    },
+    "accessWidener": "create_cyber_goggles.accessWidener"
+}

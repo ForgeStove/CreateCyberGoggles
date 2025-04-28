@@ -1,110 +1,76 @@
 //file:noinspection All
-buildscript {
-    repositories {
-        mavenCentral()
-        maven { url = 'https://repo.spongepowered.org/repository/maven-public' }
-    }
-    dependencies { classpath 'org.spongepowered:mixingradle:+' }
-}
 plugins {
     id 'idea'
     id 'eclipse'
-    id 'net.minecraftforge.gradle' version '+'
-    id 'org.parchmentmc.librarian.forgegradle' version '+'
+    id 'fabric-loom' version '+'
     id "me.modmuss50.mod-publish-plugin" version "+"
 }
-apply plugin: 'org.spongepowered.mixin'
-def platform = "Forge"
+def platform = "Fabric"
+base { archivesName = mod_id }
 group = mod_group_id
 version = minecraft_version + '-' + mod_version + '+' + platform
-base { archivesName = mod_id }
-java { toolchain.languageVersion = JavaLanguageVersion.of(17) }
-minecraft {
-    mappings channel: 'parchment', version: "${parchment_mappings_version}-${minecraft_version}"
-    copyIdeResources = true
-    runs {
-        configureEach {
-            workingDirectory project.file('run')
-            mods { "${mod_id}" { source sourceSets.main } }
-        }
-        client {
-            workingDirectory project.file('run')
-            property 'forge.enabledGameTestNamespaces', mod_id
-            args '--username', "Dev", "-mixin.config=" + mod_id + ".mixins.json"
-        }
-        server {
-            property 'forge.enabledGameTestNamespaces', mod_id
-            args '--nogui', "-mixin.config=" + mod_id + ".mixins.json"
-        }
-    }
-}
 repositories {
-    mavenCentral()
+    maven { url = "https://maven.parchmentmc.org" } // Parchment mappings
+    maven { url = "https://mvn.devos.one/releases" } // Porting Lib releases
+    maven { url = "https://mvn.devos.one/snapshots" } // Create and several dependencies
+    maven { url = "https://maven.tterrag.com" } // Flywheel
+    maven { url = "https://maven.jamieswhiteshirt.com/libs-release" } // Reach Entity Attributes
+    maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven" } // Forge Config API Port
     maven {
-        name = 'MinecraftForge'
-        url = 'https://maven.minecraftforge.net'
-        content {
-            includeGroup("curse.maven")
-            includeGroup("org.spongepowered")
-        }
-    }
-    maven { url = "https://maven.createmod.net" } // Create, Ponder, Flywheel
-    maven { url = "https://maven.tterrag.com" } // Registrate
+        url = "https://jitpack.io"
+        content { includeGroupAndSubgroups("com.github") }
+    } // Fabric ASM for Porting Lib
     maven { url = "https://maven.shedaniel.me" } // Cloth Config API
+    maven { url = "https://maven.terraformersmc.com/releases" } // Mod Menu
 }
+configurations.configureEach { resolutionStrategy { force("net.fabricmc:fabric-loader:$fabric_loader_version") } }
 dependencies {
-    minecraft("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
-    annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
-    implementation(fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false })
-    implementation(fg.deobf("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}"))
-    compileOnly(fg.deobf("dev.engine-room.flywheel:flywheel-forge-api-${minecraft_version}:${flywheel_version}"))
-    runtimeOnly(fg.deobf("dev.engine-room.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}"))
-    implementation(fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}"))
-    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:+"))
-    implementation("io.github.llamalad7:mixinextras-forge:+")
-    implementation(fg.deobf("me.shedaniel.cloth:cloth-config-forge:11.1.136"))
+    minecraft("com.mojang:minecraft:$minecraft_version")
+    mappings(loom.layered {
+        it.officialMojangMappings { nameSyntheticMembers = false }
+        it.parchment("org.parchmentmc.data:parchment-$minecraft_version:$parchment_version@zip")
+    })
+    modImplementation("net.fabricmc:fabric-loader:$fabric_loader_version")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:$fabric_api_version")
+    modImplementation("com.simibubi.create:create-fabric-$minecraft_version:$create_version")
+    modImplementation("me.shedaniel.cloth:cloth-config-fabric:$cloth_config_version")
+    modImplementation("com.terraformersmc:modmenu:$modmenu_version")
 }
-tasks.named('processResources', ProcessResources).configure {
-    var replaceProperties = [minecraft_version: minecraft_version,
-                             mod_id               : mod_id,
-                             mod_name             : mod_name,
-                             mod_display_url      : mod_display_url,
-                             mod_issue_tracker_url: mod_issue_tracker_url,
-                             mod_license          : mod_license,
-                             mod_version          : mod_version,
-                             mod_authors          : mod_authors,
-                             mod_description  : mod_description]
-    inputs.properties replaceProperties
-    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) { expand replaceProperties + [project: project] }
+processResources {
+    var properties = [minecraft_version: minecraft_version,
+                      mod_id           : mod_id,
+                      mod_name         : mod_name,
+                      mod_display_url  : mod_display_url,
+                      mod_issue_url    : mod_issue_url,
+                      mod_license      : mod_license,
+                      mod_version      : mod_version,
+                      mod_authors      : mod_authors,
+                      mod_description  : mod_description]
+    inputs.properties(properties)
+    filesMatching("fabric.mod.json") { expand properties }
 }
-tasks.named('jar', Jar).configure { exclude('mixin.refmap.json') }
-tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
-jar { manifest { attributes(["MixinConfigs": mod_id + ".mixins.json"]) } }
-jar.finalizedBy('reobfJar')
-task sourcesJar(type: Jar) {
-    from sourceSets.main.allSource
-    archiveBaseName.set(project.archivesBaseName)
-    archiveVersion.set("${project.version}")
-    archiveClassifier.set('sources')
-}
-artifacts { archives jar, sourcesJar }
+java { withSourcesJar() }
+jar { from("LICENSE"); exclude("${mod_id}-refmap.json") }
+loom { accessWidenerPath.set(file("src/main/resources/${mod_id}.accesswidener")) }
 publishMods {
     file = jar.archiveFile
     changelog = file("CHANGELOG.md").text
-    type = STABLE
+    type = BETA
     version = "$minecraft_version-$mod_version+$platform"
     displayName = "[$platform] $mod_name $mod_version+$minecraft_version"
-    modLoaders.addAll("$platform", "Neo$platform")
+    modLoaders.addAll("$platform", "Quilt")
     modrinth {
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")
         projectId = "TlQAWQCY"
         minecraftVersions.add(minecraft_version)
-        requires("create", "cloth-config")
+        requires("create-fabric", "cloth-config")
+        optional("modmenu")
     }
     curseforge {
         accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
         projectId = "1233804"
         minecraftVersions.add(minecraft_version)
-        requires("create", "cloth-config")
+        requires("create-fabric", "cloth-config")
+        optional("modmenu")
     }
 }

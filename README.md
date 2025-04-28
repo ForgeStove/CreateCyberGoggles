@@ -71,7 +71,7 @@ This mod provides the following configurable features:
 |        | Forge | Fabric/Quilt | NeoForge |
 |:------:|:-----:|:------------:|:--------:|
 | 1.21.1 |       |              |    ✅     |
-| 1.20.1 |   ✅   |      ❌       |    ✅     |
+| 1.20.1 |   ✅   |      ✅       |    ✅     |
 | 1.19.2 |   ❌   |      ❌       |          |
 | 1.18.2 |   ❌   |      ❌       |          |
 

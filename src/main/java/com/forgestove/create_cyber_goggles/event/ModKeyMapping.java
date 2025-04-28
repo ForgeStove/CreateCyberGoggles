@@ -1,28 +1,21 @@
 package com.forgestove.create_cyber_goggles.event;
+import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
 import com.mojang.blaze3d.platform.InputConstants.Type;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraftforge.client.settings.KeyConflictContext;
-import net.minecraftforge.common.util.Lazy;
-import org.jetbrains.annotations.NotNull;
-
-import static com.forgestove.create_cyber_goggles.CreateCyberGoggles.ID;
-import static com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM;
-import static net.minecraftforge.client.settings.KeyConflictContext.IN_GAME;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_UNKNOWN;
+import org.lwjgl.glfw.GLFW;
 public class ModKeyMapping {
-	public static final Lazy<KeyMapping> OPEN_CONFIG = register("openConfig", IN_GAME, KEYSYM, GLFW_KEY_UNKNOWN);
-	public static final Lazy<KeyMapping> OPEN_STOCK = register("openStock", IN_GAME, KEYSYM, GLFW_KEY_UNKNOWN);
-	public static final Lazy<KeyMapping> PREVIEW_FILTER = register("previewFilter", IN_GAME, KEYSYM, GLFW_KEY_UNKNOWN);
-	public static final Lazy<KeyMapping> TOGGLE_DIVING = register("toggleDiving", IN_GAME, KEYSYM, GLFW_KEY_UNKNOWN);
-	@SuppressWarnings("SameParameterValue")
-	private static @NotNull Lazy<KeyMapping> register(String name, KeyConflictContext context, Type type, int key) {
-		return Lazy.of(() -> new KeyMapping("key." + ID + "." + name, context, type, key, "key.categories." + ID));
+	public static KeyMapping toggleDiving;
+	public static KeyMapping openConfig;
+	public static KeyMapping previewFilter;
+	public static void register() {
+		toggleDiving = register("toggleDiving", Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN);
+		openConfig = register("openConfig", Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN);
+		previewFilter = register("previewFilter", Type.SCANCODE, GLFW.GLFW_KEY_UNKNOWN);
 	}
-	public static void register(@NotNull RegisterKeyMappingsEvent event) {
-		event.register(OPEN_CONFIG.get());
-		event.register(OPEN_STOCK.get());
-		event.register(PREVIEW_FILTER.get());
-		event.register(TOGGLE_DIVING.get());
+	@SuppressWarnings("SameParameterValue")
+	private static KeyMapping register(String name, Type type, int key) {
+		var id = CreateCyberGoggles.ID;
+		return KeyBindingHelper.registerKeyBinding(new KeyMapping("key." + id + "." + name, type, key, "key.categories." + id));
 	}
 }

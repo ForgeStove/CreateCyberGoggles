@@ -51,7 +51,7 @@ processResources {
 }
 java { withSourcesJar() }
 jar { from("LICENSE"); exclude("${mod_id}-refmap.json") }
-loom { accessWidenerPath.set(file("src/main/resources/${mod_id}.accesswidener")) }
+loom { accessWidenerPath.set(file("src/main/resources/${mod_id}.accessWidener")) }
 publishMods {
     file = jar.archiveFile
     changelog = file("CHANGELOG.md").text

@@ -1,1 +1,1 @@
-- use lazy keymapping
+- Add nonrandomScrap sequenced assembly recipe, better package item hover text

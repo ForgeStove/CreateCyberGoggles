@@ -1,6 +1,4 @@
-# 项目排除路径
-/.gradle/
-/build/
-/run/
-/build/classes/java/main/
-/out/
+/.gradle
+/build
+/run
+/.idea/workspace.xml

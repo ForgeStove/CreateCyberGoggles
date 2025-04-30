@@ -1,8 +1,9 @@
-package com.forgestove.create_cyber_goggles.mixin.filter;
+package com.forgestove.create_cyber_goggles.mixin.screen;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -12,7 +13,7 @@ public abstract class AbstractFilterScreenMixin<F extends AbstractFilterMenu> ex
 		super(container, inv, title);
 	}
 	@Inject(method = "containerTick", at = @At("HEAD"), cancellable = true)
-	private void containerTick(CallbackInfo callbackInfo) {
+	private void containerTick(@NotNull CallbackInfo callbackInfo) {
 		callbackInfo.cancel();
 		super.containerTick();
 		handleTooltips();

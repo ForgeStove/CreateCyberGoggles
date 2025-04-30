@@ -5,57 +5,56 @@ plugins {
     id 'java-library'
     id "maven-publish"
     id 'net.neoforged.moddev' version '+'
-    id "me.modmuss50.mod-publish-plugin" version "+"
+    id "me.modmuss50.mod-publish-plugin" version '+'
 }
 base { archivesName = mod_id }
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 def platform = "NeoForge"
-version = "$minecraft_version-$mod_version+$platform"
 group = mod_group_id
-repositories {
-    mavenLocal()
-    maven { url = "https://maven.createmod.net" } // Create, Ponder, Flywheel
-    maven { url = "https://mvn.devos.one/snapshots" } // Registrate
-    maven { url = "https://maven.shedaniel.me" } // Cloth Config API
-}
+version = "$minecraft_version-$mod_version+$platform"
 neoForge {
     version = neo_version
     parchment {
         mappingsVersion = parchment_mappings_version
-        minecraftVersion = parchment_minecraft_version
+        minecraftVersion = minecraft_version
     }
     runs {
-        client {
-            client()
-            systemProperty 'neoforge.enabledGameTestNamespaces', "${mod_id}"
-        }
+        configureEach { systemProperty 'neoforge.enabledGameTestNamespaces', "${mod_id}" }
+        client { client() }
         server {
             server()
             programArgument '--nogui'
-            systemProperty 'neoforge.enabledGameTestNamespaces', "${mod_id}"
         }
     }
     mods { "${mod_id}" { sourceSet(sourceSets.main) } }
 }
 sourceSets.main.resources { srcDir 'src/generated/resources' }
+repositories {
+    mavenLocal()
+    maven { url = "https://maven.createmod.net" } // Create, Ponder, Flywheel
+    maven { url = "https://mvn.devos.one/snapshots" } // Registrate
+    maven { url = "https://maven.shedaniel.me" } // Cloth Config API
+    maven { url = 'https://maven.blamejared.com' } // JEI
+}
 dependencies {
-    implementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
-    implementation("net.createmod.ponder:Ponder-NeoForge-${minecraft_version}:${ponder_version}") { transitive = false }
-    implementation("com.tterrag.registrate:Registrate:${registrate_version}")
-    compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
-    runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")
-    implementation("me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}")
+    implementation("com.simibubi.create:create-$minecraft_version:$create_version:slim") { transitive = false }
+    implementation("net.createmod.ponder:Ponder-NeoForge-$minecraft_version:$ponder_version") { transitive = false }
+    implementation "com.tterrag.registrate:Registrate:$registrate_version"
+    compileOnly "dev.engine-room.flywheel:flywheel-neoforge-api-$minecraft_version:$flywheel_version"
+    runtimeOnly "dev.engine-room.flywheel:flywheel-neoforge-$minecraft_version:$flywheel_version"
+    implementation "me.shedaniel.cloth:cloth-config-neoforge:$cloth_config_version"
+    implementation "mezz.jei:jei-$minecraft_version-neoforge:$jei_version"
 }
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
-    var replaceProperties = [minecraft_version    : minecraft_version,
-                             mod_id               : mod_id,
-                             mod_name             : mod_name,
-                             mod_license          : mod_license,
-                             mod_version          : mod_version,
-                             mod_authors          : mod_authors,
-                             mod_display_url      : mod_display_url,
-                             mod_issue_tracker_url: mod_issue_tracker_url,
-                             mod_description      : mod_description]
+    var replaceProperties = [minecraft_version: minecraft_version,
+                             mod_id           : mod_id,
+                             mod_name         : mod_name,
+                             mod_display_url  : mod_display_url,
+                             mod_issue_url    : mod_issue_url,
+                             mod_license      : mod_license,
+                             mod_version      : mod_version,
+                             mod_authors      : mod_authors,
+                             mod_description  : mod_description]
     inputs.properties replaceProperties
     expand replaceProperties
     from "src/main/templates"
@@ -63,12 +62,7 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
 }
 sourceSets.main.resources.srcDir generateModMetadata
 neoForge.ideSyncTask generateModMetadata
-tasks.register('sourcesJar', Jar) {
-    from sourceSets.main.allSource
-    archiveBaseName.set(mod_id)
-    archiveVersion.set("${project.version}")
-    archiveClassifier.set('sources')
-}
+java { withSourcesJar() }
 artifacts { archives jar, sourcesJar }
 idea { module { downloadSources = true; downloadJavadoc = true } }
 publishMods {

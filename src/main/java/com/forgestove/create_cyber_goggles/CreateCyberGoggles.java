@@ -1,5 +1,4 @@
 package com.forgestove.create_cyber_goggles;
-import com.forgestove.create_cyber_goggles.config.ModConfig;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.neoforged.api.distmarker.Dist;
@@ -10,8 +9,9 @@ import org.jetbrains.annotations.NotNull;
 @Mod(value = CreateCyberGoggles.ID, dist = Dist.CLIENT)
 public class CreateCyberGoggles {
 	public static final String ID = "create_cyber_goggles";
-	public static ModConfig config = AutoConfig.register(ModConfig.class, Toml4jConfigSerializer::new).getConfig();
+	public static ModConfig config;
 	public CreateCyberGoggles(@NotNull ModContainer container) {
+		config = AutoConfig.register(ModConfig.class, Toml4jConfigSerializer::new).getConfig();
 		container.registerExtensionPoint(
 				IConfigScreenFactory.class,
 				(modContainer, screen) -> AutoConfig.getConfigScreen(ModConfig.class, screen).get()

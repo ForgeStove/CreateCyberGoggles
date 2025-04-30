@@ -1,5 +1,4 @@
-package com.forgestove.create_cyber_goggles.config;
-import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
+package com.forgestove.create_cyber_goggles;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry.Category;
@@ -10,6 +9,7 @@ public class ModConfig implements ConfigData {
 	@Category("chainConveyor") @TransitiveObject public ChainConveyor chainConveyor = new ChainConveyor();
 	@Category("flywheel") @TransitiveObject public Flywheel flywheel = new Flywheel();
 	@Category("goggles") @TransitiveObject public Goggles goggles = new Goggles();
+	@Category("jei") @TransitiveObject public Jei jei = new Jei();
 	@Category("nbt") @TransitiveObject public Nbt nbt = new Nbt();
 	@Category("wrench") @TransitiveObject public Wrench wrench = new Wrench();
 	public static class Armor {
@@ -38,6 +38,9 @@ public class ModConfig implements ConfigData {
 		@Tooltip public boolean renderExtraItems = true;
 		@Tooltip public boolean enableKineticEffect = true;
 		@Tooltip public boolean preciseNumbers = true;
+	}
+	public static class Jei {
+		@Tooltip @RequiresRestart public boolean nonrandomScrap = true;
 	}
 	public static class Nbt {
 		@Tooltip public boolean nbtFix = false;

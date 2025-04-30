@@ -1,4 +1,4 @@
-package com.forgestove.create_cyber_goggles.mixin.filter;
+package com.forgestove.create_cyber_goggles.mixin.screen;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import net.minecraft.network.chat.Component;

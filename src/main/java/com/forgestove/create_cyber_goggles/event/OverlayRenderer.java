@@ -1,6 +1,5 @@
-package com.forgestove.create_cyber_goggles.render;
-import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
-import com.forgestove.create_cyber_goggles.util.Util;
+package com.forgestove.create_cyber_goggles.event;
+import com.forgestove.create_cyber_goggles.*;
 import com.simibubi.create.content.kinetics.base.*;
 import com.simibubi.create.content.logistics.depot.DepotBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;

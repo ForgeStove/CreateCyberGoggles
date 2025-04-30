@@ -11,31 +11,26 @@ plugins {
     id 'eclipse'
     id 'net.minecraftforge.gradle' version '+'
     id 'org.parchmentmc.librarian.forgegradle' version '+'
-    id "me.modmuss50.mod-publish-plugin" version "+"
+    id "me.modmuss50.mod-publish-plugin" version '+'
 }
 apply plugin: 'org.spongepowered.mixin'
 def platform = "Forge"
 group = mod_group_id
-version = minecraft_version + '-' + mod_version + '+' + platform
+version = "$minecraft_version-$mod_version+$platform"
 base { archivesName = mod_id }
 java { toolchain.languageVersion = JavaLanguageVersion.of(17) }
 minecraft {
-    mappings channel: 'parchment', version: "${parchment_mappings_version}-${minecraft_version}"
+    mappings channel: 'parchment', version: "$parchment_mappings_version-$minecraft_version"
     copyIdeResources = true
     runs {
         configureEach {
+            args "-mixin.config=${mod_id}.mixins.json"
             workingDirectory project.file('run')
-            mods { "${mod_id}" { source sourceSets.main } }
-        }
-        client {
-            workingDirectory project.file('run')
+            mods { "$mod_id" { source sourceSets.main } }
             property 'forge.enabledGameTestNamespaces', mod_id
-            args '--username', "Dev", "-mixin.config=" + mod_id + ".mixins.json"
         }
-        server {
-            property 'forge.enabledGameTestNamespaces', mod_id
-            args '--nogui', "-mixin.config=" + mod_id + ".mixins.json"
-        }
+        client { args '--username', "Dev" }
+        server { args '--nogui' }
     }
 }
 repositories {
@@ -51,50 +46,44 @@ repositories {
     maven { url = "https://maven.createmod.net" } // Create, Ponder, Flywheel
     maven { url = "https://maven.tterrag.com" } // Registrate
     maven { url = "https://maven.shedaniel.me" } // Cloth Config API
+    maven { url = 'https://maven.blamejared.com' } // JEI
 }
 dependencies {
-    minecraft("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
-    annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
-    implementation(fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false })
-    implementation(fg.deobf("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}"))
-    compileOnly(fg.deobf("dev.engine-room.flywheel:flywheel-forge-api-${minecraft_version}:${flywheel_version}"))
-    runtimeOnly(fg.deobf("dev.engine-room.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}"))
-    implementation(fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}"))
-    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:+"))
-    implementation("io.github.llamalad7:mixinextras-forge:+")
-    implementation(fg.deobf("me.shedaniel.cloth:cloth-config-forge:11.1.136"))
+    minecraft "net.minecraftforge:forge:$minecraft_version-$forge_version"
+    annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
+    implementation fg.deobf("com.simibubi.create:create-$minecraft_version:$create_version:slim") { transitive = false }
+    implementation fg.deobf("net.createmod.ponder:Ponder-Forge-$minecraft_version:$ponder_version")
+    compileOnly fg.deobf("dev.engine-room.flywheel:flywheel-forge-api-$minecraft_version:$flywheel_version")
+    runtimeOnly fg.deobf("dev.engine-room.flywheel:flywheel-forge-$minecraft_version:$flywheel_version")
+    implementation fg.deobf("com.tterrag.registrate:Registrate:$registrate_version")
+    implementation fg.deobf("io.github.llamalad7:mixinextras-forge:0.5.0-rc.2")
+    implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:$cloth_config_version")
+    implementation fg.deobf("mezz.jei:jei-$minecraft_version-forge:$jei_version")
 }
 tasks.named('processResources', ProcessResources).configure {
     var replaceProperties = [minecraft_version: minecraft_version,
-                             mod_id               : mod_id,
-                             mod_name             : mod_name,
-                             mod_display_url      : mod_display_url,
-                             mod_issue_tracker_url: mod_issue_tracker_url,
-                             mod_license          : mod_license,
-                             mod_version          : mod_version,
-                             mod_authors          : mod_authors,
+                             mod_id         : mod_id,
+                             mod_name       : mod_name,
+                             mod_display_url: mod_display_url,
+                             mod_issue_url  : mod_issue_url,
+                             mod_license    : mod_license,
+                             mod_version    : mod_version,
+                             mod_authors    : mod_authors,
                              mod_description  : mod_description]
     inputs.properties replaceProperties
     filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) { expand replaceProperties + [project: project] }
 }
-tasks.named('jar', Jar).configure { exclude('mixin.refmap.json') }
 tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
-jar { manifest { attributes(["MixinConfigs": mod_id + ".mixins.json"]) } }
-jar.finalizedBy('reobfJar')
-task sourcesJar(type: Jar) {
-    from sourceSets.main.allSource
-    archiveBaseName.set(project.archivesBaseName)
-    archiveVersion.set("${project.version}")
-    archiveClassifier.set('sources')
-}
-artifacts { archives jar, sourcesJar }
+jar { manifest { attributes([MixinConfigs: mod_id + '.mixins.json']) }; exclude('mixin.refmap.json') }
+//java { withSourcesJar() }
+//idea { module { downloadSources = true; downloadJavadoc = true } }
 publishMods {
     file = jar.archiveFile
     changelog = file("CHANGELOG.md").text
     type = STABLE
     version = "$minecraft_version-$mod_version+$platform"
     displayName = "[$platform] $mod_name $mod_version+$minecraft_version"
-    modLoaders.addAll("$platform", "Neo$platform")
+    modLoaders.addAll("$platform", "NeoForge")
     modrinth {
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")
         projectId = "TlQAWQCY"

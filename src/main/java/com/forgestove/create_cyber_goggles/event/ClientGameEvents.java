@@ -12,7 +12,7 @@ public class ClientGameEvents {
 		KeyInput.toggleDiving();
 		KeyInput.openConfigScreen();
 		KeyInput.openStockScreen();
-		KeyInput.openFilterScreen();
+		KeyInput.previewFilterScreen();
 	}
 	@SubscribeEvent
 	public static void mouseScrollingEvent(MouseScrollingEvent event) {

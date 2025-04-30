@@ -1,4 +1,4 @@
-package com.forgestove.create_cyber_goggles.mixin.stockKeeper;
+package com.forgestove.create_cyber_goggles.mixin.screen;
 import com.simibubi.create.content.logistics.*;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.stockTicker.*;

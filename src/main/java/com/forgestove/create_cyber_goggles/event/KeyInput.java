@@ -1,6 +1,5 @@
 package com.forgestove.create_cyber_goggles.event;
-import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
-import com.forgestove.create_cyber_goggles.config.ModConfig;
+import com.forgestove.create_cyber_goggles.*;
 import com.simibubi.create.AllMenuTypes;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.stockTicker.*;
@@ -47,9 +46,7 @@ public class KeyInput {
 		var player = mc.player;
 		if (player == null) return;
 		if (mc.hitResult == null) return;
-		if (mc.hitResult instanceof BlockHitResult blockHitResult && (
-				lastBlockEntity == null || blockHitResult.getType() == Type.BLOCK
-		)) {
+		if (mc.hitResult instanceof BlockHitResult blockHitResult && (lastBlockEntity == null || blockHitResult.getType() == Type.BLOCK)) {
 			if (mc.level == null) return;
 			if ((mc.level.getBlockEntity(blockHitResult.getBlockPos()) instanceof StockTickerBlockEntity stockTickerBlockEntity))
 				lastBlockEntity = stockTickerBlockEntity;
@@ -60,7 +57,7 @@ public class KeyInput {
 		var menu = new StockKeeperRequestMenu(type, -1, inv, lastBlockEntity);
 		mc.setScreen(new StockKeeperRequestScreen(menu, inv, lastBlockEntity.getBlockState().getBlock().getName()));
 	}
-	public static void openFilterScreen() {
+	public static void previewFilterScreen() {
 		if (!ModKeyMapping.PREVIEW_FILTER.get().isDown()) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) {

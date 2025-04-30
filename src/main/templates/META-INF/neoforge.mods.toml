@@ -36,14 +36,12 @@ side = "CLIENT"
 
 [[dependencies."${mod_id}"]]
 modId = "cloth_config"
-mandatory = true
-versionRange = "0"
+type = "required"
 ordering = "NONE"
 side = "CLIENT"
 
 [[dependencies."${mod_id}"]]
 modId = "jei"
-mandatory = false
-versionRange = "0"
+type = "optional"
 ordering = "NONE"
 side = "CLIENT"

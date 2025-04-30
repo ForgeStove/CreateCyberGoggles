@@ -85,3 +85,10 @@ publishMods {
         requires("create", "cloth-config")
     }
 }
+// Fix highlight log
+def cleanLog4j2Files() {
+    fileTree(dir: "build/moddev", include: "**/*Log4j2.xml").each { file -> file.text = file.text.replaceAll("Forge", "") }
+}
+
+runClient { doFirst { cleanLog4j2Files() } }
+runServer { doFirst { cleanLog4j2Files() } }

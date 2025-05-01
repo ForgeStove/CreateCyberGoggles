@@ -1,10 +1,11 @@
 //file:noinspection All
 plugins {
     id 'idea'
-    id 'net.neoforged.moddev' version '+'
-    id "me.modmuss50.mod-publish-plugin" version '+'
+    id 'net.neoforged.moddev' version '2.0.82'
+    id 'me.modmuss50.mod-publish-plugin' version '0.8.4'
 }
-def platform = "NeoForge"
+def platform = "neoforge"
+def Platform = "NeoForge"
 base {
     archivesName = mod_id
     group = mod_group_id
@@ -34,12 +35,11 @@ repositories {
 }
 dependencies {
     implementation("com.simibubi.create:create-$minecraft_version:$create_version:slim") { transitive = false }
-    implementation("net.createmod.ponder:Ponder-NeoForge-$minecraft_version:$ponder_version") { transitive = false }
+    implementation("net.createmod.ponder:Ponder-$Platform-$minecraft_version:$ponder_version") { transitive = false }
     implementation "com.tterrag.registrate:Registrate:$registrate_version"
-    compileOnly "dev.engine-room.flywheel:flywheel-neoforge-api-$minecraft_version:$flywheel_version"
-    runtimeOnly "dev.engine-room.flywheel:flywheel-neoforge-$minecraft_version:$flywheel_version"
-    implementation "me.shedaniel.cloth:cloth-config-neoforge:$cloth_config_version"
-    implementation "mezz.jei:jei-$minecraft_version-neoforge:$jei_version"
+    implementation "dev.engine-room.vanillin:vanillin-$platform-$minecraft_version:$vanillin_version"
+    implementation "me.shedaniel.cloth:cloth-config-$platform:$cloth_config_version"
+    implementation "mezz.jei:jei-$minecraft_version-$platform:$jei_version"
 }
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
     var replaceProperties = [minecraft_version: minecraft_version,

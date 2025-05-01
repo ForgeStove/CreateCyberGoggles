@@ -1,1 +1,1 @@
-- Add nonrandomScrap sequenced assembly recipe, better package item hover text
+- Add language supports

@@ -18,13 +18,9 @@ neoForge {
         mappingsVersion = parchment_version
         minecraftVersion = minecraft_version
     }
-    runs {
-        client { client() }
-        server { server() }
-    }
+    runs { client { client() } }
     mods { "${mod_id}" { sourceSet sourceSets.main } }
 }
-sourceSets.main.resources { srcDir 'src/generated/resources' }
 repositories {
     mavenLocal()
     mavenCentral()
@@ -37,7 +33,7 @@ dependencies {
     implementation("com.simibubi.create:create-$minecraft_version:$create_version:slim") { transitive = false }
     implementation("net.createmod.ponder:Ponder-$Platform-$minecraft_version:$ponder_version") { transitive = false }
     implementation "com.tterrag.registrate:Registrate:$registrate_version"
-    implementation "dev.engine-room.vanillin:vanillin-$platform-$minecraft_version:$vanillin_version"
+    implementation "dev.engine-room.flywheel:flywheel-$platform-$minecraft_version:$flywheel_version"
     implementation "me.shedaniel.cloth:cloth-config-$platform:$cloth_config_version"
     implementation "mezz.jei:jei-$minecraft_version-$platform:$jei_version"
 }
@@ -67,21 +63,31 @@ publishMods {
     type = STABLE
     version = "$minecraft_version-$mod_version+$platform"
     displayName = "[$platform] $mod_name $mod_version+$minecraft_version"
-    modLoaders.addAll("$platform")
+    modLoaders.addAll "$platform"
     modrinth {
-        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        accessToken = providers.environmentVariable "MODRINTH_TOKEN"
         projectId = "TlQAWQCY"
-        minecraftVersions.add(minecraft_version)
-        requires("create", "cloth-config")
+        minecraftVersions.add minecraft_version
+        requires "create", "cloth-config"
     }
     curseforge {
-        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
-        minecraftVersions.add(minecraft_version)
+        accessToken = providers.environmentVariable "CURSEFORGE_TOKEN"
+        minecraftVersions.add minecraft_version
         projectId = "1233804"
-        requires("create", "cloth-config")
+        requires "create", "cloth-config"
     }
 }
 // Fix highlight log
-def cleanLog4j2Files() {
+tasks.register("fixHighlightLog") {
     fileTree(dir: "build/moddev", include: "**/*Log4j2.xml").each { file -> file.text = file.text.replaceAll("Forge", "") }
 }
+// Copy IDEA icon to .idea folder
+tasks.register("copyIDEAicon") {
+    if (file(".idea").exists() && !file(".idea/icon.png").exists()) {
+        copy {
+            from "src/main/resources/icon.png"
+            into ".idea"
+        }
+    }
+}
+runClient { doLast { fixHighlightLog } }

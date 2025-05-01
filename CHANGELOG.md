@@ -1,1 +1,2 @@
-- Add nonrandomScrap sequenced assembly recipe, better package item hover text
+- Fix [#16](https://github.com/ForgeStove/CreateCyberGoggles/issues/16)
+- Add language supports

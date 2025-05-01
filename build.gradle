@@ -1,36 +1,32 @@
 //file:noinspection All
 plugins {
     id 'idea'
-    id "eclipse"
-    id 'java-library'
-    id "maven-publish"
     id 'net.neoforged.moddev' version '+'
     id "me.modmuss50.mod-publish-plugin" version '+'
 }
-base { archivesName = mod_id }
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 def platform = "NeoForge"
-group = mod_group_id
-version = "$minecraft_version-$mod_version+$platform"
+base {
+    archivesName = mod_id
+    group = mod_group_id
+    version = "$minecraft_version-$mod_version+$platform"
+    java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+}
 neoForge {
     version = neo_version
     parchment {
-        mappingsVersion = parchment_mappings_version
+        mappingsVersion = parchment_version
         minecraftVersion = minecraft_version
     }
     runs {
-        configureEach { systemProperty 'neoforge.enabledGameTestNamespaces', "${mod_id}" }
         client { client() }
-        server {
-            server()
-            programArgument '--nogui'
-        }
+        server { server() }
     }
-    mods { "${mod_id}" { sourceSet(sourceSets.main) } }
+    mods { "${mod_id}" { sourceSet sourceSets.main } }
 }
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 repositories {
     mavenLocal()
+    mavenCentral()
     maven { url = "https://maven.createmod.net" } // Create, Ponder, Flywheel
     maven { url = "https://mvn.devos.one/snapshots" } // Registrate
     maven { url = "https://maven.shedaniel.me" } // Cloth Config API
@@ -80,8 +76,8 @@ publishMods {
     }
     curseforge {
         accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
-        projectId = "1233804"
         minecraftVersions.add(minecraft_version)
+        projectId = "1233804"
         requires("create", "cloth-config")
     }
 }
@@ -89,6 +85,3 @@ publishMods {
 def cleanLog4j2Files() {
     fileTree(dir: "build/moddev", include: "**/*Log4j2.xml").each { file -> file.text = file.text.replaceAll("Forge", "") }
 }
-
-runClient { doFirst { cleanLog4j2Files() } }
-runServer { doFirst { cleanLog4j2Files() } }

@@ -6,7 +6,6 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -14,16 +13,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.List;
 @Mixin(PackageItem.class)
 public abstract class PackageItemMixin extends Item {
-	public PackageItemMixin(Properties pProperties) {
-		super(pProperties);
+	public PackageItemMixin(Properties properties) {
+		super(properties);
 	}
-	@Inject(method = "appendHoverText", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "appendHoverText", at = @At("HEAD"), remap = false, cancellable = true)
 	private void appendHoverText(
 			ItemStack pStack,
 			Level pLevel,
 			List<Component> pTooltipComponents,
-			TooltipFlag pIsAdvanced,
-			@NotNull CallbackInfo callbackInfo
+			TooltipFlag pIsAdvanced, CallbackInfo callbackInfo
 	) {
 		if (!CreateCyberGoggles.config.goggles.enhancedInfo) return;
 		callbackInfo.cancel();

@@ -82,7 +82,7 @@ tasks.register("fixHighlightLog") {
     fileTree(dir: "build/moddev", include: "**/*Log4j2.xml").each { file -> file.text = file.text.replaceAll("Forge", "") }
 }
 // Copy IDEA icon to .idea folder
-tasks.register("copyIDEAicon") {
+tasks.register("copyIDEAIcon") {
     if (file(".idea").exists() && !file(".idea/icon.png").exists()) {
         copy {
             from "src/main/resources/icon.png"
@@ -90,4 +90,5 @@ tasks.register("copyIDEAicon") {
         }
     }
 }
-runClient { doLast { fixHighlightLog } }
+neoForgeIdeSync { doLast { copyIDEAIcon } }
+prepareClientRun { doLast { fixHighlightLog } }

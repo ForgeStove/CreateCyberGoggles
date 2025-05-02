@@ -14,10 +14,10 @@ public class MouseScroll {
 		var level = mc.level;
 		if (mc.isPaused()) return;
 		if (level == null
-				|| !(mc.hitResult instanceof BlockHitResult blockHitResult)
-				|| blockHitResult.getType() == Type.MISS
-				|| !(level.getBlockEntity(blockHitResult.getBlockPos()) instanceof TableClothBlockEntity tableClothBlockEntity)
-				|| !tableClothBlockEntity.isShop()) {
+			|| !(mc.hitResult instanceof BlockHitResult blockHitResult)
+			|| blockHitResult.getType() == Type.MISS
+			|| !(level.getBlockEntity(blockHitResult.getBlockPos()) instanceof TableClothBlockEntity tableClothBlockEntity)
+			|| !tableClothBlockEntity.isShop()) {
 			index = 1;
 			return;
 		}

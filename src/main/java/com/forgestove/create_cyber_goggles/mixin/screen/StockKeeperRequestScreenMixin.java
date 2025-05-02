@@ -6,7 +6,6 @@ import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -29,7 +28,7 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 		super(container, inv, title);
 	}
 	@Inject(method = "containerTick", at = @At("HEAD"), cancellable = true)
-	protected void containerTick(@NotNull CallbackInfo callbackInfo) {
+	protected void containerTick(CallbackInfo callbackInfo) {
 		callbackInfo.cancel();
 		super.containerTick();
 		addressBox.tick();

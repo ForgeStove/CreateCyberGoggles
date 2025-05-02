@@ -27,8 +27,8 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 		if (localPlayer == null) return;
 		var mainHandItem = localPlayer.getMainHandItem();
 		if (mc.level == null || mc.hitResult == null || mc.hitResult instanceof BlockHitResult blockHitResult && mc.level.getBlockState(
-				blockHitResult.getBlockPos()).getBlock() instanceof ChainConveyorBlock && (
-				localPlayer.isShiftKeyDown() || mainHandItem.getItem().equals(Items.CHAIN) || AllBlocks.CHAIN_CONVEYOR.isIn(mainHandItem)
+			blockHitResult.getBlockPos()).getBlock() instanceof ChainConveyorBlock && (
+			localPlayer.isShiftKeyDown() || mainHandItem.getItem().equals(Items.CHAIN) || AllBlocks.CHAIN_CONVEYOR.isIn(mainHandItem)
 		)) return;
 		returnable.setReturnValue(true);
 	}
@@ -46,19 +46,19 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 		if (AllBlocks.PACKAGE_FROGPORT.isIn(mainHandItem)) {
 			exactPositionOfTarget = selectedBakedPosition;
 			activePackageTarget = new PackagePortTarget.ChainConveyorFrogportTarget(
-					selectedLift,
-					selectedChainPosition,
-					selectedConnection,
-					false
+				selectedLift,
+				selectedChainPosition,
+				selectedConnection,
+				false
 			);
 			return;
 		}
 		if (PackageItem.isPackage(mainHandItem)) {
 			CatnipServices.NETWORK.sendToServer(new ChainPackageInteractionPacket(
-					selectedLift,
-					selectedConnection,
-					selectedChainPosition,
-					mainHandItem
+				selectedLift,
+				selectedConnection,
+				selectedChainPosition,
+				mainHandItem
 			));
 			return;
 		}
@@ -68,10 +68,10 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 		}
 		if (selectedConnection == null) return;
 		CatnipServices.NETWORK.sendToServer(new ChainConveyorConnectionPacket(
-				selectedLift,
-				selectedLift.offset(selectedConnection),
-				mainHandItem.isEmpty() ? AllItems.WRENCH.asStack() : mainHandItem,
-				false
+			selectedLift,
+			selectedLift.offset(selectedConnection),
+			mainHandItem.isEmpty() ? AllItems.WRENCH.asStack() : mainHandItem,
+			false
 		));
 	}
 }

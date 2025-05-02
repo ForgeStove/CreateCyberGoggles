@@ -19,7 +19,7 @@ neoForge {
         minecraftVersion = minecraft_version
     }
     runs { client { client() } }
-    mods { "${mod_id}" { sourceSet sourceSets.main } }
+    mods { "$mod_id" { sourceSet sourceSets.main } }
 }
 repositories {
     mavenLocal()

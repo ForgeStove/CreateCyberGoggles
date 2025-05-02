@@ -11,13 +11,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
-import org.jetbrains.annotations.NotNull;
 public class OverlayRenderer {
-	public static void register(@NotNull RegisterGuiLayersEvent event) {
+	public static void register(RegisterGuiLayersEvent event) {
 		event.registerAbove(
-				VanillaGuiLayers.HOTBAR,
-				ResourceLocation.fromNamespaceAndPath(CreateCyberGoggles.ID, "goggle_overlay"),
-				OverlayRenderer::renderOverlay
+			VanillaGuiLayers.HOTBAR,
+			ResourceLocation.fromNamespaceAndPath(CreateCyberGoggles.ID, "goggle_overlay"),
+			OverlayRenderer::renderOverlay
 		);
 	}
 	public static void renderOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
@@ -43,14 +42,14 @@ public class OverlayRenderer {
 			var center = VecHelper.getCenterOf(kineticBlockEntity.getBlockPos());
 			var speedLevel = SpeedLevel.of(speed);
 			level.addParticle(
-					new RotationIndicatorParticleData(
-							speedLevel.getColor(),
-							Math.max(15, speedLevel.getParticleSpeed()) * Math.signum(speed),
-							kineticBlock.getParticleInitialRadius(),
-							kineticBlock.getParticleTargetRadius(),
-							10,
-							rotationAxis
-					), center.x, center.y, center.z, 0, 0, 0
+				new RotationIndicatorParticleData(
+					speedLevel.getColor(),
+					Math.max(15, speedLevel.getParticleSpeed()) * Math.signum(speed),
+					kineticBlock.getParticleInitialRadius(),
+					kineticBlock.getParticleTargetRadius(),
+					10,
+					rotationAxis
+				), center.x, center.y, center.z, 0, 0, 0
 			);
 		}
 	}

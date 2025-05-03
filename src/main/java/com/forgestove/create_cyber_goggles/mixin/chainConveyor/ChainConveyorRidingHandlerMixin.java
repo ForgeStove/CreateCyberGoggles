@@ -10,7 +10,6 @@ import net.minecraft.core.Direction.Axis;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket.Action;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -19,7 +18,7 @@ import static com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorRi
 @Mixin(ChainConveyorRidingHandler.class)
 public abstract class ChainConveyorRidingHandlerMixin {
 	@Inject(method = "clientTick", at = @At("HEAD"), remap = false, cancellable = true)
-	private static void clientTick(@NotNull CallbackInfo callbackInfo) {
+	private static void clientTick(CallbackInfo callbackInfo) {
 		callbackInfo.cancel();
 		if (ridingChainConveyor == null) return;
 		var mc = Minecraft.getInstance();
@@ -35,8 +34,8 @@ public abstract class ChainConveyorRidingHandlerMixin {
 		if (level == null) return;
 		var blockEntity = level.getBlockEntity(ridingChainConveyor);
 		if (player.isShiftKeyDown()
-				|| !(blockEntity instanceof ChainConveyorBlockEntity chainConveyorBlockEntity)
-				|| ridingConnection != null && !chainConveyorBlockEntity.connections.contains(ridingConnection)) {
+			|| !(blockEntity instanceof ChainConveyorBlockEntity chainConveyorBlockEntity)
+			|| ridingConnection != null && !chainConveyorBlockEntity.connections.contains(ridingConnection)) {
 			stopRiding();
 			return;
 		}
@@ -52,7 +51,7 @@ public abstract class ChainConveyorRidingHandlerMixin {
 		if (ridingConnection != null) {
 			var stats = chainConveyorBlockEntity.connectionStats.get(ridingConnection);
 			targetPosition = stats.start().add((
-					stats.end().subtract(stats.start())
+				stats.end().subtract(stats.start())
 			).normalize().scale(Math.min(stats.chainLength(), chainPosition)));
 		} else
 			targetPosition = Vec3.atBottomCenterOf(ridingChainConveyor).add(VecHelper.rotate(new Vec3(0, 0.25, 1), chainPosition, Axis.Y));

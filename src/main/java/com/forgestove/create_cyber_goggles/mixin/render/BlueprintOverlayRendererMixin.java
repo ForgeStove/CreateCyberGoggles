@@ -34,12 +34,12 @@ public abstract class BlueprintOverlayRendererMixin {
 	@Shadow(remap = false) static BlueprintOverlayShopContext shopContext;
 	@Inject(method = "renderOverlay", at = @At("HEAD"), remap = false, cancellable = true)
 	private static void renderOverlay(
-			ForgeGui gui,
-			GuiGraphics guiGraphics,
-			float partialTicks,
-			int width,
-			int height,
-			CallbackInfo callbackInfo
+		ForgeGui gui,
+		GuiGraphics guiGraphics,
+		float partialTicks,
+		int width,
+		int height,
+		CallbackInfo callbackInfo
 	) {
 		if (!CreateCyberGoggles.config.goggles.enhancedStoreRender) return;
 		callbackInfo.cancel();
@@ -47,7 +47,7 @@ public abstract class BlueprintOverlayRendererMixin {
 		if (mc.options.hideGui || mc.screen != null) return;
 		if (!active || empty) return;
 		var invalidShop = shopContext != null && (
-				ingredients.isEmpty() || ingredients.get(0).getFirst().isEmpty() || shopContext.stockLevel() == 0
+			ingredients.isEmpty() || ingredients.get(0).getFirst().isEmpty() || shopContext.stockLevel() == 0
 		);
 		var w = 21 * ingredients.size();
 		if (!noOutput) {
@@ -62,12 +62,12 @@ public abstract class BlueprintOverlayRendererMixin {
 			if (shopContext.purchases() > 0) {
 				guiGraphics.renderItem(AllItems.SHOPPING_LIST.asStack(), guiGraphics.guiWidth() / 2 + 20, y - 20);
 				guiGraphics.drawString(
-						mc.font,
-						Component.literal("x" + shopContext.purchases()),
-						guiGraphics.guiWidth() / 2 + 20 + 16,
-						y - 20 + 4,
-						0xff_eeeeee,
-						true
+					mc.font,
+					Component.literal("x" + shopContext.purchases()),
+					guiGraphics.guiWidth() / 2 + 20 + 16,
+					y - 20 + 4,
+					0xff_eeeeee,
+					true
 				);
 			}
 		}
@@ -77,8 +77,8 @@ public abstract class BlueprintOverlayRendererMixin {
 			(pair.getSecond() ? AllGuiTextures.HOTSLOT_ACTIVE : AllGuiTextures.HOTSLOT).render(guiGraphics, x, y);
 			var itemStack = pair.getFirst();
 			var count = shopContext != null && !shopContext.checkout() || pair.getSecond()
-					? null
-					: ChatFormatting.GOLD.toString() + itemStack.getCount();
+				? null
+				: ChatFormatting.GOLD.toString() + itemStack.getCount();
 			drawItemStack(guiGraphics, mc, x, y, itemStack, count);
 			x += 21;
 		}

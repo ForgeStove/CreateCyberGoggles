@@ -16,12 +16,13 @@ public abstract class PackageItemMixin extends Item {
 	public PackageItemMixin(Properties properties) {
 		super(properties);
 	}
-	@Inject(method = "appendHoverText", at = @At("HEAD"), remap = false, cancellable = true)
+	@Inject(method = "appendHoverText", at = @At("HEAD"), cancellable = true)
 	private void appendHoverText(
-			ItemStack pStack,
-			Level pLevel,
-			List<Component> pTooltipComponents,
-			TooltipFlag pIsAdvanced, CallbackInfo callbackInfo
+		ItemStack pStack,
+		Level pLevel,
+		List<Component> pTooltipComponents,
+		TooltipFlag pIsAdvanced,
+		CallbackInfo callbackInfo
 	) {
 		if (!CreateCyberGoggles.config.goggles.enhancedInfo) return;
 		callbackInfo.cancel();

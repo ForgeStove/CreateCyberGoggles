@@ -9,9 +9,8 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.gui.overlay.*;
-import org.jetbrains.annotations.NotNull;
 public class OverlayRenderer {
-	public static void register(@NotNull RegisterGuiOverlaysEvent event) {
+	public static void register(RegisterGuiOverlaysEvent event) {
 		event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "goggle_overlay", OverlayRenderer::renderOverlay);
 	}
 	public static void renderOverlay(ForgeGui forgeGui, GuiGraphics guiGraphics, float v, int i, int i1) {
@@ -37,14 +36,14 @@ public class OverlayRenderer {
 			var center = VecHelper.getCenterOf(kineticBlockEntity.getBlockPos());
 			var speedLevel = IRotate.SpeedLevel.of(speed);
 			level.addParticle(
-					new RotationIndicatorParticleData(
-							speedLevel.getColor(),
-							Math.max(15, speedLevel.getParticleSpeed()) * Math.signum(speed),
-							kineticBlock.getParticleInitialRadius(),
-							kineticBlock.getParticleTargetRadius(),
-							10,
-							rotationAxis.name().charAt(0)
-					), center.x, center.y, center.z, 0, 0, 0
+				new RotationIndicatorParticleData(
+					speedLevel.getColor(),
+					Math.max(15, speedLevel.getParticleSpeed()) * Math.signum(speed),
+					kineticBlock.getParticleInitialRadius(),
+					kineticBlock.getParticleTargetRadius(),
+					10,
+					rotationAxis.name().charAt(0)
+				), center.x, center.y, center.z, 0, 0, 0
 			);
 		}
 	}

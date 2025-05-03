@@ -20,12 +20,12 @@ public abstract class ChainConveyorConnectionHandlerMixin {
 	@Shadow(remap = false) private static ResourceKey<Level> firstDim;
 	@Inject(method = "validateAndConnect", at = @At("HEAD"), remap = false, cancellable = true)
 	private static void validateAndConnect(
-			LevelAccessor level,
-			BlockPos pos,
-			Player player,
-			ItemStack chain,
-			boolean simulate,
-			CallbackInfoReturnable<Boolean> returnable
+		LevelAccessor level,
+		BlockPos pos,
+		Player player,
+		ItemStack chain,
+		boolean simulate,
+		CallbackInfoReturnable<Boolean> returnable
 	) {
 		if (!CreateCyberGoggles.config.chainConveyor.enhancedConnection) return;
 		returnable.setReturnValue(false);

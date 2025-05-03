@@ -25,8 +25,8 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 		if (localPlayer == null) return;
 		var mainHandItem = localPlayer.getMainHandItem();
 		if (mc.level == null || mc.hitResult == null || mc.hitResult instanceof BlockHitResult blockHitResult && mc.level.getBlockState(
-				blockHitResult.getBlockPos()).getBlock() instanceof ChainConveyorBlock && (
-				localPlayer.isShiftKeyDown() || mainHandItem.getItem().equals(Items.CHAIN) || AllBlocks.CHAIN_CONVEYOR.isIn(mainHandItem)
+			blockHitResult.getBlockPos()).getBlock() instanceof ChainConveyorBlock && (
+			localPlayer.isShiftKeyDown() || mainHandItem.getItem().equals(Items.CHAIN) || AllBlocks.CHAIN_CONVEYOR.isIn(mainHandItem)
 		)) return;
 		returnable.setReturnValue(true);
 	}
@@ -44,18 +44,18 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 		if (AllBlocks.PACKAGE_FROGPORT.isIn(mainHandItem)) {
 			PackagePortTargetSelectionHandler.exactPositionOfTarget = selectedBakedPosition;
 			PackagePortTargetSelectionHandler.activePackageTarget = new PackagePortTarget.ChainConveyorFrogportTarget(
-					selectedLift,
-					selectedChainPosition,
-					selectedConnection
+				selectedLift,
+				selectedChainPosition,
+				selectedConnection
 			);
 			return;
 		}
 		if (PackageItem.isPackage(mainHandItem)) {
 			AllPackets.getChannel().sendToServer(new ChainPackageInteractionPacket(
-					selectedLift,
-					selectedConnection,
-					selectedChainPosition,
-					mainHandItem
+				selectedLift,
+				selectedConnection,
+				selectedChainPosition,
+				mainHandItem
 			));
 			return;
 		}
@@ -65,10 +65,10 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 		}
 		if (selectedConnection == null) return;
 		AllPackets.getChannel().sendToServer(new ChainConveyorConnectionPacket(
-				selectedLift,
-				selectedLift.offset(selectedConnection),
-				mainHandItem,
-				false
+			selectedLift,
+			selectedLift.offset(selectedConnection),
+			mainHandItem,
+			false
 		));
 	}
 }

@@ -1,2 +1,2 @@
-- Fix [#16](https://github.com/ForgeStove/CreateCyberGoggles/issues/16)
-- Add language supports
+- Fix crash when JEI is not installed
+- Fix issues with some features not working

@@ -14,7 +14,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 public class KeyInput {
@@ -27,10 +26,10 @@ public class KeyInput {
 		var enabled = CreateCyberGoggles.config.armor.removeDivingBootsAffect;
 		CreateCyberGoggles.config.armor.removeDivingBootsAffect = !enabled;
 		player.displayClientMessage(
-				Component.translatable("message.%s.%s".formatted(
-						CreateCyberGoggles.ID,
-						enabled ? "enableDivingAffect" : "disableDivingAffect"
-				)), true
+			Component.translatable("message.%s.%s".formatted(
+				CreateCyberGoggles.ID,
+				enabled ? "enableDivingAffect" : "disableDivingAffect"
+			)), true
 		);
 	}
 	public static void openConfigScreen() {
@@ -80,7 +79,7 @@ public class KeyInput {
 			setFilterScreen(item);
 		}
 	}
-	public static void setFilterScreen(@NotNull ItemStack filter) {
+	public static void setFilterScreen(ItemStack filter) {
 		try {
 			var field = FilterItem.class.getDeclaredField("type");
 			field.setAccessible(true);

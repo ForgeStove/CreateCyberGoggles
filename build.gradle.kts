@@ -15,7 +15,7 @@ repositories {
 	maven("https://maven.blamejared.com") // JEI
 }
 dependencies {
-	compileOnly(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+	implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 	annotationProcessor("org.spongepowered:mixin:${e("mixin_version")}:processor")
 	modImplementation("io.github.llamalad7:mixinextras-${e("loader")}:${e("mixin_extras_version")}")
 	modImplementation("com.simibubi.create:create-${e("minecraft_version")}:${e("create_version")}:slim")
@@ -35,7 +35,7 @@ val copyIcon = tasks.register("copyIcon") {
 }
 base.archivesName.set(e("mod_id"))
 group = e("mod_group_id")
-version = "${e("minecraft_version")}-${e("mod_version")}+${e("loader")}"
+version = "${e("minecraft_version")}-${e("mod_version")}+${e("upper_loader")}"
 java.withSourcesJar()
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 tasks.jar {
@@ -68,10 +68,10 @@ legacyForge {
 	ideSyncTasks.addAll(generateModMetadata, copyIcon)
 }
 publishMods {
-	file.set(tasks.jar.get().archiveFile)
+	file.set(file("build/libs/${e("mod_id")}-${project.version}.jar"))
 	changelog.set(file("CHANGELOG.md").readText())
 	type.set(STABLE)
-	version.set("${e("minecraft_version")}-${e("mod_version")}-${e("loader")}")
+	version.set(project.version.toString())
 	displayName.set("[${e("upper_loader")}] ${e("mod_name")} ${e("mod_version")}+${e("minecraft_version")}")
 	modLoaders.addAll(e("loader"), "NeoForge")
 	modrinth {

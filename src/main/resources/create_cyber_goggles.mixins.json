@@ -1,18 +1,21 @@
 {
-    "required": false,
-    "minVersion": "0",
-    "package": "com.forgestove.create_cyber_goggles.mixin",
-    "client": [
-        "armor.DivingBootsItemMixin",
-        "armor.NetheriteBacktankFirstPersonRendererMixin",
-        "filter.AbstractFilterScreenMixin",
-        "flywheel.BackendMixin",
-        "goggles.DeployerBlockEntityMixin",
-        "goggles.GeneratingKineticBlockEntityMixin",
-        "goggles.GogglesItemMixin",
-        "goggles.KineticBlockEntityMixin",
-        "goggles.LangMixin",
-        "goggles.PoweredShaftBlockEntityMixin",
-        "nbt.NbtAccounterMixin"
-    ]
+	"required": false,
+	"minVersion": "0",
+	"package": "com.forgestove.create_cyber_goggles.mixin",
+	"refmap": "create_cyber_goggles-refmap.json",
+	"client": [
+		"armor.DivingBootsItemMixin",
+		"goggles.DeployerBlockEntityMixin",
+		"goggles.GeneratingKineticBlockEntityMixin",
+		"goggles.GogglesItemMixin",
+		"goggles.KineticBlockEntityMixin",
+		"goggles.LangMixin",
+		"goggles.PoweredShaftBlockEntityMixin",
+		"jei.CreateJEIMixin",
+		"jei.SequencedAssemblyCategoryMixin",
+		"nbt.NbtAccounterMixin",
+		"render.BackendMixin",
+		"render.NetheriteBacktankFirstPersonRendererMixin",
+		"screen.AbstractFilterScreenMixin"
+	]
 }

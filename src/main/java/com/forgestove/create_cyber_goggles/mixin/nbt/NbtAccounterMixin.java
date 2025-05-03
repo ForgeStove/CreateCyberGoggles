@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(NbtAccounter.class)
 public abstract class NbtAccounterMixin {
-	@Inject(method = "accountBytes(J)V", at = @At("HEAD"), remap = false, cancellable = true)
+	@Inject(method = "accountBytes(J)V", at = @At("HEAD"), cancellable = true)
 	public void accountBytes(@NotNull CallbackInfo callbackInfo) {
 		try {
 			if (CreateCyberGoggles.config.nbt.nbtFix) callbackInfo.cancel();

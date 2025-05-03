@@ -1,6 +1,6 @@
-package com.forgestove.create_cyber_goggles.event;
+package com.forgestove.create_cyber_goggles.content.event;
 import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
-import com.forgestove.create_cyber_goggles.config.ModConfig;
+import com.forgestove.create_cyber_goggles.content.ModConfig;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
@@ -25,7 +25,7 @@ public class KeyInput {
 		});
 	}
 	public static void toggleDiving() {
-		if (!ModKeyMapping.toggleDiving.isDown()) return;
+		if (!ModKeyMapping.toggleDiving.consumeClick()) return;
 		var mc = Minecraft.getInstance();
 		var player = mc.player;
 		if (player == null || mc.screen != null) return;
@@ -35,13 +35,13 @@ public class KeyInput {
 		player.displayClientMessage(component, true);
 	}
 	public static void openConfigScreen() {
-		if (!ModKeyMapping.openConfig.isDown()) return;
+		if (!ModKeyMapping.openConfig.consumeClick()) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) return;
 		mc.setScreen(AutoConfig.getConfigScreen(ModConfig.class, null).get());
 	}
 	public static void previewFilterScreen() {
-		if (!ModKeyMapping.previewFilter.isDown()) return;
+		if (!ModKeyMapping.previewFilter.consumeClick()) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) {
 			if (!(mc.screen instanceof AbstractContainerScreen<?> screen)) return;
@@ -87,3 +87,4 @@ public class KeyInput {
 		}
 	}
 }
+

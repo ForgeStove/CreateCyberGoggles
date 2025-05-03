@@ -1,4 +1,4 @@
-package com.forgestove.create_cyber_goggles.mixin.flywheel;
+package com.forgestove.create_cyber_goggles.mixin.render;
 import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
 import com.jozufozu.flywheel.backend.Backend;
 import com.jozufozu.flywheel.config.*;

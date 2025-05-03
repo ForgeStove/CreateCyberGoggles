@@ -1,13 +1,10 @@
 package com.forgestove.create_cyber_goggles;
 import com.simibubi.create.AllItems;
-import com.simibubi.create.foundation.gui.AllGuiTextures;
-import mezz.jei.api.gui.drawable.IDrawable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
-import org.jetbrains.annotations.*;
 public class Util {
 	/**
 	 * 测试玩家是否穿着全套纸板盔甲并且不在飞行状态。
@@ -45,19 +42,5 @@ public class Util {
 		guiGraphics.renderItem(itemStack, x + 10, y - 15);
 		guiGraphics.renderItemDecorations(font, itemStack, x + 10, y - 15);
 		guiGraphics.renderTooltip(font, itemStack, x + 22, y - height);
-	}
-	@Contract(value = "_ -> new", pure = true)
-	public static IDrawable asDrawable(AllGuiTextures texture) {
-		return new IDrawable() {
-			public int getWidth() {
-				return texture.getWidth();
-			}
-			public int getHeight() {
-				return texture.getHeight();
-			}
-			public void draw(@NotNull GuiGraphics guiGraphics, int xOffset, int yOffset) {
-				texture.render(guiGraphics, xOffset, yOffset);
-			}
-		};
 	}
 }

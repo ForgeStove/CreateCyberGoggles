@@ -1,13 +1,16 @@
 package com.forgestove.create_cyber_goggles.mixin.jei;
-import com.forgestove.create_cyber_goggles.*;
+import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
 import com.simibubi.create.compat.jei.category.SequencedAssemblyCategory;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.utility.CreateLang;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.recipe.*;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.MutableComponent;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
@@ -19,13 +22,23 @@ public abstract class SequencedAssemblyCategoryMixin {
 		var size = 8;
 		for (var i = 1; i < recipe.resultPool.size(); i++) {
 			var out = recipe.resultPool.get(i);
-			builder.addSlot(RecipeIngredientRole.OUTPUT, (i - 1) % size * 19 + 15, (i - 1) / size * 19 + 120)
-				   .setBackground(Util.asDrawable(AllGuiTextures.JEI_CHANCE_SLOT), -1, -1).addItemStack(out.getStack())
-				   .addRichTooltipCallback((iRecipeSlotView, iTooltipBuilder) -> {
-					   float totalWeight = 0;
-					   for (var output : recipe.resultPool) totalWeight += output.getChance();
-					   iTooltipBuilder.add(chanceComponent(out.getChance() / totalWeight));
-				   });
+			builder.addSlot(RecipeIngredientRole.OUTPUT, (i - 1) % size * 19 + 15, (i - 1) / size * 19 + 120).setBackground(
+				new IDrawable() {
+					public int getWidth() {
+						return AllGuiTextures.JEI_CHANCE_SLOT.getWidth();
+					}
+					public int getHeight() {
+						return AllGuiTextures.JEI_CHANCE_SLOT.getHeight();
+					}
+					public void draw(@NotNull GuiGraphics guiGraphics, int xOffset, int yOffset) {
+						AllGuiTextures.JEI_CHANCE_SLOT.render(guiGraphics, xOffset, yOffset);
+					}
+				}, -1, -1
+			).addItemStack(out.getStack()).addRichTooltipCallback((iRecipeSlotView, iTooltipBuilder) -> {
+				float totalWeight = 0;
+				for (var output : recipe.resultPool) totalWeight += output.getChance();
+				iTooltipBuilder.add(chanceComponent(out.getChance() / totalWeight));
+			});
 		}
 	}
 	@Shadow

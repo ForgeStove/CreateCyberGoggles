@@ -75,11 +75,13 @@ publishMods {
 		projectId.set("TlQAWQCY")
 		minecraftVersions.add(e("minecraft_version"))
 		requires("create", "cloth-config")
+		optional("modmenu")
 	}
 	curseforge {
 		accessToken.set(providers.environmentVariable("CURSEFORGE_TOKEN"))
 		projectId.set("1233804")
 		minecraftVersions.add(e("minecraft_version"))
 		requires("create", "cloth-config")
+		optional("modmenu")
 	}
 }

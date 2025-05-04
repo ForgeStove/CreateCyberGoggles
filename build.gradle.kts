@@ -39,16 +39,21 @@ val copyIcon = tasks.register("copyIcon") {
 		into(".idea")
 	}
 }
+val deleteCache = tasks.register<Delete>("deleteCache") {
+	delete("cache")
+}
 val cacheMergedJar = tasks.register<Copy>("copyMergedJar") {
 	dependsOn("createMinecraftArtifacts")
-	from("build/moddev/artifacts/forge-${e("minecraft_version")}-${e("forge_version")}-merged.jar")
+	from("build/moddev/artifacts/${e("loader")}-${e("minecraft_version")}-${e("loader_version")}-merged.jar")
 	into("cache")
 }
 base.archivesName.set(e("mod_id"))
 group = e("mod_group_id")
 version = "${e("minecraft_version")}-${e("mod_version")}+${e("upper_loader")}"
-java.withSourcesJar()
-java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+java {
+	withSourcesJar()
+	toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+}
 tasks.jar {
 	from("LICENSE")
 	manifest { attributes(mapOf("MixinConfigs" to "${e("mod_id")}.mixins.json")) }
@@ -65,7 +70,7 @@ idea {
 }
 sourceSets { named("main") { resources.srcDir(generateModMetadata) } }
 legacyForge {
-	version = "${e("minecraft_version")}-${e("forge_version")}"
+	version = "${e("minecraft_version")}-${e("loader_version")}"
 	validateAccessTransformers.set(true)
 	parchment { mappingsVersion.set(e("parchment_version"));minecraftVersion.set(e("minecraft_version")) }
 	runs {
@@ -76,7 +81,7 @@ legacyForge {
 		}
 	}
 	mods { create(e("mod_id")) { sourceSet(sourceSets["main"]) } }
-	ideSyncTasks.addAll(generateModMetadata, copyIcon, cacheMergedJar)
+	ideSyncTasks.addAll(generateModMetadata, copyIcon, deleteCache, cacheMergedJar)
 }
 publishMods {
 	file.set(file("build/libs/${e("mod_id")}-${project.version}.jar"))

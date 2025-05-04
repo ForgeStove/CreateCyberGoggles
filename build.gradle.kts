@@ -64,7 +64,7 @@ tasks.ideaSyncTask {
 }
 loom { accessWidenerPath.set(file("src/main/resources/${e("mod_id")}.accessWidener")) }
 publishMods {
-	file.set(file("build/libs/${e("mod_id")}-${project.version}.jar"))
+	file.set(tasks.remapJar.get().archiveFile)
 	changelog.set(file("CHANGELOG.md").readText())
 	type.set(STABLE)
 	version.set(project.version.toString())

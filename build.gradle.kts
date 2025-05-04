@@ -69,19 +69,19 @@ publishMods {
 	type.set(STABLE)
 	version.set(project.version.toString())
 	displayName.set("[${e("upper_loader")}] ${e("mod_name")} ${e("mod_version")}+${e("minecraft_version")}")
-	modLoaders.addAll(e("upper_loader"), "Quilt")
+	modLoaders.addAll(e("upper_loader"), e("other_loader"))
 	modrinth {
 		accessToken.set(providers.environmentVariable("MODRINTH_TOKEN"))
 		projectId.set("TlQAWQCY")
 		minecraftVersions.add(e("minecraft_version"))
-		requires("create", "cloth-config")
+		requires("create-fabric", "cloth-config")
 		optional("modmenu")
 	}
 	curseforge {
 		accessToken.set(providers.environmentVariable("CURSEFORGE_TOKEN"))
 		projectId.set("1233804")
 		minecraftVersions.add(e("minecraft_version"))
-		requires("create", "cloth-config")
+		requires("create-fabric", "cloth-config")
 		optional("modmenu")
 	}
 }

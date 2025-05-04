@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.armor;
-import com.forgestove.create_cyber_goggles.Util;
+import com.forgestove.create_cyber_goggles.content.Util;
 import com.simibubi.create.content.equipment.armor.CardboardArmorHandler;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorRidingHandler;
 import net.minecraft.client.player.LocalPlayer;

@@ -1,4 +1,5 @@
 package com.forgestove.create_cyber_goggles;
+import com.forgestove.create_cyber_goggles.content.ModConfig;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory;

@@ -1,5 +1,6 @@
-package com.forgestove.create_cyber_goggles.event;
+package com.forgestove.create_cyber_goggles.content.event;
 import com.forgestove.create_cyber_goggles.*;
+import com.forgestove.create_cyber_goggles.content.ModConfig;
 import com.simibubi.create.AllMenuTypes;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.stockTicker.*;

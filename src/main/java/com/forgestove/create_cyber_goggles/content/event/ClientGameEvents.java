@@ -1,4 +1,4 @@
-package com.forgestove.create_cyber_goggles.event;
+package com.forgestove.create_cyber_goggles.content.event;
 import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent.*;

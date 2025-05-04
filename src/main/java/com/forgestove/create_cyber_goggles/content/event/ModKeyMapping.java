@@ -1,4 +1,4 @@
-package com.forgestove.create_cyber_goggles.event;
+package com.forgestove.create_cyber_goggles.content.event;
 import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
 import com.mojang.blaze3d.platform.InputConstants.Type;
 import net.minecraft.client.KeyMapping;

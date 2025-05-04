@@ -34,12 +34,15 @@ val generateModMetadata = tasks.register<ProcessResources>("generateModMetadata"
 	into("build/generated/sources/modMetadata")
 }
 val copyIcon = tasks.register("copyIcon") {
-	if(file(".idea").exists() && !file(".idea/icon.png").exists()) copy { from("src/main/resources/icon.png"); into(".idea") }
+	if(file(".idea").exists() && !file(".idea/icon.png").exists()) copy {
+		from("src/main/resources/icon.png")
+		into(".idea")
+	}
 }
 val cacheMergedJar = tasks.register<Copy>("copyMergedJar") {
-    dependsOn("createMinecraftArtifacts")
-    from("build/moddev/artifacts/forge-${e("minecraft_version")}-${e("forge_version")}-merged.jar")
-    into("cache")
+	dependsOn("createMinecraftArtifacts")
+	from("build/moddev/artifacts/forge-${e("minecraft_version")}-${e("forge_version")}-merged.jar")
+	into("cache")
 }
 base.archivesName.set(e("mod_id"))
 group = e("mod_group_id")

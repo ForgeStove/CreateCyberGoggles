@@ -1,4 +1,4 @@
-![Logo](https://cdn.modrinth.com/data/TlQAWQCY/images/b0404b8be3dc050d20c09d73ea5e570ae061961a.png)
+![Logo](https://cdn.modrinth.com/data/cached_images/45b7c12e5bfe61cf6cf3a47ecc761b041825de67.png)
 
 [![Supported Versions](https://cf.way2muchnoise.eu/versions/1233804(c70039).svg)](https://www.curseforge.com/minecraft/mc-mods/create-cyber-goggles/files)
 [![License](https://img.shields.io/github/license/ForgeStove/CreateCyberGoggles?style=flat&color=900c3f)](https://github.com/ForgeStove/CreateCyberGoggles?tab=readme-ov-file#MIT-1-ov-file)
@@ -21,7 +21,7 @@
 * **护目镜模块**：模式强制启用（生存/创造/冒险/旁观）、旋转粒子效果、精准数值显示、增强信息渲染、增强商店界面
 * **扳手模块**：无需扳手即可旋转方块
 * **NBT修复**：修复原版NBT过大导致的崩溃问题
-* **快捷键支持**：快速访问配置界面、库存界面、过滤器预览
+* **快捷键支持**：快速访问配置界面、仓库界面、过滤器预览
 * **JEI增强**：显示随机废料的内容
 
 This mod provides the following configurable features:
@@ -39,11 +39,11 @@ This mod provides the following configurable features:
 
 > 主要在 1.21.1 NeoForge 上开发额外功能  
 > 1.20.1 Forge 版本已经完全跟进  
-> 1.20.1 Fabric 版本部分移植完成  
+> 1.20.1 Fabric 版本部分移植完成
 
 > Extra features are mainly developed in 1.21.1 NeoForge  
 > 1.20.1 Forge version has been fully updated  
-> 1.20.1 Fabric version part migration completed  
+> 1.20.1 Fabric version part migration completed
 
 ## 版本 / Versions
 

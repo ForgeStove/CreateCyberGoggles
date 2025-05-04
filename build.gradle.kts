@@ -15,8 +15,11 @@ repositories {
 	maven("https://maven.blamejared.com") // JEI
 }
 dependencies {
-	implementation("com.simibubi.create:create-${e("minecraft_version")}:${e("create_version")}:slim") {isTransitive = false}
-	implementation("net.createmod.ponder:Ponder-${e("upper_loader")}-${e("minecraft_version")}:${e("ponder_version")}") {isTransitive = false}
+	compileOnly(fileTree(mapOf("dir" to "cache", "include" to listOf("*.jar"))))
+	implementation("com.simibubi.create:create-${e("minecraft_version")}:${e("create_version")}:slim") { isTransitive = false }
+	implementation("net.createmod.ponder:Ponder-${e("upper_loader")}-${e("minecraft_version")}:${e("ponder_version")}") {
+		isTransitive = false
+	}
 	implementation("dev.engine-room.flywheel:flywheel-${e("loader")}-${e("minecraft_version")}:${e("flywheel_version")}")
 	implementation("com.tterrag.registrate:Registrate:${e("registrate_version")}")
 	implementation("me.shedaniel.cloth:cloth-config-${e("loader")}:${e("cloth_config_version")}")
@@ -24,10 +27,15 @@ dependencies {
 }
 val generateModMetadata = tasks.register<ProcessResources>("generateModMetadata") {
 	val replace = properties.mapValues { it.value.toString() }
-	inputs.properties(replace); expand(replace); from("src/main/templates"); into("build/generated/sources/modMetadata")
+	inputs.properties(replace)
+	from("src/main/templates")
+	expand(replace)
+	into("build/generated/sources/modMetadata")
 }
-val copyIcon = tasks.register("copyIcon") {
-	if(file(".idea").exists() && !file(".idea/icon.png").exists()) copy { from("src/main/resources/icon.png"); into(".idea") }
+val copyIcon = tasks.register<Copy>("copyIcon") {
+	if(!file(".idea").exists()) return@register
+	from("src/main/resources/icon.png")
+	into(".idea")
 }
 base.archivesName.set(e("mod_id"))
 group = e("mod_group_id")
@@ -43,7 +51,7 @@ idea {
 }
 sourceSets { named("main") { resources.srcDir(generateModMetadata) } }
 neoForge {
-	version = e("neo_version")
+	version = e("loader_version")
 	parchment {
 		mappingsVersion.set(e("parchment_version"))
 		minecraftVersion.set(e("minecraft_version"))

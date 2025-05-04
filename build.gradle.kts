@@ -37,11 +37,22 @@ val copyIcon = tasks.register<Copy>("copyIcon") {
 	from("src/main/resources/icon.png")
 	into(".idea")
 }
+val merged = "${e("loader")}-${e("loader_version")}-merged.jar"
+val deleteCache = tasks.register<Delete>("deleteCache") {
+	delete(fileTree("cache").exclude { it.name == merged })
+}
+val cacheMergedJar = tasks.register<Copy>("copyMergedJar") {
+	dependsOn(deleteCache, "createMinecraftArtifacts")
+	from("build/moddev/artifacts/$merged")
+	into("cache")
+}
 base.archivesName.set(e("mod_id"))
 group = e("mod_group_id")
 version = "${e("minecraft_version")}-${e("mod_version")}+${e("upper_loader")}"
-java.withSourcesJar()
-java.toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+java {
+	withSourcesJar()
+	toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+}
 tasks.jar { from("LICENSE") }
 idea {
 	module {
@@ -64,7 +75,7 @@ neoForge {
 		}
 	}
 	mods { create(e("mod_id")) { sourceSet(sourceSets["main"]) } }
-	ideSyncTasks.addAll(generateModMetadata, copyIcon)
+	ideSyncTasks.addAll(generateModMetadata, copyIcon, deleteCache, cacheMergedJar)
 }
 publishMods {
 	file.set(tasks.jar.get().archiveFile)

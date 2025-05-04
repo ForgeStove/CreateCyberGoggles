@@ -1,4 +1,4 @@
-package com.forgestove.create_cyber_goggles.event;
+package com.forgestove.create_cyber_goggles.content.event;
 import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -12,7 +12,7 @@ public class ClientGameEvents {
 		KeyInput.toggleDiving();
 		KeyInput.openConfigScreen();
 		KeyInput.openStockScreen();
-		KeyInput.openFilterScreen();
+		KeyInput.previewFilterScreen();
 	}
 	@SubscribeEvent
 	public static void mouseScrollingEvent(MouseScrollingEvent event) {

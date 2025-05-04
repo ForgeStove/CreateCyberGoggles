@@ -1,5 +1,6 @@
-package com.forgestove.create_cyber_goggles.event;
+package com.forgestove.create_cyber_goggles.content.event;
 import com.forgestove.create_cyber_goggles.*;
+import com.forgestove.create_cyber_goggles.content.ModConfig;
 import com.simibubi.create.AllMenuTypes;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.stockTicker.*;
@@ -58,7 +59,7 @@ public class KeyInput {
 		var menu = new StockKeeperRequestMenu(type, -1, inv, lastBlockEntity);
 		mc.setScreen(new StockKeeperRequestScreen(menu, inv, lastBlockEntity.getBlockState().getBlock().getName()));
 	}
-	public static void openFilterScreen() {
+	public static void previewFilterScreen() {
 		if (!ModKeyMapping.PREVIEW_FILTER.get().isDown()) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) {

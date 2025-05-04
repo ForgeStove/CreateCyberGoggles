@@ -1,4 +1,5 @@
-package com.forgestove.create_cyber_goggles;
+package com.forgestove.create_cyber_goggles.content;
+import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry.Category;

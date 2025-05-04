@@ -1,5 +1,6 @@
 package com.forgestove.create_cyber_goggles.mixin.render;
 import com.forgestove.create_cyber_goggles.*;
+import com.forgestove.create_cyber_goggles.content.Util;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer;
@@ -20,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
-import static com.forgestove.create_cyber_goggles.event.MouseScroll.*;
+import static com.forgestove.create_cyber_goggles.content.event.MouseScroll.*;
 @Mixin(BlueprintOverlayRenderer.class)
 public abstract class BlueprintOverlayRendererMixin {
 	@Shadow static boolean active;

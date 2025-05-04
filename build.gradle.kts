@@ -28,10 +28,18 @@ dependencies {
 }
 val generateModMetadata = tasks.register<ProcessResources>("generateModMetadata") {
 	val replace = properties.mapValues { it.value.toString() }
-	inputs.properties(replace); expand(replace); from("src/main/templates"); into("build/generated/sources/modMetadata")
+	inputs.properties(replace)
+	from("src/main/templates")
+	expand(replace)
+	into("build/generated/sources/modMetadata")
 }
 val copyIcon = tasks.register("copyIcon") {
 	if(file(".idea").exists() && !file(".idea/icon.png").exists()) copy { from("src/main/resources/icon.png"); into(".idea") }
+}
+val cacheMergedJar = tasks.register<Copy>("copyMergedJar") {
+    dependsOn("createMinecraftArtifacts")
+    from("build/moddev/artifacts/forge-${e("minecraft_version")}-${e("forge_version")}-merged.jar")
+    into("cache")
 }
 base.archivesName.set(e("mod_id"))
 group = e("mod_group_id")
@@ -55,7 +63,7 @@ idea {
 sourceSets { named("main") { resources.srcDir(generateModMetadata) } }
 legacyForge {
 	version = "${e("minecraft_version")}-${e("forge_version")}"
-//	validateAccessTransformers.set(true)
+	validateAccessTransformers.set(true)
 	parchment { mappingsVersion.set(e("parchment_version"));minecraftVersion.set(e("minecraft_version")) }
 	runs {
 		create("client") { client() }
@@ -65,7 +73,7 @@ legacyForge {
 		}
 	}
 	mods { create(e("mod_id")) { sourceSet(sourceSets["main"]) } }
-	ideSyncTasks.addAll(generateModMetadata, copyIcon)
+	ideSyncTasks.addAll(generateModMetadata, copyIcon, cacheMergedJar)
 }
 publishMods {
 	file.set(file("build/libs/${e("mod_id")}-${project.version}.jar"))
@@ -73,7 +81,7 @@ publishMods {
 	type.set(STABLE)
 	version.set(project.version.toString())
 	displayName.set("[${e("upper_loader")}] ${e("mod_name")} ${e("mod_version")}+${e("minecraft_version")}")
-	modLoaders.addAll(e("loader"), "NeoForge")
+	modLoaders.addAll(e("upper_loader"), e("other_loader"))
 	modrinth {
 		accessToken.set(providers.environmentVariable("MODRINTH_TOKEN"))
 		projectId.set("TlQAWQCY")

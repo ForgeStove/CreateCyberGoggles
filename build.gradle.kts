@@ -15,7 +15,7 @@ repositories {
 	maven("https://maven.blamejared.com") // JEI
 }
 dependencies {
-	implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+	compileOnly(fileTree(mapOf("dir" to "cache", "include" to listOf("*.jar"))))
 	annotationProcessor("org.spongepowered:mixin:${e("mixin_version")}:processor")
 	modImplementation("io.github.llamalad7:mixinextras-${e("loader")}:${e("mixin_extras_version")}")
 	modImplementation("com.simibubi.create:create-${e("minecraft_version")}:${e("create_version")}:slim")

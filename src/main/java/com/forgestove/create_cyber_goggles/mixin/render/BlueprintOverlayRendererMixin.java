@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.render;
-import com.forgestove.create_cyber_goggles.*;
+import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
 import com.forgestove.create_cyber_goggles.content.Util;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.simibubi.create.AllItems;

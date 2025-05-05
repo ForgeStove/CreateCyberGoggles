@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.content.event;
-import com.forgestove.create_cyber_goggles.*;
+import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
 import com.forgestove.create_cyber_goggles.content.ModConfig;
 import com.simibubi.create.AllMenuTypes;
 import com.simibubi.create.content.logistics.filter.*;
@@ -16,9 +16,17 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
 
+import java.lang.invoke.*;
 import java.util.Collections;
 public class KeyInput {
+	public static final MethodHandle FILTER_TYPE = findGetter();
 	public static StockTickerBlockEntity lastBlockEntity = null;
+	@SuppressWarnings("JavaLangInvokeHandleSignature")
+	private static MethodHandle findGetter() {
+		try {
+			return MethodHandles.lookup().findGetter(FilterItem.class, "type", Enum.class);
+		} catch (Exception ignored) {return null;}
+	}
 	public static void toggleDiving() {
 		if (!ModKeyMapping.TOGGLE_DIVING.get().isDown()) return;
 		var mc = Minecraft.getInstance();
@@ -84,17 +92,16 @@ public class KeyInput {
 	}
 	public static void setFilterScreen(ItemStack filter) {
 		try {
-			var field = FilterItem.class.getDeclaredField("type");
-			field.setAccessible(true);
 			if (!(filter.getItem() instanceof FilterItem filterItem)) return;
-			if (!field.getType().isEnum()) return;
 			var mc = Minecraft.getInstance();
 			var player = mc.player;
 			if (player == null) return;
 			var inv = player.getInventory();
 			var name = filter.getHoverName();
+			if (FILTER_TYPE == null) return;
+			var type = (Enum<?>) FILTER_TYPE.invokeExact(filterItem);
 			Screen screen;
-			switch (((Enum<?>) field.get(filterItem)).ordinal()) {
+			switch (type.ordinal()) {
 				case 0 -> screen = new FilterScreen(FilterMenu.create(-1, inv, filter), inv, name);
 				case 1 -> screen = new AttributeFilterScreen(AttributeFilterMenu.create(-1, inv, filter), inv, name);
 				case 2 -> screen = new PackageFilterScreen(PackageFilterMenu.create(-1, inv, filter), inv, name);
@@ -103,7 +110,6 @@ public class KeyInput {
 				}
 			}
 			ScreenOpener.open(screen);
-		} catch (Exception ignored) {
-		}
+		} catch (Throwable ignored) {}
 	}
 }

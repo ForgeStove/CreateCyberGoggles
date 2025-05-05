@@ -30,15 +30,16 @@ public class ModConfig implements ConfigData {
 		@Tooltip public boolean forcedBackend = false;
 	}
 	public static class Goggles {
-		@Tooltip public boolean enableInSurvival = true;
-		@Tooltip public boolean enableInCreative = true;
-		@Tooltip public boolean enableInSpectator = true;
-		@Tooltip public boolean enableInAdventure = true;
 		@Tooltip public boolean enhancedInfo = true;
+		@Tooltip public boolean hideStaticKineticInfo = false;
 		@Tooltip public boolean enhancedStoreRender = true;
 		@Tooltip public boolean renderExtraItems = true;
 		@Tooltip public boolean enableKineticEffect = true;
 		@Tooltip public boolean preciseNumbers = true;
+		@Tooltip public boolean enableInSurvival = true;
+		@Tooltip public boolean enableInCreative = true;
+		@Tooltip public boolean enableInSpectator = true;
+		@Tooltip public boolean enableInAdventure = true;
 	}
 	public static class Jei {
 		@Tooltip @RequiresRestart public boolean nonrandomScrap = true;

@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.chainConveyor;
-import com.forgestove.create_cyber_goggles.*;
+import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
 import com.forgestove.create_cyber_goggles.content.Util;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.kinetics.chainConveyor.*;
@@ -12,6 +12,7 @@ import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket.Action;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -69,8 +70,8 @@ public abstract class ChainConveyorRidingHandlerMixin {
 		if (AnimationTickHolder.getTicks() % 10 == 0)
 			CatnipServices.NETWORK.sendToServer(new ServerboundChainConveyorRidingPacket(ridingChainConveyor, false));
 	}
-	@Shadow
-	private static void stopRiding() {}
+	@Invoker("stopRiding")
+	public static void stopRiding() {}
 	@Shadow
 	private static void updateTargetPosition(Minecraft mc, ChainConveyorBlockEntity chainConveyorBlockEntity) {}
 }

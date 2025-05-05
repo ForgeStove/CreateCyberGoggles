@@ -8,6 +8,7 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -37,9 +38,20 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 					  .style(ChatFormatting.GREEN).forGoggles(tooltip);
 		returnable.setReturnValue(true);
 	}
-	@Inject(method = "addToGoggleTooltip", at = @At("RETURN"))
+	@Inject(method = "addToGoggleTooltip", at = @At("TAIL"))
 	private void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
 		if (!CreateCyberGoggles.config.goggles.enhancedInfo) return;
 		SpeedLevel.getFormattedSpeedText(getSpeed(), overStressed).forGoggles(tooltip);
+	}
+	@Inject(
+		method = "addToGoggleTooltip", at = @At(
+		value = "INVOKE", target = "Lcom/simibubi/create/content/kinetics/deployer/DeployerBlockEntity;calculateStressApplied()F"
+	), cancellable = true
+	)
+	private void injected(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
+		var goggles = CreateCyberGoggles.config.goggles;
+		if (!goggles.enhancedInfo || !goggles.hideStaticKineticInfo) return;
+		if (!Mth.equal(getSpeed(), 0)) return;
+		returnable.setReturnValue(true);
 	}
 }

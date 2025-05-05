@@ -47,6 +47,8 @@
 	"text.autoconfig.create_cyber_goggles.option.goggles.enhancedInfo.@Tooltip": "Verbessert die Informationsanzeige",
 	"text.autoconfig.create_cyber_goggles.option.goggles.enhancedStoreRender": "Verbessertes Shop-Rendering",
 	"text.autoconfig.create_cyber_goggles.option.goggles.enhancedStoreRender.@Tooltip": "Verbessert das Rendering und die Logik des Shops",
+	"text.autoconfig.create_cyber_goggles.option.goggles.hideStaticKineticInfo": "Statische kinetische Informationen ausblenden",
+	"text.autoconfig.create_cyber_goggles.option.goggles.hideStaticKineticInfo.@Tooltip": "Statische kinetische Informationen im Brillen-Overlay ausblenden",
 	"text.autoconfig.create_cyber_goggles.option.goggles.preciseNumbers": "Präzise Zahlen",
 	"text.autoconfig.create_cyber_goggles.option.goggles.preciseNumbers.@Tooltip": "Zeigt genauere Werte an",
 	"text.autoconfig.create_cyber_goggles.option.goggles.renderExtraItems": "Mehr Gegenstände anzeigen",

@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.chainConveyor;
-import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
+import com.forgestove.create_cyber_goggles.content.config.CyberConfig;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer;
 import com.simibubi.create.content.kinetics.chainConveyor.*;
@@ -28,7 +28,7 @@ public abstract class ChainConveyorConnectionHandlerMixin {
 		boolean simulate,
 		CallbackInfoReturnable<Boolean> returnable
 	) {
-		if (!CreateCyberGoggles.config.chainConveyor.enhancedConnection) return;
+		if (!CyberConfig.get().chainConveyor.enhancedConnection) return;
 		returnable.setReturnValue(false);
 		if (!simulate && player.isShiftKeyDown()) {
 			CreateLang.translate("chain_conveyor.selection_cleared").sendStatus(player);

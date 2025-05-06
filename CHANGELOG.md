@@ -1,1 +1,1 @@
-- Add language supports
+- Fixed the issue that the preview filter did not take effect

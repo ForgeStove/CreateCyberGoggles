@@ -1,6 +1,6 @@
 package com.forgestove.create_cyber_goggles.mixin.chainConveyor;
-import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
-import com.forgestove.create_cyber_goggles.content.Util;
+import com.forgestove.create_cyber_goggles.content.config.CyberConfig;
+import com.forgestove.create_cyber_goggles.content.util.Common;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.kinetics.chainConveyor.*;
 import net.createmod.catnip.animation.AnimationTickHolder;
@@ -12,7 +12,6 @@ import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket.Action;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.*;
-import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -27,7 +26,7 @@ public abstract class ChainConveyorRidingHandlerMixin {
 		if (mc.isPaused()) return;
 		var player = mc.player;
 		if (player == null) return;
-		var chainConveyor = CreateCyberGoggles.config.chainConveyor;
+		var chainConveyor = CyberConfig.get().chainConveyor;
 		if (!chainConveyor.alwaysAllowRiding && !AllItemTags.CHAIN_RIDEABLE.matches(mc.player.getMainHandItem())) {
 			stopRiding();
 			return;
@@ -66,12 +65,12 @@ public abstract class ChainConveyorRidingHandlerMixin {
 			return;
 		}
 		player.setDeltaMovement(player.getDeltaMovement().scale(0.75).add(diff.scale(0.25)));
-		if (Util.testForStealth(player)) player.connection.send(new ServerboundPlayerCommandPacket(player, Action.PRESS_SHIFT_KEY));
+		if (Common.testForStealth(player)) player.connection.send(new ServerboundPlayerCommandPacket(player, Action.PRESS_SHIFT_KEY));
 		if (AnimationTickHolder.getTicks() % 10 == 0)
 			CatnipServices.NETWORK.sendToServer(new ServerboundChainConveyorRidingPacket(ridingChainConveyor, false));
 	}
-	@Invoker("stopRiding")
-	public static void stopRiding() {}
+	@Shadow
+	private static void stopRiding() {}
 	@Shadow
 	private static void updateTargetPosition(Minecraft mc, ChainConveyorBlockEntity chainConveyorBlockEntity) {}
 }

@@ -1,11 +1,11 @@
-package com.forgestove.create_cyber_goggles.content;
+package com.forgestove.create_cyber_goggles.content.config;
 import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry.Category;
 import me.shedaniel.autoconfig.annotation.ConfigEntry.Gui.*;
 @Config(name = CreateCyberGoggles.ID)
-public class ModConfig implements ConfigData {
+public class CyberConfigData implements ConfigData {
 	@Category("armor") @TransitiveObject public Armor armor = new Armor();
 	@Category("chainConveyor") @TransitiveObject public ChainConveyor chainConveyor = new ChainConveyor();
 	@Category("flywheel") @TransitiveObject public Flywheel flywheel = new Flywheel();

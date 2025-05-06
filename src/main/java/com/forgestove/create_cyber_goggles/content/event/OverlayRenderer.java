@@ -1,6 +1,7 @@
 package com.forgestove.create_cyber_goggles.content.event;
 import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
-import com.forgestove.create_cyber_goggles.content.Util;
+import com.forgestove.create_cyber_goggles.content.config.CyberConfig;
+import com.forgestove.create_cyber_goggles.content.util.Common;
 import com.simibubi.create.content.kinetics.base.IRotate.SpeedLevel;
 import com.simibubi.create.content.kinetics.base.*;
 import com.simibubi.create.content.logistics.depot.DepotBlockEntity;
@@ -27,11 +28,11 @@ public class OverlayRenderer {
 		var level = mc.level;
 		if (level == null || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return;
 		var blockEntity = level.getBlockEntity(blockHitResult.getBlockPos());
-		var goggles = CreateCyberGoggles.config.goggles;
+		var goggles = CyberConfig.get().goggles;
 		if (goggles.renderExtraItems && blockEntity instanceof DepotBlockEntity depotBlockEntity)
-			Util.renderItemStack(guiGraphics, depotBlockEntity.getHeldItem());
+			Common.renderItemStack(guiGraphics, depotBlockEntity.getHeldItem());
 		else if (goggles.renderExtraItems && blockEntity instanceof PackagerBlockEntity packagerBlockEntity)
-			Util.renderItemStack(guiGraphics, packagerBlockEntity.heldBox);
+			Common.renderItemStack(guiGraphics, packagerBlockEntity.heldBox);
 		else if (goggles.enableKineticEffect && blockEntity instanceof KineticBlockEntity kineticBlockEntity) {
 			if (!blockHitResult.getBlockPos().equals(kineticBlockEntity.getBlockPos())) return;
 			var speed = kineticBlockEntity.getSpeed();

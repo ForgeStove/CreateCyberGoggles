@@ -1,6 +1,6 @@
 package com.forgestove.create_cyber_goggles.content.event;
 import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
-import com.forgestove.create_cyber_goggles.content.ModConfig;
+import com.forgestove.create_cyber_goggles.content.config.*;
 import com.simibubi.create.AllMenuTypes;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.stockTicker.*;
@@ -32,8 +32,8 @@ public class KeyInput {
 		var mc = Minecraft.getInstance();
 		var player = mc.player;
 		if (player == null || mc.screen != null) return;
-		var enabled = CreateCyberGoggles.config.armor.removeDivingBootsAffect;
-		CreateCyberGoggles.config.armor.removeDivingBootsAffect = !enabled;
+		var enabled = CyberConfig.get().armor.removeDivingBootsAffect;
+		CyberConfig.get().armor.removeDivingBootsAffect = !enabled;
 		player.displayClientMessage(
 			Component.translatable("message.%s.%s".formatted(
 				CreateCyberGoggles.ID,
@@ -45,7 +45,7 @@ public class KeyInput {
 		if (!ModKeyMapping.OPEN_CONFIG.get().isDown()) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) return;
-		mc.setScreen(AutoConfig.getConfigScreen(ModConfig.class, null).get());
+		mc.setScreen(AutoConfig.getConfigScreen(CyberConfigData.class, null).get());
 	}
 	public static void openStockScreen() {
 		if (!ModKeyMapping.OPEN_STOCK.get().isDown()) return;

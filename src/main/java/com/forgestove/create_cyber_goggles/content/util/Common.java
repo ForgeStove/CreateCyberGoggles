@@ -1,19 +1,19 @@
-package com.forgestove.create_cyber_goggles.content;
-import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
+package com.forgestove.create_cyber_goggles.content.util;
+import com.forgestove.create_cyber_goggles.content.config.CyberConfig;
 import com.simibubi.create.AllItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
-public class Util {
+public class Common {
 	/**
 	 * 测试玩家是否穿着全套纸板盔甲并且不在飞行状态。
 	 *
 	 * @param player 本地玩家实体
 	 */
 	public static boolean testForStealth(LocalPlayer player) {
-		return CreateCyberGoggles.config.chainConveyor.cardBoardedYourself
+		return CyberConfig.get().chainConveyor.cardBoardedYourself
 			&& !player.getAbilities().flying
 			&& AllItems.CARDBOARD_HELMET.isIn(player.getItemBySlot(EquipmentSlot.HEAD))
 			&& AllItems.CARDBOARD_CHESTPLATE.isIn(player.getItemBySlot(EquipmentSlot.CHEST))

@@ -1,5 +1,6 @@
 package com.forgestove.create_cyber_goggles.mixin.nbt;
-import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
+import com.forgestove.create_cyber_goggles.content.config.CyberConfig;
+import com.forgestove.create_cyber_goggles.content.util.RunSafely;
 import net.minecraft.nbt.NbtAccounter;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
@@ -8,9 +9,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class NbtAccounterMixin {
 	@Inject(method = "accountBytes(J)V", at = @At("HEAD"), cancellable = true)
 	public void accountBytes(CallbackInfo callbackInfo) {
-		try {
-			if (CreateCyberGoggles.config.nbt.nbtFix) callbackInfo.cancel();
-		} catch (Exception ignored) {
-		}
+		RunSafely.run(() -> {if (CyberConfig.get().nbt.nbtFix) callbackInfo.cancel();});
 	}
 }

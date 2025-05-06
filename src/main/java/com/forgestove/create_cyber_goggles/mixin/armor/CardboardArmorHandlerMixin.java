@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.armor;
-import com.forgestove.create_cyber_goggles.content.Util;
+import com.forgestove.create_cyber_goggles.content.util.Common;
 import com.simibubi.create.content.equipment.armor.CardboardArmorHandler;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorRidingHandler;
 import net.minecraft.client.player.LocalPlayer;
@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class CardboardArmorHandlerMixin {
 	@Inject(method = "testForStealth", at = @At("HEAD"), cancellable = true)
 	private static void testForStealth(Entity entityIn, CallbackInfoReturnable<Boolean> returnable) {
-		if (ChainConveyorRidingHandler.ridingChainConveyor == null || !(entityIn instanceof LocalPlayer player) || !Util.testForStealth(
+		if (ChainConveyorRidingHandler.ridingChainConveyor == null || !(entityIn instanceof LocalPlayer player) || !Common.testForStealth(
 			player)) return;
 		returnable.setReturnValue(true);
 	}

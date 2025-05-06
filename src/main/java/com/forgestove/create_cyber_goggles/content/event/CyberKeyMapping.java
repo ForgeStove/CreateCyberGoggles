@@ -8,7 +8,7 @@ import static com.forgestove.create_cyber_goggles.CreateCyberGoggles.ID;
 import static com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM;
 import static net.neoforged.neoforge.client.settings.KeyConflictContext.*;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_UNKNOWN;
-public class ModKeyMapping {
+public class CyberKeyMapping {
 	public static final Lazy<KeyMapping> OPEN_CONFIG = register("openConfig", IN_GAME, GLFW_KEY_UNKNOWN);
 	public static final Lazy<KeyMapping> OPEN_STOCK = register("openStock", IN_GAME, GLFW_KEY_UNKNOWN);
 	public static final Lazy<KeyMapping> PREVIEW_FILTER = register("previewFilter", UNIVERSAL, GLFW_KEY_UNKNOWN);

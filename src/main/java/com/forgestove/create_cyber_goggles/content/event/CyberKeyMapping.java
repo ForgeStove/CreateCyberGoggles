@@ -6,7 +6,7 @@ import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.common.util.Lazy;
 import org.lwjgl.glfw.GLFW;
-public class ModKeyMapping {
+public class CyberKeyMapping {
 	public static final Lazy<KeyMapping> OPEN_CONFIG = register("openConfig", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_UNKNOWN);
 	public static final Lazy<KeyMapping> OPEN_STOCK = register("openStock", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_UNKNOWN);
 	public static final Lazy<KeyMapping> PREVIEW_FILTER = register("previewFilter", KeyConflictContext.UNIVERSAL, GLFW.GLFW_KEY_UNKNOWN);

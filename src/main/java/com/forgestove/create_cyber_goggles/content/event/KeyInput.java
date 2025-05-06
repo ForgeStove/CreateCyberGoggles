@@ -16,19 +16,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
+import net.minecraftforge.client.event.InputEvent.Key;
 
-import java.lang.invoke.*;
 import java.util.Collections;
-@SuppressWarnings("JavaLangInvokeHandleSignature")
 public class KeyInput {
-	public static final MethodHandle FILTER_TYPE = RunSafely.run(() -> MethodHandles.lookup().findGetter(
-		FilterItem.class,
-		"type",
-		Enum.class
-	));
 	public static StockTickerBlockEntity lastBlockEntity = null;
 	public static void toggleDiving() {
-		if (!ModKeyMapping.TOGGLE_DIVING.get().isDown()) return;
+		if (!CyberKeyMapping.TOGGLE_DIVING.get().isDown()) return;
 		var mc = Minecraft.getInstance();
 		var player = mc.player;
 		if (player == null || mc.screen != null) return;
@@ -42,13 +36,13 @@ public class KeyInput {
 		);
 	}
 	public static void openConfigScreen() {
-		if (!ModKeyMapping.OPEN_CONFIG.get().isDown()) return;
+		if (!CyberKeyMapping.OPEN_CONFIG.get().isDown()) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) return;
 		mc.setScreen(AutoConfig.getConfigScreen(CyberConfigData.class, null).get());
 	}
 	public static void openStockScreen() {
-		if (!ModKeyMapping.OPEN_STOCK.get().isDown()) return;
+		if (!CyberKeyMapping.OPEN_STOCK.get().isDown()) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) return;
 		var player = mc.player;
@@ -65,16 +59,14 @@ public class KeyInput {
 		var menu = new StockKeeperRequestMenu(type, -1, inv, lastBlockEntity);
 		mc.setScreen(new StockKeeperRequestScreen(menu, inv, lastBlockEntity.getBlockState().getBlock().getName()));
 	}
-	public static void previewFilterScreen() {
-		if (!ModKeyMapping.PREVIEW_FILTER.get().isDown()) return;
+	public static void previewFilterScreen(Key event) {
+		if (!(CyberKeyMapping.PREVIEW_FILTER.get().getKey().getValue() == event.getKey())) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) {
 			if (!(mc.screen instanceof AbstractContainerScreen<?> screen)) return;
 			var slot = screen.getSlotUnderMouse();
 			if (slot == null) return;
-			var item = slot.getItem();
-			if (!(item.getItem() instanceof FilterItem)) return;
-			setFilterScreen(item);
+			setFilterScreen(slot.getItem());
 		} else {
 			if (mc.level == null || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return;
 			if (blockHitResult.getType() == Type.MISS) return;
@@ -83,30 +75,29 @@ public class KeyInput {
 			var behavior = Collections.singleton(smartBlockEntity.getBehaviour(FilteringBehaviour.TYPE));
 			var first = behavior.iterator().next();
 			if (!(first instanceof FilteringBehaviour)) return;
-			var item = first.getFilter(blockHitResult.getDirection());
-			if (!(item.getItem() instanceof FilterItem)) return;
-			setFilterScreen(item);
+			setFilterScreen(first.getFilter(blockHitResult.getDirection()));
 		}
 	}
 	public static void setFilterScreen(ItemStack filter) {
-		if (!(filter.getItem() instanceof FilterItem filterItem)) return;
-		var mc = Minecraft.getInstance();
-		var player = mc.player;
-		if (player == null) return;
-		var inv = player.getInventory();
-		var name = filter.getHoverName();
-		if (FILTER_TYPE == null) return;
-		var type = RunSafely.run(() -> (Enum<?>) FILTER_TYPE.invokeExact(filterItem));
-		if (type == null) return;
-		Screen screen;
-		switch (type.ordinal()) {
-			case 0 -> screen = new FilterScreen(FilterMenu.create(-1, inv, filter), inv, name);
-			case 1 -> screen = new AttributeFilterScreen(AttributeFilterMenu.create(-1, inv, filter), inv, name);
-			case 2 -> screen = new PackageFilterScreen(PackageFilterMenu.create(-1, inv, filter), inv, name);
-			default -> {
-				return;
+		RunSafely.run(() -> {
+			if (!(filter.getItem() instanceof FilterItem filterItem)) return;
+			var mc = Minecraft.getInstance();
+			var player = mc.player;
+			if (player == null) return;
+			var inv = player.getInventory();
+			var name = filter.getHoverName();
+			Screen screen;
+			var field = FilterItem.class.getDeclaredField("type");
+			field.setAccessible(true);
+			switch (((Enum<?>) field.get(filterItem)).ordinal()) {
+				case 0 -> screen = new FilterScreen(FilterMenu.create(-1, inv, filter), inv, name);
+				case 1 -> screen = new AttributeFilterScreen(AttributeFilterMenu.create(-1, inv, filter), inv, name);
+				case 2 -> screen = new PackageFilterScreen(PackageFilterMenu.create(-1, inv, filter), inv, name);
+				default -> {
+					return;
+				}
 			}
-		}
-		ScreenOpener.open(screen);
+			ScreenOpener.open(screen);
+		});
 	}
 }

@@ -1,43 +1,26 @@
 package com.forgestove.create_cyber_goggles.content.util;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.concurrent.Callable;
 /**
- * 一个类似于{@link Callable}的函数式接口。
+ * 一个类似于{@link Runnable}的函数式接口。
  * <p>它返回一个结果，或者在无法计算结果时返回null。
- * <p>它的主要目的是在发生异常时返回null，而不是抛出{@link Throwable}。
- * @param <V> 返回结果的类型
+ * <p>它的主要目的是在发生异常时忽略它，而不是抛出{@link Throwable}。
  */
-public interface RunSafely<V> {
+@SuppressWarnings("unused")
+public interface RunSafely {
 	/**
-	 * 计算结果，或者在无法计算结果时抛出异常。
-	 *
-	 * @return 计算结果
-	 * @throws Throwable 如果无法计算结果
-	 */
-	V run() throws Throwable;
-	/**
-	 * 执行一个{@link RunSafely}对象，并在发生异常时返回null。
+	 * 执行一个{@link RunSafely}对象，并在发生异常时忽略它。
 	 *
 	 * @param runSafely 需要执行的{@link RunSafely}对象
-	 * @param <T>      返回值类型
-	 * @return {@link RunSafely}对象的返回值，或null（如果发生异常）
 	 */
-	static <T> @Nullable T run(RunSafely<T> runSafely) {
+	static void run(RunSafely runSafely) {
 		try {
-			return runSafely.run();
-		} catch (Throwable ignored) {
-			return null;
-		}
-	}
-	/**
-	 * 执行一个Runnable对象，并在发生异常时忽略它。
-	 *
-	 * @param runnable 需要执行的Runnable对象
-	 */
-	static void run(Runnable runnable) {
-		try {
-			runnable.run();
+			runSafely.run();
 		} catch (Throwable ignored) {}
 	}
+	/**
+	 * 定义一个需要实现的抽象方法，用于执行操作。
+	 * <p>实现此方法时，可以抛出任何类型的异常。</p>
+	 *
+	 * @throws Throwable 如果在执行过程中发生错误
+	 */
+	void run() throws Throwable;
 }

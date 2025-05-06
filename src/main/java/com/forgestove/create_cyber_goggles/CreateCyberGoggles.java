@@ -21,7 +21,7 @@ public class CreateCyberGoggles {
 			KeyInput.toggleDiving();
 			KeyInput.openConfigScreen();
 			KeyInput.openStockScreen();
-			KeyInput.previewFilterScreen();
+			KeyInput.previewFilterScreen(event);
 		}
 		@SubscribeEvent
 		public static void mouseScrollingEvent(MouseScrollingEvent event) {
@@ -32,7 +32,7 @@ public class CreateCyberGoggles {
 	public static class ClientModEvents {
 		@SubscribeEvent
 		public static void registerKeyMappingsEvent(RegisterKeyMappingsEvent event) {
-			ModKeyMapping.register(event);
+			CyberKeyMapping.register(event);
 		}
 		@SubscribeEvent
 		public static void registerGuiLayersEvent(RegisterGuiOverlaysEvent event) {

@@ -45,6 +45,8 @@
 	"text.autoconfig.create_cyber_goggles.option.goggles.enableKineticEffect.@Tooltip": "Show target kinetic block effect",
 	"text.autoconfig.create_cyber_goggles.option.goggles.enhancedInfo": "Enhanced Info",
 	"text.autoconfig.create_cyber_goggles.option.goggles.enhancedInfo.@Tooltip": "Show more information in the goggles overlay",
+	"text.autoconfig.create_cyber_goggles.option.goggles.hideStaticKineticInfo": "Hide Static Kinetic Info",
+	"text.autoconfig.create_cyber_goggles.option.goggles.hideStaticKineticInfo.@Tooltip": "Hide static kinetic info in goggles overlay",
 	"text.autoconfig.create_cyber_goggles.option.goggles.enhancedStoreRender": "Enhanced Store Render",
 	"text.autoconfig.create_cyber_goggles.option.goggles.enhancedStoreRender.@Tooltip": "Enhance the rendering of the tablecloth store as well as the operation logic",
 	"text.autoconfig.create_cyber_goggles.option.goggles.preciseNumbers": "Precise Numbers",

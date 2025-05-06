@@ -47,6 +47,8 @@
 	"text.autoconfig.create_cyber_goggles.option.goggles.enhancedInfo.@Tooltip": "增強護目鏡顯示信息",
 	"text.autoconfig.create_cyber_goggles.option.goggles.enhancedStoreRender": "增強商店渲染",
 	"text.autoconfig.create_cyber_goggles.option.goggles.enhancedStoreRender.@Tooltip": "增強桌布商店渲染以及操作邏輯",
+	"text.autoconfig.create_cyber_goggles.option.goggles.hideStaticKineticInfo": "隱藏靜態旋轉信息",
+	"text.autoconfig.create_cyber_goggles.option.goggles.hideStaticKineticInfo.@Tooltip": "在護目鏡中隱藏靜態方塊的旋轉信息",
 	"text.autoconfig.create_cyber_goggles.option.goggles.preciseNumbers": "精準數字",
 	"text.autoconfig.create_cyber_goggles.option.goggles.preciseNumbers.@Tooltip": "顯示更精準的數字",
 	"text.autoconfig.create_cyber_goggles.option.goggles.renderExtraItems": "渲染更多物品信息",

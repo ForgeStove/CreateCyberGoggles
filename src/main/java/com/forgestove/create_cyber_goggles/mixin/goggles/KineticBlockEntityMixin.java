@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.goggles;
-import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
+import com.forgestove.create_cyber_goggles.content.config.CyberConfig;
 import com.simibubi.create.content.kinetics.base.IRotate.*;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.utility.CreateLang;
@@ -15,8 +15,11 @@ public abstract class KineticBlockEntityMixin {
 	@Shadow(remap = false) protected boolean overStressed;
 	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), remap = false, cancellable = true)
 	private void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
-		if (!CreateCyberGoggles.config.goggles.enhancedInfo) return;
-		returnable.setReturnValue(true);
+		var goggles = CyberConfig.get().goggles;
+		if (!goggles.enhancedInfo) return;
+		var hide = !goggles.hideStaticKineticInfo || !Mth.equal(getSpeed(), 0);
+		returnable.setReturnValue(hide);
+		if (!hide) return;
 		CreateLang.translate("gui.goggles.kinetic_stats").forGoggles(tooltip);
 		if (StressImpact.isEnabled()) {
 			var stressAtBase = calculateStressApplied();

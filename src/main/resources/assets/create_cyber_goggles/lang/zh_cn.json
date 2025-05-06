@@ -45,6 +45,8 @@
 	"text.autoconfig.create_cyber_goggles.option.goggles.enableKineticEffect.@Tooltip": "渲染目标方块的旋转粒子效果",
 	"text.autoconfig.create_cyber_goggles.option.goggles.enhancedInfo": "增强信息显示",
 	"text.autoconfig.create_cyber_goggles.option.goggles.enhancedInfo.@Tooltip": "增强护目镜显示信息",
+	"text.autoconfig.create_cyber_goggles.option.goggles.hideStaticKineticInfo": "隐藏静态旋转信息",
+	"text.autoconfig.create_cyber_goggles.option.goggles.hideStaticKineticInfo.@Tooltip": "在护目镜中隐藏静态方块的旋转信息",
 	"text.autoconfig.create_cyber_goggles.option.goggles.enhancedStoreRender": "增强商店渲染",
 	"text.autoconfig.create_cyber_goggles.option.goggles.enhancedStoreRender.@Tooltip": "增强桌布商店渲染以及操作逻辑",
 	"text.autoconfig.create_cyber_goggles.option.goggles.preciseNumbers": "精准数字",

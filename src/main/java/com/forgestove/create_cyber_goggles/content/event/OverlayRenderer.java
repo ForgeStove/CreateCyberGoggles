@@ -1,6 +1,7 @@
 package com.forgestove.create_cyber_goggles.content.event;
-import com.forgestove.create_cyber_goggles.*;
-import com.forgestove.create_cyber_goggles.content.Util;
+import com.forgestove.create_cyber_goggles.content.config.CyberConfig;
+import com.forgestove.create_cyber_goggles.content.util.Common;
+import com.simibubi.create.content.kinetics.base.IRotate.SpeedLevel;
 import com.simibubi.create.content.kinetics.base.*;
 import com.simibubi.create.content.logistics.depot.DepotBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
@@ -21,12 +22,12 @@ public class OverlayRenderer {
 		var level = mc.level;
 		if (level == null || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return;
 		var blockEntity = level.getBlockEntity(blockHitResult.getBlockPos());
-		var renderExtraItems = CreateCyberGoggles.config.goggles.renderExtraItems;
+		var renderExtraItems = CyberConfig.get().goggles.renderExtraItems;
 		if (renderExtraItems && blockEntity instanceof DepotBlockEntity depotBlockEntity)
-			Util.renderItemStack(guiGraphics, depotBlockEntity.getHeldItem());
+			Common.renderItemStack(guiGraphics, depotBlockEntity.getHeldItem());
 		else if (renderExtraItems && blockEntity instanceof PackagerBlockEntity packagerBlockEntity)
-			Util.renderItemStack(guiGraphics, packagerBlockEntity.heldBox);
-		else if (CreateCyberGoggles.config.goggles.enableKineticEffect && blockEntity instanceof KineticBlockEntity kineticBlockEntity) {
+			Common.renderItemStack(guiGraphics, packagerBlockEntity.heldBox);
+		else if (CyberConfig.get().goggles.enableKineticEffect && blockEntity instanceof KineticBlockEntity kineticBlockEntity) {
 			if (!blockHitResult.getBlockPos().equals(kineticBlockEntity.getBlockPos())) return;
 			var speed = kineticBlockEntity.getSpeed();
 			if (speed == 0) return;
@@ -35,7 +36,7 @@ public class OverlayRenderer {
 			var rotationAxis = kineticBlock.getRotationAxis(state);
 			if (rotationAxis == null) return;
 			var center = VecHelper.getCenterOf(kineticBlockEntity.getBlockPos());
-			var speedLevel = IRotate.SpeedLevel.of(speed);
+			var speedLevel = SpeedLevel.of(speed);
 			level.addParticle(
 				new RotationIndicatorParticleData(
 					speedLevel.getColor(),

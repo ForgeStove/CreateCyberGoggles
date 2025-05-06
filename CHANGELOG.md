@@ -1,2 +1,1 @@
-- Fix crash when JEI is not installed
-- Fix issues with some features not working
+- Enhance tooltip options for goggles configuration

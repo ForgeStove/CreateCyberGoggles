@@ -2,7 +2,7 @@
 
 plugins {
 	idea
-	id("net.neoforged.moddev") version "2.0.86"
+	id("net.neoforged.moddev") version "+"
 	id("me.modmuss50.mod-publish-plugin") version "0.8.4"
 }
 fun e(key: String) = extra[key].toString()

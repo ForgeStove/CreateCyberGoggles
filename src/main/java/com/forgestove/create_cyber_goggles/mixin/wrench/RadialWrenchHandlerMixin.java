@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.wrench;
-import com.forgestove.create_cyber_goggles.content.config.CyberConfig;
+import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
 import com.simibubi.create.AllKeys;
 import com.simibubi.create.content.contraptions.wrench.*;
 import net.createmod.catnip.gui.ScreenOpener;
@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class RadialWrenchHandlerMixin {
 	@Inject(method = "onKeyInput", at = @At("HEAD"), cancellable = true)
 	private static void onKeyInput(int key, boolean pressed, CallbackInfo callbackInfo) {
-		if (!CyberConfig.get().wrench.alwaysAllowRotating) return;
+		if (!CCGConfig.get().wrench.alwaysAllowRotating) return;
 		callbackInfo.cancel();
 		if (!pressed || key != AllKeys.ROTATE_MENU.getBoundCode()) return;
 		var mc = Minecraft.getInstance();

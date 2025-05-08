@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.render;
-import com.forgestove.create_cyber_goggles.content.config.CyberConfig;
+import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
 import com.forgestove.create_cyber_goggles.content.util.Common;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.simibubi.create.AllItems;
@@ -33,7 +33,7 @@ public abstract class BlueprintOverlayRendererMixin {
 	@Shadow static BlueprintOverlayShopContext shopContext;
 	@Inject(method = "renderOverlay", at = @At("HEAD"), cancellable = true)
 	private static void renderOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo callbackInfo) {
-		if (!CyberConfig.get().goggles.enhancedStoreRender) return;
+		if (!CCGConfig.get().goggles.enhancedStoreRender) return;
 		callbackInfo.cancel();
 		var mc = Minecraft.getInstance();
 		if (mc.options.hideGui || mc.screen != null) return;

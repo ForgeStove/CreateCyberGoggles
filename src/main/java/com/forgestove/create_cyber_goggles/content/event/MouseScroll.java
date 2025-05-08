@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.content.event;
-import com.forgestove.create_cyber_goggles.content.config.CyberConfig;
+import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
 import com.simibubi.create.content.logistics.tableCloth.TableClothBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.phys.BlockHitResult;
@@ -9,7 +9,7 @@ public class MouseScroll {
 	public static int index = 1;
 	public static int scrollDeltaY = 0;
 	public static void onMouseScroll(MouseScrollingEvent event) {
-		if (!CyberConfig.get().goggles.enhancedStoreRender) return;
+		if (!CCGConfig.get().goggles.enhancedStoreRender) return;
 		var mc = Minecraft.getInstance();
 		var level = mc.level;
 		if (mc.isPaused()) return;

@@ -5,7 +5,7 @@ import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry.Category;
 import me.shedaniel.autoconfig.annotation.ConfigEntry.Gui.*;
 @Config(name = CreateCyberGoggles.ID)
-public class CyberConfigData implements ConfigData {
+public class CCGConfigData implements ConfigData {
 	@Category("armor") @TransitiveObject public Armor armor = new Armor();
 	@Category("chainConveyor") @TransitiveObject public ChainConveyor chainConveyor = new ChainConveyor();
 	@Category("flywheel") @TransitiveObject public Flywheel flywheel = new Flywheel();

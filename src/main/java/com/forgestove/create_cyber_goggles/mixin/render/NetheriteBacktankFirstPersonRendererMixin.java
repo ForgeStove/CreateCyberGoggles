@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.render;
-import com.forgestove.create_cyber_goggles.content.config.CyberConfig;
+import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
 import com.simibubi.create.content.equipment.armor.NetheriteBacktankFirstPersonRenderer;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
@@ -9,7 +9,7 @@ public abstract class NetheriteBacktankFirstPersonRendererMixin {
 	@Shadow private static boolean rendererActive;
 	@Inject(method = "clientTick", at = @At("HEAD"), cancellable = true)
 	private static void clientTick(CallbackInfo callbackInfo) {
-		if (!CyberConfig.get().armor.removeNetheriteFirstPerson) return;
+		if (!CCGConfig.get().armor.removeNetheriteFirstPerson) return;
 		callbackInfo.cancel();
 		rendererActive = false;
 	}

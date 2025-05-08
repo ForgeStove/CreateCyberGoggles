@@ -22,12 +22,12 @@ import java.util.Collections;
 public class KeyInput {
 	public static StockTickerBlockEntity lastBlockEntity = null;
 	public static void toggleDiving() {
-		if (!CyberKeyMapping.TOGGLE_DIVING.get().isDown()) return;
+		if (!CCGKeyMapping.TOGGLE_DIVING.get().isDown()) return;
 		var mc = Minecraft.getInstance();
 		var player = mc.player;
 		if (player == null || mc.screen != null) return;
-		var enabled = CyberConfig.get().armor.removeDivingBootsAffect;
-		CyberConfig.get().armor.removeDivingBootsAffect = !enabled;
+		var enabled = CCGConfig.get().armor.removeDivingBootsAffect;
+		CCGConfig.get().armor.removeDivingBootsAffect = !enabled;
 		player.displayClientMessage(
 			Component.translatable("message.%s.%s".formatted(
 				CreateCyberGoggles.ID,
@@ -36,13 +36,13 @@ public class KeyInput {
 		);
 	}
 	public static void openConfigScreen() {
-		if (!CyberKeyMapping.OPEN_CONFIG.get().isDown()) return;
+		if (!CCGKeyMapping.OPEN_CONFIG.get().isDown()) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) return;
-		mc.setScreen(AutoConfig.getConfigScreen(CyberConfigData.class, null).get());
+		mc.setScreen(AutoConfig.getConfigScreen(CCGConfigData.class, null).get());
 	}
 	public static void openStockScreen() {
-		if (!CyberKeyMapping.OPEN_STOCK.get().isDown()) return;
+		if (!CCGKeyMapping.OPEN_STOCK.get().isDown()) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) return;
 		var player = mc.player;
@@ -60,7 +60,7 @@ public class KeyInput {
 		mc.setScreen(new StockKeeperRequestScreen(menu, inv, lastBlockEntity.getBlockState().getBlock().getName()));
 	}
 	public static void previewFilterScreen(Key event) {
-		if (!(CyberKeyMapping.PREVIEW_FILTER.get().getKey().getValue() == event.getKey())) return;
+		if (!(CCGKeyMapping.PREVIEW_FILTER.get().getKey().getValue() == event.getKey())) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) {
 			if (!(mc.screen instanceof AbstractContainerScreen<?> screen)) return;

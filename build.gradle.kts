@@ -5,25 +5,21 @@ plugins {
 	id("net.neoforged.moddev") version "+"
 	id("me.modmuss50.mod-publish-plugin") version "0.8.4"
 }
-fun e(key: String) = extra[key].toString()
-val copyIcon = tasks.register<Copy>("copyIcon") {
-	if(!file(".idea").exists()) return@register
-	from("src/main/resources/icon.png")
-	into(".idea")
-}
-val replaceProperties = tasks.register<ProcessResources>("replaceProperties") {
+base.archivesName.set(e("mod_id"))
+group = e("mod_group_id")
+version = "${e("minecraft_version")}-${e("mod_version")}+${e("upper_loader")}"
+java.toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+idea.module { isDownloadSources = true; isDownloadJavadoc = true }
+tasks.jar { from("LICENSE") }
+tasks.processResources {
 	val replace = properties.mapValues { it.value.toString() }
 	inputs.properties(replace)
-	from("src/main/resources/META-INF")
-	into("build/resources/main/META-INF")
-	expand(replace)
-}
-tasks.classes { dependsOn(replaceProperties) }
-tasks.jar { from("LICENSE") }
-java.toolchain.languageVersion.set(JavaLanguageVersion.of(21))
-idea.module {
-	isDownloadSources = true
-	isDownloadJavadoc = true
+	from("src/main/resources") {
+		include("**/*.toml")
+		expand(replace)
+	}
+	into("build/resources/main")
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 neoForge {
 	version = e("loader_version")
@@ -39,11 +35,7 @@ neoForge {
 		}
 	}
 	mods { create(e("mod_id")) { sourceSet(sourceSets["main"]) } }
-	ideSyncTasks.addAll(copyIcon)
 }
-base.archivesName.set(e("mod_id"))
-group = e("mod_group_id")
-version = "${e("minecraft_version")}-${e("mod_version")}+${e("upper_loader")}"
 repositories {
 	mavenLocal()
 	mavenCentral()
@@ -82,3 +74,4 @@ publishMods {
 		requires("create", "cloth-config")
 	}
 }
+fun e(key: String) = extra[key].toString()

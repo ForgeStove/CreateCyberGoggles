@@ -1,6 +1,6 @@
 package com.forgestove.create_cyber_goggles.content.event;
 import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
-import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
+import com.forgestove.create_cyber_goggles.content.config.*;
 import com.forgestove.create_cyber_goggles.content.util.SafeRun;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
@@ -30,8 +30,8 @@ public class KeyInput {
 		var mc = Minecraft.getInstance();
 		var player = mc.player;
 		if (player == null || mc.screen != null) return;
-		var enabled = CreateCyberGoggles.config.armor.removeDivingBootsAffect;
-		CreateCyberGoggles.config.armor.removeDivingBootsAffect = !enabled;
+		var enabled = CCGConfig.getConfig().armor.removeDivingBootsAffect;
+		CCGConfig.getConfig().armor.removeDivingBootsAffect = !enabled;
 		var component = Component.translatable("message.%s.%sableDivingAffect".formatted(CreateCyberGoggles.ID, enabled ? "en" : "dis"));
 		player.displayClientMessage(component, true);
 	}
@@ -39,7 +39,7 @@ public class KeyInput {
 		if (!CCGKeyMapping.openConfig.consumeClick()) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) return;
-		mc.setScreen(AutoConfig.getConfigScreen(CCGConfig.class, null).get());
+		mc.setScreen(AutoConfig.getConfigScreen(CCGConfigData.class, null).get());
 	}
 	public static void previewFilterScreen() {
 		if (!CCGKeyMapping.previewFilter.consumeClick()) return;

@@ -19,7 +19,7 @@
 			"com.forgestove.create_cyber_goggles.CreateCyberGoggles"
 		],
 		"modmenu": [
-			"com.forgestove.create_cyber_goggles.content.config.CCGMenuIntegration"
+			"com.forgestove.create_cyber_goggles.content.config.CCGConfig"
 		]
 	},
 	"mixins": [

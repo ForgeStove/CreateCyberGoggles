@@ -1,37 +1,23 @@
 package com.forgestove.create_cyber_goggles.content.config;
-import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
-import me.shedaniel.autoconfig.ConfigData;
-import me.shedaniel.autoconfig.annotation.Config;
-import me.shedaniel.autoconfig.annotation.ConfigEntry.Category;
-import me.shedaniel.autoconfig.annotation.ConfigEntry.Gui.*;
-@Config(name = CreateCyberGoggles.ID)
-public class CCGConfig implements ConfigData {
-	@Category("armor") @TransitiveObject public Armor armor = new Armor();
-	@Category("flywheel") @TransitiveObject public Flywheel flywheel = new Flywheel();
-	@Category("goggles") @TransitiveObject public Goggles goggles = new Goggles();
-	@Category("jei") @TransitiveObject public Jei jei = new Jei();
-	@Category("nbt") @TransitiveObject public Nbt nbt = new Nbt();
-	public static class Armor {
-		@Tooltip public boolean removeNetheriteFirstPerson = false;
-		@Tooltip public boolean removeDivingBootsAffect = false;
+import com.terraformersmc.modmenu.api.*;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
+import net.fabricmc.api.*;
+@Environment(EnvType.CLIENT)
+public class CCGConfig implements ModMenuApi {
+	private static CCGConfigData config;
+	public static CCGConfigData getConfig() {
+		return config;
 	}
-	public static class Flywheel {
-		@Tooltip public boolean forcedBackend = false;
+	public static CCGConfigData get() {
+		if (config == null) config = AutoConfig.register(CCGConfigData.class, Toml4jConfigSerializer::new).getConfig();
+		return config;
 	}
-	public static class Goggles {
-		@Tooltip public boolean enableInSurvival = true;
-		@Tooltip public boolean enableInCreative = true;
-		@Tooltip public boolean enableInSpectator = true;
-		@Tooltip public boolean enableInAdventure = true;
-		@Tooltip public boolean enhancedInfo = true;
-		@Tooltip public boolean renderExtraItems = true;
-		@Tooltip public boolean enableKineticEffect = true;
-		@Tooltip public boolean preciseNumbers = true;
+	public static void register() {
+		config = AutoConfig.register(CCGConfigData.class, Toml4jConfigSerializer::new).getConfig();
 	}
-	public static class Jei {
-		@Tooltip @RequiresRestart public boolean nonrandomScrap = true;
-	}
-	public static class Nbt {
-		@Tooltip public boolean nbtFix = false;
+	@Override
+	public ConfigScreenFactory<?> getModConfigScreenFactory() {
+		return screen -> AutoConfig.getConfigScreen(CCGConfigData.class, screen).get();
 	}
 }

@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.goggles;
-import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
+import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
 import com.simibubi.create.content.kinetics.base.*;
 import com.simibubi.create.foundation.utility.Lang;
 import net.minecraft.ChatFormatting;
@@ -20,7 +20,7 @@ public abstract class GeneratingKineticBlockEntityMixin extends KineticBlockEnti
 	}
 	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), remap = false, cancellable = true)
 	private void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
-		if (!CreateCyberGoggles.config.goggles.enhancedInfo) return;
+		if (!CCGConfig.getConfig().goggles.enhancedInfo) return;
 		var stressBase = calculateAddedStressCapacity();
 		if (!Mth.equal(stressBase, 0)) {
 			Lang.translate("gui.goggles.generator_stats").forGoggles(tooltip);

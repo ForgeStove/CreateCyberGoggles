@@ -1,7 +1,7 @@
 package com.forgestove.create_cyber_goggles.content.event;
 import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
 import com.forgestove.create_cyber_goggles.content.config.*;
-import com.forgestove.create_cyber_goggles.content.util.RunSafely;
+import com.forgestove.create_cyber_goggles.content.util.SafeRun;
 import com.simibubi.create.AllMenuTypes;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.stockTicker.*;
@@ -79,7 +79,7 @@ public class KeyInput {
 		}
 	}
 	public static void setFilterScreen(ItemStack filter) {
-		RunSafely.run(() -> {
+		SafeRun.run(() -> {
 			if (!(filter.getItem() instanceof FilterItem filterItem)) return;
 			var mc = Minecraft.getInstance();
 			var player = mc.player;

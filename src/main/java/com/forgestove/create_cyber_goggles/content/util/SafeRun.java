@@ -5,15 +5,15 @@ package com.forgestove.create_cyber_goggles.content.util;
  * <p>它的主要目的是在发生异常时忽略它，而不是抛出{@link Throwable}。
  */
 @SuppressWarnings("unused")
-public interface RunSafely {
+public interface SafeRun {
 	/**
-	 * 执行一个{@link RunSafely}对象，并在发生异常时忽略它。
+	 * 执行一个{@link SafeRun}对象，并在发生异常时忽略它。
 	 *
-	 * @param runSafely 需要执行的{@link RunSafely}对象
+	 * @param safeRun 需要执行的{@link SafeRun}对象
 	 */
-	static void run(RunSafely runSafely) {
+	static void run(SafeRun safeRun) {
 		try {
-			runSafely.run();
+			safeRun.run();
 		} catch (Throwable ignored) {}
 	}
 	/**

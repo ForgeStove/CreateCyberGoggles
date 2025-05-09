@@ -34,9 +34,9 @@ public class KeyInput {
 		var enabled = CCGConfig.get().armor.removeDivingBootsAffect;
 		CCGConfig.get().armor.removeDivingBootsAffect = !enabled;
 		player.displayClientMessage(
-			Component.translatable("message.%s.%s".formatted(
+			Component.translatable("message.%s.%sableDivingAffect".formatted(
 				CreateCyberGoggles.ID,
-				enabled ? "enableDivingAffect" : "disableDivingAffect"
+				enabled ? "en" : "dis"
 			)), true
 		);
 	}

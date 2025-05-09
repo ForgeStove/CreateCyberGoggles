@@ -15,7 +15,6 @@ repositories {
 	maven("https://maven.blamejared.com") // JEI
 }
 dependencies {
-	compileOnly(fileTree(mapOf("dir" to "cache", "include" to listOf("*.jar"))))
 	implementation("com.simibubi.create:create-${e("minecraft_version")}:${e("create_version")}:slim") { isTransitive = false }
 	implementation("net.createmod.ponder:Ponder-${e("upper_loader")}-${e("minecraft_version")}:${e("ponder_version")}") {
 		isTransitive = false
@@ -25,26 +24,18 @@ dependencies {
 	implementation("me.shedaniel.cloth:cloth-config-${e("loader")}:${e("cloth_config_version")}")
 	implementation("mezz.jei:jei-${e("minecraft_version")}-${e("loader")}:${e("jei_version")}")
 }
-val generateModMetadata = tasks.register<ProcessResources>("generateModMetadata") {
+val replaceProperties = tasks.register<ProcessResources>("replaceProperties") {
 	val replace = properties.mapValues { it.value.toString() }
 	inputs.properties(replace)
-	from("src/main/templates")
+	from("src/main/resources/META-INF")
+	into("build/resources/main/META-INF")
 	expand(replace)
-	into("build/generated/sources/modMetadata")
 }
+tasks.jar { dependsOn(replaceProperties) }
 val copyIcon = tasks.register<Copy>("copyIcon") {
 	if(!file(".idea").exists()) return@register
 	from("src/main/resources/icon.png")
 	into(".idea")
-}
-val merged = "${e("loader")}-${e("loader_version")}-merged.jar"
-val deleteCache = tasks.register<Delete>("deleteCache") {
-	delete(fileTree("cache").exclude { it.name == merged })
-}
-val cacheMergedJar = tasks.register<Copy>("copyMergedJar") {
-	dependsOn(deleteCache, "createMinecraftArtifacts")
-	from("build/moddev/artifacts/$merged")
-	into("cache")
 }
 base.archivesName.set(e("mod_id"))
 group = e("mod_group_id")
@@ -60,7 +51,7 @@ idea {
 		isDownloadJavadoc = true
 	}
 }
-sourceSets { named("main") { resources.srcDir(generateModMetadata) } }
+//sourceSets { named("main") { resources.srcDir(generateModMetadata) } }
 neoForge {
 	version = e("loader_version")
 	parchment {
@@ -75,7 +66,7 @@ neoForge {
 		}
 	}
 	mods { create(e("mod_id")) { sourceSet(sourceSets["main"]) } }
-	ideSyncTasks.addAll(generateModMetadata, copyIcon, deleteCache, cacheMergedJar)
+	ideSyncTasks.addAll(copyIcon)
 }
 publishMods {
 	file.set(tasks.jar.get().archiveFile)

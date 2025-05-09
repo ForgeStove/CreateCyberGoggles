@@ -1,6 +1,7 @@
 package com.forgestove.create_cyber_goggles.content.event;
 import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
 import com.forgestove.create_cyber_goggles.content.util.Common;
+import com.simibubi.create.content.kinetics.base.IRotate.SpeedLevel;
 import com.simibubi.create.content.kinetics.base.*;
 import com.simibubi.create.content.logistics.depot.DepotBlockEntity;
 import com.simibubi.create.foundation.utility.VecHelper;
@@ -31,7 +32,7 @@ public class OverlayRenderer {
 			var rotationAxis = kineticBlock.getRotationAxis(state);
 			if (rotationAxis == null) return;
 			var center = VecHelper.getCenterOf(kineticBlockEntity.getBlockPos());
-			var speedLevel = IRotate.SpeedLevel.of(speed);
+			var speedLevel = SpeedLevel.of(speed);
 			level.addParticle(
 				new RotationIndicatorParticleData(
 					speedLevel.getColor(),

@@ -5,7 +5,7 @@ import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry.Category;
 import me.shedaniel.autoconfig.annotation.ConfigEntry.Gui.*;
 @Config(name = CreateCyberGoggles.ID)
-public class ModConfig implements ConfigData {
+public class CCGConfig implements ConfigData {
 	@Category("armor") @TransitiveObject public Armor armor = new Armor();
 	@Category("flywheel") @TransitiveObject public Flywheel flywheel = new Flywheel();
 	@Category("goggles") @TransitiveObject public Goggles goggles = new Goggles();

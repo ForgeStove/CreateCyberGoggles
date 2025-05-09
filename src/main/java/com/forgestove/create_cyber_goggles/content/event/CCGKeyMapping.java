@@ -4,14 +4,14 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
 import org.lwjgl.glfw.GLFW;
 @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-public enum ModKeyMapping {
+public enum CCGKeyMapping {
 	toggleDiving(GLFW.GLFW_KEY_UNKNOWN),
 	openConfig(GLFW.GLFW_KEY_UNKNOWN),
 	previewFilter(GLFW.GLFW_KEY_UNKNOWN);
 	private final String name;
 	private final int keyCode;
 	public KeyMapping keyMapping;
-	ModKeyMapping(int defaultKey) {
+	CCGKeyMapping(int defaultKey) {
 		name = "key.%s.%s".formatted(CreateCyberGoggles.ID, name());
 		keyCode = defaultKey;
 	}

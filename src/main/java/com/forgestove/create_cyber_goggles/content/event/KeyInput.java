@@ -1,6 +1,7 @@
 package com.forgestove.create_cyber_goggles.content.event;
 import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
-import com.forgestove.create_cyber_goggles.content.config.ModConfig;
+import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
+import com.forgestove.create_cyber_goggles.content.util.SafeRun;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
@@ -25,7 +26,7 @@ public class KeyInput {
 		});
 	}
 	public static void toggleDiving() {
-		if (!ModKeyMapping.toggleDiving.consumeClick()) return;
+		if (!CCGKeyMapping.toggleDiving.consumeClick()) return;
 		var mc = Minecraft.getInstance();
 		var player = mc.player;
 		if (player == null || mc.screen != null) return;
@@ -35,21 +36,19 @@ public class KeyInput {
 		player.displayClientMessage(component, true);
 	}
 	public static void openConfigScreen() {
-		if (!ModKeyMapping.openConfig.consumeClick()) return;
+		if (!CCGKeyMapping.openConfig.consumeClick()) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) return;
-		mc.setScreen(AutoConfig.getConfigScreen(ModConfig.class, null).get());
+		mc.setScreen(AutoConfig.getConfigScreen(CCGConfig.class, null).get());
 	}
 	public static void previewFilterScreen() {
-		if (!ModKeyMapping.previewFilter.consumeClick()) return;
+		if (!CCGKeyMapping.previewFilter.consumeClick()) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) {
 			if (!(mc.screen instanceof AbstractContainerScreen<?> screen)) return;
 			var slot = screen.hoveredSlot;
 			if (slot == null) return;
-			var item = slot.getItem();
-			if (!(item.getItem() instanceof FilterItem)) return;
-			setFilterScreen(item);
+			setFilterScreen(slot.getItem());
 		} else {
 			if (mc.level == null || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return;
 			if (blockHitResult.getType() == Type.MISS) return;
@@ -58,23 +57,20 @@ public class KeyInput {
 			var behavior = Collections.singleton(smartBlockEntity.getBehaviour(FilteringBehaviour.TYPE));
 			var first = behavior.iterator().next();
 			if (!(first instanceof FilteringBehaviour)) return;
-			var item = first.getFilter(blockHitResult.getDirection());
-			if (!(item.getItem() instanceof FilterItem)) return;
-			setFilterScreen(item);
+			setFilterScreen(first.getFilter(blockHitResult.getDirection()));
 		}
 	}
 	public static void setFilterScreen(ItemStack filter) {
-		try {
-			var field = FilterItem.class.getDeclaredField("type");
-			field.setAccessible(true);
+		SafeRun.run(() -> {
 			if (!(filter.getItem() instanceof FilterItem filterItem)) return;
-			if (!field.getType().isEnum()) return;
 			var mc = Minecraft.getInstance();
 			var player = mc.player;
 			if (player == null) return;
 			var inv = player.getInventory();
 			var name = filter.getHoverName();
 			Screen screen;
+			var field = FilterItem.class.getDeclaredField("type");
+			field.setAccessible(true);
 			switch (((Enum<?>) field.get(filterItem)).ordinal()) {
 				case 0 -> screen = new FilterScreen(FilterMenu.create(-1, inv, filter), inv, name);
 				case 1 -> screen = new AttributeFilterScreen(AttributeFilterMenu.create(-1, inv, filter), inv, name);
@@ -83,8 +79,6 @@ public class KeyInput {
 				}
 			}
 			ScreenOpener.open(screen);
-		} catch (Exception ignored) {
-		}
+		});
 	}
 }
-

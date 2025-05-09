@@ -10,17 +10,17 @@ import java.util.concurrent.Callable;
  * @param <V> 返回结果的类型
  */
 @SuppressWarnings("unused")
-public interface CallSafely<V> {
+public interface SafeCall<V> {
 	/**
-	 * 执行一个{@link CallSafely}对象，并在发生异常时返回null。
+	 * 执行一个{@link SafeCall}对象，并在发生异常时返回null。
 	 *
-	 * @param callSafely 需要执行的{@link CallSafely}对象
+	 * @param safeCall 需要执行的{@link SafeCall}对象
 	 * @param <T>        返回值类型
-	 * @return {@link CallSafely}对象的返回值，或null（如果发生异常）
+	 * @return {@link SafeCall}对象的返回值，或null（如果发生异常）
 	 */
-	static <T> @Nullable T call(CallSafely<T> callSafely) {
+	static <T> @Nullable T call(SafeCall<T> safeCall) {
 		try {
-			return callSafely.call();
+			return safeCall.call();
 		} catch (Throwable ignored) {
 			return null;
 		}

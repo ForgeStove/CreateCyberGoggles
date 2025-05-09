@@ -79,7 +79,7 @@ public class KeyInput {
 		}
 	}
 	public static void setFilterScreen(ItemStack filter) {
-		RunSafely.run(() -> {
+		SafeRun.run(() -> {
 			if (!(filter.getItem() instanceof FilterItem filterItem)) return;
 			var mc = Minecraft.getInstance();
 			var player = mc.player;

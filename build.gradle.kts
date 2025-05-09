@@ -6,6 +6,44 @@ plugins {
 	id("me.modmuss50.mod-publish-plugin") version "0.8.4"
 }
 fun e(key: String) = extra[key].toString()
+val copyIcon = tasks.register<Copy>("copyIcon") {
+	if(!file(".idea").exists()) return@register
+	from("src/main/resources/icon.png")
+	into(".idea")
+}
+val replaceProperties = tasks.register<ProcessResources>("replaceProperties") {
+	val replace = properties.mapValues { it.value.toString() }
+	inputs.properties(replace)
+	from("src/main/resources/META-INF")
+	into("build/resources/main/META-INF")
+	expand(replace)
+}
+tasks.classes { dependsOn(replaceProperties) }
+tasks.jar { from("LICENSE") }
+java.toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+idea.module {
+	isDownloadSources = true
+	isDownloadJavadoc = true
+}
+neoForge {
+	version = e("loader_version")
+	parchment {
+		mappingsVersion.set(e("parchment_version"))
+		minecraftVersion.set(e("minecraft_version"))
+	}
+	runs {
+		create("client") { client() }
+		configureEach {
+			jvmArguments.addAll("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition")
+			systemProperty("terminal.jline", "true")
+		}
+	}
+	mods { create(e("mod_id")) { sourceSet(sourceSets["main"]) } }
+	ideSyncTasks.addAll(copyIcon)
+}
+base.archivesName.set(e("mod_id"))
+group = e("mod_group_id")
+version = "${e("minecraft_version")}-${e("mod_version")}+${e("upper_loader")}"
 repositories {
 	mavenLocal()
 	mavenCentral()
@@ -23,50 +61,6 @@ dependencies {
 	implementation("com.tterrag.registrate:Registrate:${e("registrate_version")}")
 	implementation("me.shedaniel.cloth:cloth-config-${e("loader")}:${e("cloth_config_version")}")
 	implementation("mezz.jei:jei-${e("minecraft_version")}-${e("loader")}:${e("jei_version")}")
-}
-val replaceProperties = tasks.register<ProcessResources>("replaceProperties") {
-	val replace = properties.mapValues { it.value.toString() }
-	inputs.properties(replace)
-	from("src/main/resources/META-INF")
-	into("build/resources/main/META-INF")
-	expand(replace)
-}
-tasks.jar { dependsOn(replaceProperties) }
-val copyIcon = tasks.register<Copy>("copyIcon") {
-	if(!file(".idea").exists()) return@register
-	from("src/main/resources/icon.png")
-	into(".idea")
-}
-base.archivesName.set(e("mod_id"))
-group = e("mod_group_id")
-version = "${e("minecraft_version")}-${e("mod_version")}+${e("upper_loader")}"
-java {
-	withSourcesJar()
-	toolchain.languageVersion.set(JavaLanguageVersion.of(21))
-}
-tasks.jar { from("LICENSE") }
-idea {
-	module {
-		isDownloadSources = true
-		isDownloadJavadoc = true
-	}
-}
-//sourceSets { named("main") { resources.srcDir(generateModMetadata) } }
-neoForge {
-	version = e("loader_version")
-	parchment {
-		mappingsVersion.set(e("parchment_version"))
-		minecraftVersion.set(e("minecraft_version"))
-	}
-	runs {
-		create("client") { client() }
-		configureEach {
-			jvmArguments.addAll("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition")
-			systemProperty("terminal.jline", "true")
-		}
-	}
-	mods { create(e("mod_id")) { sourceSet(sourceSets["main"]) } }
-	ideSyncTasks.addAll(copyIcon)
 }
 publishMods {
 	file.set(tasks.jar.get().archiveFile)

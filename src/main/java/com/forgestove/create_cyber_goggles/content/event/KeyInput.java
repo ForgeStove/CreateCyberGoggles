@@ -19,7 +19,7 @@ import net.minecraft.world.phys.HitResult.Type;
 import java.util.Collections;
 public class KeyInput {
 	public static void register() {
-		ClientTickEvents.END_CLIENT_TICK.register(client -> {
+		ClientTickEvents.END_CLIENT_TICK.register(mc -> {
 			KeyInput.toggleDiving();
 			KeyInput.openConfigScreen();
 			KeyInput.previewFilterScreen();
@@ -46,7 +46,7 @@ public class KeyInput {
 		mc.setScreen(AutoConfig.getConfigScreen(CCGConfigData.class, null).get());
 	}
 	public static void previewFilterScreen() {
-		if (!CCGKeyMapping.previewFilter.consumeClick()) return;
+		if (!CCGKeyMapping.previewFilter.isDown()) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) {
 			if (!(mc.screen instanceof AbstractContainerScreen<?> screen)) return;

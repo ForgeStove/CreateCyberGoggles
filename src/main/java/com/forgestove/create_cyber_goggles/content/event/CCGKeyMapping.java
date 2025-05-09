@@ -1,7 +1,7 @@
 package com.forgestove.create_cyber_goggles.content.event;
 import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.minecraft.client.KeyMapping;
+import net.minecraft.client.*;
 import org.lwjgl.glfw.GLFW;
 @SuppressWarnings("BooleanMethodIsAlwaysInverted")
 public enum CCGKeyMapping {
@@ -23,5 +23,9 @@ public enum CCGKeyMapping {
 	}
 	public boolean consumeClick() {
 		return keyMapping.consumeClick();
+	}
+	public boolean isDown() {
+		return GLFW.glfwGetKey(Minecraft.getInstance().getWindow().getWindow(), KeyBindingHelper.getBoundKeyOf(keyMapping).getValue())
+			== GLFW.GLFW_PRESS;
 	}
 }

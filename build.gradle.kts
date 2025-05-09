@@ -2,7 +2,7 @@
 
 plugins {
 	idea
-	id("fabric-loom") version "+"
+	id("fabric-loom") version "1.11.0-alpha.19"
 	id("me.modmuss50.mod-publish-plugin") version "0.8.4"
 }
 base.archivesName.set(e("mod_id"))

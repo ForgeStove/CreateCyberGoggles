@@ -2,10 +2,36 @@
 
 plugins {
 	idea
-	id("fabric-loom") version "1.11.0-alpha.19"
+	id("fabric-loom") version "+"
 	id("me.modmuss50.mod-publish-plugin") version "0.8.4"
 }
-fun e(key: String) = extra[key].toString()
+base.archivesName.set(e("mod_id"))
+group = e("mod_group_id")
+version = "${e("minecraft_version")}-${e("mod_version")}+${e("upper_loader")}"
+java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+idea.module { isDownloadSources = true; isDownloadJavadoc = true }
+tasks {
+	ideaSyncTask {
+		if(!file(".idea/icon.png").exists()) return@ideaSyncTask
+		copy {
+			from("src/main/resources/icon.png")
+			into(".idea")
+		}
+	}
+	jar { from("LICENSE") }
+}
+tasks.processResources {
+	val replace = properties.mapValues { it.value.toString() }
+	inputs.properties(replace)
+	from("src/main/resources") {
+		include("*.json")
+		expand(replace)
+	}
+	into("build/resources/main")
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+configurations.configureEach { resolutionStrategy.force("net.fabricmc:fabric-loader:${e("fabric_loader_version")}") }
+loom { accessWidenerPath.set(file("src/main/resources/${e("mod_id")}.accesswidener")) }
 repositories {
 	mavenLocal()
 	mavenCentral()
@@ -33,36 +59,6 @@ dependencies {
 	modImplementation("com.terraformersmc:modmenu:${e("modmenu_version")}")
 	modImplementation("mezz.jei:jei-${e("minecraft_version")}-${e("loader")}:${e("jei_version")}")
 }
-tasks.processResources {
-	val replace = properties.mapValues { it.value.toString() }
-	inputs.properties(replace)
-	from("src/main/resources") {
-		include("*.json")
-		expand(replace)
-	}
-	into("build/resources/main")
-	duplicatesStrategy = DuplicatesStrategy.INCLUDE
-}
-base.archivesName.set(e("mod_id"))
-group = e("mod_group_id")
-version = "${e("minecraft_version")}-${e("mod_version")}+${e("upper_loader")}"
-java.withSourcesJar()
-java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
-tasks.jar { from("LICENSE") }
-configurations.configureEach { resolutionStrategy { force("net.fabricmc:fabric-loader:${e("fabric_loader_version")}") } }
-idea {
-	module {
-		isDownloadSources = true
-		isDownloadJavadoc = true
-	}
-}
-tasks.ideaSyncTask {
-	if(file(".idea").exists() && !file(".idea/icon.png").exists()) copy {
-		from("src/main/resources/icon.png")
-		into(".idea")
-	}
-}
-loom { accessWidenerPath.set(file("src/main/resources/${e("mod_id")}.accessWidener")) }
 publishMods {
 	file.set(tasks.remapJar.get().archiveFile)
 	changelog.set(file("CHANGELOG.md").readText())
@@ -85,3 +81,4 @@ publishMods {
 		optional("modmenu")
 	}
 }
+fun e(key: String) = extra[key].toString()

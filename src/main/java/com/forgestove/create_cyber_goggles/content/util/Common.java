@@ -1,8 +1,8 @@
-package com.forgestove.create_cyber_goggles.content;
+package com.forgestove.create_cyber_goggles.content.util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.*;
-public class Util {
+public class Common {
 	/**
 	 * 在屏幕中央区域渲染指定物品堆的图标及关联的悬浮提示信息。
 	 *

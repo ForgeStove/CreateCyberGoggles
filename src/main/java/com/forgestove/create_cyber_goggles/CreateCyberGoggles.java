@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles;
-import com.forgestove.create_cyber_goggles.content.ModConfig;
+import com.forgestove.create_cyber_goggles.content.config.ModConfig;
 import com.forgestove.create_cyber_goggles.content.event.*;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;

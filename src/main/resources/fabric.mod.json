@@ -19,7 +19,7 @@
 			"com.forgestove.create_cyber_goggles.CreateCyberGoggles"
 		],
 		"modmenu": [
-			"com.forgestove.create_cyber_goggles.content.ModMenuIntegration"
+			"com.forgestove.create_cyber_goggles.content.config.ModMenuIntegration"
 		]
 	},
 	"mixins": [
@@ -36,5 +36,5 @@
 		"modmenu": "*",
 		"jei": "*"
 	},
-	"accessWidener": "create_cyber_goggles.accessWidener"
+	"accessWidener": "create_cyber_goggles.accesswidener"
 }

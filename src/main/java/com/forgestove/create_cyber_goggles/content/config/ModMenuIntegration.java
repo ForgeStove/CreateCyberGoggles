@@ -1,4 +1,4 @@
-package com.forgestove.create_cyber_goggles.content;
+package com.forgestove.create_cyber_goggles.content.config;
 import com.terraformersmc.modmenu.api.*;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.fabricmc.api.*;

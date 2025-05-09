@@ -1,6 +1,6 @@
 package com.forgestove.create_cyber_goggles.content.event;
 import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
-import com.forgestove.create_cyber_goggles.content.Util;
+import com.forgestove.create_cyber_goggles.content.util.Common;
 import com.simibubi.create.content.kinetics.base.*;
 import com.simibubi.create.content.logistics.depot.DepotBlockEntity;
 import com.simibubi.create.foundation.utility.VecHelper;
@@ -21,7 +21,7 @@ public class OverlayRenderer {
 		var blockEntity = level.getBlockEntity(blockHitResult.getBlockPos());
 		var renderExtraItems = CreateCyberGoggles.config.goggles.renderExtraItems;
 		if (renderExtraItems && blockEntity instanceof DepotBlockEntity depotBlockEntity)
-			Util.renderItemStack(guiGraphics, depotBlockEntity.getHeldItem());
+			Common.renderItemStack(guiGraphics, depotBlockEntity.getHeldItem());
 		else if (CreateCyberGoggles.config.goggles.enableKineticEffect && blockEntity instanceof KineticBlockEntity kineticBlockEntity) {
 			if (!blockHitResult.getBlockPos().equals(kineticBlockEntity.getBlockPos())) return;
 			var speed = kineticBlockEntity.getSpeed();

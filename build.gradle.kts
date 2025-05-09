@@ -6,69 +6,32 @@ plugins {
 	id("me.modmuss50.mod-publish-plugin") version "0.8.4"
 }
 fun e(key: String) = extra[key].toString()
-repositories {
-	mavenLocal()
-	mavenCentral()
-	maven("https://maven.createmod.net") // Create, Ponder, Flywheel
-	maven("https://maven.tterrag.com") // Registrate
-	maven("https://maven.shedaniel.me") // Cloth Config API
-	maven("https://maven.blamejared.com") // JEI
+val copyIcon = tasks.register<Copy>("copyIcon") {
+	if(!file(".idea").exists()) return@register
+	from("src/main/resources/icon.png")
+	into(".idea")
 }
-dependencies {
-	compileOnly(fileTree(mapOf("dir" to "cache", "include" to listOf("*.jar"))))
-	annotationProcessor("org.spongepowered:mixin:${e("mixin_version")}:processor")
-	modImplementation("io.github.llamalad7:mixinextras-${e("loader")}:${e("mixin_extras_version")}")
-	modImplementation("com.simibubi.create:create-${e("minecraft_version")}:${e("create_version")}:slim")
-	modImplementation("net.createmod.ponder:Ponder-${e("upper_loader")}-${e("minecraft_version")}:${e("ponder_version")}")
-	modImplementation("dev.engine-room.flywheel:flywheel-${e("loader")}-${e("minecraft_version")}:${e("flywheel_version")}")
-	modImplementation("com.tterrag.registrate:Registrate:${e("registrate_version")}")
-	modImplementation("me.shedaniel.cloth:cloth-config-${e("loader")}:${e("cloth_config_version")}")
-	modImplementation("mezz.jei:jei-${e("minecraft_version")}-${e("loader")}:${e("jei_version")}")
-	compileOnly("org.jetbrains:annotations:${e("annotations_version")}")
-}
-val generateModMetadata = tasks.register<ProcessResources>("generateModMetadata") {
+val replaceProperties = tasks.register<ProcessResources>("replaceProperties") {
 	val replace = properties.mapValues { it.value.toString() }
 	inputs.properties(replace)
-	from("src/main/templates")
+	from("src/main/resources/META-INF")
+	into("build/resources/main/META-INF")
 	expand(replace)
-	into("build/generated/sources/modMetadata")
 }
-val copyIcon = tasks.register("copyIcon") {
-	if(file(".idea").exists() && !file(".idea/icon.png").exists()) copy {
-		from("src/main/resources/icon.png")
-		into(".idea")
-	}
-}
-val deleteCache = tasks.register<Delete>("deleteCache") {
-	delete("cache")
-}
-val cacheMergedJar = tasks.register<Copy>("copyMergedJar") {
-	dependsOn("createMinecraftArtifacts")
-	from("build/moddev/artifacts/${e("loader")}-${e("minecraft_version")}-${e("loader_version")}-merged.jar")
-	into("cache")
-}
-base.archivesName.set(e("mod_id"))
-group = e("mod_group_id")
-version = "${e("minecraft_version")}-${e("mod_version")}+${e("upper_loader")}"
-java {
-	withSourcesJar()
-	toolchain.languageVersion.set(JavaLanguageVersion.of(17))
-}
+tasks.classes { dependsOn(replaceProperties) }
 tasks.jar {
 	from("LICENSE")
 	manifest { attributes(mapOf("MixinConfigs" to "${e("mod_id")}.mixins.json")) }
 }
+java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 mixin {
 	add(sourceSets.main.get(), "${e("mod_id")}.refmap.json")
 	config("${e("mod_id")}.mixins.json")
 }
-idea {
-	module {
-		isDownloadSources = true
-		isDownloadJavadoc = true
-	}
+idea.module {
+	isDownloadSources = true
+	isDownloadJavadoc = true
 }
-sourceSets { named("main") { resources.srcDir(generateModMetadata) } }
 legacyForge {
 	version = "${e("minecraft_version")}-${e("loader_version")}"
 	validateAccessTransformers.set(true)
@@ -81,10 +44,32 @@ legacyForge {
 		}
 	}
 	mods { create(e("mod_id")) { sourceSet(sourceSets["main"]) } }
-	ideSyncTasks.addAll(generateModMetadata, copyIcon, deleteCache, cacheMergedJar)
+	ideSyncTasks.addAll(copyIcon)
+}
+base.archivesName.set(e("mod_id"))
+group = e("mod_group_id")
+version = "${e("minecraft_version")}-${e("mod_version")}+${e("upper_loader")}"
+repositories {
+	mavenLocal()
+	mavenCentral()
+	maven("https://maven.createmod.net") // Create, Ponder, Flywheel
+	maven("https://maven.tterrag.com") // Registrate
+	maven("https://maven.shedaniel.me") // Cloth Config API
+	maven("https://maven.blamejared.com") // JEI
+}
+dependencies {
+	modImplementation("com.simibubi.create:create-${e("minecraft_version")}:${e("create_version")}:slim")
+	modImplementation("net.createmod.ponder:Ponder-${e("upper_loader")}-${e("minecraft_version")}:${e("ponder_version")}")
+	modImplementation("dev.engine-room.flywheel:flywheel-${e("loader")}-${e("minecraft_version")}:${e("flywheel_version")}")
+	modImplementation("com.tterrag.registrate:Registrate:${e("registrate_version")}")
+	modImplementation("io.github.llamalad7:mixinextras-${e("loader")}:${e("mixin_extras_version")}")
+	modImplementation("me.shedaniel.cloth:cloth-config-${e("loader")}:${e("cloth_config_version")}")
+	modImplementation("mezz.jei:jei-${e("minecraft_version")}-${e("loader")}:${e("jei_version")}")
+	annotationProcessor("org.spongepowered:mixin:${e("mixin_version")}:processor")
+	compileOnly("org.jetbrains:annotations:${e("annotations_version")}")
 }
 publishMods {
-	file.set(file("build/libs/${e("mod_id")}-${project.version}.jar"))
+	file.set(tasks.named("reobfJar").get().outputs.files.singleFile)
 	changelog.set(file("CHANGELOG.md").readText())
 	type.set(STABLE)
 	version.set(project.version.toString())

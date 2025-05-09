@@ -12,14 +12,15 @@ public class CCGConfigData implements ConfigData {
 	@Category("jei") @TransitiveObject public Jei jei = new Jei();
 	@Category("nbt") @TransitiveObject public Nbt nbt = new Nbt();
 	public static class Goggles {
+		@Tooltip public boolean enhancedInfo = true;
+		@Tooltip public boolean hideStaticKineticInfo = false;
+		@Tooltip public boolean renderExtraItems = true;
+		@Tooltip public boolean enableKineticEffect = true;
+		@Tooltip public boolean preciseNumbers = true;
 		@Tooltip public boolean enableInSurvival = true;
 		@Tooltip public boolean enableInCreative = true;
 		@Tooltip public boolean enableInSpectator = true;
 		@Tooltip public boolean enableInAdventure = true;
-		@Tooltip public boolean enhancedInfo = true;
-		@Tooltip public boolean renderExtraItems = true;
-		@Tooltip public boolean enableKineticEffect = true;
-		@Tooltip public boolean preciseNumbers = true;
 	}
 	public static class Armor {
 		@Tooltip public boolean removeNetheriteFirstPerson = false;

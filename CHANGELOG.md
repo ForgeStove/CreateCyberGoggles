@@ -1,1 +1,2 @@
-- Fix issues with some features not working
+- Fixed the issue that the preview filter did not take effect
+- Enhance tooltip options for goggles configuration

@@ -30,10 +30,14 @@ public class KeyInput {
 		var mc = Minecraft.getInstance();
 		var player = mc.player;
 		if (player == null || mc.screen != null) return;
-		var enabled = CCGConfig.getConfig().armor.removeDivingBootsAffect;
-		CCGConfig.getConfig().armor.removeDivingBootsAffect = !enabled;
-		var component = Component.translatable("message.%s.%sableDivingAffect".formatted(CreateCyberGoggles.ID, enabled ? "en" : "dis"));
-		player.displayClientMessage(component, true);
+		var enabled = CCGConfig.get().armor.removeDivingBootsAffect;
+		CCGConfig.get().armor.removeDivingBootsAffect = !enabled;
+		player.displayClientMessage(
+			Component.translatable("message.%s.%sableDivingAffect".formatted(
+				CreateCyberGoggles.ID,
+				enabled ? "en" : "dis"
+			)), true
+		);
 	}
 	public static void openConfigScreen() {
 		if (!CCGKeyMapping.openConfig.consumeClick()) return;

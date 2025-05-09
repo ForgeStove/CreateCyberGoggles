@@ -15,8 +15,11 @@ public abstract class KineticBlockEntityMixin {
 	@Shadow(remap = false) protected boolean overStressed;
 	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), remap = false, cancellable = true)
 	private void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
-		if (!CCGConfig.getConfig().goggles.enhancedInfo) return;
-		returnable.setReturnValue(true);
+		var goggles = CCGConfig.get().goggles;
+		if (!goggles.enhancedInfo) return;
+		var hide = !goggles.hideStaticKineticInfo || !Mth.equal(getSpeed(), 0);
+		returnable.setReturnValue(hide);
+		if (!hide) return;
 		Lang.translate("gui.goggles.kinetic_stats").forGoggles(tooltip);
 		if (StressImpact.isEnabled()) {
 			var stressAtBase = calculateStressApplied();

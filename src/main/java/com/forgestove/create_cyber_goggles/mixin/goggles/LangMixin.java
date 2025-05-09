@@ -10,7 +10,7 @@ import java.text.NumberFormat;
 public abstract class LangMixin {
 	@Inject(method = "number", at = @At("HEAD"), remap = false, cancellable = true)
 	private static void number(double d, CallbackInfoReturnable<LangBuilder> returnable) {
-		if (!CCGConfig.getConfig().goggles.preciseNumbers) return;
+		if (!CCGConfig.get().goggles.preciseNumbers) return;
 		if (d == (long) d) return;
 		var format = NumberFormat.getNumberInstance();
 		format.setMaximumFractionDigits(8);

@@ -6,9 +6,6 @@ import net.fabricmc.api.*;
 @Environment(EnvType.CLIENT)
 public class CCGConfig implements ModMenuApi {
 	private static CCGConfigData config;
-	public static CCGConfigData getConfig() {
-		return config;
-	}
 	public static CCGConfigData get() {
 		if (config == null) config = AutoConfig.register(CCGConfigData.class, Toml4jConfigSerializer::new).getConfig();
 		return config;

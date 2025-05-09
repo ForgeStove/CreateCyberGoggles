@@ -13,7 +13,7 @@ public abstract class CreateJEIMixin {
 	), remap = false, index = 1
 	)
 	private int loadCategories(int height) {
-		if (!CCGConfig.getConfig().jei.nonrandomScrap) return height;
+		if (!CCGConfig.get().jei.nonrandomScrap) return height;
 		else return height + 40;
 	}
 }

@@ -11,11 +11,12 @@ public abstract class GogglesItemMixin {
 	private static void isWearingGoggles(CallbackInfoReturnable<Boolean> returnable) {
 		var gameMode = Minecraft.getInstance().gameMode;
 		if (gameMode == null) return;
+		var goggles = CCGConfig.get().goggles;
 		if (!switch (gameMode.getPlayerMode()) {
-			case SURVIVAL -> CCGConfig.getConfig().goggles.enableInSurvival;
-			case CREATIVE -> CCGConfig.getConfig().goggles.enableInCreative;
-			case SPECTATOR -> CCGConfig.getConfig().goggles.enableInSpectator;
-			case ADVENTURE -> CCGConfig.getConfig().goggles.enableInAdventure;
+			case SURVIVAL -> goggles.enableInSurvival;
+			case CREATIVE -> goggles.enableInCreative;
+			case SPECTATOR -> goggles.enableInSpectator;
+			case ADVENTURE -> goggles.enableInAdventure;
 		}) return;
 		returnable.setReturnValue(true);
 	}

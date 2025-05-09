@@ -20,10 +20,10 @@ public class OverlayRenderer {
 		var level = mc.level;
 		if (level == null || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return;
 		var blockEntity = level.getBlockEntity(blockHitResult.getBlockPos());
-		var renderExtraItems = CCGConfig.getConfig().goggles.renderExtraItems;
+		var renderExtraItems = CCGConfig.get().goggles.renderExtraItems;
 		if (renderExtraItems && blockEntity instanceof DepotBlockEntity depotBlockEntity)
 			Common.renderItemStack(guiGraphics, depotBlockEntity.getHeldItem());
-		else if (CCGConfig.getConfig().goggles.enableKineticEffect && blockEntity instanceof KineticBlockEntity kineticBlockEntity) {
+		else if (CCGConfig.get().goggles.enableKineticEffect && blockEntity instanceof KineticBlockEntity kineticBlockEntity) {
 			if (!blockHitResult.getBlockPos().equals(kineticBlockEntity.getBlockPos())) return;
 			var speed = kineticBlockEntity.getSpeed();
 			if (speed == 0) return;

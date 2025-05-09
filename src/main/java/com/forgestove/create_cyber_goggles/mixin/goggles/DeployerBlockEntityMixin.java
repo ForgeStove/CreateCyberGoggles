@@ -8,6 +8,7 @@ import com.simibubi.create.foundation.utility.Lang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -24,7 +25,7 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 	}
 	@Inject(method = "addToTooltip", at = @At("HEAD"), remap = false, cancellable = true)
 	private void addToTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
-		if (!CCGConfig.getConfig().goggles.enhancedInfo) return;
+		if (!CCGConfig.get().goggles.enhancedInfo) return;
 		super.addToTooltip(tooltip, isPlayerSneaking);
 		if (overflowItems.isEmpty()) {
 			returnable.setReturnValue(false);
@@ -36,9 +37,20 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 				.style(ChatFormatting.GREEN).forGoggles(tooltip);
 		returnable.setReturnValue(true);
 	}
-	@Inject(method = "addToGoggleTooltip", at = @At("RETURN"), remap = false)
+	@Inject(method = "addToGoggleTooltip", at = @At("TAIL"), remap = false)
 	private void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
-		if (!CCGConfig.getConfig().goggles.enhancedInfo) return;
+		if (!CCGConfig.get().goggles.enhancedInfo) return;
 		SpeedLevel.getFormattedSpeedText(getSpeed(), overStressed).forGoggles(tooltip);
+	}
+	@Inject(
+		method = "addToGoggleTooltip", at = @At(
+		value = "INVOKE", target = "Lcom/simibubi/create/content/kinetics/deployer/DeployerBlockEntity;calculateStressApplied()F"
+	), remap = false, cancellable = true
+	)
+	private void injected(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
+		var goggles = CCGConfig.get().goggles;
+		if (!goggles.enhancedInfo || !goggles.hideStaticKineticInfo) return;
+		if (!Mth.equal(getSpeed(), 0)) return;
+		returnable.setReturnValue(true);
 	}
 }

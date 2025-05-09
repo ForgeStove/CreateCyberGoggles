@@ -9,7 +9,7 @@ public abstract class NetheriteBacktankFirstPersonRendererMixin {
 	@Shadow(remap = false) private static boolean rendererActive;
 	@Inject(method = "clientTick", at = @At("HEAD"), remap = false, cancellable = true)
 	private static void clientTick(CallbackInfo callbackInfo) {
-		if (!CCGConfig.getConfig().armor.removeNetheriteFirstPerson) return;
+		if (!CCGConfig.get().armor.removeNetheriteFirstPerson) return;
 		callbackInfo.cancel();
 		rendererActive = false;
 	}

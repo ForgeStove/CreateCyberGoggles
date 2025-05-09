@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.goggles;
-import com.forgestove.create_cyber_goggles.content.config.CyberConfig;
+import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
 import com.simibubi.create.content.kinetics.base.IRotate.SpeedLevel;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.deployer.DeployerBlockEntity;
@@ -25,7 +25,7 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 	}
 	@Inject(method = "addToTooltip", at = @At("HEAD"), remap = false, cancellable = true)
 	private void addToTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
-		if (!CyberConfig.get().goggles.enhancedInfo) return;
+		if (!CCGConfig.get().goggles.enhancedInfo) return;
 		super.addToTooltip(tooltip, isPlayerSneaking);
 		if (overflowItems.isEmpty()) {
 			returnable.setReturnValue(false);
@@ -40,7 +40,7 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 	}
 	@Inject(method = "addToGoggleTooltip", at = @At("TAIL"), remap = false)
 	private void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
-		if (!CyberConfig.get().goggles.enhancedInfo) return;
+		if (!CCGConfig.get().goggles.enhancedInfo) return;
 		SpeedLevel.getFormattedSpeedText(getSpeed(), overStressed).forGoggles(tooltip);
 	}
 	@Inject(
@@ -49,7 +49,7 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 	),remap = false, cancellable = true
 	)
 	private void injected(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
-		var goggles = CyberConfig.get().goggles;
+		var goggles = CCGConfig.get().goggles;
 		if (!goggles.enhancedInfo || !goggles.hideStaticKineticInfo) return;
 		if (!Mth.equal(getSpeed(), 0)) return;
 		returnable.setReturnValue(true);

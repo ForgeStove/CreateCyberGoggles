@@ -1,6 +1,6 @@
 package com.forgestove.create_cyber_goggles.mixin.render;
-import com.forgestove.create_cyber_goggles.content.config.CyberConfig;
-import com.forgestove.create_cyber_goggles.content.util.Common;
+import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
+import com.forgestove.create_cyber_goggles.content.util.*;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer;
@@ -22,7 +22,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
-import static com.forgestove.create_cyber_goggles.content.event.MouseScroll.*;
 import static com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer.drawItemStack;
 @Mixin(BlueprintOverlayRenderer.class)
 public abstract class BlueprintOverlayRendererMixin {
@@ -42,7 +41,7 @@ public abstract class BlueprintOverlayRendererMixin {
 		int height,
 		CallbackInfo callbackInfo
 	) {
-		if (!CyberConfig.get().goggles.enhancedStoreRender) return;
+		if (!CCGConfig.get().goggles.enhancedStoreRender) return;
 		callbackInfo.cancel();
 		var mc = Minecraft.getInstance();
 		if (mc.options.hideGui || mc.screen != null) return;
@@ -97,10 +96,10 @@ public abstract class BlueprintOverlayRendererMixin {
 			if (hotbarOffHandLeft != null) guiGraphics.blit(hotbarOffHandLeft, x, y, 0, 0, 24, 23);
 			GuiGameElement.of(Items.BARRIER).at(x + 3, y + 3).render(guiGraphics);
 		} else if (shopContext != null && !shopContext.checkout()) {
-			index += scrollDeltaY;
-			scrollDeltaY = 0;
-			if (index < 1) index = results.size();
-			else if (index > results.size()) index = 1;
+			StaticManager.index += StaticManager.scrollDeltaY;
+			StaticManager.scrollDeltaY = 0;
+			if (StaticManager.index < 1) StaticManager.index = results.size();
+			else if (StaticManager.index > results.size()) StaticManager.index = 1;
 			var selectedX = 0;
 			for (int i = 0, resultsSize = results.size(); i < resultsSize; i++) {
 				var result = results.get(i);
@@ -109,11 +108,11 @@ public abstract class BlueprintOverlayRendererMixin {
 					slot = AllGuiTextures.HOTSLOT_ACTIVE;
 				slot.render(guiGraphics, resultCraftable ? x - 1 : x, resultCraftable ? y - 1 : y);
 				drawItemStack(guiGraphics, mc, x, y, result, null);
-				if (i == index - 1) selectedX = x;
+				if (i == StaticManager.index - 1) selectedX = x;
 				x += 21;
 			}
 			if (selectedX != 0 && hotbarSelection != null) guiGraphics.blit(hotbarSelection, selectedX - 1, y - 1, 0, 0, 24, 23);
-			Common.renderItemStack(guiGraphics, results.get(index - 1));
+			Common.renderItemStack(guiGraphics, results.get(StaticManager.index - 1));
 		}
 		RenderSystem.disableBlend();
 	}

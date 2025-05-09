@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.content.util;
-import com.forgestove.create_cyber_goggles.content.config.CyberConfig;
+import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
 import com.simibubi.create.AllItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -13,7 +13,7 @@ public class Common {
 	 * @param player 本地玩家实体
 	 */
 	public static boolean testForStealth(LocalPlayer player) {
-		return CyberConfig.get().chainConveyor.cardBoardedYourself
+		return CCGConfig.get().chainConveyor.cardBoardedYourself
 			&& !player.getAbilities().flying
 			&& AllItems.CARDBOARD_HELMET.isIn(player.getItemBySlot(EquipmentSlot.HEAD))
 			&& AllItems.CARDBOARD_CHESTPLATE.isIn(player.getItemBySlot(EquipmentSlot.CHEST))

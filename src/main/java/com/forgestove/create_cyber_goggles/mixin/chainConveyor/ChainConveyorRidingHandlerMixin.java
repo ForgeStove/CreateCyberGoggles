@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.chainConveyor;
-import com.forgestove.create_cyber_goggles.content.config.CyberConfig;
+import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
 import com.forgestove.create_cyber_goggles.content.util.Common;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.AllTags.AllItemTags;
@@ -26,7 +26,7 @@ public abstract class ChainConveyorRidingHandlerMixin {
 		if (mc.isPaused()) return;
 		var player = mc.player;
 		if (player == null) return;
-		var chainConveyor = CyberConfig.get().chainConveyor;
+		var chainConveyor = CCGConfig.get().chainConveyor;
 		if (!chainConveyor.alwaysAllowRiding && !AllItemTags.CHAIN_RIDEABLE.matches(mc.player.getMainHandItem())) {
 			stopRiding();
 			return;

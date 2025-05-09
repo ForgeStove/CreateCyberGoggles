@@ -1,15 +1,17 @@
 package com.forgestove.create_cyber_goggles.content.event;
-import com.forgestove.create_cyber_goggles.content.config.CyberConfig;
+import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
+import com.forgestove.create_cyber_goggles.content.util.StaticManager;
 import com.simibubi.create.content.logistics.tableCloth.TableClothBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import net.minecraftforge.client.event.InputEvent.MouseScrollingEvent;
 public class MouseScroll {
-	public static int index = 1;
-	public static int scrollDeltaY = 0;
+	public static void register(MouseScrollingEvent event) {
+		onMouseScroll(event);
+	}
 	public static void onMouseScroll(MouseScrollingEvent event) {
-		if (!CyberConfig.get().goggles.enhancedStoreRender) return;
+		if (!CCGConfig.get().goggles.enhancedStoreRender) return;
 		var mc = Minecraft.getInstance();
 		var level = mc.level;
 		if (mc.isPaused()) return;
@@ -18,11 +20,11 @@ public class MouseScroll {
 			|| blockHitResult.getType() == Type.MISS
 			|| !(level.getBlockEntity(blockHitResult.getBlockPos()) instanceof TableClothBlockEntity tableClothBlockEntity)
 			|| !tableClothBlockEntity.isShop()) {
-			index = 1;
+			StaticManager.index = 1;
 			return;
 		}
-		if (event.getScrollDelta() == 0) scrollDeltaY = 0;
-		else scrollDeltaY = event.getScrollDelta() > 0 ? -1 : 1;
+		if (event.getScrollDelta() == 0) StaticManager.scrollDeltaY = 0;
+		else StaticManager.scrollDeltaY = event.getScrollDelta() > 0 ? -1 : 1;
 		event.setCanceled(true);
 	}
 }

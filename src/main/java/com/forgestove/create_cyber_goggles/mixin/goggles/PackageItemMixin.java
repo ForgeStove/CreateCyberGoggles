@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.goggles;
-import com.forgestove.create_cyber_goggles.content.config.CyberConfig;
+import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.Tag;
@@ -24,7 +24,7 @@ public abstract class PackageItemMixin extends Item {
 		TooltipFlag pIsAdvanced,
 		CallbackInfo callbackInfo
 	) {
-		if (!CyberConfig.get().goggles.enhancedInfo) return;
+		if (!CCGConfig.get().goggles.enhancedInfo) return;
 		callbackInfo.cancel();
 		super.appendHoverText(pStack, pLevel, pTooltipComponents, pIsAdvanced);
 		var compoundNbt = pStack.getOrCreateTag();

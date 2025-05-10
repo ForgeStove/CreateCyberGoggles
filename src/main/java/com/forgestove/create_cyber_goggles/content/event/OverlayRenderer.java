@@ -34,7 +34,6 @@ public class OverlayRenderer {
 		else if (goggles.renderExtraItems && blockEntity instanceof PackagerBlockEntity packagerBlockEntity)
 			Common.renderItemStack(guiGraphics, packagerBlockEntity.heldBox);
 		else if (goggles.enableKineticEffect && blockEntity instanceof KineticBlockEntity kineticBlockEntity) {
-			if (!blockHitResult.getBlockPos().equals(kineticBlockEntity.getBlockPos())) return;
 			var speed = kineticBlockEntity.getSpeed();
 			if (speed == 0) return;
 			var state = kineticBlockEntity.getBlockState();

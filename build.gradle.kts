@@ -10,16 +10,7 @@ group = e("mod_group_id")
 version = "${e("minecraft_version")}-${e("mod_version")}+${e("upper_loader")}"
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 idea.module { isDownloadSources = true; isDownloadJavadoc = true }
-tasks {
-	ideaSyncTask {
-		if(!file(".idea/icon.png").exists()) return@ideaSyncTask
-		copy {
-			from("src/main/resources/icon.png")
-			into(".idea")
-		}
-	}
-	jar { from("LICENSE") }
-}
+tasks.jar { from("LICENSE") }
 tasks.processResources {
 	val replace = properties.mapValues { it.value.toString() }
 	inputs.properties(replace)
@@ -31,7 +22,7 @@ tasks.processResources {
 	duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 configurations.configureEach { resolutionStrategy.force("net.fabricmc:fabric-loader:${e("fabric_loader_version")}") }
-loom { accessWidenerPath.set(file("src/main/resources/${e("mod_id")}.accesswidener")) }
+loom.accessWidenerPath.set(file("src/main/resources/${e("mod_id")}.accesswidener"))
 repositories {
 	mavenLocal()
 	mavenCentral()

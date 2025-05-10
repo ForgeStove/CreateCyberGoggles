@@ -20,7 +20,6 @@ import net.neoforged.neoforge.client.event.InputEvent.Key;
 
 import java.util.Collections;
 public class KeyInput {
-	public static StockTickerBlockEntity lastBlockEntity = null;
 	public static void toggleDiving() {
 		if (!CCGKeyMapping.TOGGLE_DIVING.get().isDown()) return;
 		var mc = Minecraft.getInstance();
@@ -48,16 +47,19 @@ public class KeyInput {
 		var player = mc.player;
 		if (player == null) return;
 		if (mc.hitResult == null) return;
-		if (mc.hitResult instanceof BlockHitResult blockHitResult && (lastBlockEntity == null || blockHitResult.getType() == Type.BLOCK)) {
+		if (mc.hitResult instanceof BlockHitResult blockHitResult && (
+			StaticManager.lastBlockEntity == null
+				|| blockHitResult.getType() == Type.BLOCK
+		)) {
 			if (mc.level == null) return;
 			if ((mc.level.getBlockEntity(blockHitResult.getBlockPos()) instanceof StockTickerBlockEntity stockTickerBlockEntity))
-				lastBlockEntity = stockTickerBlockEntity;
+				StaticManager.lastBlockEntity = stockTickerBlockEntity;
 		}
-		if (lastBlockEntity == null) return;
+		if (StaticManager.lastBlockEntity == null) return;
 		var type = AllMenuTypes.STOCK_KEEPER_REQUEST.get();
 		var inv = player.getInventory();
-		var menu = new StockKeeperRequestMenu(type, -1, inv, lastBlockEntity);
-		mc.setScreen(new StockKeeperRequestScreen(menu, inv, lastBlockEntity.getBlockState().getBlock().getName()));
+		var menu = new StockKeeperRequestMenu(type, -1, inv, StaticManager.lastBlockEntity);
+		mc.setScreen(new StockKeeperRequestScreen(menu, inv, StaticManager.lastBlockEntity.getBlockState().getBlock().getName()));
 	}
 	public static void previewFilterScreen(Key event) {
 		if (!(CCGKeyMapping.PREVIEW_FILTER.get().getKey().getValue() == event.getKey())) return;

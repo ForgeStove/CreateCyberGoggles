@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.*;
 public class Common {
 	/**
@@ -31,7 +32,7 @@ public class Common {
 		var mc = Minecraft.getInstance();
 		var font = mc.font;
 		var tooltipFlag = mc.options.advancedItemTooltips ? TooltipFlag.ADVANCED : TooltipFlag.NORMAL;
-		var tooltipLines = itemStack.getTooltipLines(Item.TooltipContext.of(mc.level), mc.player, tooltipFlag);
+		var tooltipLines = itemStack.getTooltipLines(TooltipContext.of(mc.level), mc.player, tooltipFlag);
 		var height = Math.max(10, tooltipLines.size() * font.lineHeight - 60);
 		var x = guiGraphics.guiWidth() / 2;
 		var y = guiGraphics.guiHeight() / 2;

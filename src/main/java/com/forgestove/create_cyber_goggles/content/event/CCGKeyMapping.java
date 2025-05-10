@@ -9,15 +9,15 @@ public enum CCGKeyMapping {
 	openConfig(GLFW.GLFW_KEY_UNKNOWN),
 	previewFilter(GLFW.GLFW_KEY_UNKNOWN);
 	private final String name;
-	private final int keyCode;
+	private final int defaultKeyCode;
 	public KeyMapping keyMapping;
-	CCGKeyMapping(int defaultKey) {
+	CCGKeyMapping(int defaultKeyCode) {
 		name = "key.%s.%s".formatted(CreateCyberGoggles.ID, name());
-		keyCode = defaultKey;
+		this.defaultKeyCode = defaultKeyCode;
 	}
 	public static void register() {
 		for (var key : values()) {
-			key.keyMapping = new KeyMapping(key.name, key.keyCode, "key.categories.%s".formatted(CreateCyberGoggles.ID));
+			key.keyMapping = new KeyMapping(key.name, key.defaultKeyCode, "key.categories.%s".formatted(CreateCyberGoggles.ID));
 			KeyBindingHelper.registerKeyBinding(key.keyMapping);
 		}
 	}
@@ -25,7 +25,8 @@ public enum CCGKeyMapping {
 		return keyMapping.consumeClick();
 	}
 	public boolean isDown() {
-		return GLFW.glfwGetKey(Minecraft.getInstance().getWindow().getWindow(), KeyBindingHelper.getBoundKeyOf(keyMapping).getValue())
-			== GLFW.GLFW_PRESS;
+		var keyCode = KeyBindingHelper.getBoundKeyOf(keyMapping).getValue();
+		if (keyCode == GLFW.GLFW_KEY_UNKNOWN) return false;
+		return GLFW.glfwGetKey(Minecraft.getInstance().getWindow().getWindow(), keyCode) == GLFW.GLFW_PRESS;
 	}
 }

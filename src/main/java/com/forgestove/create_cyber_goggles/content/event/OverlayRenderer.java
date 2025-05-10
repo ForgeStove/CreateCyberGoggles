@@ -17,18 +17,16 @@ public class OverlayRenderer {
 	}
 	public static void renderOverlay(ForgeGui forgeGui, GuiGraphics guiGraphics, float v, int i, int i1) {
 		var mc = Minecraft.getInstance();
-		var player = mc.player;
-		if (player == null || mc.isPaused() || mc.screen != null) return;
+		if (mc.player == null || mc.isPaused() || mc.screen != null) return;
 		var level = mc.level;
 		if (level == null || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return;
 		var blockEntity = level.getBlockEntity(blockHitResult.getBlockPos());
-		var renderExtraItems = CCGConfig.get().goggles.renderExtraItems;
-		if (renderExtraItems && blockEntity instanceof DepotBlockEntity depotBlockEntity)
+		var goggles = CCGConfig.get().goggles;
+		if (goggles.renderExtraItems && blockEntity instanceof DepotBlockEntity depotBlockEntity)
 			Common.renderItemStack(guiGraphics, depotBlockEntity.getHeldItem());
-		else if (renderExtraItems && blockEntity instanceof PackagerBlockEntity packagerBlockEntity)
+		else if (goggles.renderExtraItems && blockEntity instanceof PackagerBlockEntity packagerBlockEntity)
 			Common.renderItemStack(guiGraphics, packagerBlockEntity.heldBox);
-		else if (CCGConfig.get().goggles.enableKineticEffect && blockEntity instanceof KineticBlockEntity kineticBlockEntity) {
-			if (!blockHitResult.getBlockPos().equals(kineticBlockEntity.getBlockPos())) return;
+		else if (goggles.enableKineticEffect && blockEntity instanceof KineticBlockEntity kineticBlockEntity) {
 			var speed = kineticBlockEntity.getSpeed();
 			if (speed == 0) return;
 			var state = kineticBlockEntity.getBlockState();
@@ -37,16 +35,15 @@ public class OverlayRenderer {
 			if (rotationAxis == null) return;
 			var center = VecHelper.getCenterOf(kineticBlockEntity.getBlockPos());
 			var speedLevel = SpeedLevel.of(speed);
-			level.addParticle(
-				new RotationIndicatorParticleData(
-					speedLevel.getColor(),
-					Math.max(15, speedLevel.getParticleSpeed()) * Math.signum(speed),
-					kineticBlock.getParticleInitialRadius(),
-					kineticBlock.getParticleTargetRadius(),
-					10,
-					rotationAxis.name().charAt(0)
-				), center.x, center.y, center.z, 0, 0, 0
+			var particleData = new RotationIndicatorParticleData(
+				speedLevel.getColor(),
+				Math.max(15, speedLevel.getParticleSpeed()) * Math.signum(speed),
+				kineticBlock.getParticleInitialRadius(),
+				kineticBlock.getParticleTargetRadius(),
+				20,
+				rotationAxis.name().charAt(0)
 			);
+			level.addParticle(particleData, center.x, center.y, center.z, 0, 0, 0);
 		}
 	}
 }

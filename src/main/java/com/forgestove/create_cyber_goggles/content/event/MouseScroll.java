@@ -7,9 +7,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import net.minecraftforge.client.event.InputEvent.MouseScrollingEvent;
 public class MouseScroll {
-	public static void register(MouseScrollingEvent event) {
-		onMouseScroll(event);
-	}
 	public static void onMouseScroll(MouseScrollingEvent event) {
 		if (!CCGConfig.get().goggles.enhancedStoreRender) return;
 		var mc = Minecraft.getInstance();

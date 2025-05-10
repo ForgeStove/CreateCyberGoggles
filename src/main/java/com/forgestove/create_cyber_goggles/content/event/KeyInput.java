@@ -20,12 +20,6 @@ import net.minecraftforge.client.event.InputEvent.Key;
 
 import java.util.Collections;
 public class KeyInput {
-	public static void register(Key event) {
-		toggleDiving();
-		openConfigScreen();
-		openStockScreen();
-		previewFilterScreen(event);
-	}
 	public static void toggleDiving() {
 		if (!CCGKeyMapping.TOGGLE_DIVING.get().isDown()) return;
 		var mc = Minecraft.getInstance();

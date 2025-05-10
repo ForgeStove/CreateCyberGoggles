@@ -18,11 +18,14 @@ public class CreateCyberGoggles {
 	public static class ClientGameEvents {
 		@SubscribeEvent
 		public static void key(Key event) {
-			KeyInput.register(event);
+			KeyInput.toggleDiving();
+			KeyInput.openConfigScreen();
+			KeyInput.openStockScreen();
+			KeyInput.previewFilterScreen(event);
 		}
 		@SubscribeEvent
 		public static void mouseScrollingEvent(MouseScrollingEvent event) {
-			MouseScroll.register(event);
+			MouseScroll.onMouseScroll(event);
 		}
 	}
 	@EventBusSubscriber(modid = ID, value = Dist.CLIENT, bus = Bus.MOD)

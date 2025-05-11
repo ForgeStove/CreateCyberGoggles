@@ -9,7 +9,10 @@ base.archivesName.set(e("mod_id"))
 group = e("mod_group_id")
 version = "${e("minecraft_version")}-${e("mod_version")}+${e("upper_loader")}"
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(21))
-idea.module { isDownloadSources = true; isDownloadJavadoc = true }
+idea.module {
+	isDownloadSources = true
+	isDownloadJavadoc = true
+}
 tasks.jar { from("LICENSE") }
 tasks.processResources {
 	val replace = properties.mapValues { it.value.toString() }

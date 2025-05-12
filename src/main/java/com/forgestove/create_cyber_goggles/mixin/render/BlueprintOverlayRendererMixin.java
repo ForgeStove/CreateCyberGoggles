@@ -22,6 +22,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.List;
 @Mixin(BlueprintOverlayRenderer.class)
 public abstract class BlueprintOverlayRendererMixin {
+	@Unique private static final ResourceLocation HOTBAR_SELECTION = ResourceLocation.withDefaultNamespace("hud/hotbar_selection");
+	@Unique private static final ResourceLocation HOTBAR_OFF_HAND_LEFT = ResourceLocation.withDefaultNamespace("hud/hotbar_offhand_left");
 	@Shadow static boolean active;
 	@Shadow static boolean empty;
 	@Shadow static List<Pair<ItemStack, Boolean>> ingredients;
@@ -80,10 +82,8 @@ public abstract class BlueprintOverlayRendererMixin {
 		else AllGuiTextures.HOTSLOT_ARROW.render(guiGraphics, x, y + 4);
 		x += 25;
 		// Outputs
-		var hotbarOffHandLeft = ResourceLocation.withDefaultNamespace("hud/hotbar_offhand_left");
-		var hotbarSelection = ResourceLocation.withDefaultNamespace("hud/hotbar_selection");
 		if (results.isEmpty()) {
-			guiGraphics.blitSprite(hotbarOffHandLeft, x, y, 24, 23);
+			guiGraphics.blitSprite(HOTBAR_OFF_HAND_LEFT, x, y, 24, 23);
 			GuiGameElement.of(Items.BARRIER).at(x + 3, y + 3).render(guiGraphics);
 		} else {
 			StaticManager.index += StaticManager.scrollDeltaY;
@@ -91,7 +91,7 @@ public abstract class BlueprintOverlayRendererMixin {
 			if (StaticManager.index < 1) StaticManager.index = results.size();
 			else if (StaticManager.index > results.size()) StaticManager.index = 1;
 			var selectedX = 0;
-			for (int i = 0, resultsSize = results.size(); i < resultsSize; i++) {
+			for (var i = 0; i < results.size(); i++) {
 				var result = results.get(i);
 				var slot = resultCraftable ? AllGuiTextures.HOTSLOT_SUPER_ACTIVE : AllGuiTextures.HOTSLOT;
 				if (!invalidShop && shopContext != null && shopContext.stockLevel() > shopContext.purchases())
@@ -101,7 +101,7 @@ public abstract class BlueprintOverlayRendererMixin {
 				if (i == StaticManager.index - 1) selectedX = x;
 				x += 21;
 			}
-			if (selectedX != 0) guiGraphics.blitSprite(hotbarSelection, selectedX - 1, y - 1, 24, 23);
+			if (selectedX != 0) guiGraphics.blitSprite(HOTBAR_SELECTION, selectedX - 1, y - 1, 24, 23);
 			Common.renderItemStack(guiGraphics, results.get(StaticManager.index - 1));
 		}
 		RenderSystem.disableBlend();

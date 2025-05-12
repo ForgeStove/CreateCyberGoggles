@@ -101,7 +101,7 @@ public abstract class BlueprintOverlayRendererMixin {
 			if (StaticManager.index < 1) StaticManager.index = results.size();
 			else if (StaticManager.index > results.size()) StaticManager.index = 1;
 			var selectedX = 0;
-			for (int i = 0, resultsSize = results.size(); i < resultsSize; i++) {
+			for (var i = 0; i < results.size(); i++) {
 				var result = results.get(i);
 				var slot = resultCraftable ? AllGuiTextures.HOTSLOT_SUPER_ACTIVE : AllGuiTextures.HOTSLOT;
 				if (!invalidShop && shopContext != null && shopContext.stockLevel() > shopContext.purchases())

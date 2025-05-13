@@ -14,7 +14,6 @@ public class CCGConfig {
 		);
 	}
 	public static CCGConfigData get() {
-		if (config == null) SafeRun.run(() -> config = AutoConfig.register(CCGConfigData.class, Toml4jConfigSerializer::new).getConfig());
-		return config;
+		return config != null ? config : (config = AutoConfig.register(CCGConfigData.class, Toml4jConfigSerializer::new).getConfig());
 	}
 }

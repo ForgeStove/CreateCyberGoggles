@@ -1,1 +1,4 @@
-- Enhance tooltip options for goggles configuration
+- Fix store rendering
+- Remove unnecessary configuration of chain conveyor
+- New wrench configurable items: removeCooldown
+- Optimize mixin logic

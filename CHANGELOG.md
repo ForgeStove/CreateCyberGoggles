@@ -1,4 +1,1 @@
-- Fix crash when register config
-- Remove unnecessary configuration of chain conveyor
-- New wrench configurable items: removeCooldown
-- Optimize mixin logic
+- Fixed an issue that cannot use ponder with legendary tooltip installed when player targets a kinetic block

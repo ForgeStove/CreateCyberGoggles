@@ -28,8 +28,6 @@ public class CCGConfigData implements ConfigData {
 	public static class ChainConveyor {
 		@Tooltip public boolean alwaysAllowRiding = false;
 		@Tooltip public boolean preventFalling = false;
-		@Tooltip public int separationDistance = 3;
-		@Tooltip public int separationHeight = -1;
 		@Tooltip public boolean enhancedConnection = true;
 		@Tooltip public boolean cardBoardedYourself = false;
 	}

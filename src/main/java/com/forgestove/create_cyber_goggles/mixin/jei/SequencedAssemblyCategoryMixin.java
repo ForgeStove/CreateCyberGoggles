@@ -24,12 +24,8 @@ public abstract class SequencedAssemblyCategoryMixin {
 			var out = recipe.resultPool.get(i);
 			builder.addSlot(RecipeIngredientRole.OUTPUT, (i - 1) % size * 19 + 15, (i - 1) / size * 19 + 120).setBackground(
 				new IDrawable() {
-					public int getWidth() {
-						return AllGuiTextures.JEI_CHANCE_SLOT.getWidth();
-					}
-					public int getHeight() {
-						return AllGuiTextures.JEI_CHANCE_SLOT.getHeight();
-					}
+					public int getWidth() {return AllGuiTextures.JEI_CHANCE_SLOT.getWidth();}
+					public int getHeight() {return AllGuiTextures.JEI_CHANCE_SLOT.getHeight();}
 					public void draw(@NotNull GuiGraphics guiGraphics, int xOffset, int yOffset) {
 						AllGuiTextures.JEI_CHANCE_SLOT.render(guiGraphics, xOffset, yOffset);
 					}

@@ -11,8 +11,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import static com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorInteractionHandler.*;
 @Mixin(ChainConveyorInteractionHandler.class)
 public abstract class ChainConveyorInteractionHandlerMixin {
 	@Shadow(remap = false) public static BlockPos selectedConnection;
@@ -33,7 +31,7 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 	@Inject(method = "onUse", at = @At("HEAD"), remap = false, cancellable = true)
 	private static void onUse(CallbackInfoReturnable<Boolean> returnable) {
 		if (!CCGConfig.get().chainConveyor.alwaysAllowRiding) return;
-		if (selectedLift == null) {
+		if (ChainConveyorInteractionHandler.selectedLift == null) {
 			returnable.setReturnValue(false);
 			return;
 		}
@@ -42,31 +40,35 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 		if (player == null) return;
 		var mainHandItem = player.getMainHandItem();
 		if (AllBlocks.PACKAGE_FROGPORT.isIn(mainHandItem)) {
-			PackagePortTargetSelectionHandler.exactPositionOfTarget = selectedBakedPosition;
-			PackagePortTargetSelectionHandler.activePackageTarget = new PackagePortTarget.ChainConveyorFrogportTarget(
-				selectedLift,
-				selectedChainPosition,
+			PackagePortTargetSelectionHandler.exactPositionOfTarget = ChainConveyorInteractionHandler.selectedBakedPosition;
+			PackagePortTargetSelectionHandler.activePackageTarget =
+				new PackagePortTarget.ChainConveyorFrogportTarget(ChainConveyorInteractionHandler.selectedLift,
+				ChainConveyorInteractionHandler.selectedChainPosition,
 				selectedConnection
 			);
 			return;
 		}
 		if (PackageItem.isPackage(mainHandItem)) {
 			AllPackets.getChannel().sendToServer(new ChainPackageInteractionPacket(
-				selectedLift,
+				ChainConveyorInteractionHandler.selectedLift,
 				selectedConnection,
-				selectedChainPosition,
+				ChainConveyorInteractionHandler.selectedChainPosition,
 				mainHandItem
 			));
 			return;
 		}
 		if (!player.isShiftKeyDown()) {
-			ChainConveyorRidingHandler.embark(selectedLift, selectedChainPosition, selectedConnection);
+			ChainConveyorRidingHandler.embark(
+				ChainConveyorInteractionHandler.selectedLift,
+				ChainConveyorInteractionHandler.selectedChainPosition,
+				selectedConnection
+			);
 			return;
 		}
 		if (selectedConnection == null) return;
 		AllPackets.getChannel().sendToServer(new ChainConveyorConnectionPacket(
-			selectedLift,
-			selectedLift.offset(selectedConnection),
+			ChainConveyorInteractionHandler.selectedLift,
+			ChainConveyorInteractionHandler.selectedLift.offset(selectedConnection),
 			mainHandItem.isEmpty() ? AllItems.WRENCH.asStack() : mainHandItem,
 			false
 		));

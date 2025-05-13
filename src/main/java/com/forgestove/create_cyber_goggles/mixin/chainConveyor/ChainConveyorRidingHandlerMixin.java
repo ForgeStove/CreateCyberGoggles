@@ -14,8 +14,6 @@ import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import static com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorRidingHandler.ridingChainConveyor;
 @Mixin(ChainConveyorRidingHandler.class)
 public abstract class ChainConveyorRidingHandlerMixin {
 	@Redirect(
@@ -39,8 +37,10 @@ public abstract class ChainConveyorRidingHandlerMixin {
 		var player = Minecraft.getInstance().player;
 		if (player == null) return;
 		player.setDeltaMovement(player.getDeltaMovement().scale(0.75).add(diff.scale(0.25)));
-		if (AnimationTickHolder.getTicks() % 10 == 0)
-			AllPackets.getChannel().sendToServer(new ServerboundChainConveyorRidingPacket(ridingChainConveyor, false));
+		if (AnimationTickHolder.getTicks() % 10 == 0) AllPackets.getChannel().sendToServer(new ServerboundChainConveyorRidingPacket(
+			ChainConveyorRidingHandler.ridingChainConveyor,
+			false
+		));
 		if (Common.testForStealth(player)) player.connection.send(new ServerboundPlayerCommandPacket(player, Action.PRESS_SHIFT_KEY));
 	}
 }

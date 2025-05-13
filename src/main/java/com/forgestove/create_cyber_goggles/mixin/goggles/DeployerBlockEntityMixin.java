@@ -46,7 +46,7 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 	@Inject(
 		method = "addToGoggleTooltip", at = @At(
 		value = "INVOKE", target = "Lcom/simibubi/create/content/kinetics/deployer/DeployerBlockEntity;calculateStressApplied()F"
-	),remap = false, cancellable = true
+	), remap = false, cancellable = true
 	)
 	private void injected(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
 		var goggles = CCGConfig.get().goggles;

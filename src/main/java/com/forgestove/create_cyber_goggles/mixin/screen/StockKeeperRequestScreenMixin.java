@@ -11,7 +11,7 @@ public abstract class StockKeeperRequestScreenMixin {
 		value = "INVOKE",
 		target = "Lcom/simibubi/create/content/logistics/stockTicker/StockTickerBlockEntity;refreshClientStockSnapshot()V",
 		shift = Shift.AFTER
-	), remap = false, cancellable = true
+	), cancellable = true
 	)
 	protected void containerTick(CallbackInfo callbackInfo) {
 		callbackInfo.cancel();

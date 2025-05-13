@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(GogglesItem.class)
 public abstract class GogglesItemMixin {
-	@Inject(method = "isWearingGoggles", at = @At("HEAD"), remap = false, cancellable = true)
+	@Inject(method = "isWearingGoggles", at = @At("HEAD"), cancellable = true)
 	private static void isWearingGoggles(CallbackInfoReturnable<Boolean> returnable) {
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) {

@@ -5,10 +5,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 @Mixin(AbstractFilterScreen.class)
 public abstract class AbstractFilterScreenMixin {
-	@Redirect(
-		method = "containerTick",
-		at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;closeContainer()V"),
-		remap = false
-	)
+	@Redirect(method = "containerTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;closeContainer()V"))
 	private void containerTick(Player instance) {}
 }

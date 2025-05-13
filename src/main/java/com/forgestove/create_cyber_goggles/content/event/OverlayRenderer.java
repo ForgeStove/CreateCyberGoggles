@@ -40,7 +40,7 @@ public class OverlayRenderer {
 				Math.max(15, speedLevel.getParticleSpeed()) * Math.signum(speed),
 				kineticBlock.getParticleInitialRadius(),
 				kineticBlock.getParticleTargetRadius(),
-				20,
+				10,
 				rotationAxis.name().charAt(0)
 			);
 			level.addParticle(particleData, center.x, center.y, center.z, 0, 0, 0);

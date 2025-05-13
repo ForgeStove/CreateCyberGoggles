@@ -27,10 +27,6 @@
 	"text.autoconfig.create_cyber_goggles.option.chainConveyor.enhancedConnection.@Tooltip": "移除鏈式傳動輪的最小連接距離限制和最大傾斜角度限制",
 	"text.autoconfig.create_cyber_goggles.option.chainConveyor.preventFalling": "防止玩家分離",
 	"text.autoconfig.create_cyber_goggles.option.chainConveyor.preventFalling.@Tooltip": "防止玩家從鏈式傳動輪上跌落\n可能導致與方塊發生持續碰撞問題",
-	"text.autoconfig.create_cyber_goggles.option.chainConveyor.separationDistance": "最小相對分離距離",
-	"text.autoconfig.create_cyber_goggles.option.chainConveyor.separationDistance.@Tooltip": "與鏈式傳動輪保持鏈接的最小相對距離（方塊數）",
-	"text.autoconfig.create_cyber_goggles.option.chainConveyor.separationHeight": "最小相對分離高度",
-	"text.autoconfig.create_cyber_goggles.option.chainConveyor.separationHeight.@Tooltip": "與鏈式傳動輪保持鏈接的最小相對高度（方塊數）",
 	"text.autoconfig.create_cyber_goggles.option.flywheel.forcedBackend": "強制飛輪優化",
 	"text.autoconfig.create_cyber_goggles.option.flywheel.forcedBackend.@Tooltip": "強制啟用飛輪渲染後端（與著色器衝突，除非你知道你在做什麼）",
 	"text.autoconfig.create_cyber_goggles.option.goggles.enableInAdventure": "冒險模式啟用",
@@ -59,5 +55,7 @@
 	"text.autoconfig.create_cyber_goggles.option.nbt.nbtFix.@Tooltip": "修復NBT過大導致的崩潰，可能導致卡頓",
 	"text.autoconfig.create_cyber_goggles.option.wrench.alwaysAllowRotating": "總是允許旋轉方塊",
 	"text.autoconfig.create_cyber_goggles.option.wrench.alwaysAllowRotating.@Tooltip": "無需扳手即可通過快捷鍵旋轉方塊",
-	"text.autoconfig.create_cyber_goggles.title": "機械動力：賽博護目鏡"
+	"text.autoconfig.create_cyber_goggles.title": "機械動力：賽博護目鏡",
+	"text.autoconfig.create_cyber_goggles.option.wrench.removeCooldown": "移除冷卻",
+"text.autoconfig.create_cyber_goggles.option.wrench.removeCooldown.@Tooltip": "移除扳手的冷卻時間"
 }

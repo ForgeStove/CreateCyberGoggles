@@ -27,10 +27,6 @@
 	"text.autoconfig.create_cyber_goggles.option.chainConveyor.enhancedConnection.@Tooltip": "Убирает ограничения на минимальное расстояние и угол наклона",
 	"text.autoconfig.create_cyber_goggles.option.chainConveyor.preventFalling": "Предотвратить падение",
 	"text.autoconfig.create_cyber_goggles.option.chainConveyor.preventFalling.@Tooltip": "Предотвращает падение с конвейера\nМожет вызвать застревание в блоках",
-	"text.autoconfig.create_cyber_goggles.option.chainConveyor.separationDistance": "Минимальное расстояние отцепления",
-	"text.autoconfig.create_cyber_goggles.option.chainConveyor.separationDistance.@Tooltip": "Минимальное расстояние (в блоках) для отцепления",
-	"text.autoconfig.create_cyber_goggles.option.chainConveyor.separationHeight": "Минимальная высота отцепления",
-	"text.autoconfig.create_cyber_goggles.option.chainConveyor.separationHeight.@Tooltip": "Минимальная высота (в блоках) для отцепления",
 	"text.autoconfig.create_cyber_goggles.option.flywheel.forcedBackend": "Принудительный рендеринг маховика",
 	"text.autoconfig.create_cyber_goggles.option.flywheel.forcedBackend.@Tooltip": "Принудительно включает рендеринг маховика (может конфликтовать с шейдерами)",
 	"text.autoconfig.create_cyber_goggles.option.goggles.enableInAdventure": "Включить в режиме приключения",
@@ -59,5 +55,7 @@
 	"text.autoconfig.create_cyber_goggles.option.nbt.nbtFix.@Tooltip": "Исправляет краш из-за большого NBT (может вызывать лаги)",
 	"text.autoconfig.create_cyber_goggles.option.wrench.alwaysAllowRotating": "Всегда разрешать вращение",
 	"text.autoconfig.create_cyber_goggles.option.wrench.alwaysAllowRotating.@Tooltip": "Позволяет вращать блоки без гаечного ключа",
+	"text.autoconfig.create_cyber_goggles.option.wrench.removeCooldown": "Убрать перезарядку",
+	"text.autoconfig.create_cyber_goggles.option.wrench.removeCooldown.@Tooltip": "Убирает перезарядку гаечного ключа",
 	"text.autoconfig.create_cyber_goggles.title": "Create: Кибер-очки"
 }

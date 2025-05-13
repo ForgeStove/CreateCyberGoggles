@@ -1,73 +1,31 @@
 package com.forgestove.create_cyber_goggles.mixin.chainConveyor;
 import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
-import com.simibubi.create.*;
-import com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer;
-import com.simibubi.create.content.kinetics.chainConveyor.*;
-import com.simibubi.create.foundation.utility.CreateLang;
-import com.simibubi.create.infrastructure.config.AllConfigs;
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.*;
-import org.spongepowered.asm.mixin.*;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorConnectionHandler;
+import net.minecraft.core.*;
+import net.minecraft.world.phys.Vec3;
+import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ChainConveyorConnectionHandler.class)
 public abstract class ChainConveyorConnectionHandlerMixin {
-	@Shadow(remap = false) private static BlockPos firstPos;
-	@Shadow(remap = false) private static ResourceKey<Level> firstDim;
-	@Inject(method = "validateAndConnect", at = @At("HEAD"), remap = false, cancellable = true)
-	private static void validateAndConnect(
-		LevelAccessor level,
-		BlockPos pos,
-		Player player,
-		ItemStack chain,
-		boolean simulate,
-		CallbackInfoReturnable<Boolean> returnable
+	@Redirect(
+		method = "validateAndConnect",
+		at = @At(value = "INVOKE", target = "Lnet/minecraft/core/BlockPos;closerThan(Lnet/minecraft/core/Vec3i;D)Z", ordinal = 1),
+		remap = false
+	)
+	private static boolean redirectCloserThan(BlockPos instance, Vec3i vec3i, double distance) {
+		if (CCGConfig.get().chainConveyor.enhancedConnection) return false;
+		return instance.closerThan(vec3i, distance);
+	}
+	@Redirect(
+		method = "validateAndConnect", at = @At(
+		value = "INVOKE",
+		target = "Lnet/minecraft/world/phys/Vec3;atLowerCornerOf(Lnet/minecraft/core/Vec3i;)Lnet/minecraft/world/phys/Vec3;"
+	), remap = false
+	)
+	private static Vec3 redirectDiff(
+		Vec3i vec3i
 	) {
-		if (!CCGConfig.get().chainConveyor.enhancedConnection) return;
-		returnable.setReturnValue(false);
-		if (!simulate && player.isShiftKeyDown()) {
-			CreateLang.translate("chain_conveyor.selection_cleared").sendStatus(player);
-			return;
-		}
-		if (pos.equals(firstPos)) return;
-		if (!pos.closerThan(firstPos, AllConfigs.server().kinetics.maxChainConveyorLength.get())) {
-			CreateLang.translate("chain_conveyor.too_far").style(ChatFormatting.RED).sendStatus(player);
-			return;
-		}
-		var chainConveyorBlock = AllBlocks.CHAIN_CONVEYOR.get();
-		var sourceLift = chainConveyorBlock.getBlockEntity(level, firstPos);
-		var targetLift = chainConveyorBlock.getBlockEntity(level, pos);
-		if (sourceLift == null || targetLift == null) {
-			CreateLang.translate("chain_conveyor.blocks_invalid").style(ChatFormatting.RED).sendStatus(player);
-			return;
-		}
-		if (targetLift.connections.size() >= AllConfigs.server().kinetics.maxChainConveyorConnections.get()) {
-			CreateLang.translate("chain_conveyor.cannot_add_more_connections").style(ChatFormatting.RED).sendStatus(player);
-			return;
-		}
-		if (targetLift.connections.contains(firstPos.subtract(pos))) {
-			CreateLang.translate("chain_conveyor.already_connected").style(ChatFormatting.RED).sendStatus(player);
-			return;
-		}
-		if (!player.isCreative()) {
-			var chainCost = ChainConveyorBlockEntity.getChainCost(pos.subtract(firstPos));
-			var hasEnough = ChainConveyorBlockEntity.getChainsFromInventory(player, chain, chainCost, true);
-			if (simulate) BlueprintOverlayRenderer.displayChainRequirements(chain.getItem(), chainCost, hasEnough);
-			if (!hasEnough) {
-				CreateLang.translate("chain_conveyor.not_enough_chains").style(ChatFormatting.RED).sendStatus(player);
-				return;
-			}
-		}
-		returnable.setReturnValue(true);
-		if (simulate) return;
-		player.swing(player.getUsedItemHand());
-		AllPackets.getChannel().sendToServer(new ChainConveyorConnectionPacket(firstPos, pos, chain, true));
-		CreateLang.text("").sendStatus(player);
-		firstPos = null;
-		firstDim = null;
+		if (CCGConfig.get().chainConveyor.enhancedConnection) return new Vec3(2, 0, 2);
+		return Vec3.atLowerCornerOf(vec3i);
 	}
 }

@@ -67,7 +67,7 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 		AllPackets.getChannel().sendToServer(new ChainConveyorConnectionPacket(
 			selectedLift,
 			selectedLift.offset(selectedConnection),
-			mainHandItem,
+			mainHandItem.isEmpty() ? AllItems.WRENCH.asStack() : mainHandItem,
 			false
 		));
 	}

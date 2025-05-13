@@ -27,10 +27,6 @@
 	"text.autoconfig.create_cyber_goggles.option.chainConveyor.enhancedConnection.@Tooltip": "Remove the minimum connection distance restriction and maximum angle limitation for chain conveyor",
 	"text.autoconfig.create_cyber_goggles.option.chainConveyor.preventFalling": "Prevent Falling",
 	"text.autoconfig.create_cyber_goggles.option.chainConveyor.preventFalling.@Tooltip": "Prevent falling off chain conveyors\nMay cause collision issues with blocks",
-	"text.autoconfig.create_cyber_goggles.option.chainConveyor.separationDistance": "Separation Distance",
-	"text.autoconfig.create_cyber_goggles.option.chainConveyor.separationDistance.@Tooltip": "Minimum relative falling distance between you and chain conveyor",
-	"text.autoconfig.create_cyber_goggles.option.chainConveyor.separationHeight": "Separation Height",
-	"text.autoconfig.create_cyber_goggles.option.chainConveyor.separationHeight.@Tooltip": "Minimum relative falling height between you and chain conveyor",
 	"text.autoconfig.create_cyber_goggles.option.flywheel.forcedBackend": "Forced Backend",
 	"text.autoconfig.create_cyber_goggles.option.flywheel.forcedBackend.@Tooltip": "Allow flywheel backend, even if not compatible with shaders (Unless you know what you are doing)",
 	"text.autoconfig.create_cyber_goggles.option.goggles.enableInAdventure": "Enable In Adventure",
@@ -59,5 +55,7 @@
 	"text.autoconfig.create_cyber_goggles.option.nbt.nbtFix.@Tooltip": "Fix NBT too big crash, may cause lag",
 	"text.autoconfig.create_cyber_goggles.option.wrench.alwaysAllowRotating": "Always Allow Rotating",
 	"text.autoconfig.create_cyber_goggles.option.wrench.alwaysAllowRotating.@Tooltip": "Always allow rotating block without wrench by hotkey",
+	"text.autoconfig.create_cyber_goggles.option.wrench.removeCooldown": "Remove Cooldown",
+	"text.autoconfig.create_cyber_goggles.option.wrench.removeCooldown.@Tooltip": "Remove the cooldown of wrench",
 	"text.autoconfig.create_cyber_goggles.title": "Create: Cyber Goggles"
 }

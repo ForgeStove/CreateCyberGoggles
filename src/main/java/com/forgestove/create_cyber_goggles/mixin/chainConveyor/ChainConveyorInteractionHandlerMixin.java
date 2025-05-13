@@ -3,7 +3,7 @@ import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
 import com.simibubi.create.*;
 import com.simibubi.create.content.kinetics.chainConveyor.*;
 import com.simibubi.create.content.logistics.box.PackageItem;
-import com.simibubi.create.content.logistics.packagePort.PackagePortTarget;
+import com.simibubi.create.content.logistics.packagePort.*;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -12,9 +12,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import static com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorInteractionHandler.*;
-import static com.simibubi.create.content.logistics.packagePort.PackagePortTargetSelectionHandler.*;
 @Mixin(ChainConveyorInteractionHandler.class)
 public abstract class ChainConveyorInteractionHandlerMixin {
 	@Shadow public static BlockPos selectedConnection;
@@ -35,7 +32,7 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 	@Inject(method = "onUse", at = @At("HEAD"), cancellable = true)
 	private static void onUse(CallbackInfoReturnable<Boolean> returnable) {
 		if (!CCGConfig.get().chainConveyor.alwaysAllowRiding) return;
-		if (selectedLift == null) {
+		if (ChainConveyorInteractionHandler.selectedLift == null) {
 			returnable.setReturnValue(false);
 			return;
 		}
@@ -44,10 +41,10 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 		if (player == null) return;
 		var mainHandItem = player.getMainHandItem();
 		if (AllBlocks.PACKAGE_FROGPORT.isIn(mainHandItem)) {
-			exactPositionOfTarget = selectedBakedPosition;
-			activePackageTarget = new PackagePortTarget.ChainConveyorFrogportTarget(
-				selectedLift,
-				selectedChainPosition,
+			PackagePortTargetSelectionHandler.exactPositionOfTarget = ChainConveyorInteractionHandler.selectedBakedPosition;
+			PackagePortTargetSelectionHandler.activePackageTarget = new PackagePortTarget.ChainConveyorFrogportTarget(
+				ChainConveyorInteractionHandler.selectedLift,
+				ChainConveyorInteractionHandler.selectedChainPosition,
 				selectedConnection,
 				false
 			);
@@ -55,21 +52,25 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 		}
 		if (PackageItem.isPackage(mainHandItem)) {
 			CatnipServices.NETWORK.sendToServer(new ChainPackageInteractionPacket(
-				selectedLift,
+				ChainConveyorInteractionHandler.selectedLift,
 				selectedConnection,
-				selectedChainPosition,
+				ChainConveyorInteractionHandler.selectedChainPosition,
 				mainHandItem
 			));
 			return;
 		}
 		if (!player.isShiftKeyDown()) {
-			ChainConveyorRidingHandler.embark(selectedLift, selectedChainPosition, selectedConnection);
+			ChainConveyorRidingHandler.embark(
+				ChainConveyorInteractionHandler.selectedLift,
+				ChainConveyorInteractionHandler.selectedChainPosition,
+				selectedConnection
+			);
 			return;
 		}
 		if (selectedConnection == null) return;
 		CatnipServices.NETWORK.sendToServer(new ChainConveyorConnectionPacket(
-			selectedLift,
-			selectedLift.offset(selectedConnection),
+			ChainConveyorInteractionHandler.selectedLift,
+			ChainConveyorInteractionHandler.selectedLift.offset(selectedConnection),
 			mainHandItem.isEmpty() ? AllItems.WRENCH.asStack() : mainHandItem,
 			false
 		));

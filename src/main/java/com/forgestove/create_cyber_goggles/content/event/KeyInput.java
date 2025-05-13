@@ -28,9 +28,9 @@ public class KeyInput {
 		var enabled = CCGConfig.get().armor.removeDivingBootsAffect;
 		CCGConfig.get().armor.removeDivingBootsAffect = !enabled;
 		player.displayClientMessage(
-			Component.translatable("message.%s.%s".formatted(
+			Component.translatable("message.%s.%sableDivingAffect".formatted(
 				CreateCyberGoggles.ID,
-				enabled ? "enableDivingAffect" : "disableDivingAffect"
+				enabled ? "en" : "dis"
 			)), true
 		);
 	}
@@ -48,8 +48,7 @@ public class KeyInput {
 		if (player == null) return;
 		if (mc.hitResult == null) return;
 		if (mc.hitResult instanceof BlockHitResult blockHitResult && (
-			StaticManager.lastBlockEntity == null
-				|| blockHitResult.getType() == Type.BLOCK
+			StaticManager.lastBlockEntity == null || blockHitResult.getType() == Type.BLOCK
 		)) {
 			if (mc.level == null) return;
 			if ((mc.level.getBlockEntity(blockHitResult.getBlockPos()) instanceof StockTickerBlockEntity stockTickerBlockEntity))

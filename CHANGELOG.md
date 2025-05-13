@@ -1,1 +1,4 @@
-- Fixed the issue that the preview filter did not take effect
+- Fix crash when register config
+- Remove unnecessary configuration of chain conveyor
+- New wrench configurable items: removeCooldown
+- Optimize mixin logic

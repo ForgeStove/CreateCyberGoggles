@@ -1,3 +1,4 @@
+- Fix crash when register config
 - Fix store rendering
 - Remove unnecessary configuration of chain conveyor
 - New wrench configurable items: removeCooldown

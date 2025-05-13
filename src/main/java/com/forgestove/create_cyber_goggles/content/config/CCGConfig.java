@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.content.config;
-import com.forgestove.create_cyber_goggles.content.util.SafeRun;
+import com.forgestove.create_cyber_goggles.content.util.*;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory;
@@ -12,6 +12,7 @@ public class CCGConfig {
 		ModLoadingContext.get().registerExtensionPoint(ConfigScreenFactory.class, () -> factory);
 	}
 	public static CCGConfigData get() {
-		return config != null ? config : (config = AutoConfig.register(CCGConfigData.class, Toml4jConfigSerializer::new).getConfig());
+		if (config != null) return config;
+		return SafeCall.call(() -> config = AutoConfig.register(CCGConfigData.class, Toml4jConfigSerializer::new).getConfig());
 	}
 }

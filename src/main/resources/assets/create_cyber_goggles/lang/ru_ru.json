@@ -55,5 +55,7 @@
 	"text.autoconfig.create_cyber_goggles.option.nbt.nbtFix.@Tooltip": "Исправляет краш из-за большого NBT (может вызывать лаги)",
 	"text.autoconfig.create_cyber_goggles.option.wrench.alwaysAllowRotating": "Всегда разрешать вращение",
 	"text.autoconfig.create_cyber_goggles.option.wrench.alwaysAllowRotating.@Tooltip": "Позволяет вращать блоки без гаечного ключа",
+	"text.autoconfig.create_cyber_goggles.option.wrench.removeCooldown": "Убрать перезарядку",
+	"text.autoconfig.create_cyber_goggles.option.wrench.removeCooldown.@Tooltip": "Убирает перезарядку гаечного ключа",
 	"text.autoconfig.create_cyber_goggles.title": "Create: Кибер-очки"
 }

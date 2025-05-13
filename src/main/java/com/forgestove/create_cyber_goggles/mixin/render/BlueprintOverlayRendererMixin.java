@@ -30,11 +30,10 @@ public abstract class BlueprintOverlayRendererMixin {
 		CallbackInfo callbackInfo,
 		@Local(name = "x") int x,
 		@Local(name = "y") int y,
-		@Local boolean invalidShop
+		@Local(name = "invalidShop") boolean invalidShop
 	) {
 		if (!CCGConfig.get().goggles.enhancedStoreRender) return;
 		callbackInfo.cancel();
-		var mc = Minecraft.getInstance();
 		if (results.isEmpty()) {
 			guiGraphics.blitSprite(HOTBAR_OFF_HAND_LEFT, x, y, 24, 23);
 			GuiGameElement.of(Items.BARRIER).at(x + 3, y + 3).render(guiGraphics);
@@ -50,7 +49,7 @@ public abstract class BlueprintOverlayRendererMixin {
 				if (!invalidShop && shopContext != null && shopContext.stockLevel() > shopContext.purchases())
 					slot = AllGuiTextures.HOTSLOT_ACTIVE;
 				slot.render(guiGraphics, resultCraftable ? x - 1 : x, resultCraftable ? y - 1 : y);
-				BlueprintOverlayRenderer.drawItemStack(guiGraphics, mc, x, y, result, null);
+				BlueprintOverlayRenderer.drawItemStack(guiGraphics, Minecraft.getInstance(), x, y, result, null);
 				if (i == StaticManager.index - 1) selectedX = x;
 				x += 21;
 			}

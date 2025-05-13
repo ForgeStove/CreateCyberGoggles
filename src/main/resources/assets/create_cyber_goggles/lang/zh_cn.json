@@ -55,5 +55,7 @@
 	"text.autoconfig.create_cyber_goggles.option.nbt.nbtFix.@Tooltip": "修复NBT过大导致的崩溃，可能导致卡顿",
 	"text.autoconfig.create_cyber_goggles.option.wrench.alwaysAllowRotating": "总是允许旋转方块",
 	"text.autoconfig.create_cyber_goggles.option.wrench.alwaysAllowRotating.@Tooltip": "无需扳手即可通过快捷键旋转方块",
+	"text.autoconfig.create_cyber_goggles.option.wrench.removeCooldown": "移除冷却",
+	"text.autoconfig.create_cyber_goggles.option.wrench.removeCooldown.@Tooltip": "移除扳手的冷却时间",
 	"text.autoconfig.create_cyber_goggles.title": "机械动力：赛博护目镜"
 }

@@ -42,16 +42,15 @@ public class OverlayRenderer {
 			if (rotationAxis == null) return;
 			var center = VecHelper.getCenterOf(kineticBlockEntity.getBlockPos());
 			var speedLevel = SpeedLevel.of(speed);
-			level.addParticle(
-				new RotationIndicatorParticleData(
-					speedLevel.getColor(),
-					Math.max(15, speedLevel.getParticleSpeed()) * Math.signum(speed),
-					kineticBlock.getParticleInitialRadius(),
-					kineticBlock.getParticleTargetRadius(),
-					10,
-					rotationAxis
-				), center.x, center.y, center.z, 0, 0, 0
+			var particleData = new RotationIndicatorParticleData(
+				speedLevel.getColor(),
+				Math.max(15, speedLevel.getParticleSpeed()) * Math.signum(speed),
+				kineticBlock.getParticleInitialRadius(),
+				kineticBlock.getParticleTargetRadius(),
+				10,
+				rotationAxis
 			);
+			level.addParticle(particleData, center.x, center.y, center.z, 0, 0, 0);
 		}
 	}
 }

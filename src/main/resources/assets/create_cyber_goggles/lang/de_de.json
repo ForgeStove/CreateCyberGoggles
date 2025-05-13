@@ -55,5 +55,7 @@
 	"text.autoconfig.create_cyber_goggles.option.nbt.nbtFix.@Tooltip": "Behebt Abstürze durch große NBT-Daten (kann Lags verursachen)",
 	"text.autoconfig.create_cyber_goggles.option.wrench.alwaysAllowRotating": "Blöcke immer drehen",
 	"text.autoconfig.create_cyber_goggles.option.wrench.alwaysAllowRotating.@Tooltip": "Erlaubt das Drehen von Blöcken ohne Schlüssel",
+	"text.autoconfig.create_cyber_goggles.option.wrench.removeCooldown": "Abklingzeit entfernen",
+	"text.autoconfig.create_cyber_goggles.option.wrench.removeCooldown.@Tooltip": "Entfernt die Abklingzeit des Schraubenschlüssels",
 	"text.autoconfig.create_cyber_goggles.title": "Create: Cyber-Brille"
 }

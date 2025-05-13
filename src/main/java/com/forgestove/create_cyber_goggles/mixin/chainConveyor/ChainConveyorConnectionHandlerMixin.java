@@ -12,8 +12,7 @@ public abstract class ChainConveyorConnectionHandlerMixin {
 		at = @At(value = "INVOKE", target = "Lnet/minecraft/core/BlockPos;closerThan(Lnet/minecraft/core/Vec3i;D)Z", ordinal = 1)
 	)
 	private static boolean redirectCloserThan(BlockPos instance, Vec3i vec3i, double distance) {
-		if (CCGConfig.get().chainConveyor.enhancedConnection) return false;
-		return instance.closerThan(vec3i, distance);
+		return !CCGConfig.get().chainConveyor.enhancedConnection && instance.closerThan(vec3i, distance);
 	}
 	@Redirect(
 		method = "validateAndConnect", at = @At(
@@ -24,7 +23,6 @@ public abstract class ChainConveyorConnectionHandlerMixin {
 	private static Vec3 redirectDiff(
 		Vec3i vec3i
 	) {
-		if (CCGConfig.get().chainConveyor.enhancedConnection) return new Vec3(2, 0, 2);
-		return Vec3.atLowerCornerOf(vec3i);
+		return CCGConfig.get().chainConveyor.enhancedConnection ? new Vec3(2, 0, 2) : Vec3.atLowerCornerOf(vec3i);
 	}
 }

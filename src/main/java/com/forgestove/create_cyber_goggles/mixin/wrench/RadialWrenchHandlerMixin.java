@@ -1,27 +1,37 @@
 package com.forgestove.create_cyber_goggles.mixin.wrench;
 import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
-import com.simibubi.create.AllKeys;
-import com.simibubi.create.content.contraptions.wrench.*;
-import net.createmod.catnip.gui.ScreenOpener;
-import net.minecraft.client.Minecraft;
-import net.minecraft.world.phys.BlockHitResult;
-import org.spongepowered.asm.mixin.Mixin;
+import com.simibubi.create.AllItems;
+import com.simibubi.create.content.contraptions.wrench.RadialWrenchHandler;
+import net.minecraft.client.multiplayer.MultiPlayerGameMode;
+import net.minecraft.world.item.*;
+import net.minecraft.world.level.GameType;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(RadialWrenchHandler.class)
 public abstract class RadialWrenchHandlerMixin {
-	@Inject(method = "onKeyInput", at = @At("HEAD"), cancellable = true)
-	private static void onKeyInput(int key, boolean pressed, CallbackInfo callbackInfo) {
-		if (!CCGConfig.get().wrench.alwaysAllowRotating) return;
+	@Shadow public static int COOLDOWN;
+	@Redirect(
+		method = "onKeyInput", at = @At(
+		value = "INVOKE",
+		target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;getPlayerMode()Lnet/minecraft/world/level/GameType;"
+	)
+	)
+	private static GameType redirectPlayerMode(MultiPlayerGameMode instance) {
+		return CCGConfig.get().wrench.alwaysAllowRotating ? null : instance.getPlayerMode();
+	}
+	@Redirect(
+		method = "onKeyInput", at = @At(
+		value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getItem()Lnet/minecraft/world/item/Item;"
+	)
+	)
+	private static Item redirectMainHandItem(ItemStack instance) {
+		return CCGConfig.get().wrench.alwaysAllowRotating ? AllItems.WRENCH.get() : instance.getItem();
+	}
+	@Inject(method = "clientTick", at = @At("HEAD"), cancellable = true)
+	private static void clientTick(CallbackInfo callbackInfo) {
+		if (!CCGConfig.get().wrench.removeCooldown) return;
 		callbackInfo.cancel();
-		if (!pressed || key != AllKeys.ROTATE_MENU.getBoundCode()) return;
-		var mc = Minecraft.getInstance();
-		var player = mc.player;
-		if (player == null) return;
-		var level = player.level();
-		var hitResult = mc.hitResult;
-		if (!(hitResult instanceof BlockHitResult blockHitResult)) return;
-		var blockPos = blockHitResult.getBlockPos();
-		RadialWrenchMenu.tryCreateFor(level.getBlockState(blockPos), blockPos, level).ifPresent(ScreenOpener::open);
+		COOLDOWN = 0;
 	}
 }

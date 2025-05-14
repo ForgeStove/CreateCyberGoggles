@@ -9,7 +9,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class GogglesItemMixin {
 	@Inject(method = "isWearingGoggles", at = @At("HEAD"), remap = false, cancellable = true)
 	private static void isWearingGoggles(CallbackInfoReturnable<Boolean> returnable) {
-		var gameMode = Minecraft.getInstance().gameMode;
+		var mc = Minecraft.getInstance();
+		if (mc.screen != null) {
+			returnable.setReturnValue(false);
+			return;
+		}
+		var gameMode = mc.gameMode;
 		if (gameMode == null) return;
 		var goggles = CCGConfig.get().goggles;
 		if (!switch (gameMode.getPlayerMode()) {

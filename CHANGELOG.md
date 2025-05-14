@@ -1,2 +1,2 @@
-- Fixed the issue that the preview filter did not take effect
-- Enhance tooltip options for goggles configuration
+- Fixed an issue that cannot use ponder with legendary tooltip installed when player targets a kinetic block
+- Fix crash when register config

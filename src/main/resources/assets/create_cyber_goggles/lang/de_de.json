@@ -27,10 +27,6 @@
 	"text.autoconfig.create_cyber_goggles.option.chainConveyor.enhancedConnection.@Tooltip": "Entfernt Mindestabstand und Neigungswinkel-Beschränkungen",
 	"text.autoconfig.create_cyber_goggles.option.chainConveyor.preventFalling": "Fallschutz",
 	"text.autoconfig.create_cyber_goggles.option.chainConveyor.preventFalling.@Tooltip": "Verhindert das Fallen vom Förderer\nKann Kollisionsprobleme verursachen",
-	"text.autoconfig.create_cyber_goggles.option.chainConveyor.separationDistance": "Mindesttrennungsabstand",
-	"text.autoconfig.create_cyber_goggles.option.chainConveyor.separationDistance.@Tooltip": "Mindestabstand (in Blöcken) zur Trennung",
-	"text.autoconfig.create_cyber_goggles.option.chainConveyor.separationHeight": "Mindesttrennungshöhe",
-	"text.autoconfig.create_cyber_goggles.option.chainConveyor.separationHeight.@Tooltip": "Mindesthöhe (in Blöcken) zur Trennung",
 	"text.autoconfig.create_cyber_goggles.option.flywheel.forcedBackend": "Schwungrad-Rendering erzwingen",
 	"text.autoconfig.create_cyber_goggles.option.flywheel.forcedBackend.@Tooltip": "Erzwingt das Schwungrad-Rendering (kann mit Shadern kollidieren)",
 	"text.autoconfig.create_cyber_goggles.option.goggles.enableInAdventure": "Im Abenteuermodus aktivieren",
@@ -59,5 +55,7 @@
 	"text.autoconfig.create_cyber_goggles.option.nbt.nbtFix.@Tooltip": "Behebt Abstürze durch große NBT-Daten (kann Lags verursachen)",
 	"text.autoconfig.create_cyber_goggles.option.wrench.alwaysAllowRotating": "Blöcke immer drehen",
 	"text.autoconfig.create_cyber_goggles.option.wrench.alwaysAllowRotating.@Tooltip": "Erlaubt das Drehen von Blöcken ohne Schlüssel",
+	"text.autoconfig.create_cyber_goggles.option.wrench.removeCooldown": "Abklingzeit entfernen",
+	"text.autoconfig.create_cyber_goggles.option.wrench.removeCooldown.@Tooltip": "Entfernt die Abklingzeit des Schraubenschlüssels",
 	"text.autoconfig.create_cyber_goggles.title": "Create: Cyber-Brille"
 }

@@ -20,11 +20,11 @@ public abstract class KineticBlockEntityMixin {
 		var hide = !goggles.hideStaticKineticInfo || !Mth.equal(getSpeed(), 0);
 		returnable.setReturnValue(hide);
 		if (!hide) return;
-		Lang.translate("gui.goggles.kinetic_stats").forGoggles(tooltip);
 		if (StressImpact.isEnabled()) {
 			var stressAtBase = calculateStressApplied();
 			if (!Mth.equal(stressAtBase, 0)) addStressImpactStats(tooltip, stressAtBase);
 		}
+		Lang.translate("gui.goggles.kinetic_stats").forGoggles(tooltip);
 		SpeedLevel.getFormattedSpeedText(getSpeed(), overStressed).forGoggles(tooltip);
 	}
 	@Shadow(remap = false)

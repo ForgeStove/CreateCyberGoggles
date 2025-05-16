@@ -9,6 +9,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class BackendMixin {
 	@Inject(method = "chooseEngine", at = @At("HEAD"), remap = false, cancellable = true)
 	private static void chooseEngine(CallbackInfoReturnable<BackendType> returnable) {
-		if (CCGConfig.get().flywheel.forcedBackend) returnable.setReturnValue(FlwConfig.get().getBackendType());
+		if (CCGConfig.get().other.forcedBackend) returnable.setReturnValue(FlwConfig.get().getBackendType());
 	}
 }

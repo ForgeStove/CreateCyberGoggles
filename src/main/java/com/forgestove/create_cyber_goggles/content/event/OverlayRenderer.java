@@ -5,7 +5,6 @@ import com.simibubi.create.content.logistics.depot.DepotBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.gui.overlay.*;
 public class OverlayRenderer {
@@ -16,11 +15,8 @@ public class OverlayRenderer {
 		if (!CCGConfig.get().goggles.renderExtraItems) return;
 		var mc = Minecraft.getInstance();
 		if (mc.player == null || mc.isPaused() || mc.screen != null) return;
-		var level = mc.level;
-		if (level == null || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return;
-		var blockEntity = level.getBlockEntity(blockHitResult.getBlockPos());
-		if (blockEntity instanceof DepotBlockEntity depotBlockEntity) Common.renderItemStack(guiGraphics, depotBlockEntity.getHeldItem());
-		if (blockEntity instanceof PackagerBlockEntity packagerBlockEntity)
-			Common.renderItemStack(guiGraphics, packagerBlockEntity.heldBox);
+		var be = Common.getSelectedBE();
+		if (be instanceof DepotBlockEntity dbe) Common.renderItemStack(guiGraphics, dbe.getHeldItem());
+		if (be instanceof PackagerBlockEntity pbe) Common.renderItemStack(guiGraphics, pbe.heldBox);
 	}
 }

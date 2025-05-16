@@ -22,7 +22,7 @@ public class CreateCyberGoggles {
 			KeyInput.toggleDiving();
 			KeyInput.openConfigScreen();
 			KeyInput.openStockScreen();
-			KeyInput.previewFilterScreen(event);
+			KeyInput.previewFilterScreen();
 		}
 		@SubscribeEvent
 		public static void mouseScrollingEvent(MouseScrollingEvent event) {

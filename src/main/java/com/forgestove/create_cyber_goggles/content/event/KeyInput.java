@@ -10,18 +10,16 @@ import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringB
 import me.shedaniel.autoconfig.AutoConfig;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
-import net.minecraftforge.client.event.InputEvent.Key;
 
 import java.util.Collections;
 public class KeyInput {
 	public static void toggleDiving() {
-		if (!CCGKeyMapping.TOGGLE_DIVING.get().isDown()) return;
+		if (!CCGKeyMapping.toggleDiving.isDown()) return;
 		var mc = Minecraft.getInstance();
 		var player = mc.player;
 		if (player == null || mc.screen != null) return;
@@ -35,13 +33,13 @@ public class KeyInput {
 		);
 	}
 	public static void openConfigScreen() {
-		if (!CCGKeyMapping.OPEN_CONFIG.get().isDown()) return;
+		if (!CCGKeyMapping.openConfig.isDown()) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) return;
 		mc.setScreen(AutoConfig.getConfigScreen(CCGConfigData.class, null).get());
 	}
 	public static void openStockScreen() {
-		if (!CCGKeyMapping.OPEN_STOCK.get().isDown()) return;
+		if (!CCGKeyMapping.openStock.isDown()) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) return;
 		var player = mc.player;
@@ -60,8 +58,8 @@ public class KeyInput {
 		var menu = new StockKeeperRequestMenu(type, -1, inv, StaticManager.lastBlockEntity);
 		mc.setScreen(new StockKeeperRequestScreen(menu, inv, StaticManager.lastBlockEntity.getBlockState().getBlock().getName()));
 	}
-	public static void previewFilterScreen(Key event) {
-		if (!(CCGKeyMapping.PREVIEW_FILTER.get().getKey().getValue() == event.getKey())) return;
+	public static void previewFilterScreen() {
+		if (!(CCGKeyMapping.previewFilter.isDown())) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) {
 			if (!(mc.screen instanceof AbstractContainerScreen<?> screen)) return;
@@ -87,18 +85,14 @@ public class KeyInput {
 			if (player == null) return;
 			var inv = player.getInventory();
 			var name = filter.getHoverName();
-			Screen screen;
 			var field = FilterItem.class.getDeclaredField("type");
 			field.setAccessible(true);
-			switch (((Enum<?>) field.get(filterItem)).ordinal()) {
-				case 0 -> screen = new FilterScreen(FilterMenu.create(-1, inv, filter), inv, name);
-				case 1 -> screen = new AttributeFilterScreen(AttributeFilterMenu.create(-1, inv, filter), inv, name);
-				case 2 -> screen = new PackageFilterScreen(PackageFilterMenu.create(-1, inv, filter), inv, name);
-				default -> {
-					return;
-				}
-			}
-			ScreenOpener.open(screen);
+			ScreenOpener.open(switch (((Enum<?>) field.get(filterItem)).ordinal()) {
+				case 0 -> new FilterScreen(FilterMenu.create(-1, inv, filter), inv, name);
+				case 1 -> new AttributeFilterScreen(AttributeFilterMenu.create(-1, inv, filter), inv, name);
+				case 2 -> new PackageFilterScreen(PackageFilterMenu.create(-1, inv, filter), inv, name);
+				default -> throw new IllegalStateException("Unexpected value: " + field.get(filterItem));
+			});
 		});
 	}
 }

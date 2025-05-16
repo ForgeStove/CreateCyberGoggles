@@ -8,6 +8,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class SimpleBackendMixin {
 	@Inject(method = "isSupported", at = @At("HEAD"), cancellable = true)
 	private void isSupported(CallbackInfoReturnable<Boolean> returnable) {
-		if (CCGConfig.get().flywheel.forcedBackend) returnable.setReturnValue(true);
+		if (CCGConfig.get().other.forcedBackend) returnable.setReturnValue(true);
 	}
 }

@@ -6,6 +6,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.*;
 import net.neoforged.fml.common.EventBusSubscriber.Bus;
+import net.neoforged.neoforge.client.event.ClientTickEvent.Post;
 import net.neoforged.neoforge.client.event.InputEvent.*;
 import net.neoforged.neoforge.client.event.*;
 @Mod(value = CreateCyberGoggles.ID, dist = Dist.CLIENT)
@@ -21,11 +22,16 @@ public class CreateCyberGoggles {
 			KeyInput.toggleDiving();
 			KeyInput.openConfigScreen();
 			KeyInput.openStockScreen();
-			KeyInput.previewFilterScreen(event);
+			KeyInput.previewFilterScreen();
 		}
 		@SubscribeEvent
 		public static void mouseScrollingEvent(MouseScrollingEvent event) {
 			MouseScroll.onMouseScroll(event);
+		}
+		@SubscribeEvent
+		public static void tick(Post event) {
+			KineticEffector.tick();
+			KineticDebugger.tick();
 		}
 	}
 	@EventBusSubscriber(modid = ID, value = Dist.CLIENT, bus = Bus.MOD)

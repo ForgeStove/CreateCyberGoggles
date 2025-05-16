@@ -1,2 +1,1 @@
-- Fixed an issue that cannot use ponder with legendary tooltip installed when player targets a kinetic block
-- Fix crash when register config
+- Reworked configurations and translation.

@@ -15,8 +15,8 @@ public class MouseScroll {
 		if (level == null
 			|| !(mc.hitResult instanceof BlockHitResult blockHitResult)
 			|| blockHitResult.getType() == Type.MISS
-			|| !(level.getBlockEntity(blockHitResult.getBlockPos()) instanceof TableClothBlockEntity tableClothBlockEntity)
-			|| !tableClothBlockEntity.isShop()) {
+			|| !(level.getBlockEntity(blockHitResult.getBlockPos()) instanceof TableClothBlockEntity tcbe)
+			|| !tcbe.isShop()) {
 			StaticManager.index = 1;
 			return;
 		}

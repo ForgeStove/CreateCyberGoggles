@@ -69,9 +69,9 @@ public class KeyInput {
 		} else {
 			if (mc.level == null || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return;
 			if (blockHitResult.getType() == Type.MISS) return;
-			var blockEntity = mc.level.getBlockEntity(blockHitResult.getBlockPos());
-			if (!(blockEntity instanceof SmartBlockEntity smartBlockEntity)) return;
-			var behavior = Collections.singleton(smartBlockEntity.getBehaviour(FilteringBehaviour.TYPE));
+			var be = mc.level.getBlockEntity(blockHitResult.getBlockPos());
+			if (!(be instanceof SmartBlockEntity sbe)) return;
+			var behavior = Collections.singleton(sbe.getBehaviour(FilteringBehaviour.TYPE));
 			var first = behavior.iterator().next();
 			if (!(first instanceof FilteringBehaviour)) return;
 			setFilterScreen(first.getFilter(blockHitResult.getDirection()));

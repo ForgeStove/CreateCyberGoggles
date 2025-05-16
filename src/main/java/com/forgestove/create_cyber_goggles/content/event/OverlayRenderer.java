@@ -7,7 +7,6 @@ import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
 import net.minecraft.client.*;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 public class OverlayRenderer {
@@ -21,14 +20,11 @@ public class OverlayRenderer {
 	public static void renderOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
 		if (!CCGConfig.get().goggles.renderExtraItems) return;
 		var mc = Minecraft.getInstance();
-		var player = mc.player;
-		if (player == null || mc.isPaused() || mc.screen != null) return;
-		var level = mc.level;
-		if (level == null || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return;
-		var blockEntity = level.getBlockEntity(blockHitResult.getBlockPos());
-		if (blockEntity != null) switch (blockEntity) {
-			case DepotBlockEntity depotBlockEntity -> Common.renderItemStack(guiGraphics, depotBlockEntity.getHeldItem());
-			case PackagerBlockEntity packagerBlockEntity -> Common.renderItemStack(guiGraphics, packagerBlockEntity.heldBox);
+		if (mc.isPaused() || mc.screen != null) return;
+		var be = Common.getSelectedBE();
+		if (be != null) switch (be) {
+			case DepotBlockEntity dbe -> Common.renderItemStack(guiGraphics, dbe.getHeldItem());
+			case PackagerBlockEntity pbe -> Common.renderItemStack(guiGraphics, pbe.heldBox);
 			default -> {}
 		}
 	}

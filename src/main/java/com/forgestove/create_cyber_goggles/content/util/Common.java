@@ -62,11 +62,8 @@ public class Common {
 	 */
 	public static @Nullable BlockEntity getSelectedBE() {
 		var mc = Minecraft.getInstance();
-		var hitResult = mc.hitResult;
-		var level = mc.level;
-		if (hitResult == null) return null;
-		if (level == null) return null;
-		if (!(hitResult instanceof BlockHitResult blockHitResult)) return null;
-		return level.getBlockEntity(blockHitResult.getBlockPos());
+		if (mc.hitResult == null || mc.level == null) return null;
+		if (!(mc.hitResult instanceof BlockHitResult blockHitResult)) return null;
+		return mc.level.getBlockEntity(blockHitResult.getBlockPos());
 	}
 }

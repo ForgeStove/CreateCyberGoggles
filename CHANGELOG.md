@@ -1,1 +1,2 @@
-- Fixed an issue that cannot use ponder with legendary tooltip installed when player targets a kinetic block
+- Add new configuration option 'Rainbow Debug' to enable/disable rainbow debug mode.
+- Reworked configurations and translation.

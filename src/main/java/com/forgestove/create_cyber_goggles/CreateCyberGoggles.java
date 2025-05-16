@@ -4,6 +4,7 @@ import com.forgestove.create_cyber_goggles.content.event.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent.*;
 import net.minecraftforge.client.event.*;
+import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -26,6 +27,11 @@ public class CreateCyberGoggles {
 		@SubscribeEvent
 		public static void mouseScrollingEvent(MouseScrollingEvent event) {
 			MouseScroll.onMouseScroll(event);
+		}
+		@SubscribeEvent
+		public static void tick(ClientTickEvent event) {
+			KineticEffector.tick();
+			KineticDebugger.tick();
 		}
 	}
 	@EventBusSubscriber(modid = ID, value = Dist.CLIENT, bus = Bus.MOD)

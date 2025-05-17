@@ -1,4 +1,4 @@
-package com.forgestove.create_cyber_goggles.mixin.screen;
+package com.forgestove.create_cyber_goggles.mixin;
 import com.simibubi.create.content.logistics.filter.AbstractFilterScreen;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;

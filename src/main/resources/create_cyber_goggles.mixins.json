@@ -3,7 +3,7 @@
 	"minVersion": "0",
 	"package": "com.forgestove.create_cyber_goggles.mixin",
 	"client": [
-		"armor.CardboardArmorHandlerMixin",
+		"chainConveyor.CardboardArmorHandlerMixin",
 		"armor.CardboardArmorStealthOverlayMixin",
 		"armor.DivingBootsItemMixin",
 		"chainConveyor.ChainConveyorConnectionHandlerMixin",
@@ -16,14 +16,14 @@
 		"goggles.KineticBlockEntityMixin",
 		"goggles.PackageItemMixin",
 		"goggles.PoweredShaftBlockEntityMixin",
-		"jei.CreateJEIMixin",
-		"jei.SequencedAssemblyCategoryMixin",
-		"nbt.NbtAccounterMixin",
-		"render.BlueprintOverlayRendererMixin",
-		"render.NetheriteBacktankFirstPersonRendererMixin",
-		"render.SimpleBackendMixin",
-		"screen.AbstractFilterScreenMixin",
-		"screen.StockKeeperRequestScreenMixin",
-		"wrench.RadialWrenchHandlerMixin"
+		"other.CreateJEIMixin",
+		"other.SequencedAssemblyCategoryMixin",
+		"other.NbtAccounterMixin",
+		"goggles.BlueprintOverlayRendererMixin",
+		"armor.NetheriteBacktankFirstPersonRendererMixin",
+		"other.SimpleBackendMixin",
+		"AbstractFilterScreenMixin",
+		"StockKeeperRequestScreenMixin",
+		"RadialWrenchHandlerMixin"
 	]
 }

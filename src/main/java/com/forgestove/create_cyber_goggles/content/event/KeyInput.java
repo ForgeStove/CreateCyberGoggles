@@ -1,7 +1,7 @@
 package com.forgestove.create_cyber_goggles.content.event;
 import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
 import com.forgestove.create_cyber_goggles.content.config.*;
-import com.forgestove.create_cyber_goggles.content.util.*;
+import com.forgestove.create_cyber_goggles.content.util.StaticManager;
 import com.simibubi.create.AllMenuTypes;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.stockTicker.*;
@@ -78,21 +78,15 @@ public class KeyInput {
 		}
 	}
 	public static void setFilterScreen(ItemStack filter) {
-		SafeRun.run(() -> {
-			if (!(filter.getItem() instanceof FilterItem filterItem)) return;
-			var mc = Minecraft.getInstance();
-			var player = mc.player;
-			if (player == null) return;
-			var inv = player.getInventory();
-			var name = filter.getHoverName();
-			var field = FilterItem.class.getDeclaredField("type");
-			field.setAccessible(true);
-			ScreenOpener.open(switch (((Enum<?>) field.get(filterItem)).ordinal()) {
-				case 0 -> new FilterScreen(FilterMenu.create(-1, inv, filter), inv, name);
-				case 1 -> new AttributeFilterScreen(AttributeFilterMenu.create(-1, inv, filter), inv, name);
-				case 2 -> new PackageFilterScreen(PackageFilterMenu.create(-1, inv, filter), inv, name);
-				default -> throw new IllegalStateException("Unexpected value: " + field.get(filterItem));
-			});
+		if (!(filter.getItem() instanceof FilterItem filterItem)) return;
+		var player = Minecraft.getInstance().player;
+		if (player == null) return;
+		var inv = player.getInventory();
+		var name = filter.getHoverName();
+		ScreenOpener.open(switch (filterItem.type) {
+			case REGULAR -> new FilterScreen(FilterMenu.create(-1, inv, filter), inv, name);
+			case ATTRIBUTE -> new AttributeFilterScreen(AttributeFilterMenu.create(-1, inv, filter), inv, name);
+			case PACKAGE -> new PackageFilterScreen(PackageFilterMenu.create(-1, inv, filter), inv, name);
 		});
 	}
 }

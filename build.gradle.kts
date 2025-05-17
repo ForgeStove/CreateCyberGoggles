@@ -4,6 +4,7 @@ plugins {
 	idea
 	id("net.neoforged.moddev") version "+"
 	id("me.modmuss50.mod-publish-plugin") version "0.8.4"
+	id("dev.vfyjxf.modaccessor") version "1.1.1"
 }
 base.archivesName.set(e("mod_id"))
 group = e("mod_group_id")
@@ -23,6 +24,10 @@ tasks.processResources {
 	}
 	into("build/resources/main")
 	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+modAccessor {
+	createTransformConfiguration(configurations.compileOnly.get())
+	accessTransformerFiles = project.files("src/main/resources/META-INF/modaccessor.cfg")
 }
 neoForge {
 	version = e("loader_version")
@@ -48,7 +53,8 @@ repositories {
 	maven("https://maven.blamejared.com") // JEI
 }
 dependencies {
-	implementation("com.simibubi.create:create-${e("minecraft_version")}:${e("create_version")}:slim") { isTransitive = false }
+	add("accessCompileOnly", "com.simibubi.create:create-${e("minecraft_version")}:${e("create_version")}:slim") { isTransitive = false }
+	runtimeOnly("com.simibubi.create:create-${e("minecraft_version")}:${e("create_version")}:slim") { isTransitive = false }
 	implementation("net.createmod.ponder:Ponder-${e("upper_loader")}-${e("minecraft_version")}:${e("ponder_version")}") {
 		isTransitive = false
 	}

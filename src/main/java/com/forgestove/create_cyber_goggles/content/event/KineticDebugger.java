@@ -50,4 +50,3 @@ public class KineticDebugger {
 		Outliner.getInstance().showLine("rotationAxis", center.add(vec), center.subtract(vec)).lineWidth(1 / 16f);
 	}
 }
-

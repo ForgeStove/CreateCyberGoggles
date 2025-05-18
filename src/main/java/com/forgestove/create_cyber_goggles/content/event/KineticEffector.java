@@ -25,7 +25,7 @@ public class KineticEffector {
 			Math.max(15, speedLevel.getParticleSpeed()) * Math.signum(speed),
 			kb.getParticleInitialRadius(),
 			kb.getParticleTargetRadius(),
-			10,
+			20,
 			rotationAxis
 		);
 		mc.level.addParticle(particleData, center.x, center.y, center.z, 0, 0, 0);

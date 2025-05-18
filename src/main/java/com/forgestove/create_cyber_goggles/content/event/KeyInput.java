@@ -62,8 +62,7 @@ public class KeyInput {
 			if (blockHitResult.getType() == Type.MISS) return;
 			var be = mc.level.getBlockEntity(blockHitResult.getBlockPos());
 			if (!(be instanceof SmartBlockEntity sbe)) return;
-			var behavior = Collections.singleton(sbe.getBehaviour(FilteringBehaviour.TYPE));
-			var first = behavior.iterator().next();
+			var first = Collections.singleton(sbe.getBehaviour(FilteringBehaviour.TYPE)).iterator().next();
 			if (!(first instanceof FilteringBehaviour)) return;
 			openFilterScreen(first.getFilter(blockHitResult.getDirection()));
 		}

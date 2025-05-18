@@ -1,6 +1,7 @@
 package com.forgestove.create_cyber_goggles.content.event;
 import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
 import com.forgestove.create_cyber_goggles.content.util.Common;
+import com.simibubi.create.content.kinetics.base.IRotate.SpeedLevel;
 import com.simibubi.create.content.kinetics.base.*;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.client.Minecraft;
@@ -18,7 +19,7 @@ public class KineticEffector {
 		var rotationAxis = kb.getRotationAxis(state);
 		if (rotationAxis == null) return;
 		var center = VecHelper.getCenterOf(kbe.getBlockPos());
-		var speedLevel = IRotate.SpeedLevel.of(speed);
+		var speedLevel = SpeedLevel.of(speed);
 		var particleData = new RotationIndicatorParticleData(
 			speedLevel.getColor(),
 			Math.max(15, speedLevel.getParticleSpeed()) * Math.signum(speed),

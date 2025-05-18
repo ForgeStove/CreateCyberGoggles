@@ -22,11 +22,7 @@ public class OverlayRenderer {
 		var mc = Minecraft.getInstance();
 		if (mc.isPaused() || mc.screen != null) return;
 		var be = Common.getSelectedBE();
-		if (be == null) return;
-		switch (be) {
-			case DepotBlockEntity dbe -> Common.renderItemStack(guiGraphics, dbe.getHeldItem());
-			case PackagerBlockEntity pbe -> Common.renderItemStack(guiGraphics, pbe.heldBox);
-			default -> {}
-		}
+		if (be instanceof DepotBlockEntity dbe) Common.renderItemStack(guiGraphics, dbe.getHeldItem());
+		if (be instanceof PackagerBlockEntity pbe) Common.renderItemStack(guiGraphics, pbe.heldBox);
 	}
 }

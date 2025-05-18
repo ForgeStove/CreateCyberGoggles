@@ -65,7 +65,7 @@ public class KeyInput {
 			if (!(mc.screen instanceof AbstractContainerScreen<?> screen)) return;
 			var slot = screen.getSlotUnderMouse();
 			if (slot == null) return;
-			setFilterScreen(slot.getItem());
+			openFilterScreen(slot.getItem());
 		} else {
 			if (mc.level == null || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return;
 			if (blockHitResult.getType() == Type.MISS) return;
@@ -74,10 +74,10 @@ public class KeyInput {
 			var behavior = Collections.singleton(sbe.getBehaviour(FilteringBehaviour.TYPE));
 			var first = behavior.iterator().next();
 			if (!(first instanceof FilteringBehaviour)) return;
-			setFilterScreen(first.getFilter(blockHitResult.getDirection()));
+			openFilterScreen(first.getFilter(blockHitResult.getDirection()));
 		}
 	}
-	public static void setFilterScreen(ItemStack filter) {
+	public static void openFilterScreen(ItemStack filter) {
 		if (!(filter.getItem() instanceof FilterItem filterItem)) return;
 		var player = Minecraft.getInstance().player;
 		if (player == null) return;

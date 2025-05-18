@@ -1,4 +1,4 @@
-package com.forgestove.create_cyber_goggles.mixin.render;
+package com.forgestove.create_cyber_goggles.mixin.armor;
 import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
 import com.simibubi.create.content.equipment.armor.NetheriteBacktankFirstPersonRenderer;
 import org.spongepowered.asm.mixin.*;

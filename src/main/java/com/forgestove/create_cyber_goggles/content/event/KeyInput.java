@@ -46,17 +46,17 @@ public class KeyInput {
 		if (player == null) return;
 		if (mc.hitResult == null) return;
 		if (mc.hitResult instanceof BlockHitResult blockHitResult && (
-			StaticManager.lastBlockEntity == null || blockHitResult.getType() == Type.BLOCK
+			Common.lastBlockEntity == null || blockHitResult.getType() == Type.BLOCK
 		)) {
 			if (mc.level == null) return;
 			if ((mc.level.getBlockEntity(blockHitResult.getBlockPos()) instanceof StockTickerBlockEntity stockTickerBlockEntity))
-				StaticManager.lastBlockEntity = stockTickerBlockEntity;
+				Common.lastBlockEntity = stockTickerBlockEntity;
 		}
-		if (StaticManager.lastBlockEntity == null) return;
+		if (Common.lastBlockEntity == null) return;
 		var type = AllMenuTypes.STOCK_KEEPER_REQUEST.get();
 		var inv = player.getInventory();
-		var menu = new StockKeeperRequestMenu(type, -1, inv, StaticManager.lastBlockEntity);
-		mc.setScreen(new StockKeeperRequestScreen(menu, inv, StaticManager.lastBlockEntity.getBlockState().getBlock().getName()));
+		var menu = new StockKeeperRequestMenu(type, -1, inv, Common.lastBlockEntity);
+		mc.setScreen(new StockKeeperRequestScreen(menu, inv, Common.lastBlockEntity.getBlockState().getBlock().getName()));
 	}
 	public static void previewFilterScreen() {
 		if (!(CCGKeyMapping.previewFilter.isDown())) return;
@@ -65,34 +65,28 @@ public class KeyInput {
 			if (!(mc.screen instanceof AbstractContainerScreen<?> screen)) return;
 			var slot = screen.getSlotUnderMouse();
 			if (slot == null) return;
-			setFilterScreen(slot.getItem());
+			openFilterScreen(slot.getItem());
 		} else {
 			if (mc.level == null || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return;
 			if (blockHitResult.getType() == Type.MISS) return;
-			var blockEntity = mc.level.getBlockEntity(blockHitResult.getBlockPos());
-			if (!(blockEntity instanceof SmartBlockEntity smartBlockEntity)) return;
-			var behavior = Collections.singleton(smartBlockEntity.getBehaviour(FilteringBehaviour.TYPE));
+			var be = mc.level.getBlockEntity(blockHitResult.getBlockPos());
+			if (!(be instanceof SmartBlockEntity sbe)) return;
+			var behavior = Collections.singleton(sbe.getBehaviour(FilteringBehaviour.TYPE));
 			var first = behavior.iterator().next();
 			if (!(first instanceof FilteringBehaviour)) return;
-			setFilterScreen(first.getFilter(blockHitResult.getDirection()));
+			openFilterScreen(first.getFilter(blockHitResult.getDirection()));
 		}
 	}
-	public static void setFilterScreen(ItemStack filter) {
-		SafeRun.run(() -> {
-			if (!(filter.getItem() instanceof FilterItem filterItem)) return;
-			var mc = Minecraft.getInstance();
-			var player = mc.player;
-			if (player == null) return;
-			var inv = player.getInventory();
-			var name = filter.getHoverName();
-			var field = FilterItem.class.getDeclaredField("type");
-			field.setAccessible(true);
-			ScreenOpener.open(switch (((Enum<?>) field.get(filterItem)).ordinal()) {
-				case 0 -> new FilterScreen(FilterMenu.create(-1, inv, filter), inv, name);
-				case 1 -> new AttributeFilterScreen(AttributeFilterMenu.create(-1, inv, filter), inv, name);
-				case 2 -> new PackageFilterScreen(PackageFilterMenu.create(-1, inv, filter), inv, name);
-				default -> throw new IllegalStateException("Unexpected value: " + field.get(filterItem));
-			});
+	public static void openFilterScreen(ItemStack filter) {
+		if (!(filter.getItem() instanceof FilterItem filterItem)) return;
+		var player = Minecraft.getInstance().player;
+		if (player == null) return;
+		var inv = player.getInventory();
+		var name = filter.getHoverName();
+		ScreenOpener.open(switch (filterItem.type) {
+			case REGULAR -> new FilterScreen(FilterMenu.create(-1, inv, filter), inv, name);
+			case ATTRIBUTE -> new AttributeFilterScreen(AttributeFilterMenu.create(-1, inv, filter), inv, name);
+			case PACKAGE -> new PackageFilterScreen(PackageFilterMenu.create(-1, inv, filter), inv, name);
 		});
 	}
 }

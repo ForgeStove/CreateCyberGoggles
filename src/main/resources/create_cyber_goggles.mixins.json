@@ -4,12 +4,17 @@
 	"package": "com.forgestove.create_cyber_goggles.mixin",
 	"refmap": "create_cyber_goggles.refmap.json",
 	"client": [
-		"armor.CardboardArmorHandlerMixin",
+		"AbstractFilterScreenMixin",
+		"RadialWrenchHandlerMixin",
+		"StockKeeperRequestScreenMixin",
 		"armor.CardboardArmorStealthOverlayMixin",
 		"armor.DivingBootsItemMixin",
+		"armor.NetheriteBacktankFirstPersonRendererMixin",
+		"chainConveyor.CardboardArmorHandlerMixin",
 		"chainConveyor.ChainConveyorConnectionHandlerMixin",
 		"chainConveyor.ChainConveyorInteractionHandlerMixin",
 		"chainConveyor.ChainConveyorRidingHandlerMixin",
+		"goggles.BlueprintOverlayRendererMixin",
 		"goggles.CreateLangMixin",
 		"goggles.DeployerBlockEntityMixin",
 		"goggles.GeneratingKineticBlockEntityMixin",
@@ -17,14 +22,9 @@
 		"goggles.KineticBlockEntityMixin",
 		"goggles.PackageItemMixin",
 		"goggles.PoweredShaftBlockEntityMixin",
-		"jei.CreateJEIMixin",
-		"jei.SequencedAssemblyCategoryMixin",
-		"nbt.NbtAccounterMixin",
-		"render.BlueprintOverlayRendererMixin",
-		"render.NetheriteBacktankFirstPersonRendererMixin",
-		"render.SimpleBackendMixin",
-		"screen.AbstractFilterScreenMixin",
-		"screen.StockKeeperRequestScreenMixin",
-		"wrench.RadialWrenchHandlerMixin"
+		"other.CreateJEIMixin",
+		"other.NbtAccounterMixin",
+		"other.SequencedAssemblyCategoryMixin",
+		"other.SimpleBackendMixin"
 	]
 }

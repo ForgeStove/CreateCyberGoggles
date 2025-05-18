@@ -41,7 +41,7 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 	@Inject(method = "addToGoggleTooltip", at = @At("TAIL"), remap = false)
 	private void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
 		if (!CCGConfig.get().goggles.enhancedInfo) return;
-		SpeedLevel.getFormattedSpeedText(getSpeed(), overStressed).forGoggles(tooltip);
+		SpeedLevel.getFormattedSpeedText(getTheoreticalSpeed(), overStressed).forGoggles(tooltip);
 	}
 	@Inject(
 		method = "addToGoggleTooltip", at = @At(
@@ -51,7 +51,7 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 	private void injected(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
 		var goggles = CCGConfig.get().goggles;
 		if (!goggles.enhancedInfo || !goggles.hideStaticKineticInfo) return;
-		if (!Mth.equal(getSpeed(), 0)) return;
+		if (!Mth.equal(getTheoreticalSpeed(), 0)) return;
 		returnable.setReturnValue(true);
 	}
 }

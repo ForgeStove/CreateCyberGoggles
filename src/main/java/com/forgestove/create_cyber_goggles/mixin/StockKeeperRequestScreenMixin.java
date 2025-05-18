@@ -1,4 +1,4 @@
-package com.forgestove.create_cyber_goggles.mixin.screen;
+package com.forgestove.create_cyber_goggles.mixin;
 import com.simibubi.create.content.logistics.stockTicker.StockKeeperRequestScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;

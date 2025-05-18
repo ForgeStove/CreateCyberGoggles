@@ -14,10 +14,9 @@ public abstract class GogglesItemMixin {
 			returnable.setReturnValue(false);
 			return;
 		}
-		var gameMode = mc.gameMode;
-		if (gameMode == null) return;
+		if (mc.gameMode == null) return;
 		var goggles = CCGConfig.get().goggles;
-		if (!switch (gameMode.getPlayerMode()) {
+		if (!switch (mc.gameMode.getPlayerMode()) {
 			case SURVIVAL -> goggles.enableInSurvival;
 			case CREATIVE -> goggles.enableInCreative;
 			case SPECTATOR -> goggles.enableInSpectator;

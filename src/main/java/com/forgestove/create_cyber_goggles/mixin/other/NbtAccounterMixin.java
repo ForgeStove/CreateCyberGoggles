@@ -1,4 +1,4 @@
-package com.forgestove.create_cyber_goggles.mixin.nbt;
+package com.forgestove.create_cyber_goggles.mixin.other;
 import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
 import com.forgestove.create_cyber_goggles.content.util.SafeRun;
 import net.minecraft.nbt.NbtAccounter;

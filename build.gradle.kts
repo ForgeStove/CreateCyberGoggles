@@ -4,6 +4,7 @@ plugins {
 	idea
 	id("net.neoforged.moddev.legacyforge") version "+"
 	id("me.modmuss50.mod-publish-plugin") version "0.8.4"
+	id("dev.vfyjxf.modaccessor") version "1.1.1"
 }
 base.archivesName.set(e("mod_id"))
 group = e("mod_group_id")
@@ -26,6 +27,10 @@ tasks.processResources {
 	}
 	into("build/resources/main")
 	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+modAccessor {
+	createTransformConfiguration(configurations.compileOnly.get())
+	accessTransformerFiles = legacyForge.accessTransformers.files
 }
 mixin {
 	add(sourceSets.main.get(), "${e("mod_id")}.refmap.json")
@@ -55,6 +60,7 @@ repositories {
 	maven("https://maven.blamejared.com") // JEI
 }
 dependencies {
+	add("accessCompileOnly", "com.simibubi.create:create-${e("minecraft_version")}:${e("create_version")}:slim")
 	modImplementation("com.simibubi.create:create-${e("minecraft_version")}:${e("create_version")}:slim")
 	modImplementation("net.createmod.ponder:Ponder-${e("upper_loader")}-${e("minecraft_version")}:${e("ponder_version")}")
 	modImplementation("dev.engine-room.flywheel:flywheel-${e("loader")}-${e("minecraft_version")}:${e("flywheel_version")}")

@@ -2,15 +2,21 @@ package com.forgestove.create_cyber_goggles.content.util;
 import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
+import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult.Type;
 import org.jetbrains.annotations.Nullable;
 public class Common {
+	public static StockTickerBlockEntity lastBlockEntity = null;
+	public static int index = 1;
+	public static int scrollDeltaY = 0;
 	/**
 	 * 测试玩家是否穿着全套纸板盔甲并且不在飞行状态。
 	 *
@@ -61,11 +67,22 @@ public class Common {
 	 */
 	public static @Nullable BlockEntity getSelectedBE() {
 		var mc = Minecraft.getInstance();
-		var hitResult = mc.hitResult;
-		var level = mc.level;
-		if (hitResult == null) return null;
-		if (level == null) return null;
-		if (!(hitResult instanceof BlockHitResult blockHitResult)) return null;
-		return level.getBlockEntity(blockHitResult.getBlockPos());
+		if (mc.level == null) return null;
+		if (!(mc.hitResult instanceof BlockHitResult blockHitResult)) return null;
+		if (!(blockHitResult.getType() == Type.BLOCK)) return null;
+		return mc.level.getBlockEntity(blockHitResult.getBlockPos());
+	}
+	/**
+	 * 获取当前玩家选中的方块。
+	 * 如果没有选中方块或选中的方块不是 {@link Block} 类型，则返回 null。
+	 *
+	 * @return 当前选中的 {@link Block} 实例，如果没有选中或类型不匹配则返回 null
+	 */
+	public static @Nullable Block getSelectedB() {
+		var mc = Minecraft.getInstance();
+		if (mc.level == null) return null;
+		if (!(mc.hitResult instanceof BlockHitResult blockHitResult)) return null;
+		if (!(blockHitResult.getType() == Type.BLOCK)) return null;
+		return mc.level.getBlockState(blockHitResult.getBlockPos()).getBlock();
 	}
 }

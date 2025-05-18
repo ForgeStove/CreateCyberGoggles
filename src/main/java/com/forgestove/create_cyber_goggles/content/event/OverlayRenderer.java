@@ -14,7 +14,7 @@ public class OverlayRenderer {
 	public static void renderOverlay(ForgeGui forgeGui, GuiGraphics guiGraphics, float v, int i, int i1) {
 		if (!CCGConfig.get().goggles.renderExtraItems) return;
 		var mc = Minecraft.getInstance();
-		if (mc.player == null || mc.isPaused() || mc.screen != null) return;
+		if (mc.isPaused() || mc.screen != null) return;
 		var be = Common.getSelectedBE();
 		if (be instanceof DepotBlockEntity dbe) Common.renderItemStack(guiGraphics, dbe.getHeldItem());
 		if (be instanceof PackagerBlockEntity pbe) Common.renderItemStack(guiGraphics, pbe.heldBox);

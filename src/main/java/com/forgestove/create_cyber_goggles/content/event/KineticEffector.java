@@ -15,16 +15,16 @@ public class KineticEffector {
 		var speed = kbe.getSpeed();
 		if (speed == 0) return;
 		var state = kbe.getBlockState();
-		if (!(state.getBlock() instanceof KineticBlock kineticBlock)) return;
-		var rotationAxis = kineticBlock.getRotationAxis(state);
+		if (!(state.getBlock() instanceof KineticBlock kb)) return;
+		var rotationAxis = kb.getRotationAxis(state);
 		if (rotationAxis == null) return;
 		var center = VecHelper.getCenterOf(kbe.getBlockPos());
 		var speedLevel = SpeedLevel.of(speed);
 		var particleData = new RotationIndicatorParticleData(
 			speedLevel.getColor(),
 			Math.max(15, speedLevel.getParticleSpeed()) * Math.signum(speed),
-			kineticBlock.getParticleInitialRadius(),
-			kineticBlock.getParticleTargetRadius(),
+			kb.getParticleInitialRadius(),
+			kb.getParticleTargetRadius(),
 			10,
 			rotationAxis.name().charAt(0)
 		);

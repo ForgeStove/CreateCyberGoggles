@@ -18,26 +18,26 @@ public abstract class PackageItemMixin extends Item {
 	}
 	@Inject(method = "appendHoverText", at = @At("HEAD"), cancellable = true)
 	private void appendHoverText(
-		ItemStack pStack,
-		Level pLevel,
-		List<Component> pTooltipComponents,
-		TooltipFlag pIsAdvanced,
+		ItemStack stack,
+		Level level,
+		List<Component> tooltipComponents,
+		TooltipFlag isAdvanced,
 		CallbackInfo callbackInfo
 	) {
 		if (!CCGConfig.get().goggles.enhancedInfo) return;
 		callbackInfo.cancel();
-		super.appendHoverText(pStack, pLevel, pTooltipComponents, pIsAdvanced);
-		var compoundNbt = pStack.getOrCreateTag();
+		super.appendHoverText(stack, level, tooltipComponents, isAdvanced);
+		var compoundNbt = stack.getOrCreateTag();
 		var address = compoundNbt.getString("Address");
 		if (compoundNbt.contains("Address", Tag.TAG_STRING) && !address.isBlank())
-			pTooltipComponents.add(Component.literal("→ " + address).withStyle(ChatFormatting.GOLD));
+			tooltipComponents.add(Component.literal("→ " + address).withStyle(ChatFormatting.GOLD));
 		if (!compoundNbt.contains("Items", Tag.TAG_COMPOUND)) return;
-		var contents = PackageItem.getContents(pStack);
+		var contents = PackageItem.getContents(stack);
 		for (var i = 0; i < contents.getSlots(); i++) {
 			var itemstack = contents.getStackInSlot(i);
 			if (itemstack.isEmpty()) continue;
-			pTooltipComponents.add(itemstack.getHoverName().copy().append(" x").append(String.valueOf(itemstack.getCount()))
-											.withStyle(ChatFormatting.GRAY));
+			tooltipComponents.add(itemstack.getHoverName().copy().append(" x").append(String.valueOf(itemstack.getCount()))
+										   .withStyle(ChatFormatting.GRAY));
 		}
 	}
 }

@@ -1,4 +1,4 @@
-package com.forgestove.create_cyber_goggles.mixin.render;
+package com.forgestove.create_cyber_goggles.mixin.goggles;
 import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
 import com.forgestove.create_cyber_goggles.content.util.*;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -46,10 +46,10 @@ public abstract class BlueprintOverlayRendererMixin {
 			guiGraphics.blit(WIDGETS_LOCATION, x, y, 24, 23, 22, 22);
 			GuiGameElement.of(Items.BARRIER).at(x + 3, y + 3).render(guiGraphics);
 		} else if (shopContext != null && !shopContext.checkout()) {
-			StaticManager.index += StaticManager.scrollDeltaY;
-			StaticManager.scrollDeltaY = 0;
-			if (StaticManager.index < 1) StaticManager.index = results.size();
-			else if (StaticManager.index > results.size()) StaticManager.index = 1;
+			Common.index += Common.scrollDeltaY;
+			Common.scrollDeltaY = 0;
+			if (Common.index < 1) Common.index = results.size();
+			else if (Common.index > results.size()) Common.index = 1;
 			var selectedX = 0;
 			for (var i = 0; i < results.size(); i++) {
 				var result = results.get(i);
@@ -58,11 +58,11 @@ public abstract class BlueprintOverlayRendererMixin {
 					slot = AllGuiTextures.HOTSLOT_ACTIVE;
 				slot.render(guiGraphics, resultCraftable ? x - 1 : x, resultCraftable ? y - 1 : y);
 				BlueprintOverlayRenderer.drawItemStack(guiGraphics, Minecraft.getInstance(), x, y, result, null);
-				if (i == StaticManager.index - 1) selectedX = x;
+				if (i == Common.index - 1) selectedX = x;
 				x += 21;
 			}
 			if (selectedX != 0) guiGraphics.blit(WIDGETS_LOCATION, selectedX - 1, y - 1, 0, 22, 23, 23);
-			Common.renderItemStack(guiGraphics, results.get(StaticManager.index - 1));
+			Common.renderItemStack(guiGraphics, results.get(Common.index - 1));
 		}
 		RenderSystem.disableBlend();
 	}

@@ -1,4 +1,4 @@
-package com.forgestove.create_cyber_goggles.mixin.armor;
+package com.forgestove.create_cyber_goggles.mixin.chainConveyor;
 import com.forgestove.create_cyber_goggles.content.util.Common;
 import com.simibubi.create.content.equipment.armor.CardboardArmorHandler;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorRidingHandler;

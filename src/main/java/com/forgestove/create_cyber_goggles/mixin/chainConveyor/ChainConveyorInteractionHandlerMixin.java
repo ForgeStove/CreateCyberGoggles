@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.chainConveyor;
-import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
+import com.forgestove.create_cyber_goggles.content.config.*;
 import com.forgestove.create_cyber_goggles.content.util.Common;
 import com.simibubi.create.*;
 import com.simibubi.create.AllTags.AllItemTags;
@@ -17,7 +17,7 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 	@Shadow(remap = false) public static BlockPos selectedConnection;
 	@Inject(method = "isActive", at = @At("HEAD"), remap = false, cancellable = true)
 	private static void isActive(CallbackInfoReturnable<Boolean> returnable) {
-		if (!CCGConfig.get().chainConveyor.alwaysAllowRiding) return;
+		if (!CCGConfig.config.chainConveyor.alwaysAllowRiding) return;
 		returnable.setReturnValue(false);
 		var mc = Minecraft.getInstance();
 		var player = mc.player;
@@ -34,11 +34,11 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 		remap = false
 	)
 	private static boolean onUse(AllItemTags instance, ItemStack stack) {
-		return !CCGConfig.get().chainConveyor.alwaysAllowRiding && instance.matches(stack);
+		return !CCGConfig.config.chainConveyor.alwaysAllowRiding && instance.matches(stack);
 	}
 	@Inject(method = "onUse", at = @At("TAIL"), remap = false)
 	private static void injectTail(CallbackInfoReturnable<Boolean> returnable) {
-		if (!CCGConfig.get().chainConveyor.alwaysAllowRiding) return;
+		if (!CCGConfig.config.chainConveyor.alwaysAllowRiding) return;
 		var player = Minecraft.getInstance().player;
 		if (player == null) return;
 		var mainHandItem = player.getMainHandItem();

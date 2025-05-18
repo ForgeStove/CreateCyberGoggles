@@ -1,7 +1,7 @@
 package com.forgestove.create_cyber_goggles.content.event;
 import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
 import com.forgestove.create_cyber_goggles.content.config.*;
-import com.forgestove.create_cyber_goggles.content.util.*;
+import com.forgestove.create_cyber_goggles.content.util.Common;
 import com.simibubi.create.AllMenuTypes;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.stockTicker.*;
@@ -23,8 +23,8 @@ public class KeyInput {
 		var mc = Minecraft.getInstance();
 		var player = mc.player;
 		if (player == null || mc.screen != null) return;
-		var enabled = CCGConfig.get().armor.removeDivingBootsAffect;
-		CCGConfig.get().armor.removeDivingBootsAffect = !enabled;
+		var enabled = CCGConfig.config.armor.removeDivingBootsAffect;
+		CCGConfig.config.armor.removeDivingBootsAffect = !enabled;
 		player.displayClientMessage(
 			Component.translatable("message.%s.%sableDivingAffect".formatted(
 				CreateCyberGoggles.ID,
@@ -44,18 +44,11 @@ public class KeyInput {
 		if (mc.screen != null) return;
 		var player = mc.player;
 		if (player == null) return;
-		if (mc.hitResult == null) return;
-		if (mc.hitResult instanceof BlockHitResult blockHitResult && (
-			Common.lastBlockEntity == null || blockHitResult.getType() == Type.BLOCK
-		)) {
-			if (mc.level == null) return;
-			if ((mc.level.getBlockEntity(blockHitResult.getBlockPos()) instanceof StockTickerBlockEntity stockTickerBlockEntity))
-				Common.lastBlockEntity = stockTickerBlockEntity;
-		}
+		if (Common.lastBlockEntity == null && Common.getSelectedBE() instanceof StockTickerBlockEntity stockTickerBlockEntity)
+			Common.lastBlockEntity = stockTickerBlockEntity;
 		if (Common.lastBlockEntity == null) return;
-		var type = AllMenuTypes.STOCK_KEEPER_REQUEST.get();
 		var inv = player.getInventory();
-		var menu = new StockKeeperRequestMenu(type, -1, inv, Common.lastBlockEntity);
+		var menu = new StockKeeperRequestMenu(AllMenuTypes.STOCK_KEEPER_REQUEST.get(), -1, inv, Common.lastBlockEntity);
 		mc.setScreen(new StockKeeperRequestScreen(menu, inv, Common.lastBlockEntity.getBlockState().getBlock().getName()));
 	}
 	public static void previewFilterScreen() {

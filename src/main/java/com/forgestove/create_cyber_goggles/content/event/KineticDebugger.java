@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.content.event;
-import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
+import com.forgestove.create_cyber_goggles.content.config.*;
 import com.forgestove.create_cyber_goggles.content.util.Common;
 import com.simibubi.create.content.kinetics.base.*;
 import net.createmod.catnip.math.VecHelper;
@@ -15,7 +15,7 @@ import java.awt.Color;
 import java.util.*;
 public class KineticDebugger {
 	public static void tick() {
-		if (!CCGConfig.get().other.rainbowDebug) return;
+		if (!CCGConfig.config.other.rainbowDebug) return;
 		var mc = Minecraft.getInstance();
 		if (mc.isPaused()) return;
 		var kbe = Common.getSelectedKBE();

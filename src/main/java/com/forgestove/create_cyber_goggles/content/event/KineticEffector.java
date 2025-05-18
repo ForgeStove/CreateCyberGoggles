@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.content.event;
-import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
+import com.forgestove.create_cyber_goggles.content.config.*;
 import com.forgestove.create_cyber_goggles.content.util.Common;
 import com.simibubi.create.content.kinetics.base.IRotate.SpeedLevel;
 import com.simibubi.create.content.kinetics.base.*;
@@ -7,7 +7,7 @@ import net.createmod.catnip.math.VecHelper;
 import net.minecraft.client.Minecraft;
 public class KineticEffector {
 	public static void tick() {
-		if (!CCGConfig.get().goggles.enableKineticEffect) return;
+		if (!CCGConfig.config.goggles.enableKineticEffect) return;
 		var kbe = Common.getSelectedKBE();
 		if (kbe == null) return;
 		var mc = Minecraft.getInstance();

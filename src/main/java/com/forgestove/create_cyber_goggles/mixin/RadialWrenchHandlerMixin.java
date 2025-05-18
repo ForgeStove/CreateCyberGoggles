@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin;
-import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
+import com.forgestove.create_cyber_goggles.content.config.*;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.contraptions.wrench.RadialWrenchHandler;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
@@ -18,7 +18,7 @@ public abstract class RadialWrenchHandlerMixin {
 	), remap = false
 	)
 	private static GameType redirectPlayerMode(MultiPlayerGameMode instance) {
-		return CCGConfig.get().wrench.alwaysAllowRotating ? null : instance.getPlayerMode();
+		return CCGConfig.config.wrench.alwaysAllowRotating ? null : instance.getPlayerMode();
 	}
 	@Redirect(
 		method = "onKeyInput", at = @At(
@@ -26,11 +26,11 @@ public abstract class RadialWrenchHandlerMixin {
 	), remap = false
 	)
 	private static Item redirectMainHandItem(ItemStack instance) {
-		return CCGConfig.get().wrench.alwaysAllowRotating ? AllItems.WRENCH.get() : instance.getItem();
+		return CCGConfig.config.wrench.alwaysAllowRotating ? AllItems.WRENCH.get() : instance.getItem();
 	}
 	@Inject(method = "clientTick", at = @At("HEAD"), remap = false, cancellable = true)
 	private static void clientTick(CallbackInfo callbackInfo) {
-		if (!CCGConfig.get().wrench.removeCooldown) return;
+		if (!CCGConfig.config.wrench.removeCooldown) return;
 		callbackInfo.cancel();
 		COOLDOWN = 0;
 	}

@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.goggles;
-import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
+import com.forgestove.create_cyber_goggles.content.config.*;
 import com.simibubi.create.foundation.utility.CreateLang;
 import net.createmod.catnip.lang.LangBuilder;
 import org.spongepowered.asm.mixin.Mixin;
@@ -11,7 +11,7 @@ import java.text.NumberFormat;
 public abstract class CreateLangMixin {
 	@Inject(method = "number", at = @At("HEAD"), remap = false, cancellable = true)
 	private static void number(double d, CallbackInfoReturnable<LangBuilder> returnable) {
-		if (!CCGConfig.get().goggles.preciseNumbers) return;
+		if (!CCGConfig.config.goggles.preciseNumbers) return;
 		if (d == (long) d) return;
 		var format = NumberFormat.getNumberInstance();
 		format.setMaximumFractionDigits(8);

@@ -1,7 +1,12 @@
 package com.forgestove.create_cyber_goggles.content.util;
+import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.*;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult.Type;
+import org.jetbrains.annotations.Nullable;
 public class Common {
 	/**
 	 * 在屏幕中央区域渲染指定物品堆的图标及关联的悬浮提示信息。
@@ -21,5 +26,28 @@ public class Common {
 		guiGraphics.renderItem(itemStack, x + 10, y - 15);
 		guiGraphics.renderItemDecorations(font, itemStack, x + 10, y - 15);
 		guiGraphics.renderTooltip(font, itemStack, x + 22, y - height);
+	}
+	/**
+	 * 获取当前玩家选中的方块实体，并将其转换为 {@link KineticBlockEntity} 类型。
+	 * 如果选中的方块实体不是 {@link KineticBlockEntity} 类型，则返回 null。
+	 *
+	 * @return 当前选中的 {@link KineticBlockEntity} 实例，如果没有选中或类型不匹配则返回 null
+	 */
+	public static @Nullable KineticBlockEntity getSelectedKBE() {
+		if (!(getSelectedBE() instanceof KineticBlockEntity kbe)) return null;
+		return kbe;
+	}
+	/**
+	 * 获取当前玩家选中的方块实体。
+	 * 如果没有选中方块或选中的方块不是 {@link BlockEntity} 类型，则返回 null。
+	 *
+	 * @return 当前选中的 {@link BlockEntity} 实例，如果没有选中或类型不匹配则返回 null
+	 */
+	public static @Nullable BlockEntity getSelectedBE() {
+		var mc = Minecraft.getInstance();
+		if (mc.level == null) return null;
+		if (!(mc.hitResult instanceof BlockHitResult blockHitResult)) return null;
+		if (!(blockHitResult.getType() == Type.BLOCK)) return null;
+		return mc.level.getBlockEntity(blockHitResult.getBlockPos());
 	}
 }

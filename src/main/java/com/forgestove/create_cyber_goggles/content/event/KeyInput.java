@@ -9,7 +9,6 @@ import com.simibubi.create.foundation.gui.ScreenOpener;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -20,18 +19,17 @@ import java.util.Collections;
 public class KeyInput {
 	public static void register() {
 		ClientTickEvents.END_CLIENT_TICK.register(mc -> {
-			KeyInput.toggleDiving();
-			KeyInput.openConfigScreen();
-			KeyInput.previewFilterScreen();
+			toggleDiving(mc);
+			openConfigScreen(mc);
+			previewFilterScreen(mc);
 		});
 	}
-	public static void toggleDiving() {
+	public static void toggleDiving(Minecraft mc) {
 		if (!CCGKeyMapping.toggleDiving.consumeClick()) return;
-		var mc = Minecraft.getInstance();
 		var player = mc.player;
 		if (player == null || mc.screen != null) return;
-		var enabled = CCGConfig.get().armor.removeDivingBootsAffect;
-		CCGConfig.get().armor.removeDivingBootsAffect = !enabled;
+		var enabled = CCGConfig.config.armor.removeDivingBootsAffect;
+		CCGConfig.config.armor.removeDivingBootsAffect = !enabled;
 		player.displayClientMessage(
 			Component.translatable("message.%s.%sableDivingAffect".formatted(
 				CreateCyberGoggles.ID,
@@ -39,50 +37,44 @@ public class KeyInput {
 			)), true
 		);
 	}
-	public static void openConfigScreen() {
+	public static void openConfigScreen(Minecraft mc) {
 		if (!CCGKeyMapping.openConfig.consumeClick()) return;
-		var mc = Minecraft.getInstance();
 		if (mc.screen != null) return;
 		mc.setScreen(AutoConfig.getConfigScreen(CCGConfigData.class, null).get());
 	}
-	public static void previewFilterScreen() {
+	public static void previewFilterScreen(Minecraft mc) {
 		if (!CCGKeyMapping.previewFilter.isDown()) return;
-		var mc = Minecraft.getInstance();
 		if (mc.screen != null) {
 			if (!(mc.screen instanceof AbstractContainerScreen<?> screen)) return;
 			var slot = screen.hoveredSlot;
 			if (slot == null) return;
-			setFilterScreen(slot.getItem());
+			openFilterScreen(slot.getItem());
 		} else {
 			if (mc.level == null || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return;
 			if (blockHitResult.getType() == Type.MISS) return;
-			var blockEntity = mc.level.getBlockEntity(blockHitResult.getBlockPos());
-			if (!(blockEntity instanceof SmartBlockEntity smartBlockEntity)) return;
-			var behavior = Collections.singleton(smartBlockEntity.getBehaviour(FilteringBehaviour.TYPE));
+			var be = mc.level.getBlockEntity(blockHitResult.getBlockPos());
+			if (!(be instanceof SmartBlockEntity sbe)) return;
+			var behavior = Collections.singleton(sbe.getBehaviour(FilteringBehaviour.TYPE));
 			var first = behavior.iterator().next();
 			if (!(first instanceof FilteringBehaviour)) return;
-			setFilterScreen(first.getFilter(blockHitResult.getDirection()));
+			openFilterScreen(first.getFilter(blockHitResult.getDirection()));
 		}
 	}
-	public static void setFilterScreen(ItemStack filter) {
+	public static void openFilterScreen(ItemStack filter) {
 		SafeRun.run(() -> {
 			if (!(filter.getItem() instanceof FilterItem filterItem)) return;
 			var mc = Minecraft.getInstance();
-			var player = mc.player;
-			if (player == null) return;
-			var inv = player.getInventory();
+			if (mc.player == null) return;
+			var inv = mc.player.getInventory();
 			var name = filter.getHoverName();
-			Screen screen;
 			var field = FilterItem.class.getDeclaredField("type");
 			field.setAccessible(true);
-			switch (((Enum<?>) field.get(filterItem)).ordinal()) {
-				case 0 -> screen = new FilterScreen(FilterMenu.create(-1, inv, filter), inv, name);
-				case 1 -> screen = new AttributeFilterScreen(AttributeFilterMenu.create(-1, inv, filter), inv, name);
-				default -> {
-					return;
-				}
-			}
-			ScreenOpener.open(screen);
+			var ordinal = ((Enum<?>) field.get(filterItem)).ordinal();
+			ScreenOpener.open(switch (ordinal) {
+				case 0 -> new FilterScreen(FilterMenu.create(-1, inv, filter), inv, name);
+				case 1 -> new AttributeFilterScreen(AttributeFilterMenu.create(-1, inv, filter), inv, name);
+				default -> throw new IllegalStateException("Unexpected value: " + ordinal);
+			});
 		});
 	}
 }

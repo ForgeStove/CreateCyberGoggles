@@ -1,5 +1,5 @@
-package com.forgestove.create_cyber_goggles.mixin.render;
-import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
+package com.forgestove.create_cyber_goggles.mixin.other;
+import com.forgestove.create_cyber_goggles.content.config.*;
 import com.jozufozu.flywheel.backend.Backend;
 import com.jozufozu.flywheel.config.*;
 import org.spongepowered.asm.mixin.Mixin;
@@ -9,6 +9,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class BackendMixin {
 	@Inject(method = "chooseEngine", at = @At("HEAD"), remap = false, cancellable = true)
 	private static void chooseEngine(CallbackInfoReturnable<BackendType> returnable) {
-		if (CCGConfig.get().other.forcedBackend) returnable.setReturnValue(FlwConfig.get().getBackendType());
+		if (CCGConfig.config.other.forcedBackend) returnable.setReturnValue(FlwConfig.get().getBackendType());
 	}
 }

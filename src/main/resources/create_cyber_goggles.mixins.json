@@ -11,11 +11,11 @@
 		"goggles.KineticBlockEntityMixin",
 		"goggles.LangMixin",
 		"goggles.PoweredShaftBlockEntityMixin",
-		"jei.CreateJEIMixin",
-		"jei.SequencedAssemblyCategoryMixin",
-		"nbt.NbtAccounterMixin",
-		"render.BackendMixin",
-		"render.NetheriteBacktankFirstPersonRendererMixin",
-		"screen.AbstractFilterScreenMixin"
+		"other.CreateJEIMixin",
+		"other.SequencedAssemblyCategoryMixin",
+		"other.NbtAccounterMixin",
+		"other.BackendMixin",
+		"armor.NetheriteBacktankFirstPersonRendererMixin",
+		"AbstractFilterScreenMixin"
 	]
 }

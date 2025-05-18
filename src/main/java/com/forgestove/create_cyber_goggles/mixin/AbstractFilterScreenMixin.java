@@ -1,4 +1,4 @@
-package com.forgestove.create_cyber_goggles.mixin.screen;
+package com.forgestove.create_cyber_goggles.mixin;
 import com.simibubi.create.content.logistics.filter.AbstractFilterScreen;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
@@ -10,7 +10,7 @@ public abstract class AbstractFilterScreenMixin {
 		value = "INVOKE",
 		target = "Lio/github/fabricators_of_create/porting_lib/util/PlayerEntityHelper;closeScreen"
 			+ "(Lnet/minecraft/world/entity/player/Player;)V"
-	), remap = false
+	)
 	)
 	private void containerTick(Player instance) {}
 }

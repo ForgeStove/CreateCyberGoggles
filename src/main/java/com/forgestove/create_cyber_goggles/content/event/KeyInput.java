@@ -44,6 +44,7 @@ public class KeyInput {
 		if (mc.screen != null) return;
 		if (mc.player == null) return;
 		if (Common.laststbe == null && Common.getSelectedBE() instanceof StockTickerBlockEntity stbe) Common.laststbe = stbe;
+		if (Common.laststbe == null) return;
 		var inv = mc.player.getInventory();
 		var menu = new StockKeeperRequestMenu(AllMenuTypes.STOCK_KEEPER_REQUEST.get(), -1, inv, Common.laststbe);
 		mc.setScreen(new StockKeeperRequestScreen(menu, inv, Common.laststbe.getBlockState().getBlock().getName()));

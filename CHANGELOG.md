@@ -1,2 +1,1 @@
-- Add new configuration option 'Rainbow Debug' to enable/disable rainbow debug mode.
-- Reworked configurations and translation.
+- Changed kinetic particle lifetime to 20 ticks

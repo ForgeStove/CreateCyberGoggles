@@ -3,8 +3,8 @@
 plugins {
 	idea
 	id("net.neoforged.moddev.legacyforge") version "+"
-	id("me.modmuss50.mod-publish-plugin") version "0.8.4"
-	id("dev.vfyjxf.modaccessor") version "1.1.1"
+	id("me.modmuss50.mod-publish-plugin") version "+"
+	id("dev.vfyjxf.modaccessor") version "+"
 }
 base.archivesName.set(e("mod_id"))
 group = e("mod_group_id")

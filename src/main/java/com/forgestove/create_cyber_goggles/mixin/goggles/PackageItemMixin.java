@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.goggles;
-import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
+import com.forgestove.create_cyber_goggles.content.config.*;
 import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import net.minecraft.ChatFormatting;
@@ -23,7 +23,7 @@ public abstract class PackageItemMixin extends Item {
 		TooltipFlag tooltipFlag,
 		CallbackInfo callbackInfo
 	) {
-		if (!CCGConfig.get().goggles.enhancedInfo) return;
+		if (!CCGConfig.config.goggles.enhancedInfo) return;
 		callbackInfo.cancel();
 		super.appendHoverText(stack, tooltipContext, tooltipComponents, tooltipFlag);
 		if (stack.has(AllDataComponents.PACKAGE_ADDRESS))

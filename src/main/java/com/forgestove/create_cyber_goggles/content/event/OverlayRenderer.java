@@ -1,6 +1,6 @@
 package com.forgestove.create_cyber_goggles.content.event;
 import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
-import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
+import com.forgestove.create_cyber_goggles.content.config.*;
 import com.forgestove.create_cyber_goggles.content.util.Common;
 import com.simibubi.create.content.logistics.depot.DepotBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
@@ -18,7 +18,7 @@ public class OverlayRenderer {
 		);
 	}
 	public static void renderOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
-		if (!CCGConfig.get().goggles.renderExtraItems) return;
+		if (!CCGConfig.config.goggles.renderExtraItems) return;
 		var mc = Minecraft.getInstance();
 		if (mc.isPaused() || mc.screen != null) return;
 		var be = Common.getSelectedBE();

@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.chainConveyor;
-import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
+import com.forgestove.create_cyber_goggles.content.config.*;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorConnectionHandler;
 import net.minecraft.core.*;
 import net.minecraft.world.phys.Vec3;
@@ -12,7 +12,7 @@ public abstract class ChainConveyorConnectionHandlerMixin {
 		at = @At(value = "INVOKE", target = "Lnet/minecraft/core/BlockPos;closerThan(Lnet/minecraft/core/Vec3i;D)Z", ordinal = 1)
 	)
 	private static boolean redirectCloserThan(BlockPos instance, Vec3i vec3i, double distance) {
-		return !CCGConfig.get().chainConveyor.enhancedConnection && instance.closerThan(vec3i, distance);
+		return !CCGConfig.config.chainConveyor.enhancedConnection && instance.closerThan(vec3i, distance);
 	}
 	@Redirect(
 		method = "validateAndConnect", at = @At(
@@ -23,6 +23,6 @@ public abstract class ChainConveyorConnectionHandlerMixin {
 	private static Vec3 redirectDiff(
 		Vec3i vec3i
 	) {
-		return CCGConfig.get().chainConveyor.enhancedConnection ? new Vec3(2, 0, 2) : Vec3.atLowerCornerOf(vec3i);
+		return CCGConfig.config.chainConveyor.enhancedConnection ? new Vec3(2, 0, 2) : Vec3.atLowerCornerOf(vec3i);
 	}
 }

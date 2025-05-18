@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.goggles;
-import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
+import com.forgestove.create_cyber_goggles.content.config.*;
 import com.simibubi.create.content.kinetics.base.IRotate.*;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.utility.CreateLang;
@@ -15,7 +15,7 @@ public abstract class KineticBlockEntityMixin {
 	@Shadow protected boolean overStressed;
 	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), cancellable = true)
 	private void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
-		var goggles = CCGConfig.get().goggles;
+		var goggles = CCGConfig.config.goggles;
 		if (!goggles.enhancedInfo) return;
 		var hide = !goggles.hideStaticKineticInfo || !Mth.equal(getTheoreticalSpeed(), 0);
 		returnable.setReturnValue(hide);

@@ -23,8 +23,8 @@ public class KeyInput {
 		var mc = Minecraft.getInstance();
 		var player = mc.player;
 		if (player == null || mc.screen != null) return;
-		var enabled = CCGConfig.get().armor.removeDivingBootsAffect;
-		CCGConfig.get().armor.removeDivingBootsAffect = !enabled;
+		var enabled = CCGConfig.config.armor.removeDivingBootsAffect;
+		CCGConfig.config.armor.removeDivingBootsAffect = !enabled;
 		player.displayClientMessage(
 			Component.translatable("message.%s.%sableDivingAffect".formatted(
 				CreateCyberGoggles.ID,

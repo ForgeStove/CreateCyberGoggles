@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.chainConveyor;
-import com.forgestove.create_cyber_goggles.content.config.*;
+import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
 import com.forgestove.create_cyber_goggles.content.util.Common;
 import com.simibubi.create.*;
 import com.simibubi.create.AllTags.AllItemTags;
@@ -11,8 +11,6 @@ import net.minecraft.world.item.*;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import static com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorInteractionHandler.*;
 @Mixin(ChainConveyorInteractionHandler.class)
 public abstract class ChainConveyorInteractionHandlerMixin {
 	@Shadow public static BlockPos selectedConnection;
@@ -43,13 +41,17 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 		if (player == null) return;
 		var mainHandItem = player.getMainHandItem();
 		if (!player.isShiftKeyDown()) {
-			ChainConveyorRidingHandler.embark(selectedLift, selectedChainPosition, selectedConnection);
+			ChainConveyorRidingHandler.embark(
+				ChainConveyorInteractionHandler.selectedLift,
+				ChainConveyorInteractionHandler.selectedChainPosition,
+				selectedConnection
+			);
 			return;
 		}
 		if (selectedConnection == null) return;
 		CatnipServices.NETWORK.sendToServer(new ChainConveyorConnectionPacket(
-			selectedLift,
-			selectedLift.offset(selectedConnection),
+			ChainConveyorInteractionHandler.selectedLift,
+			ChainConveyorInteractionHandler.selectedLift.offset(selectedConnection),
 			mainHandItem.isEmpty() ? AllItems.WRENCH.asStack() : mainHandItem,
 			false
 		));

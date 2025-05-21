@@ -27,6 +27,6 @@ jobs:
             git checkout $branch
             git checkout $src_branch -- README.md
             git add README.md
-            git commit -m "chore: sync README.md from $src_branch" || true
+            git commit -m "Sync README.md from $src_branch" || true
             git push origin $branch
           done

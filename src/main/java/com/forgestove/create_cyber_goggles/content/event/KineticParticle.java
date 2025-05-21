@@ -4,10 +4,13 @@ import com.forgestove.create_cyber_goggles.content.util.Common;
 import com.simibubi.create.content.kinetics.base.IRotate.SpeedLevel;
 import com.simibubi.create.content.kinetics.base.*;
 import net.createmod.catnip.math.VecHelper;
-import net.minecraft.client.Minecraft;
-public class KineticEffector {
-	public static void tick() {
+import net.minecraft.client.*;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage;
+public class KineticParticle {
+	public static void tick(RenderLevelStageEvent event) {
 		if (!CCGConfig.config.goggles.enableKineticEffect) return;
+		if (event.getStage() != Stage.AFTER_PARTICLES) return;
 		var kbe = Common.getSelectedKBE();
 		if (kbe == null) return;
 		var mc = Minecraft.getInstance();
@@ -28,6 +31,6 @@ public class KineticEffector {
 			20,
 			rotationAxis
 		);
-		mc.level.addParticle(particleData, center.x, center.y, center.z, 0, 0, 0);
+		mc.level.addParticle(particleData, center.x, center.y, center.z, 100, 0, 0);
 	}
 }

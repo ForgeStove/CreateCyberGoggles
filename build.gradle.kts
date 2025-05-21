@@ -30,7 +30,7 @@ tasks.processResources {
 }
 modAccessor {
 	createTransformConfiguration(configurations.compileOnly.get())
-	accessTransformerFiles = legacyForge.accessTransformers.files
+	accessTransformerFiles = project.files("src/main/resources/META-INF/accesstransformer.cfg")
 }
 mixin {
 	add(sourceSets.main.get(), "${e("mod_id")}.refmap.json")

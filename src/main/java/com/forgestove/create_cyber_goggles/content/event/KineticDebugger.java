@@ -44,9 +44,9 @@ public class KineticDebugger {
 	public static void updateKBEPath(ClientLevel level, KineticBlockEntity kbe) {
 		if (kbe == lastKbe && cachedKBEPath != null) return;
 		// 构建源KBE链表
-		List<KineticBlockEntity> kbePath = new LinkedList<>();
+		var kbePath = new LinkedList<KineticBlockEntity>();
 		var currentBE = kbe;
-		Set<KineticBlockEntity> visitedBE = new HashSet<>();
+		var visitedBE = new HashSet<KineticBlockEntity>();
 		while (currentBE != null && !visitedBE.contains(currentBE)) {
 			kbePath.addFirst(currentBE); // 逆序插入，真源在前
 			visitedBE.add(currentBE);

@@ -31,6 +31,6 @@ public class KineticParticle {
 			20,
 			rotationAxis
 		);
-		mc.level.addParticle(particleData, center.x, center.y, center.z, 100, 0, 0);
+		mc.level.addParticle(particleData, center.x, center.y, center.z, 0, 0, 0);
 	}
 }

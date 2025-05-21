@@ -14,7 +14,7 @@ public class CreateCyberGoggles {
 	public CreateCyberGoggles(ModContainer container) {
 		CCGConfig.register(container);
 	}
-	@EventBusSubscriber(modid = ID, value = Dist.CLIENT, bus = Bus.GAME)
+	@EventBusSubscriber(modid = ID, value = Dist.CLIENT)
 	public static class ClientGameEvents {
 		@SubscribeEvent
 		public static void key(Key event) {

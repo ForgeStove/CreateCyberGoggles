@@ -17,8 +17,8 @@ import org.jetbrains.annotations.*;
 import java.awt.Color;
 import java.util.*;
 public class KineticDebugger {
-	public static KineticBlockEntity lastKbe = null;
-	public static List<KineticBlockEntity> cachedKBEPath = null;
+	public static BlockPos lastSource;
+	public static List<KineticBlockEntity> cachedKBEPath;
 	public static void tick(RenderLevelStageEvent event) {
 		if (!CCGConfig.config.other.rainbowDebug) return;
 		if (event.getStage() != Stage.AFTER_BLOCK_ENTITIES) return;
@@ -42,19 +42,17 @@ public class KineticDebugger {
 	 * @param kbe   当前选中的动力方块实体
 	 */
 	public static void updateKBEPath(ClientLevel level, KineticBlockEntity kbe) {
-		if (kbe == lastKbe && cachedKBEPath != null) return;
+		if (kbe.source == lastSource && cachedKBEPath != null) return;
 		// 构建源KBE链表
-		var kbePath = new LinkedList<KineticBlockEntity>();
+		var kbePath = new ArrayDeque<KineticBlockEntity>();
 		var currentBE = kbe;
-		var visitedBE = new HashSet<KineticBlockEntity>();
-		while (currentBE != null && !visitedBE.contains(currentBE)) {
+		while (currentBE != null) {
 			kbePath.addFirst(currentBE); // 逆序插入，真源在前
-			visitedBE.add(currentBE);
 			if (currentBE.source == null) break;
 			currentBE = (level.getBlockEntity(currentBE.source) instanceof KineticBlockEntity kbeSource) ? kbeSource : null;
 		}
-		cachedKBEPath = kbePath;
-		lastKbe = kbe;
+		cachedKBEPath = new ArrayList<>(kbePath);
+		lastSource = kbe.source;
 	}
 	/**
 	 * 渲染整个动力链路，包括每个节点的包围盒轮廓和节点间的连线。

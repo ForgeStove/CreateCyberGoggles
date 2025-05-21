@@ -1,6 +1,6 @@
 package com.forgestove.create_cyber_goggles.mixin.goggles;
-import com.forgestove.create_cyber_goggles.content.config.*;
-import com.forgestove.create_cyber_goggles.content.util.*;
+import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
+import com.forgestove.create_cyber_goggles.content.util.Common;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer;

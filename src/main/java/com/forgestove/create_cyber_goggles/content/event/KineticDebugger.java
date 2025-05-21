@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.content.event;
-import com.forgestove.create_cyber_goggles.content.config.*;
+import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
 import com.forgestove.create_cyber_goggles.content.util.Common;
 import com.simibubi.create.content.kinetics.base.*;
 import net.createmod.catnip.math.VecHelper;
@@ -46,7 +46,7 @@ public class KineticDebugger {
 		// 构建源KBE链表
 		var kbePath = new LinkedList<KineticBlockEntity>();
 		var currentBE = kbe;
-		Set<KineticBlockEntity> visitedBE = new HashSet<>();
+		var visitedBE = new HashSet<KineticBlockEntity>();
 		while (currentBE != null && !visitedBE.contains(currentBE)) {
 			kbePath.addFirst(currentBE); // 逆序插入，真源在前
 			visitedBE.add(currentBE);

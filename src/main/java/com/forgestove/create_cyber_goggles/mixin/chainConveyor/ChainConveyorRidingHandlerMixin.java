@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.chainConveyor;
-import com.forgestove.create_cyber_goggles.content.config.*;
+import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
 import com.forgestove.create_cyber_goggles.content.util.Common;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.simibubi.create.AllPackets;

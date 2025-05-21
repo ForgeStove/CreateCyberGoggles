@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.content.event;
-import com.forgestove.create_cyber_goggles.content.config.*;
+import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
 import com.forgestove.create_cyber_goggles.content.util.Common;
 import com.simibubi.create.content.logistics.tableCloth.TableClothBlockEntity;
 import net.minecraftforge.client.event.InputEvent.MouseScrollingEvent;

@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.armor;
-import com.forgestove.create_cyber_goggles.content.config.*;
+import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
 import com.simibubi.create.content.equipment.armor.CardboardArmorStealthOverlay;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;

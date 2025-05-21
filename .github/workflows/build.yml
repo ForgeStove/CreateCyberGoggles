@@ -3,18 +3,18 @@ name: Build
 on:
   push:
     paths-ignore:
-      - '.github/**'
-      - '.idea/**'
-      - '.gitignore'
-      - 'CHANGELOG.md'
-      - 'README.md'
+      - .github/**
+      - .idea/**
+      - .gitignore
+      - CHANGELOG.md
+      - README.md
   pull_request:
     paths-ignore:
-      - '.github/**'
-      - '.idea/**'
-      - '.gitignore'
-      - 'CHANGELOG.md'
-      - 'README.md'
+      - .github/**
+      - .idea/**
+      - .gitignore
+      - CHANGELOG.md
+      - README.md
   workflow_dispatch:
 
 jobs:

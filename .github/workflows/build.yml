@@ -24,8 +24,15 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Get Java Version
+        id: java_version
+        run: echo "version=$(grep '^javaVersion=' gradle.properties | cut -d'=' -f2)" >> $GITHUB_OUTPUT
+
       - name: Setup Java
-        run: echo "JAVA_HOME=$JAVA_HOME_21_X64" >> "$GITHUB_ENV"
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ steps.java_version.outputs.version }}
 
       - name: NeoGradle Cache
         uses: actions/cache@v4

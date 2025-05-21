@@ -16,35 +16,35 @@
 
 该模组提供以下功能配置项：
 
-* **护甲模块**：移除纸板套装渲染、禁用潜水靴功能、禁用下界合金背罐的第一人称渲染
-* **链式传动轮模块**：无需扳手悬挂、防跌落保护、移除连接距离/高度/角度限制、自动纸箱化悬挂
-* **飞轮模块**：强制启用飞轮渲染后端（需谨慎使用）
-* **护目镜模块**：模式强制启用（生存/创造/冒险/旁观）、旋转粒子效果、精准数值显示、增强信息渲染、增强商店界面
-* **扳手模块**：无需扳手即可旋转方块
-* **NBT修复**：修复原版NBT过大导致的崩溃问题
-* **快捷键支持**：快速访问配置界面、仓库界面、过滤器预览
-* **JEI增强**：显示随机废料的内容
+* **护甲模块**：移除纸板渲染、移除潜水靴影响、移除第一人称背罐渲染；
+* **链式传动轮模块**：始终允许悬挂、防止玩家分离、增强型连接、自动打包你自己；
+* **护目镜模块**：生存/创造/冒险/旁观模式启用、渲染旋转粒子、精准数字、增强信息显示、增强商店渲染、隐藏静态旋转信息、渲染更多物品信息；
+* **扳手模块**：总是允许旋转方块、移除冷却；
+* **其他模块**：强制飞轮优化、NBT修复、非随机废料、彩虹调试；
+* **快捷键支持**：快速访问配置界面、库存界面、过滤器预览、切换潜水模式。
 
 This mod provides the following configurable features:
 
-* **Armor Module**: Remove cardboard suit rendering, disable diving boots functionality, disable first-person rendering of netherite back tanks
-* **Chain Conveyor Module**: Wrench-free suspension, anti-fall protection, removal of connection distance/height/angle limits, automatic box suspension
-* **Flywheel Module**: Forced flywheel rendering backend (use with caution)
-* **Goggles Module**: Forced enable in survival/creative/adventure/spectator modes, rotation particle effects, precise numerical displays, enhanced information rendering, enhanced shop interface
-* **Wrench Module**: Wrench-free block rotation
-* **NBT Fix**: Fix crashes caused by oversized Vanilla NBT
-* **Hotkey Support**: Quick access to config UI, stock UI, and filter preview
-* **JEI Enhancements**: Display contents of random scraps
+* **Armor Module**: Remove cardboard rendering, remove diving boots effect, remove first-person back tank rendering;
+* **Chain Conveyor Module**: Always allow suspension, prevent player separation, enhanced connection, auto-pack yourself;
+* **Goggles Module**: Enable in survival/creative/adventure/spectator modes, render rotation particles, precise numbers, enhanced information display, enhanced shop rendering, hide static rotation info, render more item info;
+* **Wrench Module**: Always allow block rotation, remove cooldown;
+* **Other Module**: Forced flywheel optimization, NBT fix, non-random scraps, rainbow debug;
+* **Hotkey Support**: Quick access to config UI, inventory UI, filter preview, toggle diving mode.
 
 ## 注意 / Notice
 
-> 主要在 1.21.1 NeoForge 上开发额外功能  
-> 1.20.1 Forge 版本已经完全跟进  
-> 1.20.1 Fabric 版本部分移植完成
+> 主要在 1.21.1 NeoForge 上开发额外功能；
+> 
+> 1.20.1 Forge 版本已经完全跟进，2.0版本以后仅兼容6.0+版本的Create，仅限2.0以下的版本兼容0.5+版本的Create；
+> 
+> 1.20.1 Fabric 版本部分移植完成，其余功能需要等待Create-Fabric更新至6.0+版本后再进行移植。
 
-> Extra features are mainly developed in 1.21.1 NeoForge  
-> 1.20.1 Forge version has been fully updated  
-> 1.20.1 Fabric version part migration completed
+> Extra features are mainly developed in 1.21.1 NeoForge;
+> 
+> 1.20.1 Forge version has been fully updated, version 2.0 and later only compatible with Create 6.0+ version, only version 2.0 and below compatible with Create 0.5+ version;
+> 
+> 1.20.1 Fabric version part migration completed, the rest of the features need to wait for Create-Fabric to be updated to version 6.0+ before migration.
 
 ## 版本 / Versions
 

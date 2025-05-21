@@ -1,1 +1,1 @@
-- Changed kinetic particle lifetime to 20 ticks
+- Optimized the performance of rainbow debug

@@ -31,7 +31,10 @@ public class CreateCyberGoggles {
 		@SubscribeEvent
 		public static void tick(ClientTickEvent event) {
 			KineticEffector.tick();
-			KineticDebugger.tick();
+		}
+		@SubscribeEvent
+		public static void renderLevelStageEvent(RenderLevelStageEvent event) {
+			KineticDebugger.tick(event);
 		}
 	}
 	@EventBusSubscriber(modid = ID, value = Dist.CLIENT, bus = Bus.MOD)

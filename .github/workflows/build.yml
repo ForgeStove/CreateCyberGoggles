@@ -1,6 +1,21 @@
 name: Build
 
-on: [ workflow_dispatch, push, pull_request ]
+on:
+  push:
+    paths-ignore:
+      - '.github/**'
+      - '.idea/**'
+      - '.gitignore'
+      - 'CHANGELOG.md'
+      - 'README.md'
+  pull_request:
+    paths-ignore:
+      - '.github/**'
+      - '.idea/**'
+      - '.gitignore'
+      - 'CHANGELOG.md'
+      - 'README.md'
+  workflow_dispatch:
 
 jobs:
   build:

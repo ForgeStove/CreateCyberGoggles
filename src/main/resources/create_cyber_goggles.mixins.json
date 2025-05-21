@@ -4,18 +4,18 @@
 	"package": "com.forgestove.create_cyber_goggles.mixin",
 	"refmap": "create_cyber_goggles-refmap.json",
 	"client": [
+		"AbstractFilterScreenMixin",
 		"armor.DivingBootsItemMixin",
+		"armor.NetheriteBacktankFirstPersonRendererMixin",
 		"goggles.DeployerBlockEntityMixin",
 		"goggles.GeneratingKineticBlockEntityMixin",
 		"goggles.GogglesItemMixin",
 		"goggles.KineticBlockEntityMixin",
 		"goggles.LangMixin",
 		"goggles.PoweredShaftBlockEntityMixin",
-		"other.CreateJEIMixin",
-		"other.SequencedAssemblyCategoryMixin",
-		"other.NbtAccounterMixin",
 		"other.BackendMixin",
-		"armor.NetheriteBacktankFirstPersonRendererMixin",
-		"AbstractFilterScreenMixin"
+		"other.CreateJEIMixin",
+		"other.NbtAccounterMixin",
+		"other.SequencedAssemblyCategoryMixin"
 	]
 }

@@ -5,9 +5,9 @@ import net.minecraft.client.*;
 import org.lwjgl.glfw.GLFW;
 @SuppressWarnings("BooleanMethodIsAlwaysInverted")
 public enum CCGKeyMapping {
-	toggleDiving(GLFW.GLFW_KEY_UNKNOWN),
 	openConfig(GLFW.GLFW_KEY_UNKNOWN),
-	previewFilter(GLFW.GLFW_KEY_UNKNOWN);
+	previewFilter(GLFW.GLFW_KEY_UNKNOWN),
+	toggleDiving(GLFW.GLFW_KEY_UNKNOWN);
 	private final String name;
 	private final int defaultKeyCode;
 	public KeyMapping keyMapping;

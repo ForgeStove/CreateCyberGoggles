@@ -4,16 +4,17 @@ import com.forgestove.create_cyber_goggles.content.util.Common;
 import com.simibubi.create.content.kinetics.base.IRotate.SpeedLevel;
 import com.simibubi.create.content.kinetics.base.*;
 import com.simibubi.create.foundation.utility.VecHelper;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.Minecraft;
 public class KineticEffector {
 	public static void register() {
-		ClientTickEvents.END_CLIENT_TICK.register(KineticEffector::tick);
+		WorldRenderEvents.AFTER_ENTITIES.register(context -> tick());
 	}
-	public static void tick(Minecraft mc) {
+	public static void tick() {
 		if (!CCGConfig.config.goggles.enableKineticEffect) return;
 		var kbe = Common.getSelectedKBE();
 		if (kbe == null) return;
+		var mc = Minecraft.getInstance();
 		if (mc.level == null) return;
 		var speed = kbe.getSpeed();
 		if (speed == 0) return;

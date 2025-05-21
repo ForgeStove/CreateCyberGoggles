@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.goggles;
-import com.forgestove.create_cyber_goggles.content.config.*;
+import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
 import com.simibubi.create.content.kinetics.base.*;
 import com.simibubi.create.foundation.utility.Lang;
 import net.minecraft.ChatFormatting;

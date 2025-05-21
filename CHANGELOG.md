@@ -1,1 +1,2 @@
-- Reworked mixin
+- Optimized the kinetic particle effect
+- Fixed crash when loading backend which caused by missing config

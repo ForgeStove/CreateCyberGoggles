@@ -1,6 +1,21 @@
 name: Build
 
-on: [ workflow_dispatch, push, pull_request ]
+on:
+  push:
+    paths-ignore:
+      - .github/**
+      - .idea/**
+      - .gitignore
+      - CHANGELOG.md
+      - README.md
+  pull_request:
+    paths-ignore:
+      - .github/**
+      - .idea/**
+      - .gitignore
+      - CHANGELOG.md
+      - README.md
+  workflow_dispatch:
 
 jobs:
   build:
@@ -9,8 +24,15 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Get Java Version
+        id: java_version
+        run: echo "version=$(grep '^javaVersion=' gradle.properties | cut -d'=' -f2)" >> $GITHUB_OUTPUT
+
       - name: Setup Java
-        run: echo "JAVA_HOME=$JAVA_HOME_17_X64" >> "$GITHUB_ENV"
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ steps.java_version.outputs.version }}
 
       - name: NeoGradle Cache
         uses: actions/cache@v4
@@ -22,17 +44,8 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Validate Gradle Wrapper Integrity
-        uses: gradle/actions/wrapper-validation@v3
-
       - name: Grant execute permission to gradlew
         run: chmod +x ./gradlew
-
-      - name: Print working directory
-        run: pwd
-
-      - name: Check file permissions
-        run: ls -l ./gradlew
 
       - name: Run Gradle build
         run: ./gradlew build

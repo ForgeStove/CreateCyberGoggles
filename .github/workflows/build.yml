@@ -34,7 +34,7 @@ jobs:
           distribution: temurin
           java-version: ${{ steps.java_version.outputs.version }}
 
-      - name: NeoGradle Cache
+      - name: Gradle Cache
         uses: actions/cache@v4
         with:
           path: "**/.gradle/repositories/"

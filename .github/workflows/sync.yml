@@ -1,0 +1,31 @@
+name: Sync README to All Branches
+
+on:
+  push:
+    paths:
+      - README.md
+
+jobs:
+  sync-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 配置 Git 用户
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: 遍历并同步 README.md
+        run: |
+          src_branch="${{ github.ref_name }}"
+          for branch in $(git branch -r | grep -vE "${src_branch}|HEAD" | sed 's|origin/||'); do
+            git checkout $branch
+            git checkout $src_branch -- README.md
+            git add README.md
+            git commit -m "chore: sync README.md from $src_branch" || true
+            git push origin $branch
+          done

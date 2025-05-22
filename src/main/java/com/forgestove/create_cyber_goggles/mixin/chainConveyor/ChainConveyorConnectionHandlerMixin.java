@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.chainConveyor;
-import com.forgestove.create_cyber_goggles.content.config.*;
+import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorConnectionHandler;
 import net.minecraft.core.*;
 import net.minecraft.world.phys.Vec3;

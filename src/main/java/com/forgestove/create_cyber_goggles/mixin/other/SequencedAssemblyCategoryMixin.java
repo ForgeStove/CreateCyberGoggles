@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.other;
-import com.forgestove.create_cyber_goggles.content.config.*;
+import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
 import com.simibubi.create.compat.jei.category.SequencedAssemblyCategory;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import com.simibubi.create.foundation.gui.AllGuiTextures;

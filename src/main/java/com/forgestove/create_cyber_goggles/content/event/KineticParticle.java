@@ -1,10 +1,10 @@
 package com.forgestove.create_cyber_goggles.content.event;
-import com.forgestove.create_cyber_goggles.content.config.*;
+import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
 import com.forgestove.create_cyber_goggles.content.util.Common;
 import com.simibubi.create.content.kinetics.base.IRotate.SpeedLevel;
 import com.simibubi.create.content.kinetics.base.*;
 import net.createmod.catnip.math.VecHelper;
-import net.minecraft.client.*;
+import net.minecraft.client.Minecraft;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage;
 public class KineticParticle {

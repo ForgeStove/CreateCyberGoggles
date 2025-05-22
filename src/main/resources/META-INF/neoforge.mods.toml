@@ -17,10 +17,10 @@ logoBlur = false
 config = "${mod_id}.mixins.json"
 
 [[accessTransformers]]
-file="META-INF/accesstransformer.cfg"
+file = "META-INF/accesstransformer.cfg"
 
 [[accessTransformers]]
-file="META-INF/modaccessor.cfg"
+file = "META-INF/modaccessor.cfg"
 
 [[dependencies."${mod_id}"]]
 modId = "neoforge"

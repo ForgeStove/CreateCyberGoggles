@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin;
-import com.forgestove.create_cyber_goggles.content.config.*;
+import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.contraptions.wrench.RadialWrenchHandler;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;

@@ -9,7 +9,7 @@ plugins {
 base.archivesName.set(e("mod_id"))
 group = e("mod_group_id")
 version = "${e("minecraft_version")}-${e("mod_version")}+${e("upper_loader")}"
-java.toolchain.languageVersion.set(JavaLanguageVersion.of(e("javaVersion")))
+java.toolchain.languageVersion.set(JavaLanguageVersion.of(e("java_version")))
 idea.module {
 	isDownloadSources = true
 	isDownloadJavadoc = true
@@ -27,7 +27,7 @@ tasks.processResources {
 }
 modAccessor {
 	createTransformConfiguration(configurations.compileOnly.get())
-	accessTransformerFiles = project.files("src/main/resources/META-INF/modaccessor.cfg")
+	accessTransformerFiles = files("src/main/resources/META-INF/modaccessor.cfg")
 }
 neoForge {
 	version = e("loader_version")
@@ -36,13 +36,13 @@ neoForge {
 		minecraftVersion.set(e("minecraft_version"))
 	}
 	runs {
-		create("client") { client() }
+		create("client").client()
 		configureEach {
 			jvmArguments.addAll("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition")
 			systemProperty("terminal.jline", "true")
 		}
 	}
-	mods { create(e("mod_id")) { sourceSet(sourceSets["main"]) } }
+	mods.create(e("mod_id")).sourceSet(sourceSets["main"])
 }
 repositories {
 	mavenLocal()

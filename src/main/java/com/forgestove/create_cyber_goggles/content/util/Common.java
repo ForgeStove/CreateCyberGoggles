@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.content.util;
-import com.forgestove.create_cyber_goggles.content.config.*;
+import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
@@ -16,8 +16,7 @@ import net.minecraft.world.phys.HitResult.Type;
 import org.jetbrains.annotations.Nullable;
 public class Common {
 	public static StockTickerBlockEntity laststbe = null;
-	public static int index = 1;
-	public static int scrollDeltaY = 0;
+	public static int index = 1, scrollDeltaY = 0;
 	/**
 	 * 测试玩家是否穿着全套纸板盔甲并且不在飞行状态。
 	 *

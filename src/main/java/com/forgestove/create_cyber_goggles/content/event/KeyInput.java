@@ -14,17 +14,10 @@ import net.minecraft.world.phys.HitResult.Type;
 import java.util.Collections;
 public class KeyInput {
 	public static void tick() {
-		toggleStess();
 		toggleDiving();
 		openConfigScreen();
 		openStockScreen();
 		previewFilterScreen();
-	}
-	public static void toggleStess() {
-		if (!CCGKeyMapping.toggleStress.isDown()) return;
-		var goggles = CCGConfig.config.goggles;
-		CCGConfig.set(v -> goggles.showNetworkStress = v, !goggles.showNetworkStress);
-		Common.displayClientMessage(goggles.showNetworkStress, "Stress");
 	}
 	public static void toggleDiving() {
 		if (!CCGKeyMapping.toggleDiving.isDown()) return;

@@ -13,7 +13,6 @@ public class CCGConfigData implements ConfigData {
 	@Category("other") @TransitiveObject public Other other = new Other();
 	public static class Goggles {
 		@Tooltip public boolean enhancedInfo = true;
-		@Tooltip public boolean showNetworkStress = true;
 		@Tooltip public boolean hideStaticKineticInfo = false;
 		@Tooltip public boolean enhancedStoreRender = true;
 		@Tooltip public boolean renderExtraItems = true;

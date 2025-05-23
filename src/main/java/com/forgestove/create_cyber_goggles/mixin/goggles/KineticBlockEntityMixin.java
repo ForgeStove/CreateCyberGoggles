@@ -1,5 +1,6 @@
 package com.forgestove.create_cyber_goggles.mixin.goggles;
 import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
+import com.forgestove.create_cyber_goggles.content.event.CCGKeyMapping;
 import com.simibubi.create.content.kinetics.base.IRotate.*;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.gauge.*;
@@ -39,7 +40,7 @@ public abstract class KineticBlockEntityMixin extends SmartBlockEntity {
 		}
 		CreateLang.translate("gui.goggles.kinetic_stats").forGoggles(tooltip);
 		SpeedLevel.getFormattedSpeedText(getTheoreticalSpeed(), overStressed).forGoggles(tooltip);
-		if (!CCGConfig.config.goggles.showNetworkStress) return;
+		if (!CCGKeyMapping.showStress.isDown()) return;
 		double stressFraction = stress / (capacity == 0 ? 1 : capacity);
 		CreateLang.translate("gui.stressometer.title").style(ChatFormatting.GRAY).forGoggles(tooltip);
 		if (getTheoreticalSpeed() == 0)

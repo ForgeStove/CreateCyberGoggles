@@ -5,6 +5,7 @@ import net.minecraft.client.*;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.common.util.Lazy;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 public enum CCGKeyMapping {
 	openConfig(GLFW.GLFW_KEY_UNKNOWN),
@@ -26,7 +27,7 @@ public enum CCGKeyMapping {
 	public static void register(RegisterKeyMappingsEvent event) {
 		for (var key : values()) event.register(key.get());
 	}
-	public KeyMapping get() {
+	public @NotNull KeyMapping get() {
 		return keyMapping.get();
 	}
 	public boolean isDown() {

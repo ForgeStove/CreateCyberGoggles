@@ -3,11 +3,9 @@ import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
 import com.forgestove.create_cyber_goggles.content.event.CCGKeyMapping;
 import com.simibubi.create.content.kinetics.base.IRotate.*;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
-import com.simibubi.create.content.kinetics.gauge.*;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.item.TooltipHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
-import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -56,8 +54,6 @@ public abstract class KineticBlockEntityMixin extends SmartBlockEntity {
 				stressTip.text(ChatFormatting.GRAY, " / ").add(CreateLang.number(capacity).add(su).style(ChatFormatting.DARK_GRAY));
 			stressTip.forGoggles(tooltip, 1);
 		}
-		if (!worldPosition.equals(StressGaugeBlockEntity.lastSent))
-			CatnipServices.NETWORK.sendToServer(new GaugeObservedPacket(StressGaugeBlockEntity.lastSent = worldPosition));
 	}
 	@Shadow
 	public abstract float getTheoreticalSpeed();

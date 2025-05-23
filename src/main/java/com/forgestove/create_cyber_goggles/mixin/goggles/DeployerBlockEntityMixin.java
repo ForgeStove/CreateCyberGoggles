@@ -48,7 +48,7 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 		value = "INVOKE", target = "Lcom/simibubi/create/content/kinetics/deployer/DeployerBlockEntity;calculateStressApplied()F"
 	), cancellable = true
 	)
-	private void injected(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
+	private void hideInfoIfNeeded(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
 		var goggles = CCGConfig.config.goggles;
 		if (!goggles.enhancedInfo || !goggles.hideStaticKineticInfo) return;
 		if (!Mth.equal(getTheoreticalSpeed(), 0)) return;

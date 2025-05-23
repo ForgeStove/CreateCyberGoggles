@@ -31,7 +31,7 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 		method = "onUse",
 		at = @At(value = "INVOKE", target = "Lcom/simibubi/create/AllTags$AllItemTags;matches(Lnet/minecraft/world/item/ItemStack;)Z")
 	)
-	private static boolean onUse(AllItemTags instance, ItemStack stack) {
+	private static boolean redirectItemMatch(AllItemTags instance, ItemStack stack) {
 		return !CCGConfig.config.chainConveyor.alwaysAllowRiding && instance.matches(stack);
 	}
 	@Inject(method = "onUse", at = @At("TAIL"))

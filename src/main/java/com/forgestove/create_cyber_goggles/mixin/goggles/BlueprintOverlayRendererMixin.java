@@ -24,7 +24,7 @@ public abstract class BlueprintOverlayRendererMixin {
 	@Shadow static boolean resultCraftable;
 	@Shadow static BlueprintOverlayShopContext shopContext;
 	@Inject(method = "renderOverlay", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z", ordinal = 1), cancellable = true)
-	private static void injectRenderOverlay(
+	private static void renderOverlay(
 		GuiGraphics guiGraphics,
 		DeltaTracker deltaTracker,
 		CallbackInfo callbackInfo,

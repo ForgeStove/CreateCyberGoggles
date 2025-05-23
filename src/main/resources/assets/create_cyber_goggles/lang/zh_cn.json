@@ -45,6 +45,8 @@
 	"text.autoconfig.create_cyber_goggles.option.goggles.preciseNumbers.@Tooltip": "显示更精准的数字",
 	"text.autoconfig.create_cyber_goggles.option.goggles.renderExtraItems": "渲染更多物品信息",
 	"text.autoconfig.create_cyber_goggles.option.goggles.renderExtraItems.@Tooltip": "允许渲染更多方块上的物品信息",
+	"text.autoconfig.create_cyber_goggles.option.goggles.showNetworkStress": "显示网络应力",
+	"text.autoconfig.create_cyber_goggles.option.goggles.showNetworkStress.@Tooltip": "在护目镜中额外显示网络应力信息",
 	"text.autoconfig.create_cyber_goggles.option.other.forcedBackend": "强制飞轮优化",
 	"text.autoconfig.create_cyber_goggles.option.other.forcedBackend.@Tooltip": "强制启用飞轮渲染后端（与着色器冲突，除非你知道你在做什么）",
 	"text.autoconfig.create_cyber_goggles.option.other.nbtFix": "NBT修复",

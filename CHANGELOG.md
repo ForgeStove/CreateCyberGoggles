@@ -1,3 +1,2 @@
-- Fixed the issue where openStock could not switch to view different Stock Keepers
-- Optimized the kinetic particle effect
-- Fixed crash when loading backend which caused by missing config
+- Added shortcut key to display stress network information (Buggy)
+- Corrected some translations

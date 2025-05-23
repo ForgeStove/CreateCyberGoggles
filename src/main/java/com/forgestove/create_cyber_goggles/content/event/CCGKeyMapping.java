@@ -10,7 +10,8 @@ public enum CCGKeyMapping {
 	openConfig(GLFW.GLFW_KEY_UNKNOWN),
 	openStock(GLFW.GLFW_KEY_UNKNOWN),
 	previewFilter(GLFW.GLFW_KEY_UNKNOWN),
-	toggleDiving(GLFW.GLFW_KEY_UNKNOWN);
+	toggleDiving(GLFW.GLFW_KEY_UNKNOWN),
+	toggleStress(GLFW.GLFW_KEY_TAB);
 	private final Lazy<KeyMapping> keyMapping;
 	CCGKeyMapping(int key) {
 		var id = CreateCyberGoggles.ID;

@@ -1,36 +1,36 @@
 package com.forgestove.create_cyber_goggles.content.event;
-import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
 import com.forgestove.create_cyber_goggles.content.config.*;
 import com.forgestove.create_cyber_goggles.content.util.Common;
 import com.simibubi.create.AllMenuTypes;
-import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.stockTicker.*;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import me.shedaniel.autoconfig.AutoConfig;
-import net.createmod.catnip.gui.ScreenOpener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
 
 import java.util.Collections;
 public class KeyInput {
+	public static void tick() {
+		toggleStess();
+		toggleDiving();
+		openConfigScreen();
+		openStockScreen();
+		previewFilterScreen();
+	}
+	public static void toggleStess() {
+		if (!CCGKeyMapping.toggleStress.isDown()) return;
+		var goggles = CCGConfig.config.goggles;
+		CCGConfig.set(v -> goggles.showNetworkStress = v, !goggles.showNetworkStress);
+		Common.displayClientMessage(goggles.showNetworkStress, "Stress");
+	}
 	public static void toggleDiving() {
 		if (!CCGKeyMapping.toggleDiving.isDown()) return;
-		var mc = Minecraft.getInstance();
-		var player = mc.player;
-		if (player == null || mc.screen != null) return;
-		var enabled = CCGConfig.config.armor.removeDivingBootsAffect;
-		CCGConfig.config.armor.removeDivingBootsAffect = !enabled;
-		player.displayClientMessage(
-			Component.translatable("message.%s.%sableDivingAffect".formatted(
-				CreateCyberGoggles.ID,
-				enabled ? "en" : "dis"
-			)), true
-		);
+		var armor = CCGConfig.config.armor;
+		CCGConfig.set(v -> armor.removeDivingBootsAffect = v, !armor.removeDivingBootsAffect);
+		Common.displayClientMessage(armor.removeDivingBootsAffect, "DivingAffect");
 	}
 	public static void openConfigScreen() {
 		if (!CCGKeyMapping.openConfig.isDown()) return;
@@ -56,7 +56,7 @@ public class KeyInput {
 			if (!(mc.screen instanceof AbstractContainerScreen<?> screen)) return;
 			var slot = screen.getSlotUnderMouse();
 			if (slot == null) return;
-			openFilterScreen(slot.getItem());
+			Common.openFilterScreen(slot.getItem());
 		} else {
 			if (mc.level == null || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return;
 			if (blockHitResult.getType() == Type.MISS) return;
@@ -64,19 +64,7 @@ public class KeyInput {
 			if (!(be instanceof SmartBlockEntity sbe)) return;
 			var first = Collections.singleton(sbe.getBehaviour(FilteringBehaviour.TYPE)).iterator().next();
 			if (!(first instanceof FilteringBehaviour)) return;
-			openFilterScreen(first.getFilter(blockHitResult.getDirection()));
+			Common.openFilterScreen(first.getFilter(blockHitResult.getDirection()));
 		}
-	}
-	public static void openFilterScreen(ItemStack filter) {
-		if (!(filter.getItem() instanceof FilterItem filterItem)) return;
-		var player = Minecraft.getInstance().player;
-		if (player == null) return;
-		var inv = player.getInventory();
-		var name = filter.getHoverName();
-		ScreenOpener.open(switch (filterItem.type) {
-			case REGULAR -> new FilterScreen(FilterMenu.create(-1, inv, filter), inv, name);
-			case ATTRIBUTE -> new AttributeFilterScreen(AttributeFilterMenu.create(-1, inv, filter), inv, name);
-			case PACKAGE -> new PackageFilterScreen(PackageFilterMenu.create(-1, inv, filter), inv, name);
-		});
 	}
 }

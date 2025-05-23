@@ -1,11 +1,15 @@
 package com.forgestove.create_cyber_goggles.content.util;
+import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
 import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
+import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
+import net.createmod.catnip.gui.ScreenOpener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.*;
@@ -13,7 +17,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.*;
 public class Common {
 	public static StockTickerBlockEntity laststbe = null;
 	public static int index = 1, scrollDeltaY = 0;
@@ -84,5 +88,34 @@ public class Common {
 		if (!(mc.hitResult instanceof BlockHitResult blockHitResult)) return null;
 		if (!(blockHitResult.getType() == Type.BLOCK)) return null;
 		return mc.level.getBlockState(blockHitResult.getBlockPos()).getBlock();
+	}
+	/**
+	 * 显示一条格式化的客户端消息。
+	 *
+	 * @param currentValue 当前值，用于确定消息的启用或禁用状态
+	 * @param messageKey   消息的键，用于生成完整的消息标识符
+	 */
+	public static void displayClientMessage(boolean currentValue, String messageKey) {
+		var mc = Minecraft.getInstance();
+		if (mc.player == null || mc.screen != null) return;
+		var formatted = "message.%s.%sable%s".formatted(CreateCyberGoggles.ID, currentValue ? "en" : "dis", messageKey);
+		mc.player.displayClientMessage(Component.translatable(formatted), true);
+	}
+	/**
+	 * 打开与指定过滤器物品相关的筛选器界面。
+	 *
+	 * @param filter 需要打开筛选器界面的物品堆
+	 */
+	public static void openFilterScreen(@NotNull ItemStack filter) {
+		if (!(filter.getItem() instanceof FilterItem filterItem)) return;
+		var mc = Minecraft.getInstance();
+		if (mc.player == null) return;
+		var inv = mc.player.getInventory();
+		var name = filter.getHoverName();
+		ScreenOpener.open(switch (filterItem.type) {
+			case REGULAR -> new FilterScreen(FilterMenu.create(-1, inv, filter), inv, name);
+			case ATTRIBUTE -> new AttributeFilterScreen(AttributeFilterMenu.create(-1, inv, filter), inv, name);
+			case PACKAGE -> new PackageFilterScreen(PackageFilterMenu.create(-1, inv, filter), inv, name);
+		});
 	}
 }

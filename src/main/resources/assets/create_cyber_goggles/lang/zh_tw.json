@@ -4,6 +4,7 @@
 	"key.create_cyber_goggles.openStock": "打開庫存",
 	"key.create_cyber_goggles.previewFilter": "預覽過濾器",
 	"key.create_cyber_goggles.toggleDiving": "切換潛水模式",
+	"key.create_cyber_goggles.toggleStress": "切換應力網路資訊",
 	"message.create_cyber_goggles.disableDivingAffect": "已禁用潛水靴影響",
 	"message.create_cyber_goggles.enableDivingAffect": "已啟用潛水靴影響",
 	"text.autoconfig.create_cyber_goggles.category.armor": "護甲",

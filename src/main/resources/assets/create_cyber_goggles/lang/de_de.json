@@ -4,6 +4,7 @@
 	"key.create_cyber_goggles.openStock": "Inventar öffnen",
 	"key.create_cyber_goggles.previewFilter": "Filtervorschau",
 	"key.create_cyber_goggles.toggleDiving": "Tauchmodus umschalten",
+	"key.create_cyber_goggles.toggleStress": "Netzwerkbelastungsinfo umschalten",
 	"message.create_cyber_goggles.disableDivingAffect": "Tauchstiefel-Effekt deaktiviert",
 	"message.create_cyber_goggles.enableDivingAffect": "Tauchstiefel-Effekt aktiviert",
 	"text.autoconfig.create_cyber_goggles.category.armor": "Rüstung",

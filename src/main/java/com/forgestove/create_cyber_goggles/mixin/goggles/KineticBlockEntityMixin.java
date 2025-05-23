@@ -39,7 +39,7 @@ public abstract class KineticBlockEntityMixin extends SmartBlockEntity {
 		}
 		CreateLang.translate("gui.goggles.kinetic_stats").forGoggles(tooltip);
 		SpeedLevel.getFormattedSpeedText(getTheoreticalSpeed(), overStressed).forGoggles(tooltip);
-		if (!CCGConfig.config.goggles.showStress) return;
+		if (!CCGConfig.config.goggles.showNetworkStress) return;
 		double stressFraction = stress / (capacity == 0 ? 1 : capacity);
 		CreateLang.translate("gui.stressometer.title").style(ChatFormatting.GRAY).forGoggles(tooltip);
 		if (getTheoreticalSpeed() == 0)

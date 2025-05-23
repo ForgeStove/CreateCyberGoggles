@@ -45,6 +45,8 @@
 	"text.autoconfig.create_cyber_goggles.option.goggles.preciseNumbers.@Tooltip": "Zeigt genauere Werte an",
 	"text.autoconfig.create_cyber_goggles.option.goggles.renderExtraItems": "Mehr Gegenstände anzeigen",
 	"text.autoconfig.create_cyber_goggles.option.goggles.renderExtraItems.@Tooltip": "Zeigt mehr Informationen über Gegenstände an",
+	"text.autoconfig.create_cyber_goggles.option.goggles.showNetworkStress": "Netzwerkbelastung anzeigen",
+	"text.autoconfig.create_cyber_goggles.option.goggles.showNetworkStress.@Tooltip": "Zeigt die Netzwerkbelastung im Brillen-Overlay an",
 	"text.autoconfig.create_cyber_goggles.option.other.forcedBackend": "Schwungrad-Rendering erzwingen",
 	"text.autoconfig.create_cyber_goggles.option.other.forcedBackend.@Tooltip": "Erzwingt das Schwungrad-Rendering (kann mit Shadern kollidieren)",
 	"text.autoconfig.create_cyber_goggles.option.other.nbtFix": "NBT-Fix",

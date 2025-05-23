@@ -45,6 +45,8 @@
 	"text.autoconfig.create_cyber_goggles.option.goggles.preciseNumbers.@Tooltip": "Show more precise numbers",
 	"text.autoconfig.create_cyber_goggles.option.goggles.renderExtraItems": "Render More Item Info",
 	"text.autoconfig.create_cyber_goggles.option.goggles.renderExtraItems.@Tooltip": "Allow rendering more item info on blocks",
+	"text.autoconfig.create_cyber_goggles.option.goggles.showNetworkStress": "Show Network Stress",
+	"text.autoconfig.create_cyber_goggles.option.goggles.showNetworkStress.@Tooltip": "Show network stress in the goggles overlay",
 	"text.autoconfig.create_cyber_goggles.option.other.forcedBackend": "Force Flywheel Optimization",
 	"text.autoconfig.create_cyber_goggles.option.other.forcedBackend.@Tooltip": "Force enable Flywheel rendering backend (conflicts with shaders, unless you know what you are doing)",
 	"text.autoconfig.create_cyber_goggles.option.other.nbtFix": "NBT Fix",

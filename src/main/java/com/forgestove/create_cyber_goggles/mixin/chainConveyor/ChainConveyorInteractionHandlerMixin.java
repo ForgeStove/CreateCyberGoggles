@@ -13,7 +13,8 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ChainConveyorInteractionHandler.class)
 public abstract class ChainConveyorInteractionHandlerMixin {
-	@Shadow public static BlockPos selectedConnection;
+	@Shadow public static BlockPos selectedConnection, selectedLift;
+	@Shadow public static float selectedChainPosition;
 	@Inject(method = "isActive", at = @At("HEAD"), cancellable = true)
 	private static void isActive(CallbackInfoReturnable<Boolean> returnable) {
 		if (!CCGConfig.config.chainConveyor.alwaysAllowRiding) return;
@@ -31,7 +32,7 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 		method = "onUse",
 		at = @At(value = "INVOKE", target = "Lcom/simibubi/create/AllTags$AllItemTags;matches(Lnet/minecraft/world/item/ItemStack;)Z")
 	)
-	private static boolean redirectItemMatch(AllItemTags instance, ItemStack stack) {
+	private static boolean onUse(AllItemTags instance, ItemStack stack) {
 		return !CCGConfig.config.chainConveyor.alwaysAllowRiding && instance.matches(stack);
 	}
 	@Inject(method = "onUse", at = @At("TAIL"))
@@ -41,17 +42,13 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 		if (player == null) return;
 		var mainHandItem = player.getMainHandItem();
 		if (!player.isShiftKeyDown()) {
-			ChainConveyorRidingHandler.embark(
-				ChainConveyorInteractionHandler.selectedLift,
-				ChainConveyorInteractionHandler.selectedChainPosition,
-				selectedConnection
-			);
+			ChainConveyorRidingHandler.embark(selectedLift, selectedChainPosition, selectedConnection);
 			return;
 		}
 		if (selectedConnection == null) return;
 		CatnipServices.NETWORK.sendToServer(new ChainConveyorConnectionPacket(
-			ChainConveyorInteractionHandler.selectedLift,
-			ChainConveyorInteractionHandler.selectedLift.offset(selectedConnection),
+			selectedLift,
+			selectedLift.offset(selectedConnection),
 			mainHandItem.isEmpty() ? AllItems.WRENCH.asStack() : mainHandItem,
 			false
 		));

@@ -15,8 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.List;
 @Mixin(KineticBlockEntity.class)
 public abstract class KineticBlockEntityMixin {
-	@Shadow protected float stress;
-	@Shadow protected float capacity;
+	@Shadow protected float capacity, stress;
 	@Shadow protected boolean overStressed;
 	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), cancellable = true)
 	private void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {

@@ -12,7 +12,8 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ChainConveyorInteractionHandler.class)
 public abstract class ChainConveyorInteractionHandlerMixin {
-	@Shadow(remap = false) public static BlockPos selectedConnection;
+	@Shadow(remap = false) public static BlockPos selectedConnection, selectedLift;
+	@Shadow(remap = false) public static float selectedChainPosition;
 	@Inject(method = "isActive", at = @At("HEAD"), remap = false, cancellable = true)
 	private static void isActive(CallbackInfoReturnable<Boolean> returnable) {
 		if (!CCGConfig.config.chainConveyor.alwaysAllowRiding) return;
@@ -41,17 +42,13 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 		if (player == null) return;
 		var mainHandItem = player.getMainHandItem();
 		if (!player.isShiftKeyDown()) {
-			ChainConveyorRidingHandler.embark(
-				ChainConveyorInteractionHandler.selectedLift,
-				ChainConveyorInteractionHandler.selectedChainPosition,
-				selectedConnection
-			);
+			ChainConveyorRidingHandler.embark(selectedLift, selectedChainPosition, selectedConnection);
 			return;
 		}
 		if (selectedConnection == null) return;
 		AllPackets.getChannel().sendToServer(new ChainConveyorConnectionPacket(
-			ChainConveyorInteractionHandler.selectedLift,
-			ChainConveyorInteractionHandler.selectedLift.offset(selectedConnection),
+			selectedLift,
+			selectedLift.offset(selectedConnection),
 			mainHandItem.isEmpty() ? AllItems.WRENCH.asStack() : mainHandItem,
 			false
 		));

@@ -21,12 +21,12 @@ public abstract class PackageItemMixin extends Item {
 		ItemStack stack,
 		Level level,
 		List<Component> tooltipComponents,
-		TooltipFlag isAdvanced,
+		TooltipFlag tooltipFlag,
 		CallbackInfo callbackInfo
 	) {
 		if (!CCGConfig.config.goggles.enhancedInfo) return;
 		callbackInfo.cancel();
-		super.appendHoverText(stack, level, tooltipComponents, isAdvanced);
+		super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
 		var compoundNbt = stack.getOrCreateTag();
 		var address = compoundNbt.getString("Address");
 		if (compoundNbt.contains("Address", Tag.TAG_STRING) && !address.isBlank())

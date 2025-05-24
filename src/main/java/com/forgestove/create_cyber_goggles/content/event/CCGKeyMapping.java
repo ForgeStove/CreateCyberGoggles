@@ -5,12 +5,14 @@ import net.minecraft.client.*;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.common.util.Lazy;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 public enum CCGKeyMapping {
 	openConfig(GLFW.GLFW_KEY_UNKNOWN),
 	openStock(GLFW.GLFW_KEY_UNKNOWN),
 	previewFilter(GLFW.GLFW_KEY_UNKNOWN),
-	toggleDiving(GLFW.GLFW_KEY_UNKNOWN);
+	toggleDiving(GLFW.GLFW_KEY_UNKNOWN),
+	showStress(GLFW.GLFW_KEY_TAB);
 	private final Lazy<KeyMapping> keyMapping;
 	CCGKeyMapping(int key) {
 		var id = CreateCyberGoggles.ID;
@@ -25,7 +27,7 @@ public enum CCGKeyMapping {
 	public static void register(RegisterKeyMappingsEvent event) {
 		for (var key : values()) event.register(key.get());
 	}
-	public KeyMapping get() {
+	public @NotNull KeyMapping get() {
 		return keyMapping.get();
 	}
 	public boolean isDown() {

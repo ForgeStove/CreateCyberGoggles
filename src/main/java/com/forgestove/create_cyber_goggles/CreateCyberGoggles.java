@@ -18,10 +18,7 @@ public class CreateCyberGoggles {
 	public static class ClientGameEvents {
 		@SubscribeEvent
 		public static void key(Key event) {
-			KeyInput.toggleDiving();
-			KeyInput.openConfigScreen();
-			KeyInput.openStockScreen();
-			KeyInput.previewFilterScreen();
+			KeyInput.tick();
 		}
 		@SubscribeEvent
 		public static void mouseScrollingEvent(MouseScrollingEvent event) {

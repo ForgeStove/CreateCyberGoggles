@@ -3,11 +3,17 @@ import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory;
 import net.minecraftforge.fml.ModLoadingContext;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Consumer;
 public class CCGConfig {
 	public static CCGConfigData config;
 	public static void register() {
 		config = AutoConfig.register(CCGConfigData.class, Toml4jConfigSerializer::new).getConfig();
 		var factory = new ConfigScreenFactory((mc, screen) -> AutoConfig.getConfigScreen(CCGConfigData.class, screen).get());
 		ModLoadingContext.get().registerExtensionPoint(ConfigScreenFactory.class, () -> factory);
+	}
+	public static <T> void set(@NotNull Consumer<T> setter, T value) {
+		setter.accept(value);
 	}
 }

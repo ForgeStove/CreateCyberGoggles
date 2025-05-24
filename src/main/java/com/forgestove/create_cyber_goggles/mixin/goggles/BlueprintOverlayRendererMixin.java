@@ -29,7 +29,7 @@ public abstract class BlueprintOverlayRendererMixin {
 		remap = false,
 		cancellable = true
 	)
-	private static void injectRenderOverlay(
+	private static void renderOverlay(
 		ForgeGui gui,
 		GuiGraphics guiGraphics,
 		float partialTicks,
@@ -45,7 +45,7 @@ public abstract class BlueprintOverlayRendererMixin {
 		if (results.isEmpty()) {
 			guiGraphics.blit(WIDGETS_LOCATION, x, y, 24, 23, 22, 22);
 			GuiGameElement.of(Items.BARRIER).at(x + 3, y + 3).render(guiGraphics);
-		} else if (shopContext != null && !shopContext.checkout()) {
+		} else {
 			Common.index += Common.scrollDeltaY;
 			Common.scrollDeltaY = 0;
 			if (Common.index < 1) Common.index = results.size();

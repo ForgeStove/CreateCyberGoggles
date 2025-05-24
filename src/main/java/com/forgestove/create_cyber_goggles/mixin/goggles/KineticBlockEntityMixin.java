@@ -1,8 +1,11 @@
 package com.forgestove.create_cyber_goggles.mixin.goggles;
 import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
+import com.forgestove.create_cyber_goggles.content.event.CCGKeyMapping;
 import com.simibubi.create.content.kinetics.base.IRotate.*;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
+import com.simibubi.create.foundation.item.TooltipHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import org.spongepowered.asm.mixin.*;
@@ -12,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.List;
 @Mixin(KineticBlockEntity.class)
 public abstract class KineticBlockEntityMixin {
+	@Shadow(remap = false) protected float capacity, stress;
 	@Shadow(remap = false) protected boolean overStressed;
 	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), remap = false, cancellable = true)
 	private void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
@@ -26,6 +30,22 @@ public abstract class KineticBlockEntityMixin {
 		}
 		CreateLang.translate("gui.goggles.kinetic_stats").forGoggles(tooltip);
 		SpeedLevel.getFormattedSpeedText(getTheoreticalSpeed(), overStressed).forGoggles(tooltip);
+		if (!CCGKeyMapping.showStress.isDown()) return;
+		double stressFraction = stress / (capacity == 0 ? 1 : capacity);
+		CreateLang.translate("gui.stressometer.title").style(ChatFormatting.GRAY).forGoggles(tooltip);
+		if (getTheoreticalSpeed() == 0)
+			CreateLang.text(TooltipHelper.makeProgressBar(3, 0)).translate("gui.stressometer.no_rotation").style(ChatFormatting.DARK_GRAY)
+					  .forGoggles(tooltip);
+		else {
+			StressImpact.getFormattedStressText(stressFraction).forGoggles(tooltip);
+			CreateLang.translate("gui.stressometer.capacity").style(ChatFormatting.GRAY).forGoggles(tooltip);
+			double remainingCapacity = capacity - stress;
+			var su = CreateLang.translate("generic.unit.stress");
+			var stressTip = CreateLang.number(remainingCapacity).add(su).style(StressImpact.of(stressFraction).getRelativeColor());
+			if (remainingCapacity != capacity)
+				stressTip.text(ChatFormatting.GRAY, " / ").add(CreateLang.number(capacity).add(su).style(ChatFormatting.DARK_GRAY));
+			stressTip.forGoggles(tooltip, 1);
+		}
 	}
 	@Shadow(remap = false)
 	public abstract float getTheoreticalSpeed();

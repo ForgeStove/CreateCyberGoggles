@@ -5,7 +5,7 @@ import net.minecraft.client.*;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.common.util.Lazy;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.*;
 import org.lwjgl.glfw.GLFW;
 public enum CCGKeyMapping {
 	openConfig(GLFW.GLFW_KEY_UNKNOWN),
@@ -14,6 +14,7 @@ public enum CCGKeyMapping {
 	toggleDiving(GLFW.GLFW_KEY_UNKNOWN),
 	showStress(GLFW.GLFW_KEY_TAB);
 	private final Lazy<KeyMapping> keyMapping;
+	@Contract(pure = true)
 	CCGKeyMapping(int key) {
 		var id = CreateCyberGoggles.ID;
 		keyMapping = Lazy.of(() -> new KeyMapping(

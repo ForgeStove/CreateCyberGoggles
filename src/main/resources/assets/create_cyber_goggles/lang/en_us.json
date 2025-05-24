@@ -20,7 +20,7 @@
 	"text.autoconfig.create_cyber_goggles.option.armor.removeNetheriteFirstPerson.@Tooltip": "Remove the first-person render effect of the Netherite Backtank",
 	"text.autoconfig.create_cyber_goggles.option.chainConveyor.alwaysAllowRiding": "Always Allow Hanging",
 	"text.autoconfig.create_cyber_goggles.option.chainConveyor.alwaysAllowRiding.@Tooltip": "Hang on the chain conveyor without a wrench",
-	"text.autoconfig.create_cyber_goggles.option.chainConveyor.cardBoardedYourself": "Auto Pack Yourself",
+	"text.autoconfig.create_cyber_goggles.option.chainConveyor.cardBoardedYourself": "Automatically Pack Yourself",
 	"text.autoconfig.create_cyber_goggles.option.chainConveyor.cardBoardedYourself.@Tooltip": "Automatically turn yourself into a cardboard box when hanging on the chain",
 	"text.autoconfig.create_cyber_goggles.option.chainConveyor.enhancedConnection": "Enhanced Connection",
 	"text.autoconfig.create_cyber_goggles.option.chainConveyor.enhancedConnection.@Tooltip": "Remove the minimum connection distance and maximum tilt angle restrictions for chain conveyors",

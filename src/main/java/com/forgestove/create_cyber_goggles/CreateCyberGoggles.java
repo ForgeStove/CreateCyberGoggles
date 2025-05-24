@@ -10,6 +10,6 @@ public class CreateCyberGoggles implements ClientModInitializer {
 		CCGKeyMapping.register();
 		KeyInput.register();
 		OverlayRenderer.register();
-		KineticEffector.register();
+		KineticParticle.register();
 	}
 }

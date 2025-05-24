@@ -6,7 +6,7 @@ import com.simibubi.create.content.kinetics.base.*;
 import com.simibubi.create.foundation.utility.VecHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.Minecraft;
-public class KineticEffector {
+public class KineticParticle {
 	public static void register() {
 		WorldRenderEvents.AFTER_ENTITIES.register(context -> tick());
 	}

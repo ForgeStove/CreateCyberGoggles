@@ -1,5 +1,7 @@
 package com.forgestove.create_cyber_goggles.content.util;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
+import com.simibubi.create.content.logistics.filter.*;
+import com.simibubi.create.foundation.gui.ScreenOpener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.*;
@@ -49,5 +51,30 @@ public class Common {
 		if (!(mc.hitResult instanceof BlockHitResult blockHitResult)) return null;
 		if (!(blockHitResult.getType() == Type.BLOCK)) return null;
 		return mc.level.getBlockEntity(blockHitResult.getBlockPos());
+	}
+	/**
+	 * 打开与指定过滤器物品相关的筛选器界面。
+	 * <p>
+	 * 此方法会根据过滤器物品的类型，动态打开对应的筛选器界面。
+	 *
+	 * @param filter 需要打开筛选器界面的物品堆实例。
+	 *               如果物品不是 {@link FilterItem} 类型，方法将立即返回。
+	 */
+	public static void openFilterScreen(ItemStack filter) {
+		SafeRun.run(() -> {
+			if (!(filter.getItem() instanceof FilterItem filterItem)) return;
+			var mc = Minecraft.getInstance();
+			if (mc.player == null) return;
+			var inv = mc.player.getInventory();
+			var name = filter.getHoverName();
+			var field = FilterItem.class.getDeclaredField("type");
+			field.setAccessible(true);
+			var ordinal = ((Enum<?>) field.get(filterItem)).ordinal();
+			ScreenOpener.open(switch (ordinal) {
+				case 0 -> new FilterScreen(FilterMenu.create(-1, inv, filter), inv, name);
+				case 1 -> new AttributeFilterScreen(AttributeFilterMenu.create(-1, inv, filter), inv, name);
+				default -> throw new IllegalStateException("Unexpected value: " + ordinal);
+			});
+		});
 	}
 }

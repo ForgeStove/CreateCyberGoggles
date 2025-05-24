@@ -1,2 +1,3 @@
-- Optimized the kinetic particle effect
-- Fixed crash when loading backend which caused by missing config
+- Added shortcut key to display stress network information (Buggy)
+- Corrected some translations
+- Fixed the issue that the deployer could not display the stress network information

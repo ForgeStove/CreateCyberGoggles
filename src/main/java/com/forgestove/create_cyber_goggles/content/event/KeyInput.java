@@ -1,5 +1,4 @@
 package com.forgestove.create_cyber_goggles.content.event;
-import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
 import com.forgestove.create_cyber_goggles.content.config.*;
 import com.forgestove.create_cyber_goggles.content.util.Common;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
@@ -8,7 +7,6 @@ import me.shedaniel.autoconfig.AutoConfig;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
 
@@ -16,31 +14,26 @@ import java.util.Collections;
 public class KeyInput {
 	public static void register() {
 		ClientTickEvents.END_CLIENT_TICK.register(mc -> {
-			toggleDiving(mc);
-			openConfigScreen(mc);
-			previewFilterScreen(mc);
+			toggleDiving();
+			openConfigScreen();
+			previewFilterScreen();
 		});
 	}
-	public static void toggleDiving(Minecraft mc) {
-		if (!CCGKeyMapping.toggleDiving.consumeClick()) return;
-		var player = mc.player;
-		if (player == null || mc.screen != null) return;
-		var enabled = CCGConfig.config.armor.removeDivingBootsAffect;
-		CCGConfig.config.armor.removeDivingBootsAffect = !enabled;
-		player.displayClientMessage(
-			Component.translatable("message.%s.%sableDivingAffect".formatted(
-				CreateCyberGoggles.ID,
-				enabled ? "en" : "dis"
-			)), true
-		);
+	public static void toggleDiving() {
+		if (!CCGKeyMapping.toggleDiving.isDown()) return;
+		var armor = CCGConfig.config.armor;
+		CCGConfig.set(v -> armor.removeDivingBootsAffect = v, !armor.removeDivingBootsAffect);
+		Common.displayClientMessage(armor.removeDivingBootsAffect, "DivingAffect");
 	}
-	public static void openConfigScreen(Minecraft mc) {
+	public static void openConfigScreen() {
 		if (!CCGKeyMapping.openConfig.consumeClick()) return;
+		var mc = Minecraft.getInstance();
 		if (mc.screen != null) return;
 		mc.setScreen(AutoConfig.getConfigScreen(CCGConfigData.class, null).get());
 	}
-	public static void previewFilterScreen(Minecraft mc) {
+	public static void previewFilterScreen() {
 		if (!CCGKeyMapping.previewFilter.isDown()) return;
+		var mc = Minecraft.getInstance();
 		if (mc.screen != null) {
 			if (!(mc.screen instanceof AbstractContainerScreen<?> screen)) return;
 			var slot = screen.hoveredSlot;
@@ -51,8 +44,7 @@ public class KeyInput {
 			if (blockHitResult.getType() == Type.MISS) return;
 			var be = mc.level.getBlockEntity(blockHitResult.getBlockPos());
 			if (!(be instanceof SmartBlockEntity sbe)) return;
-			var behavior = Collections.singleton(sbe.getBehaviour(FilteringBehaviour.TYPE));
-			var first = behavior.iterator().next();
+			var first = Collections.singleton(sbe.getBehaviour(FilteringBehaviour.TYPE)).iterator().next();
 			if (!(first instanceof FilteringBehaviour)) return;
 			Common.openFilterScreen(first.getFilter(blockHitResult.getDirection()));
 		}

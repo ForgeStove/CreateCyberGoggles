@@ -1,9 +1,11 @@
 package com.forgestove.create_cyber_goggles.content.util;
+import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.foundation.gui.ScreenOpener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
@@ -51,6 +53,18 @@ public class Common {
 		if (!(mc.hitResult instanceof BlockHitResult blockHitResult)) return null;
 		if (!(blockHitResult.getType() == Type.BLOCK)) return null;
 		return mc.level.getBlockEntity(blockHitResult.getBlockPos());
+	}
+	/**
+	 * 显示一条格式化的客户端消息。
+	 *
+	 * @param currentValue 当前值，用于确定消息的启用或禁用状态
+	 * @param messageKey   消息的键，用于生成完整的消息标识符
+	 */
+	public static void displayClientMessage(boolean currentValue, String messageKey) {
+		var mc = Minecraft.getInstance();
+		if (mc.player == null || mc.screen != null) return;
+		var formatted = "message.%s.%sable%s".formatted(CreateCyberGoggles.ID, currentValue ? "en" : "dis", messageKey);
+		mc.player.displayClientMessage(Component.translatable(formatted), true);
 	}
 	/**
 	 * 打开与指定过滤器物品相关的筛选器界面。

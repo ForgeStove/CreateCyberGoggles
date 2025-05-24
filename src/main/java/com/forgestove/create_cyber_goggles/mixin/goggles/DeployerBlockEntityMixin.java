@@ -1,6 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.goggles;
 import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
-import com.simibubi.create.content.kinetics.base.IRotate.SpeedLevel;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.deployer.DeployerBlockEntity;
 import com.simibubi.create.foundation.item.TooltipHelper;
@@ -8,7 +7,6 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -38,20 +36,13 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 					  .style(ChatFormatting.GREEN).forGoggles(tooltip);
 		returnable.setReturnValue(true);
 	}
-	@Inject(method = "addToGoggleTooltip", at = @At("TAIL"), remap = false)
-	private void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
-		if (!CCGConfig.config.goggles.enhancedInfo) return;
-		SpeedLevel.getFormattedSpeedText(getTheoreticalSpeed(), overStressed).forGoggles(tooltip);
-	}
 	@Inject(
 		method = "addToGoggleTooltip", at = @At(
 		value = "INVOKE", target = "Lcom/simibubi/create/content/kinetics/deployer/DeployerBlockEntity;calculateStressApplied()F"
 	), remap = false, cancellable = true
 	)
-	private void hideInfoIfNeeded(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
-		var goggles = CCGConfig.config.goggles;
-		if (!goggles.enhancedInfo || !goggles.hideStaticKineticInfo) return;
-		if (!Mth.equal(getTheoreticalSpeed(), 0)) return;
-		returnable.setReturnValue(true);
+	private void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
+		if (!CCGConfig.config.goggles.enhancedInfo) return;
+		returnable.setReturnValue(super.addToGoggleTooltip(tooltip, isPlayerSneaking));
 	}
 }

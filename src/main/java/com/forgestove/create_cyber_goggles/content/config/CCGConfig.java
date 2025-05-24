@@ -12,11 +12,11 @@ public class CCGConfig implements ModMenuApi {
 	public static void register() {
 		config = AutoConfig.register(CCGConfigData.class, Toml4jConfigSerializer::new).getConfig();
 	}
+	public static <T> void set(@NotNull Consumer<T> setter, T value) {
+		setter.accept(value);
+	}
 	@Override
 	public ConfigScreenFactory<?> getModConfigScreenFactory() {
 		return screen -> AutoConfig.getConfigScreen(CCGConfigData.class, screen).get();
-	}
-	public static <T> void set(@NotNull Consumer<T> setter, T value) {
-		setter.accept(value);
 	}
 }

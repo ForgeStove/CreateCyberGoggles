@@ -8,7 +8,7 @@ plugins {
 base.archivesName.set(e("mod_id"))
 group = e("mod_group_id")
 version = "${e("minecraft_version")}-${e("mod_version")}+${e("upper_loader")}"
-java.toolchain.languageVersion.set(JavaLanguageVersion.of(e("javaVersion")))
+java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 idea.module {
 	isDownloadSources = true
 	isDownloadJavadoc = true

@@ -1,5 +1,5 @@
-package com.forgestove.create_cyber_goggles.content.event;
-import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
+package com.forgestove.create_cyber_goggles.event;
+import com.forgestove.create_cyber_goggles.CCG;
 import com.mojang.blaze3d.platform.InputConstants.Type;
 import net.minecraft.client.*;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
@@ -16,7 +16,7 @@ public enum CCGKeyMapping {
 	private final Lazy<KeyMapping> keyMapping;
 	@Contract(pure = true)
 	CCGKeyMapping(int key) {
-		var id = CreateCyberGoggles.ID;
+		var id = CCG.ID;
 		keyMapping = Lazy.of(() -> new KeyMapping(
 			"key." + id + "." + name(),
 			KeyConflictContext.UNIVERSAL,

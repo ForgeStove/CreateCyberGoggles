@@ -1,16 +1,22 @@
-package com.forgestove.create_cyber_goggles.content.config;
-import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
-import me.shedaniel.autoconfig.ConfigData;
+package com.forgestove.create_cyber_goggles;
+import me.shedaniel.autoconfig.*;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry.Category;
 import me.shedaniel.autoconfig.annotation.ConfigEntry.Gui.*;
-@Config(name = CreateCyberGoggles.ID)
-public class CCGConfigData implements ConfigData {
+import net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory;
+import net.minecraftforge.fml.ModLoadingContext;
+@Config(name = CCG.ID)
+public class CCGConfig implements ConfigData {
 	@Category("goggles") @TransitiveObject public Goggles goggles = new Goggles();
+	@Category("goggles") @CollapsibleObject public Goggles.GameMode gameMode = new Goggles.GameMode();
 	@Category("chainConveyor") @TransitiveObject public ChainConveyor chainConveyor = new ChainConveyor();
 	@Category("armor") @TransitiveObject public Armor armor = new Armor();
 	@Category("wrench") @TransitiveObject public Wrench wrench = new Wrench();
 	@Category("other") @TransitiveObject public Other other = new Other();
+	public static void register() {
+		var factory = new ConfigScreenFactory((mc, screen) -> AutoConfig.getConfigScreen(CCGConfig.class, screen).get());
+		ModLoadingContext.get().registerExtensionPoint(ConfigScreenFactory.class, () -> factory);
+	}
 	public static class Goggles {
 		@Tooltip public boolean enhancedInfo = true;
 		@Tooltip public boolean hideStaticKineticInfo = false;
@@ -18,10 +24,12 @@ public class CCGConfigData implements ConfigData {
 		@Tooltip public boolean renderExtraItems = true;
 		@Tooltip public boolean enableKineticEffect = true;
 		@Tooltip public boolean preciseNumbers = true;
-		@Tooltip public boolean enableInSurvival = true;
-		@Tooltip public boolean enableInCreative = true;
-		@Tooltip public boolean enableInSpectator = true;
-		@Tooltip public boolean enableInAdventure = true;
+		public static class GameMode {
+			@Tooltip public boolean enableInSurvival = true;
+			@Tooltip public boolean enableInCreative = true;
+			@Tooltip public boolean enableInSpectator = true;
+			@Tooltip public boolean enableInAdventure = true;
+		}
 	}
 	public static class ChainConveyor {
 		@Tooltip public boolean alwaysAllowRiding = false;

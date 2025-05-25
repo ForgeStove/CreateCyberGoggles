@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.goggles;
-import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
+import com.forgestove.create_cyber_goggles.CCG;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import net.minecraft.client.Minecraft;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,12 +15,12 @@ public abstract class GogglesItemMixin {
 			return;
 		}
 		if (mc.gameMode == null) return;
-		var goggles = CCGConfig.config.goggles;
+		var gameMode = CCG.CONFIG.gameMode;
 		if (!switch (mc.gameMode.getPlayerMode()) {
-			case SURVIVAL -> goggles.enableInSurvival;
-			case CREATIVE -> goggles.enableInCreative;
-			case SPECTATOR -> goggles.enableInSpectator;
-			case ADVENTURE -> goggles.enableInAdventure;
+			case SURVIVAL -> gameMode.enableInSurvival;
+			case CREATIVE -> gameMode.enableInCreative;
+			case SPECTATOR -> gameMode.enableInSpectator;
+			case ADVENTURE -> gameMode.enableInAdventure;
 		}) return;
 		returnable.setReturnValue(true);
 	}

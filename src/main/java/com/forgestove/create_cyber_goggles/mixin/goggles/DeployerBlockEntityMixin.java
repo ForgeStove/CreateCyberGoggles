@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.goggles;
-import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
+import com.forgestove.create_cyber_goggles.CCG;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.deployer.DeployerBlockEntity;
 import com.simibubi.create.foundation.item.TooltipHelper;
@@ -23,7 +23,7 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 	}
 	@Inject(method = "addToTooltip", at = @At("HEAD"), remap = false, cancellable = true)
 	private void addToTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
-		if (!CCGConfig.config.goggles.enhancedInfo) return;
+		if (!CCG.CONFIG.goggles.enhancedInfo) return;
 		super.addToTooltip(tooltip, isPlayerSneaking);
 		if (overflowItems.isEmpty()) {
 			returnable.setReturnValue(false);
@@ -42,7 +42,7 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 	), remap = false, cancellable = true
 	)
 	private void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
-		if (!CCGConfig.config.goggles.enhancedInfo) return;
+		if (!CCG.CONFIG.goggles.enhancedInfo) return;
 		returnable.setReturnValue(super.addToGoggleTooltip(tooltip, isPlayerSneaking));
 	}
 }

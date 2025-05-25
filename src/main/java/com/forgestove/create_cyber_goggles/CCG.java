@@ -1,6 +1,7 @@
 package com.forgestove.create_cyber_goggles;
-import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
-import com.forgestove.create_cyber_goggles.content.event.*;
+import com.forgestove.create_cyber_goggles.event.*;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent.*;
 import net.minecraftforge.client.event.*;
@@ -8,11 +9,13 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-@Mod(CreateCyberGoggles.ID)
-public class CreateCyberGoggles {
+import net.minecraftforge.fml.loading.FMLEnvironment;
+@Mod(CCG.ID)
+public class CCG {
 	public static final String ID = "create_cyber_goggles";
-	public CreateCyberGoggles() {
-		CCGConfig.register();
+	public static final CCGConfig CONFIG = AutoConfig.register(CCGConfig.class, Toml4jConfigSerializer::new).getConfig();
+	public CCG() {
+		if (FMLEnvironment.dist == Dist.CLIENT) CCGConfig.register();
 	}
 	@EventBusSubscriber(modid = ID, value = Dist.CLIENT)
 	public static class ClientGameEvents {

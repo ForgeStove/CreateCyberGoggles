@@ -1,4 +1,4 @@
-package com.forgestove.create_cyber_goggles.content.util;
+package com.forgestove.create_cyber_goggles.util;
 /**
  * 一个类似于{@link Runnable}的函数式接口。
  * <p>它返回一个结果，或者在无法计算结果时返回null。

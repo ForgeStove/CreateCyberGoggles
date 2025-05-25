@@ -1,6 +1,6 @@
-package com.forgestove.create_cyber_goggles.content.event;
-import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
-import com.forgestove.create_cyber_goggles.content.util.Common;
+package com.forgestove.create_cyber_goggles.event;
+import com.forgestove.create_cyber_goggles.CCG;
+import com.forgestove.create_cyber_goggles.util.Common;
 import com.simibubi.create.content.kinetics.base.IRotate.SpeedLevel;
 import com.simibubi.create.content.kinetics.base.*;
 import net.createmod.catnip.math.VecHelper;
@@ -9,7 +9,7 @@ import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent.Stage;
 public class KineticParticle {
 	public static void tick(RenderLevelStageEvent event) {
-		if (!CCGConfig.config.goggles.enableKineticEffect) return;
+		if (!CCG.CONFIG.goggles.enableKineticEffect) return;
 		if (event.getStage() != Stage.AFTER_PARTICLES) return;
 		var kbe = Common.getSelectedKBE();
 		if (kbe == null) return;

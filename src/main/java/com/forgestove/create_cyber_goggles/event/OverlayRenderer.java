@@ -1,7 +1,6 @@
-package com.forgestove.create_cyber_goggles.content.event;
-import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
-import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
-import com.forgestove.create_cyber_goggles.content.util.Common;
+package com.forgestove.create_cyber_goggles.event;
+import com.forgestove.create_cyber_goggles.CCG;
+import com.forgestove.create_cyber_goggles.util.Common;
 import com.simibubi.create.content.logistics.depot.DepotBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
 import net.minecraft.client.*;
@@ -13,12 +12,12 @@ public class OverlayRenderer {
 	public static void register(RegisterGuiLayersEvent event) {
 		event.registerAbove(
 			VanillaGuiLayers.HOTBAR,
-			ResourceLocation.fromNamespaceAndPath(CreateCyberGoggles.ID, "goggle_overlay"),
+			ResourceLocation.fromNamespaceAndPath(CCG.ID, "goggle_overlay"),
 			OverlayRenderer::renderOverlay
 		);
 	}
 	public static void renderOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
-		if (!CCGConfig.config.goggles.renderExtraItems) return;
+		if (!CCG.CONFIG.goggles.renderExtraItems) return;
 		var mc = Minecraft.getInstance();
 		if (mc.isPaused() || mc.screen != null) return;
 		var be = Common.getSelectedBE();

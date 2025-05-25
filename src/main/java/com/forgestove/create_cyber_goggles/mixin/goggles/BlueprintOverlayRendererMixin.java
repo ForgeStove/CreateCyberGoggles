@@ -1,6 +1,6 @@
 package com.forgestove.create_cyber_goggles.mixin.goggles;
-import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
-import com.forgestove.create_cyber_goggles.content.util.Common;
+import com.forgestove.create_cyber_goggles.CCG;
+import com.forgestove.create_cyber_goggles.util.Common;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer;
@@ -32,7 +32,7 @@ public abstract class BlueprintOverlayRendererMixin {
 		@Local(name = "y") int y,
 		@Local(name = "invalidShop") boolean invalidShop
 	) {
-		if (!CCGConfig.config.goggles.enhancedStoreRender) return;
+		if (!CCG.CONFIG.goggles.enhancedStoreRender) return;
 		callbackInfo.cancel();
 		if (results.isEmpty()) {
 			guiGraphics.blitSprite(HOTBAR_OFF_HAND_LEFT, x, y, 24, 23);

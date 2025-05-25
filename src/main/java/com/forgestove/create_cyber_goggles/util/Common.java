@@ -1,6 +1,5 @@
-package com.forgestove.create_cyber_goggles.content.util;
-import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
-import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
+package com.forgestove.create_cyber_goggles.util;
+import com.forgestove.create_cyber_goggles.CCG;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.logistics.filter.*;
@@ -27,7 +26,7 @@ public class Common {
 	 * @param player 本地玩家实体
 	 */
 	public static boolean testForStealth(LocalPlayer player) {
-		return CCGConfig.config.chainConveyor.cardBoardedYourself
+		return CCG.CONFIG.chainConveyor.cardBoardedYourself
 			&& !player.getAbilities().flying
 			&& AllItems.CARDBOARD_HELMET.isIn(player.getItemBySlot(EquipmentSlot.HEAD))
 			&& AllItems.CARDBOARD_CHESTPLATE.isIn(player.getItemBySlot(EquipmentSlot.CHEST))
@@ -98,7 +97,7 @@ public class Common {
 	public static void displayClientMessage(boolean currentValue, String messageKey) {
 		var mc = Minecraft.getInstance();
 		if (mc.player == null || mc.screen != null) return;
-		var formatted = "message.%s.%sable%s".formatted(CreateCyberGoggles.ID, currentValue ? "en" : "dis", messageKey);
+		var formatted = "message.%s.%sable%s".formatted(CCG.ID, currentValue ? "en" : "dis", messageKey);
 		mc.player.displayClientMessage(Component.translatable(formatted), true);
 	}
 	/**

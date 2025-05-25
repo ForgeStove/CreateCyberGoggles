@@ -1,6 +1,7 @@
 package com.forgestove.create_cyber_goggles.mixin.chainConveyor;
-import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
-import com.forgestove.create_cyber_goggles.content.util.Common;
+import com.forgestove.create_cyber_goggles.CCG;
+import com.forgestove.create_cyber_goggles.util.Common;
+import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.simibubi.create.*;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.kinetics.chainConveyor.*;
@@ -17,7 +18,7 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 	@Shadow public static float selectedChainPosition;
 	@Inject(method = "isActive", at = @At("HEAD"), cancellable = true)
 	private static void isActive(CallbackInfoReturnable<Boolean> returnable) {
-		if (!CCGConfig.config.chainConveyor.alwaysAllowRiding) return;
+		if (!CCG.CONFIG.chainConveyor.alwaysAllowRiding) return;
 		returnable.setReturnValue(false);
 		var mc = Minecraft.getInstance();
 		var player = mc.player;
@@ -28,16 +29,16 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 		)) return;
 		returnable.setReturnValue(true);
 	}
-	@Redirect(
+	@WrapOperation(
 		method = "onUse",
 		at = @At(value = "INVOKE", target = "Lcom/simibubi/create/AllTags$AllItemTags;matches(Lnet/minecraft/world/item/ItemStack;)Z")
 	)
-	private static boolean onUse(AllItemTags instance, ItemStack stack) {
-		return !CCGConfig.config.chainConveyor.alwaysAllowRiding && instance.matches(stack);
+	private static boolean onUse(AllItemTags instance, ItemStack stack, Operation<Boolean> original) {
+		return !CCG.CONFIG.chainConveyor.alwaysAllowRiding && original.call(instance, stack);
 	}
 	@Inject(method = "onUse", at = @At("TAIL"))
 	private static void injectTail(CallbackInfoReturnable<Boolean> returnable) {
-		if (!CCGConfig.config.chainConveyor.alwaysAllowRiding) return;
+		if (!CCG.CONFIG.chainConveyor.alwaysAllowRiding) return;
 		var player = Minecraft.getInstance().player;
 		if (player == null) return;
 		var mainHandItem = player.getMainHandItem();

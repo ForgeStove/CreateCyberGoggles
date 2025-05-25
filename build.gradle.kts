@@ -28,6 +28,10 @@ tasks.processResources {
 	into("build/resources/main")
 	duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
+tasks.register("publish") {
+	dependsOn(tasks.build)
+	dependsOn(tasks.publishMods)
+}
 modAccessor {
 	createTransformConfiguration(configurations.compileOnly.get())
 	accessTransformerFiles = project.files("src/main/resources/META-INF/accesstransformer.cfg")

@@ -15,12 +15,12 @@ public abstract class GogglesItemMixin {
 			return;
 		}
 		if (mc.gameMode == null) return;
-		var goggles = CCG.CONFIG.goggles;
+		var gameMode = CCG.CONFIG.gameMode;
 		if (!switch (mc.gameMode.getPlayerMode()) {
-			case SURVIVAL -> goggles.enableInSurvival;
-			case CREATIVE -> goggles.enableInCreative;
-			case SPECTATOR -> goggles.enableInSpectator;
-			case ADVENTURE -> goggles.enableInAdventure;
+			case SURVIVAL -> gameMode.enableInSurvival;
+			case CREATIVE -> gameMode.enableInCreative;
+			case SPECTATOR -> gameMode.enableInSpectator;
+			case ADVENTURE -> gameMode.enableInAdventure;
 		}) return;
 		returnable.setReturnValue(true);
 	}

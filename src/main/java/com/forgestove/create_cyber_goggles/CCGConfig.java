@@ -8,6 +8,7 @@ import net.fabricmc.api.*;
 @Config(name = CCG.ID)
 public class CCGConfig implements ConfigData, ModMenuApi {
 	@Category("goggles") @TransitiveObject public Goggles goggles = new Goggles();
+	@Category("goggles") @CollapsibleObject public Goggles.GameMode gameMode = new Goggles.GameMode();
 	@Category("armor") @TransitiveObject public Armor armor = new Armor();
 	@Category("other") @TransitiveObject public Other other = new Other();
 	@Override
@@ -21,10 +22,12 @@ public class CCGConfig implements ConfigData, ModMenuApi {
 		@Tooltip public boolean renderExtraItems = true;
 		@Tooltip public boolean enableKineticEffect = true;
 		@Tooltip public boolean preciseNumbers = true;
-		@Tooltip public boolean enableInSurvival = true;
-		@Tooltip public boolean enableInCreative = true;
-		@Tooltip public boolean enableInSpectator = true;
-		@Tooltip public boolean enableInAdventure = true;
+		public static class GameMode {
+			@Tooltip public boolean enableInSurvival = true;
+			@Tooltip public boolean enableInCreative = true;
+			@Tooltip public boolean enableInSpectator = true;
+			@Tooltip public boolean enableInAdventure = true;
+		}
 	}
 	public static class Armor {
 		@Tooltip public boolean removeNetheriteFirstPerson = false;

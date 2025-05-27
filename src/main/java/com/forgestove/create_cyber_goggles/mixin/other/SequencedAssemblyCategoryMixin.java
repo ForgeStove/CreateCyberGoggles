@@ -14,9 +14,9 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
-@Mixin(SequencedAssemblyCategory.class)
+@Mixin(value = SequencedAssemblyCategory.class, remap = false)
 public abstract class SequencedAssemblyCategoryMixin {
-	@Inject(method = "setRecipe*", at = @At("TAIL"), remap = false)
+	@Inject(method = "setRecipe*", at = @At("TAIL"))
 	private void setRecipe(IRecipeLayoutBuilder builder, SequencedAssemblyRecipe recipe, IFocusGroup focuses, CallbackInfo callbackInfo) {
 		if (!CCG.CONFIG.other.nonrandomScrap) return;
 		var size = 8;
@@ -37,9 +37,9 @@ public abstract class SequencedAssemblyCategoryMixin {
 			});
 		}
 	}
-	@Shadow(remap = false)
+	@Shadow
 	protected abstract MutableComponent chanceComponent(float chance);
-	@Inject(method = "chanceComponent", at = @At("HEAD"), remap = false, cancellable = true)
+	@Inject(method = "chanceComponent", at = @At("HEAD"), cancellable = true)
 	protected void chanceComponent(float chance, CallbackInfoReturnable<MutableComponent> returnable) {
 		if (!CCG.CONFIG.goggles.preciseNumbers) return;
 		if (chance * 100 == (int) (chance * 100)) return;

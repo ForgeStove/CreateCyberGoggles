@@ -1,6 +1,7 @@
 package com.forgestove.create_cyber_goggles.mixin.chainConveyor;
 import com.forgestove.create_cyber_goggles.CCG;
 import com.forgestove.create_cyber_goggles.util.Common;
+import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.simibubi.create.*;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.kinetics.chainConveyor.*;
@@ -10,11 +11,11 @@ import net.minecraft.world.item.*;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-@Mixin(ChainConveyorInteractionHandler.class)
+@Mixin(value = ChainConveyorInteractionHandler.class, remap = false)
 public abstract class ChainConveyorInteractionHandlerMixin {
-	@Shadow(remap = false) public static BlockPos selectedConnection, selectedLift;
-	@Shadow(remap = false) public static float selectedChainPosition;
-	@Inject(method = "isActive", at = @At("HEAD"), remap = false, cancellable = true)
+	@Shadow public static BlockPos selectedConnection, selectedLift;
+	@Shadow public static float selectedChainPosition;
+	@Inject(method = "isActive", at = @At("HEAD"), cancellable = true)
 	private static void isActive(CallbackInfoReturnable<Boolean> returnable) {
 		if (!CCG.CONFIG.chainConveyor.alwaysAllowRiding) return;
 		returnable.setReturnValue(false);
@@ -27,15 +28,14 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 		)) return;
 		returnable.setReturnValue(true);
 	}
-	@Redirect(
+	@WrapOperation(
 		method = "onUse",
-		at = @At(value = "INVOKE", target = "Lcom/simibubi/create/AllTags$AllItemTags;matches(Lnet/minecraft/world/item/ItemStack;)Z"),
-		remap = false
+		at = @At(value = "INVOKE", target = "Lcom/simibubi/create/AllTags$AllItemTags;matches(Lnet/minecraft/world/item/ItemStack;)Z")
 	)
-	private static boolean onUse(AllItemTags instance, ItemStack stack) {
-		return !CCG.CONFIG.chainConveyor.alwaysAllowRiding && instance.matches(stack);
+	private static boolean onUse(AllItemTags instance, ItemStack stack, Operation<Boolean> original) {
+		return !CCG.CONFIG.chainConveyor.alwaysAllowRiding && original.call(instance, stack);
 	}
-	@Inject(method = "onUse", at = @At("TAIL"), remap = false)
+	@Inject(method = "onUse", at = @At("TAIL"))
 	private static void injectTail(CallbackInfoReturnable<Boolean> returnable) {
 		if (!CCG.CONFIG.chainConveyor.alwaysAllowRiding) return;
 		var player = Minecraft.getInstance().player;

@@ -15,13 +15,13 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
-@Mixin(DeployerBlockEntity.class)
+@Mixin(value = DeployerBlockEntity.class, remap = false)
 public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
-	@Shadow(remap = false) protected List<ItemStack> overflowItems;
+	@Shadow protected List<ItemStack> overflowItems;
 	public DeployerBlockEntityMixin(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
 		super(typeIn, pos, state);
 	}
-	@Inject(method = "addToTooltip", at = @At("HEAD"), remap = false, cancellable = true)
+	@Inject(method = "addToTooltip", at = @At("HEAD"), cancellable = true)
 	private void addToTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return;
 		super.addToTooltip(tooltip, isPlayerSneaking);
@@ -39,7 +39,7 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 	@Inject(
 		method = "addToGoggleTooltip", at = @At(
 		value = "INVOKE", target = "Lcom/simibubi/create/content/kinetics/deployer/DeployerBlockEntity;calculateStressApplied()F"
-	), remap = false, cancellable = true
+	), cancellable = true
 	)
 	private void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return;

@@ -9,13 +9,13 @@ import net.minecraft.world.level.GameType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-@Mixin(RadialWrenchHandler.class)
+@Mixin(value = RadialWrenchHandler.class, remap = false)
 public abstract class RadialWrenchHandlerMixin {
 	@WrapOperation(
 		method = "onKeyInput", at = @At(
 		value = "INVOKE",
 		target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;getPlayerMode()Lnet/minecraft/world/level/GameType;"
-	), remap = false
+	)
 	)
 	private static GameType wrapPlayerMode(MultiPlayerGameMode instance, Operation<GameType> original) {
 		return CCG.CONFIG.wrench.alwaysAllowRotating ? null : original.call(instance);
@@ -23,12 +23,12 @@ public abstract class RadialWrenchHandlerMixin {
 	@WrapOperation(
 		method = "onKeyInput", at = @At(
 		value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getItem()Lnet/minecraft/world/item/Item;"
-	), remap = false
+	)
 	)
 	private static Item wrapMainHandItem(ItemStack instance, Operation<Item> original) {
 		return CCG.CONFIG.wrench.alwaysAllowRotating ? AllItems.WRENCH.get() : original.call(instance);
 	}
-	@Inject(method = "clientTick", at = @At("HEAD"), remap = false, cancellable = true)
+	@Inject(method = "clientTick", at = @At("HEAD"), cancellable = true)
 	private static void clientTick(CallbackInfo callbackInfo) {
 		if (!CCG.CONFIG.wrench.removeCooldown) return;
 		callbackInfo.cancel();

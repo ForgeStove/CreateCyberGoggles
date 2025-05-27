@@ -17,18 +17,13 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
-@Mixin(BlueprintOverlayRenderer.class)
+@Mixin(value = BlueprintOverlayRenderer.class, remap = false)
 public abstract class BlueprintOverlayRendererMixin {
 	@Unique private static final ResourceLocation WIDGETS_LOCATION = new ResourceLocation("textures/gui/widgets.png");
-	@Shadow(remap = false) static List<ItemStack> results;
-	@Shadow(remap = false) static boolean resultCraftable;
-	@Shadow(remap = false) static BlueprintOverlayShopContext shopContext;
-	@Inject(
-		method = "renderOverlay",
-		at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z", ordinal = 1),
-		remap = false,
-		cancellable = true
-	)
+	@Shadow static List<ItemStack> results;
+	@Shadow static boolean resultCraftable;
+	@Shadow static BlueprintOverlayShopContext shopContext;
+	@Inject(method = "renderOverlay", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z", ordinal = 1), cancellable = true)
 	private static void renderOverlay(
 		ForgeGui gui,
 		GuiGraphics guiGraphics,

@@ -4,9 +4,9 @@ import com.simibubi.create.content.equipment.armor.CardboardArmorStealthOverlay;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-@Mixin(CardboardArmorStealthOverlay.class)
+@Mixin(value = CardboardArmorStealthOverlay.class, remap = false)
 public abstract class CardboardArmorStealthOverlayMixin {
-	@Inject(method = "renderHelmetOverlay", at = @At("HEAD"), remap = false, cancellable = true)
+	@Inject(method = "renderHelmetOverlay", at = @At("HEAD"), cancellable = true)
 	private void renderHelmetOverlay(CallbackInfo callbackInfo) {
 		if (CCG.CONFIG.armor.removeBoxOverlay) callbackInfo.cancel();
 	}

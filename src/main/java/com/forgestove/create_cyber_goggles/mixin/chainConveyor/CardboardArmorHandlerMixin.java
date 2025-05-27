@@ -7,9 +7,9 @@ import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-@Mixin(CardboardArmorHandler.class)
+@Mixin(value = CardboardArmorHandler.class, remap = false)
 public abstract class CardboardArmorHandlerMixin {
-	@Inject(method = "testForStealth", at = @At("HEAD"), remap = false, cancellable = true)
+	@Inject(method = "testForStealth", at = @At("HEAD"), cancellable = true)
 	private static void testForStealth(Entity entityIn, CallbackInfoReturnable<Boolean> returnable) {
 		if (ChainConveyorRidingHandler.ridingChainConveyor == null) return;
 		if (!(entityIn instanceof LocalPlayer player)) return;

@@ -1,6 +1,7 @@
 package com.forgestove.create_cyber_goggles.mixin.chainConveyor;
 import com.forgestove.create_cyber_goggles.CCG;
 import com.forgestove.create_cyber_goggles.util.Common;
+import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.simibubi.create.AllPackets;
 import com.simibubi.create.AllTags.AllItemTags;
@@ -14,22 +15,20 @@ import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-@Mixin(ChainConveyorRidingHandler.class)
+@Mixin(value = ChainConveyorRidingHandler.class, remap = false)
 public abstract class ChainConveyorRidingHandlerMixin {
-	@Redirect(
+	@WrapOperation(
 		method = "clientTick", at = @At(
 		value = "INVOKE", target = "Lcom/simibubi/create/AllTags$AllItemTags;matches(Lnet/minecraft/world/item/ItemStack;)Z"
-	), remap = false
 	)
-	private static boolean redirectChainRideableCheck(AllItemTags instance, ItemStack stack) {
-		var player = Minecraft.getInstance().player;
-		if (player == null) return true;
-		return CCG.CONFIG.chainConveyor.alwaysAllowRiding || AllItemTags.CHAIN_RIDEABLE.matches(player.getMainHandItem());
+	)
+	private static boolean wrapChainRideableCheck(AllItemTags instance, ItemStack stack, Operation<Boolean> original) {
+		return CCG.CONFIG.chainConveyor.alwaysAllowRiding || original.call(instance, stack);
 	}
 	@Inject(
 		method = "clientTick", at = @At(
 		value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec3;length()D"
-	), remap = false, cancellable = true
+	), cancellable = true
 	)
 	private static void injectCustomDiffCheck(CallbackInfo callbackInfo, @Local(name = "diff") Vec3 diff) {
 		var chainConveyor = CCG.CONFIG.chainConveyor;

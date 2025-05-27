@@ -23,9 +23,7 @@ public abstract class ChainConveyorRidingHandlerMixin {
 	)
 	)
 	private static boolean wrapChainRideableCheck(AllItemTags instance, ItemStack stack, Operation<Boolean> original) {
-		var player = Minecraft.getInstance().player;
-		if (player == null) return true;
-		return CCG.CONFIG.chainConveyor.alwaysAllowRiding || AllItemTags.CHAIN_RIDEABLE.matches(player.getMainHandItem());
+		return CCG.CONFIG.chainConveyor.alwaysAllowRiding || original.call(instance, stack);
 	}
 	@Inject(
 		method = "clientTick", at = @At(

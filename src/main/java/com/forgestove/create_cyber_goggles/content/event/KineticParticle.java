@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.content.event;
-import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
+import com.forgestove.create_cyber_goggles.CCG;
 import com.forgestove.create_cyber_goggles.content.util.Common;
 import com.simibubi.create.content.kinetics.base.IRotate.SpeedLevel;
 import com.simibubi.create.content.kinetics.base.*;
@@ -11,7 +11,7 @@ public class KineticParticle {
 		WorldRenderEvents.AFTER_ENTITIES.register(context -> tick());
 	}
 	public static void tick() {
-		if (!CCGConfig.config.goggles.enableKineticEffect) return;
+		if (!CCG.CONFIG.goggles.enableKineticEffect) return;
 		var kbe = Common.getSelectedKBE();
 		if (kbe == null) return;
 		var mc = Minecraft.getInstance();

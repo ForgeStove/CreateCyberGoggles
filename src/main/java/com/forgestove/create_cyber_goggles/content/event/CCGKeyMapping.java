@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.content.event;
-import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
+import com.forgestove.create_cyber_goggles.CCG;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.*;
 import org.lwjgl.glfw.GLFW;
@@ -13,12 +13,12 @@ public enum CCGKeyMapping {
 	private final int defaultKeyCode;
 	public KeyMapping keyMapping;
 	CCGKeyMapping(int defaultKeyCode) {
-		name = "key.%s.%s".formatted(CreateCyberGoggles.ID, name());
+		name = "key.%s.%s".formatted(CCG.ID, name());
 		this.defaultKeyCode = defaultKeyCode;
 	}
 	public static void register() {
 		for (var key : values()) {
-			key.keyMapping = new KeyMapping(key.name, key.defaultKeyCode, "key.categories.%s".formatted(CreateCyberGoggles.ID));
+			key.keyMapping = new KeyMapping(key.name, key.defaultKeyCode, "key.categories.%s".formatted(CCG.ID));
 			KeyBindingHelper.registerKeyBinding(key.keyMapping);
 		}
 	}

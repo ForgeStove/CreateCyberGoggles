@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.content.util;
-import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
+import com.forgestove.create_cyber_goggles.CCG;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.foundation.gui.ScreenOpener;
@@ -63,7 +63,7 @@ public class Common {
 	public static void displayClientMessage(boolean currentValue, String messageKey) {
 		var mc = Minecraft.getInstance();
 		if (mc.player == null || mc.screen != null) return;
-		var formatted = "message.%s.%sable%s".formatted(CreateCyberGoggles.ID, currentValue ? "en" : "dis", messageKey);
+		var formatted = "message.%s.%sable%s".formatted(CCG.ID, currentValue ? "en" : "dis", messageKey);
 		mc.player.displayClientMessage(Component.translatable(formatted), true);
 	}
 	/**

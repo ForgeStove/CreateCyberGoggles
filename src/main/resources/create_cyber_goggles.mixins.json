@@ -11,7 +11,7 @@
 		"goggles.GeneratingKineticBlockEntityMixin",
 		"goggles.GogglesItemMixin",
 		"goggles.KineticBlockEntityMixin",
-		"goggles.LangMixin",
+		"goggles.LangNumberFormatMixin",
 		"goggles.PoweredShaftBlockEntityMixin",
 		"other.BackendMixin",
 		"other.CreateJEIMixin",

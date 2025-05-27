@@ -1,3 +1,1 @@
-- Added shortcut key to display stress network information (Buggy)
-- Corrected some translations
-- Fixed the issue that the deployer could not display the stress network information
+- Refactored mixins and configuration

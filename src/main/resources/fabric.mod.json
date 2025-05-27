@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"id": "create_cyber_goggles",
+	"id": "${mod_id}",
 	"version": "${mod_version}",
 	"name": "${mod_name}",
 	"description": "${mod_description}",
@@ -11,15 +11,15 @@
 		"homepage": "${mod_display_url}",
 		"issues": "${mod_issue_url}"
 	},
-	"license": "MIT",
+	"license": "${mod_license}",
 	"icon": "icon.png",
 	"environment": "client",
 	"entrypoints": {
 		"client": [
-			"com.forgestove.create_cyber_goggles.CreateCyberGoggles"
+			"com.forgestove.create_cyber_goggles.CCG"
 		],
 		"modmenu": [
-			"com.forgestove.create_cyber_goggles.content.config.CCGConfig"
+			"com.forgestove.create_cyber_goggles.CCGConfig"
 		]
 	},
 	"mixins": [

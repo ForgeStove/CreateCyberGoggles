@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.goggles;
-import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
+import com.forgestove.create_cyber_goggles.CCG;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.deployer.DeployerBlockEntity;
 import com.simibubi.create.foundation.item.TooltipHelper;
@@ -15,15 +15,15 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
-@Mixin(DeployerBlockEntity.class)
+@Mixin(value = DeployerBlockEntity.class, remap = false)
 public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
-	@Shadow(remap = false) protected List<ItemStack> overflowItems;
+	@Shadow protected List<ItemStack> overflowItems;
 	public DeployerBlockEntityMixin(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
 		super(typeIn, pos, state);
 	}
-	@Inject(method = "addToTooltip", at = @At("HEAD"), remap = false, cancellable = true)
+	@Inject(method = "addToTooltip", at = @At("HEAD"), cancellable = true)
 	private void addToTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
-		if (!CCGConfig.config.goggles.enhancedInfo) return;
+		if (!CCG.CONFIG.goggles.enhancedInfo) return;
 		super.addToTooltip(tooltip, isPlayerSneaking);
 		if (overflowItems.isEmpty()) {
 			returnable.setReturnValue(false);
@@ -38,10 +38,10 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 	@Inject(
 		method = "addToGoggleTooltip", at = @At(
 		value = "INVOKE", target = "Lcom/simibubi/create/content/kinetics/deployer/DeployerBlockEntity;calculateStressApplied()F"
-	), remap = false, cancellable = true
+	), cancellable = true
 	)
 	private void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
-		if (!CCGConfig.config.goggles.enhancedInfo) return;
+		if (!CCG.CONFIG.goggles.enhancedInfo) return;
 		returnable.setReturnValue(super.addToGoggleTooltip(tooltip, isPlayerSneaking));
 	}
 }

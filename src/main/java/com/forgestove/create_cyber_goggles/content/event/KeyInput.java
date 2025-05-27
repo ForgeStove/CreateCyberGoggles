@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.content.event;
-import com.forgestove.create_cyber_goggles.content.config.*;
+import com.forgestove.create_cyber_goggles.*;
 import com.forgestove.create_cyber_goggles.content.util.Common;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
@@ -21,15 +21,15 @@ public class KeyInput {
 	}
 	public static void toggleDiving() {
 		if (!CCGKeyMapping.toggleDiving.isDown()) return;
-		var armor = CCGConfig.config.armor;
-		CCGConfig.set(v -> armor.removeDivingBootsAffect = v, !armor.removeDivingBootsAffect);
+		var armor = CCG.CONFIG.armor;
+		armor.removeDivingBootsAffect = !armor.removeDivingBootsAffect;
 		Common.displayClientMessage(armor.removeDivingBootsAffect, "DivingAffect");
 	}
 	public static void openConfigScreen() {
 		if (!CCGKeyMapping.openConfig.consumeClick()) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) return;
-		mc.setScreen(AutoConfig.getConfigScreen(CCGConfigData.class, null).get());
+		mc.setScreen(AutoConfig.getConfigScreen(CCGConfig.class, null).get());
 	}
 	public static void previewFilterScreen() {
 		if (!CCGKeyMapping.previewFilter.isDown()) return;

@@ -1,14 +1,20 @@
-package com.forgestove.create_cyber_goggles.content.config;
-import com.forgestove.create_cyber_goggles.CreateCyberGoggles;
-import me.shedaniel.autoconfig.ConfigData;
+package com.forgestove.create_cyber_goggles;
+import com.terraformersmc.modmenu.api.*;
+import me.shedaniel.autoconfig.*;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry.Category;
 import me.shedaniel.autoconfig.annotation.ConfigEntry.Gui.*;
-@Config(name = CreateCyberGoggles.ID)
-public class CCGConfigData implements ConfigData {
+import net.fabricmc.api.*;
+@Config(name = CCG.ID)
+public class CCGConfig implements ConfigData, ModMenuApi {
 	@Category("goggles") @TransitiveObject public Goggles goggles = new Goggles();
 	@Category("armor") @TransitiveObject public Armor armor = new Armor();
 	@Category("other") @TransitiveObject public Other other = new Other();
+	@Override
+	@Environment(EnvType.CLIENT)
+	public ConfigScreenFactory<?> getModConfigScreenFactory() {
+		return screen -> AutoConfig.getConfigScreen(CCGConfig.class, screen).get();
+	}
 	public static class Goggles {
 		@Tooltip public boolean enhancedInfo = true;
 		@Tooltip public boolean hideStaticKineticInfo = false;

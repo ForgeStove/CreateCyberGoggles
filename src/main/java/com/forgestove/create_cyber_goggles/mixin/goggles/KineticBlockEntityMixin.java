@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.goggles;
-import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
+import com.forgestove.create_cyber_goggles.CCG;
 import com.forgestove.create_cyber_goggles.content.event.CCGKeyMapping;
 import com.simibubi.create.content.kinetics.base.IRotate.*;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
@@ -13,15 +13,15 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
-@Mixin(KineticBlockEntity.class)
+@Mixin(value = KineticBlockEntity.class, remap = false)
 public abstract class KineticBlockEntityMixin {
-	@Shadow(remap = false) protected float capacity, stress;
-	@Shadow(remap = false) protected boolean overStressed;
-	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), remap = false, cancellable = true)
+	@Shadow protected float capacity, stress, speed;
+	@Shadow protected boolean overStressed;
+	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), cancellable = true)
 	private void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
-		var goggles = CCGConfig.config.goggles;
+		var goggles = CCG.CONFIG.goggles;
 		if (!goggles.enhancedInfo) return;
-		var hide = !goggles.hideStaticKineticInfo || !Mth.equal(getTheoreticalSpeed(), 0);
+		var hide = !goggles.hideStaticKineticInfo || !Mth.equal(speed, 0);
 		returnable.setReturnValue(hide);
 		if (!hide) return;
 		if (StressImpact.isEnabled()) {
@@ -29,11 +29,11 @@ public abstract class KineticBlockEntityMixin {
 			if (!Mth.equal(stressAtBase, 0)) addStressImpactStats(tooltip, stressAtBase);
 		}
 		Lang.translate("gui.goggles.kinetic_stats").forGoggles(tooltip);
-		SpeedLevel.getFormattedSpeedText(getTheoreticalSpeed(), overStressed).forGoggles(tooltip);
+		SpeedLevel.getFormattedSpeedText(speed, overStressed).forGoggles(tooltip);
 		if (!CCGKeyMapping.showStress.isDown()) return;
 		double stressFraction = stress / (capacity == 0 ? 1 : capacity);
 		Lang.translate("gui.stressometer.title").style(ChatFormatting.GRAY).forGoggles(tooltip);
-		if (getTheoreticalSpeed() == 0)
+		if (speed == 0)
 			Lang.text(TooltipHelper.makeProgressBar(3, 0)).translate("gui.stressometer.no_rotation").style(ChatFormatting.DARK_GRAY)
 				.forGoggles(tooltip);
 		else {
@@ -47,10 +47,8 @@ public abstract class KineticBlockEntityMixin {
 			stressTip.forGoggles(tooltip, 1);
 		}
 	}
-	@Shadow(remap = false)
-	public abstract float getTheoreticalSpeed();
-	@Shadow(remap = false)
+	@Shadow
 	public abstract float calculateStressApplied();
-	@Shadow(remap = false)
+	@Shadow
 	protected abstract void addStressImpactStats(List<Component> tooltip, float stressAtBase);
 }

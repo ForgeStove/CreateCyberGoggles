@@ -1,5 +1,5 @@
 package com.forgestove.create_cyber_goggles.mixin.goggles;
-import com.forgestove.create_cyber_goggles.content.config.CCGConfig;
+import com.forgestove.create_cyber_goggles.CCG;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.steamEngine.PoweredShaftBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -11,14 +11,14 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
-@Mixin(PoweredShaftBlockEntity.class)
+@Mixin(value = PoweredShaftBlockEntity.class, remap = false)
 public abstract class PoweredShaftBlockEntityMixin extends GeneratingKineticBlockEntity {
 	public PoweredShaftBlockEntityMixin(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
 	}
-	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), remap = false, cancellable = true)
+	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), cancellable = true)
 	private void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
-		var goggles = CCGConfig.config.goggles;
+		var goggles = CCG.CONFIG.goggles;
 		if (!goggles.enhancedInfo) return;
 		if (goggles.hideStaticKineticInfo) return;
 		returnable.setReturnValue(super.addToGoggleTooltip(tooltip, isPlayerSneaking));

@@ -1,1 +1,2 @@
-- Refactored mixins and configuration
+- Refactored mixins
+- Fix issue

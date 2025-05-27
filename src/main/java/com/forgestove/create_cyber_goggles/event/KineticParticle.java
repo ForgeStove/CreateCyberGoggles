@@ -1,6 +1,6 @@
-package com.forgestove.create_cyber_goggles.content.event;
+package com.forgestove.create_cyber_goggles.event;
 import com.forgestove.create_cyber_goggles.CCG;
-import com.forgestove.create_cyber_goggles.content.util.Common;
+import com.forgestove.create_cyber_goggles.util.Common;
 import com.simibubi.create.content.kinetics.base.IRotate.SpeedLevel;
 import com.simibubi.create.content.kinetics.base.*;
 import com.simibubi.create.foundation.utility.VecHelper;

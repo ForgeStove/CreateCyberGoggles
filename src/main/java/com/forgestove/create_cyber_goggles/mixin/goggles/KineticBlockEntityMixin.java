@@ -1,6 +1,6 @@
 package com.forgestove.create_cyber_goggles.mixin.goggles;
 import com.forgestove.create_cyber_goggles.CCG;
-import com.forgestove.create_cyber_goggles.content.event.CCGKeyMapping;
+import com.forgestove.create_cyber_goggles.event.CCGKeyMapping;
 import com.simibubi.create.content.kinetics.base.IRotate.*;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.item.TooltipHelper;

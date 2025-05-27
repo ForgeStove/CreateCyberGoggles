@@ -1,4 +1,4 @@
-package com.forgestove.create_cyber_goggles.content.util;
+package com.forgestove.create_cyber_goggles.util;
 import com.forgestove.create_cyber_goggles.CCG;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.logistics.filter.*;

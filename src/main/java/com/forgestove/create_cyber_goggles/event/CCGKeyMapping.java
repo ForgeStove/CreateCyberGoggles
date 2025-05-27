@@ -1,4 +1,4 @@
-package com.forgestove.create_cyber_goggles.content.event;
+package com.forgestove.create_cyber_goggles.event;
 import com.forgestove.create_cyber_goggles.CCG;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.*;

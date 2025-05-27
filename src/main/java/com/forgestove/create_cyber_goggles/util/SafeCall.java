@@ -1,4 +1,4 @@
-package com.forgestove.create_cyber_goggles.content.util;
+package com.forgestove.create_cyber_goggles.util;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.Callable;

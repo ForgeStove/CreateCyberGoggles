@@ -1,6 +1,6 @@
 package com.forgestove.create_cyber_goggles.mixin.other;
 import com.forgestove.create_cyber_goggles.CCG;
-import com.forgestove.create_cyber_goggles.content.util.SafeRun;
+import com.forgestove.create_cyber_goggles.util.SafeRun;
 import com.jozufozu.flywheel.backend.Backend;
 import com.jozufozu.flywheel.config.*;
 import org.spongepowered.asm.mixin.Mixin;

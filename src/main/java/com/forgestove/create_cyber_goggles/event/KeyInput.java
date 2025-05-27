@@ -1,6 +1,6 @@
-package com.forgestove.create_cyber_goggles.content.event;
+package com.forgestove.create_cyber_goggles.event;
 import com.forgestove.create_cyber_goggles.*;
-import com.forgestove.create_cyber_goggles.content.util.Common;
+import com.forgestove.create_cyber_goggles.util.Common;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import me.shedaniel.autoconfig.AutoConfig;

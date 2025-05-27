@@ -15,13 +15,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.List;
 @Mixin(KineticBlockEntity.class)
 public abstract class KineticBlockEntityMixin {
-	@Shadow protected float capacity, stress;
+	@Shadow protected float capacity, stress, speed;
 	@Shadow protected boolean overStressed;
 	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), cancellable = true)
 	private void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
 		var goggles = CCG.CONFIG.goggles;
 		if (!goggles.enhancedInfo) return;
-		var hide = !goggles.hideStaticKineticInfo || !Mth.equal(getTheoreticalSpeed(), 0);
+		var hide = !goggles.hideStaticKineticInfo || !Mth.equal(speed, 0);
 		returnable.setReturnValue(hide);
 		if (!hide) return;
 		if (StressImpact.isEnabled()) {
@@ -29,11 +29,11 @@ public abstract class KineticBlockEntityMixin {
 			if (!Mth.equal(stressAtBase, 0)) addStressImpactStats(tooltip, stressAtBase);
 		}
 		CreateLang.translate("gui.goggles.kinetic_stats").forGoggles(tooltip);
-		SpeedLevel.getFormattedSpeedText(getTheoreticalSpeed(), overStressed).forGoggles(tooltip);
+		SpeedLevel.getFormattedSpeedText(speed, overStressed).forGoggles(tooltip);
 		if (!CCGKeyMapping.showStress.isDown()) return;
 		double stressFraction = stress / (capacity == 0 ? 1 : capacity);
 		CreateLang.translate("gui.stressometer.title").style(ChatFormatting.GRAY).forGoggles(tooltip);
-		if (getTheoreticalSpeed() == 0)
+		if (speed == 0)
 			CreateLang.text(TooltipHelper.makeProgressBar(3, 0)).translate("gui.stressometer.no_rotation").style(ChatFormatting.DARK_GRAY)
 					  .forGoggles(tooltip);
 		else {
@@ -47,8 +47,6 @@ public abstract class KineticBlockEntityMixin {
 			stressTip.forGoggles(tooltip, 1);
 		}
 	}
-	@Shadow
-	public abstract float getTheoreticalSpeed();
 	@Shadow
 	public abstract float calculateStressApplied();
 	@Shadow

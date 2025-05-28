@@ -48,6 +48,7 @@ repositories {
 	maven("https://mvn.devos.one/snapshots") // Registrate
 	maven("https://maven.shedaniel.me") // Cloth Config API
 	maven("https://maven.blamejared.com") // JEI
+	maven("https://api.modrinth.com/maven") // Modrinth
 }
 dependencies {
 	add("accessCompileOnly", "com.simibubi.create:create-${e("minecraft_version")}:${e("create_version")}:slim") { isTransitive = false }
@@ -59,6 +60,7 @@ dependencies {
 	implementation("com.tterrag.registrate:Registrate:${e("registrate_version")}")
 	implementation("me.shedaniel.cloth:cloth-config-${e("loader")}:${e("cloth_config_version")}")
 	implementation("mezz.jei:jei-${e("minecraft_version")}-${e("loader")}:${e("jei_version")}")
+	implementation("maven.modrinth:jade:${e("jade_version")}")
 }
 publishMods {
 	file.set(tasks.jar.get().archiveFile)

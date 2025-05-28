@@ -49,6 +49,7 @@ public class CCGConfig implements ConfigData {
 		@Tooltip public boolean removeCooldown = true;
 	}
 	public static class Other {
+		@Tooltip public boolean rightClickPenetrate = false;
 		@Tooltip public boolean rainbowDebug = false;
 		@Tooltip public boolean forcedBackend = false;
 		@Tooltip @RequiresRestart public boolean nonrandomScrap = true;

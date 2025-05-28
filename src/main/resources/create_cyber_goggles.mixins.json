@@ -4,6 +4,7 @@
 	"package": "com.forgestove.create_cyber_goggles.mixin",
 	"client": [
 		"AbstractFilterScreenMixin",
+		"ContraptionHandlerClientMixin",
 		"RadialWrenchHandlerMixin",
 		"StockKeeperRequestScreenMixin",
 		"armor.CardboardArmorStealthOverlayMixin",

@@ -1,2 +1,1 @@
-- Refactored mixins
-- Fix issue
+- New feature: Allow right-clicking to penetrate moving contraption

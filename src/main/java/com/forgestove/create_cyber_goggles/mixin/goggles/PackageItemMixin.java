@@ -36,8 +36,7 @@ public abstract class PackageItemMixin extends Item {
 		for (var i = 0; i < contents.getSlots(); i++) {
 			var itemstack = contents.getStackInSlot(i);
 			if (itemstack.isEmpty()) continue;
-			tooltipComponents.add(itemstack.getHoverName().copy().append(" x").append(String.valueOf(itemstack.getCount()))
-										   .withStyle(ChatFormatting.GRAY));
+			tooltipComponents.add(itemstack.getHoverName().copy().append(" x" + itemstack.getCount()).withStyle(ChatFormatting.GRAY));
 		}
 	}
 }

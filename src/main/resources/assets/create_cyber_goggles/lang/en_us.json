@@ -55,6 +55,8 @@
 	"text.autoconfig.create_cyber_goggles.option.other.nonrandomScrap.@Tooltip": "Display the content of random scrap",
 	"text.autoconfig.create_cyber_goggles.option.other.rainbowDebug": "Rainbow Debug",
 	"text.autoconfig.create_cyber_goggles.option.other.rainbowDebug.@Tooltip": "Enable rainbow debug mode",
+	"text.autoconfig.create_cyber_goggles.option.other.rightClickPenetrate": "Right Click Penetrate",
+	"text.autoconfig.create_cyber_goggles.option.other.rightClickPenetrate.@Tooltip": "Allow right-clicking to penetrate moving contraption",
 	"text.autoconfig.create_cyber_goggles.option.wrench.alwaysAllowRotating": "Always Allow Rotating Blocks",
 	"text.autoconfig.create_cyber_goggles.option.wrench.alwaysAllowRotating.@Tooltip": "Rotate blocks with hotkey without a wrench",
 	"text.autoconfig.create_cyber_goggles.option.wrench.removeCooldown": "Remove Cooldown",

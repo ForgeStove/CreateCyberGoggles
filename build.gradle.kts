@@ -62,6 +62,7 @@ repositories {
 	maven("https://maven.tterrag.com") // Registrate
 	maven("https://maven.shedaniel.me") // Cloth Config API
 	maven("https://maven.blamejared.com") // JEI
+	maven("https://api.modrinth.com/maven") // Modrinth
 }
 dependencies {
 	add("accessCompileOnly", "com.simibubi.create:create-${e("minecraft_version")}:${e("create_version")}:slim")
@@ -73,6 +74,7 @@ dependencies {
 	implementation("io.github.llamalad7:mixinextras-${e("loader")}:${e("mixin_extras_version")}")
 	modImplementation("me.shedaniel.cloth:cloth-config-${e("loader")}:${e("cloth_config_version")}")
 	modImplementation("mezz.jei:jei-${e("minecraft_version")}-${e("loader")}:${e("jei_version")}")
+	modImplementation("maven.modrinth:jade:${e("jade_version")}")
 	annotationProcessor("org.spongepowered:mixin:${e("mixin_version")}:processor")
 	compileOnly("org.jetbrains:annotations:${e("annotations_version")}")
 }

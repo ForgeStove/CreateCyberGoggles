@@ -4,8 +4,9 @@ plugins {
 	idea
 	id("net.neoforged.moddev") version "+"
 	id("me.modmuss50.mod-publish-plugin") version "+"
-	id("dev.vfyjxf.modaccessor") version "+"
 }
+buildscript { dependencies { classpath(fileTree("gradle/script")) } }
+apply(plugin = "dev.forgestove.modaccessor")
 base.archivesName.set(e("mod_id"))
 group = e("mod_group_id")
 version = "${e("minecraft_version")}-${e("mod_version")}+${e("upper_loader")}"
@@ -24,10 +25,6 @@ tasks.processResources {
 	}
 	into("build/resources/main")
 	duplicatesStrategy = DuplicatesStrategy.INCLUDE
-}
-modAccessor {
-	createTransformConfiguration(configurations.compileOnly.get())
-	accessTransformerFiles = files("src/main/resources/META-INF/modaccessor.cfg")
 }
 neoForge {
 	version = e("loader_version")
@@ -51,7 +48,7 @@ repositories {
 	maven("https://api.modrinth.com/maven") // Modrinth
 }
 dependencies {
-	add("accessCompileOnly", "com.simibubi.create:create-${e("minecraft_version")}:${e("create_version")}:slim") { isTransitive = false }
+	add("accessCompileOnly", "com.simibubi.create:create-${e("minecraft_version")}:${e("create_version")}:slim")
 	runtimeOnly("com.simibubi.create:create-${e("minecraft_version")}:${e("create_version")}:slim") { isTransitive = false }
 	implementation("net.createmod.ponder:Ponder-${e("upper_loader")}-${e("minecraft_version")}:${e("ponder_version")}") {
 		isTransitive = false

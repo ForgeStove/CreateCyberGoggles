@@ -33,9 +33,10 @@ public abstract class KineticBlockEntityMixin {
 		if (!CCGKeyMapping.showStress.isDown()) return;
 		double stressFraction = stress / (capacity == 0 ? 1 : capacity);
 		Lang.translate("gui.stressometer.title").style(ChatFormatting.GRAY).forGoggles(tooltip);
-		if (speed == 0)
-			Lang.text(TooltipHelper.makeProgressBar(3, 0)).translate("gui.stressometer.no_rotation").style(ChatFormatting.DARK_GRAY)
-				.forGoggles(tooltip);
+		if (speed == 0) Lang.text(TooltipHelper.makeProgressBar(3, 0))
+			.translate("gui.stressometer.no_rotation")
+			.style(ChatFormatting.DARK_GRAY)
+			.forGoggles(tooltip);
 		else {
 			StressImpact.getFormattedStressText(stressFraction).forGoggles(tooltip);
 			Lang.translate("gui.stressometer.capacity").style(ChatFormatting.GRAY).forGoggles(tooltip);

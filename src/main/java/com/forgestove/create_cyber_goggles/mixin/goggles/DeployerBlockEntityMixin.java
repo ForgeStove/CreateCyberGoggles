@@ -31,8 +31,10 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 		}
 		TooltipHelper.addHint(tooltip, "hint.full_deployer");
 		for (var itemStack : overflowItems)
-			Lang.builder().text("%s x%d".formatted(Component.translatable(itemStack.getDescriptionId()).getString(), itemStack.getCount()))
-				.style(ChatFormatting.GREEN).forGoggles(tooltip);
+			Lang.builder()
+				.add(Component.translatable(itemStack.getDescriptionId()).withStyle(ChatFormatting.GRAY))
+				.add(Lang.text(" x" + itemStack.getCount()).style(ChatFormatting.GREEN))
+				.forGoggles(tooltip);
 		returnable.setReturnValue(true);
 	}
 	@Inject(

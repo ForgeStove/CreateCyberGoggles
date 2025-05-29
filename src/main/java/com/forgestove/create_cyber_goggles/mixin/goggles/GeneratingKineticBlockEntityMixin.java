@@ -32,8 +32,12 @@ public abstract class GeneratingKineticBlockEntityMixin extends KineticBlockEnti
 			Lang.translate("gui.goggles.generator_stats").forGoggles(tooltip);
 			Lang.translate("tooltip.capacityProvided").style(ChatFormatting.GRAY).forGoggles(tooltip);
 			if (speed != getGeneratedSpeed()) stressBase *= getGeneratedSpeed() / speed;
-			Lang.number(Math.abs(stressBase * speed)).translate("generic.unit.stress").style(ChatFormatting.AQUA).space()
-				.add(Lang.translate("gui.goggles.at_current_speed").style(ChatFormatting.DARK_GRAY)).forGoggles(tooltip);
+			Lang.number(Math.abs(stressBase * speed))
+				.translate("generic.unit.stress")
+				.style(ChatFormatting.AQUA)
+				.space()
+				.add(Lang.translate("gui.goggles.at_current_speed").style(ChatFormatting.DARK_GRAY))
+				.forGoggles(tooltip);
 		}
 		returnable.setReturnValue(super.addToGoggleTooltip(tooltip, isPlayerSneaking));
 	}

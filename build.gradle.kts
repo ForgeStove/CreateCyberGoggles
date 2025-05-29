@@ -4,8 +4,9 @@ plugins {
 	idea
 	id("net.neoforged.moddev.legacyforge") version "+"
 	id("me.modmuss50.mod-publish-plugin") version "+"
-	id("dev.vfyjxf.modaccessor") version "+"
 }
+buildscript { dependencies { classpath(fileTree("gradle/script")) } }
+apply(plugin = "dev.forgestove.modaccessor")
 base.archivesName.set(e("mod_id"))
 group = e("mod_group_id")
 version = "${e("minecraft_version")}-${e("mod_version")}+${e("upper_loader")}"
@@ -31,10 +32,6 @@ tasks.processResources {
 tasks.register("publish") {
 	dependsOn(tasks.build)
 	dependsOn(tasks.publishMods)
-}
-modAccessor {
-	createTransformConfiguration(configurations.compileOnly.get())
-	accessTransformerFiles = project.files("src/main/resources/META-INF/accesstransformer.cfg")
 }
 mixin {
 	add(sourceSets.main.get(), "${e("mod_id")}.refmap.json")

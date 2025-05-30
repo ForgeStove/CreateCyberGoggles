@@ -67,12 +67,12 @@ dependencies {
 	modImplementation("net.createmod.ponder:Ponder-${e("upper_loader")}-${e("minecraft_version")}:${e("ponder_version")}")
 	modImplementation("dev.engine-room.flywheel:flywheel-${e("loader")}-${e("minecraft_version")}:${e("flywheel_version")}")
 	modImplementation("com.tterrag.registrate:Registrate:${e("registrate_version")}")
-	compileOnly("io.github.llamalad7:mixinextras-common:${e("mixin_extras_version")}")
-	implementation("io.github.llamalad7:mixinextras-${e("loader")}:${e("mixin_extras_version")}")
 	modImplementation("me.shedaniel.cloth:cloth-config-${e("loader")}:${e("cloth_config_version")}")
 	modImplementation("mezz.jei:jei-${e("minecraft_version")}-${e("loader")}:${e("jei_version")}")
 	modImplementation("maven.modrinth:jade:${e("jade_version")}")
 	annotationProcessor("org.spongepowered:mixin:${e("mixin_version")}:processor")
+	compileOnly("io.github.llamalad7:mixinextras-common:${e("mixin_extras_version")}")
+	implementation("io.github.llamalad7:mixinextras-${e("loader")}:${e("mixin_extras_version")}")
 	compileOnly("org.jetbrains:annotations:${e("annotations_version")}")
 }
 publishMods {

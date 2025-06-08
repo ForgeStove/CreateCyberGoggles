@@ -1,4 +1,5 @@
 package com.forgestove.create_cyber_goggles;
+import com.forgestove.create_cyber_goggles.CCGConfig.Goggles.GameMode;
 import me.shedaniel.autoconfig.*;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry.Category;
@@ -8,7 +9,7 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 @Config(name = CCG.ID)
 public class CCGConfig implements ConfigData {
 	@Category("goggles") @TransitiveObject public Goggles goggles = new Goggles();
-	@Category("goggles") @CollapsibleObject public Goggles.GameMode gameMode = new Goggles.GameMode();
+	@Category("goggles") @CollapsibleObject public GameMode gameMode = new GameMode();
 	@Category("chainConveyor") @TransitiveObject public ChainConveyor chainConveyor = new ChainConveyor();
 	@Category("armor") @TransitiveObject public Armor armor = new Armor();
 	@Category("wrench") @TransitiveObject public Wrench wrench = new Wrench();

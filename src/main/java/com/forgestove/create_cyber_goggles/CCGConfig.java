@@ -15,10 +15,8 @@ public class CCGConfig implements ConfigData {
 	@Category("wrench") @TransitiveObject public Wrench wrench = new Wrench();
 	@Category("other") @TransitiveObject public Other other = new Other();
 	public static void register(ModContainer container) {
-		container.registerExtensionPoint(
-			IConfigScreenFactory.class,
-			(modContainer, screen) -> AutoConfig.getConfigScreen(CCGConfig.class, screen).get()
-		);
+		IConfigScreenFactory factory = (modContainer, screen) -> AutoConfig.getConfigScreen(CCGConfig.class, screen).get();
+		container.registerExtensionPoint(IConfigScreenFactory.class, factory);
 	}
 	public static class Goggles {
 		@Tooltip public boolean enhancedInfo = true;

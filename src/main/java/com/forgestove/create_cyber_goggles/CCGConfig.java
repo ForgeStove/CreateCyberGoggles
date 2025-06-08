@@ -1,4 +1,5 @@
 package com.forgestove.create_cyber_goggles;
+import com.forgestove.create_cyber_goggles.CCGConfig.Goggles.GameMode;
 import com.terraformersmc.modmenu.api.*;
 import me.shedaniel.autoconfig.*;
 import me.shedaniel.autoconfig.annotation.Config;
@@ -8,7 +9,7 @@ import net.fabricmc.api.*;
 @Config(name = CCG.ID)
 public class CCGConfig implements ConfigData, ModMenuApi {
 	@Category("goggles") @TransitiveObject public Goggles goggles = new Goggles();
-	@Category("goggles") @CollapsibleObject public Goggles.GameMode gameMode = new Goggles.GameMode();
+	@Category("goggles") @CollapsibleObject public GameMode gameMode = new GameMode();
 	@Category("armor") @TransitiveObject public Armor armor = new Armor();
 	@Category("other") @TransitiveObject public Other other = new Other();
 	@Override

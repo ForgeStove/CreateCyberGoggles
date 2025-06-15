@@ -10,10 +10,6 @@ public abstract class GogglesItemMixin {
 	@Inject(method = "isWearingGoggles", at = @At("HEAD"), cancellable = true)
 	private static void isWearingGoggles(CallbackInfoReturnable<Boolean> returnable) {
 		var mc = Minecraft.getInstance();
-		if (mc.screen != null) {
-			returnable.setReturnValue(false);
-			return;
-		}
 		if (mc.gameMode == null) return;
 		var gameMode = CCG.CONFIG.gameMode;
 		if (!switch (mc.gameMode.getPlayerMode()) {

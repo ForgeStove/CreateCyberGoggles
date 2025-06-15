@@ -1,1 +1,1 @@
-- Refactored mixins and configuration
+- Fixed incorrect goggle judgment logic

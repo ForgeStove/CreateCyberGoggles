@@ -1,1 +1,1 @@
-- New feature: Allow right-clicking to penetrate moving contraption
+- Fixed incorrect goggle judgment logic

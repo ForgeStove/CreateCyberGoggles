@@ -8,8 +8,8 @@ public abstract class CreateJEIMixin {
 	@ModifyArg(
 		method = "loadCategories", at = @At(
 		value = "INVOKE",
-		target = "Lcom/simibubi/create/compat/jei/CreateJEI$CategoryBuilder;emptyBackground(II)"
-			+ "Lcom/simibubi/create/compat/jei/CreateJEI$CategoryBuilder;"
+		target = "Lcom/simibubi/create/compat/jei/category/CreateRecipeCategory$Builder;emptyBackground(II)"
+			+ "Lcom/simibubi/create/compat/jei/category/CreateRecipeCategory$Builder;"
 	), index = 1
 	)
 	private int loadCategories(int height) {

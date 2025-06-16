@@ -1,7 +1,6 @@
 @file:Suppress("SpellCheckingInspection")
 
 plugins {
-	idea
 	id("net.neoforged.moddev.legacyforge") version "+"
 	id("me.modmuss50.mod-publish-plugin") version "+"
 }
@@ -11,10 +10,6 @@ base.archivesName.set(e("mod_id"))
 group = e("mod_group_id")
 version = "${e("minecraft_version")}-${e("mod_version")}+${e("upper_loader")}"
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
-idea.module {
-	isDownloadSources = true
-	isDownloadJavadoc = true
-}
 tasks.jar {
 	from("LICENSE")
 	manifest { attributes(mapOf("MixinConfigs" to "${e("mod_id")}.mixins.json")) }

@@ -34,7 +34,10 @@ neoForge {
 	}
 	runs {
 		create("client").client()
-		configureEach { systemProperty("terminal.jline", "true") }
+		configureEach {
+			jvmArguments.addAll("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition")
+			systemProperty("terminal.jline", "true")
+		}
 	}
 	mods.create(e("mod_id")).sourceSet(sourceSets["main"])
 }

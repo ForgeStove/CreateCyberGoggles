@@ -8,12 +8,12 @@ import net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory;
 import net.minecraftforge.fml.ModLoadingContext;
 @Config(name = CCG.ID)
 public class CCGConfig implements ConfigData {
-	@Category("goggles") @TransitiveObject public Goggles goggles = new Goggles();
-	@Category("goggles") @CollapsibleObject public GameMode gameMode = new GameMode();
-	@Category("chainConveyor") @TransitiveObject public ChainConveyor chainConveyor = new ChainConveyor();
-	@Category("armor") @TransitiveObject public Armor armor = new Armor();
-	@Category("wrench") @TransitiveObject public Wrench wrench = new Wrench();
-	@Category("other") @TransitiveObject public Other other = new Other();
+	@Category("goggles") @TransitiveObject public final Goggles goggles = new Goggles();
+	@Category("goggles") @CollapsibleObject public final GameMode gameMode = new GameMode();
+	@Category("chainConveyor") @TransitiveObject public final ChainConveyor chainConveyor = new ChainConveyor();
+	@Category("armor") @TransitiveObject public final Armor armor = new Armor();
+	@Category("wrench") @TransitiveObject public final Wrench wrench = new Wrench();
+	@Category("other") @TransitiveObject public final Other other = new Other();
 	public static void register() {
 		var factory = new ConfigScreenFactory((mc, screen) -> AutoConfig.getConfigScreen(CCGConfig.class, screen).get());
 		ModLoadingContext.get().registerExtensionPoint(ConfigScreenFactory.class, () -> factory);

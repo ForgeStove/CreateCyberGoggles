@@ -1,1 +1,1 @@
-- Fixed incorrect goggle judgment logic
+- Fix JEI recipe mixin for Create-6.0.6

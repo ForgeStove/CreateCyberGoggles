@@ -7,8 +7,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.gui.overlay.*;
+import org.jetbrains.annotations.NotNull;
 public class OverlayRenderer {
-	public static void register(RegisterGuiOverlaysEvent event) {
+	public static void register(@NotNull RegisterGuiOverlaysEvent event) {
 		event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "goggle_overlay", OverlayRenderer::renderOverlay);
 	}
 	public static void renderOverlay(ForgeGui forgeGui, GuiGraphics guiGraphics, float v, int i, int i1) {

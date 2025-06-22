@@ -41,7 +41,7 @@ public class KineticDebugger {
 	 * @param level 当前客户端世界
 	 * @param kbe   当前选中的动力方块实体
 	 */
-	public static void updateKBEPath(ClientLevel level, KineticBlockEntity kbe) {
+	public static void updateKBEPath(ClientLevel level, @NotNull KineticBlockEntity kbe) {
 		if (kbe.source == lastSource && cachedKBEPath != null) return;
 		// 构建源KBE链表
 		var kbePath = new ArrayDeque<KineticBlockEntity>();
@@ -49,7 +49,7 @@ public class KineticDebugger {
 		while (currentBE != null) {
 			kbePath.addFirst(currentBE); // 逆序插入，真源在前
 			if (currentBE.source == null) break;
-			currentBE = (level.getBlockEntity(currentBE.source) instanceof KineticBlockEntity kbeSource) ? kbeSource : null;
+			currentBE = level.getBlockEntity(currentBE.source) instanceof KineticBlockEntity kbeSource ? kbeSource : null;
 		}
 		cachedKBEPath = new ArrayList<>(kbePath);
 		lastSource = kbe.source;

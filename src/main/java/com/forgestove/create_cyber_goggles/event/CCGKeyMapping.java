@@ -16,13 +16,11 @@ public enum CCGKeyMapping {
 	private final Lazy<KeyMapping> keyMapping;
 	@Contract(pure = true)
 	CCGKeyMapping(int key) {
-		keyMapping = Lazy.of(() -> new KeyMapping(
-			"key." + CCG.ID + "." + name(),
+		keyMapping = Lazy.of(() -> new KeyMapping("key." + CCG.ID + "." + name(),
 			KeyConflictContext.UNIVERSAL,
 			Type.KEYSYM,
 			key,
-			"key.categories." + CCG.ID
-		));
+			"key.categories." + CCG.ID));
 	}
 	public static void register(RegisterKeyMappingsEvent event) {
 		for (var key : values()) event.register(key.get());

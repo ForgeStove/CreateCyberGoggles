@@ -21,6 +21,6 @@ public abstract class PoweredShaftBlockEntityMixin extends GeneratingKineticBloc
 		var goggles = CCG.CONFIG.goggles;
 		if (!goggles.enhancedInfo) return;
 		if (goggles.hideStaticKineticInfo) return;
-		returnable.setReturnValue(super.addToGoggleTooltip(tooltip, isPlayerSneaking));
+		returnable.setReturnValue(addToGoggleTooltip(tooltip, isPlayerSneaking));
 	}
 }

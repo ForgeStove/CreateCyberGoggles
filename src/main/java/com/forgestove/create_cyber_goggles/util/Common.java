@@ -17,8 +17,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import org.jetbrains.annotations.*;
 public class Common {
-	public static StockTickerBlockEntity laststbe = null;
-	public static int index = 1, scrollDeltaY = 0;
+	public static StockTickerBlockEntity laststbe;
+	public static int index = 1, scrollDeltaY;
 	/**
 	 * 测试玩家是否穿着全套纸板盔甲并且不在飞行状态。
 	 *

@@ -43,7 +43,7 @@ public class KeyInput {
 		mc.setScreen(new StockKeeperRequestScreen(menu, inv, Common.laststbe.getBlockState().getBlock().getName()));
 	}
 	public static void previewFilterScreen() {
-		if (!(CCGKeyMapping.previewFilter.isDown())) return;
+		if (!CCGKeyMapping.previewFilter.isDown()) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) {
 			if (!(mc.screen instanceof AbstractContainerScreen<?> screen)) return;

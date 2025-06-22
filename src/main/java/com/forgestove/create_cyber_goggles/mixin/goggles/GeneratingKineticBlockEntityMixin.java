@@ -39,6 +39,6 @@ public abstract class GeneratingKineticBlockEntityMixin extends KineticBlockEnti
 				.add(CreateLang.translate("gui.goggles.at_current_speed").style(ChatFormatting.DARK_GRAY))
 				.forGoggles(tooltip);
 		}
-		returnable.setReturnValue(super.addToGoggleTooltip(tooltip, isPlayerSneaking));
+		returnable.setReturnValue(addToGoggleTooltip(tooltip, isPlayerSneaking));
 	}
 }

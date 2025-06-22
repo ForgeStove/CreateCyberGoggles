@@ -47,11 +47,9 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 			return;
 		}
 		if (selectedConnection == null) return;
-		CatnipServices.NETWORK.sendToServer(new ChainConveyorConnectionPacket(
-			selectedLift,
+		CatnipServices.NETWORK.sendToServer(new ChainConveyorConnectionPacket(selectedLift,
 			selectedLift.offset(selectedConnection),
 			mainHandItem.isEmpty() ? AllItems.WRENCH.asStack() : mainHandItem,
-			false
-		));
+			false));
 	}
 }

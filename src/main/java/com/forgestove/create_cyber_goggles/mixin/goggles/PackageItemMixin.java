@@ -25,7 +25,7 @@ public abstract class PackageItemMixin extends Item {
 	) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return;
 		callbackInfo.cancel();
-		super.appendHoverText(stack, tooltipContext, tooltipComponents, tooltipFlag);
+		appendHoverText(stack, tooltipContext, tooltipComponents, tooltipFlag);
 		if (stack.has(AllDataComponents.PACKAGE_ADDRESS))
 			tooltipComponents.add(Component.literal("→ " + stack.get(AllDataComponents.PACKAGE_ADDRESS)).withStyle(ChatFormatting.GOLD));
 		if (!stack.has(AllDataComponents.PACKAGE_CONTENTS)) return;

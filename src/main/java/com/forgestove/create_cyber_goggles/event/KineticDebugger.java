@@ -49,7 +49,7 @@ public class KineticDebugger {
 		while (currentBE != null) {
 			kbePath.addFirst(currentBE); // 逆序插入，真源在前
 			if (currentBE.source == null) break;
-			currentBE = (level.getBlockEntity(currentBE.source) instanceof KineticBlockEntity kbeSource) ? kbeSource : null;
+			currentBE = level.getBlockEntity(currentBE.source) instanceof KineticBlockEntity kbeSource ? kbeSource : null;
 		}
 		cachedKBEPath = new ArrayList<>(kbePath);
 		lastSource = kbe.source;

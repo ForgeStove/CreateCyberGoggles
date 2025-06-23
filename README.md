@@ -8,9 +8,9 @@
 
 ## 概述 / Overview
 
-> **Create: Cyber Goggles** 是[**机械动力**](https://modrinth.com/mod/create)的客户端附属模组，旨在增强游戏体验并提供更多可配置的功能。
+> **Create: Cyber Goggles** 是[**机械动力**](https://modrinth.com/mod/create)的客户端附属模组，为其提供了模块化的辅助功能。
 
-> **Create: Cyber Goggles** is a client-side addon for [**Create**](https://modrinth.com/mod/create), designed to enhance gameplay and provide more configurable features.
+> **Create: Cyber Goggles** is a client-side addon for [**Create**](https://modrinth.com/mod/create), providing modular assistance features.
 
 ## 功能 / Features
 
@@ -36,7 +36,7 @@ This mod provides the following configurable features:
 
 > 主要在 1.21.1 NeoForge 上开发额外功能；
 > 
-> 1.20.1 Forge 版本已经完全跟进，2.0版本以后仅兼容6.0+版本的Create，仅限2.0以下的版本兼容0.5+版本的Create；
+> 1.20.1 Forge 版本已经完全跟进，2.0版本以后仅兼容6.0+版本的Create，仅限2.0以前的版本兼容0.5+版本的Create；
 > 
 > 1.20.1 Fabric 版本部分移植完成，其余功能需要等待Create-Fabric更新至6.0+版本后再进行移植。
 

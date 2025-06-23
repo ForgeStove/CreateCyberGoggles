@@ -36,7 +36,7 @@ This mod provides the following configurable features:
 
 > 主要在 1.21.1 NeoForge 上开发额外功能；
 > 
-> 1.20.1 Forge 版本已经完全跟进，2.0版本以后仅兼容6.0+版本的Create，仅限2.0以下的版本兼容0.5+版本的Create；
+> 1.20.1 Forge 版本已经完全跟进，2.0版本以后仅兼容6.0+版本的Create，仅限2.0以前的版本兼容0.5+版本的Create；
 > 
 > 1.20.1 Fabric 版本部分移植完成，其余功能需要等待Create-Fabric更新至6.0+版本后再进行移植。
 

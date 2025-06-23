@@ -10,7 +10,7 @@
 
 > **Create: Cyber Goggles** 是[**机械动力**](https://modrinth.com/mod/create)的客户端附属模组，为其提供了模块化的辅助功能。
 
-> **Create: Cyber Goggles** is a client-side addon for [**Create**](https://modrinth.com/mod/create), designed to enhance gameplay and provide more configurable features.
+> **Create: Cyber Goggles** is a client-side addon for [**Create**](https://modrinth.com/mod/create), providing modular assistance features.
 
 ## 功能 / Features
 

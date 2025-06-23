@@ -51,7 +51,7 @@ repositories {
 	mavenLocal()
 	mavenCentral()
 	maven("https://maven.createmod.net") // Create, Ponder, Flywheel
-	maven("https://maven.tterrag.com") // Registrate
+	maven("https://maven.ithundxr.dev/mirror") // Registrate
 	maven("https://maven.shedaniel.me") // Cloth Config API
 	maven("https://maven.blamejared.com") // JEI
 	maven("https://api.modrinth.com/maven") // Modrinth

@@ -3,9 +3,8 @@
 plugins {
 	id("net.neoforged.moddev.legacyforge") version "+"
 	id("me.modmuss50.mod-publish-plugin") version "+"
+	id("dev.forgestove.modaccessor") version "+"
 }
-buildscript { dependencies { classpath(fileTree("gradle/script")) } }
-apply(plugin = "dev.forgestove.modaccessor")
 base.archivesName.set(e("mod_id"))
 group = e("mod_group_id")
 version = "${e("minecraft_version")}-${e("mod_version")}+${e("upper_loader")}"
@@ -57,7 +56,7 @@ repositories {
 	maven("https://api.modrinth.com/maven") // Modrinth
 }
 dependencies {
-	add("accessCompileOnly", "com.simibubi.create:create-${e("minecraft_version")}:${e("create_version")}:slim")
+	accessCompileOnly("com.simibubi.create:create-${e("minecraft_version")}:${e("create_version")}:slim")
 	modImplementation("com.simibubi.create:create-${e("minecraft_version")}:${e("create_version")}:slim")
 	modImplementation("net.createmod.ponder:Ponder-${e("upper_loader")}-${e("minecraft_version")}:${e("ponder_version")}")
 	modImplementation("dev.engine-room.flywheel:flywheel-${e("loader")}-${e("minecraft_version")}:${e("flywheel_version")}")

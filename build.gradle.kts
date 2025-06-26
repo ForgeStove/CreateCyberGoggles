@@ -3,8 +3,12 @@
 plugins {
 	id("net.neoforged.moddev.legacyforge") version "+"
 	id("me.modmuss50.mod-publish-plugin") version "+"
-	id("dev.forgestove.modaccessor") version "+"
 }
+buildscript {
+	repositories { maven("https://raw.githubusercontent.com/ForgeStove/Maven/main/maven") }
+	dependencies { classpath("io.github.forgestove:ModAccessor:+") }
+}
+apply(plugin = "io.github.forgestove.modaccessor")
 base.archivesName.set(e("mod_id"))
 group = e("mod_group_id")
 version = "${e("minecraft_version")}-${e("mod_version")}+${e("upper_loader")}"
@@ -56,7 +60,7 @@ repositories {
 	maven("https://api.modrinth.com/maven") // Modrinth
 }
 dependencies {
-	accessCompileOnly("com.simibubi.create:create-${e("minecraft_version")}:${e("create_version")}:slim")
+	add("accessCompileOnly", "com.simibubi.create:create-${e("minecraft_version")}:${e("create_version")}:slim")
 	modImplementation("com.simibubi.create:create-${e("minecraft_version")}:${e("create_version")}:slim")
 	modImplementation("net.createmod.ponder:Ponder-${e("upper_loader")}-${e("minecraft_version")}:${e("ponder_version")}")
 	modImplementation("dev.engine-room.flywheel:flywheel-${e("loader")}-${e("minecraft_version")}:${e("flywheel_version")}")

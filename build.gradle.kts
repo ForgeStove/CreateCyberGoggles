@@ -1,20 +1,14 @@
 @file:Suppress("SpellCheckingInspection")
 
 plugins {
-	idea
 	id("net.neoforged.moddev") version "+"
 	id("me.modmuss50.mod-publish-plugin") version "+"
+	id("dev.forgestove.modaccessor") version "+"
 }
-buildscript { dependencies { classpath(fileTree("gradle/script")) } }
-apply(plugin = "dev.forgestove.modaccessor")
 base.archivesName.set(e("mod_id"))
 group = e("mod_group_id")
 version = "${e("minecraft_version")}-${e("mod_version")}+${e("upper_loader")}"
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(21))
-idea.module {
-	isDownloadSources = true
-	isDownloadJavadoc = true
-}
 tasks.jar { from("LICENSE") }
 tasks.processResources {
 	val replace = properties.mapValues { it.value.toString() }
@@ -51,7 +45,7 @@ repositories {
 	maven("https://api.modrinth.com/maven") // Modrinth
 }
 dependencies {
-	add("accessCompileOnly", "com.simibubi.create:create-${e("minecraft_version")}:${e("create_version")}:slim")
+	accessCompileOnly("com.simibubi.create:create-${e("minecraft_version")}:${e("create_version")}:slim")
 	runtimeOnly("com.simibubi.create:create-${e("minecraft_version")}:${e("create_version")}:slim") { isTransitive = false }
 	implementation("net.createmod.ponder:Ponder-${e("upper_loader")}-${e("minecraft_version")}:${e("ponder_version")}") {
 		isTransitive = false

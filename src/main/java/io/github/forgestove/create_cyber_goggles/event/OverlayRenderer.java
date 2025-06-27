@@ -12,7 +12,7 @@ public class OverlayRenderer {
 	public static void renderOverlay(GuiGraphics guiGraphics, float tickDelta) {
 		if (!CCG.CONFIG.goggles.renderExtraItems) return;
 		var mc = Minecraft.getInstance();
-		if (mc.isPaused() || mc.screen != null) return;
+		if (mc.isPaused() || mc.screen != null || mc.options.hideGui) return;
 		var be = Common.getSelectedBE();
 		if (be instanceof DepotBlockEntity dbe) Common.renderItemStack(guiGraphics, dbe.getHeldItem());
 	}

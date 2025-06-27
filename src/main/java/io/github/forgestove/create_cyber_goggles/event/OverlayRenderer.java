@@ -18,7 +18,7 @@ public class OverlayRenderer {
 	public static void renderOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
 		if (!CCG.CONFIG.goggles.renderExtraItems) return;
 		var mc = Minecraft.getInstance();
-		if (mc.isPaused() || mc.screen != null) return;
+		if (mc.isPaused() || mc.screen != null || mc.options.hideGui) return;
 		var be = Common.getSelectedBE();
 		if (be instanceof DepotBlockEntity dbe) Common.renderItemStack(guiGraphics, dbe.getHeldItem());
 		if (be instanceof PackagerBlockEntity pbe) Common.renderItemStack(guiGraphics, pbe.heldBox);

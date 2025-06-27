@@ -5,8 +5,8 @@ pluginManagement {
 		maven("https://jitpack.io")
 	}
 	resolutionStrategy.eachPlugin {
-		when(requested.id.id) {
-			"io.github.forgestove.modaccessor" -> useModule("com.github.ForgeStove.ModAccessor:build:+")
+		if (requested.id.id == "io.github.forgestove.modaccessor") {
+			useModule("com.github.ForgeStove.ModAccessor:build:+")
 		}
 	}
 }

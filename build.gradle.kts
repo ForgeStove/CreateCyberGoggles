@@ -14,13 +14,10 @@ tasks.jar {
 	manifest { attributes(mapOf("MixinConfigs" to "${p("mod_id")}.mixins.json")) }
 }
 tasks.processResources {
-	val replace = properties.mapValues { it.value.toString() }
-	inputs.properties(replace)
 	from("src/main/resources") {
 		include("**/*.toml")
-		expand(replace)
+		expand(properties.mapValues { it.value.toString() })
 	}
-	into("build/resources/main")
 	duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 tasks.publishMods { dependsOn(tasks.build) }

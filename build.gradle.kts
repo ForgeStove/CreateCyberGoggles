@@ -10,13 +10,10 @@ version = "${p("minecraft_version")}-${p("mod_version")}+${p("upper_loader")}"
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 tasks.jar { from("LICENSE") }
 tasks.processResources {
-	val replace = properties.mapValues { it.value.toString() }
-	inputs.properties(replace)
 	from("src/main/resources") {
 		include("*.json")
-		expand(replace)
+		expand(properties.mapValues { it.value.toString() })
 	}
-	into("build/resources/main")
 	duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 configurations.configureEach { resolutionStrategy.force("net.fabricmc:fabric-loader:${p("fabric_loader_version")}") }

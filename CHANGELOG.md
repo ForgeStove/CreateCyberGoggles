@@ -1,1 +1,1 @@
-- Fixed incorrect goggle judgment logic
+- Fixed hidegui option not work

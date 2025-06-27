@@ -5,8 +5,8 @@ plugins {
 	id("me.modmuss50.mod-publish-plugin") version "+"
 }
 buildscript {
-	repositories { maven("https://raw.githubusercontent.com/ForgeStove/Maven/main/maven") }
-	dependencies { classpath("io.github.forgestove:ModAccessor:+") }
+	repositories { maven("https://jitpack.io") }
+	dependencies { classpath("com.github.ForgeStove.ModAccessor:build:1.0.0") }
 }
 apply(plugin = "io.github.forgestove.modaccessor")
 base.archivesName.set(e("mod_id"))

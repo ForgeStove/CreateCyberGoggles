@@ -1,8 +1,8 @@
-package com.forgestove.create_cyber_goggles.event;
-import com.forgestove.create_cyber_goggles.*;
-import com.forgestove.create_cyber_goggles.util.Common;
+package io.github.forgestove.create_cyber_goggles.event;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
+import io.github.forgestove.create_cyber_goggles.*;
+import io.github.forgestove.create_cyber_goggles.util.Common;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;

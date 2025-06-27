@@ -1,9 +1,9 @@
-package com.forgestove.create_cyber_goggles.event;
-import com.forgestove.create_cyber_goggles.CCG;
-import com.forgestove.create_cyber_goggles.util.Common;
+package io.github.forgestove.create_cyber_goggles.event;
 import com.simibubi.create.content.kinetics.base.IRotate.SpeedLevel;
 import com.simibubi.create.content.kinetics.base.*;
 import com.simibubi.create.foundation.utility.VecHelper;
+import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.util.Common;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.Minecraft;
 public class KineticParticle {

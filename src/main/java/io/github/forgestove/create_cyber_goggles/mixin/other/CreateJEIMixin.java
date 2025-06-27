@@ -1,6 +1,6 @@
-package com.forgestove.create_cyber_goggles.mixin.other;
-import com.forgestove.create_cyber_goggles.CCG;
+package io.github.forgestove.create_cyber_goggles.mixin.other;
 import com.simibubi.create.compat.jei.CreateJEI;
+import io.github.forgestove.create_cyber_goggles.CCG;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 @Mixin(value = CreateJEI.class, remap = false)

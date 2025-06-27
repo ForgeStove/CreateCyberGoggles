@@ -1,9 +1,9 @@
-package com.forgestove.create_cyber_goggles.mixin.other;
-import com.forgestove.create_cyber_goggles.CCG;
+package io.github.forgestove.create_cyber_goggles.mixin.other;
 import com.simibubi.create.compat.jei.category.SequencedAssemblyCategory;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.utility.Lang;
+import io.github.forgestove.create_cyber_goggles.CCG;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.recipe.*;

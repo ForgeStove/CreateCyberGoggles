@@ -1,6 +1,6 @@
-package com.forgestove.create_cyber_goggles;
-import com.forgestove.create_cyber_goggles.CCGConfig.Goggles.GameMode;
+package io.github.forgestove.create_cyber_goggles;
 import com.terraformersmc.modmenu.api.*;
+import io.github.forgestove.create_cyber_goggles.CCGConfig.Goggles.GameMode;
 import me.shedaniel.autoconfig.*;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry.Category;

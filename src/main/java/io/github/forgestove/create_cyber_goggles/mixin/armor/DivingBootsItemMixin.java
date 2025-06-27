@@ -1,6 +1,6 @@
-package com.forgestove.create_cyber_goggles.mixin.armor;
-import com.forgestove.create_cyber_goggles.CCG;
+package io.github.forgestove.create_cyber_goggles.mixin.armor;
 import com.simibubi.create.content.equipment.armor.DivingBootsItem;
+import io.github.forgestove.create_cyber_goggles.CCG;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;

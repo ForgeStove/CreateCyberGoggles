@@ -16,10 +16,10 @@
 	"environment": "client",
 	"entrypoints": {
 		"client": [
-			"com.forgestove.create_cyber_goggles.CCG"
+			"io.github.forgestove.create_cyber_goggles.CCG"
 		],
 		"modmenu": [
-			"com.forgestove.create_cyber_goggles.CCGConfig"
+			"io.github.forgestove.create_cyber_goggles.CCGConfig"
 		]
 	},
 	"mixins": [

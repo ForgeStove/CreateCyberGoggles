@@ -1,8 +1,8 @@
-package com.forgestove.create_cyber_goggles.util;
-import com.forgestove.create_cyber_goggles.CCG;
+package io.github.forgestove.create_cyber_goggles.util;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.foundation.gui.ScreenOpener;
+import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;

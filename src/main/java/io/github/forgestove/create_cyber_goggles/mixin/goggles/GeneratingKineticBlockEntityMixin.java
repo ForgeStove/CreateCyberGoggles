@@ -1,7 +1,7 @@
-package com.forgestove.create_cyber_goggles.mixin.goggles;
-import com.forgestove.create_cyber_goggles.CCG;
+package io.github.forgestove.create_cyber_goggles.mixin.goggles;
 import com.simibubi.create.content.kinetics.base.*;
 import com.simibubi.create.foundation.utility.Lang;
+import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -39,6 +39,6 @@ public abstract class GeneratingKineticBlockEntityMixin extends KineticBlockEnti
 				.add(Lang.translate("gui.goggles.at_current_speed").style(ChatFormatting.DARK_GRAY))
 				.forGoggles(tooltip);
 		}
-		returnable.setReturnValue(super.addToGoggleTooltip(tooltip, isPlayerSneaking));
+		returnable.setReturnValue(addToGoggleTooltip(tooltip, isPlayerSneaking));
 	}
 }

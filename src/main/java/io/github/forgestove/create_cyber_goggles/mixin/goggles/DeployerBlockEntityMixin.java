@@ -1,9 +1,9 @@
-package com.forgestove.create_cyber_goggles.mixin.goggles;
-import com.forgestove.create_cyber_goggles.CCG;
+package io.github.forgestove.create_cyber_goggles.mixin.goggles;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.deployer.DeployerBlockEntity;
 import com.simibubi.create.foundation.item.TooltipHelper;
 import com.simibubi.create.foundation.utility.Lang;
+import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -24,7 +24,7 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 	@Inject(method = "addToTooltip", at = @At("HEAD"), cancellable = true)
 	private void addToTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return;
-		super.addToTooltip(tooltip, isPlayerSneaking);
+		addToTooltip(tooltip, isPlayerSneaking);
 		if (overflowItems.isEmpty()) {
 			returnable.setReturnValue(false);
 			return;
@@ -44,6 +44,6 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 	)
 	private void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return;
-		returnable.setReturnValue(super.addToGoggleTooltip(tooltip, isPlayerSneaking));
+		returnable.setReturnValue(addToGoggleTooltip(tooltip, isPlayerSneaking));
 	}
 }

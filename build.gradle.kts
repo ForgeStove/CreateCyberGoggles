@@ -20,7 +20,6 @@ tasks.processResources {
 	}
 	duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
-tasks.publishMods { dependsOn(tasks.build) }
 mixin {
 	add(sourceSets.main.get(), "${p("mod_id")}.refmap.json")
 	config("${p("mod_id")}.mixins.json")

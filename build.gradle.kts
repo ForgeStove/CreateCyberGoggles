@@ -3,7 +3,7 @@
 plugins {
 	id("net.neoforged.moddev.legacyforge") version "+"
 	id("me.modmuss50.mod-publish-plugin") version "+"
-	id("io.github.forgestove.modaccessor")
+	id("io.github.forgestove.modaccessor") version "+"
 }
 base.archivesName.set(p("mod_id"))
 group = p("mod_group_id")

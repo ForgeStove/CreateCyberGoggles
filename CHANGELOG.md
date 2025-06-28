@@ -1,1 +1,1 @@
-- Fixed hidegui option not work
+- Fixed StackOverFlowError [#19](https://github.com/ForgeStove/CreateCyberGoggles/issues/19)

@@ -26,7 +26,7 @@ public abstract class PackageItemMixin extends Item {
 	) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return;
 		callbackInfo.cancel();
-		appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+		super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
 		var compoundNbt = stack.getOrCreateTag();
 		var address = compoundNbt.getString("Address");
 		if (compoundNbt.contains("Address", Tag.TAG_STRING) && !address.isBlank())

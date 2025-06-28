@@ -44,6 +44,6 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 	)
 	private void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return;
-		returnable.setReturnValue(addToGoggleTooltip(tooltip, isPlayerSneaking));
+		returnable.setReturnValue(super.addToGoggleTooltip(tooltip, isPlayerSneaking));
 	}
 }

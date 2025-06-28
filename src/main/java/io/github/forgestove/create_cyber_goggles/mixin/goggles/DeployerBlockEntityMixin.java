@@ -24,7 +24,7 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 	@Inject(method = "addToTooltip", at = @At("HEAD"), cancellable = true)
 	private void addToTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return;
-		addToTooltip(tooltip, isPlayerSneaking);
+		super.addToTooltip(tooltip, isPlayerSneaking);
 		if (overflowItems.isEmpty()) {
 			returnable.setReturnValue(false);
 			return;

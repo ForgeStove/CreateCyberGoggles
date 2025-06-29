@@ -24,7 +24,7 @@ repositories {
 	maven("https://maven.parchmentmc.org") // Parchment mappings
 	maven("https://mvn.devos.one/releases") // Porting Lib releases
 	maven("https://mvn.devos.one/snapshots") // Create and several dependencies
-	maven("https://maven.tterrag.com") // Flywheel
+	maven("https://modmaven.dev") // Flywheel
 	maven("https://maven.jamieswhiteshirt.com/libs-release") // Reach Entity Attributes
 	maven("https://raw.githubusercontent.com/Fuzss/modresources/main/maven") // Forge Config API Port
 	maven("https://jitpack.io") // Fabric ASM for Porting Lib

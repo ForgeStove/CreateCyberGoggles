@@ -1,1 +1,1 @@
-- Fixed StackOverFlowError [#19](https://github.com/ForgeStove/CreateCyberGoggles/issues/19)
+- Porting right-click penetration options and debugging capabilities

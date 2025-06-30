@@ -72,7 +72,11 @@ publishMods {
 		accessToken.set(providers.environmentVariable("MODRINTH_TOKEN"))
 		projectId.set("TlQAWQCY")
 		minecraftVersions.add(p("minecraft_version"))
-		requires("6R069CcK", "cloth-config")
+		requires {
+			id.set("LNytGWDc")
+			version.set("6R069CcK")
+		}
+		requires("cloth-config")
 	}
 	curseforge {
 		accessToken.set(providers.environmentVariable("CURSEFORGE_TOKEN"))

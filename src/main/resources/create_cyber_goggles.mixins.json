@@ -5,6 +5,7 @@
 	"refmap": "create_cyber_goggles-refmap.json",
 	"client": [
 		"AbstractFilterScreenMixin",
+		"ContraptionHandlerClientMixin",
 		"armor.DivingBootsItemMixin",
 		"armor.NetheriteBacktankFirstPersonRendererMixin",
 		"goggles.DeployerBlockEntityMixin",

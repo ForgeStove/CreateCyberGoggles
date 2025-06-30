@@ -22,19 +22,20 @@ public abstract class SequencedAssemblyCategoryMixin {
 		var size = 8;
 		for (var i = 1; i < recipe.resultPool.size(); i++) {
 			var out = recipe.resultPool.get(i);
-			builder.addSlot(RecipeIngredientRole.OUTPUT, (i - 1) % size * 19 + 15, (i - 1) / size * 19 + 120).setBackground(
-				new IDrawable() {
+			builder.addSlot(RecipeIngredientRole.OUTPUT, (i - 1) % size * 19 + 15, (i - 1) / size * 19 + 120)
+				.setBackground(new IDrawable() {
 					public int getWidth() {return AllGuiTextures.JEI_CHANCE_SLOT.width;}
 					public int getHeight() {return AllGuiTextures.JEI_CHANCE_SLOT.height;}
 					public void draw(@NotNull GuiGraphics guiGraphics, int xOffset, int yOffset) {
 						AllGuiTextures.JEI_CHANCE_SLOT.render(guiGraphics, xOffset, yOffset);
 					}
-				}, -1, -1
-			).addItemStack(out.getStack()).addRichTooltipCallback((iRecipeSlotView, iTooltipBuilder) -> {
-				float totalWeight = 0;
-				for (var output : recipe.resultPool) totalWeight += output.getChance();
-				iTooltipBuilder.add(chanceComponent(out.getChance() / totalWeight));
-			});
+				}, -1, -1)
+				.addItemStack(out.getStack())
+				.addRichTooltipCallback((iRecipeSlotView, iTooltipBuilder) -> {
+					float totalWeight = 0;
+					for (var output : recipe.resultPool) totalWeight += output.getChance();
+					iTooltipBuilder.add(chanceComponent(out.getChance() / totalWeight));
+				});
 		}
 	}
 	@Shadow

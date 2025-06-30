@@ -35,6 +35,8 @@ public class CCGConfig implements ConfigData, ModMenuApi {
 		@Tooltip public boolean removeDivingBootsAffect = false;
 	}
 	public static class Other {
+		@Tooltip public boolean rightClickPenetrate = false;
+		@Tooltip public boolean rainbowDebug = false;
 		@Tooltip public boolean forcedBackend = false;
 		@Tooltip @RequiresRestart public boolean nonrandomScrap = true;
 		@Tooltip public boolean nbtFix = false;

@@ -12,5 +12,6 @@ public class CCG implements ClientModInitializer {
 		KeyInput.register();
 		OverlayRenderer.register();
 		KineticParticle.register();
+		KineticDebugger.register();
 	}
 }

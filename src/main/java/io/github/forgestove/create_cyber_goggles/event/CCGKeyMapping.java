@@ -3,7 +3,6 @@ import io.github.forgestove.create_cyber_goggles.CCG;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.*;
 import org.lwjgl.glfw.GLFW;
-@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 public enum CCGKeyMapping {
 	openConfig(GLFW.GLFW_KEY_UNKNOWN),
 	previewFilter(GLFW.GLFW_KEY_UNKNOWN),

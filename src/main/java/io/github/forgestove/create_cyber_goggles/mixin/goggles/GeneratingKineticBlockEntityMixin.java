@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.mixin.goggles;
 import com.simibubi.create.content.kinetics.base.*;
-import com.simibubi.create.foundation.utility.CreateLang;
+import com.simibubi.create.foundation.utility.Lang;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -29,14 +29,14 @@ public abstract class GeneratingKineticBlockEntityMixin extends KineticBlockEnti
 		}
 		var stressBase = calculateAddedStressCapacity();
 		if (!Mth.equal(stressBase, 0)) {
-			CreateLang.translate("gui.goggles.generator_stats").forGoggles(tooltip);
-			CreateLang.translate("tooltip.capacityProvided").style(ChatFormatting.GRAY).forGoggles(tooltip);
+			Lang.translate("gui.goggles.generator_stats").forGoggles(tooltip);
+			Lang.translate("tooltip.capacityProvided").style(ChatFormatting.GRAY).forGoggles(tooltip);
 			if (speed != getGeneratedSpeed()) stressBase *= getGeneratedSpeed() / speed;
-			CreateLang.number(Math.abs(stressBase * speed))
+			Lang.number(Math.abs(stressBase * speed))
 				.translate("generic.unit.stress")
 				.style(ChatFormatting.AQUA)
 				.space()
-				.add(CreateLang.translate("gui.goggles.at_current_speed").style(ChatFormatting.DARK_GRAY))
+				.add(Lang.translate("gui.goggles.at_current_speed").style(ChatFormatting.DARK_GRAY))
 				.forGoggles(tooltip);
 		}
 		returnable.setReturnValue(super.addToGoggleTooltip(tooltip, isPlayerSneaking));

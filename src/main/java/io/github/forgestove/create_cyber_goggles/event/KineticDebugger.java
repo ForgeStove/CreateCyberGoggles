@@ -1,9 +1,9 @@
 package io.github.forgestove.create_cyber_goggles.event;
+import com.simibubi.create.CreateClient;
 import com.simibubi.create.content.kinetics.base.*;
+import com.simibubi.create.foundation.utility.VecHelper;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.util.Common;
-import net.createmod.catnip.math.VecHelper;
-import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.culling.Frustum;
@@ -113,7 +113,7 @@ public class KineticDebugger {
 		var shape = level.getBlockState(toOutline).getBlockSupportShape(level, toOutline);
 		if (kbe.getTheoreticalSpeed() == 0 || shape.isEmpty()) return;
 		var rgb = getColor(depth, time);
-		Outliner.getInstance().chaseAABB(toOutline.asLong(), shape.bounds().move(toOutline)).lineWidth(1 / 16f).colored(rgb);
+		CreateClient.OUTLINER.chaseAABB(toOutline.asLong(), shape.bounds().move(toOutline)).lineWidth(1 / 16f).colored(rgb);
 	}
 	/**
 	 * 根据链路深度和时间生成彩虹色。
@@ -140,7 +140,7 @@ public class KineticDebugger {
 		if (fromPos.distManhattan(toPos) == 1) return;
 		var from = VecHelper.getCenterOf(fromPos);
 		var to = VecHelper.getCenterOf(toPos);
-		Outliner.getInstance().showLine(fromPos.asLong() + toPos.asLong(), from, to).lineWidth(1 / 8f).colored(rgb);
+		CreateClient.OUTLINER.showLine(fromPos.asLong() + toPos.asLong(), from, to).lineWidth(1 / 8f).colored(rgb);
 	}
 	/**
 	 * 渲染动力方块的旋转轴线。
@@ -153,6 +153,6 @@ public class KineticDebugger {
 		var axis = iRotate.getRotationAxis(state);
 		var vec = Vec3.atLowerCornerOf(Direction.get(AxisDirection.POSITIVE, axis).getNormal());
 		var center = VecHelper.getCenterOf(kbe.getBlockPos());
-		Outliner.getInstance().showLine("axisLine", center.add(vec), center.subtract(vec)).lineWidth(1 / 8f);
+		CreateClient.OUTLINER.showLine("axisLine", center.add(vec), center.subtract(vec)).lineWidth(1 / 8f);
 	}
 }

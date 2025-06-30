@@ -1,6 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.event;
 import com.simibubi.create.content.logistics.depot.DepotBlockEntity;
-import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.util.Common;
 import net.minecraft.client.Minecraft;
@@ -18,6 +17,5 @@ public class OverlayRenderer {
 		if (mc.isPaused() || mc.screen != null || mc.options.hideGui) return;
 		var be = Common.getSelectedBE();
 		if (be instanceof DepotBlockEntity dbe) Common.renderItemStack(guiGraphics, dbe.getHeldItem());
-		if (be instanceof PackagerBlockEntity pbe) Common.renderItemStack(guiGraphics, pbe.heldBox);
 	}
 }

@@ -3,7 +3,7 @@ import io.github.forgestove.create_cyber_goggles.event.*;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.InputEvent.*;
+import net.minecraftforge.client.event.InputEvent.Key;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -22,10 +22,6 @@ public class CCG {
 		@SubscribeEvent
 		public static void key(Key event) {
 			KeyInput.tick();
-		}
-		@SubscribeEvent
-		public static void mouseScrollingEvent(MouseScrollingEvent event) {
-			MouseScroll.onMouseScroll(event);
 		}
 		@SubscribeEvent
 		public static void renderLevelStageEvent(RenderLevelStageEvent event) {

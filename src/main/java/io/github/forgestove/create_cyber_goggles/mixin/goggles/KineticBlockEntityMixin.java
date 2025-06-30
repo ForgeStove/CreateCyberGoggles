@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.mixin.goggles;
 import com.simibubi.create.content.kinetics.base.IRotate.*;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.item.TooltipHelper;
-import com.simibubi.create.foundation.utility.CreateLang;
+import com.simibubi.create.foundation.utility.Lang;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.event.CCGKeyMapping;
 import net.minecraft.ChatFormatting;
@@ -28,23 +28,23 @@ public abstract class KineticBlockEntityMixin {
 			var stressAtBase = calculateStressApplied();
 			if (!Mth.equal(stressAtBase, 0)) addStressImpactStats(tooltip, stressAtBase);
 		}
-		CreateLang.translate("gui.goggles.kinetic_stats").forGoggles(tooltip);
+		Lang.translate("gui.goggles.kinetic_stats").forGoggles(tooltip);
 		SpeedLevel.getFormattedSpeedText(speed, overStressed).forGoggles(tooltip);
 		if (!CCGKeyMapping.showStress.isDown()) return;
 		double stressFraction = stress / (capacity == 0 ? 1 : capacity);
-		CreateLang.translate("gui.stressometer.title").style(ChatFormatting.GRAY).forGoggles(tooltip);
-		if (speed == 0) CreateLang.text(TooltipHelper.makeProgressBar(3, 0))
+		Lang.translate("gui.stressometer.title").style(ChatFormatting.GRAY).forGoggles(tooltip);
+		if (speed == 0) Lang.text(TooltipHelper.makeProgressBar(3, 0))
 			.translate("gui.stressometer.no_rotation")
 			.style(ChatFormatting.DARK_GRAY)
 			.forGoggles(tooltip);
 		else {
 			StressImpact.getFormattedStressText(stressFraction).forGoggles(tooltip);
-			CreateLang.translate("gui.stressometer.capacity").style(ChatFormatting.GRAY).forGoggles(tooltip);
+			Lang.translate("gui.stressometer.capacity").style(ChatFormatting.GRAY).forGoggles(tooltip);
 			double remainingCapacity = capacity - stress;
-			var su = CreateLang.translate("generic.unit.stress");
-			var stressTip = CreateLang.number(remainingCapacity).add(su).style(StressImpact.of(stressFraction).getRelativeColor());
+			var su = Lang.translate("generic.unit.stress");
+			var stressTip = Lang.number(remainingCapacity).add(su).style(StressImpact.of(stressFraction).getRelativeColor());
 			if (remainingCapacity != capacity)
-				stressTip.text(ChatFormatting.GRAY, " / ").add(CreateLang.number(capacity).add(su).style(ChatFormatting.DARK_GRAY));
+				stressTip.text(ChatFormatting.GRAY, " / ").add(Lang.number(capacity).add(su).style(ChatFormatting.DARK_GRAY));
 			stressTip.forGoggles(tooltip, 1);
 		}
 	}

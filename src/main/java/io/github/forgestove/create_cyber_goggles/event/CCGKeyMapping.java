@@ -9,7 +9,6 @@ import org.jetbrains.annotations.*;
 import org.lwjgl.glfw.GLFW;
 public enum CCGKeyMapping {
 	openConfig(GLFW.GLFW_KEY_UNKNOWN),
-	openStock(GLFW.GLFW_KEY_UNKNOWN),
 	previewFilter(GLFW.GLFW_KEY_UNKNOWN),
 	toggleDiving(GLFW.GLFW_KEY_UNKNOWN),
 	showStress(GLFW.GLFW_KEY_TAB);

@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.mixin.goggles;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.deployer.DeployerBlockEntity;
 import com.simibubi.create.foundation.item.TooltipHelper;
-import com.simibubi.create.foundation.utility.CreateLang;
+import com.simibubi.create.foundation.utility.Lang;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -31,9 +31,9 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 		}
 		TooltipHelper.addHint(tooltip, "hint.full_deployer");
 		for (var itemStack : overflowItems)
-			CreateLang.builder()
+			Lang.builder()
 				.add(Component.translatable(itemStack.getDescriptionId()).withStyle(ChatFormatting.GRAY))
-				.add(CreateLang.text(" x" + itemStack.getCount()).style(ChatFormatting.GREEN))
+				.add(Lang.text(" x" + itemStack.getCount()).style(ChatFormatting.GREEN))
 				.forGoggles(tooltip);
 		returnable.setReturnValue(true);
 	}

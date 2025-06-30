@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.mixin.other;
 import com.simibubi.create.compat.jei.category.SequencedAssemblyCategory;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
-import com.simibubi.create.foundation.utility.CreateLang;
+import com.simibubi.create.foundation.utility.Lang;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -24,8 +24,8 @@ public abstract class SequencedAssemblyCategoryMixin {
 			var out = recipe.resultPool.get(i);
 			builder.addSlot(RecipeIngredientRole.OUTPUT, (i - 1) % size * 19 + 15, (i - 1) / size * 19 + 120)
 				.setBackground(new IDrawable() {
-					public int getWidth() {return AllGuiTextures.JEI_CHANCE_SLOT.getWidth();}
-					public int getHeight() {return AllGuiTextures.JEI_CHANCE_SLOT.getHeight();}
+					public int getWidth() {return AllGuiTextures.JEI_CHANCE_SLOT.width;}
+					public int getHeight() {return AllGuiTextures.JEI_CHANCE_SLOT.height;}
 					public void draw(@NotNull GuiGraphics guiGraphics, int xOffset, int yOffset) {
 						AllGuiTextures.JEI_CHANCE_SLOT.render(guiGraphics, xOffset, yOffset);
 					}
@@ -44,6 +44,6 @@ public abstract class SequencedAssemblyCategoryMixin {
 	protected void chanceComponent(float chance, CallbackInfoReturnable<MutableComponent> returnable) {
 		if (!CCG.CONFIG.goggles.preciseNumbers) return;
 		if (chance * 100 == (int) (chance * 100)) return;
-		returnable.setReturnValue(CreateLang.translateDirect("recipe.processing.chance", chance * 100).withStyle(ChatFormatting.GOLD));
+		returnable.setReturnValue(Lang.translateDirect("recipe.processing.chance", chance * 100).withStyle(ChatFormatting.GOLD));
 	}
 }

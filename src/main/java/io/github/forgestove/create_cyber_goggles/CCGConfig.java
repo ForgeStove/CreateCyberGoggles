@@ -10,9 +10,7 @@ import net.minecraftforge.fml.ModLoadingContext;
 public class CCGConfig implements ConfigData {
 	@Category("goggles") @TransitiveObject public final Goggles goggles = new Goggles();
 	@Category("goggles") @CollapsibleObject public final GameMode gameMode = new GameMode();
-	@Category("chainConveyor") @TransitiveObject public final ChainConveyor chainConveyor = new ChainConveyor();
 	@Category("armor") @TransitiveObject public final Armor armor = new Armor();
-	@Category("wrench") @TransitiveObject public final Wrench wrench = new Wrench();
 	@Category("other") @TransitiveObject public final Other other = new Other();
 	public static void register() {
 		var factory = new ConfigScreenFactory((mc, screen) -> AutoConfig.getConfigScreen(CCGConfig.class, screen).get());
@@ -21,7 +19,6 @@ public class CCGConfig implements ConfigData {
 	public static class Goggles {
 		@Tooltip public boolean enhancedInfo = true;
 		@Tooltip public boolean hideStaticKineticInfo = false;
-		@Tooltip public boolean enhancedStoreRender = true;
 		@Tooltip public boolean renderExtraItems = true;
 		@Tooltip public boolean enableKineticEffect = true;
 		@Tooltip public boolean preciseNumbers = true;
@@ -32,20 +29,9 @@ public class CCGConfig implements ConfigData {
 			@Tooltip public boolean enableInAdventure = true;
 		}
 	}
-	public static class ChainConveyor {
-		@Tooltip public boolean alwaysAllowRiding = false;
-		@Tooltip public boolean preventFalling = false;
-		@Tooltip public boolean enhancedConnection = true;
-		@Tooltip public boolean cardBoardedYourself = false;
-	}
 	public static class Armor {
-		@Tooltip public boolean removeBoxOverlay = true;
 		@Tooltip public boolean removeNetheriteFirstPerson = false;
 		@Tooltip public boolean removeDivingBootsAffect = false;
-	}
-	public static class Wrench {
-		@Tooltip public boolean alwaysAllowRotating = true;
-		@Tooltip public boolean removeCooldown = true;
 	}
 	public static class Other {
 		@Tooltip public boolean rightClickPenetrate = false;

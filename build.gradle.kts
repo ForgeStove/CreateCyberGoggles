@@ -42,17 +42,16 @@ legacyForge {
 repositories {
 	mavenLocal()
 	mavenCentral()
-	maven("https://maven.createmod.net") // Create, Ponder, Flywheel
+	maven("https://modmaven.dev") // Create, Flywheel
 	maven("https://maven.tterrag.com") // Registrate
 	maven("https://maven.shedaniel.me") // Cloth Config API
 	maven("https://maven.blamejared.com") // JEI
 	maven("https://api.modrinth.com/maven") // Modrinth
 }
 dependencies {
-	accessCompileOnly("com.simibubi.create:create-${p("minecraft_version")}:${p("create_version")}:slim")
-	modImplementation("com.simibubi.create:create-${p("minecraft_version")}:${p("create_version")}:slim")
-	modImplementation("net.createmod.ponder:Ponder-${p("upper_loader")}-${p("minecraft_version")}:${p("ponder_version")}")
-	modImplementation("dev.engine-room.flywheel:flywheel-${p("loader")}-${p("minecraft_version")}:${p("flywheel_version")}")
+	accessCompileOnly("com.simibubi.create:create-${p("minecraft_version")}:${p("create_version")}:all")
+	modImplementation("com.simibubi.create:create-${p("minecraft_version")}:${p("create_version")}:all")
+	modImplementation("com.jozufozu.flywheel:flywheel-${p("loader")}-${p("minecraft_version")}:${p("flywheel_version")}")
 	modImplementation("com.tterrag.registrate:Registrate:${p("registrate_version")}")
 	modImplementation("me.shedaniel.cloth:cloth-config-${p("loader")}:${p("cloth_config_version")}")
 	modImplementation("mezz.jei:jei-${p("minecraft_version")}-${p("loader")}:${p("jei_version")}")

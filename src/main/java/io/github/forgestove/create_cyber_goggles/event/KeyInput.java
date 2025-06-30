@@ -1,6 +1,4 @@
 package io.github.forgestove.create_cyber_goggles.event;
-import com.simibubi.create.AllMenuTypes;
-import com.simibubi.create.content.logistics.stockTicker.*;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import io.github.forgestove.create_cyber_goggles.*;
@@ -16,7 +14,6 @@ public class KeyInput {
 	public static void tick() {
 		toggleDiving();
 		openConfigScreen();
-		openStockScreen();
 		previewFilterScreen();
 	}
 	public static void toggleDiving() {
@@ -30,17 +27,6 @@ public class KeyInput {
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) return;
 		mc.setScreen(AutoConfig.getConfigScreen(CCGConfig.class, null).get());
-	}
-	public static void openStockScreen() {
-		if (!CCGKeyMapping.openStock.isDown()) return;
-		var mc = Minecraft.getInstance();
-		if (mc.screen != null) return;
-		if (mc.player == null) return;
-		if (Common.getSelectedBE() instanceof StockTickerBlockEntity stbe) Common.laststbe = stbe;
-		if (Common.laststbe == null) return;
-		var inv = mc.player.getInventory();
-		var menu = new StockKeeperRequestMenu(AllMenuTypes.STOCK_KEEPER_REQUEST.get(), -1, inv, Common.laststbe);
-		mc.setScreen(new StockKeeperRequestScreen(menu, inv, Common.laststbe.getBlockState().getBlock().getName()));
 	}
 	public static void previewFilterScreen() {
 		if (!CCGKeyMapping.previewFilter.isDown()) return;

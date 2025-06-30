@@ -6,26 +6,17 @@
 	"client": [
 		"AbstractFilterScreenMixin",
 		"ContraptionHandlerClientMixin",
-		"RadialWrenchHandlerMixin",
-		"StockKeeperRequestScreenMixin",
-		"armor.CardboardArmorStealthOverlayMixin",
 		"armor.DivingBootsItemMixin",
 		"armor.NetheriteBacktankFirstPersonRendererMixin",
-		"chainConveyor.CardboardArmorHandlerMixin",
-		"chainConveyor.ChainConveyorConnectionHandlerMixin",
-		"chainConveyor.ChainConveyorInteractionHandlerMixin",
-		"chainConveyor.ChainConveyorRidingHandlerMixin",
-		"goggles.BlueprintOverlayRendererMixin",
 		"goggles.DeployerBlockEntityMixin",
 		"goggles.GeneratingKineticBlockEntityMixin",
 		"goggles.GogglesItemMixin",
 		"goggles.KineticBlockEntityMixin",
 		"goggles.LangNumberFormatMixin",
-		"goggles.PackageItemMixin",
 		"goggles.PoweredShaftBlockEntityMixin",
+		"other.BackendMixin",
 		"other.CreateJEIMixin",
 		"other.NbtAccounterMixin",
-		"other.SequencedAssemblyCategoryMixin",
-		"other.SimpleBackendMixin"
+		"other.SequencedAssemblyCategoryMixin"
 	]
 }

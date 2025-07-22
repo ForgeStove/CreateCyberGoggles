@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.mixin;
-import com.llamalad7.mixinextras.injector.wrapoperation.*;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.simibubi.create.content.logistics.stockTicker.*;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -11,10 +11,10 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractContainerScr
 	public StockKeeperRequestScreenMixin(StockKeeperRequestMenu menu, Inventory playerInventory, Component title) {
 		super(menu, playerInventory, title);
 	}
-	@WrapOperation(
+	@WrapWithCondition(
 		method = "containerTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;closeContainer()V")
 	)
-	public void containerTick(Player instance, Operation<Void> original) {
-		if (menu.containerId != -1) original.call(instance);
+	public boolean containerTick(Player instance) {
+		return menu.containerId != -1;
 	}
 }

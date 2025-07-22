@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.mixin;
-import com.llamalad7.mixinextras.injector.wrapoperation.*;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -11,10 +11,10 @@ public abstract class AbstractFilterScreenMixin<F extends AbstractFilterMenu> ex
 	public AbstractFilterScreenMixin(F container, Inventory inv, Component title) {
 		super(container, inv, title);
 	}
-	@WrapOperation(
+	@WrapWithCondition(
 		method = "containerTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;closeContainer()V")
 	)
-	public void containerTick(Player instance, Operation<Void> original) {
-		if (menu.containerId != -1) original.call(instance);
+	public boolean containerTick(Player instance) {
+		return menu.containerId != -1;
 	}
 }

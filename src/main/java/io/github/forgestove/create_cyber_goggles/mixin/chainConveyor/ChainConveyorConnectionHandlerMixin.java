@@ -6,7 +6,7 @@ import net.minecraft.core.*;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-@Mixin(value = ChainConveyorConnectionHandler.class, remap = false)
+@Mixin(ChainConveyorConnectionHandler.class)
 public abstract class ChainConveyorConnectionHandlerMixin {
 	@WrapOperation(
 		method = "validateAndConnect",

@@ -15,12 +15,12 @@ import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-@Mixin(value = ChainConveyorRidingHandler.class, remap = false)
+@Mixin(ChainConveyorRidingHandler.class)
 public abstract class ChainConveyorRidingHandlerMixin {
 	@WrapOperation(
 		method = "clientTick", at = @At(
 		value = "INVOKE", target = "Lcom/simibubi/create/AllTags$AllItemTags;matches(Lnet/minecraft/world/item/ItemStack;)Z"
-	)
+	), remap = false
 	)
 	private static boolean wrapChainRideableCheck(AllItemTags instance, ItemStack stack, Operation<Boolean> original) {
 		return CCG.CONFIG.chainConveyor.alwaysAllowRiding || original.call(instance, stack);
@@ -31,8 +31,7 @@ public abstract class ChainConveyorRidingHandlerMixin {
 	), cancellable = true
 	)
 	private static void injectCustomDiffCheck(CallbackInfo callbackInfo, @Local(name = "diff") Vec3 diff) {
-		var chainConveyor = CCG.CONFIG.chainConveyor;
-		if (chainConveyor.preventFalling) callbackInfo.cancel();
+		if (CCG.CONFIG.chainConveyor.preventFalling) callbackInfo.cancel();
 		var player = Minecraft.getInstance().player;
 		if (player == null) return;
 		player.setDeltaMovement(player.getDeltaMovement().scale(0.75).add(diff.scale(0.25)));

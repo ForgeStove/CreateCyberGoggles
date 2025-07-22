@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-@Mixin(value = RadialWrenchHandler.class, remap = false)
+@Mixin(value = RadialWrenchHandler.class)
 public abstract class RadialWrenchHandlerMixin {
 	@WrapOperation(
 		method = "onKeyInput", at = @At(
@@ -29,7 +29,7 @@ public abstract class RadialWrenchHandlerMixin {
 	private static Item wrapMainHandItem(ItemStack instance, Operation<Item> original) {
 		return CCG.CONFIG.wrench.alwaysAllowRotating ? AllItems.WRENCH.get() : original.call(instance);
 	}
-	@Inject(method = "clientTick", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "clientTick", at = @At("HEAD"), remap = false, cancellable = true)
 	private static void clientTick(CallbackInfo callbackInfo) {
 		if (!CCG.CONFIG.wrench.removeCooldown) return;
 		callbackInfo.cancel();

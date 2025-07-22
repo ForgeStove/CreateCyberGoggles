@@ -58,8 +58,9 @@ dependencies {
 	modImplementation("mezz.jei:jei-${p("minecraft_version")}-${p("loader")}:${p("jei_version")}")
 	modImplementation("maven.modrinth:jade:${p("jade_version")}")
 	annotationProcessor("org.spongepowered:mixin:${p("mixin_version")}:processor")
+	annotationProcessor("io.github.llamalad7:mixinextras-common:${p("mixin_extras_version")}")
 	compileOnly("io.github.llamalad7:mixinextras-common:${p("mixin_extras_version")}")
-	implementation("io.github.llamalad7:mixinextras-${p("loader")}:${p("mixin_extras_version")}")
+	implementation("io.github.llamalad7:mixinextras-common:${p("mixin_extras_version")}")
 	compileOnly("org.jetbrains:annotations:${p("annotations_version")}")
 }
 publishMods {

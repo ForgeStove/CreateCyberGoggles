@@ -37,7 +37,7 @@ legacyForge {
 			systemProperty("terminal.jline", "true")
 		}
 	}
-	mods { create(p("mod_id")) { sourceSet(sourceSets["main"]) } }
+	mods { create(p("mod_id")) { sourceSet(sourceSets.main.get()) } }
 }
 repositories {
 	mavenLocal()

@@ -31,7 +31,7 @@ legacyForge {
 		minecraftVersion.set(p("minecraft_version"))
 	}
 	runs {
-		create("client") { client() }
+		create("client").client()
 		configureEach {
 			jvmArguments.addAll("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition")
 			systemProperty("terminal.jline", "true")

@@ -1,1 +1,1 @@
-- Fixed StackOverFlowError [#19](https://github.com/ForgeStove/CreateCyberGoggles/issues/19)
+- Fixed an issue where some functions could not be used properly in Create-6.0.6

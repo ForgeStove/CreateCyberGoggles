@@ -35,6 +35,8 @@
 	"text.autoconfig.create_cyber_goggles.option.gameMode.enableInSpectator.@Tooltip": "Brille immer im Zuschauermodus aktiv",
 	"text.autoconfig.create_cyber_goggles.option.gameMode.enableInSurvival": "Im Überlebensmodus aktivieren",
 	"text.autoconfig.create_cyber_goggles.option.gameMode.enableInSurvival.@Tooltip": "Brille immer im Überlebensmodus aktiv",
+	"text.autoconfig.create_cyber_goggles.option.goggles.disableScreenGoggles": "Bildschirm-Brille deaktivieren",
+	"text.autoconfig.create_cyber_goggles.option.goggles.disableScreenGoggles.@Tooltip": "Brille deaktivieren wenn Bildschirm erscheint",
 	"text.autoconfig.create_cyber_goggles.option.goggles.enableKineticEffect": "Rotationspartikel anzeigen",
 	"text.autoconfig.create_cyber_goggles.option.goggles.enableKineticEffect.@Tooltip": "Zeigt Rotationspartikel von Blöcken an",
 	"text.autoconfig.create_cyber_goggles.option.goggles.enhancedInfo": "Erweiterte Informationen",

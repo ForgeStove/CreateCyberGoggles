@@ -35,6 +35,8 @@
 	"text.autoconfig.create_cyber_goggles.option.gameMode.enableInSpectator.@Tooltip": "Очки всегда активны в режиме наблюдателя",
 	"text.autoconfig.create_cyber_goggles.option.gameMode.enableInSurvival": "Включить в режиме выживания",
 	"text.autoconfig.create_cyber_goggles.option.gameMode.enableInSurvival.@Tooltip": "Очки всегда активны в режиме выживания",
+	"text.autoconfig.create_cyber_goggles.option.goggles.disableScreenGoggles": "Отключить экранные очки",
+	"text.autoconfig.create_cyber_goggles.option.goggles.disableScreenGoggles.@Tooltip": "Отключает очки при появлении экрана",
 	"text.autoconfig.create_cyber_goggles.option.goggles.enableKineticEffect": "Показывать частицы вращения",
 	"text.autoconfig.create_cyber_goggles.option.goggles.enableKineticEffect.@Tooltip": "Отображает частицы вращения блоков",
 	"text.autoconfig.create_cyber_goggles.option.goggles.enhancedInfo": "Расширенная информация",

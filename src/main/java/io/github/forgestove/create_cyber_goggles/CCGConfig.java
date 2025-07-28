@@ -23,6 +23,7 @@ public class CCGConfig implements ConfigData, ModMenuApi {
 		@Tooltip public boolean renderExtraItems = true;
 		@Tooltip public boolean enableKineticEffect = true;
 		@Tooltip public boolean preciseNumbers = true;
+		@Tooltip public boolean disableScreenGoggles = true;
 		public static class GameMode {
 			@Tooltip public boolean enableInSurvival = true;
 			@Tooltip public boolean enableInCreative = true;

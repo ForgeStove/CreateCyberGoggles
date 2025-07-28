@@ -45,6 +45,8 @@
 	"text.autoconfig.create_cyber_goggles.option.goggles.hideStaticKineticInfo.@Tooltip": "在护目镜中隐藏静态方块的旋转信息",
 	"text.autoconfig.create_cyber_goggles.option.goggles.preciseNumbers": "精准数字",
 	"text.autoconfig.create_cyber_goggles.option.goggles.preciseNumbers.@Tooltip": "显示更精准的数字",
+	"text.autoconfig.create_cyber_goggles.option.goggles.disableScreenGoggles": "禁用屏幕内护目镜",
+	"text.autoconfig.create_cyber_goggles.option.goggles.disableScreenGoggles.@Tooltip": "屏幕出现时禁用护目镜",
 	"text.autoconfig.create_cyber_goggles.option.goggles.renderExtraItems": "渲染更多物品信息",
 	"text.autoconfig.create_cyber_goggles.option.goggles.renderExtraItems.@Tooltip": "允许渲染更多方块上的物品信息",
 	"text.autoconfig.create_cyber_goggles.option.other.forcedBackend": "强制飞轮优化",

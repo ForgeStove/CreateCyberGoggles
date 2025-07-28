@@ -1,1 +1,1 @@
-- Ported right-click penetration options and debugging capabilities
+- Added option to disable goggles when a screen/GUI is open

@@ -1,1 +1,1 @@
-- Fixed StackOverFlowError [#19](https://github.com/ForgeStove/CreateCyberGoggles/issues/19)
+- Added option to disable goggles when a screen/GUI is open

@@ -1,1 +1,1 @@
-- Fixed an issue where some functions could not be used properly in Create-6.0.6
+- Added option to disable goggles when a screen/GUI is open

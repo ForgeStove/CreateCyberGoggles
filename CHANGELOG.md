@@ -1,1 +1,1 @@
-- Ported to 1.20.1-create-0.5
+- Added option to disable goggles when a screen/GUI is open

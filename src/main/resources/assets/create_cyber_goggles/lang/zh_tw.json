@@ -35,6 +35,8 @@
 	"text.autoconfig.create_cyber_goggles.option.gameMode.enableInSpectator.@Tooltip": "在旁觀模式下始終啟用護目鏡",
 	"text.autoconfig.create_cyber_goggles.option.gameMode.enableInSurvival": "生存模式啟用",
 	"text.autoconfig.create_cyber_goggles.option.gameMode.enableInSurvival.@Tooltip": "在生存模式下始終啟用護目鏡",
+	"text.autoconfig.create_cyber_goggles.option.goggles.disableScreenGoggles": "禁用螢幕內護目鏡",
+	"text.autoconfig.create_cyber_goggles.option.goggles.disableScreenGoggles.@Tooltip": "螢幕出現時禁用護目鏡",
 	"text.autoconfig.create_cyber_goggles.option.goggles.enableKineticEffect": "渲染旋轉粒子",
 	"text.autoconfig.create_cyber_goggles.option.goggles.enableKineticEffect.@Tooltip": "渲染目標方塊的旋轉粒子效果",
 	"text.autoconfig.create_cyber_goggles.option.goggles.enhancedInfo": "增強資訊顯示",

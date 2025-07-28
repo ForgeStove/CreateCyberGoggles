@@ -35,6 +35,8 @@
 	"text.autoconfig.create_cyber_goggles.option.gameMode.enableInSpectator.@Tooltip": "Always enable goggles in Spectator mode",
 	"text.autoconfig.create_cyber_goggles.option.gameMode.enableInSurvival": "Enable in Survival Mode",
 	"text.autoconfig.create_cyber_goggles.option.gameMode.enableInSurvival.@Tooltip": "Always enable goggles in Survival mode",
+	"text.autoconfig.create_cyber_goggles.option.goggles.disableScreenGoggles": "Disable Screen Goggles",
+	"text.autoconfig.create_cyber_goggles.option.goggles.disableScreenGoggles.@Tooltip": "Disable goggles when Screen appears",
 	"text.autoconfig.create_cyber_goggles.option.goggles.enableKineticEffect": "Render Rotational Particles",
 	"text.autoconfig.create_cyber_goggles.option.goggles.enableKineticEffect.@Tooltip": "Render rotational particle effects for target blocks",
 	"text.autoconfig.create_cyber_goggles.option.goggles.enhancedInfo": "Enhanced Info Display",

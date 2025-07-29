@@ -9,10 +9,7 @@ group = p("mod_group_id")
 version = "${p("minecraft_version")}-${p("mod_version")}+${p("upper_loader")}"
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 tasks.jar { from("LICENSE") }
-tasks.processResources {
-	from("src/main/resources/fabric.mod.json") { expand(properties) }
-	duplicatesStrategy = DuplicatesStrategy.INCLUDE
-}
+tasks.processResources { filesMatching("fabric.mod.json") { expand(properties) } }
 configurations.configureEach { resolutionStrategy.force("net.fabricmc:fabric-loader:${p("fabric_loader_version")}") }
 loom.accessWidenerPath.set(file("src/main/resources/${p("mod_id")}.accesswidener"))
 repositories {

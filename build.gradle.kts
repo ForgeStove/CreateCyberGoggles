@@ -10,13 +10,7 @@ group = p("mod_group_id")
 version = "${p("minecraft_version")}-${p("mod_version")}+${p("upper_loader")}"
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 tasks.jar { from("LICENSE") }
-tasks.processResources {
-	from("src/main/resources") {
-		include("**/*.toml")
-		expand(properties.mapValues { it.value.toString() })
-	}
-	duplicatesStrategy = DuplicatesStrategy.INCLUDE
-}
+tasks.processResources { filesMatching("META-INF/neoforge.mods.toml") { expand(properties) } }
 neoForge {
 	version = p("loader_version")
 	parchment {

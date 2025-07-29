@@ -13,10 +13,7 @@ tasks.jar {
 	from("LICENSE")
 	manifest.attributes("MixinConfigs" to "${p("mod_id")}.mixins.json")
 }
-tasks.processResources {
-	filesMatching("**/*.toml") { expand(properties) }
-	duplicatesStrategy = DuplicatesStrategy.INCLUDE
-}
+tasks.processResources { filesMatching("META-INF/mods.toml") { expand(properties) } }
 mixin {
 	add(sourceSets.main.get(), "${p("mod_id")}.refmap.json")
 	config("${p("mod_id")}.mixins.json")

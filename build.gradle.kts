@@ -14,10 +14,7 @@ tasks.jar {
 	manifest.attributes("MixinConfigs" to "${p("mod_id")}.mixins.json")
 }
 tasks.processResources {
-	from("src/main/resources") {
-		include("**/*.toml")
-		expand(properties.mapValues { it.value.toString() })
-	}
+	filesMatching("**/*.toml") { expand(properties) }
 	duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 mixin {

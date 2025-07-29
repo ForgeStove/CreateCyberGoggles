@@ -11,13 +11,10 @@ version = "${p("minecraft_version")}-${p("mod_version")}+${p("upper_loader")}"
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 tasks.jar {
 	from("LICENSE")
-	manifest { attributes(mapOf("MixinConfigs" to "${p("mod_id")}.mixins.json")) }
+	manifest.attributes("MixinConfigs" to "${p("mod_id")}.mixins.json")
 }
 tasks.processResources {
-	from("src/main/resources") {
-		include("**/*.toml")
-		expand(properties.mapValues { it.value.toString() })
-	}
+	filesMatching("META-INF/mods.toml") { expand(properties) }
 	duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 mixin {
@@ -37,7 +34,7 @@ legacyForge {
 			systemProperty("terminal.jline", "true")
 		}
 	}
-	mods { create(p("mod_id")) { sourceSet(sourceSets.main.get()) } }
+	mods.create(p("mod_id")).sourceSet(sourceSets.main.get())
 }
 repositories {
 	mavenLocal()

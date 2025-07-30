@@ -6,7 +6,6 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.*;
-import net.neoforged.fml.common.EventBusSubscriber.Bus;
 import net.neoforged.neoforge.client.event.InputEvent.*;
 import net.neoforged.neoforge.client.event.*;
 @Mod(CCG.ID)
@@ -17,7 +16,7 @@ public class CCG {
 		if (dist == Dist.CLIENT) CCGConfig.register(container);
 	}
 	@EventBusSubscriber(modid = ID, value = Dist.CLIENT)
-	public static class ClientGameEvents {
+	public static class ClientEvents {
 		@SubscribeEvent
 		public static void key(Key event) {
 			KeyInput.tick();
@@ -31,9 +30,6 @@ public class CCG {
 			KineticParticle.tick(event);
 			KineticDebugger.tick(event);
 		}
-	}
-	@EventBusSubscriber(modid = ID, value = Dist.CLIENT, bus = Bus.MOD)
-	public static class ClientModEvents {
 		@SubscribeEvent
 		public static void registerKeyMappingsEvent(RegisterKeyMappingsEvent event) {
 			CCGKeyMapping.register(event);

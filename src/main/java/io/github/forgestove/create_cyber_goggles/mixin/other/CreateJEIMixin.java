@@ -12,7 +12,7 @@ public abstract class CreateJEIMixin {
 			+ "Lcom/simibubi/create/compat/jei/category/CreateRecipeCategory$Builder;"
 	), index = 1
 	)
-	private int loadCategories(int height) {
+	public int loadCategories(int height) {
 		return CCG.CONFIG.other.nonrandomScrap ? height + 40 : height;
 	}
 	@SuppressWarnings({"MixinAnnotationTarget", "InvalidInjectorMethodSignature"})
@@ -23,7 +23,7 @@ public abstract class CreateJEIMixin {
 			+ "Lcom/simibubi/create/compat/jei/CreateJEI$CategoryBuilder;"
 	), index = 1
 	)
-	private int loadCategoriesLegacy(int height) {
-		return CCG.CONFIG.other.nonrandomScrap ? height + 40 : height;
+	public int loadCategoriesLegacy(int height) {
+		return loadCategories(height);
 	}
 }

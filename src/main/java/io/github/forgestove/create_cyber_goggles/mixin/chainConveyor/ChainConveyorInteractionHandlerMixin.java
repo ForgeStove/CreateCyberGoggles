@@ -46,10 +46,11 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 			return;
 		}
 		if (selectedConnection == null) return;
-		AllPackets.getChannel()
-			.sendToServer(new ChainConveyorConnectionPacket(selectedLift,
-				selectedLift.offset(selectedConnection),
-				mainHandItem.isEmpty() ? AllItems.WRENCH.asStack() : mainHandItem,
-				false));
+		AllPackets.getChannel().sendToServer(new ChainConveyorConnectionPacket(
+			selectedLift,
+			selectedLift.offset(selectedConnection),
+			mainHandItem.isEmpty() ? AllItems.WRENCH.asStack() : mainHandItem,
+			false
+		));
 	}
 }

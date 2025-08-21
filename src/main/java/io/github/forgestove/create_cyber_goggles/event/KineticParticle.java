@@ -23,12 +23,14 @@ public class KineticParticle {
 		if (rotationAxis == null) return;
 		var center = VecHelper.getCenterOf(kbe.getBlockPos());
 		var speedLevel = SpeedLevel.of(speed);
-		var particleData = new RotationIndicatorParticleData(speedLevel.getColor(),
+		var particleData = new RotationIndicatorParticleData(
+			speedLevel.getColor(),
 			Math.max(15, speedLevel.getParticleSpeed()) * Math.signum(speed),
 			kb.getParticleInitialRadius(),
 			kb.getParticleTargetRadius(),
 			20,
-			rotationAxis.name().charAt(0));
+			rotationAxis.name().charAt(0)
+		);
 		mc.level.addParticle(particleData, center.x, center.y, center.z, 0, 0, 0);
 	}
 }

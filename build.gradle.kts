@@ -1,5 +1,3 @@
-@file:Suppress("SpellCheckingInspection")
-
 plugins {
 	id("net.neoforged.moddev.legacyforge") version "+"
 	id("me.modmuss50.mod-publish-plugin") version "+"
@@ -46,8 +44,8 @@ repositories {
 	maven("https://api.modrinth.com/maven") // Modrinth
 }
 dependencies {
-	accessCompileOnly("com.simibubi.create:create-${p("minecraft_version")}:${p("create_version")}:all")
-	modImplementation("com.simibubi.create:create-${p("minecraft_version")}:${p("create_version")}:all")
+	accessCompileOnly("com.simibubi.create:create-${p("minecraft_version")}:${p("create_version")}:slim")
+	modImplementation("com.simibubi.create:create-${p("minecraft_version")}:${p("create_version")}:slim")
 	modImplementation("com.jozufozu.flywheel:flywheel-${p("loader")}-${p("minecraft_version")}:${p("flywheel_version")}")
 	modImplementation("com.tterrag.registrate:Registrate:${p("registrate_version")}")
 	modImplementation("me.shedaniel.cloth:cloth-config-${p("loader")}:${p("cloth_config_version")}")

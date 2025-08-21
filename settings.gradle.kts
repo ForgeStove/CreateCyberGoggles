@@ -9,4 +9,3 @@ pluginManagement {
 		useModule("com.github.ForgeStove.ModAccessor:build:${requested.version ?: "+"}")
 	}
 }
-plugins { id("org.gradle.toolchains.foojay-resolver-convention") version "+" }

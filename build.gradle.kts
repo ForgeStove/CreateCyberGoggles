@@ -1,5 +1,3 @@
-@file:Suppress("SpellCheckingInspection", "UnstableApiUsage")
-
 plugins {
 	id("fabric-loom") version "+"
 	id("me.modmuss50.mod-publish-plugin") version "+"
@@ -31,7 +29,7 @@ repositories {
 }
 dependencies {
 	minecraft("com.mojang:minecraft:${p("minecraft_version")}")
-	mappings(loom.layered {
+	@Suppress("UnstableApiUsage") mappings(loom.layered {
 		officialMojangMappings { nameSyntheticMembers = false }
 		parchment("org.parchmentmc.data:parchment-${p("minecraft_version")}:${p("parchment_version")}@zip")
 	})

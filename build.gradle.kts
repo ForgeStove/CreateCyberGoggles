@@ -1,5 +1,3 @@
-@file:Suppress("SpellCheckingInspection")
-
 plugins {
 	java
 	id("net.neoforged.moddev.legacyforge") version "+"

@@ -15,7 +15,12 @@ public abstract class CreateJEIMixin {
 	public int loadCategories(int height) {
 		return CCG.CONFIG.other.nonrandomScrap ? height + 40 : height;
 	}
-	@SuppressWarnings({"MixinAnnotationTarget", "InvalidInjectorMethodSignature"})
+	@SuppressWarnings(
+		{
+			"MixinAnnotationTarget",
+			"InvalidInjectorMethodSignature"
+		}
+	)
 	@ModifyArg(
 		method = "loadCategories", at = @At(
 		value = "INVOKE",

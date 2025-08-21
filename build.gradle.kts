@@ -1,5 +1,4 @@
 plugins {
-	java
 	id("net.neoforged.moddev") version "+"
 	id("me.modmuss50.mod-publish-plugin") version "+"
 	id("io.github.forgestove.modaccessor") version "+"

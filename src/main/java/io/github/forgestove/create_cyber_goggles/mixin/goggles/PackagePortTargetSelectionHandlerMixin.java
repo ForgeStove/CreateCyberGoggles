@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.mixin.other;
+package io.github.forgestove.create_cyber_goggles.mixin.goggles;
 import com.simibubi.create.content.logistics.packagePort.PackagePortTargetSelectionHandler;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.createmod.catnip.outliner.Outliner;

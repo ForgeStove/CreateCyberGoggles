@@ -21,10 +21,10 @@
 		"goggles.KineticBlockEntityMixin",
 		"goggles.LangNumberFormatMixin",
 		"goggles.PackageItemMixin",
+		"goggles.PackagePortTargetSelectionHandlerMixin",
 		"goggles.PoweredShaftBlockEntityMixin",
 		"other.CreateJEIMixin",
 		"other.NbtAccounterMixin",
-		"other.PackagePortTargetSelectionHandlerMixin",
 		"other.SequencedAssemblyCategoryMixin",
 		"other.SimpleBackendMixin"
 	]

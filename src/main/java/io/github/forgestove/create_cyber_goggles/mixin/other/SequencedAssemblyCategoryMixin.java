@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.*;
 public abstract class SequencedAssemblyCategoryMixin {
 	@Inject(method = "setRecipe*", at = @At("TAIL"))
 	private void setRecipe(IRecipeLayoutBuilder builder, SequencedAssemblyRecipe recipe, IFocusGroup focuses, CallbackInfo callbackInfo) {
-		if (!CCG.CONFIG.other.nonrandomScrap) return;
+		if (!CCG.CONFIG.other.showScrapContent) return;
 		var size = 8;
 		for (var i = 1; i < recipe.resultPool.size(); i++) {
 			var out = recipe.resultPool.get(i);

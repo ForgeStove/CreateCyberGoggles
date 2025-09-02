@@ -53,7 +53,7 @@ public class CCGConfig implements ConfigData {
 		@Tooltip public boolean rightClickPenetrate = false;
 		@Tooltip public boolean rainbowDebug = false;
 		@Tooltip public boolean forcedBackend = false;
-		@Tooltip @RequiresRestart public boolean nonrandomScrap = true;
+		@Tooltip @RequiresRestart public boolean showScrapContent = true;
 		@Tooltip public boolean nbtFix = false;
 	}
 }

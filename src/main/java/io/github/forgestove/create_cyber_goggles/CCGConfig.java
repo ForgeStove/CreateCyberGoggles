@@ -27,6 +27,7 @@ public class CCGConfig implements ConfigData {
 		@Tooltip public boolean enableKineticEffect = true;
 		@Tooltip public boolean preciseNumbers = true;
 		@Tooltip public boolean disableScreenGoggles = true;
+		@Tooltip public boolean betterLine = true;
 		public static class GameMode {
 			@Tooltip public boolean enableInSurvival = true;
 			@Tooltip public boolean enableInCreative = true;

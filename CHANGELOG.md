@@ -1,1 +1,3 @@
-- Added option to disable goggles when a screen/GUI is open
+- Add an option to optimize the rendering of connection lines
+- Optimize the Rainbow Debug
+- Fix translation

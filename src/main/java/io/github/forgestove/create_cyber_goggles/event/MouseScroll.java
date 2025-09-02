@@ -5,7 +5,7 @@ import io.github.forgestove.create_cyber_goggles.util.Common;
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent;
 public class MouseScroll {
 	public static void onMouseScroll(MouseScrollingEvent event) {
-		if (!CCG.CONFIG.goggles.enhancedStoreRender) return;
+		if (!CCG.CONFIG.goggles.betterStoreInfo) return;
 		if (Common.getSelectedBE() instanceof TableClothBlockEntity tcbe && tcbe.isShop()) {
 			if (event.getScrollDeltaY() == 0) Common.scrollDeltaY = 0;
 			else Common.scrollDeltaY = event.getScrollDeltaY() > 0 ? -1 : 1;

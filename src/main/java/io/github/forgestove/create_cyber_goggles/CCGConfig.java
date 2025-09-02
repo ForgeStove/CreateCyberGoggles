@@ -22,7 +22,7 @@ public class CCGConfig implements ConfigData {
 	public static class Goggles {
 		@Tooltip public boolean enhancedInfo = true;
 		@Tooltip public boolean hideStaticKineticInfo = false;
-		@Tooltip public boolean enhancedStoreRender = true;
+		@Tooltip public boolean betterStoreInfo = true;
 		@Tooltip public boolean renderExtraItems = true;
 		@Tooltip public boolean enableKineticEffect = true;
 		@Tooltip public boolean preciseNumbers = true;

@@ -12,7 +12,7 @@ import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.world.phys.*;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent.Stage;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
 import java.util.*;
@@ -30,7 +30,7 @@ public class KineticDebugger {
 		if (kbe == null) return;
 		renderAxisLine(kbe);
 		updateKBEPath(level, kbe);
-		renderKineticPath(level, cachedKBEPath, System.currentTimeMillis(), event.getFrustum());
+		renderKineticPath(level, cachedKBEPath, level.getGameTime(), event.getFrustum());
 	}
 	/**
 	 * 更新并缓存当前选中动力方块实体的动力来源链路。
@@ -68,10 +68,11 @@ public class KineticDebugger {
 		for (var depth = 0; depth < kbePath.size(); depth++) {
 			var nodeBE = kbePath.get(depth);
 			// 渲染前判断包围盒是否在视锥体内
-			if (isAABBInFrustum(nodeBE, level, frustum)) renderOutline(nodeBE, level, depth, time);
+			var rgb = getRainbowColor(depth, time);
+			if (isAABBInFrustum(nodeBE, level, frustum)) renderOutline(nodeBE, level, depth, rgb);
 			// 连线渲染时也判断两端是否有一端在视锥体内，否则跳过
 			if (nodeBE.source == null) continue;
-			if (isLineInFrustum(nodeBE.getBlockPos(), nodeBE.source, frustum)) renderKineticLine(nodeBE, getColor(depth, time));
+			if (isLineInFrustum(nodeBE.getBlockPos(), nodeBE.source, frustum)) renderKineticLine(nodeBE, depth, rgb);
 		}
 	}
 	/**
@@ -105,15 +106,14 @@ public class KineticDebugger {
 	 *
 	 * @param kbe   目标动力方块实体
 	 * @param level 当前客户端世界
-	 * @param depth 链路深度（用于着色）
-	 * @param time  当前时间戳
+	 * @param depth 链路深度
+	 * @param rgb   轮廓的RGB颜色值
 	 */
-	public static void renderOutline(@NotNull KineticBlockEntity kbe, @NotNull ClientLevel level, int depth, long time) {
+	public static void renderOutline(@NotNull KineticBlockEntity kbe, @NotNull ClientLevel level, int depth, int rgb) {
 		var toOutline = kbe.getBlockPos();
 		var shape = level.getBlockState(toOutline).getBlockSupportShape(level, toOutline);
 		if (kbe.getTheoreticalSpeed() == 0 || shape.isEmpty()) return;
-		var rgb = getColor(depth, time);
-		Outliner.getInstance().chaseAABB(toOutline.asLong(), shape.bounds().move(toOutline)).lineWidth(1 / 16f).colored(rgb);
+		Outliner.getInstance().chaseAABB("kineticOutline" + depth, shape.bounds().move(toOutline)).lineWidth(1 / 16f).colored(rgb);
 	}
 	/**
 	 * 根据链路深度和时间生成彩虹色。
@@ -122,25 +122,25 @@ public class KineticDebugger {
 	 * @param time  当前时间戳
 	 * @return RGB 颜色值
 	 */
-	@Contract(pure = true)
-	public static int getColor(int depth, long time) {
+	public static int getRainbowColor(int depth, long time) {
 		var hue = 1.0f - (depth * 0.05f - (time % 6000L) / 3000f) % 1.0f;
 		return Color.HSBtoRGB(hue, 0.8f, 1.0f);
 	}
 	/**
 	 * 渲染动力链路的连线（非直接相邻）。
 	 *
-	 * @param kbe 当前动力方块实体
-	 * @param rgb 线条颜色
+	 * @param kbe   当前动力方块实体
+	 * @param depth 链路深度
+	 * @param rgb   线条颜色
 	 */
-	public static void renderKineticLine(@NotNull KineticBlockEntity kbe, int rgb) {
+	public static void renderKineticLine(@NotNull KineticBlockEntity kbe, int depth, int rgb) {
 		if (kbe.source == null) return;
 		var fromPos = kbe.getBlockPos();
 		var toPos = kbe.source;
 		if (fromPos.distManhattan(toPos) == 1) return;
 		var from = VecHelper.getCenterOf(fromPos);
 		var to = VecHelper.getCenterOf(toPos);
-		Outliner.getInstance().showLine(fromPos.asLong() + toPos.asLong(), from, to).lineWidth(1 / 8f).colored(rgb);
+		Outliner.getInstance().showLine("kineticLine" + depth, from, to).lineWidth(1 / 8f).colored(rgb);
 	}
 	/**
 	 * 渲染动力方块的旋转轴线。
@@ -153,6 +153,6 @@ public class KineticDebugger {
 		var axis = iRotate.getRotationAxis(state);
 		var vec = Vec3.atLowerCornerOf(Direction.get(AxisDirection.POSITIVE, axis).getNormal());
 		var center = VecHelper.getCenterOf(kbe.getBlockPos());
-		Outliner.getInstance().showLine("axisLine", center.add(vec), center.subtract(vec)).lineWidth(1 / 8f);
+		Outliner.getInstance().showLine("rotationAxis", center.add(vec), center.subtract(vec)).lineWidth(1 / 8f);
 	}
 }

@@ -21,11 +21,12 @@ public class CCGConfig implements ConfigData {
 	public static class Goggles {
 		@Tooltip public boolean enhancedInfo = true;
 		@Tooltip public boolean hideStaticKineticInfo = false;
-		@Tooltip public boolean enhancedStoreRender = true;
+		@Tooltip public boolean betterStoreInfo = true;
 		@Tooltip public boolean renderExtraItems = true;
 		@Tooltip public boolean enableKineticEffect = true;
 		@Tooltip public boolean preciseNumbers = true;
 		@Tooltip public boolean disableScreenGoggles = true;
+		@Tooltip public boolean betterLine = true;
 		public static class GameMode {
 			@Tooltip public boolean enableInSurvival = true;
 			@Tooltip public boolean enableInCreative = true;
@@ -52,7 +53,7 @@ public class CCGConfig implements ConfigData {
 		@Tooltip public boolean rightClickPenetrate = false;
 		@Tooltip public boolean rainbowDebug = false;
 		@Tooltip public boolean forcedBackend = false;
-		@Tooltip @RequiresRestart public boolean nonrandomScrap = true;
+		@Tooltip @RequiresRestart public boolean showScrapContent = true;
 		@Tooltip public boolean nbtFix = false;
 	}
 }

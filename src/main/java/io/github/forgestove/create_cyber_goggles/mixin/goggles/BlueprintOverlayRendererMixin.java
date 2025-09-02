@@ -35,7 +35,7 @@ public abstract class BlueprintOverlayRendererMixin {
 		@Local(name = "y") int y,
 		@Local(name = "invalidShop") boolean invalidShop
 	) {
-		if (!CCG.CONFIG.goggles.enhancedStoreRender) return;
+		if (!CCG.CONFIG.goggles.betterStoreInfo) return;
 		callbackInfo.cancel();
 		if (results.isEmpty()) {
 			guiGraphics.blit(WIDGETS_LOCATION, x, y, 24, 23, 22, 22);

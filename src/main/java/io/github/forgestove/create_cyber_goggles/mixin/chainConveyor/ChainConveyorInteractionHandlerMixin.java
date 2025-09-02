@@ -40,12 +40,12 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 		if (!CCG.CONFIG.chainConveyor.alwaysAllowRiding) return;
 		var player = Minecraft.getInstance().player;
 		if (player == null) return;
-		var mainHandItem = player.getMainHandItem();
 		if (!player.isShiftKeyDown()) {
 			ChainConveyorRidingHandler.embark(selectedLift, selectedChainPosition, selectedConnection);
 			return;
 		}
 		if (selectedConnection == null) return;
+		var mainHandItem = player.getMainHandItem();
 		AllPackets.getChannel().sendToServer(new ChainConveyorConnectionPacket(
 			selectedLift,
 			selectedLift.offset(selectedConnection),

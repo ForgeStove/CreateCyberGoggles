@@ -21,7 +21,7 @@ neoForge {
 	runs {
 		create("client").client()
 		configureEach {
-			jvmArguments.add("-XX:+AllowEnhancedClassRedefinition")
+			jvmArguments.addAll("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition")
 			systemProperty("terminal.jline", "true")
 		}
 	}

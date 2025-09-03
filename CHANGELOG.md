@@ -1,3 +1,2 @@
-- Add an option to optimize the rendering of connection lines
 - Optimize the Rainbow Debug
-- Fix translation
+- Fix some bugs

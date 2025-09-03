@@ -7,6 +7,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.*;
 import net.neoforged.fml.common.EventBusSubscriber.Bus;
+import net.neoforged.neoforge.client.event.ClientTickEvent.Post;
 import net.neoforged.neoforge.client.event.InputEvent.*;
 import net.neoforged.neoforge.client.event.*;
 @Mod(CCG.ID)
@@ -29,7 +30,10 @@ public class CCG {
 		@SubscribeEvent
 		public static void renderLevelStageEvent(RenderLevelStageEvent event) {
 			KineticParticle.tick(event);
-			KineticDebugger.tick(event);
+		}
+		@SubscribeEvent
+		public static void tickPostEvent(Post event) {
+			KineticDebugger.tick();
 		}
 	}
 	@EventBusSubscriber(modid = ID, value = Dist.CLIENT, bus = Bus.MOD)

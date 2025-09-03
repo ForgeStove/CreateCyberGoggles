@@ -10,8 +10,6 @@ import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.core.*;
 import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.world.phys.*;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
@@ -19,9 +17,8 @@ import java.util.*;
 public class KineticDebugger {
 	public static BlockPos lastSource;
 	public static List<KineticBlockEntity> cachedKBEPath;
-	public static void tick(RenderLevelStageEvent event) {
+	public static void tick() {
 		if (!CCG.CONFIG.other.rainbowDebug) return;
-		if (event.getStage() != Stage.AFTER_BLOCK_ENTITIES) return;
 		var mc = Minecraft.getInstance();
 		if (mc.isPaused() || mc.screen != null) return;
 		var level = mc.level;
@@ -30,7 +27,7 @@ public class KineticDebugger {
 		if (kbe == null) return;
 		renderAxisLine(kbe);
 		updateKBEPath(level, kbe);
-		renderKineticPath(level, cachedKBEPath, level.getGameTime(), event.getFrustum());
+		renderKineticPath(level, cachedKBEPath, level.getGameTime());
 	}
 	/**
 	 * 更新并缓存当前选中动力方块实体的动力来源链路。
@@ -62,13 +59,13 @@ public class KineticDebugger {
 	 * @param level   当前客户端世界
 	 * @param kbePath 动力链路节点列表（从源到目标）
 	 * @param time    当前时间戳
-	 * @param frustum 当前渲染视锥体
 	 */
-	public static void renderKineticPath(ClientLevel level, @NotNull List<KineticBlockEntity> kbePath, long time, Frustum frustum) {
+	public static void renderKineticPath(ClientLevel level, @NotNull List<KineticBlockEntity> kbePath, long time) {
 		for (var depth = 0; depth < kbePath.size(); depth++) {
 			var nodeBE = kbePath.get(depth);
 			// 渲染前判断包围盒是否在视锥体内
 			var rgb = getRainbowColor(depth, time);
+			var frustum = Minecraft.getInstance().levelRenderer.getFrustum();
 			if (isAABBInFrustum(nodeBE, level, frustum)) renderOutline(nodeBE, level, depth, rgb);
 			// 连线渲染时也判断两端是否有一端在视锥体内，否则跳过
 			if (nodeBE.source == null) continue;
@@ -123,8 +120,7 @@ public class KineticDebugger {
 	 * @return RGB 颜色值
 	 */
 	public static int getRainbowColor(int depth, long time) {
-		var hue = 1.0f - (depth * 0.05f - (time % 6000L) / 3000f) % 1.0f;
-		return Color.HSBtoRGB(hue, 0.8f, 1.0f);
+		return Color.HSBtoRGB(1.0f - (depth * 0.05f - (time % 200L) / 100f) % 1.0f, 0.8f, 1.0f);
 	}
 	/**
 	 * 渲染动力链路的连线（非直接相邻）。

@@ -23,7 +23,7 @@ public class KeyInput {
 		if (!CCGKeyMapping.toggleDiving.isDown()) return;
 		var armor = CCG.CONFIG.armor;
 		armor.removeDivingBootsAffect = !armor.removeDivingBootsAffect;
-		Common.displayClientMessage(armor.removeDivingBootsAffect, "DivingAffect");
+		Common.displayClientMessage(armor.removeDivingBootsAffect);
 	}
 	public static void openConfigScreen() {
 		if (!CCGKeyMapping.openConfig.isDown()) return;

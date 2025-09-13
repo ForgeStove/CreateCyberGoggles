@@ -49,8 +49,12 @@
 	"text.autoconfig.create_cyber_goggles.option.goggles.hideStaticKineticInfo.@Tooltip": "Hide static block rotational info in goggles overlay",
 	"text.autoconfig.create_cyber_goggles.option.goggles.preciseNumbers": "Precise Numbers",
 	"text.autoconfig.create_cyber_goggles.option.goggles.preciseNumbers.@Tooltip": "Show more precise numbers",
+	"text.autoconfig.create_cyber_goggles.option.goggles.renderBox": "Render Box",
+	"text.autoconfig.create_cyber_goggles.option.goggles.renderBox.@Tooltip": "Render the air frame box of fan",
 	"text.autoconfig.create_cyber_goggles.option.goggles.renderExtraItems": "Render More Item Info",
 	"text.autoconfig.create_cyber_goggles.option.goggles.renderExtraItems.@Tooltip": "Allow rendering more item info on blocks",
+	"text.autoconfig.create_cyber_goggles.option.other.fixSchematicName": "Fix Schematic Name",
+	"text.autoconfig.create_cyber_goggles.option.other.fixSchematicName.@Tooltip": "Non-ASCII characters could be used when saving Blueprints",
 	"text.autoconfig.create_cyber_goggles.option.other.forcedBackend": "Force Flywheel Optimization",
 	"text.autoconfig.create_cyber_goggles.option.other.forcedBackend.@Tooltip": "Force enable Flywheel rendering backend (conflicts with shaders, unless you know what you are doing)",
 	"text.autoconfig.create_cyber_goggles.option.other.nbtFix": "NBT Fix",
@@ -65,5 +69,8 @@
 	"text.autoconfig.create_cyber_goggles.option.wrench.alwaysAllowRotating.@Tooltip": "Rotate blocks with hotkey without a wrench",
 	"text.autoconfig.create_cyber_goggles.option.wrench.removeCooldown": "Remove Cooldown",
 	"text.autoconfig.create_cyber_goggles.option.wrench.removeCooldown.@Tooltip": "Remove the wrench cooldown",
-	"text.autoconfig.create_cyber_goggles.title": "Create: Cyber Goggles"
+	"text.autoconfig.create_cyber_goggles.title": "Create: Cyber Goggles",
+	"tooltip.create_cyber_goggles.block": "Block",
+	"tooltip.create_cyber_goggles.pull": "Pull",
+	"tooltip.create_cyber_goggles.push": "Push"
 }

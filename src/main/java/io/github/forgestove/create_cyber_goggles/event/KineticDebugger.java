@@ -1,7 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.event;
 import com.simibubi.create.content.kinetics.base.*;
-import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.util.Common;
+import io.github.forgestove.create_cyber_goggles.*;
 import net.createmod.catnip.math.VecHelper;
 import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.Minecraft;
@@ -84,19 +83,18 @@ public class KineticDebugger {
 		var pos = kbe.getBlockPos();
 		var shape = level.getBlockState(pos).getBlockSupportShape(level, pos);
 		if (shape.isEmpty()) return false;
-		var aabb = shape.bounds().move(pos);
-		return frustum.isVisible(aabb);
+		return frustum.isVisible(shape.bounds().move(pos));
 	}
 	/**
 	 * 判断线段是否在视锥体内。
 	 *
-	 * @param from    起点
-	 * @param to      终点
+	 * @param start    起点
+	 * @param end      终点
 	 * @param frustum 视锥体
 	 * @return 线段是否可见
 	 */
-	public static boolean isLineInFrustum(Vec3i from, Vec3i to, @NotNull Frustum frustum) {
-		return frustum.isVisible(new AABB(VecHelper.getCenterOf(from), VecHelper.getCenterOf(to)));
+	public static boolean isLineInFrustum(Vec3i start, Vec3i end, @NotNull Frustum frustum) {
+		return frustum.isVisible(new AABB(VecHelper.getCenterOf(start), VecHelper.getCenterOf(end)));
 	}
 	/**
 	 * 渲染指定 KineticBlockEntity 的包围盒轮廓。
@@ -110,7 +108,7 @@ public class KineticDebugger {
 		var toOutline = kbe.getBlockPos();
 		var shape = level.getBlockState(toOutline).getBlockSupportShape(level, toOutline);
 		if (kbe.getTheoreticalSpeed() == 0 || shape.isEmpty()) return;
-		Outliner.getInstance().chaseAABB("kineticOutline" + depth, shape.bounds().move(toOutline)).lineWidth(1 / 16f).colored(rgb);
+		Outliner.getInstance().chaseAABB("KineticOutline" + depth, shape.bounds().move(toOutline)).lineWidth(1 / 16f).colored(rgb);
 	}
 	/**
 	 * 根据链路深度和时间生成彩虹色。
@@ -131,12 +129,13 @@ public class KineticDebugger {
 	 */
 	public static void renderKineticLine(@NotNull KineticBlockEntity kbe, int depth, int rgb) {
 		if (kbe.source == null) return;
-		var fromPos = kbe.getBlockPos();
-		var toPos = kbe.source;
-		if (fromPos.distManhattan(toPos) == 1) return;
-		var from = VecHelper.getCenterOf(fromPos);
-		var to = VecHelper.getCenterOf(toPos);
-		Outliner.getInstance().showLine("kineticLine" + depth, from, to).lineWidth(1 / 8f).colored(rgb);
+		var start = kbe.getBlockPos();
+		var end = kbe.source;
+		if (start.distManhattan(end) == 1) return;
+		Outliner.getInstance()
+			.showLine("KineticLine" + depth, VecHelper.getCenterOf(start), VecHelper.getCenterOf(end))
+			.lineWidth(1 / 8f)
+			.colored(rgb);
 	}
 	/**
 	 * 渲染动力方块的旋转轴线。
@@ -146,9 +145,8 @@ public class KineticDebugger {
 	public static void renderAxisLine(@NotNull KineticBlockEntity kbe) {
 		var state = kbe.getBlockState();
 		if (!(state.getBlock() instanceof IRotate iRotate)) return;
-		var axis = iRotate.getRotationAxis(state);
-		var vec = Vec3.atLowerCornerOf(Direction.get(AxisDirection.POSITIVE, axis).getNormal());
+		var vec = Vec3.atLowerCornerOf(Direction.get(AxisDirection.POSITIVE, iRotate.getRotationAxis(state)).getNormal());
 		var center = VecHelper.getCenterOf(kbe.getBlockPos());
-		Outliner.getInstance().showLine("rotationAxis", center.add(vec), center.subtract(vec)).lineWidth(1 / 8f);
+		Outliner.getInstance().showLine("RotationAxis", center.add(vec), center.subtract(vec)).lineWidth(1 / 8f);
 	}
 }

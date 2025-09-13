@@ -34,6 +34,7 @@ public class CCG {
 		@SubscribeEvent
 		public static void tickPostEvent(Post event) {
 			KineticDebugger.tick();
+			AirBoxRender.tick();
 		}
 	}
 	@EventBusSubscriber(modid = ID, value = Dist.CLIENT, bus = Bus.MOD)

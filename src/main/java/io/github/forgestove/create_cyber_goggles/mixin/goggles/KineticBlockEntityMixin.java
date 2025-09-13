@@ -18,7 +18,7 @@ public abstract class KineticBlockEntityMixin {
 	@Shadow protected float capacity, stress, speed;
 	@Shadow protected boolean overStressed;
 	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), cancellable = true)
-	private void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
+	public void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
 		var goggles = CCG.CONFIG.goggles;
 		if (!goggles.enhancedInfo) return;
 		var hide = !goggles.hideStaticKineticInfo || !Mth.equal(speed, 0);

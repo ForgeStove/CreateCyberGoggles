@@ -1,2 +1,4 @@
-- Optimize the Rainbow Debug
-- Fix some bugs
+- Added airbox rendering
+- Added fan distance tooltip
+- Added option to enable schematic use non-ASCII name
+- Fixed an issue where the stress effect value could not be displayed

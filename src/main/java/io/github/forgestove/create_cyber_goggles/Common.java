@@ -1,10 +1,11 @@
-package io.github.forgestove.create_cyber_goggles.util;
+package io.github.forgestove.create_cyber_goggles;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
-import io.github.forgestove.create_cyber_goggles.CCG;
+import com.simibubi.create.foundation.utility.CreateLang;
 import net.createmod.catnip.gui.ScreenOpener;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
@@ -17,6 +18,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import org.jetbrains.annotations.*;
+
+import java.util.List;
 public class Common {
 	public static StockTickerBlockEntity laststbe;
 	public static int index = 1, scrollDeltaY = 0;
@@ -119,5 +122,28 @@ public class Common {
 			case ATTRIBUTE -> new AttributeFilterScreen(AttributeFilterMenu.create(-1, inv, filter), inv, name);
 			case PACKAGE -> new PackageFilterScreen(PackageFilterMenu.create(-1, inv, filter), inv, name);
 		});
+	}
+	/**
+	 * 为风扇组件添加悬浮提示信息。
+	 * 此方法根据风扇的推/拉状态和作用范围，格式化并添加相应的提示文本。
+	 *
+	 * @param tooltip 需要添加提示信息的组件列表
+	 * @param pushing 风扇是否处于推动模式（true为推动，false为拉动）
+	 * @param range   风扇的作用范围（原始值）
+	 * @param divide  范围除数，用于计算显示的实际范围值
+	 */
+	public static void addFanTooltip(List<Component> tooltip, boolean pushing, float range, int divide) {
+		var string = (
+			pushing
+				? Component.translatable("tooltip.create_cyber_goggles.push")
+				: Component.translatable("tooltip.create_cyber_goggles.pull")
+		).getString();
+		CreateLang.text("-> %s %s %s".formatted(
+				string,
+				range / divide,
+				Component.translatable("tooltip.create_cyber_goggles.block").getString()
+			))
+			.style(ChatFormatting.YELLOW)
+			.forGoggles(tooltip);
 	}
 }

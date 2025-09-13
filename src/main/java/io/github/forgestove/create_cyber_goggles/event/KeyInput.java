@@ -4,7 +4,6 @@ import com.simibubi.create.content.logistics.stockTicker.*;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import io.github.forgestove.create_cyber_goggles.*;
-import io.github.forgestove.create_cyber_goggles.util.Common;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;

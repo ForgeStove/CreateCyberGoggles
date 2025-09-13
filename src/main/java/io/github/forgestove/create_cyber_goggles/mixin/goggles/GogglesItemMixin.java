@@ -11,10 +11,6 @@ public abstract class GogglesItemMixin {
 	private static void isWearingGoggles(CallbackInfoReturnable<Boolean> returnable) {
 		var mc = Minecraft.getInstance();
 		if (mc.gameMode == null) return;
-		if (mc.screen != null && CCG.CONFIG.goggles.disableScreenGoggles) {
-			returnable.setReturnValue(false);
-			return;
-		}
 		var gameMode = CCG.CONFIG.gameMode;
 		if (!switch (mc.gameMode.getPlayerMode()) {
 			case SURVIVAL -> gameMode.enableInSurvival;

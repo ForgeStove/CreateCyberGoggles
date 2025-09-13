@@ -49,12 +49,16 @@
 	"text.autoconfig.create_cyber_goggles.option.goggles.hideStaticKineticInfo.@Tooltip": "Statische kinetische Informationen im Brillen-Overlay ausblenden",
 	"text.autoconfig.create_cyber_goggles.option.goggles.preciseNumbers": "Präzise Zahlen",
 	"text.autoconfig.create_cyber_goggles.option.goggles.preciseNumbers.@Tooltip": "Zeigt genauere Werte an",
+	"text.autoconfig.create_cyber_goggles.option.goggles.renderBox": "Box rendern",
+	"text.autoconfig.create_cyber_goggles.option.goggles.renderBox.@Tooltip": "Luftrahmenbox des Ventilators rendern",
 	"text.autoconfig.create_cyber_goggles.option.goggles.renderExtraItems": "Mehr Gegenstände anzeigen",
 	"text.autoconfig.create_cyber_goggles.option.goggles.renderExtraItems.@Tooltip": "Zeigt mehr Informationen über Gegenstände an",
 	"text.autoconfig.create_cyber_goggles.option.other.forcedBackend": "Schwungrad-Rendering erzwingen",
 	"text.autoconfig.create_cyber_goggles.option.other.forcedBackend.@Tooltip": "Erzwingt das Schwungrad-Rendering (kann mit Shadern kollidieren)",
 	"text.autoconfig.create_cyber_goggles.option.other.nbtFix": "NBT-Fix",
 	"text.autoconfig.create_cyber_goggles.option.other.nbtFix.@Tooltip": "Behebt Abstürze durch große NBT-Daten (kann Lags verursachen)",
+	"text.autoconfig.create_cyber_goggles.option.other.fixSchematicName": "Schematischen Namen reparieren",
+	"text.autoconfig.create_cyber_goggles.option.other.fixSchematicName.@Tooltip": "Nicht-ASCII-Zeichen können beim Speichern von Blaupausen verwendet werden",
 	"text.autoconfig.create_cyber_goggles.option.other.rainbowDebug": "Regenbogen-Debug",
 	"text.autoconfig.create_cyber_goggles.option.other.rainbowDebug.@Tooltip": "Aktiviert den Regenbogen-Debug-Modus",
 	"text.autoconfig.create_cyber_goggles.option.other.rightClickPenetrate": "Rechtsklick-Durchdringung",
@@ -65,5 +69,8 @@
 	"text.autoconfig.create_cyber_goggles.option.wrench.alwaysAllowRotating.@Tooltip": "Erlaubt das Drehen von Blöcken ohne Schlüssel",
 	"text.autoconfig.create_cyber_goggles.option.wrench.removeCooldown": "Abklingzeit entfernen",
 	"text.autoconfig.create_cyber_goggles.option.wrench.removeCooldown.@Tooltip": "Entfernt die Abklingzeit des Schraubenschlüssels",
-	"text.autoconfig.create_cyber_goggles.title": "Create: Cyber-Brille"
+	"text.autoconfig.create_cyber_goggles.title": "Create: Cyber-Brille",
+	"tooltip.create_cyber_goggles.block": "Block",
+	"tooltip.create_cyber_goggles.pull": "Anziehen",
+	"tooltip.create_cyber_goggles.push": "Drücken"
 }

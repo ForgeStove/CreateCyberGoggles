@@ -49,8 +49,12 @@
 	"text.autoconfig.create_cyber_goggles.option.goggles.hideStaticKineticInfo.@Tooltip": "在護目鏡中隱藏靜態方塊的旋轉資訊",
 	"text.autoconfig.create_cyber_goggles.option.goggles.preciseNumbers": "精準數字",
 	"text.autoconfig.create_cyber_goggles.option.goggles.preciseNumbers.@Tooltip": "顯示更精準的數字",
+	"text.autoconfig.create_cyber_goggles.option.goggles.renderBox": "渲染框架盒",
+	"text.autoconfig.create_cyber_goggles.option.goggles.renderBox.@Tooltip": "渲染鼓風機的風框架盒",
 	"text.autoconfig.create_cyber_goggles.option.goggles.renderExtraItems": "渲染更多物品資訊",
 	"text.autoconfig.create_cyber_goggles.option.goggles.renderExtraItems.@Tooltip": "允許渲染更多方塊上的物品資訊",
+	"text.autoconfig.create_cyber_goggles.option.other.fixSchematicName": "修復藍圖名稱",
+	"text.autoconfig.create_cyber_goggles.option.other.fixSchematicName.@Tooltip": "儲存藍圖時可以使用非ASCII字元",
 	"text.autoconfig.create_cyber_goggles.option.other.forcedBackend": "強制飛輪優化",
 	"text.autoconfig.create_cyber_goggles.option.other.forcedBackend.@Tooltip": "強制啟用飛輪渲染後端（與著色器衝突，除非你知道你在做什麼）",
 	"text.autoconfig.create_cyber_goggles.option.other.nbtFix": "NBT修復",
@@ -65,5 +69,8 @@
 	"text.autoconfig.create_cyber_goggles.option.wrench.alwaysAllowRotating.@Tooltip": "無需扳手即可通過快捷鍵旋轉方塊",
 	"text.autoconfig.create_cyber_goggles.option.wrench.removeCooldown": "移除冷卻",
 	"text.autoconfig.create_cyber_goggles.option.wrench.removeCooldown.@Tooltip": "移除扳手的冷卻時間",
-	"text.autoconfig.create_cyber_goggles.title": "機械動力：賽博護目鏡"
+	"text.autoconfig.create_cyber_goggles.title": "機械動力：賽博護目鏡",
+	"tooltip.create_cyber_goggles.block": "格",
+	"tooltip.create_cyber_goggles.pull": "吸引",
+	"tooltip.create_cyber_goggles.push": "推動"
 }

@@ -49,8 +49,12 @@
 	"text.autoconfig.create_cyber_goggles.option.goggles.hideStaticKineticInfo.@Tooltip": "Скрывает статическую кинетическую информацию в интерфейсе очков",
 	"text.autoconfig.create_cyber_goggles.option.goggles.preciseNumbers": "Точные числа",
 	"text.autoconfig.create_cyber_goggles.option.goggles.preciseNumbers.@Tooltip": "Показывает более точные значения",
+	"text.autoconfig.create_cyber_goggles.option.goggles.renderBox": "Отображать рамку",
+	"text.autoconfig.create_cyber_goggles.option.goggles.renderBox.@Tooltip": "Отображать воздушную рамку вентилятора",
 	"text.autoconfig.create_cyber_goggles.option.goggles.renderExtraItems": "Показывать больше предметов",
 	"text.autoconfig.create_cyber_goggles.option.goggles.renderExtraItems.@Tooltip": "Позволяет отображать больше информации о предметах",
+	"text.autoconfig.create_cyber_goggles.option.other.fixSchematicName": "Исправить имя схемы",
+	"text.autoconfig.create_cyber_goggles.option.other.fixSchematicName.@Tooltip": "При сохранении чертежей можно использовать символы, не входящие в ASCII",
 	"text.autoconfig.create_cyber_goggles.option.other.forcedBackend": "Принудительный рендеринг маховика",
 	"text.autoconfig.create_cyber_goggles.option.other.forcedBackend.@Tooltip": "Принудительно включает рендеринг маховика (может конфликтовать с шейдерами)",
 	"text.autoconfig.create_cyber_goggles.option.other.nbtFix": "Исправление NBT",
@@ -65,5 +69,8 @@
 	"text.autoconfig.create_cyber_goggles.option.wrench.alwaysAllowRotating.@Tooltip": "Позволяет вращать блоки без гаечного ключа",
 	"text.autoconfig.create_cyber_goggles.option.wrench.removeCooldown": "Убрать перезарядку",
 	"text.autoconfig.create_cyber_goggles.option.wrench.removeCooldown.@Tooltip": "Убирает перезарядку гаечного ключа",
-	"text.autoconfig.create_cyber_goggles.title": "Create: Кибер-очки"
+	"text.autoconfig.create_cyber_goggles.title": "Create: Кибер-очки",
+	"tooltip.create_cyber_goggles.block": "Блок",
+	"tooltip.create_cyber_goggles.pull": "Притяжение",
+	"tooltip.create_cyber_goggles.push": "Отталкивание"
 }

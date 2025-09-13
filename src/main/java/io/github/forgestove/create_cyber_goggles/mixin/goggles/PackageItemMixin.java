@@ -17,7 +17,7 @@ public abstract class PackageItemMixin extends Item {
 		super(properties);
 	}
 	@Inject(method = "appendHoverText", at = @At("HEAD"), cancellable = true)
-	private void appendHoverText(
+	public void appendHoverText(
 		ItemStack stack,
 		Level level,
 		List<Component> tooltipComponents,

@@ -5,6 +5,7 @@ import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent.*;
 import net.minecraftforge.client.event.*;
+import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -30,7 +31,11 @@ public class CCG {
 		@SubscribeEvent
 		public static void renderLevelStageEvent(RenderLevelStageEvent event) {
 			KineticParticle.tick(event);
-			KineticDebugger.tick(event);
+		}
+		@SubscribeEvent
+		public static void clientTickEvent(ClientTickEvent event) {
+			KineticDebugger.tick();
+			AirBoxRender.tick();
 		}
 	}
 	@EventBusSubscriber(modid = ID, value = Dist.CLIENT, bus = Bus.MOD)

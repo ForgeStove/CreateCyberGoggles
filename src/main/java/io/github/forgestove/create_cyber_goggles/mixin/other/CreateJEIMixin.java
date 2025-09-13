@@ -12,7 +12,7 @@ public abstract class CreateJEIMixin {
 			+ "Lcom/simibubi/create/compat/jei/CreateJEI$CategoryBuilder;"
 	), index = 1
 	)
-	private int loadCategories(int height) {
+	public int loadCategories(int height) {
 		return CCG.CONFIG.other.showScrapContent ? height + 40 : height;
 	}
 }

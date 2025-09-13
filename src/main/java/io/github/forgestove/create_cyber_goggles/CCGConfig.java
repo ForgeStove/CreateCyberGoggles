@@ -27,6 +27,7 @@ public class CCGConfig implements ConfigData {
 		@Tooltip public boolean preciseNumbers = true;
 		@Tooltip public boolean disableScreenGoggles = true;
 		@Tooltip public boolean betterLine = true;
+		@Tooltip public boolean renderBox = true;
 		public static class GameMode {
 			@Tooltip public boolean enableInSurvival = true;
 			@Tooltip public boolean enableInCreative = true;
@@ -50,6 +51,7 @@ public class CCGConfig implements ConfigData {
 		@Tooltip public boolean removeCooldown = true;
 	}
 	public static class Other {
+		@Tooltip public boolean fixSchematicName = true;
 		@Tooltip public boolean rightClickPenetrate = false;
 		@Tooltip public boolean rainbowDebug = false;
 		@Tooltip public boolean forcedBackend = false;

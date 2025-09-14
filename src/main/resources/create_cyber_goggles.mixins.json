@@ -4,7 +4,6 @@
 	"package": "io.github.forgestove.create_cyber_goggles.mixin",
 	"client": [
 		"AbstractFilterScreenMixin",
-		"ContraptionHandlerClientMixin",
 		"RadialWrenchHandlerMixin",
 		"StockKeeperRequestScreenMixin",
 		"chainConveyor.CardboardArmorHandlerMixin",
@@ -24,6 +23,7 @@
 		"goggles.PackagePortTargetSelectionHandlerMixin",
 		"goggles.PoweredShaftBlockEntityMixin",
 		"misc.CardboardArmorStealthOverlayMixin",
+		"misc.ContraptionHandlerClientMixin",
 		"misc.CreateJEIMixin",
 		"misc.DivingBootsItemMixin",
 		"misc.FilesHelperMixin",

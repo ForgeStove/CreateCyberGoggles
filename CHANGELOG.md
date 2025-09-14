@@ -1,4 +1,5 @@
-- Added airbox rendering
-- Added fan distance tooltip
-- Added option to enable schematic use non-ASCII name
-- Fixed an issue where the stress effect value could not be displayed
+- Added ejector target box rendering
+- Added analog box rendering for encased fans, nozzles and mechanical arms
+- Added delay render feature with configurable duration
+- Renamed RenderBox config category to DelayRender
+- Moved miscellaneous settings to Misc category

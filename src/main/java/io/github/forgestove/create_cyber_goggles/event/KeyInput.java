@@ -20,7 +20,7 @@ public class KeyInput {
 	}
 	public static void toggleDiving() {
 		if (!CCGKeyMapping.toggleDiving.isDown()) return;
-		var other = CCG.CONFIG.other;
+		var other = CCG.CONFIG.misc;
 		other.removeDivingBootsAffect = !other.removeDivingBootsAffect;
 		Common.displayClientMessage(other.removeDivingBootsAffect);
 	}

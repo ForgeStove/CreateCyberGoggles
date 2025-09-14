@@ -17,7 +17,7 @@ public class KineticDebugger {
 	public static BlockPos lastSource;
 	public static List<KineticBlockEntity> cachedKBEPath;
 	public static void tick() {
-		if (!CCG.CONFIG.other.rainbowDebug) return;
+		if (!CCG.CONFIG.misc.rainbowDebug) return;
 		var mc = Minecraft.getInstance();
 		if (mc.isPaused() || mc.screen != null) return;
 		var level = mc.level;

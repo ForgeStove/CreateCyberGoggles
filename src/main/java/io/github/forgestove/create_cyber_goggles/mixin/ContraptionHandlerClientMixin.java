@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class ContraptionHandlerClientMixin {
 	@Inject(method = "rightClickingOnContraptionsGetsHandledLocally", at = @At("TAIL"))
 	private static void rightClickingOnContraptionsGetsHandledLocally(InteractionKeyMappingTriggered event, CallbackInfo callbackInfo) {
-		if (!CCG.CONFIG.other.rightClickPenetrate) return;
+		if (!CCG.CONFIG.misc.rightClickPenetrate) return;
 		event.setCanceled(false);
 		event.setSwingHand(true);
 	}

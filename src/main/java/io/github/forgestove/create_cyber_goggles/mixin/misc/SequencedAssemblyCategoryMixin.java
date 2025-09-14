@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.mixin.other;
+package io.github.forgestove.create_cyber_goggles.mixin.misc;
 import com.simibubi.create.compat.jei.category.SequencedAssemblyCategory;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.*;
 public abstract class SequencedAssemblyCategoryMixin {
 	@Inject(method = "setRecipe*", at = @At("TAIL"))
 	private void setRecipe(IRecipeLayoutBuilder builder, SequencedAssemblyRecipe recipe, IFocusGroup focuses, CallbackInfo callbackInfo) {
-		if (!CCG.CONFIG.other.showScrapContent) return;
+		if (!CCG.CONFIG.misc.showScrapContent) return;
 		var size = 8;
 		for (var i = 1; i < recipe.resultPool.size(); i++) {
 			var out = recipe.resultPool.get(i);

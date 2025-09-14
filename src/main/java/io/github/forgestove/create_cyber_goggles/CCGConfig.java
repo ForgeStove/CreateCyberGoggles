@@ -13,7 +13,7 @@ public class CCGConfig implements ConfigData {
 	@Category("delayRender") @TransitiveObject public final DelayRender delayRender = new DelayRender();
 	@Category("chainConveyor") @TransitiveObject public final ChainConveyor chainConveyor = new ChainConveyor();
 	@Category("wrench") @TransitiveObject public final Wrench wrench = new Wrench();
-	@Category("other") @TransitiveObject public final Other other = new Other();
+	@Category("misc") @TransitiveObject public final Misc misc = new Misc();
 	public static void register(@NotNull ModContainer container) {
 		IConfigScreenFactory factory = (modContainer, screen) -> AutoConfig.getConfigScreen(CCGConfig.class, screen).get();
 		container.registerExtensionPoint(IConfigScreenFactory.class, factory);
@@ -50,7 +50,7 @@ public class CCGConfig implements ConfigData {
 		@Tooltip public boolean alwaysAllowRotating = true;
 		@Tooltip public boolean removeCooldown = true;
 	}
-	public static class Other {
+	public static class Misc {
 		@Tooltip public boolean removeCardboardOverlay = true;
 		@Tooltip public boolean removeNetheriteFirstPerson = false;
 		@Tooltip public boolean removeDivingBootsAffect = false;

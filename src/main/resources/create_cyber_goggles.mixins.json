@@ -23,13 +23,13 @@
 		"goggles.PackageItemMixin",
 		"goggles.PackagePortTargetSelectionHandlerMixin",
 		"goggles.PoweredShaftBlockEntityMixin",
-		"other.CardboardArmorStealthOverlayMixin",
-		"other.CreateJEIMixin",
-		"other.DivingBootsItemMixin",
-		"other.FilesHelperMixin",
-		"other.NbtAccounterMixin",
-		"other.NetheriteBacktankFirstPersonRendererMixin",
-		"other.SequencedAssemblyCategoryMixin",
-		"other.SimpleBackendMixin"
+		"misc.CardboardArmorStealthOverlayMixin",
+		"misc.CreateJEIMixin",
+		"misc.DivingBootsItemMixin",
+		"misc.FilesHelperMixin",
+		"misc.NbtAccounterMixin",
+		"misc.NetheriteBacktankFirstPersonRendererMixin",
+		"misc.SequencedAssemblyCategoryMixin",
+		"misc.SimpleBackendMixin"
 	]
 }

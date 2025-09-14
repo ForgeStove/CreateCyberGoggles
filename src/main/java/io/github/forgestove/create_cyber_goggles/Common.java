@@ -5,6 +5,7 @@ import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
 import com.simibubi.create.foundation.utility.CreateLang;
 import net.createmod.catnip.gui.ScreenOpener;
+import net.createmod.catnip.lang.LangNumberFormat;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -140,7 +141,7 @@ public class Common {
 		).getString();
 		CreateLang.text("-> %s %s %s".formatted(
 				string,
-				range / divide,
+				LangNumberFormat.format(range / divide),
 				Component.translatable("tooltip.create_cyber_goggles.block").getString()
 			))
 			.style(ChatFormatting.YELLOW)

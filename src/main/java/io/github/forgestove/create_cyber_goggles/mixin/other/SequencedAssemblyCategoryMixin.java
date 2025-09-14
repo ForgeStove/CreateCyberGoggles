@@ -41,7 +41,7 @@ public abstract class SequencedAssemblyCategoryMixin {
 	protected abstract MutableComponent chanceComponent(float chance);
 	@Inject(method = "chanceComponent", at = @At("HEAD"), cancellable = true)
 	protected void chanceComponent(float chance, CallbackInfoReturnable<MutableComponent> returnable) {
-		if (!CCG.CONFIG.goggles.preciseNumbers) return;
+		if (!CCG.CONFIG.goggles.preciseNumber) return;
 		if (chance * 100 == (int) (chance * 100)) return;
 		returnable.setReturnValue(CreateLang.translateDirect("recipe.processing.chance", chance * 100).withStyle(ChatFormatting.GOLD));
 	}

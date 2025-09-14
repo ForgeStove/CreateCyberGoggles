@@ -1,8 +1,8 @@
 package io.github.forgestove.create_cyber_goggles;
-import io.github.forgestove.create_cyber_goggles.CCGConfig.Goggles.GameMode;
+import io.github.forgestove.create_cyber_goggles.CCGConfig.Goggles.*;
 import me.shedaniel.autoconfig.*;
 import me.shedaniel.autoconfig.annotation.Config;
-import me.shedaniel.autoconfig.annotation.ConfigEntry.Category;
+import me.shedaniel.autoconfig.annotation.ConfigEntry.*;
 import me.shedaniel.autoconfig.annotation.ConfigEntry.Gui.*;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 @Config(name = CCG.ID)
 public class CCGConfig implements ConfigData {
 	@Category("goggles") @TransitiveObject public final Goggles goggles = new Goggles();
+	@Category("goggles") @CollapsibleObject public final RenderBox renderBox = new RenderBox();
 	@Category("goggles") @CollapsibleObject public final GameMode gameMode = new GameMode();
 	@Category("chainConveyor") @TransitiveObject public final ChainConveyor chainConveyor = new ChainConveyor();
 	@Category("armor") @TransitiveObject public final Armor armor = new Armor();
@@ -25,10 +26,14 @@ public class CCGConfig implements ConfigData {
 		@Tooltip public boolean betterStoreInfo = true;
 		@Tooltip public boolean renderExtraItems = true;
 		@Tooltip public boolean enableKineticEffect = true;
-		@Tooltip public boolean preciseNumbers = true;
+		@Tooltip public boolean preciseNumber = true;
 		@Tooltip public boolean disableScreenGoggles = true;
 		@Tooltip public boolean betterLine = true;
-		@Tooltip public boolean renderBox = true;
+		public static class RenderBox {
+			@Tooltip public boolean renderAirBox = true;
+			@Tooltip @ColorPicker public int airBoxPushColor = 0xDDC166;
+			@Tooltip @ColorPicker public int airBoxPullColor = 0x7FCDE0;
+		}
 		public static class GameMode {
 			@Tooltip public boolean enableInSurvival = true;
 			@Tooltip public boolean enableInCreative = true;

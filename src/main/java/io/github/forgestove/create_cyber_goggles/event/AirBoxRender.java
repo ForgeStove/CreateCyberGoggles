@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class AirBoxRender {
 	public static Object2IntOpenHashMap<BlockEntity> cachedBE = new Object2IntOpenHashMap<>();
 	public static void tick() {
-		if (!CCG.CONFIG.goggles.renderBox) return;
+		if (!CCG.CONFIG.renderBox.renderAirBox) return;
 		var mc = Minecraft.getInstance();
 		if (mc.level == null) {
 			cachedBE.clear();
@@ -34,17 +34,20 @@ public class AirBoxRender {
 		});
 	}
 	public static int getColor(boolean pushing) {
-		return pushing ? 0xDDC166 : 0x7FCDE0;
+		return pushing ? CCG.CONFIG.renderBox.airBoxPushColor : CCG.CONFIG.renderBox.airBoxPullColor;
 	}
 	public static double getOffset(int i, int numberOfFlowBoxes) {
 		return (System.currentTimeMillis() + i * ((double) 3000 / numberOfFlowBoxes)) % 3000 / 3000.0;
+	}
+	public static int getNumberOfFlowBoxes(float range) {
+		return Math.max(1, (int) (range / 3));
 	}
 	public static void render(@NotNull EncasedFanBlockEntity efbe) {
 		var airCurrent = efbe.airCurrent;
 		var color = getColor(airCurrent.pushing);
 		var bounds = airCurrent.bounds;
-		Outliner.getInstance().showAABB("FanAirBox" + efbe.getBlockPos(), bounds).lineWidth(1 / 16f).colored(color);
-		var numberOfFlowBoxes = (int) (airCurrent.maxDistance / 3);
+		Outliner.getInstance().chaseAABB("FanAirBox" + efbe.getBlockPos(), bounds).colored(color);
+		var numberOfFlowBoxes = getNumberOfFlowBoxes(airCurrent.maxDistance);
 		for (var i = 0; i < numberOfFlowBoxes; i++) {
 			var offset = getOffset(i, numberOfFlowBoxes);
 			var offsetDistance = airCurrent.maxDistance * offset;
@@ -72,16 +75,16 @@ public class AirBoxRender {
 				Outliner.getInstance().remove(id);
 				continue;
 			}
-			Outliner.getInstance().chaseAABB(id, flowBound).lineWidth(1 / 16f).colored(color);
+			Outliner.getInstance().chaseAABB(id, flowBound).colored(color);
 		}
 	}
 	public static void render(@NotNull NozzleBlockEntity nbe) {
 		var center = VecHelper.getCenterOf(nbe.getBlockPos());
 		var color = getColor(nbe.pushing);
 		Outliner.getInstance()
-			.showAABB("NozzleAirBox" + nbe.getBlockPos(), new AABB(center, center).inflate(nbe.range / 2f))
+			.chaseAABB("NozzleAirBox" + nbe.getBlockPos(), new AABB(center, center).inflate(nbe.range / 2f))
 			.colored(color);
-		var numberOfFlowBoxes = (int) (nbe.range / 3);
+		var numberOfFlowBoxes = getNumberOfFlowBoxes(nbe.range);
 		for (var i = 0; i < numberOfFlowBoxes; i++) {
 			var offset = getOffset(i, numberOfFlowBoxes);
 			var id = "NozzleAirFlowBox" + nbe.getBlockPos() + i;
@@ -91,7 +94,7 @@ public class AirBoxRender {
 			}
 			var radius = nbe.pushing ? offset * nbe.range / 2f : (1 - offset) * nbe.range / 2f;
 			var flowBound = new AABB(center, center).inflate(radius);
-			Outliner.getInstance().chaseAABB(id, flowBound).lineWidth(1 / 16f).colored(color);
+			Outliner.getInstance().chaseAABB(id, flowBound).colored(color);
 		}
 	}
 }

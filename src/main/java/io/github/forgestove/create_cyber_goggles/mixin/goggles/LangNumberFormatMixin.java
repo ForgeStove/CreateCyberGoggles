@@ -10,7 +10,7 @@ import java.text.NumberFormat;
 public abstract class LangNumberFormatMixin {
 	@Inject(method = "format", at = @At("HEAD"), cancellable = true)
 	private static void format(double d, CallbackInfoReturnable<String> returnable) {
-		if (!CCG.CONFIG.goggles.preciseNumbers) return;
+		if (!CCG.CONFIG.goggles.preciseNumber) return;
 		if (d == (long) d) return;
 		if (Math.abs(d) < 1E-3) {
 			returnable.setReturnValue(String.format("%e", d));

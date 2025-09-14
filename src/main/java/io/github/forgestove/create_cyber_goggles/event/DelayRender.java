@@ -2,6 +2,7 @@ package io.github.forgestove.create_cyber_goggles.event;
 import com.simibubi.create.AllSpecialTextures;
 import com.simibubi.create.content.kinetics.fan.*;
 import com.simibubi.create.content.kinetics.mechanicalArm.*;
+import com.simibubi.create.content.logistics.depot.EjectorBlockEntity;
 import io.github.forgestove.create_cyber_goggles.*;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.createmod.catnip.math.VecHelper;
@@ -23,8 +24,10 @@ public class DelayRender {
 		}
 		if (mc.isPaused() || mc.screen != null) return;
 		var be = Common.getSelectedBE();
-		if (be instanceof EncasedFanBlockEntity || be instanceof NozzleBlockEntity || be instanceof ArmBlockEntity)
-			cachedBE.put(be, CCG.CONFIG.delayRender.delayRenderDuration);
+		if (be instanceof EncasedFanBlockEntity
+			|| be instanceof NozzleBlockEntity
+			|| be instanceof ArmBlockEntity
+			|| be instanceof EjectorBlockEntity) cachedBE.put(be, CCG.CONFIG.delayRender.delayRenderDuration);
 		if (cachedBE.isEmpty()) return;
 		cachedBE.object2IntEntrySet().removeIf(entry -> {
 			var blockEntity = entry.getKey();
@@ -34,6 +37,7 @@ public class DelayRender {
 				case EncasedFanBlockEntity efbe -> render(efbe);
 				case NozzleBlockEntity nbe -> render(nbe);
 				case ArmBlockEntity abe -> render(abe);
+				case EjectorBlockEntity ebe -> render(ebe);
 				default -> {}
 			}
 			return newValue <= 0;
@@ -44,7 +48,7 @@ public class DelayRender {
 		var color = getColor(airCurrent.pushing);
 		var bounds = airCurrent.bounds;
 		Outliner.getInstance()
-			.chaseAABB("FanAirBox" + efbe.getBlockPos(), bounds)
+			.chaseAABB("FanAirBox" + efbe, bounds)
 			.withFaceTextures(AllSpecialTextures.CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
 			.lineWidth(1 / 16f)
 			.colored(color);
@@ -71,7 +75,7 @@ public class DelayRender {
 				case Y -> new AABB(bounds.minX, pos, bounds.minZ, bounds.maxX, pos, bounds.maxZ);
 				case Z -> new AABB(bounds.minX, bounds.minY, pos, bounds.maxX, bounds.maxY, pos);
 			};
-			var id = "FanAirFlowBox" + efbe.getBlockPos() + i;
+			var id = "FanAirFlowBox" + efbe + i;
 			if (offset > 0.98) {
 				Outliner.getInstance().remove(id);
 				continue;
@@ -87,14 +91,14 @@ public class DelayRender {
 		var center = VecHelper.getCenterOf(nbe.getBlockPos());
 		var color = getColor(nbe.pushing);
 		Outliner.getInstance()
-			.chaseAABB("NozzleAirBox" + nbe.getBlockPos(), new AABB(center, center).inflate(nbe.range / 2f))
+			.chaseAABB("NozzleAirBox" + nbe, new AABB(center, center).inflate(nbe.range / 2f))
 			.withFaceTextures(AllSpecialTextures.CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
 			.lineWidth(1 / 16f)
 			.colored(color);
 		var numberOfFlowBoxes = getNumberOfFlowBoxes(nbe.range);
 		for (var i = 0; i < numberOfFlowBoxes; i++) {
 			var offset = getOffset(i, numberOfFlowBoxes);
-			var id = "NozzleAirFlowBox" + nbe.getBlockPos() + i;
+			var id = "NozzleAirFlowBox" + nbe + i;
 			if (offset > 0.98) {
 				Outliner.getInstance().remove(id);
 				continue;
@@ -136,8 +140,14 @@ public class DelayRender {
 				.colored(point.getMode().getColor());
 			Outliner.getInstance()
 				.showLine("ArmIOLine" + point, abe.getBlockPos().getCenter(), point.getPos().getCenter())
-				.lineWidth(1 / 16f)
+				.lineWidth(1 / 8f)
 				.colored(point.getMode().getColor());
 		});
+	}
+	public static void render(@NotNull EjectorBlockEntity ebe) {
+		Outliner.getInstance()
+			.chaseAABB("EjectorTargetBox" + ebe, new AABB(ebe.getTargetPosition()))
+			.lineWidth(1 / 16f)
+			.colored(CCG.CONFIG.delayRender.airBoxPushColor);
 	}
 }

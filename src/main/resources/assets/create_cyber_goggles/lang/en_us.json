@@ -67,6 +67,8 @@
 	"text.autoconfig.create_cyber_goggles.option.renderBox.airBoxPullColor.@Tooltip": "Color of the air box when pulling",
 	"text.autoconfig.create_cyber_goggles.option.renderBox.airBoxPushColor": "Air Box Push Color",
 	"text.autoconfig.create_cyber_goggles.option.renderBox.airBoxPushColor.@Tooltip": "Color of the air box when pushing",
+	"text.autoconfig.create_cyber_goggles.option.renderBox.delayRenderDuration": "Delay Render Duration",
+	"text.autoconfig.create_cyber_goggles.option.renderBox.delayRenderDuration.@Tooltip": "Duration for which the air box will be rendered after the block stops working (in tick)",
 	"text.autoconfig.create_cyber_goggles.option.renderBox.renderAirBox": "Render Air Box",
 	"text.autoconfig.create_cyber_goggles.option.renderBox.renderAirBox.@Tooltip": "Render the air box for encased fans and nozzles",
 	"text.autoconfig.create_cyber_goggles.option.wrench.alwaysAllowRotating": "Always Allow Rotating Blocks",

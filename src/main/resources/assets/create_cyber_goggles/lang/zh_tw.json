@@ -67,6 +67,8 @@
 	"text.autoconfig.create_cyber_goggles.option.renderBox.airBoxPullColor.@Tooltip": "氣流吸引時氣流盒的顏色",
 	"text.autoconfig.create_cyber_goggles.option.renderBox.airBoxPushColor": "氣流盒推動顏色",
 	"text.autoconfig.create_cyber_goggles.option.renderBox.airBoxPushColor.@Tooltip": "氣流推動時氣流盒的顏色",
+	"text.autoconfig.create_cyber_goggles.option.renderBox.delayRenderDuration": "延時渲染時長",
+	"text.autoconfig.create_cyber_goggles.option.renderBox.delayRenderDuration.@Tooltip": "氣流盒繼續渲染的時長（以刻為單位）",
 	"text.autoconfig.create_cyber_goggles.option.renderBox.renderAirBox": "渲染氣流盒",
 	"text.autoconfig.create_cyber_goggles.option.renderBox.renderAirBox.@Tooltip": "渲染鼓風機以及分散網的氣流盒",
 	"text.autoconfig.create_cyber_goggles.option.wrench.alwaysAllowRotating": "總是允許旋轉方塊",

@@ -67,6 +67,8 @@
 	"text.autoconfig.create_cyber_goggles.option.renderBox.airBoxPullColor.@Tooltip": "Цвет воздушного блока при втягивании воздушного потока",
 	"text.autoconfig.create_cyber_goggles.option.renderBox.airBoxPushColor": "Цвет воздушного блока при выталкивании",
 	"text.autoconfig.create_cyber_goggles.option.renderBox.airBoxPushColor.@Tooltip": "Цвет воздушного блока при выталкивании воздушного потока",
+	"text.autoconfig.create_cyber_goggles.option.renderBox.delayRenderDuration": "Задержка отображения",
+	"text.autoconfig.create_cyber_goggles.option.renderBox.delayRenderDuration.@Tooltip": "Продолжительность, в течение которой воздушный ящик будет отображаться (в тик)",
 	"text.autoconfig.create_cyber_goggles.option.renderBox.renderAirBox": "Отображать воздушный ящик",
 	"text.autoconfig.create_cyber_goggles.option.renderBox.renderAirBox.@Tooltip": "Отображение воздушного ящика для вентиляторов в корпусе и сопел",
 	"text.autoconfig.create_cyber_goggles.option.wrench.alwaysAllowRotating": "Всегда разрешать вращение",

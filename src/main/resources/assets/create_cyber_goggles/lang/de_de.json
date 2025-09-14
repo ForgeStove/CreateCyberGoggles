@@ -67,6 +67,8 @@
 	"text.autoconfig.create_cyber_goggles.option.renderBox.airBoxPullColor.@Tooltip": "Die Farbe der Luftbox beim Ansaugen von Luftstrom",
 	"text.autoconfig.create_cyber_goggles.option.renderBox.airBoxPushColor": "Luftbox-Druckfarbe",
 	"text.autoconfig.create_cyber_goggles.option.renderBox.airBoxPushColor.@Tooltip": "Die Farbe der Luftbox beim Ausstoßen von Luftstrom",
+	"text.autoconfig.create_cyber_goggles.option.renderBox.delayRenderDuration": "Verzögerte Renderdauer",
+	"text.autoconfig.create_cyber_goggles.option.renderBox.delayRenderDuration.@Tooltip": "Dauer, für die die Luftbox gerendert wird (in Tick)",
 	"text.autoconfig.create_cyber_goggles.option.renderBox.renderAirBox": "Luftbox rendern",
 	"text.autoconfig.create_cyber_goggles.option.renderBox.renderAirBox.@Tooltip": "Rendert die Luftbox für Gehäuseventilatoren und Düsen",
 	"text.autoconfig.create_cyber_goggles.option.wrench.alwaysAllowRotating": "Blöcke immer drehen",

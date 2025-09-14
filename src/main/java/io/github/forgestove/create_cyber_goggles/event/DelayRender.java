@@ -12,7 +12,7 @@ import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-public class AirBoxRender {
+public class DelayRender {
 	public static Object2IntOpenHashMap<BlockEntity> cachedBE = new Object2IntOpenHashMap<>();
 	public static void tick() {
 		if (!CCG.CONFIG.renderBox.renderAirBox) return;

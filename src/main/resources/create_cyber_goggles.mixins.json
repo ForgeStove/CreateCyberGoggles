@@ -7,9 +7,6 @@
 		"ContraptionHandlerClientMixin",
 		"RadialWrenchHandlerMixin",
 		"StockKeeperRequestScreenMixin",
-		"armor.CardboardArmorStealthOverlayMixin",
-		"armor.DivingBootsItemMixin",
-		"armor.NetheriteBacktankFirstPersonRendererMixin",
 		"chainConveyor.CardboardArmorHandlerMixin",
 		"chainConveyor.ChainConveyorConnectionHandlerMixin",
 		"chainConveyor.ChainConveyorInteractionHandlerMixin",
@@ -26,9 +23,12 @@
 		"goggles.PackageItemMixin",
 		"goggles.PackagePortTargetSelectionHandlerMixin",
 		"goggles.PoweredShaftBlockEntityMixin",
+		"other.CardboardArmorStealthOverlayMixin",
 		"other.CreateJEIMixin",
+		"other.DivingBootsItemMixin",
 		"other.FilesHelperMixin",
 		"other.NbtAccounterMixin",
+		"other.NetheriteBacktankFirstPersonRendererMixin",
 		"other.SequencedAssemblyCategoryMixin",
 		"other.SimpleBackendMixin"
 	]

@@ -1,5 +1,4 @@
 package io.github.forgestove.create_cyber_goggles;
-import io.github.forgestove.create_cyber_goggles.CCGConfig.Goggles.*;
 import me.shedaniel.autoconfig.*;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry.*;
@@ -10,10 +9,9 @@ import org.jetbrains.annotations.NotNull;
 @Config(name = CCG.ID)
 public class CCGConfig implements ConfigData {
 	@Category("goggles") @TransitiveObject public final Goggles goggles = new Goggles();
-	@Category("goggles") @CollapsibleObject public final RenderBox renderBox = new RenderBox();
-	@Category("goggles") @CollapsibleObject public final GameMode gameMode = new GameMode();
+	@Category("gameMode") @TransitiveObject public final GameMode gameMode = new GameMode();
+	@Category("renderBox") @TransitiveObject public final RenderBox renderBox = new RenderBox();
 	@Category("chainConveyor") @TransitiveObject public final ChainConveyor chainConveyor = new ChainConveyor();
-	@Category("armor") @TransitiveObject public final Armor armor = new Armor();
 	@Category("wrench") @TransitiveObject public final Wrench wrench = new Wrench();
 	@Category("other") @TransitiveObject public final Other other = new Other();
 	public static void register(@NotNull ModContainer container) {
@@ -29,17 +27,17 @@ public class CCGConfig implements ConfigData {
 		@Tooltip public boolean preciseNumber = true;
 		@Tooltip public boolean disableScreenGoggles = true;
 		@Tooltip public boolean betterLine = true;
-		public static class RenderBox {
-			@Tooltip public boolean renderAirBox = true;
-			@Tooltip @ColorPicker public int airBoxPushColor = 0xDDC166;
-			@Tooltip @ColorPicker public int airBoxPullColor = 0x7FCDE0;
-		}
-		public static class GameMode {
-			@Tooltip public boolean enableInSurvival = true;
-			@Tooltip public boolean enableInCreative = true;
-			@Tooltip public boolean enableInSpectator = true;
-			@Tooltip public boolean enableInAdventure = true;
-		}
+	}
+	public static class GameMode {
+		@Tooltip public boolean enableInSurvival = true;
+		@Tooltip public boolean enableInCreative = true;
+		@Tooltip public boolean enableInSpectator = true;
+		@Tooltip public boolean enableInAdventure = true;
+	}
+	public static class RenderBox {
+		@Tooltip public boolean renderAirBox = true;
+		@Tooltip @ColorPicker public int airBoxPushColor = 0xDDC166;
+		@Tooltip @ColorPicker public int airBoxPullColor = 0x7FCDE0;
 	}
 	public static class ChainConveyor {
 		@Tooltip public boolean alwaysAllowRiding = false;
@@ -47,21 +45,19 @@ public class CCGConfig implements ConfigData {
 		@Tooltip public boolean enhancedConnection = true;
 		@Tooltip public boolean cardBoardedYourself = false;
 	}
-	public static class Armor {
-		@Tooltip public boolean removeBoxOverlay = true;
-		@Tooltip public boolean removeNetheriteFirstPerson = false;
-		@Tooltip public boolean removeDivingBootsAffect = false;
-	}
 	public static class Wrench {
 		@Tooltip public boolean alwaysAllowRotating = true;
 		@Tooltip public boolean removeCooldown = true;
 	}
 	public static class Other {
+		@Tooltip public boolean removeCardboardOverlay = true;
+		@Tooltip public boolean removeNetheriteFirstPerson = false;
+		@Tooltip public boolean removeDivingBootsAffect = false;
 		@Tooltip public boolean fixSchematicName = true;
 		@Tooltip public boolean rightClickPenetrate = false;
 		@Tooltip public boolean rainbowDebug = false;
 		@Tooltip public boolean forcedBackend = false;
-		@Tooltip @RequiresRestart public boolean showScrapContent = true;
 		@Tooltip public boolean nbtFix = false;
+		@Tooltip @RequiresRestart public boolean showScrapContent = true;
 	}
 }

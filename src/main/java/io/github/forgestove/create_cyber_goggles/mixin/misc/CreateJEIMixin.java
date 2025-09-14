@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.mixin.other;
+package io.github.forgestove.create_cyber_goggles.mixin.misc;
 import com.simibubi.create.compat.jei.CreateJEI;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,6 +13,6 @@ public abstract class CreateJEIMixin {
 	), index = 1
 	)
 	public int loadCategories(int height) {
-		return CCG.CONFIG.other.showScrapContent ? height + 40 : height;
+		return CCG.CONFIG.misc.showScrapContent ? height + 40 : height;
 	}
 }

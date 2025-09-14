@@ -17,7 +17,7 @@ public class KineticDebugger {
 	public static BlockPos lastSource;
 	public static List<KineticBlockEntity> cachedKBEPath;
 	public static void tick() {
-		if (!CCG.CONFIG.other.rainbowDebug) return;
+		if (!CCG.CONFIG.misc.rainbowDebug) return;
 		var mc = Minecraft.getInstance();
 		if (mc.isPaused() || mc.screen != null) return;
 		var level = mc.level;
@@ -88,8 +88,8 @@ public class KineticDebugger {
 	/**
 	 * 判断线段是否在视锥体内。
 	 *
-	 * @param start   起点
-	 * @param end     终点
+	 * @param start    起点
+	 * @param end      终点
 	 * @param frustum 视锥体
 	 * @return 线段是否可见
 	 */

@@ -14,6 +14,6 @@ public abstract class PackagePortTargetSelectionHandlerMixin {
 	private static void animateConnection(Minecraft mc, Vec3 source, Vec3 target, Color color, CallbackInfo callbackInfo) {
 		if (!CCG.CONFIG.goggles.betterLine) return;
 		callbackInfo.cancel();
-		Outliner.getInstance().showLine("animateConnection", source, target).lineWidth(1 / 8f).colored(color);
+		Outliner.getInstance().showLine("PackagePortConnection", source, target).lineWidth(1 / 8f).colored(color);
 	}
 }

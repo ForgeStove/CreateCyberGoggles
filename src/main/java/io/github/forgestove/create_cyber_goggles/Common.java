@@ -5,6 +5,7 @@ import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
 import com.simibubi.create.foundation.utility.CreateLang;
 import net.createmod.catnip.gui.ScreenOpener;
+import net.createmod.catnip.lang.LangNumberFormat;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -94,13 +95,16 @@ public class Common {
 	 * 显示一条格式化的客户端消息。
 	 *
 	 * @param currentValue 当前值，用于确定消息的启用或禁用状态
-	 * @param messageKey   消息的键，用于生成完整的消息标识符
 	 */
-	public static void displayClientMessage(boolean currentValue, String messageKey) {
+	public static void displayClientMessage(boolean currentValue) {
 		var mc = Minecraft.getInstance();
-		if (mc.player == null || mc.screen != null) return;
-		var formatted = "message.%s.%sable%s".formatted(CCG.ID, currentValue ? "en" : "dis", messageKey);
-		mc.player.displayClientMessage(Component.translatable(formatted), true);
+		var player = mc.player;
+		if (player == null || mc.screen != null) return;
+		player.displayClientMessage(
+			currentValue
+				? Component.translatable("message.create_cyber_goggles.enableDivingAffect")
+				: Component.translatable("message.create_cyber_goggles.disableDivingAffect"), true
+		);
 	}
 	/**
 	 * 打开与指定过滤器物品相关的筛选器界面。
@@ -136,7 +140,7 @@ public class Common {
 		).getString();
 		CreateLang.text("-> %s %s %s".formatted(
 				string,
-				range / divide,
+				LangNumberFormat.format(range / divide),
 				Component.translatable("tooltip.create_cyber_goggles.block").getString()
 			))
 			.style(ChatFormatting.YELLOW)

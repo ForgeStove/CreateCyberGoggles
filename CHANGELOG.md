@@ -1,3 +1,5 @@
-- Add an option to optimize the rendering of connection lines
-- Optimize the Rainbow Debug
-- Fix translation
+- Added ejector target box rendering
+- Added analog box rendering for encased fans, nozzles and mechanical arms
+- Added delay render feature with configurable duration
+- Renamed RenderBox config category to DelayRender
+- Moved miscellaneous settings to Misc category

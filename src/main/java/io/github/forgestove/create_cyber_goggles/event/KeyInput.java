@@ -20,9 +20,9 @@ public class KeyInput {
 	}
 	public static void toggleDiving() {
 		if (!CCGKeyMapping.toggleDiving.isDown()) return;
-		var armor = CCG.CONFIG.armor;
-		armor.removeDivingBootsAffect = !armor.removeDivingBootsAffect;
-		Common.displayClientMessage(armor.removeDivingBootsAffect, "DivingAffect");
+		var other = CCG.CONFIG.misc;
+		other.removeDivingBootsAffect = !other.removeDivingBootsAffect;
+		Common.displayClientMessage(other.removeDivingBootsAffect);
 	}
 	public static void openConfigScreen() {
 		if (!CCGKeyMapping.openConfig.isDown()) return;

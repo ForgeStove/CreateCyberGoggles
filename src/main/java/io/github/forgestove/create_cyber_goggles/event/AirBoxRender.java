@@ -1,5 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.event;
+import com.simibubi.create.AllSpecialTextures;
 import com.simibubi.create.content.kinetics.fan.*;
+import com.simibubi.create.content.kinetics.mechanicalArm.*;
 import io.github.forgestove.create_cyber_goggles.*;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.createmod.catnip.math.VecHelper;
@@ -8,6 +10,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 public class AirBoxRender {
 	public static Object2IntOpenHashMap<BlockEntity> cachedBE = new Object2IntOpenHashMap<>();
 	public static void tick() {
@@ -19,7 +23,8 @@ public class AirBoxRender {
 		}
 		if (mc.isPaused() || mc.screen != null) return;
 		var be = Common.getSelectedBE();
-		if (be instanceof EncasedFanBlockEntity || be instanceof NozzleBlockEntity) cachedBE.put(be, 120);
+		if (be instanceof EncasedFanBlockEntity || be instanceof NozzleBlockEntity || be instanceof ArmBlockEntity)
+			cachedBE.put(be, CCG.CONFIG.renderBox.delayRenderDuration);
 		if (cachedBE.isEmpty()) return;
 		cachedBE.object2IntEntrySet().removeIf(entry -> {
 			var blockEntity = entry.getKey();
@@ -28,25 +33,21 @@ public class AirBoxRender {
 			if (!blockEntity.isRemoved()) switch (blockEntity) {
 				case EncasedFanBlockEntity efbe -> render(efbe);
 				case NozzleBlockEntity nbe -> render(nbe);
+				case ArmBlockEntity abe -> render(abe);
 				default -> {}
 			}
 			return newValue <= 0;
 		});
 	}
-	public static int getColor(boolean pushing) {
-		return pushing ? CCG.CONFIG.renderBox.airBoxPushColor : CCG.CONFIG.renderBox.airBoxPullColor;
-	}
-	public static double getOffset(int i, int numberOfFlowBoxes) {
-		return (System.currentTimeMillis() + i * ((double) 3000 / numberOfFlowBoxes)) % 3000 / 3000.0;
-	}
-	public static int getNumberOfFlowBoxes(float range) {
-		return Math.max(1, (int) (range / 3));
-	}
 	public static void render(@NotNull EncasedFanBlockEntity efbe) {
 		var airCurrent = efbe.airCurrent;
 		var color = getColor(airCurrent.pushing);
 		var bounds = airCurrent.bounds;
-		Outliner.getInstance().chaseAABB("FanAirBox" + efbe.getBlockPos(), bounds).colored(color);
+		Outliner.getInstance()
+			.chaseAABB("FanAirBox" + efbe.getBlockPos(), bounds)
+			.withFaceTextures(AllSpecialTextures.CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
+			.lineWidth(1 / 16f)
+			.colored(color);
 		var numberOfFlowBoxes = getNumberOfFlowBoxes(airCurrent.maxDistance);
 		for (var i = 0; i < numberOfFlowBoxes; i++) {
 			var offset = getOffset(i, numberOfFlowBoxes);
@@ -75,7 +76,11 @@ public class AirBoxRender {
 				Outliner.getInstance().remove(id);
 				continue;
 			}
-			Outliner.getInstance().chaseAABB(id, flowBound).colored(color);
+			Outliner.getInstance()
+				.chaseAABB(id, flowBound)
+				.withFaceTextures(AllSpecialTextures.CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
+				.lineWidth(1 / 16f)
+				.colored(color);
 		}
 	}
 	public static void render(@NotNull NozzleBlockEntity nbe) {
@@ -83,6 +88,8 @@ public class AirBoxRender {
 		var color = getColor(nbe.pushing);
 		Outliner.getInstance()
 			.chaseAABB("NozzleAirBox" + nbe.getBlockPos(), new AABB(center, center).inflate(nbe.range / 2f))
+			.withFaceTextures(AllSpecialTextures.CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
+			.lineWidth(1 / 16f)
 			.colored(color);
 		var numberOfFlowBoxes = getNumberOfFlowBoxes(nbe.range);
 		for (var i = 0; i < numberOfFlowBoxes; i++) {
@@ -94,7 +101,43 @@ public class AirBoxRender {
 			}
 			var radius = nbe.pushing ? offset * nbe.range / 2f : (1 - offset) * nbe.range / 2f;
 			var flowBound = new AABB(center, center).inflate(radius);
-			Outliner.getInstance().chaseAABB(id, flowBound).colored(color);
+			Outliner.getInstance()
+				.chaseAABB(id, flowBound)
+				.withFaceTextures(AllSpecialTextures.CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
+				.lineWidth(1 / 16f)
+				.colored(color);
 		}
+	}
+	public static int getColor(boolean pushing) {
+		return pushing ? CCG.CONFIG.renderBox.airBoxPushColor : CCG.CONFIG.renderBox.airBoxPullColor;
+	}
+	public static double getOffset(int i, int numberOfFlowBoxes) {
+		return (System.currentTimeMillis() + i * ((double) 3000 / numberOfFlowBoxes)) % 3000 / 3000.0;
+	}
+	public static int getNumberOfFlowBoxes(float range) {
+		return (int) (Math.log(range) + 1);
+	}
+	public static void render(@NotNull ArmBlockEntity abe) {
+		drawArmIO(abe, abe.inputs);
+		drawArmIO(abe, abe.outputs);
+	}
+	public static void drawArmIO(@NotNull ArmBlockEntity abe, List<ArmInteractionPoint> list) {
+		list.forEach(point -> {
+			if (!point.isValid()) {
+				list.remove(point);
+				return;
+			}
+			var level = point.getLevel();
+			var pos = point.getPos();
+			Outliner.getInstance()
+				.chaseAABB("ArmIOBox" + point, level.getBlockState(pos).getShape(level, pos).bounds().move(pos))
+				.withFaceTextures(AllSpecialTextures.HIGHLIGHT_CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
+				.lineWidth(1 / 16f)
+				.colored(point.getMode().getColor());
+			Outliner.getInstance()
+				.showLine("ArmIOLine" + point, abe.getBlockPos().getCenter(), point.getPos().getCenter())
+				.lineWidth(1 / 16f)
+				.colored(point.getMode().getColor());
+		});
 	}
 }

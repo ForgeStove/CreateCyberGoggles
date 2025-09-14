@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 public class CCGConfig implements ConfigData {
 	@Category("goggles") @TransitiveObject public final Goggles goggles = new Goggles();
 	@Category("gameMode") @TransitiveObject public final GameMode gameMode = new GameMode();
-	@Category("renderBox") @TransitiveObject public final RenderBox renderBox = new RenderBox();
+	@Category("delayRender") @TransitiveObject public final DelayRender delayRender = new DelayRender();
 	@Category("chainConveyor") @TransitiveObject public final ChainConveyor chainConveyor = new ChainConveyor();
 	@Category("wrench") @TransitiveObject public final Wrench wrench = new Wrench();
 	@Category("other") @TransitiveObject public final Other other = new Other();
@@ -34,7 +34,7 @@ public class CCGConfig implements ConfigData {
 		@Tooltip public boolean enableInSpectator = true;
 		@Tooltip public boolean enableInAdventure = true;
 	}
-	public static class RenderBox {
+	public static class DelayRender {
 		@Tooltip public boolean renderAirBox = true;
 		@Tooltip public int delayRenderDuration = 60;
 		@Tooltip @ColorPicker public int airBoxPushColor = 0xDDC166;

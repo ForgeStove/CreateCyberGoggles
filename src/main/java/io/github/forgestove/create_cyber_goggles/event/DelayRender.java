@@ -15,7 +15,7 @@ import java.util.List;
 public class DelayRender {
 	public static Object2IntOpenHashMap<BlockEntity> cachedBE = new Object2IntOpenHashMap<>();
 	public static void tick() {
-		if (!CCG.CONFIG.renderBox.renderAirBox) return;
+		if (!CCG.CONFIG.delayRender.renderAirBox) return;
 		var mc = Minecraft.getInstance();
 		if (mc.level == null) {
 			cachedBE.clear();
@@ -24,7 +24,7 @@ public class DelayRender {
 		if (mc.isPaused() || mc.screen != null) return;
 		var be = Common.getSelectedBE();
 		if (be instanceof EncasedFanBlockEntity || be instanceof NozzleBlockEntity || be instanceof ArmBlockEntity)
-			cachedBE.put(be, CCG.CONFIG.renderBox.delayRenderDuration);
+			cachedBE.put(be, CCG.CONFIG.delayRender.delayRenderDuration);
 		if (cachedBE.isEmpty()) return;
 		cachedBE.object2IntEntrySet().removeIf(entry -> {
 			var blockEntity = entry.getKey();
@@ -109,7 +109,7 @@ public class DelayRender {
 		}
 	}
 	public static int getColor(boolean pushing) {
-		return pushing ? CCG.CONFIG.renderBox.airBoxPushColor : CCG.CONFIG.renderBox.airBoxPullColor;
+		return pushing ? CCG.CONFIG.delayRender.airBoxPushColor : CCG.CONFIG.delayRender.airBoxPullColor;
 	}
 	public static double getOffset(int i, int numberOfFlowBoxes) {
 		return (System.currentTimeMillis() + i * ((double) 3000 / numberOfFlowBoxes)) % 3000 / 3000.0;

@@ -35,7 +35,7 @@ public class CCGConfig implements ConfigData {
 		@Tooltip public boolean enableInAdventure = true;
 	}
 	public static class DelayRender {
-		@Tooltip public boolean renderAirBox = true;
+		@Tooltip public boolean renderAnalogBox = true;
 		@Tooltip public int delayRenderDuration = 60;
 		@Tooltip @ColorPicker public int airBoxPushColor = 0xDDC166;
 		@Tooltip @ColorPicker public int airBoxPullColor = 0x7FCDE0;

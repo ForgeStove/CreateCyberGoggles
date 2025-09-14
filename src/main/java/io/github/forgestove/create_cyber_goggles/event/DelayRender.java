@@ -15,7 +15,7 @@ import java.util.List;
 public class DelayRender {
 	public static Object2IntOpenHashMap<BlockEntity> cachedBE = new Object2IntOpenHashMap<>();
 	public static void tick() {
-		if (!CCG.CONFIG.delayRender.renderAirBox) return;
+		if (!CCG.CONFIG.delayRender.renderAnalogBox) return;
 		var mc = Minecraft.getInstance();
 		if (mc.level == null) {
 			cachedBE.clear();

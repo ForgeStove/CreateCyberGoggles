@@ -5,7 +5,6 @@
 	"refmap": "create_cyber_goggles.refmap.json",
 	"client": [
 		"AbstractFilterScreenMixin",
-		"ContraptionHandlerClientMixin",
 		"RadialWrenchHandlerMixin",
 		"StockKeeperRequestScreenMixin",
 		"chainConveyor.CardboardArmorHandlerMixin",
@@ -25,6 +24,7 @@
 		"goggles.PackagePortTargetSelectionHandlerMixin",
 		"goggles.PoweredShaftBlockEntityMixin",
 		"misc.CardboardArmorStealthOverlayMixin",
+		"misc.ContraptionHandlerClientMixin",
 		"misc.CreateJEIMixin",
 		"misc.DivingBootsItemMixin",
 		"misc.FilesHelperMixin",

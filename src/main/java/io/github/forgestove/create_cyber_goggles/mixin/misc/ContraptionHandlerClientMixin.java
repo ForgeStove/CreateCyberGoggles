@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.mixin;
+package io.github.forgestove.create_cyber_goggles.mixin.misc;
 import com.simibubi.create.content.contraptions.ContraptionHandlerClient;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraftforge.client.event.InputEvent.InteractionKeyMappingTriggered;

@@ -133,7 +133,8 @@ public class Common {
 	 * @param range   风扇的作用范围（原始值）
 	 * @param divide  范围除数，用于计算显示的实际范围值
 	 */
-	public static void addFanTooltip(List<Component> tooltip, boolean pushing, float range, int divide) {
+	public static boolean addFanTooltip(List<Component> tooltip, boolean pushing, float range, int divide) {
+		if (range == 0) return false;
 		var string = (
 			pushing
 				? Component.translatable("tooltip.create_cyber_goggles.push")
@@ -146,5 +147,6 @@ public class Common {
 			))
 			.style(ChatFormatting.YELLOW)
 			.forGoggles(tooltip);
+		return true;
 	}
 }

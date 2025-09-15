@@ -19,11 +19,9 @@ public abstract class EncasedFanBlockEntityMixin extends KineticBlockEntity impl
 	public abstract AirCurrent getAirCurrent();
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		super.addToGoggleTooltip(tooltip, isPlayerSneaking);
-		if (!CCG.CONFIG.goggles.enhancedInfo) return true;
-		if (getSpeed() == 0) return true;
+		var add = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+		if (!CCG.CONFIG.goggles.enhancedInfo || getSpeed() == 0) return add;
 		var airCurrent = getAirCurrent();
-		Common.addFanTooltip(tooltip, airCurrent.pushing, airCurrent.maxDistance, 1);
-		return true;
+		return Common.addFanTooltip(tooltip, airCurrent.pushing, airCurrent.maxDistance, 1);
 	}
 }

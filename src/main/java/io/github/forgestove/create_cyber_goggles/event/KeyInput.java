@@ -9,10 +9,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
+import net.neoforged.neoforge.client.event.InputEvent.Key;
 
 import java.util.Collections;
 public class KeyInput {
-	public static void tick() {
+	public static void tick(Key ignoredEvent) {
 		toggleDiving();
 		openConfigScreen();
 		openStockScreen();

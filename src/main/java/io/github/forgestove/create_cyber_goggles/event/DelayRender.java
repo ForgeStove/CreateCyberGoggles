@@ -10,12 +10,13 @@ import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
+import net.neoforged.neoforge.client.event.ClientTickEvent.Post;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 public class DelayRender {
 	public static Object2IntOpenHashMap<BlockEntity> cachedBE = new Object2IntOpenHashMap<>();
-	public static void tick() {
+	public static void tick(Post ignoredEvent) {
 		if (!CCG.CONFIG.delayRender.renderAnalogBox) return;
 		var mc = Minecraft.getInstance();
 		if (mc.level == null) {

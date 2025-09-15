@@ -1,5 +1,1 @@
-- Added ejector target box rendering
-- Added analog box rendering for encased fans, nozzles and mechanical arms
-- Added delay render feature with configurable duration
-- Renamed RenderBox config category to DelayRender
-- Moved miscellaneous settings to Misc category
+- Optimized tooltip display logic for encased fans and nozzles

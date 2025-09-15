@@ -9,8 +9,12 @@ version = "${p("minecraft_version")}-${p("mod_version")}+${p("upper_loader")}"
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 tasks.jar { from("LICENSE") }
 tasks.processResources {
-	outputs.upToDateWhen { false }
-	filesMatching("META-INF/neoforge.mods.toml") { expand(properties) }
+	from(sourceSets.main.get().resources) {
+		include("**/*mods.toml")
+		expand(properties)
+		outputs.upToDateWhen { false }
+		duplicatesStrategy = DuplicatesStrategy.INCLUDE
+	}
 }
 neoForge {
 	version = p("loader_version")
@@ -39,8 +43,8 @@ repositories {
 dependencies {
 	accessCompileOnly("com.simibubi.create:create-${p("minecraft_version")}:${p("create_version")}:slim")
 	runtimeOnly("com.simibubi.create:create-${p("minecraft_version")}:${p("create_version")}:slim") { isTransitive = false }
+	implementation("dev.engine-room.flywheel:flywheel-${p("loader")}-${p("minecraft_version")}:${p("flywheel_version")}"){ isTransitive = false }
 	implementation("net.createmod.ponder:Ponder-${p("upper_loader")}-${p("minecraft_version")}:${p("ponder_version")}")
-	implementation("dev.engine-room.flywheel:flywheel-${p("loader")}-${p("minecraft_version")}:${p("flywheel_version")}")
 	implementation("com.tterrag.registrate:Registrate:${p("registrate_version")}")
 	implementation("me.shedaniel.cloth:cloth-config-${p("loader")}:${p("cloth_config_version")}")
 	implementation("mezz.jei:jei-${p("minecraft_version")}-${p("loader")}:${p("jei_version")}")

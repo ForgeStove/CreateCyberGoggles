@@ -43,8 +43,12 @@ repositories {
 dependencies {
 	accessCompileOnly("com.simibubi.create:create-${p("minecraft_version")}:${p("create_version")}:slim")
 	runtimeOnly("com.simibubi.create:create-${p("minecraft_version")}:${p("create_version")}:slim") { isTransitive = false }
-	implementation("dev.engine-room.flywheel:flywheel-${p("loader")}-${p("minecraft_version")}:${p("flywheel_version")}"){ isTransitive = false }
-	implementation("net.createmod.ponder:Ponder-${p("upper_loader")}-${p("minecraft_version")}:${p("ponder_version")}")
+	implementation("dev.engine-room.flywheel:flywheel-${p("loader")}-${p("minecraft_version")}:${p("flywheel_version")}") {
+		isTransitive = false
+	}
+	implementation("net.createmod.ponder:Ponder-${p("upper_loader")}-${p("minecraft_version")}:${p("ponder_version")}") {
+		isTransitive = false
+	}
 	implementation("com.tterrag.registrate:Registrate:${p("registrate_version")}")
 	implementation("me.shedaniel.cloth:cloth-config-${p("loader")}:${p("cloth_config_version")}")
 	implementation("mezz.jei:jei-${p("minecraft_version")}-${p("loader")}:${p("jei_version")}")

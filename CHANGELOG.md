@@ -1,1 +1,3 @@
-- Optimized tooltip display logic for encased fans and nozzles
+- Optimized translations
+- Optimized event bus
+- Optimized key input

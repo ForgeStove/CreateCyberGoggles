@@ -17,9 +17,6 @@ logoBlur = false
 config = "${mod_id}.mixins.json"
 
 [[accessTransformers]]
-file = "META-INF/accesstransformer.cfg"
-
-[[accessTransformers]]
 file = "META-INF/modaccesstransformer.cfg"
 
 [[dependencies."${mod_id}"]]

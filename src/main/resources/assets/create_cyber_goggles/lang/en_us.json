@@ -1,7 +1,7 @@
 {
 	"key.categories.create_cyber_goggles": "Create: Cyber Goggles",
 	"key.create_cyber_goggles.openConfig": "Open Config",
-	"key.create_cyber_goggles.openStock": "Open Stock",
+	"key.create_cyber_goggles.openStock": "Access network storage via stock ticker",
 	"key.create_cyber_goggles.previewFilter": "Preview Filter",
 	"key.create_cyber_goggles.showStress": "Show Stress Network Info",
 	"key.create_cyber_goggles.toggleDiving": "Toggle Diving Mode",

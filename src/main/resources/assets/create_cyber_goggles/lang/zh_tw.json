@@ -1,7 +1,7 @@
 {
 	"key.categories.create_cyber_goggles": "機械動力：賽博護目鏡",
 	"key.create_cyber_goggles.openConfig": "打開配置",
-	"key.create_cyber_goggles.openStock": "打開庫存",
+	"key.create_cyber_goggles.openStock": "通過倉儲發報機訪問網路存儲",
 	"key.create_cyber_goggles.previewFilter": "預覽過濾器",
 	"key.create_cyber_goggles.showStress": "顯示應力網路資訊",
 	"key.create_cyber_goggles.toggleDiving": "切換潛水模式",

@@ -1,7 +1,7 @@
 {
 	"key.categories.create_cyber_goggles": "Create: Cyber-Brille",
 	"key.create_cyber_goggles.openConfig": "Konfiguration öffnen",
-	"key.create_cyber_goggles.openStock": "Inventar öffnen",
+	"key.create_cyber_goggles.openStock": "Zugriff auf Netzwerkspeicher über Börsenticker",
 	"key.create_cyber_goggles.previewFilter": "Filtervorschau",
 	"key.create_cyber_goggles.showStress": "Informationen zum Stressnetzwerk anzeigen",
 	"key.create_cyber_goggles.toggleDiving": "Tauchmodus umschalten",

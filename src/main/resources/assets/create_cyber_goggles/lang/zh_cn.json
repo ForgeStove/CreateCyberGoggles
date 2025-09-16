@@ -1,7 +1,7 @@
 {
 	"key.categories.create_cyber_goggles": "机械动力：赛博护目镜",
 	"key.create_cyber_goggles.openConfig": "打开配置",
-	"key.create_cyber_goggles.openStock": "打开库存",
+	"key.create_cyber_goggles.openStock": "通过仓储发报机访问网络存储",
 	"key.create_cyber_goggles.previewFilter": "预览过滤器",
 	"key.create_cyber_goggles.showStress": "显示应力网络信息",
 	"key.create_cyber_goggles.toggleDiving": "切换潜水模式",

@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.core.*;
 import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.world.phys.*;
+import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
@@ -16,7 +17,7 @@ import java.util.*;
 public class KineticDebugger {
 	public static BlockPos lastSource;
 	public static List<KineticBlockEntity> cachedKBEPath;
-	public static void tick() {
+	public static void tick(ClientTickEvent ignoredEvent) {
 		if (!CCG.CONFIG.misc.rainbowDebug) return;
 		var mc = Minecraft.getInstance();
 		if (mc.isPaused() || mc.screen != null) return;

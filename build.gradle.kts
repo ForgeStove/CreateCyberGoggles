@@ -12,8 +12,12 @@ tasks.jar {
 	manifest.attributes("MixinConfigs" to "${p("mod_id")}.mixins.json")
 }
 tasks.processResources {
-	outputs.upToDateWhen { false }
-	filesMatching("META-INF/mods.toml") { expand(properties) }
+	from(sourceSets.main.get().resources) {
+		include("**/*mods.toml")
+		expand(properties)
+		outputs.upToDateWhen { false }
+		duplicatesStrategy = DuplicatesStrategy.INCLUDE
+	}
 }
 mixin {
 	add(sourceSets.main.get(), "${p("mod_id")}.refmap.json")
@@ -45,8 +49,10 @@ repositories {
 }
 dependencies {
 	accessCompileOnly("com.simibubi.create:create-${p("minecraft_version")}:${p("create_version")}:slim")
-	modImplementation("com.simibubi.create:create-${p("minecraft_version")}:${p("create_version")}:slim")
-	modImplementation("net.createmod.ponder:Ponder-${p("upper_loader")}-${p("minecraft_version")}:${p("ponder_version")}")
+	modImplementation("com.simibubi.create:create-${p("minecraft_version")}:${p("create_version")}:slim") { isTransitive = false }
+	modImplementation("net.createmod.ponder:Ponder-${p("upper_loader")}-${p("minecraft_version")}:${p("ponder_version")}") {
+		isTransitive = false
+	}
 	modImplementation("dev.engine-room.flywheel:flywheel-${p("loader")}-${p("minecraft_version")}:${p("flywheel_version")}")
 	modImplementation("com.tterrag.registrate:Registrate:${p("registrate_version")}")
 	modImplementation("me.shedaniel.cloth:cloth-config-${p("loader")}:${p("cloth_config_version")}")

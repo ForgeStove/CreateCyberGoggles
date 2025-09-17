@@ -8,14 +8,13 @@ group = p("mod_group_id")
 version = "${p("minecraft_version")}-${p("mod_version")}+${p("upper_loader")}"
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 tasks.jar { from("LICENSE") }
-tasks.processResources {
-	from(sourceSets.main.get().resources) {
-		include("**/*mods.toml")
-		expand(properties)
-		outputs.upToDateWhen { false }
-		duplicatesStrategy = DuplicatesStrategy.INCLUDE
-	}
+var generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
+	expand(properties.mapValues { it.value.toString() })
+	from("src/main/templates")
+	into("build/resources/sources/modMetadata")
 }
+sourceSets.main.get().resources.srcDir(generateMetadata)
+neoForge.ideSyncTasks.add(generateMetadata)
 neoForge {
 	version = p("loader_version")
 	parchment {

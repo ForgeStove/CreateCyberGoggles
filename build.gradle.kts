@@ -1,5 +1,5 @@
 plugins {
-	id("fabric-loom") version "+"
+	id("fabric-loom") version "1.11.8"
 	id("me.modmuss50.mod-publish-plugin") version "+"
 }
 base.archivesName.set(p("mod_id"))
@@ -14,7 +14,10 @@ var generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
 }
 sourceSets.main.get().resources.srcDir(generateMetadata)
 configurations.configureEach { resolutionStrategy.force("net.fabricmc:fabric-loader:${p("fabric_loader_version")}") }
-loom.accessWidenerPath.set(file("src/main/resources/${p("mod_id")}.accesswidener"))
+loom {
+	enableTransitiveAccessWideners = true
+	accessWidenerPath.set(file("src/main/resources/${p("mod_id")}.accesswidener"))
+}
 repositories {
 	mavenLocal()
 	mavenCentral()

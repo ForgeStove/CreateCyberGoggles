@@ -1,15 +1,10 @@
 package io.github.forgestove.create_cyber_goggles.event;
 import com.simibubi.create.content.logistics.depot.DepotBlockEntity;
-import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.util.Common;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import io.github.forgestove.create_cyber_goggles.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 public class OverlayRenderer {
-	public static void register() {
-		HudRenderCallback.EVENT.register(OverlayRenderer::renderOverlay);
-	}
-	public static void renderOverlay(GuiGraphics guiGraphics, float tickDelta) {
+	public static void renderOverlay(GuiGraphics guiGraphics, float ignoredTickDelta) {
 		if (!CCG.CONFIG.goggles.renderExtraItems) return;
 		var mc = Minecraft.getInstance();
 		if (mc.isPaused() || mc.screen != null || mc.options.hideGui) return;

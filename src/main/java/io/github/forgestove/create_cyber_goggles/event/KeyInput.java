@@ -2,9 +2,7 @@ package io.github.forgestove.create_cyber_goggles.event;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import io.github.forgestove.create_cyber_goggles.*;
-import io.github.forgestove.create_cyber_goggles.util.Common;
 import me.shedaniel.autoconfig.AutoConfig;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.phys.BlockHitResult;
@@ -12,18 +10,16 @@ import net.minecraft.world.phys.HitResult.Type;
 
 import java.util.Collections;
 public class KeyInput {
-	public static void register() {
-		ClientTickEvents.END_CLIENT_TICK.register(mc -> {
-			toggleDiving();
-			openConfigScreen();
-			previewFilterScreen();
-		});
+	public static void register(Minecraft ignoredMc) {
+		toggleDiving();
+		openConfigScreen();
+		previewFilterScreen();
 	}
 	public static void toggleDiving() {
 		if (!CCGKeyMapping.toggleDiving.isDown()) return;
-		var armor = CCG.CONFIG.armor;
-		armor.removeDivingBootsAffect = !armor.removeDivingBootsAffect;
-		Common.displayClientMessage(armor.removeDivingBootsAffect, "DivingAffect");
+		var misc = CCG.CONFIG.misc;
+		misc.removeDivingBootsAffect = !misc.removeDivingBootsAffect;
+		Common.displayClientMessage(misc.removeDivingBootsAffect);
 	}
 	public static void openConfigScreen() {
 		if (!CCGKeyMapping.openConfig.consumeClick()) return;

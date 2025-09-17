@@ -5,12 +5,14 @@ plugins {
 base.archivesName.set(p("mod_id"))
 group = p("mod_group_id")
 version = "${p("minecraft_version")}-${p("mod_version")}+${p("upper_loader")}"
-java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+//java.toolchain.l anguageVersion.set(JavaLanguageVersion.of(17))
 tasks.jar { from("LICENSE") }
-tasks.processResources {
-	outputs.upToDateWhen { false }
-	filesMatching("fabric.mod.json") { expand(properties) }
+var generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
+	expand(properties.mapValues { it.value.toString() })
+	from("src/main/templates")
+	into("build/generated/sources/modMetadata")
 }
+sourceSets.main.get().resources.srcDir(generateMetadata)
 configurations.configureEach { resolutionStrategy.force("net.fabricmc:fabric-loader:${p("fabric_loader_version")}") }
 loom.accessWidenerPath.set(file("src/main/resources/${p("mod_id")}.accesswidener"))
 repositories {

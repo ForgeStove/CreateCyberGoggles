@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.mixin.other;
+package io.github.forgestove.create_cyber_goggles.mixin.misc;
 import com.simibubi.create.compat.jei.category.SequencedAssemblyCategory;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
@@ -17,8 +17,8 @@ import org.spongepowered.asm.mixin.injection.callback.*;
 @Mixin(value = SequencedAssemblyCategory.class, remap = false)
 public abstract class SequencedAssemblyCategoryMixin {
 	@Inject(method = "setRecipe*", at = @At("TAIL"))
-	private void setRecipe(IRecipeLayoutBuilder builder, SequencedAssemblyRecipe recipe, IFocusGroup focuses, CallbackInfo callbackInfo) {
-		if (!CCG.CONFIG.other.nonrandomScrap) return;
+	public void setRecipe(IRecipeLayoutBuilder builder, SequencedAssemblyRecipe recipe, IFocusGroup focuses, CallbackInfo callbackInfo) {
+		if (!CCG.CONFIG.misc.showScrapContent) return;
 		var size = 8;
 		for (var i = 1; i < recipe.resultPool.size(); i++) {
 			var out = recipe.resultPool.get(i);
@@ -40,8 +40,8 @@ public abstract class SequencedAssemblyCategoryMixin {
 	@Shadow
 	protected abstract MutableComponent chanceComponent(float chance);
 	@Inject(method = "chanceComponent", at = @At("HEAD"), cancellable = true)
-	protected void chanceComponent(float chance, CallbackInfoReturnable<MutableComponent> returnable) {
-		if (!CCG.CONFIG.goggles.preciseNumbers) return;
+	public void chanceComponent(float chance, CallbackInfoReturnable<MutableComponent> returnable) {
+		if (!CCG.CONFIG.goggles.preciseNumber) return;
 		if (chance * 100 == (int) (chance * 100)) return;
 		returnable.setReturnValue(Lang.translateDirect("recipe.processing.chance", chance * 100).withStyle(ChatFormatting.GOLD));
 	}

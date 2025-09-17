@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.mixin;
+package io.github.forgestove.create_cyber_goggles.mixin.misc;
 import com.simibubi.create.content.contraptions.ContraptionHandlerClient;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.client.Minecraft;
@@ -16,7 +16,7 @@ public abstract class ContraptionHandlerClientMixin {
 		InteractionHand hand,
 		CallbackInfoReturnable<InteractionResult> returnable
 	) {
-		if (!CCG.CONFIG.other.rightClickPenetrate) return;
+		if (!CCG.CONFIG.misc.rightClickPenetrate) return;
 		returnable.setReturnValue(InteractionResult.PASS);
 	}
 }

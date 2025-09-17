@@ -22,7 +22,7 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 		super(typeIn, pos, state);
 	}
 	@Inject(method = "addToTooltip", at = @At("HEAD"), cancellable = true)
-	private void addToTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
+	public void addToTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return;
 		super.addToTooltip(tooltip, isPlayerSneaking);
 		if (overflowItems.isEmpty()) {
@@ -42,7 +42,7 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 		value = "INVOKE", target = "Lcom/simibubi/create/content/kinetics/deployer/DeployerBlockEntity;calculateStressApplied()F"
 	), cancellable = true
 	)
-	private void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
+	public void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return;
 		returnable.setReturnValue(super.addToGoggleTooltip(tooltip, isPlayerSneaking));
 	}

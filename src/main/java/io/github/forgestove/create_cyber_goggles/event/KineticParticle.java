@@ -2,15 +2,11 @@ package io.github.forgestove.create_cyber_goggles.event;
 import com.simibubi.create.content.kinetics.base.IRotate.SpeedLevel;
 import com.simibubi.create.content.kinetics.base.*;
 import com.simibubi.create.foundation.utility.VecHelper;
-import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.util.Common;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import io.github.forgestove.create_cyber_goggles.*;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.Minecraft;
 public class KineticParticle {
-	public static void register() {
-		WorldRenderEvents.AFTER_ENTITIES.register(context -> tick());
-	}
-	public static void tick() {
+	public static void tick(WorldRenderContext ignoredContext) {
 		if (!CCG.CONFIG.goggles.enableKineticEffect) return;
 		var kbe = Common.getSelectedKBE();
 		if (kbe == null) return;

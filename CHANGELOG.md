@@ -1,12 +1,1 @@
-- Refactored configuration structure, categorizing settings into four categories: goggles, gameMode, delayRender, and misc
-- Added delayed rendering feature to display airflow effects and interaction boxes for fans, nozzles, mechanical arms, and ejectors
-- Added rainbow-colored kinetic debugging rendering feature
-- Added mechanical arm interaction point rendering
-- Added fan airflow box rendering
-- Added nozzle airflow rendering
-- Added ejector target position rendering
-- Optimized key mapping and event listener registration methods
-- Fixed issue with goggles display when screens are open
-- Fixed categorization and naming of multiple configuration options
-- Added configuration options for NBT fix and schematic name fix
-- Added right-click penetration configuration option
+- Fixed ConcurrentModificationException caused by delay render

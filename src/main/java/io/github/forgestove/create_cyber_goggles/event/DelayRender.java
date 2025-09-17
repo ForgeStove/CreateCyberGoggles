@@ -120,10 +120,7 @@ public class DelayRender {
 	}
 	public static void drawArmIO(@NotNull ArmBlockEntity abe, List<ArmInteractionPoint> list) {
 		list.forEach(point -> {
-			if (!point.isValid()) {
-				list.remove(point);
-				return;
-			}
+			if (!point.isValid()) return;
 			var level = point.getLevel();
 			var pos = point.getPos();
 			CreateClient.OUTLINER.chaseAABB("ArmIOBox" + point, level.getBlockState(pos).getShape(level, pos).bounds().move(pos))

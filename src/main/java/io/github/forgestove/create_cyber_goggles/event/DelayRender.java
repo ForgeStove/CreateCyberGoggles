@@ -114,7 +114,7 @@ public class DelayRender {
 		}
 	}
 	public static int getColor(boolean pushing) {
-		return pushing ? CCG.CONFIG.delayRender.airBoxPushColor : CCG.CONFIG.delayRender.airBoxPullColor;
+		return pushing ? CCG.CONFIG.delayRender.windPushColor : CCG.CONFIG.delayRender.windPullColor;
 	}
 	public static double getOffset(int i, int numberOfFlowBoxes) {
 		return (System.currentTimeMillis() + i * ((double) 3000 / numberOfFlowBoxes)) % 3000 / 3000.0;
@@ -145,6 +145,6 @@ public class DelayRender {
 		Outliner.getInstance()
 			.chaseAABB("EjectorTargetBox" + ebe, new AABB(ebe.getTargetPosition()))
 			.lineWidth(1 / 16f)
-			.colored(CCG.CONFIG.delayRender.airBoxPushColor);
+			.colored(CCG.CONFIG.delayRender.windPushColor);
 	}
 }

@@ -3,10 +3,8 @@ import com.simibubi.create.AllItems;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
-import com.simibubi.create.foundation.utility.CreateLang;
 import net.createmod.catnip.gui.ScreenOpener;
-import net.createmod.catnip.lang.LangNumberFormat;
-import net.minecraft.ChatFormatting;
+import net.createmod.catnip.lang.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
@@ -103,8 +101,8 @@ public class Common {
 		if (player == null || mc.screen != null) return;
 		player.displayClientMessage(
 			currentValue
-				? Component.translatable("message.create_cyber_goggles.enableDivingAffect")
-				: Component.translatable("message.create_cyber_goggles.disableDivingAffect"), true
+				? Component.translatable("create_cyber_goggles.message.enableDivingAffect")
+				: Component.translatable("create_cyber_goggles.message.disableDivingAffect"), true
 		);
 	}
 	/**
@@ -135,18 +133,15 @@ public class Common {
 	 */
 	public static boolean addFanTooltip(List<Component> tooltip, boolean pushing, float range, int divide) {
 		if (range == 0) return false;
-		var string = (
-			pushing
-				? Component.translatable("tooltip.create_cyber_goggles.push")
-				: Component.translatable("tooltip.create_cyber_goggles.pull")
-		).getString();
-		CreateLang.text("-> %s %s %s".formatted(
-				string,
-				LangNumberFormat.format(range / divide),
-				Component.translatable("tooltip.create_cyber_goggles.block").getString()
-			))
-			.style(ChatFormatting.YELLOW)
+		builder().translate("gui.goggles.windState").forGoggles(tooltip);
+		builder().add(Component.literal(LangNumberFormat.format(range / divide)))
+			.space()
+			.translate(pushing ? "tooltip.pushRange" : "tooltip.pullRange")
+			.color(pushing ? CCG.CONFIG.delayRender.windPushColor : CCG.CONFIG.delayRender.windPullColor)
 			.forGoggles(tooltip);
 		return true;
+	}
+	public static LangBuilder builder() {
+		return new LangBuilder(CCG.ID);
 	}
 }

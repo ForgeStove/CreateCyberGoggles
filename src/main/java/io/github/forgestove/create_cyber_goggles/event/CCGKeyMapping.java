@@ -1,10 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.event;
-import com.mojang.blaze3d.platform.InputConstants.Type;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.client.KeyMapping;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
-import net.neoforged.neoforge.client.settings.KeyConflictContext;
-import net.neoforged.neoforge.common.util.Lazy;
 import org.lwjgl.glfw.GLFW;
 public enum CCGKeyMapping {
 	openConfig(GLFW.GLFW_KEY_UNKNOWN),
@@ -12,21 +9,15 @@ public enum CCGKeyMapping {
 	previewFilter(GLFW.GLFW_KEY_UNKNOWN),
 	toggleDiving(GLFW.GLFW_KEY_UNKNOWN),
 	showStress(GLFW.GLFW_KEY_TAB);
-	private final Lazy<KeyMapping> keyMapping;
+	private final KeyMapping keyMapping;
 	CCGKeyMapping(int key) {
-		keyMapping = Lazy.of(() -> new KeyMapping(
-			"key." + CCG.ID + "." + name(),
-			KeyConflictContext.UNIVERSAL,
-			Type.KEYSYM,
-			key,
-			"key.categories." + CCG.ID
-		));
+		keyMapping = new KeyMapping(CCG.ID + ".key." + name(), key, CCG.ID + ".categories.key");
 	}
 	public static void register(RegisterKeyMappingsEvent event) {
 		for (var key : values()) event.register(key.get());
 	}
 	public KeyMapping get() {
-		return keyMapping.get();
+		return keyMapping;
 	}
 	public boolean isDown() {
 		return get().isDown();

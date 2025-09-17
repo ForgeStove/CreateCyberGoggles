@@ -37,8 +37,8 @@ public class CCGConfig implements ConfigData {
 	public static class DelayRender {
 		@Tooltip public boolean renderAnalogBox = true;
 		@Tooltip public int delayRenderDuration = 60;
-		@Tooltip @ColorPicker public int airBoxPushColor = 0xDDC166;
-		@Tooltip @ColorPicker public int airBoxPullColor = 0x7FCDE0;
+		@Tooltip @ColorPicker public int windPushColor = 0xDDC166;
+		@Tooltip @ColorPicker public int windPullColor = 0x7FCDE0;
 	}
 	public static class ChainConveyor {
 		@Tooltip public boolean alwaysAllowRiding = false;

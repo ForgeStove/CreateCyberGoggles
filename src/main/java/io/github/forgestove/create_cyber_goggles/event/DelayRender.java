@@ -125,10 +125,7 @@ public class DelayRender {
 	}
 	public static void drawArmIO(@NotNull ArmBlockEntity abe, List<ArmInteractionPoint> list) {
 		list.forEach(point -> {
-			if (!point.isValid()) {
-				list.remove(point);
-				return;
-			}
+			if (!point.isValid()) return;
 			var level = point.getLevel();
 			var pos = point.getPos();
 			Outliner.getInstance()

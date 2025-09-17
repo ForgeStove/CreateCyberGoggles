@@ -1,3 +1,1 @@
-- Optimized translations
-- Optimized event bus
-- Optimized key input
+- Fixed ConcurrentModificationException caused by delay render

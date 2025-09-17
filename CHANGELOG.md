@@ -1,3 +1,1 @@
-- Optimized translations
-- Optimized event bus
-- Optimized key input
+- Fix config crash

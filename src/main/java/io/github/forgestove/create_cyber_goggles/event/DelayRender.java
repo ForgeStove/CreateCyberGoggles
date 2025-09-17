@@ -13,7 +13,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.ArrayList;
 public class DelayRender {
 	public static Object2IntOpenHashMap<BlockEntity> cachedBE = new Object2IntOpenHashMap<>();
 	public static void tick(ClientTickEvent ignoredEvent) {
@@ -120,11 +120,10 @@ public class DelayRender {
 		return (int) (Math.log(range) + 1);
 	}
 	public static void render(@NotNull ArmBlockEntity abe) {
-		drawArmIO(abe, abe.inputs);
-		drawArmIO(abe, abe.outputs);
-	}
-	public static void drawArmIO(@NotNull ArmBlockEntity abe, List<ArmInteractionPoint> list) {
-		list.forEach(point -> {
+		var allPoints = new ArrayList<ArmInteractionPoint>();
+		allPoints.addAll(abe.inputs);
+		allPoints.addAll(abe.outputs);
+		allPoints.forEach(point -> {
 			if (!point.isValid()) return;
 			var level = point.getLevel();
 			var pos = point.getPos();

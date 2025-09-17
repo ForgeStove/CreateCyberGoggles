@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.event;
 import com.mojang.blaze3d.platform.InputConstants.Type;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import net.minecraft.client.KeyMapping;
+import net.minecraft.client.*;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.common.util.Lazy;
@@ -28,6 +28,8 @@ public enum CCGKeyMapping {
 		return keyMapping.get();
 	}
 	public boolean isDown() {
-		return keyMapping.get().isDown();
+		var value = get().getKey().getValue();
+		if (value == GLFW.GLFW_KEY_UNKNOWN) return false;
+		return GLFW.glfwGetKey(Minecraft.getInstance().getWindow().getWindow(), value) == GLFW.GLFW_PRESS;
 	}
 }

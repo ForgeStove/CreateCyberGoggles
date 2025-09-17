@@ -1,8 +1,9 @@
-package io.github.forgestove.create_cyber_goggles.util;
+package io.github.forgestove.create_cyber_goggles;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.foundation.gui.ScreenOpener;
-import io.github.forgestove.create_cyber_goggles.CCG;
+import com.simibubi.create.foundation.utility.*;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -11,6 +12,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import org.jetbrains.annotations.*;
+
+import java.util.List;
 public class Common {
 	/**
 	 * 在屏幕中央区域渲染指定物品堆的图标及关联的悬浮提示信息。
@@ -58,13 +61,16 @@ public class Common {
 	 * 显示一条格式化的客户端消息。
 	 *
 	 * @param currentValue 当前值，用于确定消息的启用或禁用状态
-	 * @param messageKey   消息的键，用于生成完整的消息标识符
 	 */
-	public static void displayClientMessage(boolean currentValue, String messageKey) {
+	public static void displayClientMessage(boolean currentValue) {
 		var mc = Minecraft.getInstance();
-		if (mc.player == null || mc.screen != null) return;
-		var formatted = "message.%s.%sable%s".formatted(CCG.ID, currentValue ? "en" : "dis", messageKey);
-		mc.player.displayClientMessage(Component.translatable(formatted), true);
+		var player = mc.player;
+		if (player == null || mc.screen != null) return;
+		player.displayClientMessage(
+			currentValue
+				? Component.translatable("message.create_cyber_goggles.enableDivingAffect")
+				: Component.translatable("message.create_cyber_goggles.disableDivingAffect"), true
+		);
 	}
 	/**
 	 * 打开与指定过滤器物品相关的筛选器界面。
@@ -81,5 +87,30 @@ public class Common {
 			case REGULAR -> new FilterScreen(FilterMenu.create(-1, inv, filter), inv, name);
 			case ATTRIBUTE -> new AttributeFilterScreen(AttributeFilterMenu.create(-1, inv, filter), inv, name);
 		});
+	}
+	/**
+	 * 为风扇组件添加悬浮提示信息。
+	 * 此方法根据风扇的推/拉状态和作用范围，格式化并添加相应的提示文本。
+	 *
+	 * @param tooltip 需要添加提示信息的组件列表
+	 * @param pushing 风扇是否处于推动模式（true为推动，false为拉动）
+	 * @param range   风扇的作用范围（原始值）
+	 * @param divide  范围除数，用于计算显示的实际范围值
+	 */
+	public static boolean addFanTooltip(List<Component> tooltip, boolean pushing, float range, int divide) {
+		if (range == 0) return false;
+		var string = (
+			pushing
+				? Component.translatable("tooltip.create_cyber_goggles.push")
+				: Component.translatable("tooltip.create_cyber_goggles.pull")
+		).getString();
+		Lang.text("-> %s %s %s".formatted(
+				string,
+				LangNumberFormat.format(range / divide),
+				Component.translatable("tooltip.create_cyber_goggles.block").getString()
+			))
+			.style(ChatFormatting.YELLOW)
+			.forGoggles(tooltip);
+		return true;
 	}
 }

@@ -2,25 +2,25 @@ package io.github.forgestove.create_cyber_goggles.event;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import io.github.forgestove.create_cyber_goggles.*;
-import io.github.forgestove.create_cyber_goggles.util.Common;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
+import net.minecraftforge.client.event.InputEvent.Key;
 
 import java.util.Collections;
 public class KeyInput {
-	public static void tick() {
+	public static void tick(Key ignoredEvent) {
 		toggleDiving();
 		openConfigScreen();
 		previewFilterScreen();
 	}
 	public static void toggleDiving() {
 		if (!CCGKeyMapping.toggleDiving.isDown()) return;
-		var armor = CCG.CONFIG.armor;
-		armor.removeDivingBootsAffect = !armor.removeDivingBootsAffect;
-		Common.displayClientMessage(armor.removeDivingBootsAffect, "DivingAffect");
+		var misc = CCG.CONFIG.misc;
+		misc.removeDivingBootsAffect = !misc.removeDivingBootsAffect;
+		Common.displayClientMessage(misc.removeDivingBootsAffect);
 	}
 	public static void openConfigScreen() {
 		if (!CCGKeyMapping.openConfig.isDown()) return;

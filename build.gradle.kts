@@ -11,10 +11,13 @@ tasks.jar {
 	from("LICENSE")
 	manifest.attributes("MixinConfigs" to "${p("mod_id")}.mixins.json")
 }
-tasks.processResources {
-	outputs.upToDateWhen { false }
-	filesMatching("META-INF/mods.toml") { expand(properties) }
+var generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
+	expand(properties.mapValues { it.value.toString() })
+	from("src/main/templates")
+	into("build/resources/sources/modMetadata")
 }
+sourceSets.main.get().resources.srcDir(generateMetadata)
+legacyForge.ideSyncTasks.add(generateMetadata)
 mixin {
 	add(sourceSets.main.get(), "${p("mod_id")}.refmap.json")
 	config("${p("mod_id")}.mixins.json")

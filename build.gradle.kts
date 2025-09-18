@@ -11,7 +11,7 @@ tasks.jar { from("LICENSE") }
 var generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
 	expand(properties.mapValues { it.value.toString() })
 	from("src/main/templates")
-	into("build/resources/sources/modMetadata")
+	into("build/generated/sources/modMetadata")
 }
 sourceSets.main.get().resources.srcDir(generateMetadata)
 neoForge.ideSyncTasks.add(generateMetadata)

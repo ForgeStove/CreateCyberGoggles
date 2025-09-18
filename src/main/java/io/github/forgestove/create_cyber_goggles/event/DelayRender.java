@@ -3,12 +3,11 @@ import com.simibubi.create.AllSpecialTextures;
 import com.simibubi.create.content.kinetics.fan.*;
 import com.simibubi.create.content.kinetics.mechanicalArm.*;
 import com.simibubi.create.content.logistics.depot.EjectorBlockEntity;
-import com.simibubi.create.content.logistics.packagePort.*;
+import com.simibubi.create.content.logistics.packagePort.PackagePortBlockEntity;
 import io.github.forgestove.create_cyber_goggles.*;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.createmod.catnip.math.VecHelper;
 import net.createmod.catnip.outliner.Outliner;
-import net.createmod.catnip.theme.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.*;
@@ -158,10 +157,10 @@ public class DelayRender {
 		var source = Vec3.atBottomCenterOf(pos);
 		var target = ppbe.target.getExactTargetLocation(ppbe, mc.level, pos);
 		if (target == Vec3.ZERO) return;
-		var color = new Color(0x9ede73);
-		PackagePortTargetSelectionHandler.animateConnection(mc, source, target, color);
+		var color = 0x9ede73;
+		Outliner.getInstance().showLine("PackagePortConnection" + ppbe, source, target).lineWidth(1 / 8f).colored(color);
 		Outliner.getInstance()
-			.chaseAABB("ChainPointSelected" + source, new AABB(target, target))
+			.chaseAABB("ChainPointSelected" + ppbe, new AABB(target, target))
 			.colored(color)
 			.lineWidth(1 / 5f)
 			.disableLineNormals();

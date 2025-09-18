@@ -1,5 +1,4 @@
 {
-	"create_cyber_goggles.categories.key": "机械动力：赛博护目镜",
 	"create_cyber_goggles.key.openConfig": "打开配置",
 	"create_cyber_goggles.key.openStock": "通过仓储发报机访问网络存储",
 	"create_cyber_goggles.key.previewFilter": "预览过滤器",
@@ -14,6 +13,7 @@
 	"create_cyber_goggles.tooltip.pushRange": "推动距离",
 	"create_cyber_goggles.tooltip.seconds": "秒",
 	"create_cyber_goggles.tooltip.windState": "风力状态：",
+	"key.categories.create_cyber_goggles": "机械动力：赛博护目镜",
 	"text.autoconfig.create_cyber_goggles.category.chainConveyor": "锁链传动轮",
 	"text.autoconfig.create_cyber_goggles.category.delayRender": "延时渲染",
 	"text.autoconfig.create_cyber_goggles.category.gameMode": "游戏模式",

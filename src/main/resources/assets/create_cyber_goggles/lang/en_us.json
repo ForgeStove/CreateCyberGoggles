@@ -1,5 +1,4 @@
 {
-	"create_cyber_goggles.categories.key": "Create: Cyber Goggles",
 	"create_cyber_goggles.key.openConfig": "Open Config",
 	"create_cyber_goggles.key.openStock": "Access network storage via stock ticker",
 	"create_cyber_goggles.key.previewFilter": "Preview Filter",
@@ -14,6 +13,7 @@
 	"create_cyber_goggles.tooltip.pushRange": "Push range",
 	"create_cyber_goggles.tooltip.seconds": "Seconds",
 	"create_cyber_goggles.tooltip.windState": "Wind State:",
+	"key.categories.create_cyber_goggles": "Create: Cyber Goggles",
 	"text.autoconfig.create_cyber_goggles.category.chainConveyor": "Chain Conveyor",
 	"text.autoconfig.create_cyber_goggles.category.delayRender": "Delay Render",
 	"text.autoconfig.create_cyber_goggles.category.gameMode": "Game Mode",

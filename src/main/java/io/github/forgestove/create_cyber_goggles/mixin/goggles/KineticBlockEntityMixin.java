@@ -30,7 +30,7 @@ public abstract class KineticBlockEntityMixin {
 		}
 		CreateLang.translate("gui.goggles.kinetic_stats").forGoggles(tooltip);
 		SpeedLevel.getFormattedSpeedText(speed, overStressed).forGoggles(tooltip);
-		if (!CCGKey.showStress.get().isDown()) return;
+		if (!CCGKey.showStress.isKeyDown()) return;
 		double stressFraction = stress / (capacity == 0 ? 1 : capacity);
 		CreateLang.translate("gui.stressometer.title").style(ChatFormatting.GRAY).forGoggles(tooltip);
 		if (speed == 0) CreateLang.text(TooltipHelper.makeProgressBar(3, 0))

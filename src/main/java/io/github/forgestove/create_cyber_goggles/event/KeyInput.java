@@ -7,6 +7,7 @@ import io.github.forgestove.create_cyber_goggles.*;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import net.neoforged.neoforge.client.event.InputEvent.Key;
@@ -23,7 +24,14 @@ public class KeyInput {
 		if (!CCGKey.toggleDiving.get().isDown()) return;
 		var misc = CCG.CONFIG.misc;
 		misc.removeDivingBootsAffect = !misc.removeDivingBootsAffect;
-		Common.displayClientMessage(misc.removeDivingBootsAffect);
+		var mc = Minecraft.getInstance();
+		var player = mc.player;
+		if (player == null || mc.screen != null) return;
+		player.displayClientMessage(
+			misc.removeDivingBootsAffect
+				? Component.translatable("create_cyber_goggles.message.enableDivingAffect")
+				: Component.translatable("create_cyber_goggles.message.disableDivingAffect"), true
+		);
 	}
 	public static void openConfigScreen() {
 		if (!CCGKey.openConfig.get().isDown()) return;
@@ -35,12 +43,20 @@ public class KeyInput {
 		if (!CCGKey.openStock.get().isDown()) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) return;
-		if (mc.player == null) return;
-		if (Common.getSelectedBE() instanceof StockTickerBlockEntity stbe) Common.laststbe = stbe;
-		if (Common.laststbe == null) return;
-		var inv = mc.player.getInventory();
-		var menu = new StockKeeperRequestMenu(AllMenuTypes.STOCK_KEEPER_REQUEST.get(), -1, inv, Common.laststbe);
-		mc.setScreen(new StockKeeperRequestScreen(menu, inv, Common.laststbe.getBlockState().getBlock().getName()));
+		var player = mc.player;
+		if (player == null) return;
+		if (Common.getSelectedBE() instanceof StockTickerBlockEntity stbe) Common.lastSTBE = stbe;
+		if (Common.lastSTBE == null || Common.lastSTBE.isRemoved()) {
+			player.displayClientMessage(
+				Component.translatable("create_cyber_goggles.message.notStock")
+					.append("  ")
+					.append(Component.translatable("create_cyber_goggles.key.openStock")), true
+			);
+			return;
+		}
+		var inv = player.getInventory();
+		var menu = new StockKeeperRequestMenu(AllMenuTypes.STOCK_KEEPER_REQUEST.get(), -1, inv, Common.lastSTBE);
+		mc.setScreen(new StockKeeperRequestScreen(menu, inv, Common.lastSTBE.getBlockState().getBlock().getName()));
 	}
 	public static void previewFilterScreen() {
 		if (!CCGKey.previewFilter.get().isDown()) return;

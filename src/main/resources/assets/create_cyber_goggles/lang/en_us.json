@@ -7,6 +7,7 @@
 	"create_cyber_goggles.key.toggleDiving": "Toggle Diving Mode",
 	"create_cyber_goggles.message.disableDivingAffect": "Diving Boots Effect Disabled",
 	"create_cyber_goggles.message.enableDivingAffect": "Diving Boots Effect Enabled",
+	"create_cyber_goggles.message.notStock": "There is no cached network storage",
 	"create_cyber_goggles.tooltip.burnerState": "Burner State:",
 	"create_cyber_goggles.tooltip.pullRange": "Pull range",
 	"create_cyber_goggles.tooltip.pushRange": "Push range",

@@ -24,7 +24,7 @@ import org.jetbrains.annotations.*;
 
 import java.util.List;
 public class Common {
-	public static StockTickerBlockEntity laststbe;
+	public static StockTickerBlockEntity lastSTBE;
 	public static int index = 1, scrollDeltaY;
 	/**
 	 * 测试玩家是否穿着全套纸板盔甲并且不在飞行状态。
@@ -95,21 +95,6 @@ public class Common {
 		return mc.level.getBlockState(blockHitResult.getBlockPos()).getBlock();
 	}
 	/**
-	 * 显示一条格式化的客户端消息。
-	 *
-	 * @param currentValue 当前值，用于确定消息的启用或禁用状态
-	 */
-	public static void displayClientMessage(boolean currentValue) {
-		var mc = Minecraft.getInstance();
-		var player = mc.player;
-		if (player == null || mc.screen != null) return;
-		player.displayClientMessage(
-			currentValue
-				? Component.translatable("create_cyber_goggles.message.enableDivingAffect")
-				: Component.translatable("create_cyber_goggles.message.disableDivingAffect"), true
-		);
-	}
-	/**
 	 * 打开与指定过滤器物品相关的筛选器界面。
 	 *
 	 * @param filter 需要打开筛选器界面的物品堆
@@ -145,6 +130,14 @@ public class Common {
 			.forGoggles(tooltip);
 		return true;
 	}
+	/**
+	 * 为燃烧室添加悬浮提示信息，显示燃烧状态、剩余燃烧时间和燃料类型颜色标识
+	 *
+	 * @param tooltip           用于显示提示信息的组件列表
+	 * @param remainingBurnTime 剩余燃烧时间（单位：tick）
+	 * @param isCreative        是否为创造模式燃烧室
+	 * @param activeFuel        当前激活的燃料类型
+	 */
 	public static boolean addBurnerTooltip(List<Component> tooltip, int remainingBurnTime, boolean isCreative, FuelType activeFuel) {
 		builder().translate("tooltip.burnerState").forGoggles(tooltip);
 		builder().text(isCreative ? "∞" : String.format("%.2f", remainingBurnTime / 20f))

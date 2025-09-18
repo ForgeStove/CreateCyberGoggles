@@ -7,6 +7,7 @@
 	"create_cyber_goggles.key.toggleDiving": "切換潛水模式",
 	"create_cyber_goggles.message.disableDivingAffect": "已禁用潛水靴影響",
 	"create_cyber_goggles.message.enableDivingAffect": "已啟用潛水靴影響",
+	"create_cyber_goggles.message.notStock": "沒有已緩存的網络存儲",
 	"create_cyber_goggles.tooltip.burnerState": "燃燒室狀態：",
 	"create_cyber_goggles.tooltip.pullRange": "吸引距離",
 	"create_cyber_goggles.tooltip.pushRange": "推動距離",

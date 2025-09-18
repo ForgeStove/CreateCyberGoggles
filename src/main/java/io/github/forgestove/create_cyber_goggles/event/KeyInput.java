@@ -2,15 +2,10 @@ package io.github.forgestove.create_cyber_goggles.event;
 import com.simibubi.create.AllMenuTypes;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.stockTicker.*;
-import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
-import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import io.github.forgestove.create_cyber_goggles.*;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.client.event.InputEvent.Key;
 public class KeyInput {
 	public static void tick(Key ignoredEvent) {
@@ -56,21 +51,14 @@ public class KeyInput {
 	public static void previewFilterScreen() {
 		if (!CCGKey.previewFilter.isKeyDown()) return;
 		var mc = Minecraft.getInstance();
-		ItemStack itemStack;
-		if (mc.screen != null) {
-			if (!(mc.screen instanceof AbstractContainerScreen<?> screen)) return;
-			var slot = screen.getSlotUnderMouse();
-			if (slot == null) return;
-			itemStack = slot.getItem();
-		} else {
-			if (!(Common.getBE() instanceof SmartBlockEntity sbe) || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return;
-			var behaviour = sbe.getBehaviour(FilteringBehaviour.TYPE);
-			if (behaviour == null) return;
-			itemStack = behaviour.getFilter(blockHitResult.getDirection());
+		var player = mc.player;
+		if (player == null) return;
+		var itemStack = Common.getRelevantFilterItem();
+		if (itemStack == null || !(itemStack.getItem() instanceof FilterItem filterItem)) {
+			player.displayClientMessage(CCGLang.translate("message.notFilter").component(), true);
+			return;
 		}
-		if (!(itemStack.getItem() instanceof FilterItem filterItem)) return;
-		if (mc.player == null) return;
-		var inv = mc.player.getInventory();
+		var inv = player.getInventory();
 		var name = itemStack.getHoverName();
 		ScreenOpener.open(switch (filterItem.type) {
 			case REGULAR -> new FilterScreen(FilterMenu.create(-1, inv, itemStack), inv, name);

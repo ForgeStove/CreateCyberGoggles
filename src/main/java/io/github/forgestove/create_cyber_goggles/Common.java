@@ -4,10 +4,13 @@ import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity.FuelType;
+import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
+import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -128,5 +131,26 @@ public class Common {
 			})
 			.forGoggles(tooltip);
 		return true;
+	}
+	/**
+	 * 获取当前上下文中的相关过滤器物品。
+	 * 此方法有两种工作模式：
+	 * <p>
+	 * 1. 如果玩家正在查看GUI界面，则返回鼠标悬停位置的物品
+	 * <p>
+	 * 2. 如果玩家在游戏世界中，则尝试从目标方块实体获取过滤器物品
+	 *
+	 * @return 相关的过滤器物品，如果无法获取则返回null
+	 */
+	public static @Nullable ItemStack getRelevantFilterItem() {
+		var mc = Minecraft.getInstance();
+		if (mc.screen != null) {
+			if (!(mc.screen instanceof AbstractContainerScreen<?> screen)) return null;
+			var slot = screen.getSlotUnderMouse();
+			return slot == null ? null : slot.getItem();
+		}
+		if (!(getBE() instanceof SmartBlockEntity sbe) || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return null;
+		var behaviour = sbe.getBehaviour(FilteringBehaviour.TYPE);
+		return behaviour == null ? null : behaviour.getFilter(blockHitResult.getDirection());
 	}
 }

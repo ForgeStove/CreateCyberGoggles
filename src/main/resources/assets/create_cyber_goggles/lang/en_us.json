@@ -8,6 +8,7 @@
 	"create_cyber_goggles.message.divingFunction": "Diving Boots Function",
 	"create_cyber_goggles.message.enabled": "§aEnabled",
 	"create_cyber_goggles.message.notStock": "There is no cached network storage",
+	"create_cyber_goggles.message.notFilter": "There is no filter in target place",
 	"create_cyber_goggles.tooltip.burnerState": "Burner State:",
 	"create_cyber_goggles.tooltip.pullRange": "Pull range",
 	"create_cyber_goggles.tooltip.pushRange": "Push range",

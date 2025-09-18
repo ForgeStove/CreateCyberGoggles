@@ -13,8 +13,11 @@ var generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
 	from("src/main/templates")
 	into("build/generated/sources/modMetadata")
 }
+var cleanMetadata = tasks.register<Delete>("cleanMetadata") {
+	delete("build/generated/sources/modMetadata")
+}
 sourceSets.main.get().resources.srcDir(generateMetadata)
-neoForge.ideSyncTasks.add(generateMetadata)
+neoForge.ideSyncTasks.addAll(cleanMetadata, generateMetadata)
 neoForge {
 	version = p("loader_version")
 	parchment {

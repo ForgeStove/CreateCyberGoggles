@@ -7,7 +7,6 @@ import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity.FuelType;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.createmod.catnip.gui.ScreenOpener;
-import net.createmod.catnip.lang.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -122,8 +121,8 @@ public class Common {
 	 */
 	public static boolean addFanTooltip(List<Component> tooltip, boolean pushing, float range, int divide) {
 		if (range == 0) return false;
-		builder().translate("tooltip.windState").forGoggles(tooltip);
-		builder().add(Component.literal(LangNumberFormat.format(range / divide)))
+		CCGLang.translate("tooltip.windState").forGoggles(tooltip);
+		CCGLang.number(range / divide)
 			.space()
 			.translate(pushing ? "tooltip.pushRange" : "tooltip.pullRange")
 			.color(pushing ? CCG.CONFIG.delayRender.windPushColor : CCG.CONFIG.delayRender.windPullColor)
@@ -139,8 +138,8 @@ public class Common {
 	 * @param activeFuel        当前激活的燃料类型
 	 */
 	public static boolean addBurnerTooltip(List<Component> tooltip, int remainingBurnTime, boolean isCreative, FuelType activeFuel) {
-		builder().translate("tooltip.burnerState").forGoggles(tooltip);
-		builder().text(isCreative ? "∞" : String.format("%.2f", remainingBurnTime / 20f))
+		CCGLang.translate("tooltip.burnerState").forGoggles(tooltip);
+		CCGLang.text(isCreative ? "∞" : String.format("%.2f", remainingBurnTime / 20f))
 			.text(String.format(" / %d ", BlazeBurnerBlockEntity.MAX_HEAT_CAPACITY / 20))
 			.translate("tooltip.seconds")
 			.style(switch (activeFuel) {
@@ -150,8 +149,5 @@ public class Common {
 			})
 			.forGoggles(tooltip);
 		return true;
-	}
-	public static LangBuilder builder() {
-		return new LangBuilder(CCG.ID);
 	}
 }

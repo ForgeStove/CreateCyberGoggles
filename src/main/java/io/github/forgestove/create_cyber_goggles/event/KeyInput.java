@@ -7,7 +7,6 @@ import io.github.forgestove.create_cyber_goggles.*;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import net.neoforged.neoforge.client.event.InputEvent.Key;
@@ -23,15 +22,15 @@ public class KeyInput {
 	public static void toggleDiving() {
 		if (!CCGKey.toggleDiving.get().isDown()) return;
 		var misc = CCG.CONFIG.misc;
-		misc.removeDivingBootsAffect = !misc.removeDivingBootsAffect;
+		misc.removeDivingFunction = !misc.removeDivingFunction;
 		var mc = Minecraft.getInstance();
 		var player = mc.player;
 		if (player == null || mc.screen != null) return;
-		player.displayClientMessage(
-			misc.removeDivingBootsAffect
-				? Component.translatable("create_cyber_goggles.message.enableDivingAffect")
-				: Component.translatable("create_cyber_goggles.message.disableDivingAffect"), true
-		);
+		var component = CCGLang.translate("message.divingFunction")
+			.space()
+			.translate(misc.removeDivingFunction ? "message.disabled" : "message.enabled")
+			.component();
+		player.displayClientMessage(component, true);
 	}
 	public static void openConfigScreen() {
 		if (!CCGKey.openConfig.get().isDown()) return;
@@ -47,11 +46,7 @@ public class KeyInput {
 		if (player == null) return;
 		if (Common.getSelectedBE() instanceof StockTickerBlockEntity stbe) Common.lastSTBE = stbe;
 		if (Common.lastSTBE == null || Common.lastSTBE.isRemoved()) {
-			player.displayClientMessage(
-				Component.translatable("create_cyber_goggles.message.notStock")
-					.append("  ")
-					.append(Component.translatable("create_cyber_goggles.key.openStock")), true
-			);
+			player.displayClientMessage(CCGLang.translate("message.notStock").text("  ").translate("key.openStock").component(), true);
 			return;
 		}
 		var inv = player.getInventory();

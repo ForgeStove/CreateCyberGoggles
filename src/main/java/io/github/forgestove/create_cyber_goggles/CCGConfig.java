@@ -53,7 +53,7 @@ public class CCGConfig implements ConfigData {
 	public static class Misc {
 		@Tooltip public boolean removeCardboardOverlay = true;
 		@Tooltip public boolean removeNetheriteFirstPerson = false;
-		@Tooltip public boolean removeDivingBootsAffect = false;
+		@Tooltip public boolean removeDivingFunction = false;
 		@Tooltip public boolean fixSchematicName = true;
 		@Tooltip public boolean rightClickPenetrate = false;
 		@Tooltip public boolean rainbowDebug = false;

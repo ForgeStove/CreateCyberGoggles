@@ -25,7 +25,7 @@ public class DelayRender {
 			return;
 		}
 		if (mc.isPaused() || mc.screen != null) return;
-		var be = Common.getSelectedBE();
+		var be = Common.getBE();
 		if (be instanceof EncasedFanBlockEntity
 			|| be instanceof NozzleBlockEntity
 			|| be instanceof ArmBlockEntity

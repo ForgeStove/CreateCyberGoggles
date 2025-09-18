@@ -10,7 +10,7 @@ public class KineticParticle {
 	public static void tick(RenderLevelStageEvent event) {
 		if (!CCG.CONFIG.goggles.enableKineticEffect) return;
 		if (event.getStage() != Stage.AFTER_PARTICLES) return;
-		var kbe = Common.getSelectedKBE();
+		var kbe = Common.getKBE();
 		if (kbe == null) return;
 		var mc = Minecraft.getInstance();
 		if (mc.level == null) return;

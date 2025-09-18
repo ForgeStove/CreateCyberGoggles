@@ -13,11 +13,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(RadialWrenchHandler.class)
 public abstract class RadialWrenchHandlerMixin {
 	@WrapOperation(
-		method = "onKeyInput",
-		at = @At(
-			value = "INVOKE",
-			target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;getPlayerMode()Lnet/minecraft/world/level/GameType;"
-		)
+		method = "onKeyInput", at = @At(
+		value = "INVOKE",
+		target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;getPlayerMode()Lnet/minecraft/world/level/GameType;"
+	)
 	)
 	private static @Nullable GameType wrapPlayerMode(MultiPlayerGameMode instance, Operation<GameType> original) {
 		return CCG.CONFIG.wrench.alwaysAllowRotating ? null : original.call(instance);

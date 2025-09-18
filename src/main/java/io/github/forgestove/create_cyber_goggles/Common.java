@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles;
-import com.simibubi.create.AllItems;
+import com.simibubi.create.content.equipment.armor.CardboardArmorItem;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
@@ -22,6 +22,7 @@ import net.minecraft.world.phys.HitResult.Type;
 import org.jetbrains.annotations.*;
 
 import java.util.List;
+import java.util.stream.Stream;
 public class Common {
 	public static StockTickerBlockEntity lastSTBE;
 	public static int index = 1, scrollDeltaY;
@@ -31,12 +32,9 @@ public class Common {
 	 * @param player 本地玩家实体
 	 */
 	public static boolean testForStealth(LocalPlayer player) {
-		return CCG.CONFIG.chainConveyor.cardBoardedYourself
-			&& !player.getAbilities().flying
-			&& AllItems.CARDBOARD_HELMET.isIn(player.getItemBySlot(EquipmentSlot.HEAD))
-			&& AllItems.CARDBOARD_CHESTPLATE.isIn(player.getItemBySlot(EquipmentSlot.CHEST))
-			&& AllItems.CARDBOARD_LEGGINGS.isIn(player.getItemBySlot(EquipmentSlot.LEGS))
-			&& AllItems.CARDBOARD_BOOTS.isIn(player.getItemBySlot(EquipmentSlot.FEET));
+		var allMatch = Stream.of(EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET)
+			.allMatch(slot -> player.getItemBySlot(slot).getItem() instanceof CardboardArmorItem);
+		return CCG.CONFIG.chainConveyor.cardBoardedYourself && !player.getAbilities().flying && allMatch;
 	}
 	/**
 	 * 在屏幕中央区域渲染指定物品堆的图标及关联的悬浮提示信息。
@@ -63,8 +61,8 @@ public class Common {
 	 *
 	 * @return 当前选中的 {@link KineticBlockEntity} 实例，如果没有选中或类型不匹配则返回 null
 	 */
-	public static @Nullable KineticBlockEntity getSelectedKBE() {
-		if (!(getSelectedBE() instanceof KineticBlockEntity kbe)) return null;
+	public static @Nullable KineticBlockEntity getKBE() {
+		if (!(getBE() instanceof KineticBlockEntity kbe)) return null;
 		return kbe;
 	}
 	/**
@@ -73,7 +71,7 @@ public class Common {
 	 *
 	 * @return 当前选中的 {@link BlockEntity} 实例，如果没有选中或类型不匹配则返回 null
 	 */
-	public static @Nullable BlockEntity getSelectedBE() {
+	public static @Nullable BlockEntity getBE() {
 		var mc = Minecraft.getInstance();
 		if (mc.level == null) return null;
 		if (!(mc.hitResult instanceof BlockHitResult blockHitResult)) return null;
@@ -86,7 +84,7 @@ public class Common {
 	 *
 	 * @return 当前选中的 {@link Block} 实例，如果没有选中或类型不匹配则返回 null
 	 */
-	public static @Nullable Block getSelectedB() {
+	public static @Nullable Block getB() {
 		var mc = Minecraft.getInstance();
 		if (mc.level == null) return null;
 		if (!(mc.hitResult instanceof BlockHitResult blockHitResult)) return null;

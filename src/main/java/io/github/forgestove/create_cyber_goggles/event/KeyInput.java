@@ -8,7 +8,6 @@ import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult.Type;
 import net.neoforged.neoforge.client.event.InputEvent.Key;
 public class KeyInput {
 	public static void tick(Key ignoredEvent) {
@@ -42,7 +41,7 @@ public class KeyInput {
 		if (mc.screen != null) return;
 		var player = mc.player;
 		if (player == null) return;
-		if (Common.getSelectedBE() instanceof StockTickerBlockEntity stbe) Common.lastSTBE = stbe;
+		if (Common.getBE() instanceof StockTickerBlockEntity stbe) Common.lastSTBE = stbe;
 		if (Common.lastSTBE == null || Common.lastSTBE.isRemoved()) {
 			player.displayClientMessage(CCGLang.translate("message.notStock").text("  ").translate("key.openStock").component(), true);
 			return;
@@ -60,10 +59,10 @@ public class KeyInput {
 			if (slot == null) return;
 			Common.openFilterScreen(slot.getItem());
 		} else {
-			if (mc.level == null || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return;
-			if (blockHitResult.getType() == Type.MISS) return;
-			if (!(Common.getSelectedBE() instanceof SmartBlockEntity sbe)) return;
-			Common.openFilterScreen(sbe.getBehaviour(FilteringBehaviour.TYPE).getFilter(blockHitResult.getDirection()));
+			if (!(Common.getBE() instanceof SmartBlockEntity sbe) || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return;
+			var behaviour = sbe.getBehaviour(FilteringBehaviour.TYPE);
+			if (behaviour == null) return;
+			Common.openFilterScreen(behaviour.getFilter(blockHitResult.getDirection()));
 		}
 	}
 }

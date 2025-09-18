@@ -25,7 +25,7 @@ public class KineticDebugger {
 		if (mc.isPaused() || mc.screen != null) return;
 		var level = mc.level;
 		if (level == null) return;
-		var kbe = Common.getSelectedKBE();
+		var kbe = Common.getKBE();
 		if (kbe == null) return;
 		renderAxisLine(kbe);
 		updateKBEPath(level, kbe);

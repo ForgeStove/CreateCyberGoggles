@@ -12,7 +12,7 @@ public enum CCGKey {
 	showStress(GLFW.GLFW_KEY_TAB);
 	public final KeyMapping keyMapping;
 	CCGKey(int key) {
-		keyMapping = new KeyMapping(CCG.ID + ".key." + name(), key, CCG.ID + ".categories.key");
+		keyMapping = new KeyMapping(CCG.ID + ".key." + name(), key, "key.categories." + CCG.ID);
 	}
 	public static void register(RegisterKeyMappingsEvent event) {
 		for (var key : values()) event.register(key.keyMapping);

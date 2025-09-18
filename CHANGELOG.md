@@ -1,1 +1,4 @@
-- Fix config crash
+- Optimized chain conveyor rainbow debug rendering
+- Added Blaze Burner goggle tooltip display
+- Added frog port display in delay render
+- Optimized localization

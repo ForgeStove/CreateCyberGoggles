@@ -1,6 +1,5 @@
 {
 	"create_cyber_goggles.categories.key": "Create: Кибер-очки",
-	"create_cyber_goggles.gui.goggles.windState": "Состояние ветра:",
 	"create_cyber_goggles.key.openConfig": "Открыть настройки",
 	"create_cyber_goggles.key.openStock": "Доступ к сетевому хранилищу через телетайп",
 	"create_cyber_goggles.key.previewFilter": "Предпросмотр фильтра",
@@ -10,6 +9,7 @@
 	"create_cyber_goggles.message.enableDivingAffect": "Эффект дайвинг-ботинок включён",
 	"create_cyber_goggles.tooltip.pullRange": "Притяжение",
 	"create_cyber_goggles.tooltip.pushRange": "Отталкивание",
+	"create_cyber_goggles.tooltip.windState": "Состояние ветра:",
 	"text.autoconfig.create_cyber_goggles.category.chainConveyor": "Цепной конвейер",
 	"text.autoconfig.create_cyber_goggles.category.delayRender": "Рендеринг с задержкой",
 	"text.autoconfig.create_cyber_goggles.category.gameMode": "Игровой режим",

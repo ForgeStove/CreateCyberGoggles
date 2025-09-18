@@ -10,6 +10,7 @@
 		"chainConveyor.ChainConveyorConnectionHandlerMixin",
 		"chainConveyor.ChainConveyorInteractionHandlerMixin",
 		"chainConveyor.ChainConveyorRidingHandlerMixin",
+		"goggles.BlazeBurnerBlockEntityMixin",
 		"goggles.BlueprintOverlayRendererMixin",
 		"goggles.DeployerBlockEntityMixin",
 		"goggles.EncasedFanBlockEntityMixin",

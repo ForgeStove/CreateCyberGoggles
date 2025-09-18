@@ -20,19 +20,19 @@ public class KeyInput {
 		previewFilterScreen();
 	}
 	public static void toggleDiving() {
-		if (!CCGKeyMapping.toggleDiving.isDown()) return;
+		if (!CCGKey.toggleDiving.get().isDown()) return;
 		var misc = CCG.CONFIG.misc;
 		misc.removeDivingBootsAffect = !misc.removeDivingBootsAffect;
 		Common.displayClientMessage(misc.removeDivingBootsAffect);
 	}
 	public static void openConfigScreen() {
-		if (!CCGKeyMapping.openConfig.isDown()) return;
+		if (!CCGKey.openConfig.get().isDown()) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) return;
 		mc.setScreen(AutoConfig.getConfigScreen(CCGConfig.class, null).get());
 	}
 	public static void openStockScreen() {
-		if (!CCGKeyMapping.openStock.isDown()) return;
+		if (!CCGKey.openStock.get().isDown()) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) return;
 		if (mc.player == null) return;
@@ -43,7 +43,7 @@ public class KeyInput {
 		mc.setScreen(new StockKeeperRequestScreen(menu, inv, Common.laststbe.getBlockState().getBlock().getName()));
 	}
 	public static void previewFilterScreen() {
-		if (!CCGKeyMapping.previewFilter.isDown()) return;
+		if (!CCGKey.previewFilter.get().isDown()) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) {
 			if (!(mc.screen instanceof AbstractContainerScreen<?> screen)) return;

@@ -3,8 +3,12 @@ import com.simibubi.create.AllItems;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
+import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity;
+import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity.FuelType;
+import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.lang.*;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
@@ -48,10 +52,10 @@ public class Common {
 		var tooltipFlag = mc.options.advancedItemTooltips ? TooltipFlag.ADVANCED : TooltipFlag.NORMAL;
 		var tooltipLines = itemStack.getTooltipLines(TooltipContext.of(mc.level), mc.player, tooltipFlag);
 		var height = Math.max(10, tooltipLines.size() * font.lineHeight - 60);
-		var x = guiGraphics.guiWidth() / 2;
-		var y = guiGraphics.guiHeight() / 2;
-		guiGraphics.renderItem(itemStack, x + 10, y - 15);
-		guiGraphics.renderItemDecorations(font, itemStack, x + 10, y - 15);
+		var x = guiGraphics.guiWidth() / 2 + AllConfigs.client().overlayOffsetX.get();
+		var y = guiGraphics.guiHeight() / 2 + AllConfigs.client().overlayOffsetY.get();
+		guiGraphics.renderItem(itemStack, x + 10, y - 16);
+		guiGraphics.renderItemDecorations(font, itemStack, x + 10, y - 16);
 		guiGraphics.renderTooltip(font, itemStack, x + 22, y - height);
 	}
 	/**
@@ -133,11 +137,24 @@ public class Common {
 	 */
 	public static boolean addFanTooltip(List<Component> tooltip, boolean pushing, float range, int divide) {
 		if (range == 0) return false;
-		builder().translate("gui.goggles.windState").forGoggles(tooltip);
+		builder().translate("tooltip.windState").forGoggles(tooltip);
 		builder().add(Component.literal(LangNumberFormat.format(range / divide)))
 			.space()
 			.translate(pushing ? "tooltip.pushRange" : "tooltip.pullRange")
 			.color(pushing ? CCG.CONFIG.delayRender.windPushColor : CCG.CONFIG.delayRender.windPullColor)
+			.forGoggles(tooltip);
+		return true;
+	}
+	public static boolean addBurnerTooltip(List<Component> tooltip, int remainingBurnTime, boolean isCreative, FuelType activeFuel) {
+		builder().translate("tooltip.burnerState").forGoggles(tooltip);
+		builder().text(isCreative ? "∞" : String.format("%.2f", remainingBurnTime / 20f))
+			.text(String.format(" / %d ", BlazeBurnerBlockEntity.MAX_HEAT_CAPACITY / 20))
+			.translate("tooltip.seconds")
+			.style(switch (activeFuel) {
+				case SPECIAL -> ChatFormatting.AQUA;
+				case NORMAL -> ChatFormatting.YELLOW;
+				default -> ChatFormatting.GRAY;
+			})
 			.forGoggles(tooltip);
 		return true;
 	}

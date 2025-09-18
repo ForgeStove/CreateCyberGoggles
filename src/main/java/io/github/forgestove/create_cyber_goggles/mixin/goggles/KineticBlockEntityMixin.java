@@ -4,7 +4,7 @@ import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.item.TooltipHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.event.CCGKeyMapping;
+import io.github.forgestove.create_cyber_goggles.event.CCGKey;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -30,7 +30,7 @@ public abstract class KineticBlockEntityMixin {
 		}
 		CreateLang.translate("gui.goggles.kinetic_stats").forGoggles(tooltip);
 		SpeedLevel.getFormattedSpeedText(speed, overStressed).forGoggles(tooltip);
-		if (!CCGKeyMapping.showStress.isDown()) return;
+		if (!CCGKey.showStress.get().isDown()) return;
 		double stressFraction = stress / (capacity == 0 ? 1 : capacity);
 		CreateLang.translate("gui.stressometer.title").style(ChatFormatting.GRAY).forGoggles(tooltip);
 		if (speed == 0) CreateLang.text(TooltipHelper.makeProgressBar(3, 0))

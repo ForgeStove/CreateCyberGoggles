@@ -15,7 +15,7 @@ public class CCG {
 		CCGConfig.register(container);
 		var mod = container.getEventBus();
 		if (mod == null) return;
-		mod.addListener(CCGKeyMapping::register);
+		mod.addListener(CCGKey::register);
 		mod.addListener(OverlayRenderer::register);
 		var game = NeoForge.EVENT_BUS;
 		game.addListener(KeyInput::tick);

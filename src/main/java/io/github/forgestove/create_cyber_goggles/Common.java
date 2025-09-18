@@ -1,12 +1,10 @@
 package io.github.forgestove.create_cyber_goggles;
 import com.simibubi.create.content.equipment.armor.CardboardArmorItem;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
-import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity.FuelType;
 import com.simibubi.create.infrastructure.config.AllConfigs;
-import net.createmod.catnip.gui.ScreenOpener;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -19,7 +17,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -90,23 +88,6 @@ public class Common {
 		if (!(mc.hitResult instanceof BlockHitResult blockHitResult)) return null;
 		if (!(blockHitResult.getType() == Type.BLOCK)) return null;
 		return mc.level.getBlockState(blockHitResult.getBlockPos()).getBlock();
-	}
-	/**
-	 * 打开与指定过滤器物品相关的筛选器界面。
-	 *
-	 * @param filter 需要打开筛选器界面的物品堆
-	 */
-	public static void openFilterScreen(@NotNull ItemStack filter) {
-		if (!(filter.getItem() instanceof FilterItem filterItem)) return;
-		var mc = Minecraft.getInstance();
-		if (mc.player == null) return;
-		var inv = mc.player.getInventory();
-		var name = filter.getHoverName();
-		ScreenOpener.open(switch (filterItem.type) {
-			case REGULAR -> new FilterScreen(FilterMenu.create(-1, inv, filter), inv, name);
-			case ATTRIBUTE -> new AttributeFilterScreen(AttributeFilterMenu.create(-1, inv, filter), inv, name);
-			case PACKAGE -> new PackageFilterScreen(PackageFilterMenu.create(-1, inv, filter), inv, name);
-		});
 	}
 	/**
 	 * 为风扇组件添加悬浮提示信息。

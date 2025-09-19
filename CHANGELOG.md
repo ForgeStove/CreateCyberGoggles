@@ -1,4 +1,7 @@
-- Optimized chain conveyor rainbow debug rendering
-- Added Blaze Burner goggle tooltip display
-- Added frog port display in delay render
+- Added outline for package port
+- Added tooltip for blaze burner
+- Optimized interact feedback for hotkey
+- Optimized kinetic debugger for chain conveyor
 - Optimized localization
+- Refactor key input
+- Removed support for de_de, ru_ru, zh_tw

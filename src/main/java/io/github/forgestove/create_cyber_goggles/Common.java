@@ -1,17 +1,24 @@
 package io.github.forgestove.create_cyber_goggles;
+import com.simibubi.create.AllSoundEvents.SoundEntry;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
-import com.simibubi.create.content.logistics.filter.*;
-import com.simibubi.create.foundation.gui.ScreenOpener;
-import com.simibubi.create.foundation.utility.*;
+import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity;
+import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity.FuelType;
+import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
+import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
+import com.simibubi.create.foundation.utility.LangBuilder;
+import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 public class Common {
@@ -28,10 +35,10 @@ public class Common {
 		var tooltipFlag = mc.options.advancedItemTooltips ? TooltipFlag.ADVANCED : TooltipFlag.NORMAL;
 		var tooltipLines = itemStack.getTooltipLines(mc.player, tooltipFlag);
 		var height = Math.max(10, tooltipLines.size() * font.lineHeight - 60);
-		var x = guiGraphics.guiWidth() / 2;
-		var y = guiGraphics.guiHeight() / 2;
-		guiGraphics.renderItem(itemStack, x + 10, y - 15);
-		guiGraphics.renderItemDecorations(font, itemStack, x + 10, y - 15);
+		var x = guiGraphics.guiWidth() / 2 + AllConfigs.client().overlayOffsetX.get();
+		var y = guiGraphics.guiHeight() / 2 + AllConfigs.client().overlayOffsetY.get();
+		guiGraphics.renderItem(itemStack, x + 10, y - 16);
+		guiGraphics.renderItemDecorations(font, itemStack, x + 10, y - 16);
 		guiGraphics.renderTooltip(font, itemStack, x + 22, y - height);
 	}
 	/**
@@ -40,8 +47,8 @@ public class Common {
 	 *
 	 * @return 当前选中的 {@link KineticBlockEntity} 实例，如果没有选中或类型不匹配则返回 null
 	 */
-	public static @Nullable KineticBlockEntity getSelectedKBE() {
-		if (!(getSelectedBE() instanceof KineticBlockEntity kbe)) return null;
+	public static @Nullable KineticBlockEntity getKBE() {
+		if (!(getBE() instanceof KineticBlockEntity kbe)) return null;
 		return kbe;
 	}
 	/**
@@ -50,43 +57,12 @@ public class Common {
 	 *
 	 * @return 当前选中的 {@link BlockEntity} 实例，如果没有选中或类型不匹配则返回 null
 	 */
-	public static @Nullable BlockEntity getSelectedBE() {
+	public static @Nullable BlockEntity getBE() {
 		var mc = Minecraft.getInstance();
 		if (mc.level == null) return null;
 		if (!(mc.hitResult instanceof BlockHitResult blockHitResult)) return null;
 		if (!(blockHitResult.getType() == Type.BLOCK)) return null;
 		return mc.level.getBlockEntity(blockHitResult.getBlockPos());
-	}
-	/**
-	 * 显示一条格式化的客户端消息。
-	 *
-	 * @param currentValue 当前值，用于确定消息的启用或禁用状态
-	 */
-	public static void displayClientMessage(boolean currentValue) {
-		var mc = Minecraft.getInstance();
-		var player = mc.player;
-		if (player == null || mc.screen != null) return;
-		player.displayClientMessage(
-			currentValue
-				? Component.translatable("message.create_cyber_goggles.enableDivingAffect")
-				: Component.translatable("message.create_cyber_goggles.disableDivingAffect"), true
-		);
-	}
-	/**
-	 * 打开与指定过滤器物品相关的筛选器界面。
-	 *
-	 * @param filter 需要打开筛选器界面的物品堆
-	 */
-	public static void openFilterScreen(@NotNull ItemStack filter) {
-		if (!(filter.getItem() instanceof FilterItem filterItem)) return;
-		var mc = Minecraft.getInstance();
-		if (mc.player == null) return;
-		var inv = mc.player.getInventory();
-		var name = filter.getHoverName();
-		ScreenOpener.open(switch (filterItem.type) {
-			case REGULAR -> new FilterScreen(FilterMenu.create(-1, inv, filter), inv, name);
-			case ATTRIBUTE -> new AttributeFilterScreen(AttributeFilterMenu.create(-1, inv, filter), inv, name);
-		});
 	}
 	/**
 	 * 为风扇组件添加悬浮提示信息。
@@ -99,18 +75,92 @@ public class Common {
 	 */
 	public static boolean addFanTooltip(List<Component> tooltip, boolean pushing, float range, int divide) {
 		if (range == 0) return false;
-		var string = (
-			pushing
-				? Component.translatable("tooltip.create_cyber_goggles.push")
-				: Component.translatable("tooltip.create_cyber_goggles.pull")
-		).getString();
-		Lang.text("-> %s %s %s".formatted(
-				string,
-				LangNumberFormat.format(range / divide),
-				Component.translatable("tooltip.create_cyber_goggles.block").getString()
-			))
-			.style(ChatFormatting.YELLOW)
+		CCGLang.translate("tooltip.windState").forGoggles(tooltip);
+		CCGLang.number(range / divide)
+			.space()
+			.translate(pushing ? "tooltip.pushRange" : "tooltip.pullRange")
+			.color(pushing ? CCG.CONFIG.delayRender.windPushColor : CCG.CONFIG.delayRender.windPullColor)
 			.forGoggles(tooltip);
 		return true;
+	}
+	/**
+	 * 为燃烧室添加悬浮提示信息，显示燃烧状态、剩余燃烧时间和燃料类型颜色标识
+	 *
+	 * @param tooltip           用于显示提示信息的组件列表
+	 * @param remainingBurnTime 剩余燃烧时间（单位：tick）
+	 * @param isCreative        是否为创造模式燃烧室
+	 * @param activeFuel        当前激活的燃料类型
+	 */
+	public static boolean addBurnerTooltip(List<Component> tooltip, int remainingBurnTime, boolean isCreative, FuelType activeFuel) {
+		CCGLang.translate("tooltip.burnerState").forGoggles(tooltip);
+		CCGLang.text(isCreative ? "∞" : String.format("%.2f", remainingBurnTime / 20f))
+			.text(String.format(" / %d ", BlazeBurnerBlockEntity.MAX_HEAT_CAPACITY / 20))
+			.translate("tooltip.seconds")
+			.style(switch (activeFuel) {
+				case SPECIAL -> ChatFormatting.AQUA;
+				case NORMAL -> ChatFormatting.YELLOW;
+				default -> ChatFormatting.GRAY;
+			})
+			.forGoggles(tooltip);
+		return true;
+	}
+	/**
+	 * 获取当前上下文中的相关过滤器物品。
+	 * 此方法有两种工作模式：
+	 * <p>
+	 * 1. 如果玩家正在查看GUI界面，则返回鼠标悬停位置的物品
+	 * <p>
+	 * 2. 如果玩家在游戏世界中，则尝试从目标方块实体获取过滤器物品
+	 *
+	 * @return 相关的过滤器物品，如果无法获取则返回null
+	 */
+	public static @Nullable ItemStack getRelevantFilterItem() {
+		var mc = Minecraft.getInstance();
+		if (mc.screen != null) {
+			if (!(mc.screen instanceof AbstractContainerScreen<?> screen)) return null;
+			var slot = screen.getSlotUnderMouse();
+			return slot == null ? null : slot.getItem();
+		}
+		if (!(getBE() instanceof SmartBlockEntity sbe) || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return null;
+		var behaviour = sbe.getBehaviour(FilteringBehaviour.TYPE);
+		return behaviour == null ? null : behaviour.getFilter(blockHitResult.getDirection());
+	}
+	/**
+	 * 向本地玩家显示客户端消息。
+	 * 此方法将 LangBuilder 构建的组件显示为覆盖游戏界面的状态栏消息。
+	 *
+	 * @param builder 包含要显示消息内容的语言构建器
+	 */
+	public static void displayMessage(LangBuilder builder) {
+		var player = Minecraft.getInstance().player;
+		if (player != null) player.displayClientMessage(builder.component(), true);
+	}
+	/**
+	 * 播放指定的音效，可自定义音调和音量。
+	 *
+	 * @param sound  要播放的音效事件
+	 * @param pitch  音调值，影响播放速度和音高
+	 * @param volume 音量大小，1.0f为正常音量
+	 */
+	public static void playSound(SoundEvent sound, float pitch, float volume) {
+		Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(sound, pitch, volume));
+	}
+	/**
+	 * 以预设的音调和音量播放Create模组的音效条目。
+	 * 默认使用较低的音调(0.25f)和正常音量(1.0f)。
+	 *
+	 * @param entry Create模组的音效条目
+	 */
+	public static void playSound(SoundEntry entry) {
+		playSound(entry.getMainEvent(), .25f, 1f);
+	}
+	/**
+	 * 以默认音调和音量播放指定的音效。
+	 * 使用正常音调(1.0f)和正常音量(1.0f)。
+	 *
+	 * @param sound 要播放的音效事件
+	 */
+	public static void playSound(SoundEvent sound) {
+		playSound(sound, 1f, 1f);
 	}
 }

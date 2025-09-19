@@ -23,7 +23,7 @@ public class KineticDebugger {
 		if (mc.isPaused() || mc.screen != null) return;
 		var level = mc.level;
 		if (level == null) return;
-		var kbe = Common.getSelectedKBE();
+		var kbe = Common.getKBE();
 		if (kbe == null) return;
 		renderAxisLine(kbe);
 		updateKBEPath(level, kbe);
@@ -106,10 +106,10 @@ public class KineticDebugger {
 	 * @param rgb   轮廓的RGB颜色值
 	 */
 	public static void renderOutline(@NotNull KineticBlockEntity kbe, @NotNull ClientLevel level, int depth, int rgb) {
-		var toOutline = kbe.getBlockPos();
-		var shape = level.getBlockState(toOutline).getBlockSupportShape(level, toOutline);
+		var blockPos = kbe.getBlockPos();
+		var shape = level.getBlockState(blockPos).getBlockSupportShape(level, blockPos);
 		if (kbe.getTheoreticalSpeed() == 0 || shape.isEmpty()) return;
-		CreateClient.OUTLINER.chaseAABB("KineticOutline" + depth, shape.bounds().move(toOutline)).lineWidth(1 / 16f).colored(rgb);
+		CreateClient.OUTLINER.chaseAABB("KineticOutline" + depth, shape.bounds().move(blockPos)).lineWidth(1 / 16f).colored(rgb);
 	}
 	/**
 	 * 根据链路深度和时间生成彩虹色。

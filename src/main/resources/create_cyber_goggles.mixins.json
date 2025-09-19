@@ -5,6 +5,7 @@
 	"refmap": "create_cyber_goggles.refmap.json",
 	"client": [
 		"AbstractFilterScreenMixin",
+		"goggles.BlazeBurnerBlockEntityMixin",
 		"goggles.DeployerBlockEntityMixin",
 		"goggles.EncasedFanBlockEntityMixin",
 		"goggles.GeneratingKineticBlockEntityMixin",

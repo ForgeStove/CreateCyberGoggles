@@ -1,1 +1,5 @@
-- Fixed ConcurrentModificationException caused by delay render
+- Added tooltip for blaze burner
+- Optimized interact feedback for hotkey
+- Optimized localization
+- Refactor key input
+- Removed support for de_de, ru_ru, zh_tw

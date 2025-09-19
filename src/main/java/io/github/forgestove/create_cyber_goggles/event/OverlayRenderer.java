@@ -14,7 +14,7 @@ public class OverlayRenderer {
 		if (!CCG.CONFIG.goggles.renderExtraItems) return;
 		var mc = Minecraft.getInstance();
 		if (mc.isPaused() || mc.screen != null || mc.options.hideGui) return;
-		var be = Common.getSelectedBE();
+		var be = Common.getBE();
 		if (be instanceof DepotBlockEntity dbe) Common.renderItemStack(guiGraphics, dbe.getHeldItem());
 	}
 }

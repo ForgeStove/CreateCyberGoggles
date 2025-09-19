@@ -16,6 +16,9 @@ var generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
 	from("src/main/templates")
 	into("build/generated/sources/modMetadata")
 }
+var cleanMetadata = tasks.register<Delete>("cleanMetadata") {
+	delete("build/generated/sources/modMetadata")
+}
 sourceSets.main.get().resources.srcDir(generateMetadata)
 legacyForge.ideSyncTasks.add(generateMetadata)
 mixin {

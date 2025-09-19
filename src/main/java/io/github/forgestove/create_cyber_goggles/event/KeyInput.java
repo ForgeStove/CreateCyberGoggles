@@ -1,15 +1,12 @@
 package io.github.forgestove.create_cyber_goggles.event;
-import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
-import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
+import com.simibubi.create.AllSoundEvents;
+import com.simibubi.create.content.logistics.filter.*;
 import io.github.forgestove.create_cyber_goggles.*;
 import me.shedaniel.autoconfig.AutoConfig;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult.Type;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.client.event.InputEvent.Key;
-
-import java.util.Collections;
 public class KeyInput {
 	public static void tick(Key ignoredEvent) {
 		toggleDiving();
@@ -17,33 +14,40 @@ public class KeyInput {
 		previewFilterScreen();
 	}
 	public static void toggleDiving() {
-		if (!CCGKeyMapping.toggleDiving.isDown()) return;
+		if (!CCGKey.toggleDiving.isKeyDown()) return;
 		var misc = CCG.CONFIG.misc;
-		misc.removeDivingBootsAffect = !misc.removeDivingBootsAffect;
-		Common.displayClientMessage(misc.removeDivingBootsAffect);
+		misc.removeDivingFunction = !misc.removeDivingFunction;
+		var mc = Minecraft.getInstance();
+		var player = mc.player;
+		if (player == null || mc.screen != null) return;
+		var builder = CCGLang.translate("message.divingFunction")
+			.space()
+			.translate(misc.removeDivingFunction ? "message.disabled" : "message.enabled");
+		Common.displayMessage(builder);
 	}
 	public static void openConfigScreen() {
-		if (!CCGKeyMapping.openConfig.isDown()) return;
+		if (!CCGKey.openConfig.isKeyDown()) return;
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) return;
 		mc.setScreen(AutoConfig.getConfigScreen(CCGConfig.class, null).get());
 	}
 	public static void previewFilterScreen() {
-		if (!CCGKeyMapping.previewFilter.isDown()) return;
+		if (!CCGKey.previewFilter.isKeyDown()) return;
 		var mc = Minecraft.getInstance();
-		if (mc.screen != null) {
-			if (!(mc.screen instanceof AbstractContainerScreen<?> screen)) return;
-			var slot = screen.getSlotUnderMouse();
-			if (slot == null) return;
-			Common.openFilterScreen(slot.getItem());
-		} else {
-			if (mc.level == null || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return;
-			if (blockHitResult.getType() == Type.MISS) return;
-			var be = mc.level.getBlockEntity(blockHitResult.getBlockPos());
-			if (!(be instanceof SmartBlockEntity sbe)) return;
-			var first = Collections.singleton(sbe.getBehaviour(FilteringBehaviour.TYPE)).iterator().next();
-			if (!(first instanceof FilteringBehaviour)) return;
-			Common.openFilterScreen(first.getFilter(blockHitResult.getDirection()));
+		var player = mc.player;
+		if (player == null) return;
+		var itemStack = Common.getRelevantFilterItem();
+		if (itemStack == null || !(itemStack.getItem() instanceof FilterItem filterItem)) {
+			Common.displayMessage(CCGLang.translate("message.notFilter").style(ChatFormatting.RED));
+			Common.playSound(AllSoundEvents.DENY);
+			return;
 		}
+		var inv = player.getInventory();
+		var name = itemStack.getHoverName();
+		mc.setScreen(switch (filterItem.type) {
+			case REGULAR -> new FilterScreen(FilterMenu.create(-1, inv, itemStack), inv, name);
+			case ATTRIBUTE -> new AttributeFilterScreen(AttributeFilterMenu.create(-1, inv, itemStack), inv, name);
+		});
+		Common.playSound(SoundEvents.BOOK_PAGE_TURN);
 	}
 }

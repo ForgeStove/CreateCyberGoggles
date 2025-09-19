@@ -1,11 +1,13 @@
 package io.github.forgestove.create_cyber_goggles.event;
-import com.simibubi.create.AllMenuTypes;
+import com.simibubi.create.*;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.stockTicker.*;
 import io.github.forgestove.create_cyber_goggles.*;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.createmod.catnip.gui.ScreenOpener;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.sounds.SoundEvents;
 import net.neoforged.neoforge.client.event.InputEvent.Key;
 public class KeyInput {
 	public static void tick(Key ignoredEvent) {
@@ -41,7 +43,9 @@ public class KeyInput {
 		if (player == null) return;
 		if (Common.getBE() instanceof StockTickerBlockEntity stbe) Common.lastSTBE = stbe;
 		if (Common.lastSTBE == null || Common.lastSTBE.isRemoved()) {
-			player.displayClientMessage(CCGLang.translate("message.notStock").text("  ").translate("key.openStock").component(), true);
+			var builder = CCGLang.translate("message.notStock").text("  ").translate("key.openStock").style(ChatFormatting.RED);
+			Common.displayClientMessage(builder, player);
+			AllSoundEvents.DENY.play(mc.level, player, player.position(), .5f, .5f);
 			return;
 		}
 		var inv = player.getInventory();
@@ -55,7 +59,9 @@ public class KeyInput {
 		if (player == null) return;
 		var itemStack = Common.getRelevantFilterItem();
 		if (itemStack == null || !(itemStack.getItem() instanceof FilterItem filterItem)) {
-			player.displayClientMessage(CCGLang.translate("message.notFilter").component(), true);
+			var builder = CCGLang.translate("message.notFilter").style(ChatFormatting.RED);
+			Common.displayClientMessage(builder, player);
+			AllSoundEvents.DENY.play(mc.level, player, player.position(), .5f, .5f);
 			return;
 		}
 		var inv = player.getInventory();
@@ -65,5 +71,6 @@ public class KeyInput {
 			case ATTRIBUTE -> new AttributeFilterScreen(AttributeFilterMenu.create(-1, inv, itemStack), inv, name);
 			case PACKAGE -> new PackageFilterScreen(PackageFilterMenu.create(-1, inv, itemStack), inv, name);
 		});
+		player.playSound(SoundEvents.BOOK_PAGE_TURN, 1f, 1f);
 	}
 }

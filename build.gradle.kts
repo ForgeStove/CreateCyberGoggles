@@ -14,10 +14,13 @@ tasks.jar {
 var generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
 	expand(properties.mapValues { it.value.toString() })
 	from("src/main/templates")
-	into("build/resources/sources/modMetadata")
+	into("build/generated/sources/modMetadata")
+}
+var cleanMetadata = tasks.register<Delete>("cleanMetadata") {
+	delete("build/generated/sources/modMetadata")
 }
 sourceSets.main.get().resources.srcDir(generateMetadata)
-legacyForge.ideSyncTasks.add(generateMetadata)
+legacyForge.ideSyncTasks.addAll(cleanMetadata, generateMetadata)
 mixin {
 	add(sourceSets.main.get(), "${p("mod_id")}.refmap.json")
 	config("${p("mod_id")}.mixins.json")

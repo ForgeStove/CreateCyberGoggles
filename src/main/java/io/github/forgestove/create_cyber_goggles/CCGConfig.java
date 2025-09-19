@@ -36,8 +36,8 @@ public class CCGConfig implements ConfigData {
 	public static class DelayRender {
 		@Tooltip public boolean renderAnalogBox = true;
 		@Tooltip public int delayRenderDuration = 60;
-		@Tooltip @ColorPicker public int airBoxPushColor = 0xDDC166;
-		@Tooltip @ColorPicker public int airBoxPullColor = 0x7FCDE0;
+		@Tooltip @ColorPicker public int windPushColor = 0xDDC166;
+		@Tooltip @ColorPicker public int windPullColor = 0x7FCDE0;
 	}
 	public static class ChainConveyor {
 		@Tooltip public boolean alwaysAllowRiding = false;
@@ -52,7 +52,7 @@ public class CCGConfig implements ConfigData {
 	public static class Misc {
 		@Tooltip public boolean removeCardboardOverlay = true;
 		@Tooltip public boolean removeNetheriteFirstPerson = false;
-		@Tooltip public boolean removeDivingBootsAffect = false;
+		@Tooltip public boolean removeDivingFunction = false;
 		@Tooltip public boolean fixSchematicName = true;
 		@Tooltip public boolean rightClickPenetrate = false;
 		@Tooltip public boolean rainbowDebug = false;

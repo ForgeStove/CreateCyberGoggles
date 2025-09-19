@@ -1,13 +1,15 @@
 package io.github.forgestove.create_cyber_goggles.event;
 import com.simibubi.create.content.kinetics.base.*;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity;
 import io.github.forgestove.create_cyber_goggles.*;
+import net.createmod.catnip.data.Iterate;
 import net.createmod.catnip.math.VecHelper;
 import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.core.*;
-import net.minecraft.core.Direction.AxisDirection;
+import net.minecraft.core.Direction.*;
 import net.minecraft.world.phys.*;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +25,7 @@ public class KineticDebugger {
 		if (mc.isPaused() || mc.screen != null) return;
 		var level = mc.level;
 		if (level == null) return;
-		var kbe = Common.getSelectedKBE();
+		var kbe = Common.getKBE();
 		if (kbe == null) return;
 		renderAxisLine(kbe);
 		updateKBEPath(level, kbe);
@@ -89,8 +91,8 @@ public class KineticDebugger {
 	/**
 	 * 判断线段是否在视锥体内。
 	 *
-	 * @param start    起点
-	 * @param end      终点
+	 * @param start   起点
+	 * @param end     终点
 	 * @param frustum 视锥体
 	 * @return 线段是否可见
 	 */
@@ -106,10 +108,19 @@ public class KineticDebugger {
 	 * @param rgb   轮廓的RGB颜色值
 	 */
 	public static void renderOutline(@NotNull KineticBlockEntity kbe, @NotNull ClientLevel level, int depth, int rgb) {
-		var toOutline = kbe.getBlockPos();
-		var shape = level.getBlockState(toOutline).getBlockSupportShape(level, toOutline);
-		if (kbe.getTheoreticalSpeed() == 0 || shape.isEmpty()) return;
-		Outliner.getInstance().chaseAABB("KineticOutline" + depth, shape.bounds().move(toOutline)).lineWidth(1 / 16f).colored(rgb);
+		if (kbe.getTheoreticalSpeed() == 0) return;
+		var blockPos = kbe.getBlockPos();
+		var shape = level.getBlockState(blockPos).getBlockSupportShape(level, blockPos);
+		if (shape.isEmpty()) return;
+		Outliner.getInstance().chaseAABB("KineticOutline" + depth, shape.bounds().move(blockPos)).lineWidth(1 / 16f).colored(rgb);
+		if (kbe instanceof ChainConveyorBlockEntity) for (var y : Iterate.zeroAndOne) {
+			var prevV = VecHelper.rotate(new Vec3(0, .125 + y * .75, 1.25), -22.5, Axis.Y).add(Vec3.atBottomCenterOf(blockPos));
+			for (var i = 0; i < 8; i++) {
+				var v = VecHelper.rotate(new Vec3(0, .125 + y * .75, 1.25), 22.5 + i * 45, Axis.Y).add(Vec3.atBottomCenterOf(blockPos));
+				Outliner.getInstance().showLine("KineticOutline" + y + i + depth, prevV, v).lineWidth(1 / 16f).colored(rgb);
+				prevV = v;
+			}
+		}
 	}
 	/**
 	 * 根据链路深度和时间生成彩虹色。

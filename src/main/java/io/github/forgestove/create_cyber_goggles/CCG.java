@@ -15,7 +15,7 @@ public class CCG {
 		if (FMLEnvironment.dist != Dist.CLIENT) return;
 		CCGConfig.register();
 		var mod = FMLJavaModLoadingContext.get().getModEventBus();
-		mod.addListener(CCGKeyMapping::register);
+		mod.addListener(CCGKey::register);
 		mod.addListener(OverlayRenderer::register);
 		var game = MinecraftForge.EVENT_BUS;
 		game.addListener(KeyInput::tick);

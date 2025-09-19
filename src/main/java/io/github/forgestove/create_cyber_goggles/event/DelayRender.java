@@ -3,13 +3,14 @@ import com.simibubi.create.AllSpecialTextures;
 import com.simibubi.create.content.kinetics.fan.*;
 import com.simibubi.create.content.kinetics.mechanicalArm.*;
 import com.simibubi.create.content.logistics.depot.EjectorBlockEntity;
+import com.simibubi.create.content.logistics.packagePort.PackagePortBlockEntity;
 import io.github.forgestove.create_cyber_goggles.*;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.createmod.catnip.math.VecHelper;
 import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.*;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,11 +25,12 @@ public class DelayRender {
 			return;
 		}
 		if (mc.isPaused() || mc.screen != null) return;
-		var be = Common.getSelectedBE();
+		var be = Common.getBE();
 		if (be instanceof EncasedFanBlockEntity
 			|| be instanceof NozzleBlockEntity
 			|| be instanceof ArmBlockEntity
-			|| be instanceof EjectorBlockEntity) cachedBE.put(be, CCG.CONFIG.delayRender.delayRenderDuration);
+			|| be instanceof EjectorBlockEntity
+			|| be instanceof PackagePortBlockEntity) cachedBE.put(be, CCG.CONFIG.delayRender.delayRenderDuration);
 		if (cachedBE.isEmpty()) return;
 		cachedBE.object2IntEntrySet().removeIf(entry -> {
 			var blockEntity = entry.getKey();
@@ -38,6 +40,7 @@ public class DelayRender {
 			else if (blockEntity instanceof NozzleBlockEntity nbe) render(nbe);
 			else if (blockEntity instanceof ArmBlockEntity abe) render(abe);
 			else if (blockEntity instanceof EjectorBlockEntity ebe) render(ebe);
+			else if (blockEntity instanceof PackagePortBlockEntity ppbe) render(ppbe);
 			return newValue <= 0;
 		});
 	}
@@ -111,7 +114,7 @@ public class DelayRender {
 		}
 	}
 	public static int getColor(boolean pushing) {
-		return pushing ? CCG.CONFIG.delayRender.airBoxPushColor : CCG.CONFIG.delayRender.airBoxPullColor;
+		return pushing ? CCG.CONFIG.delayRender.windPushColor : CCG.CONFIG.delayRender.windPullColor;
 	}
 	public static double getOffset(int i, int numberOfFlowBoxes) {
 		return (System.currentTimeMillis() + i * ((double) 3000 / numberOfFlowBoxes)) % 3000 / 3000.0;
@@ -142,6 +145,21 @@ public class DelayRender {
 		Outliner.getInstance()
 			.chaseAABB("EjectorTargetBox" + ebe, new AABB(ebe.getTargetPosition()))
 			.lineWidth(1 / 16f)
-			.colored(CCG.CONFIG.delayRender.airBoxPushColor);
+			.colored(CCG.CONFIG.delayRender.windPushColor);
+	}
+	public static void render(@NotNull PackagePortBlockEntity ppbe) {
+		var mc = Minecraft.getInstance();
+		var pos = ppbe.getBlockPos();
+		if (ppbe.target == null) return;
+		var source = Vec3.atBottomCenterOf(pos);
+		var target = ppbe.target.getExactTargetLocation(ppbe, mc.level, pos);
+		if (target == Vec3.ZERO) return;
+		var color = 0x9ede73;
+		Outliner.getInstance().showLine("PackagePortConnection" + ppbe, source, target).lineWidth(1 / 8f).colored(color);
+		Outliner.getInstance()
+			.chaseAABB("ChainPointSelected" + ppbe, new AABB(target, target))
+			.colored(color)
+			.lineWidth(1 / 5f)
+			.disableLineNormals();
 	}
 }

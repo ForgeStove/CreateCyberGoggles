@@ -7,6 +7,7 @@
 		"AbstractFilterScreenMixin",
 		"accessor.ArmBlockEntityAccessor",
 		"accessor.NozzleBlockEntityAccessor",
+		"goggles.BlazeBurnerBlockEntityMixin",
 		"goggles.DeployerBlockEntityMixin",
 		"goggles.EncasedFanBlockEntityMixin",
 		"goggles.GeneratingKineticBlockEntityMixin",

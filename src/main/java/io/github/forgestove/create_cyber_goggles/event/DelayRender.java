@@ -22,7 +22,7 @@ public class DelayRender {
 			return;
 		}
 		if (mc.isPaused() || mc.screen != null) return;
-		var be = Common.getSelectedBE();
+		var be = Common.getBE();
 		if (be instanceof EncasedFanBlockEntity
 			|| be instanceof NozzleBlockEntity
 			|| be instanceof ArmBlockEntity
@@ -108,7 +108,7 @@ public class DelayRender {
 		}
 	}
 	public static int getColor(boolean pushing) {
-		return pushing ? CCG.CONFIG.delayRender.airBoxPushColor : CCG.CONFIG.delayRender.airBoxPullColor;
+		return pushing ? CCG.CONFIG.delayRender.windPushColor : CCG.CONFIG.delayRender.windPullColor;
 	}
 	public static double getOffset(int i, int numberOfFlowBoxes) {
 		return (System.currentTimeMillis() + i * ((double) 3000 / numberOfFlowBoxes)) % 3000 / 3000.0;
@@ -137,6 +137,6 @@ public class DelayRender {
 	public static void render(@NotNull EjectorBlockEntity ebe) {
 		CreateClient.OUTLINER.chaseAABB("EjectorTargetBox" + ebe, new AABB(ebe.getTargetPosition()))
 			.lineWidth(1 / 16f)
-			.colored(CCG.CONFIG.delayRender.airBoxPushColor);
+			.colored(CCG.CONFIG.delayRender.windPushColor);
 	}
 }

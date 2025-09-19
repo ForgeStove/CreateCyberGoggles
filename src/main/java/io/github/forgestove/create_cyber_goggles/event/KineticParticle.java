@@ -8,7 +8,7 @@ import net.minecraft.client.Minecraft;
 public class KineticParticle {
 	public static void tick(WorldRenderContext ignoredContext) {
 		if (!CCG.CONFIG.goggles.enableKineticEffect) return;
-		var kbe = Common.getSelectedKBE();
+		var kbe = Common.getKBE();
 		if (kbe == null) return;
 		var mc = Minecraft.getInstance();
 		if (mc.level == null) return;

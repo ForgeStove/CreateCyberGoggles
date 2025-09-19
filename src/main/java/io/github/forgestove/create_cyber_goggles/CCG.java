@@ -10,7 +10,7 @@ public class CCG implements ClientModInitializer {
 	public static final CCGConfig CONFIG = AutoConfig.register(CCGConfig.class, Toml4jConfigSerializer::new).getConfig();
 	@Override
 	public void onInitializeClient() {
-		CCGKeyMapping.register();
+		CCGKey.register();
 		ClientTickEvents.END_CLIENT_TICK.register(KeyInput::register);
 		ClientTickEvents.END_CLIENT_TICK.register(DelayRender::tick);
 		WorldRenderEvents.AFTER_ENTITIES.register(KineticParticle::tick);

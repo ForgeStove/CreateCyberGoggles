@@ -1,11 +1,11 @@
 plugins {
-	id("fabric-loom") version "1.11.8"
+	id("fabric-loom") version "1.10.5"
 	id("me.modmuss50.mod-publish-plugin") version "+"
 }
 base.archivesName.set(p("mod_id"))
 group = p("mod_group_id")
 version = "${p("minecraft_version")}-${p("mod_version")}+${p("upper_loader")}"
-//java.toolchain.l anguageVersion.set(JavaLanguageVersion.of(17))
+java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 tasks.jar { from("LICENSE") }
 var generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
 	expand(properties.mapValues { it.value.toString() })

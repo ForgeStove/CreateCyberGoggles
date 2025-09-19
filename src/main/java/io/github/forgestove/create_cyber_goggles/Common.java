@@ -15,6 +15,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -22,8 +23,9 @@ import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.*;
 import net.minecraft.world.phys.HitResult.Type;
+import net.minecraft.world.phys.shapes.Shapes;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -194,5 +196,11 @@ public class Common {
 	 */
 	public static void playSound(SoundEvent sound) {
 		playSound(sound, 1f, 1f);
+	}
+	public static @Nullable AABB getBounds(BlockPos blockPos) {
+		var level = Minecraft.getInstance().level;
+		if (level == null) return null;
+		var shape = level.getBlockState(blockPos).getShape(level, blockPos);
+		return (shape.isEmpty() ? Shapes.block() : shape).bounds().move(blockPos);
 	}
 }

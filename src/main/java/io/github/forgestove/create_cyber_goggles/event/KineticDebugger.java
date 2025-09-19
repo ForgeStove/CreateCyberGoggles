@@ -1,15 +1,13 @@
 package io.github.forgestove.create_cyber_goggles.event;
 import com.simibubi.create.content.kinetics.base.*;
-import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity;
 import io.github.forgestove.create_cyber_goggles.*;
-import net.createmod.catnip.data.Iterate;
 import net.createmod.catnip.math.VecHelper;
 import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.core.*;
-import net.minecraft.core.Direction.*;
+import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.world.phys.*;
 import net.neoforged.neoforge.client.event.ClientTickEvent.Post;
 import org.jetbrains.annotations.NotNull;
@@ -68,7 +66,7 @@ public class KineticDebugger {
 			// 渲染前判断包围盒是否在视锥体内
 			var rgb = getRainbowColor(depth, time);
 			var frustum = Minecraft.getInstance().levelRenderer.getFrustum();
-			if (isAABBInFrustum(nodeBE, level, frustum)) renderOutline(nodeBE, level, depth, rgb);
+			if (isAABBInFrustum(nodeBE, level, frustum)) renderOutline(nodeBE, depth, rgb);
 			// 连线渲染时也判断两端是否有一端在视锥体内，否则跳过
 			if (nodeBE.source == null) continue;
 			if (isLineInFrustum(nodeBE.getBlockPos(), nodeBE.source, frustum)) renderKineticLine(nodeBE, depth, rgb);
@@ -103,24 +101,15 @@ public class KineticDebugger {
 	 * 渲染指定 KineticBlockEntity 的包围盒轮廓。
 	 *
 	 * @param kbe   目标动力方块实体
-	 * @param level 当前客户端世界
 	 * @param depth 链路深度
 	 * @param rgb   轮廓的RGB颜色值
 	 */
-	public static void renderOutline(@NotNull KineticBlockEntity kbe, @NotNull ClientLevel level, int depth, int rgb) {
+	public static void renderOutline(@NotNull KineticBlockEntity kbe, int depth, int rgb) {
 		if (kbe.getTheoreticalSpeed() == 0) return;
 		var blockPos = kbe.getBlockPos();
-		var shape = level.getBlockState(blockPos).getBlockSupportShape(level, blockPos);
-		if (shape.isEmpty()) return;
-		Outliner.getInstance().chaseAABB("KineticOutline" + depth, shape.bounds().move(blockPos)).lineWidth(1 / 16f).colored(rgb);
-		if (kbe instanceof ChainConveyorBlockEntity) for (var y : Iterate.zeroAndOne) {
-			var prevV = VecHelper.rotate(new Vec3(0, .125 + y * .75, 1.25), -22.5, Axis.Y).add(Vec3.atBottomCenterOf(blockPos));
-			for (var i = 0; i < 8; i++) {
-				var v = VecHelper.rotate(new Vec3(0, .125 + y * .75, 1.25), 22.5 + i * 45, Axis.Y).add(Vec3.atBottomCenterOf(blockPos));
-				Outliner.getInstance().showLine("KineticOutline" + y + i + depth, prevV, v).lineWidth(1 / 16f).colored(rgb);
-				prevV = v;
-			}
-		}
+		var bounds = Common.getBounds(blockPos);
+		if (bounds == null) return;
+		Outliner.getInstance().chaseAABB("KineticOutline" + depth, bounds).lineWidth(1 / 16f).colored(rgb);
 	}
 	/**
 	 * 根据链路深度和时间生成彩虹色。

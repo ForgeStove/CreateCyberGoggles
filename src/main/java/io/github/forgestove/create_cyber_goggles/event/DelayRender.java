@@ -145,10 +145,9 @@ public class DelayRender {
 		});
 	}
 	public static void render(@NotNull EjectorBlockEntity ebe) {
-		Outliner.getInstance()
-			.chaseAABB("EjectorTargetBox" + ebe, new AABB(ebe.getTargetPosition()))
-			.lineWidth(1 / 16f)
-			.colored(CCG.CONFIG.delayRender.windPushColor);
+		var bounds = Common.getBounds(ebe.getTargetPosition());
+		if (bounds == null) return;
+		Outliner.getInstance().chaseAABB("EjectorTargetBox" + ebe, bounds).lineWidth(1 / 16f).colored(CCG.CONFIG.delayRender.windPushColor);
 	}
 	public static void render(@NotNull PackagePortBlockEntity ppbe) {
 		var mc = Minecraft.getInstance();

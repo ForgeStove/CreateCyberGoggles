@@ -7,6 +7,7 @@ import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity.Fuel
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import com.simibubi.create.infrastructure.config.AllConfigs;
+import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -152,5 +153,15 @@ public class Common {
 		if (!(getBE() instanceof SmartBlockEntity sbe) || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return null;
 		var behaviour = sbe.getBehaviour(FilteringBehaviour.TYPE);
 		return behaviour == null ? null : behaviour.getFilter(blockHitResult.getDirection());
+	}
+	/**
+	 * 向本地玩家显示客户端消息。
+	 * 此方法将 LangBuilder 构建的组件显示为覆盖游戏界面的状态栏消息。
+	 *
+	 * @param builder 包含要显示消息内容的语言构建器
+	 * @param player  接收消息的本地玩家实例
+	 */
+	public static void displayClientMessage(LangBuilder builder, LocalPlayer player) {
+		player.displayClientMessage(builder.component(), true);
 	}
 }

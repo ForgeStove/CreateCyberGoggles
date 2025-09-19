@@ -1,4 +1,5 @@
 package io.github.forgestove.create_cyber_goggles;
+import com.simibubi.create.AllSoundEvents.SoundEntry;
 import com.simibubi.create.content.equipment.armor.CardboardArmorItem;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
@@ -13,7 +14,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.*;
@@ -159,9 +162,37 @@ public class Common {
 	 * 此方法将 LangBuilder 构建的组件显示为覆盖游戏界面的状态栏消息。
 	 *
 	 * @param builder 包含要显示消息内容的语言构建器
-	 * @param player  接收消息的本地玩家实例
 	 */
-	public static void displayClientMessage(LangBuilder builder, LocalPlayer player) {
-		player.displayClientMessage(builder.component(), true);
+	public static void displayMessage(LangBuilder builder) {
+		var player = Minecraft.getInstance().player;
+		if (player != null) player.displayClientMessage(builder.component(), true);
+	}
+	/**
+	 * 播放指定的音效，可自定义音调和音量。
+	 *
+	 * @param sound  要播放的音效事件
+	 * @param pitch  音调值，影响播放速度和音高
+	 * @param volume 音量大小，1.0f为正常音量
+	 */
+	public static void playSound(SoundEvent sound, float pitch, float volume) {
+		Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(sound, pitch, volume));
+	}
+	/**
+	 * 以预设的音调和音量播放Create模组的音效条目。
+	 * 默认使用较低的音调(0.25f)和正常音量(1.0f)。
+	 *
+	 * @param entry Create模组的音效条目
+	 */
+	public static void playSound(SoundEntry entry) {
+		playSound(entry.getMainEvent(), .25f, 1f);
+	}
+	/**
+	 * 以默认音调和音量播放指定的音效。
+	 * 使用正常音调(1.0f)和正常音量(1.0f)。
+	 *
+	 * @param sound 要播放的音效事件
+	 */
+	public static void playSound(SoundEvent sound) {
+		playSound(sound, 1f, 1f);
 	}
 }

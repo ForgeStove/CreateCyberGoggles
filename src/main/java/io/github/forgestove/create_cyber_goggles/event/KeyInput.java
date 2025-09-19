@@ -23,11 +23,10 @@ public class KeyInput {
 		var mc = Minecraft.getInstance();
 		var player = mc.player;
 		if (player == null || mc.screen != null) return;
-		var component = CCGLang.translate("message.divingFunction")
+		var builder = CCGLang.translate("message.divingFunction")
 			.space()
-			.translate(misc.removeDivingFunction ? "message.disabled" : "message.enabled")
-			.component();
-		player.displayClientMessage(component, true);
+			.translate(misc.removeDivingFunction ? "message.disabled" : "message.enabled");
+		Common.displayMessage(builder);
 	}
 	public static void openConfigScreen() {
 		if (!CCGKey.openConfig.isKeyDown()) return;
@@ -44,8 +43,8 @@ public class KeyInput {
 		if (Common.getBE() instanceof StockTickerBlockEntity stbe) Common.lastSTBE = stbe;
 		if (Common.lastSTBE == null || Common.lastSTBE.isRemoved()) {
 			var builder = CCGLang.translate("message.notStock").text("  ").translate("key.openStock").style(ChatFormatting.RED);
-			Common.displayClientMessage(builder, player);
-			AllSoundEvents.DENY.play(mc.level, player, player.position(), .5f, .5f);
+			Common.displayMessage(builder);
+			Common.playSound(AllSoundEvents.DENY);
 			return;
 		}
 		var inv = player.getInventory();
@@ -60,8 +59,8 @@ public class KeyInput {
 		var itemStack = Common.getRelevantFilterItem();
 		if (itemStack == null || !(itemStack.getItem() instanceof FilterItem filterItem)) {
 			var builder = CCGLang.translate("message.notFilter").style(ChatFormatting.RED);
-			Common.displayClientMessage(builder, player);
-			AllSoundEvents.DENY.play(mc.level, player, player.position(), .5f, .5f);
+			Common.displayMessage(builder);
+			Common.playSound(AllSoundEvents.DENY);
 			return;
 		}
 		var inv = player.getInventory();
@@ -71,6 +70,6 @@ public class KeyInput {
 			case ATTRIBUTE -> new AttributeFilterScreen(AttributeFilterMenu.create(-1, inv, itemStack), inv, name);
 			case PACKAGE -> new PackageFilterScreen(PackageFilterMenu.create(-1, inv, itemStack), inv, name);
 		});
-		player.playSound(SoundEvents.BOOK_PAGE_TURN, 1f, 1f);
+		Common.playSound(SoundEvents.BOOK_PAGE_TURN);
 	}
 }

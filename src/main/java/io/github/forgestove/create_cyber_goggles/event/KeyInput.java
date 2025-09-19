@@ -4,7 +4,6 @@ import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.stockTicker.*;
 import io.github.forgestove.create_cyber_goggles.*;
 import me.shedaniel.autoconfig.AutoConfig;
-import net.createmod.catnip.gui.ScreenOpener;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.sounds.SoundEvents;
@@ -42,8 +41,7 @@ public class KeyInput {
 		if (player == null) return;
 		if (Common.getBE() instanceof StockTickerBlockEntity stbe) Common.lastSTBE = stbe;
 		if (Common.lastSTBE == null || Common.lastSTBE.isRemoved()) {
-			var builder = CCGLang.translate("message.notStock").text("  ").translate("key.openStock").style(ChatFormatting.RED);
-			Common.displayMessage(builder);
+			Common.displayMessage(CCGLang.translate("message.notStock").text("  ").translate("key.openStock").style(ChatFormatting.RED));
 			Common.playSound(AllSoundEvents.DENY);
 			return;
 		}
@@ -58,14 +56,13 @@ public class KeyInput {
 		if (player == null) return;
 		var itemStack = Common.getRelevantFilterItem();
 		if (itemStack == null || !(itemStack.getItem() instanceof FilterItem filterItem)) {
-			var builder = CCGLang.translate("message.notFilter").style(ChatFormatting.RED);
-			Common.displayMessage(builder);
+			Common.displayMessage(CCGLang.translate("message.notFilter").style(ChatFormatting.RED));
 			Common.playSound(AllSoundEvents.DENY);
 			return;
 		}
 		var inv = player.getInventory();
 		var name = itemStack.getHoverName();
-		ScreenOpener.open(switch (filterItem.type) {
+		mc.setScreen(switch (filterItem.type) {
 			case REGULAR -> new FilterScreen(FilterMenu.create(-1, inv, itemStack), inv, name);
 			case ATTRIBUTE -> new AttributeFilterScreen(AttributeFilterMenu.create(-1, inv, itemStack), inv, name);
 			case PACKAGE -> new PackageFilterScreen(PackageFilterMenu.create(-1, inv, itemStack), inv, name);

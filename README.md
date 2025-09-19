@@ -16,21 +16,23 @@
 
 该模组提供以下功能配置项：
 
-* **护甲模块**：移除纸板渲染、移除潜水靴影响、移除第一人称背罐渲染；
-* **链式传动轮模块**：始终允许悬挂、防止玩家分离、增强型连接、自动打包你自己；
-* **护目镜模块**：生存/创造/冒险/旁观模式启用、渲染旋转粒子、精准数字、增强信息显示、增强商店渲染、隐藏静态旋转信息、渲染更多物品信息；
+* **护甲模块**：移除纸板渲染、移除潜水靴功能、移除第一人称背罐渲染；
+* **锁链传动轮模块**：始终允许悬挂、阻止玩家自动分离、增强型连接、自动打包你自己；
+* **护目镜模块**：生存/创造/冒险/旁观模式启用、渲染旋转粒子、精确数值、增强信息显示、更好的商店信息、隐藏静态旋转信息、渲染更多物品信息、更好的连接线、禁用界面内护目镜；
 * **扳手模块**：总是允许旋转方块、移除冷却；
-* **其他模块**：强制飞轮优化、NBT修复、非随机废料、彩虹调试；
-* **快捷键支持**：快速访问配置界面、库存界面、过滤器预览、切换潜水模式。
+* **延时渲染模块**：渲染模拟盒、气流推动/吸引颜色、延时渲染时长；
+* **杂项模块**：强制飞轮优化、NBT修复、显示废料内容、彩虹调试、修复蓝图名称、右键穿透；
+* **快捷键支持**：快速访问配置界面、仓储界面、过滤器预览、显示应力网络信息、切换潜水模式。
 
 This mod provides the following configurable features:
 
-* **Armor Module**: Remove cardboard rendering, remove diving boots effect, remove first-person back tank rendering;
-* **Chain Conveyor Module**: Always allow suspension, prevent player separation, enhanced connection, auto-pack yourself;
-* **Goggles Module**: Enable in survival/creative/adventure/spectator modes, render rotation particles, precise numbers, enhanced information display, enhanced shop rendering, hide static rotation info, render more item info;
+* **Armor Module**: Remove cardboard rendering, remove diving boots function, remove first-person back tank rendering;
+* **Chain Conveyor Module**: Always allow hanging, prevent player auto separation, enhanced connection, auto-pack yourself;
+* **Goggles Module**: Enable in survival/creative/adventure/spectator modes, render rotation particles, precise numbers, enhanced info display, better store info, hide static rotation info, render more item info, better connection lines, disable screen goggles;
 * **Wrench Module**: Always allow block rotation, remove cooldown;
-* **Other Module**: Forced flywheel optimization, NBT fix, non-random scraps, rainbow debug;
-* **Hotkey Support**: Quick access to config UI, inventory UI, filter preview, toggle diving mode.
+* **Delay Render Module**: Render analog box, wind push/pull color, delay render duration;
+* **Misc Module**: Forced flywheel optimization, NBT fix, show scrap content, rainbow debug, fix schematic name, right click penetrate;
+* **Hotkey Support**: Quick access to config UI, stock UI, filter preview, show stress network info, toggle diving mode.
 
 ## 注意 / Notice
 

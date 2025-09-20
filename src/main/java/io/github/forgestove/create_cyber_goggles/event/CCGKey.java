@@ -19,7 +19,9 @@ public enum CCGKey {
 		for (var key : values()) KeyBindingHelper.registerKeyBinding(key.keyMapping);
 	}
 	public boolean isKeyDown() {
-		var isDown = InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), keyMapping.key.getValue());
+		var value = keyMapping.key.getValue();
+		if (value == GLFW.GLFW_KEY_UNKNOWN) return false;
+		var isDown = InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), value);
 		var currentTime = System.currentTimeMillis();
 		if (isDown && !wasDown) {
 			wasDown = true;

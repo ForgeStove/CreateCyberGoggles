@@ -17,6 +17,14 @@ configurations.configureEach { resolutionStrategy.force("net.fabricmc:fabric-loa
 loom {
 	enableTransitiveAccessWideners = true
 	accessWidenerPath.set(file("src/main/resources/${p("mod_id")}.accesswidener"))
+	runConfigs.configureEach { ideConfigGenerated(false) }
+	@Suppress("UnstableApiUsage") mixin.defaultRefmapName.set("${p("mod_id")}.refmap.json")
+	runs {
+		configureEach {
+			vmArgs("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition")
+		}
+		remove(getByName("server"))
+	}
 }
 repositories {
 	mavenLocal()

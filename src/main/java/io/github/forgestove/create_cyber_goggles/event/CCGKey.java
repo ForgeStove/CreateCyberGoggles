@@ -18,6 +18,7 @@ public enum CCGKey {
 		for (var key : values()) event.register(key.keyMapping);
 	}
 	public boolean isKeyDown() {
-		return InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), keyMapping.getKey().getValue());
+		var value = keyMapping.getKey().getValue();
+		return value != GLFW.GLFW_KEY_UNKNOWN && InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), value);
 	}
 }

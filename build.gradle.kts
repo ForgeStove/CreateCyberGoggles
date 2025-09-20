@@ -36,7 +36,6 @@ repositories {
 }
 dependencies {
 	minecraft("com.mojang:minecraft:${p("minecraft_version")}")
-//	mappings("net.fabricmc:yarn:${p("yarn_mappings")}")
 	@Suppress("UnstableApiUsage") mappings(loom.layered {
 		officialMojangMappings { nameSyntheticMembers = false }
 		parchment("org.parchmentmc.data:parchment-${p("minecraft_version")}:${p("parchment_version")}@zip")
@@ -51,7 +50,7 @@ dependencies {
 publishMods {
 	file.set(tasks.remapJar.get().archiveFile)
 	changelog.set(file("CHANGELOG.md").readText())
-	type.set(STABLE)
+	type.set(BETA)
 	version.set(project.version.toString())
 	displayName.set("[${p("upper_loader")}] ${p("mod_name")} ${p("mod_version")}+${p("minecraft_version")}")
 	modLoaders.addAll(p("upper_loader"), p("other_loader"))

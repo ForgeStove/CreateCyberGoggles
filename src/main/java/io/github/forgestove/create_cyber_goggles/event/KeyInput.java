@@ -1,6 +1,9 @@
 package io.github.forgestove.create_cyber_goggles.event;
-import com.simibubi.create.AllSoundEvents;
-import com.simibubi.create.content.logistics.filter.*;
+import com.zurrtum.create.AllSoundEvents;
+import com.zurrtum.create.client.content.logistics.filter.*;
+import com.zurrtum.create.client.content.logistics.stockTicker.StockKeeperRequestScreen;
+import com.zurrtum.create.content.logistics.filter.*;
+import com.zurrtum.create.content.logistics.stockTicker.*;
 import io.github.forgestove.create_cyber_goggles.*;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.ChatFormatting;
@@ -10,6 +13,7 @@ public class KeyInput {
 	public static void register(Minecraft ignoredMc) {
 		toggleDiving();
 		openConfigScreen();
+		openStockScreen();
 		previewFilterScreen();
 	}
 	public static void toggleDiving() {
@@ -30,6 +34,22 @@ public class KeyInput {
 		if (mc.screen != null) return;
 		mc.setScreen(AutoConfig.getConfigScreen(CCGConfig.class, null).get());
 	}
+	public static void openStockScreen() {
+		if (!CCGKey.openStock.isKeyDown()) return;
+		var mc = Minecraft.getInstance();
+		if (mc.screen != null) return;
+		var player = mc.player;
+		if (player == null) return;
+		if (Common.getBE() instanceof StockTickerBlockEntity stbe) Common.lastSTBE = stbe;
+		if (Common.lastSTBE == null || Common.lastSTBE.isRemoved()) {
+			Common.displayMessage(CCGLang.translate("message.notStock").text("  ").translate("key.openStock").style(ChatFormatting.RED));
+			Common.playSound(AllSoundEvents.DENY);
+			return;
+		}
+		var inv = player.getInventory();
+		var menu = new StockKeeperRequestMenu(-1, inv, Common.lastSTBE);
+		mc.setScreen(new StockKeeperRequestScreen(menu, inv, Common.lastSTBE.getBlockState().getBlock().getName()));
+	}
 	public static void previewFilterScreen() {
 		if (!CCGKey.previewFilter.isKeyDown()) return;
 		var mc = Minecraft.getInstance();
@@ -48,8 +68,9 @@ public class KeyInput {
 			var inv = player.getInventory();
 			var name = itemStack.getHoverName();
 			mc.setScreen(switch (ordinal) {
-				case 0 -> new FilterScreen(FilterMenu.create(-1, inv, itemStack), inv, name);
-				case 1 -> new AttributeFilterScreen(AttributeFilterMenu.create(-1, inv, itemStack), inv, name);
+				case 0 -> new FilterScreen(new FilterMenu(-1, inv, itemStack), inv, name);
+				case 1 -> new AttributeFilterScreen(new AttributeFilterMenu(-1, inv, itemStack), inv, name);
+				case 2 -> new PackageFilterScreen(new PackageFilterMenu(-1, inv, itemStack), inv, name);
 				default -> throw new IllegalStateException("Unexpected value: " + ordinal);
 			});
 		} catch (Exception ignored) {}

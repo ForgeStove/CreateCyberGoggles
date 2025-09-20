@@ -1,5 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.mixin.misc;
-import com.simibubi.create.foundation.utility.*;
+import com.zurrtum.create.client.catnip.lang.Lang;
+import com.zurrtum.create.foundation.utility.FilesHelper;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;

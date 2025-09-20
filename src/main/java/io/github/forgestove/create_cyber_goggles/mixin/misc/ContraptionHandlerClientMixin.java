@@ -1,22 +1,20 @@
 package io.github.forgestove.create_cyber_goggles.mixin.misc;
-import com.simibubi.create.content.contraptions.ContraptionHandlerClient;
+import com.zurrtum.create.client.content.contraptions.ContraptionHandlerClient;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.*;
-import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.InteractionHand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-@Mixin(value = ContraptionHandlerClient.class, remap = false)
+@Mixin(ContraptionHandlerClient.class)
 public abstract class ContraptionHandlerClientMixin {
-	@Inject(method = "rightClickingOnContraptionsGetsHandledLocally", at = @At("TAIL"), cancellable = true)
+	@Inject(method = "rightClickingOnContraptionsGetsHandledLocally", at = @At("RETURN"), cancellable = true)
 	private static void rightClickingOnContraptionsGetsHandledLocally(
 		Minecraft mc,
-		HitResult result,
 		InteractionHand hand,
-		CallbackInfoReturnable<InteractionResult> returnable
+		CallbackInfoReturnable<Boolean> returnable
 	) {
 		if (!CCG.CONFIG.misc.rightClickPenetrate) return;
-		returnable.setReturnValue(InteractionResult.PASS);
+		returnable.setReturnValue(true);
 	}
 }

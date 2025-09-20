@@ -1,7 +1,8 @@
 package io.github.forgestove.create_cyber_goggles.event;
-import com.simibubi.create.content.kinetics.base.IRotate.SpeedLevel;
-import com.simibubi.create.content.kinetics.base.*;
-import com.simibubi.create.foundation.utility.VecHelper;
+import com.zurrtum.create.catnip.math.VecHelper;
+import com.zurrtum.create.content.kinetics.base.IRotate.SpeedLevel;
+import com.zurrtum.create.content.kinetics.base.KineticBlock;
+import com.zurrtum.create.infrastructure.particle.RotationIndicatorParticleData;
 import io.github.forgestove.create_cyber_goggles.*;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.Minecraft;
@@ -26,7 +27,7 @@ public class KineticParticle {
 			kb.getParticleInitialRadius(),
 			kb.getParticleTargetRadius(),
 			20,
-			rotationAxis.name().charAt(0)
+			rotationAxis
 		);
 		mc.level.addParticle(particleData, center.x, center.y, center.z, 0, 0, 0);
 	}

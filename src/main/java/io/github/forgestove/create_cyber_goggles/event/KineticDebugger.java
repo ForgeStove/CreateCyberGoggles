@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.event;
-import com.simibubi.create.CreateClient;
-import com.simibubi.create.content.kinetics.base.*;
-import com.simibubi.create.foundation.utility.VecHelper;
+import com.zurrtum.create.catnip.math.VecHelper;
+import com.zurrtum.create.client.catnip.outliner.Outliner;
+import com.zurrtum.create.content.kinetics.base.*;
 import io.github.forgestove.create_cyber_goggles.*;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.Minecraft;
@@ -65,7 +65,7 @@ public class KineticDebugger {
 			var nodeBE = kbePath.get(depth);
 			// 渲染前判断包围盒是否在视锥体内
 			var rgb = getRainbowColor(depth, time);
-			if (isAABBInFrustum(nodeBE, level, frustum)) renderOutline(nodeBE, level, depth, rgb);
+			if (isAABBInFrustum(nodeBE, level, frustum)) renderOutline(nodeBE, depth, rgb);
 			// 连线渲染时也判断两端是否有一端在视锥体内，否则跳过
 			if (nodeBE.source == null) continue;
 			if (isLineInFrustum(nodeBE.getBlockPos(), nodeBE.source, frustum)) renderKineticLine(nodeBE, depth, rgb);
@@ -79,7 +79,7 @@ public class KineticDebugger {
 	 * @param frustum 视锥体
 	 * @return 包围盒是否可见
 	 */
-	public static boolean isAABBInFrustum(@NotNull KineticBlockEntity kbe, @NotNull ClientLevel level, Frustum frustum) {
+	public static boolean isAABBInFrustum(@NotNull KineticBlockEntity kbe, @NotNull ClientLevel level, @NotNull Frustum frustum) {
 		var pos = kbe.getBlockPos();
 		var shape = level.getBlockState(pos).getBlockSupportShape(level, pos);
 		if (shape.isEmpty()) return false;
@@ -100,15 +100,15 @@ public class KineticDebugger {
 	 * 渲染指定 KineticBlockEntity 的包围盒轮廓。
 	 *
 	 * @param kbe   目标动力方块实体
-	 * @param level 当前客户端世界
 	 * @param depth 链路深度
 	 * @param rgb   轮廓的RGB颜色值
 	 */
-	public static void renderOutline(@NotNull KineticBlockEntity kbe, @NotNull ClientLevel level, int depth, int rgb) {
+	public static void renderOutline(@NotNull KineticBlockEntity kbe, int depth, int rgb) {
+		if (kbe.getTheoreticalSpeed() == 0) return;
 		var blockPos = kbe.getBlockPos();
-		var shape = level.getBlockState(blockPos).getBlockSupportShape(level, blockPos);
-		if (kbe.getTheoreticalSpeed() == 0 || shape.isEmpty()) return;
-		CreateClient.OUTLINER.chaseAABB("KineticOutline" + depth, shape.bounds().move(blockPos)).lineWidth(1 / 16f).colored(rgb);
+		var bounds = Common.getBounds(blockPos);
+		if (bounds == null) return;
+		Outliner.getInstance().chaseAABB("KineticOutline" + depth, bounds).lineWidth(1 / 16f).colored(rgb);
 	}
 	/**
 	 * 根据链路深度和时间生成彩虹色。
@@ -132,7 +132,8 @@ public class KineticDebugger {
 		var start = kbe.getBlockPos();
 		var end = kbe.source;
 		if (start.distManhattan(end) == 1) return;
-		CreateClient.OUTLINER.showLine("KineticLine" + depth, VecHelper.getCenterOf(start), VecHelper.getCenterOf(end))
+		Outliner.getInstance()
+			.showLine("KineticLine" + depth, VecHelper.getCenterOf(start), VecHelper.getCenterOf(end))
 			.lineWidth(1 / 8f)
 			.colored(rgb);
 	}
@@ -144,8 +145,8 @@ public class KineticDebugger {
 	public static void renderAxisLine(@NotNull KineticBlockEntity kbe) {
 		var state = kbe.getBlockState();
 		if (!(state.getBlock() instanceof IRotate iRotate)) return;
-		var vec = Vec3.atLowerCornerOf(Direction.get(AxisDirection.POSITIVE, iRotate.getRotationAxis(state)).getNormal());
+		var vec = Vec3.atLowerCornerOf(Direction.get(AxisDirection.POSITIVE, iRotate.getRotationAxis(state)).getUnitVec3i());
 		var center = VecHelper.getCenterOf(kbe.getBlockPos());
-		CreateClient.OUTLINER.showLine("RotationAxis", center.add(vec), center.subtract(vec)).lineWidth(1 / 8f);
+		Outliner.getInstance().showLine("RotationAxis", center.add(vec), center.subtract(vec)).lineWidth(1 / 8f);
 	}
 }

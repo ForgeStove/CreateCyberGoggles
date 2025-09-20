@@ -10,6 +10,7 @@ public class CCGConfig implements ConfigData, ModMenuApi {
 	@Category("goggles") @TransitiveObject public final Goggles goggles = new Goggles();
 	@Category("gameMode") @TransitiveObject public final GameMode gameMode = new GameMode();
 	@Category("delayRender") @TransitiveObject public final DelayRender delayRender = new DelayRender();
+	@Category("chainConveyor") @TransitiveObject public final ChainConveyor chainConveyor = new ChainConveyor();
 	@Category("misc") @TransitiveObject public final Misc misc = new Misc();
 	@Override
 	@Environment(EnvType.CLIENT)
@@ -19,10 +20,12 @@ public class CCGConfig implements ConfigData, ModMenuApi {
 	public static class Goggles {
 		@Tooltip public boolean enhancedInfo = true;
 		@Tooltip public boolean hideStaticKineticInfo = false;
+		@Tooltip public boolean betterStoreInfo = true;
 		@Tooltip public boolean renderExtraItems = true;
 		@Tooltip public boolean enableKineticEffect = true;
 		@Tooltip public boolean preciseNumber = true;
 		@Tooltip public boolean disableScreenGoggles = true;
+		@Tooltip public boolean betterLine = true;
 	}
 	public static class GameMode {
 		@Tooltip public boolean enableInSurvival = true;
@@ -36,14 +39,19 @@ public class CCGConfig implements ConfigData, ModMenuApi {
 		@Tooltip @ColorPicker public int windPushColor = 0xDDC166;
 		@Tooltip @ColorPicker public int windPullColor = 0x7FCDE0;
 	}
+	public static class ChainConveyor {
+		@Tooltip public boolean alwaysAllowRiding = false;
+		@Tooltip public boolean preventFalling = false;
+		@Tooltip public boolean enhancedConnection = true;
+		@Tooltip public boolean cardBoardedYourself = false;
+	}
 	public static class Misc {
-		@Tooltip public boolean removeNetheriteFirstPerson = false;
+		@Tooltip public boolean removeCardboardOverlay = true;
 		@Tooltip public boolean removeDivingFunction = false;
 		@Tooltip public boolean fixSchematicName = true;
 		@Tooltip public boolean rightClickPenetrate = false;
 		@Tooltip public boolean rainbowDebug = false;
 		@Tooltip public boolean forcedBackend = false;
 		@Tooltip public boolean nbtFix = false;
-		@Tooltip @RequiresRestart public boolean showScrapContent = true;
 	}
 }

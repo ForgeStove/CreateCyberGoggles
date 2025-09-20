@@ -1,27 +1,48 @@
 package io.github.forgestove.create_cyber_goggles;
-import com.simibubi.create.AllSoundEvents.SoundEntry;
-import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
-import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity;
-import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity.FuelType;
-import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
-import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
-import com.simibubi.create.foundation.utility.LangBuilder;
-import com.simibubi.create.infrastructure.config.AllConfigs;
+import com.zurrtum.create.AllSoundEvents.SoundEntry;
+import com.zurrtum.create.client.catnip.lang.LangBuilder;
+import com.zurrtum.create.client.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
+import com.zurrtum.create.content.equipment.armor.CardboardArmorItem;
+import com.zurrtum.create.content.kinetics.base.KineticBlockEntity;
+import com.zurrtum.create.content.logistics.stockTicker.StockTickerBlockEntity;
+import com.zurrtum.create.content.processing.burner.BlazeBurnerBlockEntity;
+import com.zurrtum.create.content.processing.burner.BlazeBurnerBlockEntity.FuelType;
+import com.zurrtum.create.foundation.blockEntity.SmartBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.tooltip.*;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.*;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.*;
 import net.minecraft.world.phys.HitResult.Type;
+import net.minecraft.world.phys.shapes.Shapes;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.stream.Stream;
 public class Common {
+	public static StockTickerBlockEntity lastSTBE;
+	public static int index = 1, scrollDeltaY;
+	/**
+	 * 测试玩家是否穿着全套纸板盔甲并且不在飞行状态。
+	 *
+	 * @param player 本地玩家实体
+	 */
+	public static boolean testForStealth(LocalPlayer player) {
+		var allMatch = Stream.of(EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET)
+			.allMatch(slot -> player.getItemBySlot(slot).getItem() instanceof CardboardArmorItem);
+		return CCG.CONFIG.chainConveyor.cardBoardedYourself && !player.getAbilities().flying && allMatch;
+	}
 	/**
 	 * 在屏幕中央区域渲染指定物品堆的图标及关联的悬浮提示信息。
 	 *
@@ -33,13 +54,20 @@ public class Common {
 		var mc = Minecraft.getInstance();
 		var font = mc.font;
 		var tooltipFlag = mc.options.advancedItemTooltips ? TooltipFlag.ADVANCED : TooltipFlag.NORMAL;
-		var tooltipLines = itemStack.getTooltipLines(mc.player, tooltipFlag);
+		var tooltipLines = itemStack.getTooltipLines(TooltipContext.of(mc.level), mc.player, tooltipFlag);
 		var height = Math.max(10, tooltipLines.size() * font.lineHeight - 60);
-		var x = guiGraphics.guiWidth() / 2 + AllConfigs.client().overlayOffsetX.get();
-		var y = guiGraphics.guiHeight() / 2 + AllConfigs.client().overlayOffsetY.get();
+		var x = guiGraphics.guiWidth() / 2 + 20;
+		var y = guiGraphics.guiHeight() / 2;
 		guiGraphics.renderItem(itemStack, x + 10, y - 16);
 		guiGraphics.renderItemDecorations(font, itemStack, x + 10, y - 16);
-		guiGraphics.renderTooltip(font, itemStack, x + 22, y - height);
+		guiGraphics.renderTooltip(
+			mc.font,
+			tooltipLines.stream().map(Component::getVisualOrderText).map(ClientTooltipComponent::create).toList(),
+			x + 22,
+			y - height,
+			DefaultTooltipPositioner.INSTANCE,
+			null
+		);
 	}
 	/**
 	 * 获取当前玩家选中的方块实体，并将其转换为 {@link KineticBlockEntity} 类型。
@@ -63,6 +91,19 @@ public class Common {
 		if (!(mc.hitResult instanceof BlockHitResult blockHitResult)) return null;
 		if (!(blockHitResult.getType() == Type.BLOCK)) return null;
 		return mc.level.getBlockEntity(blockHitResult.getBlockPos());
+	}
+	/**
+	 * 获取当前玩家选中的方块。
+	 * 如果没有选中方块或选中的方块不是 {@link Block} 类型，则返回 null。
+	 *
+	 * @return 当前选中的 {@link Block} 实例，如果没有选中或类型不匹配则返回 null
+	 */
+	public static @Nullable Block getB() {
+		var mc = Minecraft.getInstance();
+		if (mc.level == null) return null;
+		if (!(mc.hitResult instanceof BlockHitResult blockHitResult)) return null;
+		if (!(blockHitResult.getType() == Type.BLOCK)) return null;
+		return mc.level.getBlockState(blockHitResult.getBlockPos()).getBlock();
 	}
 	/**
 	 * 为风扇组件添加悬浮提示信息。
@@ -91,12 +132,7 @@ public class Common {
 	 * @param isCreative        是否为创造模式燃烧室
 	 * @param activeFuel        当前激活的燃料类型
 	 */
-	public static boolean addBurnerTooltip(
-		List<Component> tooltip,
-		int remainingBurnTime,
-		boolean isCreative,
-		FuelType activeFuel
-	) {
+	public static boolean addBurnerTooltip(List<Component> tooltip, int remainingBurnTime, boolean isCreative, FuelType activeFuel) {
 		CCGLang.translate("tooltip.burnerState").forGoggles(tooltip);
 		CCGLang.text(isCreative ? "∞" : String.format("%.2f", remainingBurnTime / 20f))
 			.text(String.format(" / %d ", BlazeBurnerBlockEntity.MAX_HEAT_CAPACITY / 20))
@@ -167,5 +203,11 @@ public class Common {
 	 */
 	public static void playSound(SoundEvent sound) {
 		playSound(sound, 1f, 1f);
+	}
+	public static @Nullable AABB getBounds(BlockPos blockPos) {
+		var level = Minecraft.getInstance().level;
+		if (level == null) return null;
+		var shape = level.getBlockState(blockPos).getShape(level, blockPos);
+		return (shape.isEmpty() ? Shapes.block() : shape).bounds().move(blockPos);
 	}
 }

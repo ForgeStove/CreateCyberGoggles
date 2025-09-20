@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles;
-import com.simibubi.create.foundation.utility.*;
+import com.zurrtum.create.client.catnip.lang.*;
 import org.jetbrains.annotations.*;
 public class CCGLang extends Lang {
 	@Contract(value = " -> new", pure = true)

@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.mixin.goggles;
-import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
-import com.simibubi.create.content.kinetics.fan.NozzleBlockEntity;
+import com.zurrtum.create.client.api.goggles.IHaveGoggleInformation;
+import com.zurrtum.create.content.kinetics.fan.NozzleBlockEntity;
 import io.github.forgestove.create_cyber_goggles.*;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.*;

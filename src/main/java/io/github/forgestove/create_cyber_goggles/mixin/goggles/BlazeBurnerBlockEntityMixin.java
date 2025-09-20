@@ -1,8 +1,8 @@
 package io.github.forgestove.create_cyber_goggles.mixin.goggles;
-import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
-import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity;
-import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity.FuelType;
-import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
+import com.zurrtum.create.client.api.goggles.IHaveGoggleInformation;
+import com.zurrtum.create.content.processing.burner.BlazeBurnerBlockEntity;
+import com.zurrtum.create.content.processing.burner.BlazeBurnerBlockEntity.FuelType;
+import com.zurrtum.create.foundation.blockEntity.SmartBlockEntity;
 import io.github.forgestove.create_cyber_goggles.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.List;
 @Mixin(value = BlazeBurnerBlockEntity.class, remap = false)
 public abstract class BlazeBurnerBlockEntityMixin extends SmartBlockEntity implements IHaveGoggleInformation {
-	@Shadow protected boolean isCreative;
+	@Shadow public boolean isCreative;
 	@Shadow protected int remainingBurnTime;
 	@Shadow protected FuelType activeFuel;
 	public BlazeBurnerBlockEntityMixin(BlockEntityType<?> type, BlockPos pos, BlockState state) {

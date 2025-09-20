@@ -6,6 +6,7 @@ import net.minecraft.client.*;
 import org.lwjgl.glfw.GLFW;
 public enum CCGKey {
 	openConfig(GLFW.GLFW_KEY_UNKNOWN),
+	openStock(GLFW.GLFW_KEY_UNKNOWN),
 	previewFilter(GLFW.GLFW_KEY_UNKNOWN),
 	toggleDiving(GLFW.GLFW_KEY_UNKNOWN),
 	showStress(GLFW.GLFW_KEY_TAB);
@@ -19,7 +20,8 @@ public enum CCGKey {
 		for (var key : values()) KeyBindingHelper.registerKeyBinding(key.keyMapping);
 	}
 	public boolean isKeyDown() {
-		var isDown = InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), keyMapping.key.getValue());
+		var value = keyMapping.key.getValue();
+		var isDown = value != GLFW.GLFW_KEY_UNKNOWN && InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), value);
 		var currentTime = System.currentTimeMillis();
 		if (isDown && !wasDown) {
 			wasDown = true;

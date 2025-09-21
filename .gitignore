@@ -2,3 +2,5 @@
 /build
 /run
 /.idea
+!.idea/icon.png
+!.idea/misc.xml

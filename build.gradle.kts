@@ -39,8 +39,7 @@ repositories {
 	maven("https://api.modrinth.com/maven") // Modrinth
 }
 dependencies {
-	accessCompileOnly("com.simibubi.create:create-${p("mcVersion")}:${p("createVersion")}:slim")
-	runtimeOnly("com.simibubi.create:create-${p("mcVersion")}:${p("createVersion")}:slim") { isTransitive = false }
+	accessImplementation("com.simibubi.create:create-${p("mcVersion")}:${p("createVersion")}:slim")
 	implementation("dev.engine-room.flywheel:flywheel-${p("loader")}-${p("mcVersion")}:${p("flywheelVersion")}") { isTransitive = false }
 	implementation("net.createmod.ponder:Ponder-${p("loaderCap")}-${p("mcVersion")}:${p("ponderVersion")}") { isTransitive = false }
 	implementation("com.tterrag.registrate:Registrate:${p("registrateVersion")}")

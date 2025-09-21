@@ -3,9 +3,9 @@ plugins {
 	id("me.modmuss50.mod-publish-plugin") version "+"
 	id("io.github.forgestove.modaccessor") version "+"
 }
-base.archivesName.set(p("mod_id"))
-group = p("mod_group_id")
-version = "${p("minecraft_version")}-${p("mod_version")}+${p("upper_loader")}"
+base.archivesName.set(p("modId"))
+group = p("modGroupId")
+version = "${p("mcVersion")}-${p("modVersion")}+${p("loaderCap")}"
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 tasks.jar { from("LICENSE") }
 var generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
@@ -15,10 +15,10 @@ var generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
 }
 sourceSets.main.get().resources.srcDir(generateMetadata)
 neoForge {
-	version = p("loader_version")
+	version = p("loaderVersion")
 	parchment {
-		mappingsVersion.set(p("parchment_version"))
-		minecraftVersion.set(p("minecraft_version"))
+		mappingsVersion.set(p("parchmentVersion"))
+		minecraftVersion.set(p("mcVersion"))
 	}
 	runs {
 		create("client").client()
@@ -27,7 +27,7 @@ neoForge {
 			systemProperty("terminal.jline", "true")
 		}
 	}
-	mods.create(p("mod_id")).sourceSet(sourceSets.main.get())
+	mods.create(p("modId")).sourceSet(sourceSets.main.get())
 }
 repositories {
 	mavenLocal()
@@ -39,36 +39,32 @@ repositories {
 	maven("https://api.modrinth.com/maven") // Modrinth
 }
 dependencies {
-	accessCompileOnly("com.simibubi.create:create-${p("minecraft_version")}:${p("create_version")}:slim")
-	runtimeOnly("com.simibubi.create:create-${p("minecraft_version")}:${p("create_version")}:slim") { isTransitive = false }
-	implementation("dev.engine-room.flywheel:flywheel-${p("loader")}-${p("minecraft_version")}:${p("flywheel_version")}") {
-		isTransitive = false
-	}
-	implementation("net.createmod.ponder:Ponder-${p("upper_loader")}-${p("minecraft_version")}:${p("ponder_version")}") {
-		isTransitive = false
-	}
-	implementation("com.tterrag.registrate:Registrate:${p("registrate_version")}")
-	implementation("me.shedaniel.cloth:cloth-config-${p("loader")}:${p("cloth_config_version")}")
-	implementation("mezz.jei:jei-${p("minecraft_version")}-${p("loader")}:${p("jei_version")}")
-	implementation("maven.modrinth:jade:${p("jade_version")}")
+	accessCompileOnly("com.simibubi.create:create-${p("mcVersion")}:${p("createVersion")}:slim")
+	runtimeOnly("com.simibubi.create:create-${p("mcVersion")}:${p("createVersion")}:slim") { isTransitive = false }
+	implementation("dev.engine-room.flywheel:flywheel-${p("loader")}-${p("mcVersion")}:${p("flywheelVersion")}") { isTransitive = false }
+	implementation("net.createmod.ponder:Ponder-${p("loaderCap")}-${p("mcVersion")}:${p("ponderVersion")}") { isTransitive = false }
+	implementation("com.tterrag.registrate:Registrate:${p("registrateVersion")}")
+	implementation("me.shedaniel.cloth:cloth-config-${p("loader")}:${p("clothConfigVersion")}")
+	implementation("mezz.jei:jei-${p("mcVersion")}-${p("loader")}:${p("jeiVersion")}")
+	implementation("maven.modrinth:jade:${p("jadeVersion")}")
 }
 publishMods {
 	file.set(tasks.jar.get().archiveFile)
 	changelog.set(file("CHANGELOG.md").readText())
 	type.set(STABLE)
 	version.set(project.version.toString())
-	displayName.set("[${p("upper_loader")}] ${p("mod_name")} ${p("mod_version")}+${p("minecraft_version")}")
-	modLoaders.addAll(p("upper_loader"))
+	displayName.set("[${p("loaderCap")}] ${p("modName")} ${p("modVersion")}+${p("mcVersion")}")
+	modLoaders.addAll(p("loaderCap"))
 	modrinth {
 		accessToken.set(providers.environmentVariable("MODRINTH_TOKEN"))
 		projectId.set("TlQAWQCY")
-		minecraftVersions.add(p("minecraft_version"))
+		minecraftVersions.add(p("mcVersion"))
 		requires("create", "cloth-config")
 	}
 	curseforge {
 		accessToken.set(providers.environmentVariable("CURSEFORGE_TOKEN"))
 		projectId.set("1233804")
-		minecraftVersions.add(p("minecraft_version"))
+		minecraftVersions.add(p("mcVersion"))
 		requires("create", "cloth-config")
 	}
 }

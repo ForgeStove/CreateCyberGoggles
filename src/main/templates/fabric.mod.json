@@ -1,17 +1,17 @@
 {
 	"schemaVersion": 1,
-	"id": "${mod_id}",
-	"version": "${mod_version}",
-	"name": "${mod_name}",
-	"description": "${mod_description}",
+	"id": "${modId}",
+	"version": "${modVersion}",
+	"name": "${modName}",
+	"description": "${modDescription}",
 	"authors": [
-		"${mod_authors}"
+		"${modAuthors}"
 	],
 	"contact": {
-		"homepage": "${mod_display_url}",
-		"issues": "${mod_issue_url}"
+		"homepage": "${modDisplayUrl}",
+		"issues": "${modIssueUrl}"
 	},
-	"license": "${mod_license}",
+	"license": "${modLicense}",
 	"icon": "icon.png",
 	"environment": "client",
 	"entrypoints": {

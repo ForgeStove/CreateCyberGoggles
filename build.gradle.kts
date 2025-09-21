@@ -2,9 +2,9 @@ plugins {
 	id("fabric-loom") version "1.10.5"
 	id("me.modmuss50.mod-publish-plugin") version "+"
 }
-base.archivesName.set(p("mod_id"))
-group = p("mod_group_id")
-version = "${p("minecraft_version")}-${p("mod_version")}+${p("upper_loader")}"
+base.archivesName.set(p("modId"))
+group = p("modGroupId")
+version = "${p("mcVersion")}-${p("modVersion")}+${p("loaderCap")}"
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 tasks.jar { from("LICENSE") }
 var generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
@@ -13,12 +13,12 @@ var generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
 	into("build/generated/sources/modMetadata")
 }
 sourceSets.main.get().resources.srcDir(generateMetadata)
-configurations.configureEach { resolutionStrategy.force("net.fabricmc:fabric-loader:${p("fabric_loader_version")}") }
+configurations.configureEach { resolutionStrategy.force("net.fabricmc:fabric-loader:${p("fabricLoaderVersion")}") }
 loom {
 	enableTransitiveAccessWideners = true
-	accessWidenerPath.set(file("src/main/resources/${p("mod_id")}.accesswidener"))
+	accessWidenerPath.set(file("src/main/resources/${p("modId")}.accesswidener"))
 	runConfigs.configureEach { ideConfigGenerated(false) }
-	@Suppress("UnstableApiUsage") mixin.defaultRefmapName.set("${p("mod_id")}.refmap.json")
+	@Suppress("UnstableApiUsage") mixin.defaultRefmapName.set("${p("modId")}.refmap.json")
 	runs {
 		configureEach {
 			vmArgs("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition")
@@ -41,36 +41,36 @@ repositories {
 	maven("https://maven.blamejared.com") // JEI
 }
 dependencies {
-	minecraft("com.mojang:minecraft:${p("minecraft_version")}")
+	minecraft("com.mojang:minecraft:${p("mcVersion")}")
 	@Suppress("UnstableApiUsage") mappings(loom.layered {
 		officialMojangMappings { nameSyntheticMembers = false }
-		parchment("org.parchmentmc.data:parchment-${p("minecraft_version")}:${p("parchment_version")}@zip")
+		parchment("org.parchmentmc.data:parchment-${p("mcVersion")}:${p("parchmentVersion")}@zip")
 	})
-	modImplementation("net.fabricmc:fabric-loader:${p("fabric_loader_version")}")
-	modImplementation("net.fabricmc.fabric-api:fabric-api:${p("fabric_api_version")}")
-	modImplementation("com.simibubi.create:create-${p("loader")}-${p("minecraft_version")}:${p("create_version")}")
-	modImplementation("me.shedaniel.cloth:cloth-config-${p("loader")}:${p("cloth_config_version")}")
-	modImplementation("com.terraformersmc:modmenu:${p("modmenu_version")}")
-	modImplementation("mezz.jei:jei-${p("minecraft_version")}-${p("loader")}:${p("jei_version")}")
+	modImplementation("net.fabricmc:fabric-loader:${p("fabricLoaderVersion")}")
+	modImplementation("net.fabricmc.fabric-api:fabric-api:${p("fabricApiVersion")}")
+	modImplementation("com.simibubi.create:create-${p("loader")}-${p("mcVersion")}:${p("createVersion")}")
+	modImplementation("me.shedaniel.cloth:cloth-config-${p("loader")}:${p("clothConfigVersion")}")
+	modImplementation("com.terraformersmc:modmenu:${p("modmenuVersion")}")
+	modImplementation("mezz.jei:jei-${p("mcVersion")}-${p("loader")}:${p("jeiVersion")}")
 }
 publishMods {
 	file.set(tasks.remapJar.get().archiveFile)
 	changelog.set(file("CHANGELOG.md").readText())
 	type.set(STABLE)
 	version.set(project.version.toString())
-	displayName.set("[${p("upper_loader")}] ${p("mod_name")} ${p("mod_version")}+${p("minecraft_version")}")
-	modLoaders.addAll(p("upper_loader"), p("other_loader"))
+	displayName.set("[${p("loaderCap")}] ${p("modName")} ${p("modVersion")}+${p("mcVersion")}")
+	modLoaders.addAll(p("loaderCap"), p("loaderOtherCap"))
 	modrinth {
 		accessToken.set(providers.environmentVariable("MODRINTH_TOKEN"))
 		projectId.set("TlQAWQCY")
-		minecraftVersions.add(p("minecraft_version"))
+		minecraftVersions.add(p("mcVersion"))
 		requires("create-fabric", "cloth-config")
 		optional("modmenu")
 	}
 	curseforge {
 		accessToken.set(providers.environmentVariable("CURSEFORGE_TOKEN"))
 		projectId.set("1233804")
-		minecraftVersions.add(p("minecraft_version"))
+		minecraftVersions.add(p("mcVersion"))
 		requires("create-fabric", "cloth-config")
 		optional("modmenu")
 	}

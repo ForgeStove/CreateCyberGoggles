@@ -32,7 +32,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: ${{ steps.java_version.outputs.version }}
+          java-version: ${{ steps.javaVersion.outputs.version }}
 
       - name: Gradle Cache
         uses: actions/cache@v4

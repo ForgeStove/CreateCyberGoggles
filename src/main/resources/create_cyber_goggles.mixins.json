@@ -14,6 +14,7 @@
 		"goggles.BlueprintOverlayRendererMixin",
 		"goggles.DeployerBlockEntityMixin",
 		"goggles.EncasedFanBlockEntityMixin",
+		"goggles.FilterItemMixin",
 		"goggles.GeneratingKineticBlockEntityMixin",
 		"goggles.GoggleOverlayRendererMixin",
 		"goggles.GogglesItemMixin",

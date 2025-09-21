@@ -7,6 +7,7 @@ import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.event.InputEvent.Key;
 public class KeyInput {
 	public static void tick(Key ignoredEvent) {
@@ -55,7 +56,8 @@ public class KeyInput {
 		var player = mc.player;
 		if (player == null) return;
 		var itemStack = Common.getRelevantFilterItem();
-		if (itemStack == null || !(itemStack.getItem() instanceof FilterItem filterItem)) {
+		if (itemStack == null) return;
+		if (itemStack.is(ItemStack.EMPTY.getItem()) || !(itemStack.getItem() instanceof FilterItem filterItem)) {
 			Common.displayMessage(CCGLang.translate("message.notFilter").style(ChatFormatting.RED));
 			Common.playSound(AllSoundEvents.DENY);
 			return;

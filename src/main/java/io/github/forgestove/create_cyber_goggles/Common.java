@@ -157,7 +157,7 @@ public class Common {
 		}
 		if (!(getBE() instanceof SmartBlockEntity sbe) || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return null;
 		var behaviour = sbe.getBehaviour(FilteringBehaviour.TYPE);
-		return behaviour == null ? null : behaviour.getFilter(blockHitResult.getDirection());
+		return behaviour == null ? ItemStack.EMPTY : behaviour.getFilter(blockHitResult.getDirection());
 	}
 	/**
 	 * 向本地玩家显示客户端消息。

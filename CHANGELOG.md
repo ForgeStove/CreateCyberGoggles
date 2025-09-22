@@ -1,1 +1,2 @@
-- Fix invalid key -1 GL error
+- Added better filter item info
+- Optimized key input logic

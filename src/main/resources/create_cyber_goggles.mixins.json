@@ -28,6 +28,7 @@
 		"misc.CardboardArmorStealthOverlayMixin",
 		"misc.ContraptionHandlerClientMixin",
 		"misc.DivingBootsItemMixin",
+		"misc.EditBoxMixin",
 		"misc.FilesHelperMixin",
 		"misc.NbtAccounterMixin",
 		"misc.SimpleBackendMixin"

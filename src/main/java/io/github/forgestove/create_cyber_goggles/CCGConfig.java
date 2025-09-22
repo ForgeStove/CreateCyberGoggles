@@ -46,6 +46,7 @@ public class CCGConfig implements ConfigData, ModMenuApi {
 		@Tooltip public boolean cardBoardedYourself = false;
 	}
 	public static class Misc {
+		@Tooltip public boolean infEditBoxLength = true;
 		@Tooltip public boolean removeCardboardOverlay = true;
 		@Tooltip public boolean removeDivingFunction = false;
 		@Tooltip public boolean fixSchematicName = true;

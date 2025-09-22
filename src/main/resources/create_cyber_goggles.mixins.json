@@ -21,6 +21,7 @@
 		"misc.ContraptionHandlerClientMixin",
 		"misc.CreateJEIMixin",
 		"misc.DivingBootsItemMixin",
+		"misc.EditBoxMixin",
 		"misc.FilesHelperMixin",
 		"misc.NbtAccounterMixin",
 		"misc.NetheriteBacktankFirstPersonRendererMixin",

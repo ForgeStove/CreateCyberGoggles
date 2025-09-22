@@ -7,6 +7,8 @@
 		"AbstractFilterScreenMixin",
 		"RadialWrenchHandlerMixin",
 		"StockKeeperRequestScreenMixin",
+		"accessor.ArmBlockEntityAccessor",
+		"accessor.NozzleBlockEntityAccessor",
 		"chainConveyor.CardboardArmorHandlerMixin",
 		"chainConveyor.ChainConveyorConnectionHandlerMixin",
 		"chainConveyor.ChainConveyorInteractionHandlerMixin",

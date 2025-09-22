@@ -1,4 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.event;
+import com.mojang.datafixers.util.Function3;
 import com.simibubi.create.*;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.stockTicker.*;
@@ -6,8 +7,13 @@ import io.github.forgestove.create_cyber_goggles.*;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.*;
 import net.minecraftforge.client.event.InputEvent.Key;
+
+import java.util.Map;
 public class KeyInput {
 	public static void tick(Key ignoredEvent) {
 		toggleDiving();
@@ -56,18 +62,19 @@ public class KeyInput {
 		if (player == null) return;
 		var itemStack = Common.getRelevantFilterItem();
 		if (itemStack == null) return;
-		if (!(itemStack.getItem() instanceof FilterItem filterItem)) {
+		if (!(itemStack.getItem() instanceof FilterItem)) {
 			Common.displayMessage(CCGLang.translate("message.notFilter").style(ChatFormatting.RED));
 			Common.playSound(AllSoundEvents.DENY);
 			return;
 		}
-		var inv = player.getInventory();
-		var name = itemStack.getHoverName();
-		mc.setScreen(switch (filterItem.type) {
-			case REGULAR -> new FilterScreen(FilterMenu.create(-1, inv, itemStack), inv, name);
-			case ATTRIBUTE -> new AttributeFilterScreen(AttributeFilterMenu.create(-1, inv, itemStack), inv, name);
-			case PACKAGE -> new PackageFilterScreen(PackageFilterMenu.create(-1, inv, itemStack), inv, name);
-		});
+		mc.setScreen(Map.<Item, Function3<Integer, Inventory, ItemStack, Screen>>of(
+			AllItems.FILTER.get(),
+			(id, inv, stack) -> new FilterScreen(FilterMenu.create(id, inv, stack), inv, stack.getHoverName()),
+			AllItems.ATTRIBUTE_FILTER.get(),
+			(id, inv, stack) -> new AttributeFilterScreen(AttributeFilterMenu.create(id, inv, stack), inv, stack.getHoverName()),
+			AllItems.PACKAGE_FILTER.get(),
+			(id, inv, stack) -> new PackageFilterScreen(PackageFilterMenu.create(id, inv, stack), inv, stack.getHoverName())
+		).get(itemStack.getItem()).apply(-1, player.getInventory(), itemStack));
 		Common.playSound(SoundEvents.BOOK_PAGE_TURN);
 	}
 }

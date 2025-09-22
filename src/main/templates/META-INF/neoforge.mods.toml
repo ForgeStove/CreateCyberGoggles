@@ -16,9 +16,6 @@ logoBlur = false
 [[mixins]]
 config = "${modId}.mixins.json"
 
-[[accessTransformers]]
-file = "META-INF/modaccesstransformer.cfg"
-
 [[dependencies."${modId}"]]
 modId = "neoforge"
 type = "required"

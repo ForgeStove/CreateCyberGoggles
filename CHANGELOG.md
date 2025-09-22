@@ -1,2 +1,2 @@
-- Added better filter item info
-- Optimized key input logic
+- Add support for Create 6.0.7
+- Optimized previewing filter

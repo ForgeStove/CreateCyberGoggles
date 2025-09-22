@@ -8,8 +8,8 @@ import org.spongepowered.asm.mixin.*;
 import java.util.List;
 @Mixin(NozzleBlockEntity.class)
 public abstract class NozzleBlockEntityMixin implements IHaveGoggleInformation {
-	@Shadow public boolean pushing;
-	@Shadow public float range;
+	@Shadow private boolean pushing;
+	@Shadow private float range;
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return false;

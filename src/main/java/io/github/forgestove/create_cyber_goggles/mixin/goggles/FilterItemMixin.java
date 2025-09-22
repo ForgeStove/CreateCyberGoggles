@@ -1,24 +1,20 @@
 package io.github.forgestove.create_cyber_goggles.mixin.goggles;
-import com.simibubi.create.AllDataComponents;
+import com.simibubi.create.*;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.filter.*;
-import com.simibubi.create.content.logistics.filter.FilterItem.FilterType;
 import com.simibubi.create.content.logistics.item.filter.attribute.ItemAttribute.ItemAttributeEntry;
 import com.simibubi.create.foundation.utility.CreateLang;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.*;
-
-import static com.simibubi.create.content.logistics.filter.FilterItem.getFilterItems;
 @Mixin(FilterItem.class)
 public abstract class FilterItemMixin {
-	@Shadow public FilterType type;
 	@Inject(method = "makeSummary", at = @At("HEAD"), cancellable = true)
 	private void makeSummary(ItemStack filter, CallbackInfoReturnable<List<Component>> returnable) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return;
@@ -27,8 +23,8 @@ public abstract class FilterItemMixin {
 			returnable.setReturnValue(list);
 			return;
 		}
-		if (type == FilterType.REGULAR) {
-			var filterItems = getFilterItems(filter);
+		if (filter.getItem().equals(AllItems.FILTER.get())) {
+			var filterItems = FilterItem.getFilterItems(filter);
 			boolean blacklist = filter.getOrDefault(AllDataComponents.FILTER_ITEMS_BLACKLIST, false);
 			list.add((
 				blacklist ? CreateLang.translateDirect("gui.filter.deny_list") : CreateLang.translateDirect("gui.filter.allow_list")
@@ -44,8 +40,7 @@ public abstract class FilterItemMixin {
 				returnable.setReturnValue(Collections.emptyList());
 				return;
 			}
-		}
-		if (type == FilterType.ATTRIBUTE) {
+		} else if (filter.getItem().equals(AllItems.ATTRIBUTE_FILTER.get())) {
 			var whitelistMode = filter.get(AllDataComponents.ATTRIBUTE_FILTER_WHITELIST_MODE);
 			list.add((
 				whitelistMode == AttributeFilterWhitelistMode.WHITELIST_CONJ
@@ -67,8 +62,7 @@ public abstract class FilterItemMixin {
 				returnable.setReturnValue(Collections.emptyList());
 				return;
 			}
-		}
-		if (type == FilterType.PACKAGE) {
+		} else if (filter.getItem().equals(AllItems.PACKAGE_FILTER.get())) {
 			var address = PackageItem.getAddress(filter);
 			if (!address.isBlank()) list.add(CreateLang.text("-> ")
 				.style(ChatFormatting.GRAY)

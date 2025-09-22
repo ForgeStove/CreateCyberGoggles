@@ -1,7 +1,6 @@
 plugins {
 	id("net.neoforged.moddev") version "+"
 	id("me.modmuss50.mod-publish-plugin") version "+"
-	id("io.github.forgestove.modaccessor") version "1.0.3"
 }
 base.archivesName.set(p("modId"))
 group = p("modGroupId")
@@ -39,7 +38,7 @@ repositories {
 	maven("https://api.modrinth.com/maven") // Modrinth
 }
 dependencies {
-	accessImplementation("com.simibubi.create:create-${p("mcVersion")}:${p("createVersion")}:slim")
+	implementation("com.simibubi.create:create-${p("mcVersion")}:${p("createVersion")}:slim") { isTransitive = false }
 	implementation("dev.engine-room.flywheel:flywheel-${p("loader")}-${p("mcVersion")}:${p("flywheelVersion")}") { isTransitive = false }
 	implementation("net.createmod.ponder:Ponder-${p("loaderCap")}-${p("mcVersion")}:${p("ponderVersion")}") { isTransitive = false }
 	implementation("com.tterrag.registrate:Registrate:${p("registrateVersion")}")

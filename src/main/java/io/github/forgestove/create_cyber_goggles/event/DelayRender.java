@@ -5,8 +5,8 @@ import com.simibubi.create.content.kinetics.mechanicalArm.*;
 import com.simibubi.create.content.logistics.depot.EjectorBlockEntity;
 import com.simibubi.create.content.logistics.packagePort.PackagePortBlockEntity;
 import io.github.forgestove.create_cyber_goggles.*;
+import io.github.forgestove.create_cyber_goggles.mixin.accessor.*;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.createmod.catnip.math.VecHelper;
 import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 public class DelayRender {
-	public static Object2IntOpenHashMap<BlockEntity> cachedBE = new Object2IntOpenHashMap<>();
+	public static final Object2IntOpenHashMap<BlockEntity> cachedBE = new Object2IntOpenHashMap<>();
 	public static void tick(Post ignoredEvent) {
 		if (!CCG.CONFIG.delayRender.renderAnalogBox) return;
 		var mc = Minecraft.getInstance();
@@ -92,14 +92,17 @@ public class DelayRender {
 		}
 	}
 	public static void render(@NotNull NozzleBlockEntity nbe) {
-		var center = VecHelper.getCenterOf(nbe.getBlockPos());
-		var color = getColor(nbe.pushing);
+		var accessor = (NozzleBlockEntityAccessor) nbe;
+		var pushing = accessor.getPushing();
+		var range = accessor.getRange();
+		var center = nbe.getBlockPos().getCenter();
+		var color = getColor(pushing);
 		Outliner.getInstance()
-			.chaseAABB("NozzleAirBox" + nbe, new AABB(center, center).inflate(nbe.range / 2f))
+			.chaseAABB("NozzleAirBox" + nbe, new AABB(center, center).inflate(range / 2f))
 			.withFaceTextures(AllSpecialTextures.CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
 			.lineWidth(1 / 16f)
 			.colored(color);
-		var numberOfFlowBoxes = getNumberOfFlowBoxes(nbe.range);
+		var numberOfFlowBoxes = getNumberOfFlowBoxes(range);
 		for (var i = 0; i < numberOfFlowBoxes; i++) {
 			var offset = getOffset(i, numberOfFlowBoxes);
 			var id = "NozzleAirFlowBox" + nbe + i;
@@ -107,7 +110,7 @@ public class DelayRender {
 				Outliner.getInstance().remove(id);
 				continue;
 			}
-			var radius = nbe.pushing ? offset * nbe.range / 2f : (1 - offset) * nbe.range / 2f;
+			var radius = pushing ? offset * range / 2f : (1 - offset) * range / 2f;
 			var flowBound = new AABB(center, center).inflate(radius);
 			Outliner.getInstance()
 				.chaseAABB(id, flowBound)
@@ -126,9 +129,10 @@ public class DelayRender {
 		return (int) (Math.log(range) + 1);
 	}
 	public static void render(@NotNull ArmBlockEntity abe) {
+		var accessor = (ArmBlockEntityAccessor) abe;
 		var allPoints = new ArrayList<ArmInteractionPoint>();
-		allPoints.addAll(abe.inputs);
-		allPoints.addAll(abe.outputs);
+		allPoints.addAll(accessor.getInputs());
+		allPoints.addAll(accessor.getOutputs());
 		allPoints.forEach(point -> {
 			if (!point.isValid()) return;
 			var level = point.getLevel();

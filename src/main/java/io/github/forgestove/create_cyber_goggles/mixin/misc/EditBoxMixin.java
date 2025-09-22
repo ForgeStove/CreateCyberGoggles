@@ -4,7 +4,7 @@ import net.minecraft.client.gui.components.EditBox;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-@Mixin(value = EditBox.class, remap = false)
+@Mixin(EditBox.class)
 public abstract class EditBoxMixin {
 	@Shadow private int maxLength;
 	@Inject(method = "setMaxLength", at = @At("HEAD"), cancellable = true)

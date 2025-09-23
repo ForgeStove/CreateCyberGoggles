@@ -15,6 +15,7 @@
 	"create_cyber_goggles.tooltip.seconds": "Seconds",
 	"create_cyber_goggles.tooltip.windState": "Wind State:",
 	"key.categories.create_cyber_goggles": "Create: Cyber Goggles",
+	"modmenu.descriptionTranslation.create_cyber_goggles": "A client-side mod for Create that provides modular assistance features.",
 	"text.autoconfig.create_cyber_goggles.category.chainConveyor": "Chain Conveyor",
 	"text.autoconfig.create_cyber_goggles.category.delayRender": "Delay Render",
 	"text.autoconfig.create_cyber_goggles.category.gameMode": "Game Mode",

@@ -15,6 +15,7 @@
 	"create_cyber_goggles.tooltip.seconds": "秒",
 	"create_cyber_goggles.tooltip.windState": "风力状态：",
 	"key.categories.create_cyber_goggles": "机械动力：赛博护目镜",
+	"modmenu.descriptionTranslation.create_cyber_goggles": "Create 的客户端附属模组，提供模块化辅助功能。",
 	"text.autoconfig.create_cyber_goggles.category.chainConveyor": "锁链传动轮",
 	"text.autoconfig.create_cyber_goggles.category.delayRender": "延时渲染",
 	"text.autoconfig.create_cyber_goggles.category.gameMode": "游戏模式",

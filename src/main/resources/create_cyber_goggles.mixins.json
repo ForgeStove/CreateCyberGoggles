@@ -5,6 +5,8 @@
 	"refmap": "create_cyber_goggles.refmap.json",
 	"client": [
 		"AbstractFilterScreenMixin",
+		"accessor.ArmBlockEntityAccessor",
+		"accessor.NozzleBlockEntityAccessor",
 		"goggles.BlazeBurnerBlockEntityMixin",
 		"goggles.DeployerBlockEntityMixin",
 		"goggles.EncasedFanBlockEntityMixin",
@@ -19,6 +21,7 @@
 		"misc.ContraptionHandlerClientMixin",
 		"misc.CreateJEIMixin",
 		"misc.DivingBootsItemMixin",
+		"misc.EditBoxMixin",
 		"misc.FilesHelperMixin",
 		"misc.NbtAccounterMixin",
 		"misc.NetheriteBacktankFirstPersonRendererMixin",

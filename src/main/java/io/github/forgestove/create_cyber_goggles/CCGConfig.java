@@ -36,6 +36,7 @@ public class CCGConfig implements ConfigData {
 		@Tooltip @ColorPicker public int windPullColor = 0x7FCDE0;
 	}
 	public static class Misc {
+		@Tooltip public boolean infEditBoxLength = true;
 		@Tooltip public boolean removeNetheriteFirstPerson = false;
 		@Tooltip public boolean removeDivingFunction = false;
 		@Tooltip public boolean fixSchematicName = true;

@@ -3,8 +3,8 @@ import com.simibubi.create.*;
 import com.simibubi.create.content.kinetics.fan.*;
 import com.simibubi.create.content.kinetics.mechanicalArm.*;
 import com.simibubi.create.content.logistics.depot.EjectorBlockEntity;
-import com.simibubi.create.foundation.utility.VecHelper;
 import io.github.forgestove.create_cyber_goggles.*;
+import io.github.forgestove.create_cyber_goggles.mixin.accessor.*;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -83,13 +83,16 @@ public class DelayRender {
 		}
 	}
 	public static void render(@NotNull NozzleBlockEntity nbe) {
-		var center = VecHelper.getCenterOf(nbe.getBlockPos());
-		var color = getColor(nbe.pushing);
-		CreateClient.OUTLINER.chaseAABB("NozzleAirBox" + nbe, new AABB(center, center).inflate(nbe.range / 2f))
+		var accessor = (NozzleBlockEntityAccessor) nbe;
+		var pushing = accessor.getPushing();
+		var range = accessor.getRange();
+		var center = nbe.getBlockPos().getCenter();
+		var color = getColor(pushing);
+		CreateClient.OUTLINER.chaseAABB("NozzleAirBox" + nbe, new AABB(center, center).inflate(range / 2f))
 			.withFaceTextures(AllSpecialTextures.CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
 			.lineWidth(1 / 16f)
 			.colored(color);
-		var numberOfFlowBoxes = getNumberOfFlowBoxes(nbe.range);
+		var numberOfFlowBoxes = getNumberOfFlowBoxes(range);
 		for (var i = 0; i < numberOfFlowBoxes; i++) {
 			var offset = getOffset(i, numberOfFlowBoxes);
 			var id = "NozzleAirFlowBox" + nbe + i;
@@ -97,7 +100,7 @@ public class DelayRender {
 				CreateClient.OUTLINER.remove(id);
 				continue;
 			}
-			var radius = nbe.pushing ? offset * nbe.range / 2f : (1 - offset) * nbe.range / 2f;
+			var radius = pushing ? offset * range / 2f : (1 - offset) * range / 2f;
 			var flowBound = new AABB(center, center).inflate(radius);
 			CreateClient.OUTLINER.chaseAABB(id, flowBound)
 				.withFaceTextures(AllSpecialTextures.CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
@@ -115,9 +118,10 @@ public class DelayRender {
 		return (int) (Math.log(range) + 1);
 	}
 	public static void render(@NotNull ArmBlockEntity abe) {
+		var accessor = (ArmBlockEntityAccessor) abe;
 		var allPoints = new ArrayList<ArmInteractionPoint>();
-		allPoints.addAll(abe.inputs);
-		allPoints.addAll(abe.outputs);
+		allPoints.addAll(accessor.getInputs());
+		allPoints.addAll(accessor.getOutputs());
 		allPoints.forEach(point -> {
 			if (!point.isValid()) return;
 			var level = point.getLevel();

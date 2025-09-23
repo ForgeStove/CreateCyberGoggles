@@ -9,6 +9,6 @@ public abstract class FilesHelperMixin {
 	@Inject(method = "slug", at = @At("HEAD"), cancellable = true)
 	private static void slug(String name, CallbackInfoReturnable<String> returnable) {
 		if (!CCG.CONFIG.misc.fixSchematicName) return;
-		returnable.setReturnValue(Lang.asId(name).replaceAll("[\\\\/:*?\"<>|]+", "_"));
+		returnable.setReturnValue(name.replaceAll("[\\\\/:*?\"<>|]+", "_"));
 	}
 }

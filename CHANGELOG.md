@@ -1,1 +1,2 @@
 - Fix invalid key -1 GL error
+- Fix Blueprint names cannot be capitalized

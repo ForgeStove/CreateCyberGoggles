@@ -65,7 +65,7 @@ public class KineticDebugger {
 			var nodeBE = kbePath.get(depth);
 			// 渲染前判断包围盒是否在视锥体内
 			var rgb = getRainbowColor(depth, time);
-			if (isAABBInFrustum(nodeBE, level, frustum)) renderOutline(nodeBE, level, depth, rgb);
+			if (isAABBInFrustum(nodeBE, level, frustum)) renderOutline(nodeBE, depth, rgb);
 			// 连线渲染时也判断两端是否有一端在视锥体内，否则跳过
 			if (nodeBE.source == null) continue;
 			if (isLineInFrustum(nodeBE.getBlockPos(), nodeBE.source, frustum)) renderKineticLine(nodeBE, depth, rgb);
@@ -100,15 +100,15 @@ public class KineticDebugger {
 	 * 渲染指定 KineticBlockEntity 的包围盒轮廓。
 	 *
 	 * @param kbe   目标动力方块实体
-	 * @param level 当前客户端世界
 	 * @param depth 链路深度
 	 * @param rgb   轮廓的RGB颜色值
 	 */
-	public static void renderOutline(@NotNull KineticBlockEntity kbe, @NotNull ClientLevel level, int depth, int rgb) {
+	public static void renderOutline(@NotNull KineticBlockEntity kbe, int depth, int rgb) {
+		if (kbe.getTheoreticalSpeed() == 0) return;
 		var blockPos = kbe.getBlockPos();
-		var shape = level.getBlockState(blockPos).getBlockSupportShape(level, blockPos);
-		if (kbe.getTheoreticalSpeed() == 0 || shape.isEmpty()) return;
-		CreateClient.OUTLINER.chaseAABB("KineticOutline" + depth, shape.bounds().move(blockPos)).lineWidth(1 / 16f).colored(rgb);
+		var bounds = Common.getBounds(blockPos);
+		if (bounds == null) return;
+		CreateClient.OUTLINER.chaseAABB("KineticOutline" + depth, bounds).lineWidth(1 / 16f).colored(rgb);
 	}
 	/**
 	 * 根据链路深度和时间生成彩虹色。

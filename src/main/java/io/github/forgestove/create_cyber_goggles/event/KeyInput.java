@@ -1,5 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.event;
-import com.zurrtum.create.AllSoundEvents;
+import com.mojang.datafixers.util.Function3;
+import com.zurrtum.create.*;
 import com.zurrtum.create.client.content.logistics.filter.*;
 import com.zurrtum.create.client.content.logistics.stockTicker.StockKeeperRequestScreen;
 import com.zurrtum.create.content.logistics.filter.*;
@@ -8,7 +9,12 @@ import io.github.forgestove.create_cyber_goggles.*;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.*;
+
+import java.util.Map;
 public class KeyInput {
 	public static void register(Minecraft ignoredMc) {
 		toggleDiving();
@@ -56,24 +62,20 @@ public class KeyInput {
 		var player = mc.player;
 		if (player == null) return;
 		var itemStack = Common.getRelevantFilterItem();
-		if (itemStack == null || !(itemStack.getItem() instanceof FilterItem filterItem)) {
+		if (itemStack == null) return;
+		if (!(itemStack.getItem() instanceof FilterItem)) {
 			Common.displayMessage(CCGLang.translate("message.notFilter").style(ChatFormatting.RED));
 			Common.playSound(AllSoundEvents.DENY);
 			return;
 		}
-		try {
-			var field = FilterItem.class.getDeclaredField("type");
-			field.setAccessible(true);
-			var ordinal = ((Enum<?>) field.get(filterItem)).ordinal();
-			var inv = player.getInventory();
-			var name = itemStack.getHoverName();
-			mc.setScreen(switch (ordinal) {
-				case 0 -> new FilterScreen(new FilterMenu(-1, inv, itemStack), inv, name);
-				case 1 -> new AttributeFilterScreen(new AttributeFilterMenu(-1, inv, itemStack), inv, name);
-				case 2 -> new PackageFilterScreen(new PackageFilterMenu(-1, inv, itemStack), inv, name);
-				default -> throw new IllegalStateException("Unexpected value: " + ordinal);
-			});
-		} catch (Exception ignored) {}
+		mc.setScreen(Map.<Item, Function3<Integer, Inventory, ItemStack, Screen>>of(
+			AllItems.FILTER.asItem(),
+			(id, inv, stack) -> new FilterScreen(new FilterMenu(id, inv, stack), inv, stack.getHoverName()),
+			AllItems.ATTRIBUTE_FILTER.asItem(),
+			(id, inv, stack) -> new AttributeFilterScreen(new AttributeFilterMenu(id, inv, stack), inv, stack.getHoverName()),
+			AllItems.PACKAGE_FILTER.asItem(),
+			(id, inv, stack) -> new PackageFilterScreen(new PackageFilterMenu(id, inv, stack), inv, stack.getHoverName())
+		).get(itemStack.getItem()).apply(-1, player.getInventory(), itemStack));
 		Common.playSound(SoundEvents.BOOK_PAGE_TURN);
 	}
 }

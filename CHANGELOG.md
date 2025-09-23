@@ -1,1 +1,2 @@
-- Ported to 1.21.8 Fabric
+- Optimized previewing filter
+- Add option infEditBoxLength

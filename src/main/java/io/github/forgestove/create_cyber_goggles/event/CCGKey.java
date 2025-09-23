@@ -1,6 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.event;
 import com.mojang.blaze3d.platform.InputConstants;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.mixin.accessor.KeyMappingAccessor;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.*;
 import org.lwjgl.glfw.GLFW;
@@ -20,7 +21,8 @@ public enum CCGKey {
 		for (var key : values()) KeyBindingHelper.registerKeyBinding(key.keyMapping);
 	}
 	public boolean isKeyDown() {
-		var value = keyMapping.key.getValue();
+		var accessor = (KeyMappingAccessor) keyMapping;
+		var value = accessor.getKey().getValue();
 		var isDown = value != GLFW.GLFW_KEY_UNKNOWN && InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), value);
 		var currentTime = System.currentTimeMillis();
 		if (isDown && !wasDown) {

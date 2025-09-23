@@ -8,6 +8,7 @@ import com.zurrtum.create.content.logistics.stockTicker.StockTickerBlockEntity;
 import com.zurrtum.create.content.processing.burner.BlazeBurnerBlockEntity;
 import com.zurrtum.create.content.processing.burner.BlazeBurnerBlockEntity.FuelType;
 import com.zurrtum.create.foundation.blockEntity.SmartBlockEntity;
+import io.github.forgestove.create_cyber_goggles.mixin.accessor.AbstractContainerScreenAccessor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -32,7 +33,6 @@ import java.util.List;
 import java.util.stream.Stream;
 public class Common {
 	public static StockTickerBlockEntity lastSTBE;
-	public static int index = 1, scrollDeltaY;
 	/**
 	 * 测试玩家是否穿着全套纸板盔甲并且不在飞行状态。
 	 *
@@ -159,12 +159,13 @@ public class Common {
 		var mc = Minecraft.getInstance();
 		if (mc.screen != null) {
 			if (!(mc.screen instanceof AbstractContainerScreen<?> screen)) return null;
-			var slot = screen.hoveredSlot;
+			var accessor = (AbstractContainerScreenAccessor) screen;
+			var slot = accessor.getHoveredSlot();
 			return slot == null ? null : slot.getItem();
 		}
 		if (!(getBE() instanceof SmartBlockEntity sbe) || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return null;
 		var behaviour = sbe.getBehaviour(FilteringBehaviour.TYPE);
-		return behaviour == null ? null : behaviour.getFilter(blockHitResult.getDirection());
+		return behaviour == null ? ItemStack.EMPTY : behaviour.getFilter(blockHitResult.getDirection());
 	}
 	/**
 	 * 向本地玩家显示客户端消息。

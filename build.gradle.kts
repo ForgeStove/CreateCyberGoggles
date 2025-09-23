@@ -16,13 +16,10 @@ sourceSets.main.get().resources.srcDir(generateMetadata)
 configurations.configureEach { resolutionStrategy.force("net.fabricmc:fabric-loader:${p("fabricLoaderVersion")}") }
 loom {
 	enableTransitiveAccessWideners = true
-	accessWidenerPath.set(file("src/main/resources/${p("modId")}.accesswidener"))
 	runConfigs.configureEach { ideConfigGenerated(false) }
 	@Suppress("UnstableApiUsage") mixin.defaultRefmapName.set("${p("modId")}.refmap.json")
 	runs {
-		configureEach {
-			vmArgs("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition")
-		}
+		configureEach { vmArgs("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition") }
 		remove(getByName("server"))
 	}
 }

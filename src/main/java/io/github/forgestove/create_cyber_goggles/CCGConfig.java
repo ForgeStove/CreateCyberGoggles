@@ -20,7 +20,6 @@ public class CCGConfig implements ConfigData, ModMenuApi {
 	public static class Goggles {
 		@Tooltip public boolean enhancedInfo = true;
 		@Tooltip public boolean hideStaticKineticInfo = false;
-		@Tooltip public boolean betterStoreInfo = true;
 		@Tooltip public boolean renderExtraItems = true;
 		@Tooltip public boolean enableKineticEffect = true;
 		@Tooltip public boolean preciseNumber = true;

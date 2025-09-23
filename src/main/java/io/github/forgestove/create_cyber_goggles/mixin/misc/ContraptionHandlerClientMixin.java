@@ -14,7 +14,6 @@ public abstract class ContraptionHandlerClientMixin {
 		InteractionHand hand,
 		CallbackInfoReturnable<Boolean> returnable
 	) {
-		if (!CCG.CONFIG.misc.rightClickPenetrate) return;
-		returnable.setReturnValue(true);
+		if (CCG.CONFIG.misc.rightClickPenetrate) returnable.setReturnValue(true);
 	}
 }

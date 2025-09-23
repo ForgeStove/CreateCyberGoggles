@@ -6,6 +6,8 @@
 	"client": [
 		"AbstractFilterScreenMixin",
 		"StockKeeperRequestScreenMixin",
+		"accessor.AbstractContainerScreenAccessor",
+		"accessor.KeyMappingAccessor",
 		"accessor.KineticBlockEntityAccessor",
 		"accessor.NozzleBlockEntityAccessor",
 		"chainConveyor.CardboardArmorHandlerMixin",
@@ -14,7 +16,6 @@
 		"chainConveyor.ChainConveyorRidingHandlerMixin",
 		"goggles.AllBlockEntityBehavioursMixin",
 		"goggles.BlazeBurnerBlockEntityMixin",
-		"goggles.BlueprintOverlayRendererMixin",
 		"goggles.DeployerBlockEntityMixin",
 		"goggles.GeneratingKineticBlockEntityMixin",
 		"goggles.GoggleOverlayRendererMixin",

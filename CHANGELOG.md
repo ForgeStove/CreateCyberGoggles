@@ -1,3 +1,1 @@
-- Add support for Create 6.0.7
-- Optimized previewing filter
-- Add option infEditBoxLength
+- Add language uk_ua from pull-request #20

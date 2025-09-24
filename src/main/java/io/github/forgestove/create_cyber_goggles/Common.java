@@ -1,6 +1,7 @@
 package io.github.forgestove.create_cyber_goggles;
 import com.simibubi.create.AllSoundEvents.SoundEntry;
 import com.simibubi.create.content.equipment.armor.CardboardArmorItem;
+import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.logistics.stockTicker.StockTickerBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity;
@@ -18,7 +19,7 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
@@ -55,12 +56,13 @@ public class Common {
 		var font = mc.font;
 		var tooltipFlag = mc.options.advancedItemTooltips ? TooltipFlag.ADVANCED : TooltipFlag.NORMAL;
 		var tooltipLines = itemStack.getTooltipLines(TooltipContext.of(mc.level), mc.player, tooltipFlag);
-		var height = Math.max(10, tooltipLines.size() * font.lineHeight - 60);
+		var height = tooltipLines.size() * font.lineHeight;
 		var x = guiGraphics.guiWidth() / 2 + AllConfigs.client().overlayOffsetX.get();
 		var y = guiGraphics.guiHeight() / 2 + AllConfigs.client().overlayOffsetY.get();
-		guiGraphics.renderItem(itemStack, x + 10, y - 16);
-		guiGraphics.renderItemDecorations(font, itemStack, x + 10, y - 16);
-		guiGraphics.renderTooltip(font, itemStack, x + 22, y - height);
+		if (GoggleOverlayRenderer.hoverTicks != 0) y -= height + 20;
+		guiGraphics.renderItem(itemStack, x - 10, y - 10);
+		guiGraphics.renderItemDecorations(font, itemStack, x - 10, y - 10);
+		guiGraphics.renderTooltip(font, itemStack, x, y);
 	}
 	/**
 	 * 获取当前玩家选中的方块实体，并将其转换为 {@link KineticBlockEntity} 类型。
@@ -81,9 +83,13 @@ public class Common {
 	public static @Nullable BlockEntity getBE() {
 		var mc = Minecraft.getInstance();
 		if (mc.level == null) return null;
-		if (!(mc.hitResult instanceof BlockHitResult blockHitResult)) return null;
-		if (!(blockHitResult.getType() == Type.BLOCK)) return null;
-		return mc.level.getBlockEntity(blockHitResult.getBlockPos());
+		if (!(mc.hitResult instanceof BlockHitResult bhr)) return null;
+		return bhr.getType() == Type.BLOCK ? mc.level.getBlockEntity(bhr.getBlockPos()) : null;
+	}
+	public static @Nullable Entity getE() {
+		var mc = Minecraft.getInstance();
+		if (!(mc.hitResult instanceof EntityHitResult ehr)) return null;
+		return ehr.getType() == Type.ENTITY ? ehr.getEntity() : null;
 	}
 	/**
 	 * 获取当前玩家选中的方块。

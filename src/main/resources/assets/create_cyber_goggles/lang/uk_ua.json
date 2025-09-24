@@ -16,6 +16,7 @@
 	"create_cyber_goggles.tooltip.windState": "Стан вітру:",
 	"key.categories.create_cyber_goggles": "Create: Cyber Goggles",
 	"modmenu.descriptionTranslation.create_cyber_goggles": "Клієнтське доповнення для Create, яке надає модульні допоміжні функції",
+	"modmenu.nameTranslation.create_cyber_goggles": "Create: Cyber Goggles",
 	"text.autoconfig.create_cyber_goggles.category.chainConveyor": "Ланцюгівниця",
 	"text.autoconfig.create_cyber_goggles.category.delayRender": "Затримка промальовування",
 	"text.autoconfig.create_cyber_goggles.category.gameMode": "Режим гри",

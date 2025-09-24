@@ -51,7 +51,7 @@ public class CCGConfig implements ConfigData {
 		@Tooltip public boolean removeCooldown = true;
 	}
 	public static class Misc {
-		@Tooltip public boolean infEditBoxLength = true;
+		@Tooltip public boolean infEditBoxLength = false;
 		@Tooltip public boolean removeCardboardOverlay = true;
 		@Tooltip public boolean removeNetheriteFirstPerson = false;
 		@Tooltip public boolean removeDivingFunction = false;

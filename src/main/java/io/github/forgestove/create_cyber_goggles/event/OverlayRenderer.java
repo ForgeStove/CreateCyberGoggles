@@ -90,7 +90,7 @@ public class OverlayRenderer {
 	 * 在屏幕中央区域渲染指定物品堆的图标及关联的悬浮提示信息。
 	 *
 	 * @param guiGraphics GUI渲染上下文对象，用于执行图形绘制操作
-	 * @param itemStack   需要渲染的物品堆实例。若值为null或空物品堆叠时方法立即返回
+	 * @param itemStack   需要渲染的物品堆实例。若值为{@code null}或空物品堆叠时方法立即返回
 	 */
 	public static void renderItemStack(GuiGraphics guiGraphics, ItemStack itemStack) {
 		if (itemStack == null || itemStack.isEmpty()) return;

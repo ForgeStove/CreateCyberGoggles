@@ -20,8 +20,8 @@ import net.minecraft.client.*;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.*;
 import net.minecraft.world.item.Item.TooltipContext;
+import net.minecraft.world.item.*;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import org.jetbrains.annotations.*;
@@ -63,6 +63,11 @@ public class OverlayRenderer {
 		}
 		renderItemStack(guiGraphics, itemStack);
 	}
+	/**
+	 * 根据当前玩家选中的方块实体或实体，返回待渲染的{@link ItemStack}。
+	 *
+	 * @return 需要渲染的 {@link ItemStack}，若无则为 {@code null}
+	 */
 	public static @Nullable ItemStack toRenderItemStack() {
 		var be = CCGHelper.getBE();
 		if (be instanceof DepotBlockEntity dbe) return dbe.getHeldItem();
@@ -73,10 +78,8 @@ public class OverlayRenderer {
 		else if (be instanceof CrushingWheelControllerBlockEntity cwcb) return cwcb.inventory.getStackInSlot(0);
 		else if (be instanceof MillstoneBlockEntity mbe) return mbe.inputInv.getStackInSlot(0);
 		else if (be instanceof CreativeCrateBlockEntity ccbe) return ((CreativeCrateBlockEntityAccessor) ccbe).getFiltering().getFilter();
-		else if (be instanceof SchematicannonBlockEntity sbe) {
-			if (sbe.state.equals(State.STOPPED)) cannonItemStack = null;
-			return cannonItemStack == null ? sbe.missingItem : cannonItemStack;
-		} else if (be instanceof BeltBlockEntity bbe) {
+		else if (be instanceof SchematicannonBlockEntity sbe) return sbe.state.equals(State.STOPPED) ? null : cannonItemStack;
+		else if (be instanceof BeltBlockEntity bbe) {
 			var inventory = bbe.getInventory();
 			if (inventory == null) return null;
 			var stackAtOffset = inventory.getStackAtOffset(bbe.index);

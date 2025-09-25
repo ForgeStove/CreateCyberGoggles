@@ -30,8 +30,7 @@ public abstract class ChainConveyorRidingHandlerMixin {
 	), cancellable = true
 	)
 	private static void injectCustomDiffCheck(CallbackInfo callbackInfo, @Local(name = "diff") Vec3 diff) {
-		var chainConveyor = CCG.CONFIG.chainConveyor;
-		if (chainConveyor.preventFalling) callbackInfo.cancel();
+		if (CCG.CONFIG.chainConveyor.preventFalling) callbackInfo.cancel();
 		var player = Minecraft.getInstance().player;
 		if (player == null) return;
 		player.setDeltaMovement(player.getDeltaMovement().scale(0.75).add(diff.scale(0.25)));

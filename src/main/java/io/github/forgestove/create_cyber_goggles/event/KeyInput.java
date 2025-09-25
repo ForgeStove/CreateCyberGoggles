@@ -15,6 +15,7 @@ import net.neoforged.neoforge.client.event.InputEvent.Key;
 
 import java.util.Map;
 public class KeyInput {
+	public static StockTickerBlockEntity lastSTBE;
 	public static void tick(Key ignoredEvent) {
 		toggleDiving();
 		openConfigScreen();
@@ -31,7 +32,7 @@ public class KeyInput {
 		var builder = CCGLang.translate("message.divingFunction")
 			.space()
 			.translate(misc.removeDivingFunction ? "message.disabled" : "message.enabled");
-		Common.displayMessage(builder);
+		CCGHelper.displayMessage(builder);
 	}
 	public static void openConfigScreen() {
 		if (!CCGKey.openConfig.isKeyDown()) return;
@@ -45,26 +46,26 @@ public class KeyInput {
 		if (mc.screen != null) return;
 		var player = mc.player;
 		if (player == null) return;
-		if (Common.getBE() instanceof StockTickerBlockEntity stbe) Common.lastSTBE = stbe;
-		if (Common.lastSTBE == null || Common.lastSTBE.isRemoved()) {
-			Common.displayMessage(CCGLang.translate("message.notStock").text("  ").translate("key.openStock").style(ChatFormatting.RED));
-			Common.playSound(AllSoundEvents.DENY);
+		if (CCGHelper.getBE() instanceof StockTickerBlockEntity stbe) lastSTBE = stbe;
+		if (lastSTBE == null || lastSTBE.isRemoved()) {
+			CCGHelper.displayMessage(CCGLang.translate("message.notStock").text("  ").translate("key.openStock").style(ChatFormatting.RED));
+			CCGHelper.playSound(AllSoundEvents.DENY);
 			return;
 		}
 		var inv = player.getInventory();
-		var menu = new StockKeeperRequestMenu(AllMenuTypes.STOCK_KEEPER_REQUEST.get(), -1, inv, Common.lastSTBE);
-		mc.setScreen(new StockKeeperRequestScreen(menu, inv, Common.lastSTBE.getBlockState().getBlock().getName()));
+		var menu = new StockKeeperRequestMenu(AllMenuTypes.STOCK_KEEPER_REQUEST.get(), -1, inv, lastSTBE);
+		mc.setScreen(new StockKeeperRequestScreen(menu, inv, lastSTBE.getBlockState().getBlock().getName()));
 	}
 	public static void previewFilterScreen() {
 		if (!CCGKey.previewFilter.isKeyDown()) return;
 		var mc = Minecraft.getInstance();
 		var player = mc.player;
 		if (player == null) return;
-		var itemStack = Common.getRelevantFilterItem();
+		var itemStack = CCGHelper.getRelevantFilterItem();
 		if (itemStack == null) return;
 		if (!(itemStack.getItem() instanceof FilterItem)) {
-			Common.displayMessage(CCGLang.translate("message.notFilter").style(ChatFormatting.RED));
-			Common.playSound(AllSoundEvents.DENY);
+			CCGHelper.displayMessage(CCGLang.translate("message.notFilter").style(ChatFormatting.RED));
+			CCGHelper.playSound(AllSoundEvents.DENY);
 			return;
 		}
 		mc.setScreen(Map.<Item, Function3<Integer, Inventory, ItemStack, Screen>>of(
@@ -75,6 +76,6 @@ public class KeyInput {
 			AllItems.PACKAGE_FILTER.get(),
 			(id, inv, stack) -> new PackageFilterScreen(PackageFilterMenu.create(id, inv, stack), inv, stack.getHoverName())
 		).get(itemStack.getItem()).apply(-1, player.getInventory(), itemStack));
-		Common.playSound(SoundEvents.BOOK_PAGE_TURN);
+		CCGHelper.playSound(SoundEvents.BOOK_PAGE_TURN);
 	}
 }

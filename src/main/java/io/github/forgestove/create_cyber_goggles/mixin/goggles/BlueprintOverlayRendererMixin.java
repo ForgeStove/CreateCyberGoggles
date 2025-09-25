@@ -5,6 +5,7 @@ import com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer;
 import com.simibubi.create.content.logistics.tableCloth.BlueprintOverlayShopContext;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import io.github.forgestove.create_cyber_goggles.*;
+import io.github.forgestove.create_cyber_goggles.event.*;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.minecraft.client.*;
 import net.minecraft.client.gui.GuiGraphics;
@@ -37,10 +38,10 @@ public abstract class BlueprintOverlayRendererMixin {
 			guiGraphics.blitSprite(HOTBAR_OFF_HAND_LEFT, x, y, 24, 23);
 			GuiGameElement.of(Items.BARRIER).at(x + 3, y + 3).render(guiGraphics);
 		} else {
-			Common.index += Common.scrollDeltaY;
-			Common.scrollDeltaY = 0;
-			if (Common.index < 1) Common.index = results.size();
-			else if (Common.index > results.size()) Common.index = 1;
+			MouseScroll.index += MouseScroll.scrollDeltaY;
+			MouseScroll.scrollDeltaY = 0;
+			if (MouseScroll.index < 1) MouseScroll.index = results.size();
+			else if (MouseScroll.index > results.size()) MouseScroll.index = 1;
 			var selectedX = 0;
 			for (var i = 0; i < results.size(); i++) {
 				var result = results.get(i);
@@ -49,11 +50,11 @@ public abstract class BlueprintOverlayRendererMixin {
 					slot = AllGuiTextures.HOTSLOT_ACTIVE;
 				slot.render(guiGraphics, resultCraftable ? x - 1 : x, resultCraftable ? y - 1 : y);
 				BlueprintOverlayRenderer.drawItemStack(guiGraphics, Minecraft.getInstance(), x, y, result, null);
-				if (i == Common.index - 1) selectedX = x;
+				if (i == MouseScroll.index - 1) selectedX = x;
 				x += 21;
 			}
 			if (selectedX != 0) guiGraphics.blitSprite(HOTBAR_SELECTION, selectedX - 1, y - 1, 24, 23);
-			Common.renderItemStack(guiGraphics, results.get(Common.index - 1));
+			OverlayRenderer.renderItemStack(guiGraphics, results.get(MouseScroll.index - 1));
 		}
 		RenderSystem.disableBlend();
 	}

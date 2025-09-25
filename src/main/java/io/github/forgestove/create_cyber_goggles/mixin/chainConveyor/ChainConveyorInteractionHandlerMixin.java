@@ -23,7 +23,7 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 		var player = mc.player;
 		if (player == null) return;
 		var mainHandItem = player.getMainHandItem();
-		if (Common.getB() instanceof ChainConveyorBlock && (
+		if (CCGHelper.getB() instanceof ChainConveyorBlock && (
 			player.isShiftKeyDown() || mainHandItem.getItem().equals(Items.CHAIN) || AllBlocks.CHAIN_CONVEYOR.isIn(mainHandItem)
 		)) return;
 		returnable.setReturnValue(true);

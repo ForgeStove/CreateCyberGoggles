@@ -16,12 +16,13 @@ public class CCG {
 		var mod = container.getEventBus();
 		if (mod == null) return;
 		mod.addListener(CCGKey::register);
-		mod.addListener(OverlayRenderer::register);
+		mod.addListener(OverlayRenderer::registerLayer);
 		var game = NeoForge.EVENT_BUS;
 		game.addListener(KeyInput::tick);
 		game.addListener(MouseScroll::onMouseScroll);
 		game.addListener(KineticParticle::tick);
 		game.addListener(KineticDebugger::tick);
 		game.addListener(DelayRender::tick);
+		game.addListener(OverlayRenderer::tickColor);
 	}
 }

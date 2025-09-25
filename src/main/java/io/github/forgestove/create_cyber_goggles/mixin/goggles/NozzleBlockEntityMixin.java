@@ -13,6 +13,6 @@ public abstract class NozzleBlockEntityMixin implements IHaveGoggleInformation {
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return false;
-		return Common.addFanTooltip(tooltip, pushing, range, 2);
+		return TooltipHelper.addFanTooltip(tooltip, pushing, range, 2);
 	}
 }

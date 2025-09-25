@@ -1,1 +1,11 @@
-- Add language uk_ua from pull-request #20
+- Optimized item display
+- Added DepotBlockEntity item display
+- Added EjectorBlockEntity item display
+- Added PackagerBlockEntity item display
+- Added ChuteBlockEntity item display
+- Added MechanicalCrafterBlockEntity item display
+- Added CrushingWheelControllerBlockEntity item display
+- Added MillstoneBlockEntity item display
+- Added CreativeCrateBlockEntity item display
+- Added SchematicannonBlockEntity item display
+- Added SchematicannonBlockEntity goggle overlay

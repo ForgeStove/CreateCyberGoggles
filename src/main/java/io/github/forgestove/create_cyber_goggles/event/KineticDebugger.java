@@ -23,7 +23,7 @@ public class KineticDebugger {
 		if (mc.isPaused() || mc.screen != null) return;
 		var level = mc.level;
 		if (level == null) return;
-		var kbe = CCGHelper.getKBE();
+		var kbe = CCGUtil.getKBE();
 		if (kbe == null) return;
 		renderAxisLine(kbe);
 		updateKBEPath(level, kbe);
@@ -107,7 +107,7 @@ public class KineticDebugger {
 	public static void renderOutline(@NotNull KineticBlockEntity kbe, int depth, int rgb) {
 		if (kbe.getTheoreticalSpeed() == 0) return;
 		var blockPos = kbe.getBlockPos();
-		var bounds = CCGHelper.getBounds(blockPos);
+		var bounds = CCGUtil.getBounds(blockPos);
 		if (bounds == null) return;
 		Outliner.getInstance().chaseAABB("KineticOutline" + depth, bounds).lineWidth(1 / 16f).colored(rgb);
 	}

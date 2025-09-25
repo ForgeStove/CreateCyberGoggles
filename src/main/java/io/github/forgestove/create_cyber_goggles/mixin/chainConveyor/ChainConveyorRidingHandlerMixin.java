@@ -38,6 +38,6 @@ public abstract class ChainConveyorRidingHandlerMixin {
 			ChainConveyorRidingHandler.ridingChainConveyor,
 			false
 		));
-		if (CCGHelper.testForStealth(player)) player.connection.send(new ServerboundPlayerCommandPacket(player, Action.PRESS_SHIFT_KEY));
+		if (CCGUtil.testForStealth(player)) player.connection.send(new ServerboundPlayerCommandPacket(player, Action.PRESS_SHIFT_KEY));
 	}
 }

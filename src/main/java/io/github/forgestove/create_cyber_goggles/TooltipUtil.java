@@ -11,7 +11,7 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-public class TooltipHelper {
+public class TooltipUtil {
 	/**
 	 * 为风扇组件添加悬浮提示信息。
 	 * <p>

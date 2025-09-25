@@ -32,7 +32,7 @@ public class KeyInput {
 		var builder = CCGLang.translate("message.divingFunction")
 			.space()
 			.translate(misc.removeDivingFunction ? "message.disabled" : "message.enabled");
-		CCGHelper.displayMessage(builder);
+		CCGUtil.displayMessage(builder);
 	}
 	public static void openConfigScreen() {
 		if (!CCGKey.openConfig.isKeyDown()) return;
@@ -46,10 +46,10 @@ public class KeyInput {
 		if (mc.screen != null) return;
 		var player = mc.player;
 		if (player == null) return;
-		if (CCGHelper.getBE() instanceof StockTickerBlockEntity stbe) lastSTBE = stbe;
+		if (CCGUtil.getBE() instanceof StockTickerBlockEntity stbe) lastSTBE = stbe;
 		if (lastSTBE == null || lastSTBE.isRemoved()) {
-			CCGHelper.displayMessage(CCGLang.translate("message.notStock").text("  ").translate("key.openStock").style(ChatFormatting.RED));
-			CCGHelper.playSound(AllSoundEvents.DENY);
+			CCGUtil.displayMessage(CCGLang.translate("message.notStock").text("  ").translate("key.openStock").style(ChatFormatting.RED));
+			CCGUtil.playSound(AllSoundEvents.DENY);
 			return;
 		}
 		var inv = player.getInventory();
@@ -61,11 +61,11 @@ public class KeyInput {
 		var mc = Minecraft.getInstance();
 		var player = mc.player;
 		if (player == null) return;
-		var itemStack = CCGHelper.getRelevantFilterItem();
+		var itemStack = CCGUtil.getRelevantFilterItem();
 		if (itemStack == null) return;
 		if (!(itemStack.getItem() instanceof FilterItem)) {
-			CCGHelper.displayMessage(CCGLang.translate("message.notFilter").style(ChatFormatting.RED));
-			CCGHelper.playSound(AllSoundEvents.DENY);
+			CCGUtil.displayMessage(CCGLang.translate("message.notFilter").style(ChatFormatting.RED));
+			CCGUtil.playSound(AllSoundEvents.DENY);
 			return;
 		}
 		mc.setScreen(Map.<Item, Function3<Integer, Inventory, ItemStack, Screen>>of(
@@ -76,6 +76,6 @@ public class KeyInput {
 			AllItems.PACKAGE_FILTER.get(),
 			(id, inv, stack) -> new PackageFilterScreen(PackageFilterMenu.create(id, inv, stack), inv, stack.getHoverName())
 		).get(itemStack.getItem()).apply(-1, player.getInventory(), itemStack));
-		CCGHelper.playSound(SoundEvents.BOOK_PAGE_TURN);
+		CCGUtil.playSound(SoundEvents.BOOK_PAGE_TURN);
 	}
 }

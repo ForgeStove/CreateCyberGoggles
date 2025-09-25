@@ -58,7 +58,7 @@ public class OverlayRenderer {
 		event.setBackground(colorBackground.getRGB());
 	}
 	public static @Nullable ItemStack toRenderItemStack() {
-		var be = CCGHelper.getBE();
+		var be = CCGUtil.getBE();
 		if (be instanceof DepotBlockEntity dbe) return dbe.getHeldItem();
 		else if (be instanceof EjectorBlockEntity ebe) return ebe.getBehaviour(DepotBehaviour.TYPE).getHeldItemStack();
 		else if (be instanceof PackagerBlockEntity pbe) return pbe.heldBox;
@@ -74,7 +74,7 @@ public class OverlayRenderer {
 			var stackAtOffset = inventory.getStackAtOffset(bbe.index);
 			return stackAtOffset == null ? null : stackAtOffset.stack;
 		}
-		var e = CCGHelper.getE();
+		var e = CCGUtil.getE();
 		if (e instanceof PackageEntity pe) return pe.getBox();
 		return null;
 	}

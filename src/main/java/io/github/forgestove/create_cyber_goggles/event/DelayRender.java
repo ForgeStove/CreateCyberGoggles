@@ -27,7 +27,7 @@ public class DelayRender {
 			return;
 		}
 		if (mc.isPaused() || mc.screen != null) return;
-		var be = CCGHelper.getBE();
+		var be = CCGUtil.getBE();
 		if (Stream.of(
 			EncasedFanBlockEntity.class,
 			NozzleBlockEntity.class,
@@ -152,7 +152,7 @@ public class DelayRender {
 		});
 	}
 	public static void render(@NotNull EjectorBlockEntity ebe) {
-		var bounds = CCGHelper.getBounds(ebe.getTargetPosition());
+		var bounds = CCGUtil.getBounds(ebe.getTargetPosition());
 		if (bounds == null) return;
 		Outliner.getInstance().chaseAABB("EjectorTargetBox" + ebe, bounds).lineWidth(1 / 16f).colored(CCG.CONFIG.delayRender.windPushColor);
 	}
@@ -174,7 +174,7 @@ public class DelayRender {
 	public static void render(@NotNull SchematicannonBlockEntity sbe) {
 		var currentTarget = sbe.printer.getCurrentTarget();
 		if (currentTarget == null) return;
-		var bounds = CCGHelper.getBounds(currentTarget);
+		var bounds = CCGUtil.getBounds(currentTarget);
 		if (bounds == null) return;
 		Outliner.getInstance()
 			.chaseAABB("SchematiCannonTargetBox" + sbe, bounds)

@@ -67,10 +67,8 @@ public class OverlayRenderer {
 		else if (be instanceof CrushingWheelControllerBlockEntity cwcb) return cwcb.inventory.getStackInSlot(0);
 		else if (be instanceof MillstoneBlockEntity mbe) return mbe.inputInv.getStackInSlot(0);
 		else if (be instanceof CreativeCrateBlockEntity ccbe) return ((CreativeCrateBlockEntityAccessor) ccbe).getFiltering().getFilter();
-		else if (be instanceof SchematicannonBlockEntity sbe) {
-			if (sbe.state.equals(State.STOPPED)) cannonItemStack = null;
-			return cannonItemStack == null ? sbe.missingItem : cannonItemStack;
-		} else if (be instanceof BeltBlockEntity bbe) {
+		else if (be instanceof SchematicannonBlockEntity sbe) return sbe.state.equals(State.STOPPED) ? null : cannonItemStack;
+		else if (be instanceof BeltBlockEntity bbe) {
 			var inventory = bbe.getInventory();
 			if (inventory == null) return null;
 			var stackAtOffset = inventory.getStackAtOffset(bbe.index);

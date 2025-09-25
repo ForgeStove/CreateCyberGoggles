@@ -23,7 +23,7 @@ public class KineticDebugger {
 		if (mc.isPaused() || mc.screen != null) return;
 		var level = mc.level;
 		if (level == null) return;
-		var kbe = Common.getKBE();
+		var kbe = CCGHelper.getKBE();
 		if (kbe == null) return;
 		renderAxisLine(kbe);
 		updateKBEPath(level, kbe);
@@ -98,7 +98,7 @@ public class KineticDebugger {
 		return frustum.isVisible(new AABB(VecHelper.getCenterOf(start), VecHelper.getCenterOf(end)));
 	}
 	/**
-	 * 渲染指定 KineticBlockEntity 的包围盒轮廓。
+	 * 渲染指定{@link KineticBlockEntity}的包围盒轮廓。
 	 *
 	 * @param kbe   目标动力方块实体
 	 * @param depth 链路深度
@@ -107,7 +107,7 @@ public class KineticDebugger {
 	public static void renderOutline(@NotNull KineticBlockEntity kbe, int depth, int rgb) {
 		if (kbe.getTheoreticalSpeed() == 0) return;
 		var blockPos = kbe.getBlockPos();
-		var bounds = Common.getBounds(blockPos);
+		var bounds = CCGHelper.getBounds(blockPos);
 		if (bounds == null) return;
 		Outliner.getInstance().chaseAABB("KineticOutline" + depth, bounds).lineWidth(1 / 16f).colored(rgb);
 	}

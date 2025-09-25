@@ -16,12 +16,13 @@ public class CCG {
 		CCGConfig.register();
 		var mod = FMLJavaModLoadingContext.get().getModEventBus();
 		mod.addListener(CCGKey::register);
-		mod.addListener(OverlayRenderer::register);
+		mod.addListener(OverlayRenderer::registerLayer);
 		var game = MinecraftForge.EVENT_BUS;
 		game.addListener(KeyInput::tick);
 		game.addListener(MouseScroll::onMouseScroll);
 		game.addListener(KineticParticle::tick);
 		game.addListener(KineticDebugger::tick);
 		game.addListener(DelayRender::tick);
+		game.addListener(OverlayRenderer::tickColor);
 	}
 }

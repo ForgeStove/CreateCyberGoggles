@@ -4,6 +4,7 @@ import com.simibubi.create.content.kinetics.fan.*;
 import com.simibubi.create.content.kinetics.mechanicalArm.*;
 import com.simibubi.create.content.logistics.depot.EjectorBlockEntity;
 import com.simibubi.create.content.logistics.packagePort.PackagePortBlockEntity;
+import com.simibubi.create.content.schematics.cannon.SchematicannonBlockEntity;
 import io.github.forgestove.create_cyber_goggles.*;
 import io.github.forgestove.create_cyber_goggles.mixin.accessor.*;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -15,6 +16,7 @@ import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.stream.Stream;
 public class DelayRender {
 	public static Object2IntOpenHashMap<BlockEntity> cachedBE = new Object2IntOpenHashMap<>();
 	public static void tick(ClientTickEvent ignoredEvent) {
@@ -25,12 +27,15 @@ public class DelayRender {
 			return;
 		}
 		if (mc.isPaused() || mc.screen != null) return;
-		var be = Common.getBE();
-		if (be instanceof EncasedFanBlockEntity
-			|| be instanceof NozzleBlockEntity
-			|| be instanceof ArmBlockEntity
-			|| be instanceof EjectorBlockEntity
-			|| be instanceof PackagePortBlockEntity) cachedBE.put(be, CCG.CONFIG.delayRender.delayRenderDuration);
+		var be = CCGHelper.getBE();
+		if (Stream.of(
+			EncasedFanBlockEntity.class,
+			NozzleBlockEntity.class,
+			ArmBlockEntity.class,
+			EjectorBlockEntity.class,
+			PackagePortBlockEntity.class,
+			SchematicannonBlockEntity.class
+		).anyMatch(clazz -> clazz.isInstance(be))) cachedBE.put(be, CCG.CONFIG.delayRender.delayRenderDuration);
 		if (cachedBE.isEmpty()) return;
 		cachedBE.object2IntEntrySet().removeIf(entry -> {
 			var blockEntity = entry.getKey();
@@ -41,6 +46,7 @@ public class DelayRender {
 			else if (blockEntity instanceof ArmBlockEntity abe) render(abe);
 			else if (blockEntity instanceof EjectorBlockEntity ebe) render(ebe);
 			else if (blockEntity instanceof PackagePortBlockEntity ppbe) render(ppbe);
+			else if (blockEntity instanceof SchematicannonBlockEntity sbe) render(sbe);
 			return newValue <= 0;
 		});
 	}
@@ -146,10 +152,9 @@ public class DelayRender {
 		});
 	}
 	public static void render(@NotNull EjectorBlockEntity ebe) {
-		Outliner.getInstance()
-			.chaseAABB("EjectorTargetBox" + ebe, new AABB(ebe.getTargetPosition()))
-			.lineWidth(1 / 16f)
-			.colored(CCG.CONFIG.delayRender.windPushColor);
+		var bounds = CCGHelper.getBounds(ebe.getTargetPosition());
+		if (bounds == null) return;
+		Outliner.getInstance().chaseAABB("EjectorTargetBox" + ebe, bounds).lineWidth(1 / 16f).colored(CCG.CONFIG.delayRender.windPushColor);
 	}
 	public static void render(@NotNull PackagePortBlockEntity ppbe) {
 		var mc = Minecraft.getInstance();
@@ -165,5 +170,16 @@ public class DelayRender {
 			.colored(color)
 			.lineWidth(1 / 5f)
 			.disableLineNormals();
+	}
+	public static void render(@NotNull SchematicannonBlockEntity sbe) {
+		var currentTarget = sbe.printer.getCurrentTarget();
+		if (currentTarget == null) return;
+		var bounds = CCGHelper.getBounds(currentTarget);
+		if (bounds == null) return;
+		Outliner.getInstance()
+			.chaseAABB("SchematiCannonTargetBox" + sbe, bounds)
+			.withFaceTextures(AllSpecialTextures.HIGHLIGHT_CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
+			.lineWidth(1 / 16f)
+			.colored(CCG.CONFIG.delayRender.windPushColor);
 	}
 }

@@ -36,6 +36,6 @@ public abstract class ChainConveyorRidingHandlerMixin {
 		player.setDeltaMovement(player.getDeltaMovement().scale(0.75).add(diff.scale(0.25)));
 		if (AnimationTickHolder.getTicks() % 10 == 0) AllPackets.getChannel()
 			.sendToServer(new ServerboundChainConveyorRidingPacket(ChainConveyorRidingHandler.ridingChainConveyor, false));
-		if (Common.testForStealth(player)) player.connection.send(new ServerboundPlayerCommandPacket(player, Action.PRESS_SHIFT_KEY));
+		if (CCGHelper.testForStealth(player)) player.connection.send(new ServerboundPlayerCommandPacket(player, Action.PRESS_SHIFT_KEY));
 	}
 }

@@ -24,7 +24,7 @@ public abstract class BlazeBurnerBlockEntityMixin extends SmartBlockEntity imple
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return false;
-		return Common.addBurnerTooltip(tooltip, remainingBurnTime, isCreative, activeFuel);
+		return TooltipHelper.addBurnerTooltip(tooltip, remainingBurnTime, isCreative, activeFuel);
 	}
 	@Inject(method = "tick", at = @At("HEAD"))
 	public void tick(CallbackInfo callbackInfo) {

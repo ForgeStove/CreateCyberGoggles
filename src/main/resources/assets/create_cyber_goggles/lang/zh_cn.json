@@ -6,7 +6,7 @@
 	"create_cyber_goggles.key.toggleDiving": "切换潜水模式",
 	"create_cyber_goggles.key.toggleGoggle": "切换护目镜模式",
 	"create_cyber_goggles.message.disabled": "§c已禁用",
-	"create_cyber_goggles.message.divingFunction": "潜水靴功能",
+	"create_cyber_goggles.message.divingBoot": "潜水靴",
 	"create_cyber_goggles.message.enabled": "§a已启用",
 	"create_cyber_goggles.message.goggle": "护目镜",
 	"create_cyber_goggles.message.notFilter": "目标位置没有过滤器",

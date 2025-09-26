@@ -6,7 +6,7 @@
 	"create_cyber_goggles.key.toggleDiving": "Toggle Diving Mode",
 	"create_cyber_goggles.key.toggleGoggle": "Toggle Goggle Mode",
 	"create_cyber_goggles.message.disabled": "§cDisabled",
-	"create_cyber_goggles.message.divingFunction": "Diving Boots Function",
+	"create_cyber_goggles.message.divingBoot": "Diving Boot",
 	"create_cyber_goggles.message.enabled": "§aEnabled",
 	"create_cyber_goggles.message.goggle": "Goggle",
 	"create_cyber_goggles.message.notFilter": "There is no filter in target place",

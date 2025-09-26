@@ -9,6 +9,7 @@
 		"StockKeeperRequestScreenMixin",
 		"accessor.ArmBlockEntityAccessor",
 		"accessor.CreativeCrateBlockEntityAccessor",
+		"accessor.DeployerBlockEntityAccessor",
 		"accessor.NozzleBlockEntityAccessor",
 		"chainConveyor.CardboardArmorHandlerMixin",
 		"chainConveyor.ChainConveyorConnectionHandlerMixin",

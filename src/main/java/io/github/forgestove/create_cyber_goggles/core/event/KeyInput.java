@@ -28,24 +28,22 @@ public class KeyInput {
 		if (!CCGKey.toggleGoggle.isKeyDown()) return;
 		var mode = CCG.CONFIG.gameMode;
 		mode.enableGoggle = !mode.enableGoggle;
-		var builder = CCGLang.translate("message.goggle")
-			.space()
-			.translate(mode.enableGoggle ? "message.disabled" : "message.enabled");
+		var builder = CCGLang.translate("message.goggle").space().translate(mode.enableGoggle ? "message.enabled" : "message.disabled");
 		CCGUtil.displayMessage(builder);
-		CCGUtil.playSound(mode.enableGoggle ? AllSoundEvents.DENY : AllSoundEvents.CONFIRM_2);
+		CCGUtil.playSound(mode.enableGoggle ? AllSoundEvents.CONFIRM_2 : AllSoundEvents.DENY);
 	}
 	public static void toggleDiving() {
 		if (!CCGKey.toggleDiving.isKeyDown()) return;
 		var misc = CCG.CONFIG.misc;
-		misc.removeDivingFunction = !misc.removeDivingFunction;
+		misc.allowDivingBoot = !misc.allowDivingBoot;
 		var mc = Minecraft.getInstance();
 		var player = mc.player;
 		if (player == null || mc.screen != null) return;
 		var builder = CCGLang.translate("message.divingBoot")
 			.space()
-			.translate(misc.removeDivingFunction ? "message.disabled" : "message.enabled");
+			.translate(misc.allowDivingBoot ? "message.enabled" : "message.disabled");
 		CCGUtil.displayMessage(builder);
-		CCGUtil.playSound(misc.removeDivingFunction ? AllSoundEvents.DENY : AllSoundEvents.CONFIRM_2);
+		CCGUtil.playSound(misc.allowDivingBoot ? AllSoundEvents.CONFIRM_2 : AllSoundEvents.DENY);
 	}
 	public static void openConfigScreen() {
 		if (!CCGKey.openConfig.isKeyDown()) return;

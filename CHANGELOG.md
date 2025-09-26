@@ -1,11 +1,2 @@
-- Optimized item display
-- Added DepotBlockEntity item display
-- Added EjectorBlockEntity item display
-- Added PackagerBlockEntity item display
-- Added ChuteBlockEntity item display
-- Added MechanicalCrafterBlockEntity item display
-- Added CrushingWheelControllerBlockEntity item display
-- Added MillstoneBlockEntity item display
-- Added CreativeCrateBlockEntity item display
-- Added SchematicannonBlockEntity item display
-- Added SchematicannonBlockEntity goggle overlay
+- Optimized the rendering interaction and configuration items between goggles and simulation boxes
+- Refactor delay rendering and item display logic

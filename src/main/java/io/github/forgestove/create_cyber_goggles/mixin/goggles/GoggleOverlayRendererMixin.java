@@ -22,7 +22,7 @@ public abstract class GoggleOverlayRendererMixin {
 		method = "renderOverlay", at = @At(
 		value = "INVOKE",
 		target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;getPlayerMode()Lnet/minecraft/world/level/GameType;"
-	)
+	), remap = true
 	)
 	private static GameType wrapGameMode(MultiPlayerGameMode instance, Operation<GameType> original) {
 		return CCG.CONFIG.gameMode.enableInSpectator ? null : original.call(instance);

@@ -8,7 +8,9 @@ version = "${p("mcVersion")}-${p("modVersion")}+${p("loaderCap")}"
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 tasks.jar { from("LICENSE") }
 var generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
-	expand(properties.mapValues { it.value.toString() })
+	val values = properties.mapValues { it.value.toString() }
+	inputs.properties(values)
+	expand(values)
 	from("src/main/templates")
 	into("build/generated/sources/modMetadata")
 }

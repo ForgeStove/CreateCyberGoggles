@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
 import com.simibubi.create.content.kinetics.base.*;
-import io.github.forgestove.create_cyber_goggles.*;
+import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.CCGUtil;
 import net.createmod.catnip.math.VecHelper;
 import net.createmod.catnip.outliner.Outliner;
@@ -19,7 +19,7 @@ public class KineticDebugger {
 	public static BlockPos lastSource;
 	public static List<KineticBlockEntity> cachedKBEPath;
 	public static void tick(Post ignoredEvent) {
-		if (!CCG.CONFIG.misc.rainbowDebug) return;
+		if (!CCG.CONFIG.outlineRenderer.rainbowDebug) return;
 		var mc = Minecraft.getInstance();
 		if (mc.isPaused() || mc.screen != null) return;
 		var level = mc.level;

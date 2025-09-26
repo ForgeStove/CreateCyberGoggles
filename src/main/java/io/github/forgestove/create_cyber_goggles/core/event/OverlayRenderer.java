@@ -1,38 +1,30 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
 import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
-import com.simibubi.create.content.kinetics.belt.BeltBlockEntity;
-import com.simibubi.create.content.kinetics.crafter.MechanicalCrafterBlockEntity;
-import com.simibubi.create.content.kinetics.crusher.CrushingWheelControllerBlockEntity;
-import com.simibubi.create.content.kinetics.deployer.DeployerBlockEntity;
-import com.simibubi.create.content.kinetics.mechanicalArm.ArmBlockEntity;
-import com.simibubi.create.content.kinetics.millstone.MillstoneBlockEntity;
-import com.simibubi.create.content.logistics.box.PackageEntity;
-import com.simibubi.create.content.logistics.chute.ChuteBlockEntity;
-import com.simibubi.create.content.logistics.crate.CreativeCrateBlockEntity;
-import com.simibubi.create.content.logistics.depot.*;
-import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
-import com.simibubi.create.content.schematics.cannon.SchematicannonBlockEntity;
-import com.simibubi.create.content.schematics.cannon.SchematicannonBlockEntity.State;
+import com.simibubi.create.foundation.blockEntity.behaviour.ValueBox;
 import com.simibubi.create.infrastructure.config.AllConfigs;
-import io.github.forgestove.create_cyber_goggles.*;
-import io.github.forgestove.create_cyber_goggles.mixin.accessor.*;
-import io.github.forgestove.create_cyber_goggles.core.util.CCGUtil;
+import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.createmod.catnip.gui.element.BoxElement;
+import net.createmod.catnip.outliner.Outliner;
+import net.createmod.catnip.outliner.Outliner.OutlineEntry;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.client.*;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item.TooltipContext;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag.Default;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import org.jetbrains.annotations.*;
+
+import java.util.Map;
 public class OverlayRenderer {
+	public static final Map<Object, OutlineEntry> outlines = Outliner.getInstance().getOutlines();
 	public static int hoverTicks;
 	public static float fade;
 	public static ItemStack currentItemStack;
-	public static ItemStack cannonItemStack;
 	public static void registerLayer(@NotNull RegisterGuiLayersEvent event) {
 		event.registerAbove(
 			VanillaGuiLayers.HOTBAR,
@@ -57,6 +49,11 @@ public class OverlayRenderer {
 			hoverTicks = 0;
 			return;
 		}
+		if (!CCG.CONFIG.goggles.canRenderOnValueBox) for (var entry : outlines.values()) {
+			if (!entry.isAlive()) continue;
+			var outline = entry.getOutline();
+			if (outline instanceof ValueBox && !((ValueBox) outline).isPassive) return;
+		}
 		fade = Mth.clamp((hoverTicks++ + deltaTracker.getGameTimeDeltaPartialTick(false)) / 24f, 0, 1);
 		var itemStack = toRenderItemStack();
 		currentItemStack = itemStack;
@@ -72,27 +69,9 @@ public class OverlayRenderer {
 	 * @return 需要渲染的 {@link ItemStack}，若无则为 {@code null}
 	 */
 	public static @Nullable ItemStack toRenderItemStack() {
-		var be = CCGUtil.getBE();
-		if (be instanceof DepotBlockEntity dbe) return dbe.getHeldItem();
-		else if (be instanceof EjectorBlockEntity ebe) return ebe.getBehaviour(DepotBehaviour.TYPE).getHeldItemStack();
-		else if (be instanceof PackagerBlockEntity pbe) return pbe.heldBox;
-		else if (be instanceof ChuteBlockEntity cbe) return cbe.getItem();
-		else if (be instanceof MechanicalCrafterBlockEntity mcbe) return mcbe.getInventory().getItem(0);
-		else if (be instanceof CrushingWheelControllerBlockEntity cwcb) return cwcb.inventory.getStackInSlot(0);
-		else if (be instanceof MillstoneBlockEntity mbe) return mbe.inputInv.getStackInSlot(0);
-		else if (be instanceof CreativeCrateBlockEntity ccbe) return ((CreativeCrateBlockEntityAccessor) ccbe).getFiltering().getFilter();
-		else if (be instanceof ArmBlockEntity abe) return ((ArmBlockEntityAccessor) abe).getHeldItem();
-		else if (be instanceof DeployerBlockEntity dbe) return ((DeployerBlockEntityAccessor) dbe).getHeldItem();
-		else if (be instanceof SchematicannonBlockEntity sbe) return sbe.state.equals(State.STOPPED) ? null : cannonItemStack;
-		else if (be instanceof BeltBlockEntity bbe) {
-			var inventory = bbe.getInventory();
-			if (inventory == null) return null;
-			var stackAtOffset = inventory.getStackAtOffset(bbe.index);
-			return stackAtOffset == null ? null : stackAtOffset.stack;
-		}
-		var e = CCGUtil.getE();
-		if (e instanceof PackageEntity pe) return pe.getBox();
-		return null;
+		if (CCGUtil.getBE() instanceof IItemRenderable iri) return iri.ccg$getItemStack();
+		else if (CCGUtil.getE() instanceof IItemRenderable iri) return iri.ccg$getItemStack();
+		else return null;
 	}
 	/**
 	 * 在屏幕中央区域渲染指定物品堆的图标及关联的悬浮提示信息。
@@ -104,7 +83,7 @@ public class OverlayRenderer {
 		if (itemStack == null || itemStack.isEmpty()) return;
 		var mc = Minecraft.getInstance();
 		var font = mc.font;
-		var tooltipFlag = mc.options.advancedItemTooltips ? TooltipFlag.ADVANCED : TooltipFlag.NORMAL;
+		var tooltipFlag = new Default(mc.options.advancedItemTooltips, true);
 		var tooltipLines = itemStack.getTooltipLines(TooltipContext.of(mc.level), mc.player, tooltipFlag);
 		var height = tooltipLines.size() * font.lineHeight;
 		var cfg = AllConfigs.client();

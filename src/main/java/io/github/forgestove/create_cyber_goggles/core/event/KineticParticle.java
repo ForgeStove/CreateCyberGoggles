@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
 import com.simibubi.create.content.kinetics.base.IRotate.SpeedLevel;
 import com.simibubi.create.content.kinetics.base.*;
-import io.github.forgestove.create_cyber_goggles.*;
+import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.CCGUtil;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.client.Minecraft;

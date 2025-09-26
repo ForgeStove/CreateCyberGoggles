@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer;
 import com.simibubi.create.content.logistics.tableCloth.BlueprintOverlayShopContext;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
-import io.github.forgestove.create_cyber_goggles.*;
+import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.event.*;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.minecraft.client.*;
@@ -18,8 +18,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.List;
 @Mixin(BlueprintOverlayRenderer.class)
 public abstract class BlueprintOverlayRendererMixin {
-	@Unique private static final ResourceLocation HOTBAR_SELECTION = ResourceLocation.withDefaultNamespace("hud/hotbar_selection");
-	@Unique private static final ResourceLocation HOTBAR_OFF_HAND_LEFT = ResourceLocation.withDefaultNamespace("hud/hotbar_offhand_left");
 	@Shadow static List<ItemStack> results;
 	@Shadow static boolean resultCraftable;
 	@Shadow static BlueprintOverlayShopContext shopContext;
@@ -35,7 +33,7 @@ public abstract class BlueprintOverlayRendererMixin {
 		if (!CCG.CONFIG.goggles.betterStoreInfo) return;
 		callbackInfo.cancel();
 		if (results.isEmpty()) {
-			guiGraphics.blitSprite(HOTBAR_OFF_HAND_LEFT, x, y, 24, 23);
+			guiGraphics.blitSprite(ResourceLocation.withDefaultNamespace("hud/hotbar_offhand_left"), x, y, 24, 23);
 			GuiGameElement.of(Items.BARRIER).at(x + 3, y + 3).render(guiGraphics);
 		} else {
 			MouseScroll.index += MouseScroll.scrollDeltaY;
@@ -53,7 +51,8 @@ public abstract class BlueprintOverlayRendererMixin {
 				if (i == MouseScroll.index - 1) selectedX = x;
 				x += 21;
 			}
-			if (selectedX != 0) guiGraphics.blitSprite(HOTBAR_SELECTION, selectedX - 1, y - 1, 24, 23);
+			if (selectedX != 0)
+				guiGraphics.blitSprite(ResourceLocation.withDefaultNamespace("hud/hotbar_selection"), selectedX - 1, y - 1, 24, 23);
 			OverlayRenderer.renderItemStack(guiGraphics, results.get(MouseScroll.index - 1));
 		}
 		RenderSystem.disableBlend();

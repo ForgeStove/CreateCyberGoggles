@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
 import com.simibubi.create.content.logistics.tableCloth.TableClothBlockEntity;
-import io.github.forgestove.create_cyber_goggles.*;
+import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.CCGUtil;
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent;
 public class MouseScroll {

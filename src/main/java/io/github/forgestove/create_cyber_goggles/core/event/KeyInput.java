@@ -18,10 +18,16 @@ import java.util.Map;
 public class KeyInput {
 	public static StockTickerBlockEntity lastSTBE;
 	public static void tick(Key ignoredEvent) {
+		toggleGoggle();
 		toggleDiving();
 		openConfigScreen();
 		openStockScreen();
 		previewFilterScreen();
+	}
+	public static void toggleGoggle() {
+		if (!CCGKey.toggleGoggle.isKeyDown()) return;
+		var mode = CCG.CONFIG.gameMode;
+		mode.enableGoggle = !mode.enableGoggle;
 	}
 	public static void toggleDiving() {
 		if (!CCGKey.toggleDiving.isKeyDown()) return;

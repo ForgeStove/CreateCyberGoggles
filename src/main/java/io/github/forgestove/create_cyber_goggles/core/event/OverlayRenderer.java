@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.event;
+package io.github.forgestove.create_cyber_goggles.core.event;
 import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import com.simibubi.create.content.kinetics.belt.BeltBlockEntity;
 import com.simibubi.create.content.kinetics.crafter.MechanicalCrafterBlockEntity;
@@ -16,6 +16,7 @@ import com.simibubi.create.content.schematics.cannon.SchematicannonBlockEntity.S
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import io.github.forgestove.create_cyber_goggles.*;
 import io.github.forgestove.create_cyber_goggles.mixin.accessor.*;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGUtil;
 import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.client.*;

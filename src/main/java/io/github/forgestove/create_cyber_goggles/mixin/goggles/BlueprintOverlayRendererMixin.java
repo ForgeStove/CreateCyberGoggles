@@ -5,7 +5,7 @@ import com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer;
 import com.simibubi.create.content.logistics.tableCloth.BlueprintOverlayShopContext;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import io.github.forgestove.create_cyber_goggles.*;
-import io.github.forgestove.create_cyber_goggles.event.*;
+import io.github.forgestove.create_cyber_goggles.core.event.*;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.minecraft.client.*;
 import net.minecraft.client.gui.GuiGraphics;

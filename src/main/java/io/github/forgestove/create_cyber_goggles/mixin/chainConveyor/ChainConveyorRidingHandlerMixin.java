@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.kinetics.chainConveyor.*;
 import io.github.forgestove.create_cyber_goggles.*;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGUtil;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.client.Minecraft;

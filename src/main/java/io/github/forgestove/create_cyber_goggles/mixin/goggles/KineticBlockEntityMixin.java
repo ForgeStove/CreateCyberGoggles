@@ -4,7 +4,7 @@ import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.item.TooltipHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.event.CCGKey;
+import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;

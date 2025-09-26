@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.event;
+package io.github.forgestove.create_cyber_goggles.core.event;
 import com.mojang.blaze3d.platform.InputConstants;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.client.*;

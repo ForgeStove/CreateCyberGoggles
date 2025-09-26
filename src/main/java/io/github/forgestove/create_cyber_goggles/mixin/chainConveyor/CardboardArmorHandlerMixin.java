@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.mixin.chainConveyor;
 import com.simibubi.create.content.equipment.armor.CardboardArmorHandler;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorRidingHandler;
-import io.github.forgestove.create_cyber_goggles.CCGUtil;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGUtil;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;

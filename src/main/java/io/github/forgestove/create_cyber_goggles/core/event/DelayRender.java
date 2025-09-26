@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.event;
+package io.github.forgestove.create_cyber_goggles.core.event;
 import com.simibubi.create.AllSpecialTextures;
 import com.simibubi.create.content.kinetics.fan.*;
 import com.simibubi.create.content.kinetics.mechanicalArm.*;
@@ -7,6 +7,7 @@ import com.simibubi.create.content.logistics.packagePort.PackagePortBlockEntity;
 import com.simibubi.create.content.schematics.cannon.SchematicannonBlockEntity;
 import io.github.forgestove.create_cyber_goggles.*;
 import io.github.forgestove.create_cyber_goggles.mixin.accessor.*;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGUtil;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.Minecraft;

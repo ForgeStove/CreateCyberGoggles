@@ -3,6 +3,7 @@ import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.fan.*;
 import io.github.forgestove.create_cyber_goggles.*;
+import io.github.forgestove.create_cyber_goggles.core.util.TooltipUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntityType;

@@ -22,7 +22,7 @@ public class CCG {
 		game.addListener(MouseScroll::onMouseScroll);
 		game.addListener(KineticParticle::tick);
 		game.addListener(KineticDebugger::tick);
-		game.addListener(DelayRender::tick);
+		game.addListener(OutlineRenderer::tick);
 		game.addListener(OverlayRenderer::tickColor);
 	}
 }

@@ -30,7 +30,7 @@ public class TooltipUtil {
 		CCGLang.number(range / divide)
 			.space()
 			.translate(pushing ? "tooltip.pushRange" : "tooltip.pullRange")
-			.color(pushing ? CCG.CONFIG.delayRender.windPushColor : CCG.CONFIG.delayRender.windPullColor)
+			.color(pushing ? CCG.CONFIG.outlineRenderer.windPushColor : CCG.CONFIG.outlineRenderer.windPullColor)
 			.forGoggles(tooltip);
 		return true;
 	}

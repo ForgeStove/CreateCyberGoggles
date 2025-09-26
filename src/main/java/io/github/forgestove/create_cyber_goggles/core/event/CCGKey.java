@@ -8,6 +8,7 @@ public enum CCGKey {
 	openConfig(GLFW.GLFW_KEY_UNKNOWN),
 	openStock(GLFW.GLFW_KEY_UNKNOWN),
 	previewFilter(GLFW.GLFW_KEY_UNKNOWN),
+	toggleGoggle(GLFW.GLFW_KEY_UNKNOWN),
 	toggleDiving(GLFW.GLFW_KEY_UNKNOWN),
 	showStress(GLFW.GLFW_KEY_TAB);
 	public final KeyMapping keyMapping;

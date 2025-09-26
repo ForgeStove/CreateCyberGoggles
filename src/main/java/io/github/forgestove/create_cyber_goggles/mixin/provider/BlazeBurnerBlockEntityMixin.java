@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.mixin.goggles;
+package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity.FuelType;

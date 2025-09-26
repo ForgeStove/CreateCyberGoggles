@@ -1,9 +1,10 @@
-package io.github.forgestove.create_cyber_goggles.event;
+package io.github.forgestove.create_cyber_goggles.core.event;
 import com.mojang.datafixers.util.Function3;
 import com.simibubi.create.*;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.stockTicker.*;
 import io.github.forgestove.create_cyber_goggles.*;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGUtil;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;

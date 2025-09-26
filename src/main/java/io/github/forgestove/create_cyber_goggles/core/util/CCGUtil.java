@@ -1,10 +1,11 @@
-package io.github.forgestove.create_cyber_goggles;
+package io.github.forgestove.create_cyber_goggles.core.util;
 import com.simibubi.create.AllSoundEvents.SoundEntry;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.equipment.armor.CardboardArmorItem;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
+import io.github.forgestove.create_cyber_goggles.CCG;
 import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;

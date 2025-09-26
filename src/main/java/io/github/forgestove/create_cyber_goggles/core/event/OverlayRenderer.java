@@ -36,7 +36,7 @@ public class OverlayRenderer {
 		event.setBackground(colorBackground.getRGB());
 	}
 	public static void renderOverlay(ForgeGui gui, GuiGraphics guiGraphics, float partialTicks, int width, int height) {
-		if (!CCG.CONFIG.goggles.renderExtraItems) return;
+		if (!CCG.CONFIG.goggles.renderExtraItems || !CCG.CONFIG.gameMode.enableGoggle) return;
 		var mc = Minecraft.getInstance();
 		if (mc.isPaused() || mc.screen != null || mc.options.hideGui) {
 			currentItemStack = null;

@@ -28,6 +28,11 @@ public class KeyInput {
 		if (!CCGKey.toggleGoggle.isKeyDown()) return;
 		var mode = CCG.CONFIG.gameMode;
 		mode.enableGoggle = !mode.enableGoggle;
+		var builder = CCGLang.translate("message.goggle")
+			.space()
+			.translate(mode.enableGoggle ? "message.disabled" : "message.enabled");
+		CCGUtil.displayMessage(builder);
+		CCGUtil.playSound(AllSoundEvents.CONFIRM);
 	}
 	public static void toggleDiving() {
 		if (!CCGKey.toggleDiving.isKeyDown()) return;

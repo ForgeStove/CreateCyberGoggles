@@ -11,7 +11,9 @@ tasks.jar {
 	manifest.attributes("MixinConfigs" to "${p("modId")}.mixins.json")
 }
 var generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
-	expand(properties.mapValues { it.value.toString() })
+	val values = properties.mapValues { it.value.toString() }
+	inputs.properties(values)
+	expand(values)
 	from("src/main/templates")
 	into("build/generated/sources/modMetadata")
 }

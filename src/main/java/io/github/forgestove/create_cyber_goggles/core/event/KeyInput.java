@@ -32,7 +32,7 @@ public class KeyInput {
 			.space()
 			.translate(mode.enableGoggle ? "message.disabled" : "message.enabled");
 		CCGUtil.displayMessage(builder);
-		CCGUtil.playSound(AllSoundEvents.CONFIRM);
+		CCGUtil.playSound(mode.enableGoggle ? AllSoundEvents.DENY : AllSoundEvents.CONFIRM_2);
 	}
 	public static void toggleDiving() {
 		if (!CCGKey.toggleDiving.isKeyDown()) return;
@@ -41,10 +41,11 @@ public class KeyInput {
 		var mc = Minecraft.getInstance();
 		var player = mc.player;
 		if (player == null || mc.screen != null) return;
-		var builder = CCGLang.translate("message.divingFunction")
+		var builder = CCGLang.translate("message.divingBoot")
 			.space()
 			.translate(misc.removeDivingFunction ? "message.disabled" : "message.enabled");
 		CCGUtil.displayMessage(builder);
+		CCGUtil.playSound(misc.removeDivingFunction ? AllSoundEvents.DENY : AllSoundEvents.CONFIRM_2);
 	}
 	public static void openConfigScreen() {
 		if (!CCGKey.openConfig.isKeyDown()) return;

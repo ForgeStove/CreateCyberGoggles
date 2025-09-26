@@ -5,11 +5,11 @@ import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity.Fuel
 import com.simibubi.create.content.schematics.cannon.SchematicannonBlockEntity;
 import com.simibubi.create.content.schematics.cannon.SchematicannonBlockEntity.State;
 import com.simibubi.create.foundation.utility.CreateLang;
-import net.createmod.catnip.theme.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.Color;
 import java.util.List;
 public class TooltipUtil {
 	/**
@@ -82,22 +82,26 @@ public class TooltipUtil {
 		} else {
 			var fillPercent = (int) (shotsLeft / (float) sbe.getShotsPerGunpowder() * 100);
 			CreateLang.translate("gui.schematicannon.gunpowderLevel", fillPercent).forGoggles(tooltip);
-			CreateLang.translate(
-					"gui.schematicannon.shotsRemaining",
-					Component.literal(Integer.toString(shotsLeft)).withStyle(ChatFormatting.BLUE)
-				)
+			CreateLang.translate("gui.schematicannon.shotsRemaining", CCGLang.text(Integer.toString(shotsLeft)).style(ChatFormatting.BLUE))
 				.style(ChatFormatting.GRAY)
 				.forGoggles(tooltip);
 			if (shotsLeftWithItems != shotsLeft) CreateLang.translate(
 				"gui.schematicannon.shotsRemainingWithBackup",
-				Component.literal(Integer.toString(shotsLeftWithItems)).withStyle(ChatFormatting.BLUE)
+				CCGLang.text(Integer.toString(shotsLeftWithItems)).style(ChatFormatting.BLUE)
 			).style(ChatFormatting.GRAY).forGoggles(tooltip);
 		}
 		if (sbe.state.equals(State.RUNNING)) {
-			CCGLang.translate("tooltip.printProgress").forGoggles(tooltip);
 			var progress = sbe.schematicProgress * 100;
-			CCGLang.text(String.format("%.2f%%", progress))
-				.color(new Color((int) (255 - progress * 2.55), (int) (progress * 2.55), 128))
+			CCGLang.translate("tooltip.printProgress").forGoggles(tooltip);
+			CCGLang.text(String.format("%d/%d", sbe.blocksPlaced, sbe.blocksToPlace))
+				.text(String.format(" (%.2f%%)", progress))
+				.color(Color.HSBtoRGB(sbe.schematicProgress * 0.33f, 1.0f, 1.0f))
+				.forGoggles(tooltip);
+			var totalBars = 32;
+			var filledBars = (int) (sbe.schematicProgress * totalBars);
+			CCGLang.text("|".repeat(filledBars))
+				.style(ChatFormatting.GREEN)
+				.add(CCGLang.text("|".repeat(totalBars - filledBars)).style(ChatFormatting.GRAY))
 				.forGoggles(tooltip);
 		}
 		return true;

@@ -3,6 +3,8 @@ import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import com.simibubi.create.content.kinetics.belt.BeltBlockEntity;
 import com.simibubi.create.content.kinetics.crafter.MechanicalCrafterBlockEntity;
 import com.simibubi.create.content.kinetics.crusher.CrushingWheelControllerBlockEntity;
+import com.simibubi.create.content.kinetics.deployer.DeployerBlockEntity;
+import com.simibubi.create.content.kinetics.mechanicalArm.ArmBlockEntity;
 import com.simibubi.create.content.kinetics.millstone.MillstoneBlockEntity;
 import com.simibubi.create.content.logistics.box.PackageEntity;
 import com.simibubi.create.content.logistics.chute.ChuteBlockEntity;
@@ -13,7 +15,7 @@ import com.simibubi.create.content.schematics.cannon.SchematicannonBlockEntity;
 import com.simibubi.create.content.schematics.cannon.SchematicannonBlockEntity.State;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import io.github.forgestove.create_cyber_goggles.*;
-import io.github.forgestove.create_cyber_goggles.mixin.accessor.CreativeCrateBlockEntityAccessor;
+import io.github.forgestove.create_cyber_goggles.mixin.accessor.*;
 import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.client.*;
@@ -78,6 +80,8 @@ public class OverlayRenderer {
 		else if (be instanceof CrushingWheelControllerBlockEntity cwcb) return cwcb.inventory.getStackInSlot(0);
 		else if (be instanceof MillstoneBlockEntity mbe) return mbe.inputInv.getStackInSlot(0);
 		else if (be instanceof CreativeCrateBlockEntity ccbe) return ((CreativeCrateBlockEntityAccessor) ccbe).getFiltering().getFilter();
+		else if (be instanceof ArmBlockEntity abe) return ((ArmBlockEntityAccessor) abe).getHeldItem();
+		else if (be instanceof DeployerBlockEntity dbe) return ((DeployerBlockEntityAccessor) dbe).getHeldItem();
 		else if (be instanceof SchematicannonBlockEntity sbe) return sbe.state.equals(State.STOPPED) ? null : cannonItemStack;
 		else if (be instanceof BeltBlockEntity bbe) {
 			var inventory = bbe.getInventory();

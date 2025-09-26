@@ -56,7 +56,7 @@ public class CCGConfig implements ConfigData {
 		@Tooltip public boolean infEditBoxLength = false;
 		@Tooltip public boolean removeCardboardOverlay = true;
 		@Tooltip public boolean removeNetheriteFirstPerson = false;
-		@Tooltip public boolean removeDivingFunction = false;
+		@Tooltip public boolean allowDivingBoot = true;
 		@Tooltip public boolean fixSchematicName = true;
 		@Tooltip public boolean rightClickPenetrate = false;
 		@Tooltip public boolean forcedBackend = false;

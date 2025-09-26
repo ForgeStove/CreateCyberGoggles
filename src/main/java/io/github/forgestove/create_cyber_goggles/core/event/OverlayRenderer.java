@@ -42,7 +42,7 @@ public class OverlayRenderer {
 		event.setBackground(colorBackground.getRGB());
 	}
 	public static void renderOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
-		if (!CCG.CONFIG.goggles.renderExtraItems) return;
+		if (!CCG.CONFIG.goggles.renderExtraItems || !CCG.CONFIG.gameMode.enableGoggle) return;
 		var mc = Minecraft.getInstance();
 		if (mc.isPaused() || mc.screen != null || mc.options.hideGui) {
 			currentItemStack = null;

@@ -87,7 +87,7 @@ public class OverlayRenderer {
 		var cfg = AllConfigs.client();
 		var x = guiGraphics.guiWidth() / 2 + cfg.overlayOffsetX.get();
 		var y = guiGraphics.guiHeight() / 2 + cfg.overlayOffsetY.get();
-		x += fade < 1 ? (int) (Math.pow(1 - fade, 3) * Math.signum(cfg.overlayOffsetX.get() + .5f) * 8) : 0;
+		if (fade < 1) x += (int) (Math.pow(1 - fade, 3) * Math.signum(cfg.overlayOffsetX.get() + .5f) * 8);
 		if (hoverTicks != 0) y -= (tooltip.size() + 1) * 10;
 		guiGraphics.renderItem(itemStack, x - 10, y - 10);
 		guiGraphics.renderItemDecorations(font, itemStack, x - 10, y - 10);

@@ -1,3 +1,2 @@
 - Fix schematicannon item render
-- Add CEI support of displaying enchanting item
 - Added back tank information display

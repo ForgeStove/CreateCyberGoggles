@@ -2,25 +2,25 @@ package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.simibubi.create.content.equipment.armor.*;
 import io.github.forgestove.create_cyber_goggles.CCGLang;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.*;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.*;
 import org.spongepowered.asm.mixin.Mixin;
 
 import java.awt.Color;
 import java.util.List;
-@Mixin(BacktankItem.class)
+@Mixin(value = BacktankItem.class, remap = false)
 public abstract class BacktankItemMixin extends ArmorItem {
-	public BacktankItemMixin(Holder<ArmorMaterial> material, Type type, Properties properties) {
+	public BacktankItemMixin(ArmorMaterial material, Type type, Properties properties) {
 		super(material, type, properties);
 	}
 	@Override
 	public void appendHoverText(
 		@NotNull ItemStack stack,
-		@NotNull TooltipContext context,
+		@Nullable Level level,
 		@NotNull List<Component> tooltip,
-		@NotNull TooltipFlag tooltipFlag
+		@NotNull TooltipFlag isAdvanced
 	) {
 		var airLevel = BacktankItem.getRemainingAir(stack);
 		var totalBars = 20;

@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.awt.Color;
 import java.util.List;
-@Mixin(BacktankBlockEntity.class)
+@Mixin(value = BacktankBlockEntity.class, remap = false)
 public abstract class BacktankBlockEntityMixin extends KineticBlockEntity implements IHaveGoggleInformation {
 	@Unique public int ccg$leftTick;
 	@Unique public int ccg$prevAirLevel;

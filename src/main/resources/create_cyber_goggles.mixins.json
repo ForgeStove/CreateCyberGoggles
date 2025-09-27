@@ -37,7 +37,6 @@
 		"provider.BacktankItemMixin",
 		"provider.BeltBlockEntityMixin",
 		"provider.BlazeBurnerBlockEntityMixin",
-		"provider.BlazeEnchanterBlockEntityMixin",
 		"provider.ChuteBlockEntityMixin",
 		"provider.CreativeCrateBlockEntityMixin",
 		"provider.CrushingWheelControllerBlockEntityMixin",

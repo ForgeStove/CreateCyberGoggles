@@ -54,7 +54,6 @@ dependencies {
 	modImplementation("me.shedaniel.cloth:cloth-config-${p("loader")}:${p("clothConfigVersion")}")
 	modImplementation("mezz.jei:jei-${p("mcVersion")}-${p("loader")}:${p("jeiVersion")}")
 	modImplementation("maven.modrinth:jade:${p("jadeVersion")}")
-	implementation("maven.modrinth:create-enchantment-industry:${p("ceiVersion")}")
 	annotationProcessor("org.spongepowered:mixin:${p("mixinVersion")}:processor")
 	annotationProcessor("io.github.llamalad7:mixinextras-common:${p("mixinExtrasVersion")}")
 	compileOnly("io.github.llamalad7:mixinextras-common:${p("mixinExtrasVersion")}")

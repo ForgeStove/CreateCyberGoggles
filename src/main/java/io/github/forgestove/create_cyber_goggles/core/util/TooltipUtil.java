@@ -45,8 +45,8 @@ public class TooltipUtil {
 	 */
 	public static boolean addBurnerTooltip(List<Component> tooltip, int remainingBurnTime, boolean isCreative, FuelType activeFuel) {
 		CCGLang.translate("tooltip.burnerState").forGoggles(tooltip);
-		CCGLang.text(isCreative ? "∞" : String.format("%.2f", remainingBurnTime / 20f))
-			.text(String.format(" / %d ", BlazeBurnerBlockEntity.MAX_HEAT_CAPACITY / 20))
+		CCGLang.text(isCreative ? "∞" : "%.2f".formatted(remainingBurnTime / 20f))
+			.text(" / %d ".formatted(BlazeBurnerBlockEntity.MAX_HEAT_CAPACITY / 20))
 			.translate("tooltip.seconds")
 			.style(switch (activeFuel) {
 				case SPECIAL -> ChatFormatting.AQUA;
@@ -83,13 +83,15 @@ public class TooltipUtil {
 		} else {
 			var fillPercent = (int) (shotsLeft / (float) sbe.getShotsPerGunpowder() * 100);
 			CreateLang.translate("gui.schematicannon.gunpowderLevel", fillPercent).forGoggles(tooltip);
-			CreateLang.translate("gui.schematicannon.shotsRemaining", CCGLang.text(Integer.toString(shotsLeft)).style(ChatFormatting.BLUE))
+			CreateLang.translate("gui.schematicannon.shotsRemaining", CCGLang.text(ChatFormatting.BLUE, String.valueOf(shotsLeft)))
 				.style(ChatFormatting.GRAY)
 				.forGoggles(tooltip);
 			if (shotsLeftWithItems != shotsLeft) CreateLang.translate(
-				"gui.schematicannon.shotsRemainingWithBackup",
-				CCGLang.text(Integer.toString(shotsLeftWithItems)).style(ChatFormatting.BLUE)
-			).style(ChatFormatting.GRAY).forGoggles(tooltip);
+					"gui.schematicannon.shotsRemainingWithBackup",
+					CCGLang.text(ChatFormatting.BLUE, String.valueOf(shotsLeftWithItems))
+				)
+				.style(ChatFormatting.GRAY)
+				.forGoggles(tooltip);
 		}
 		if (sbe.state.equals(State.RUNNING)) {
 			var progress = sbe.schematicProgress * 100;
@@ -98,11 +100,10 @@ public class TooltipUtil {
 				.text(String.format(" (%.2f%%)", progress))
 				.color(Color.HSBtoRGB(sbe.schematicProgress * 0.33f, 1.0f, 1.0f))
 				.forGoggles(tooltip);
-			var totalBars = 32;
+			var totalBars = 30;
 			var filledBars = (int) (sbe.schematicProgress * totalBars);
-			CCGLang.text("|".repeat(filledBars))
-				.style(ChatFormatting.GREEN)
-				.add(CCGLang.text("|".repeat(totalBars - filledBars)).style(ChatFormatting.GRAY))
+			CCGLang.text(ChatFormatting.GREEN, "|".repeat(filledBars))
+				.add(CCGLang.text(ChatFormatting.GRAY, "|".repeat(totalBars - filledBars)))
 				.forGoggles(tooltip);
 		}
 		return true;

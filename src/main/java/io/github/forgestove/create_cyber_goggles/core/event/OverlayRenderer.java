@@ -86,10 +86,14 @@ public class OverlayRenderer {
 		var flag = new Default(mc.options.advancedItemTooltips, true);
 		var tooltip = itemStack.getTooltipLines(TooltipContext.of(mc.level), mc.player, flag);
 		var cfg = AllConfigs.client();
+		var tooltipTextWidth = tooltip.stream().mapToInt(mc.font::width).max().orElse(0) + 24;
 		var x = guiGraphics.guiWidth() / 2 + cfg.overlayOffsetX.get();
 		var y = guiGraphics.guiHeight() / 2 + cfg.overlayOffsetY.get();
+		if (x + tooltipTextWidth > guiGraphics.guiWidth()) x = guiGraphics.guiWidth() - tooltipTextWidth;
 		if (fade < 1) x += (int) (Math.pow(1 - fade, 3) * Math.signum(cfg.overlayOffsetX.get() + .5f) * 8);
 		if (GoggleOverlayRenderer.hoverTicks != 0) y -= (tooltip.size() + 1) * 10;
+		x = Math.max(10, x);
+		y = Math.max(10, y);
 		guiGraphics.renderItem(itemStack, x - 10, y - 10);
 		guiGraphics.renderItemDecorations(font, itemStack, x - 10, y - 10);
 		guiGraphics.renderTooltip(font, itemStack, x, y);

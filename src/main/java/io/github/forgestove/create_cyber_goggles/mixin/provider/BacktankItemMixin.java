@@ -23,7 +23,7 @@ public abstract class BacktankItemMixin extends ArmorItem {
 		@NotNull TooltipFlag tooltipFlag
 	) {
 		var airLevel = BacktankItem.getRemainingAir(stack);
-		var totalBars = 30;
+		var totalBars = 20;
 		var max = BacktankUtil.maxAir(stack);
 		var percent = (float) airLevel / max;
 		var filledBars = (int) (percent * totalBars);

@@ -29,7 +29,7 @@ public abstract class BacktankBlockEntityMixin extends KineticBlockEntity implem
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return super.addToGoggleTooltip(tooltip, isPlayerSneaking);
-		var totalBars = 30;
+		var totalBars = 20;
 		var max = BacktankUtil.maxAir(capacityEnchantLevel);
 		var percent = (float) airLevel / max;
 		var filledBars = (int) (percent * totalBars);

@@ -1,4 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
+import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBox;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import io.github.forgestove.create_cyber_goggles.CCG;
@@ -88,7 +89,7 @@ public class OverlayRenderer {
 		var x = guiGraphics.guiWidth() / 2 + cfg.overlayOffsetX.get();
 		var y = guiGraphics.guiHeight() / 2 + cfg.overlayOffsetY.get();
 		if (fade < 1) x += (int) (Math.pow(1 - fade, 3) * Math.signum(cfg.overlayOffsetX.get() + .5f) * 8);
-		if (hoverTicks != 0) y -= (tooltip.size() + 1) * 10;
+		if (GoggleOverlayRenderer.hoverTicks != 0) y -= (tooltip.size() + 1) * 10;
 		guiGraphics.renderItem(itemStack, x - 10, y - 10);
 		guiGraphics.renderItemDecorations(font, itemStack, x - 10, y - 10);
 		guiGraphics.renderTooltip(font, itemStack, x, y);

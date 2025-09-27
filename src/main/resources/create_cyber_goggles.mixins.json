@@ -33,6 +33,8 @@
 		"misc.SequencedAssemblyCategoryMixin",
 		"misc.SimpleBackendMixin",
 		"provider.ArmBlockEntityMixin",
+		"provider.BacktankBlockEntityMixin",
+		"provider.BacktankItemMixin",
 		"provider.BeltBlockEntityMixin",
 		"provider.BlazeBurnerBlockEntityMixin",
 		"provider.BlazeEnchanterBlockEntityMixin",

@@ -1,2 +1,3 @@
-- Optimized the rendering interaction and configuration items between goggles and simulation boxes
-- Refactor delay rendering and item display logic
+- Fix schematicannon item render
+- Add CEI support of displaying enchanting item
+- Added back tank information display

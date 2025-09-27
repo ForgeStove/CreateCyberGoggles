@@ -1,9 +1,8 @@
 package io.github.forgestove.create_cyber_goggles.mixin.provider;
-import com.llamalad7.mixinextras.sugar.Local;
 import com.simibubi.create.AllSpecialTextures;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.schematics.SchematicPrinter;
-import com.simibubi.create.content.schematics.cannon.SchematicannonBlockEntity;
+import com.simibubi.create.content.schematics.cannon.*;
 import com.simibubi.create.content.schematics.cannon.SchematicannonBlockEntity.State;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
@@ -11,26 +10,14 @@ import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.*;
-import org.spongepowered.asm.mixin.injection.*;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 @Mixin(value = SchematicannonBlockEntity.class, remap = false)
 public abstract class SchematicannonBlockEntityMixin implements IHaveGoggleInformation, IItemRenderable, IOutlineRenderable {
-	@Shadow public ItemStack missingItem;
 	@Shadow public State state;
 	@Shadow public SchematicPrinter printer;
-	@Unique public ItemStack ccg$cannonItemStack;
-	@Inject(method = "tickPrinter", at = @At("TAIL"))
-	private void tickPrinter(CallbackInfo callbackInfo, @Local(name = "icon") ItemStack itemStack) {
-		if (!CCG.CONFIG.goggles.renderExtraItems) return;
-		ccg$cannonItemStack = itemStack;
-	}
-	@Inject(method = "tickPrinter", at = @At(value = "RETURN", ordinal = 10))
-	private void tickPrinter(CallbackInfo callbackInfo) {
-		if (!CCG.CONFIG.goggles.renderExtraItems) return;
-		ccg$cannonItemStack = missingItem;
-	}
+	@Shadow public List<LaunchedItem> flyingBlocks;
+	@Shadow public ItemStack missingItem;
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return false;
@@ -38,7 +25,8 @@ public abstract class SchematicannonBlockEntityMixin implements IHaveGoggleInfor
 	}
 	@Override
 	public ItemStack ccg$getItemStack() {
-		return state.equals(State.STOPPED) ? null : ccg$cannonItemStack;
+		if (state == State.STOPPED) return null;
+		return missingItem == null ? flyingBlocks.isEmpty() ? null : flyingBlocks.getLast().stack : missingItem;
 	}
 	@Override
 	public void ccg$render() {

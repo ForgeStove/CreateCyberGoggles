@@ -47,6 +47,8 @@ dependencies {
 	implementation("me.shedaniel.cloth:cloth-config-${p("loader")}:${p("clothConfigVersion")}")
 	implementation("mezz.jei:jei-${p("mcVersion")}-${p("loader")}:${p("jeiVersion")}")
 	implementation("maven.modrinth:jade:${p("jadeVersion")}")
+	implementation("maven.modrinth:create-enchantment-industry:${p("ceiVersion")}")
+	implementation("maven.modrinth:create-dragons-plus:${p("dragonPlusVersion")}")
 }
 publishMods {
 	file.set(tasks.jar.get().archiveFile)

@@ -1,5 +1,4 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
-import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBox;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import io.github.forgestove.create_cyber_goggles.CCG;
@@ -83,16 +82,13 @@ public class OverlayRenderer {
 		if (itemStack == null || itemStack.isEmpty()) return;
 		var mc = Minecraft.getInstance();
 		var font = mc.font;
-		var tooltipFlag = new Default(mc.options.advancedItemTooltips, true);
-		var tooltipLines = itemStack.getTooltipLines(TooltipContext.of(mc.level), mc.player, tooltipFlag);
-		var height = tooltipLines.size() * font.lineHeight;
+		var flag = new Default(mc.options.advancedItemTooltips, true);
+		var tooltip = itemStack.getTooltipLines(TooltipContext.of(mc.level), mc.player, flag);
 		var cfg = AllConfigs.client();
-		var offsetX = fade < 1 ? (int) (
-			Math.pow(1 - fade, 3) * Math.signum(cfg.overlayOffsetX.get() + .5f) * 8
-		) : 0;
-		var x = guiGraphics.guiWidth() / 2 + cfg.overlayOffsetX.get() + offsetX;
+		var x = guiGraphics.guiWidth() / 2 + cfg.overlayOffsetX.get();
 		var y = guiGraphics.guiHeight() / 2 + cfg.overlayOffsetY.get();
-		if (GoggleOverlayRenderer.hoverTicks != 0) y -= height + 20;
+		x += fade < 1 ? (int) (Math.pow(1 - fade, 3) * Math.signum(cfg.overlayOffsetX.get() + .5f) * 8) : 0;
+		if (hoverTicks != 0) y -= (tooltip.size() + 1) * 10;
 		guiGraphics.renderItem(itemStack, x - 10, y - 10);
 		guiGraphics.renderItemDecorations(font, itemStack, x - 10, y - 10);
 		guiGraphics.renderTooltip(font, itemStack, x, y);

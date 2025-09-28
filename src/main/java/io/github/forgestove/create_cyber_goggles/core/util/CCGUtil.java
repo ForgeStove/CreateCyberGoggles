@@ -41,8 +41,7 @@ public class CCGUtil {
 	 * @return 当前选中的{@link KineticBlockEntity}实例，如果没有选中或类型不匹配则返回{@code null}
 	 */
 	public static @Nullable KineticBlockEntity getKBE() {
-		if (!(getBE() instanceof KineticBlockEntity kbe)) return null;
-		return kbe;
+		return getBE() instanceof KineticBlockEntity kbe ? kbe : null;
 	}
 	/**
 	 * 获取当前玩家选中的方块实体。

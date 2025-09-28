@@ -22,4 +22,7 @@ public class CCGLang extends Lang {
 	public static LangBuilder number(double n) {
 		return builder().text(LangNumberFormat.format(n));
 	}
+	public static LangBuilder number(int n) {
+		return builder().text(String.valueOf(n));
+	}
 }

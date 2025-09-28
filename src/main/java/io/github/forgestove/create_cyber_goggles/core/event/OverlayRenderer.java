@@ -33,7 +33,7 @@ public class OverlayRenderer {
 		);
 	}
 	public static void tickColor(@NotNull RenderTooltipEvent.Color event) {
-		if (!event.getItemStack().equals(currentItemStack)) return;
+		if (!event.getItemStack().equals(currentItemStack) || currentItemStack.isEmpty()) return;
 		var cfg = AllConfigs.client();
 		var colorBackground = cfg.overlayCustomColor.get()
 			? new Color(cfg.overlayBackgroundColor.get())
@@ -57,7 +57,7 @@ public class OverlayRenderer {
 		fade = Mth.clamp((hoverTicks++ + deltaTracker.getGameTimeDeltaPartialTick(false)) / 24f, 0, 1);
 		var itemStack = toRenderItemStack();
 		currentItemStack = itemStack;
-		if (itemStack == null) {
+		if (itemStack == null || itemStack.isEmpty()) {
 			hoverTicks = 0;
 			return;
 		}

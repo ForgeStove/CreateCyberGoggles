@@ -69,8 +69,8 @@ public class OverlayRenderer {
 	 * @return 需要渲染的 {@link ItemStack}，若无则为 {@code null}
 	 */
 	public static @Nullable ItemStack toRenderItemStack() {
-		if (CCGUtil.getBE() instanceof IItemRenderable iri) return iri.ccg$getItemStack();
-		else if (CCGUtil.getE() instanceof IItemRenderable iri) return iri.ccg$getItemStack();
+		if (CCGUtil.getBE() instanceof IItemRenderable renderable) return renderable.ccg$getItemStack();
+		else if (CCGUtil.getE() instanceof IItemRenderable renderable) return renderable.ccg$getItemStack();
 		else return null;
 	}
 	/**

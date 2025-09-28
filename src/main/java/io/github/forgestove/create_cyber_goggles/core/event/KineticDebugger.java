@@ -21,14 +21,12 @@ public class KineticDebugger {
 	public static void tick(Post ignoredEvent) {
 		if (!CCG.CONFIG.outlineRenderer.rainbowDebug) return;
 		var mc = Minecraft.getInstance();
-		if (mc.isPaused() || mc.screen != null) return;
-		var level = mc.level;
-		if (level == null) return;
+		if (mc.isPaused() || mc.screen != null || mc.level == null) return;
 		var kbe = CCGUtil.getKBE();
 		if (kbe == null) return;
 		renderAxisLine(kbe);
-		updateKBEPath(level, kbe);
-		renderKineticPath(level, cachedKBEPath, level.getGameTime());
+		updateKBEPath(mc.level, kbe);
+		renderKineticPath(mc.level, cachedKBEPath, mc.level.getGameTime());
 	}
 	/**
 	 * 更新并缓存当前选中动力方块实体的动力来源链路。
@@ -41,15 +39,14 @@ public class KineticDebugger {
 	 */
 	public static void updateKBEPath(ClientLevel level, @NotNull KineticBlockEntity kbe) {
 		if (kbe.source == lastSource && cachedKBEPath != null) return;
-		// 构建源KBE链表
 		var kbePath = new ArrayDeque<KineticBlockEntity>();
 		var currentBE = kbe;
 		while (currentBE != null) {
-			kbePath.addFirst(currentBE); // 逆序插入，真源在前
+			kbePath.addFirst(currentBE);
 			if (currentBE.source == null) break;
 			currentBE = level.getBlockEntity(currentBE.source) instanceof KineticBlockEntity kbeSource ? kbeSource : null;
 		}
-		cachedKBEPath = new ArrayList<>(kbePath);
+		cachedKBEPath = List.copyOf(kbePath);
 		lastSource = kbe.source;
 	}
 	/**
@@ -62,11 +59,11 @@ public class KineticDebugger {
 	 * @param time    当前时间戳
 	 */
 	public static void renderKineticPath(ClientLevel level, @NotNull List<KineticBlockEntity> kbePath, long time) {
+		var frustum = Minecraft.getInstance().levelRenderer.getFrustum();
 		for (var depth = 0; depth < kbePath.size(); depth++) {
 			var nodeBE = kbePath.get(depth);
 			// 渲染前判断包围盒是否在视锥体内
 			var rgb = getRainbowColor(depth, time);
-			var frustum = Minecraft.getInstance().levelRenderer.getFrustum();
 			if (isAABBInFrustum(nodeBE, level, frustum)) renderOutline(nodeBE, depth, rgb);
 			// 连线渲染时也判断两端是否有一端在视锥体内，否则跳过
 			if (nodeBE.source == null) continue;
@@ -120,7 +117,7 @@ public class KineticDebugger {
 	 * @return RGB 颜色值
 	 */
 	public static int getRainbowColor(int depth, long time) {
-		return Color.HSBtoRGB(1.0f - (depth * 0.05f - (time % 200L) / 100f) % 1.0f, 0.8f, 1.0f);
+		return Color.HSBtoRGB(1.0f - (depth * 0.05f - (time % 50L) / 50f) % 1.0f, 0.8f, 1.0f);
 	}
 	/**
 	 * 渲染动力链路的连线（非直接相邻）。

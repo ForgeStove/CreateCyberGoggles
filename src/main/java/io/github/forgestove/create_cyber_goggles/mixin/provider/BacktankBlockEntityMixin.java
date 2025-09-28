@@ -4,7 +4,7 @@ import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.equipment.armor.*;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import io.github.forgestove.create_cyber_goggles.*;
-import net.minecraft.ChatFormatting;
+import io.github.forgestove.create_cyber_goggles.core.util.TooltipUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -14,7 +14,6 @@ import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.awt.Color;
 import java.util.List;
 @Mixin(BacktankBlockEntity.class)
 public abstract class BacktankBlockEntityMixin extends KineticBlockEntity implements IHaveGoggleInformation {
@@ -28,21 +27,7 @@ public abstract class BacktankBlockEntityMixin extends KineticBlockEntity implem
 	}
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		if (!CCG.CONFIG.goggles.enhancedInfo) return super.addToGoggleTooltip(tooltip, isPlayerSneaking);
-		var totalBars = 20;
-		var max = BacktankUtil.maxAir(capacityEnchantLevel);
-		var percent = (float) airLevel / max;
-		var filledBars = (int) (percent * totalBars);
-		CCGLang.translate("tooltip.airLevel").forGoggles(tooltip);
-		CCGLang.text(Color.HSBtoRGB(percent * 0.33f, 1.0f, 1.0f), "%d/%d".formatted(max, airLevel)).forGoggles(tooltip);
-		CCGLang.text(ChatFormatting.GREEN, "|".repeat(filledBars))
-			.add(CCGLang.text("|".repeat(totalBars - filledBars)).style(ChatFormatting.GRAY))
-			.forGoggles(tooltip);
-		if (getSpeed() == 0 || ccg$leftTick == 0) return super.addToGoggleTooltip(tooltip, isPlayerSneaking);
-		CCGLang.translate("tooltip.leftTime")
-			.add(CCGLang.text(ChatFormatting.AQUA, " %.2f ".formatted(ccg$leftTick / 20f)))
-			.translate("tooltip.seconds")
-			.forGoggles(tooltip);
+		TooltipUtil.addBacktankTooltip(tooltip, capacityEnchantLevel, airLevel, getSpeed(), ccg$leftTick);
 		return super.addToGoggleTooltip(tooltip, isPlayerSneaking);
 	}
 	@Inject(method = "tick", at = @At(value = "RETURN", ordinal = 3))

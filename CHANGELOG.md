@@ -1,3 +1,3 @@
-- Fix schematicannon item render
-- Add CEI support of displaying enchanting item
-- Added back tank information display
+- Optimize kinetic debugger
+- Refactor item tooltip for backtank
+- Optimize tooltips

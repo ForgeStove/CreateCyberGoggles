@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.util;
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.content.equipment.armor.BacktankUtil;
+import com.simibubi.create.content.equipment.armor.*;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity.FuelType;
 import com.simibubi.create.content.schematics.cannon.SchematicannonBlockEntity;
@@ -63,14 +63,14 @@ public class TooltipUtil {
 		CCGLang.fraction(sbe.blocksPlaced, sbe.blocksToPlace).forGoggles(tooltip);
 		CCGLang.progress(sbe.schematicProgress, 20).forGoggles(tooltip);
 	}
-	public static void addBacktankTooltip(List<Component> tooltip, int capacityEnchantLevel, int airLevel, float speed, int leftTick) {
+	public static void addBacktankTooltip(List<Component> tooltip, BacktankBlockEntity bbe, int capacityEnchantLevel, int leftTick) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return;
 		CreateLang.translate("gui.goggles.fluid_container").forGoggles(tooltip);
 		CreateLang.translate("gui.goggles.fluid_container.capacity")
 			.style(ChatFormatting.GRAY)
-			.add(CCGLang.fraction(airLevel, BacktankUtil.maxAir(capacityEnchantLevel)))
+			.add(CCGLang.fraction(bbe.airLevel, BacktankUtil.maxAir(capacityEnchantLevel)))
 			.forGoggles(tooltip);
-		if (speed == 0 || leftTick == 0) return;
+		if (bbe.getSpeed() == 0 || leftTick == 0) return;
 		CCGLang.translate("tooltip.leftTime")
 			.style(ChatFormatting.GRAY)
 			.add(CCGLang.number(ChatFormatting.GOLD, leftTick / 20))

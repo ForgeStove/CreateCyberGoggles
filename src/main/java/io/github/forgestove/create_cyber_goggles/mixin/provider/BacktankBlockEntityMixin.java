@@ -1,9 +1,9 @@
 package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
-import com.simibubi.create.content.equipment.armor.*;
+import com.simibubi.create.content.equipment.armor.BacktankBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
-import io.github.forgestove.create_cyber_goggles.*;
+import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.TooltipUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -27,7 +27,7 @@ public abstract class BacktankBlockEntityMixin extends KineticBlockEntity implem
 	}
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		TooltipUtil.addBacktankTooltip(tooltip, capacityEnchantLevel, airLevel, getSpeed(), ccg$leftTick);
+		TooltipUtil.addBacktankTooltip(tooltip, (BacktankBlockEntity) (Object) this, capacityEnchantLevel, ccg$leftTick);
 		return super.addToGoggleTooltip(tooltip, isPlayerSneaking);
 	}
 	@Inject(method = "tick", at = @At(value = "RETURN", ordinal = 3))

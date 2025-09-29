@@ -27,14 +27,14 @@ public class OverlayRenderer {
 	public static int hoverTicks;
 	public static float fade;
 	public static ItemStack currentItemStack;
-	public static void registerLayer(@NotNull RegisterGuiLayersEvent event) {
+	public static void register(@NotNull RegisterGuiLayersEvent event) {
 		event.registerAbove(
 			VanillaGuiLayers.HOTBAR,
 			ResourceLocation.fromNamespaceAndPath(CCG.ID, "goggle_overlay"),
 			OverlayRenderer::renderOverlay
 		);
 	}
-	public static void tickColor(@NotNull RenderTooltipEvent.Color event) {
+	public static void tick(@NotNull RenderTooltipEvent.Color event) {
 		if (!event.getItemStack().equals(currentItemStack) || currentItemStack.isEmpty()) return;
 		var cfg = AllConfigs.client();
 		var colorBackground = cfg.overlayCustomColor.get()

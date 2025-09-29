@@ -6,6 +6,7 @@ import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.createmod.catnip.lang.LangBuilder;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.LocalPlayer;
@@ -222,7 +223,10 @@ public class CCGUtil {
 		if (!keyDown) return;
 		if (isInGUI()) return;
 		setter.accept(!enabled);
-		displayMessage(CCGLang.translate(messageKey).space().translate(!enabled ? "message.enabled" : "message.disabled"));
+		displayMessage(CCGLang.translate(messageKey)
+			.space()
+			.translate(enabled ? "message.disabled" : "message.enabled")
+			.style(enabled ? ChatFormatting.RED : ChatFormatting.GREEN));
 		playSound(!enabled ? AllSoundEvents.CONFIRM_2 : AllSoundEvents.DENY);
 	}
 }

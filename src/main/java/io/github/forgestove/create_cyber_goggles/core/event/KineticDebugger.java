@@ -3,7 +3,6 @@ import com.simibubi.create.content.kinetics.base.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.createmod.catnip.math.VecHelper;
 import net.createmod.catnip.outliner.Outliner;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.core.*;
@@ -21,9 +20,8 @@ public class KineticDebugger {
 	public static List<KineticBlockEntity> cachedKBEPath;
 	public static void tick(ClientTickEvent ignoredEvent) {
 		if (!CCG.CONFIG.outlineRenderer.rainbowDebug) return;
-		var mc = Minecraft.getInstance();
 		if (mc.isPaused() || isInGUI() || mc.level == null) return;
-		var kbe = getBE(KineticBlockEntity.class);
+		var kbe = getBlockEntity(KineticBlockEntity.class);
 		if (kbe == null) return;
 		renderAxisLine(kbe);
 		updateKBEPath(mc.level, kbe);
@@ -60,7 +58,7 @@ public class KineticDebugger {
 	 * @param time    当前时间戳
 	 */
 	public static void renderKineticPath(ClientLevel level, @NotNull List<KineticBlockEntity> kbePath, long time) {
-		var frustum = Minecraft.getInstance().levelRenderer.getFrustum();
+		var frustum = mc.levelRenderer.getFrustum();
 		for (var depth = 0; depth < kbePath.size(); depth++) {
 			var nodeBE = kbePath.get(depth);
 			// 渲染前判断包围盒是否在视锥体内
@@ -106,9 +104,7 @@ public class KineticDebugger {
 	public static void renderOutline(@NotNull KineticBlockEntity kbe, int depth, int rgb) {
 		if (kbe.getTheoreticalSpeed() == 0) return;
 		var blockPos = kbe.getBlockPos();
-		var bounds = getBounds(blockPos);
-		if (bounds == null) return;
-		Outliner.getInstance().chaseAABB("KineticOutline" + depth, bounds).lineWidth(1 / 16f).colored(rgb);
+		Outliner.getInstance().chaseAABB("KineticOutline" + depth, getBounds(blockPos)).lineWidth(1 / 16f).colored(rgb);
 	}
 	/**
 	 * 根据链路深度和时间生成彩虹色。

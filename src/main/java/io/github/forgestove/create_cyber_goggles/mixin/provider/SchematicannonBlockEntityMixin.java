@@ -35,10 +35,8 @@ public abstract class SchematicannonBlockEntityMixin implements IHaveGoggleInfor
 	public void ccg$render() {
 		var currentTarget = printer.getCurrentTarget();
 		if (currentTarget == null) return;
-		var bounds = getBounds(currentTarget);
-		if (bounds == null) return;
 		Outliner.getInstance()
-			.chaseAABB("SchematiCannonTargetBox" + this, bounds)
+			.chaseAABB("SchematiCannonTargetBox" + this, getBounds(currentTarget))
 			.withFaceTextures(AllSpecialTextures.HIGHLIGHT_CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
 			.lineWidth(1 / 16f)
 			.colored(CCG.CONFIG.outlineRenderer.windPushColor);

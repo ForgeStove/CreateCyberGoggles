@@ -7,7 +7,6 @@ import io.github.forgestove.create_cyber_goggles.*;
 import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
@@ -27,36 +26,32 @@ public class KeyInput {
 		previewFilterScreen();
 	}
 	public static void toggleGoggle() {
-		if (!CCGKey.toggleGoggle.isKeyDown()) return;
-		if (isInGUI()) return;
-		var mode = CCG.CONFIG.gameMode;
-		mode.enableGoggle = !mode.enableGoggle;
-		var builder = CCGLang.translate("message.goggle").space().translate(mode.enableGoggle ? "message.enabled" : "message.disabled");
-		displayMessage(builder);
-		playSound(mode.enableGoggle ? AllSoundEvents.CONFIRM_2 : AllSoundEvents.DENY);
+		toggleConfig(
+			CCGKey.toggleGoggle.isKeyDown(),
+			CCG.CONFIG.gameMode.enableGoggle,
+			val -> CCG.CONFIG.gameMode.enableGoggle = val,
+			"message.goggle"
+		);
 	}
 	public static void toggleDiving() {
-		if (!CCGKey.toggleDiving.isKeyDown()) return;
-		if (isInGUI()) return;
-		var misc = CCG.CONFIG.misc;
-		misc.allowDivingBoot = !misc.allowDivingBoot;
-		var builder = CCGLang.translate("message.divingBoot")
-			.space()
-			.translate(misc.allowDivingBoot ? "message.enabled" : "message.disabled");
-		displayMessage(builder);
-		playSound(misc.allowDivingBoot ? AllSoundEvents.CONFIRM_2 : AllSoundEvents.DENY);
+		toggleConfig(
+			CCGKey.toggleDiving.isKeyDown(),
+			CCG.CONFIG.misc.allowDivingBoot,
+			val -> CCG.CONFIG.misc.allowDivingBoot = val,
+			"message.divingBoot"
+		);
 	}
 	public static void openConfigScreen() {
 		if (!CCGKey.openConfig.isKeyDown()) return;
 		if (isInGUI()) return;
-		Minecraft.getInstance().setScreen(AutoConfig.getConfigScreen(CCGConfig.class, null).get());
+		mc.setScreen(AutoConfig.getConfigScreen(CCGConfig.class, null).get());
 	}
 	public static void openStockScreen() {
 		if (!CCGKey.openStock.isKeyDown()) return;
-		var mc = Minecraft.getInstance();
 		if (isInGUI()) return;
 		if (mc.player == null) return;
-		if (getBE() instanceof StockTickerBlockEntity stbe) lastSTBE = stbe;
+		var stbe = getBlockEntity(StockTickerBlockEntity.class);
+		if (stbe != null) lastSTBE = stbe;
 		if (lastSTBE == null || lastSTBE.isRemoved()) {
 			displayMessage(CCGLang.translate("message.notStock").text("  ").translate("key.openStock").style(ChatFormatting.RED));
 			playSound(AllSoundEvents.DENY);
@@ -68,7 +63,6 @@ public class KeyInput {
 	}
 	public static void previewFilterScreen() {
 		if (!CCGKey.previewFilter.isKeyDown()) return;
-		var mc = Minecraft.getInstance();
 		var player = mc.player;
 		if (player == null) return;
 		var itemStack = getRelevantFilterItem();

@@ -6,7 +6,6 @@ import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.kinetics.chainConveyor.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.createmod.catnip.animation.AnimationTickHolder;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket.Action;
 import net.minecraft.world.item.ItemStack;
@@ -15,7 +14,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.testForStealth;
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 @Mixin(ChainConveyorRidingHandler.class)
 public abstract class ChainConveyorRidingHandlerMixin {
 	@WrapOperation(
@@ -33,7 +32,7 @@ public abstract class ChainConveyorRidingHandlerMixin {
 	)
 	private static void injectCustomDiffCheck(CallbackInfo callbackInfo, @Local(name = "diff") Vec3 diff) {
 		if (CCG.CONFIG.chainConveyor.preventFalling) callbackInfo.cancel();
-		var player = Minecraft.getInstance().player;
+		var player = mc.player;
 		if (player == null) return;
 		player.setDeltaMovement(player.getDeltaMovement().scale(0.75).add(diff.scale(0.25)));
 		if (AnimationTickHolder.getTicks() % 10 == 0) AllPackets.getChannel()

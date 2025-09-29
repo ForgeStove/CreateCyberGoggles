@@ -19,10 +19,8 @@ public abstract class EjectorBlockEntityMixin implements IItemRenderable, IOutli
 	}
 	@Override
 	public void ccg$render() {
-		var bounds = getBounds(getTargetPosition());
-		if (bounds == null) return;
 		Outliner.getInstance()
-			.chaseAABB("EjectorTargetBox" + this, bounds)
+			.chaseAABB("EjectorTargetBox" + this, getBounds(getTargetPosition()))
 			.lineWidth(1 / 16f)
 			.colored(CCG.CONFIG.outlineRenderer.windPushColor);
 	}

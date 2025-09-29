@@ -1,9 +1,11 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
 import com.mojang.blaze3d.platform.InputConstants;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import net.minecraft.client.*;
+import net.minecraft.client.KeyMapping;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import org.lwjgl.glfw.GLFW;
+
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public enum CCGKey {
 	openConfig(GLFW.GLFW_KEY_UNKNOWN),
 	openStock(GLFW.GLFW_KEY_UNKNOWN),
@@ -20,6 +22,6 @@ public enum CCGKey {
 	}
 	public boolean isKeyDown() {
 		var value = keyMapping.getKey().getValue();
-		return value != GLFW.GLFW_KEY_UNKNOWN && InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), value);
+		return value != GLFW.GLFW_KEY_UNKNOWN && InputConstants.isKeyDown(mc.getWindow().getWindow(), value);
 	}
 }

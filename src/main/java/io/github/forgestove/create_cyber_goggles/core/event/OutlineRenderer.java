@@ -1,7 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.IOutlineRenderable;
-import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 
@@ -12,13 +11,12 @@ public class OutlineRenderer {
 	public static final Map<BlockEntity, Integer> cachedBE = new HashMap<>();
 	public static void tick(ClientTickEvent ignoredEvent) {
 		if (!CCG.CONFIG.outlineRenderer.renderAnalogBox) return;
-		var mc = Minecraft.getInstance();
 		if (mc.level == null) {
 			cachedBE.clear();
 			return;
 		}
 		if (mc.isPaused() || isInGUI()) return;
-		var be = getBE();
+		var be = getBlockEntity();
 		if (be instanceof IOutlineRenderable) cachedBE.put(be, CCG.CONFIG.outlineRenderer.delayRenderDuration);
 		if (cachedBE.isEmpty()) return;
 		cachedBE.entrySet().removeIf(entry -> {

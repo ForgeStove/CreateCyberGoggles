@@ -3,7 +3,6 @@ import com.simibubi.create.content.kinetics.base.IRotate.SpeedLevel;
 import com.simibubi.create.content.kinetics.base.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.createmod.catnip.math.VecHelper;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
@@ -12,9 +11,8 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class KineticParticle {
 	public static void tick(ClientTickEvent ignoredEvent) {
 		if (!CCG.CONFIG.goggles.enableKineticEffect) return;
-		var mc = Minecraft.getInstance();
 		if (mc.level == null || isInGUI()) return;
-		var kbe = getBE(KineticBlockEntity.class);
+		var kbe = getBlockEntity(KineticBlockEntity.class);
 		if (kbe == null) return;
 		var speed = kbe.getSpeed();
 		if (speed == 0) return;

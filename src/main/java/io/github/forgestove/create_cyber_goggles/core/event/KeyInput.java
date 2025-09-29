@@ -4,7 +4,7 @@ import com.simibubi.create.*;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.stockTicker.*;
 import io.github.forgestove.create_cyber_goggles.*;
-import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
+import io.github.forgestove.create_cyber_goggles.core.util.*;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -15,8 +15,6 @@ import net.minecraft.world.item.*;
 import net.minecraftforge.client.event.InputEvent.Key;
 
 import java.util.Map;
-
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class KeyInput {
 	public static StockTickerBlockEntity lastSTBE;
 	public static void tick(Key ignoredEvent) {
@@ -28,44 +26,41 @@ public class KeyInput {
 	}
 	public static void toggleGoggle() {
 		if (!CCGKey.toggleGoggle.isKeyDown()) return;
+		if (CCGUtil.isInGUI()) return;
 		var mode = CCG.CONFIG.gameMode;
 		mode.enableGoggle = !mode.enableGoggle;
 		var builder = CCGLang.translate("message.goggle").space().translate(mode.enableGoggle ? "message.enabled" : "message.disabled");
-		displayMessage(builder);
-		playSound(mode.enableGoggle ? AllSoundEvents.CONFIRM_2 : AllSoundEvents.DENY);
+		CCGUtil.displayMessage(builder);
+		CCGUtil.playSound(mode.enableGoggle ? AllSoundEvents.CONFIRM_2 : AllSoundEvents.DENY);
 	}
 	public static void toggleDiving() {
 		if (!CCGKey.toggleDiving.isKeyDown()) return;
+		if (CCGUtil.isInGUI()) return;
 		var misc = CCG.CONFIG.misc;
 		misc.allowDivingBoot = !misc.allowDivingBoot;
-		var mc = Minecraft.getInstance();
-		var player = mc.player;
-		if (player == null || mc.screen != null) return;
 		var builder = CCGLang.translate("message.divingBoot")
 			.space()
 			.translate(misc.allowDivingBoot ? "message.enabled" : "message.disabled");
-		displayMessage(builder);
-		playSound(misc.allowDivingBoot ? AllSoundEvents.CONFIRM_2 : AllSoundEvents.DENY);
+		CCGUtil.displayMessage(builder);
+		CCGUtil.playSound(misc.allowDivingBoot ? AllSoundEvents.CONFIRM_2 : AllSoundEvents.DENY);
 	}
 	public static void openConfigScreen() {
 		if (!CCGKey.openConfig.isKeyDown()) return;
-		var mc = Minecraft.getInstance();
-		if (mc.screen != null) return;
-		mc.setScreen(AutoConfig.getConfigScreen(CCGConfig.class, null).get());
+		if (CCGUtil.isInGUI()) return;
+		Minecraft.getInstance().setScreen(AutoConfig.getConfigScreen(CCGConfig.class, null).get());
 	}
 	public static void openStockScreen() {
 		if (!CCGKey.openStock.isKeyDown()) return;
 		var mc = Minecraft.getInstance();
-		if (mc.screen != null) return;
-		var player = mc.player;
-		if (player == null) return;
-		if (getBE() instanceof StockTickerBlockEntity stbe) lastSTBE = stbe;
+		if (CCGUtil.isInGUI()) return;
+		if (mc.player == null) return;
+		if (CCGUtil.getBE() instanceof StockTickerBlockEntity stbe) lastSTBE = stbe;
 		if (lastSTBE == null || lastSTBE.isRemoved()) {
-			displayMessage(CCGLang.translate("message.notStock").text("  ").translate("key.openStock").style(ChatFormatting.RED));
-			playSound(AllSoundEvents.DENY);
+			CCGUtil.displayMessage(CCGLang.translate("message.notStock").text("  ").translate("key.openStock").style(ChatFormatting.RED));
+			CCGUtil.playSound(AllSoundEvents.DENY);
 			return;
 		}
-		var inv = player.getInventory();
+		var inv = mc.player.getInventory();
 		var menu = new StockKeeperRequestMenu(AllMenuTypes.STOCK_KEEPER_REQUEST.get(), -1, inv, lastSTBE);
 		mc.setScreen(new StockKeeperRequestScreen(menu, inv, lastSTBE.getBlockState().getBlock().getName()));
 	}
@@ -74,11 +69,11 @@ public class KeyInput {
 		var mc = Minecraft.getInstance();
 		var player = mc.player;
 		if (player == null) return;
-		var itemStack = getRelevantFilterItem();
+		var itemStack = CCGUtil.getRelevantFilterItem();
 		if (itemStack == null) return;
 		if (!(itemStack.getItem() instanceof FilterItem)) {
-			displayMessage(CCGLang.translate("message.notFilter").style(ChatFormatting.RED));
-			playSound(AllSoundEvents.DENY);
+			CCGUtil.displayMessage(CCGLang.translate("message.notFilter").style(ChatFormatting.RED));
+			CCGUtil.playSound(AllSoundEvents.DENY);
 			return;
 		}
 		mc.setScreen(Map.<Item, Function3<Integer, Inventory, ItemStack, Screen>>of(
@@ -89,6 +84,6 @@ public class KeyInput {
 			AllItems.PACKAGE_FILTER.get(),
 			(id, inv, stack) -> new PackageFilterScreen(PackageFilterMenu.create(id, inv, stack), inv, stack.getHoverName())
 		).get(itemStack.getItem()).apply(-1, player.getInventory(), itemStack));
-		playSound(SoundEvents.BOOK_PAGE_TURN);
+		CCGUtil.playSound(SoundEvents.BOOK_PAGE_TURN);
 	}
 }

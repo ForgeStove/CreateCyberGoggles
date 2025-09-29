@@ -3,7 +3,7 @@ import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBox;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.IItemRenderable;
+import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.outliner.Outliner;
 import net.createmod.catnip.outliner.Outliner.OutlineEntry;
@@ -40,7 +40,7 @@ public class OverlayRenderer {
 	public static void renderOverlay(ForgeGui gui, GuiGraphics guiGraphics, float partialTicks, int width, int height) {
 		if (!CCG.CONFIG.goggles.renderExtraItems || !CCG.CONFIG.gameMode.enableGoggle) return;
 		var mc = Minecraft.getInstance();
-		if (mc.isPaused() || mc.screen != null || mc.options.hideGui) {
+		if (mc.isPaused() || CCGUtil.isInGUI() || mc.options.hideGui) {
 			currentItemStack = null;
 			hoverTicks = 0;
 			return;

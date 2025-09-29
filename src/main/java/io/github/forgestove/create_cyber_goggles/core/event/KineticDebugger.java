@@ -1,6 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
 import com.simibubi.create.content.kinetics.base.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGUtil;
 import net.createmod.catnip.math.VecHelper;
 import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.Minecraft;
@@ -14,16 +15,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
 import java.util.*;
-
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class KineticDebugger {
 	public static BlockPos lastSource;
 	public static List<KineticBlockEntity> cachedKBEPath;
 	public static void tick(ClientTickEvent ignoredEvent) {
 		if (!CCG.CONFIG.outlineRenderer.rainbowDebug) return;
 		var mc = Minecraft.getInstance();
-		if (mc.isPaused() || mc.screen != null || mc.level == null) return;
-		var kbe = getKBE();
+		if (mc.isPaused() || CCGUtil.isInGUI() || mc.level == null) return;
+		var kbe = CCGUtil.getBE(KineticBlockEntity.class);
 		if (kbe == null) return;
 		renderAxisLine(kbe);
 		updateKBEPath(mc.level, kbe);
@@ -106,7 +105,7 @@ public class KineticDebugger {
 	public static void renderOutline(@NotNull KineticBlockEntity kbe, int depth, int rgb) {
 		if (kbe.getTheoreticalSpeed() == 0) return;
 		var blockPos = kbe.getBlockPos();
-		var bounds = getBounds(blockPos);
+		var bounds = CCGUtil.getBounds(blockPos);
 		if (bounds == null) return;
 		Outliner.getInstance().chaseAABB("KineticOutline" + depth, bounds).lineWidth(1 / 16f).colored(rgb);
 	}

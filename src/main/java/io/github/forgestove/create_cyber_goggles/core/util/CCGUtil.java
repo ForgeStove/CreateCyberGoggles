@@ -2,7 +2,6 @@ package io.github.forgestove.create_cyber_goggles.core.util;
 import com.simibubi.create.AllSoundEvents.SoundEntry;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.equipment.armor.CardboardArmorItem;
-import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import io.github.forgestove.create_cyber_goggles.CCG;
@@ -25,6 +24,14 @@ import org.jetbrains.annotations.*;
 import java.awt.Color;
 import java.util.stream.Stream;
 public class CCGUtil {
+	@Contract(pure = true)
+	public static boolean isInGUI() {
+		return Minecraft.getInstance().screen != null;
+	}
+	@Contract(pure = true)
+	public static boolean isInGame() {
+		return !isInGUI();
+	}
 	/**
 	 * 测试玩家是否穿着全套纸板盔甲并且不在飞行状态。
 	 *
@@ -34,15 +41,6 @@ public class CCGUtil {
 		var allMatch = Stream.of(EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET)
 			.allMatch(slot -> player.getItemBySlot(slot).getItem() instanceof CardboardArmorItem);
 		return CCG.CONFIG.chainConveyor.cardBoardedYourself && !player.getAbilities().flying && allMatch;
-	}
-	/**
-	 * 获取当前玩家选中的方块实体，并将其转换为{@link KineticBlockEntity}类型。
-	 * 如果选中的方块实体不是{@link KineticBlockEntity}类型，则返回{@code null}。
-	 *
-	 * @return 当前选中的{@link KineticBlockEntity}实例，如果没有选中或类型不匹配则返回{@code null}
-	 */
-	public static @Nullable KineticBlockEntity getKBE() {
-		return getBE() instanceof KineticBlockEntity kbe ? kbe : null;
 	}
 	/**
 	 * 获取当前玩家选中的方块实体。
@@ -55,6 +53,12 @@ public class CCGUtil {
 		if (mc.level == null) return null;
 		if (!(mc.hitResult instanceof BlockHitResult bhr)) return null;
 		return bhr.getType() == Type.BLOCK ? mc.level.getBlockEntity(bhr.getBlockPos()) : null;
+	}
+	public static <T> @Nullable T getAs(@NotNull Class<T> clazz, Object object) {
+		return clazz.isInstance(object) ? clazz.cast(object) : null;
+	}
+	public static <T> T getBE(Class<T> clazz) {
+		return getAs(clazz, getBE());
 	}
 	/**
 	 * 获取当前玩家选中的实体。
@@ -92,7 +96,7 @@ public class CCGUtil {
 	 */
 	public static @Nullable ItemStack getRelevantFilterItem() {
 		var mc = Minecraft.getInstance();
-		if (mc.screen != null) {
+		if (isInGUI()) {
 			if (!(mc.screen instanceof AbstractContainerScreen<?> screen)) return null;
 			var slot = screen.getSlotUnderMouse();
 			return slot == null ? null : slot.getItem();

@@ -15,7 +15,7 @@ public class OutlineRenderer {
 			cachedBE.clear();
 			return;
 		}
-		if (mc.isPaused() || mc.screen != null) return;
+		if (mc.isPaused() || CCGUtil.isInGUI()) return;
 		var be = CCGUtil.getBE();
 		if (be instanceof IOutlineRenderable) cachedBE.put(be, CCG.CONFIG.outlineRenderer.delayRenderDuration);
 		if (cachedBE.isEmpty()) return;

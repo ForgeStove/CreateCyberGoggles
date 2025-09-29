@@ -44,7 +44,7 @@ public class OverlayRenderer {
 	public static void renderOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
 		if (!CCG.CONFIG.goggles.renderExtraItems || !CCG.CONFIG.gameMode.enableGoggle) return;
 		var mc = Minecraft.getInstance();
-		if (mc.isPaused() || mc.screen != null || mc.options.hideGui) {
+		if (mc.isPaused() || CCGUtil.isInGUI() || mc.options.hideGui) {
 			currentItemStack = null;
 			hoverTicks = 0;
 			return;

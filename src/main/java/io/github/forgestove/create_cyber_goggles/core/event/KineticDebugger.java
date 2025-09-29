@@ -21,8 +21,8 @@ public class KineticDebugger {
 	public static void tick(Post ignoredEvent) {
 		if (!CCG.CONFIG.outlineRenderer.rainbowDebug) return;
 		var mc = Minecraft.getInstance();
-		if (mc.isPaused() || mc.screen != null || mc.level == null) return;
-		var kbe = CCGUtil.getKBE();
+		if (mc.isPaused() || CCGUtil.isInGUI() || mc.level == null) return;
+		var kbe = CCGUtil.getBE(KineticBlockEntity.class);
 		if (kbe == null) return;
 		renderAxisLine(kbe);
 		updateKBEPath(mc.level, kbe);

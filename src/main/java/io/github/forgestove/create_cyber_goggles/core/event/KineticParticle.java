@@ -12,8 +12,8 @@ public class KineticParticle {
 	public static void tick(Post ignoredEvent) {
 		if (!CCG.CONFIG.goggles.enableKineticEffect) return;
 		var mc = Minecraft.getInstance();
-		if (mc.level == null || mc.screen != null) return;
-		var kbe = CCGUtil.getKBE();
+		if (mc.level == null || CCGUtil.isInGUI()) return;
+		var kbe = CCGUtil.getBE(KineticBlockEntity.class);
 		if (kbe == null) return;
 		var speed = kbe.getSpeed();
 		if (speed == 0) return;

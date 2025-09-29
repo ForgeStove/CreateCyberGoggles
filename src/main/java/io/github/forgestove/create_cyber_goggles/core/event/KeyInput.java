@@ -15,6 +15,7 @@ import net.minecraftforge.client.event.InputEvent.Key;
 
 import java.util.Map;
 
+import static io.github.forgestove.create_cyber_goggles.core.event.CCGKey.*;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class KeyInput {
 	public static StockTickerBlockEntity lastSTBE;
@@ -25,29 +26,29 @@ public class KeyInput {
 		openStockScreen();
 		previewFilterScreen();
 	}
-	public static void toggleGoggle() {
+	private static void toggleGoggle() {
 		toggleConfig(
-			CCGKey.toggleGoggle.isKeyDown(),
+			toggleGoggle.isKeyDown(),
 			CCG.CONFIG.gameMode.enableGoggle,
 			val -> CCG.CONFIG.gameMode.enableGoggle = val,
 			"message.goggle"
 		);
 	}
-	public static void toggleDiving() {
+	private static void toggleDiving() {
 		toggleConfig(
-			CCGKey.toggleDiving.isKeyDown(),
+			toggleDiving.isKeyDown(),
 			CCG.CONFIG.misc.allowDivingBoot,
 			val -> CCG.CONFIG.misc.allowDivingBoot = val,
 			"message.divingBoot"
 		);
 	}
-	public static void openConfigScreen() {
-		if (!CCGKey.openConfig.isKeyDown()) return;
+	private static void openConfigScreen() {
+		if (!openConfig.isKeyDown()) return;
 		if (isInGUI()) return;
 		mc.setScreen(AutoConfig.getConfigScreen(CCGConfig.class, null).get());
 	}
-	public static void openStockScreen() {
-		if (!CCGKey.openStock.isKeyDown()) return;
+	private static void openStockScreen() {
+		if (!openStock.isKeyDown()) return;
 		if (isInGUI()) return;
 		if (mc.player == null) return;
 		var stbe = getBlockEntity(StockTickerBlockEntity.class);
@@ -61,8 +62,8 @@ public class KeyInput {
 		var menu = new StockKeeperRequestMenu(AllMenuTypes.STOCK_KEEPER_REQUEST.get(), -1, inv, lastSTBE);
 		mc.setScreen(new StockKeeperRequestScreen(menu, inv, lastSTBE.getBlockState().getBlock().getName()));
 	}
-	public static void previewFilterScreen() {
-		if (!CCGKey.previewFilter.isKeyDown()) return;
+	private static void previewFilterScreen() {
+		if (!previewFilter.isKeyDown()) return;
 		var player = mc.player;
 		if (player == null) return;
 		var itemStack = getRelevantFilterItem();

@@ -6,7 +6,7 @@ import net.minecraftforge.client.event.InputEvent.MouseScrollingEvent;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.getBlockEntity;
 public class MouseScroll {
 	public static int index = 1, scrollDeltaY;
-	public static void onMouseScroll(MouseScrollingEvent event) {
+	public static void tick(MouseScrollingEvent event) {
 		if (!CCG.CONFIG.goggles.betterStoreInfo) return;
 		var tcbe = getBlockEntity(TableClothBlockEntity.class);
 		if (tcbe != null && tcbe.isShop()) {

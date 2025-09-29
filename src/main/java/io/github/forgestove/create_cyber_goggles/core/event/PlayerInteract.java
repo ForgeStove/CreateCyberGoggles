@@ -16,7 +16,7 @@ public class PlayerInteract {
 		var itemStack = event.getItemStack();
 		if (!(itemStack.getItem() instanceof WrenchItem)) return;
 		var player = mc.player;
-		if (player == null || mc.gameMode == null) return;
+		if (player == null || mc.gameMode == null || mc.player.isCreative()) return;
 		var result = getBlockHitResult();
 		if (result == null) return;
 		player.connection.send(new ServerboundPlayerCommandPacket(player, Action.PRESS_SHIFT_KEY));

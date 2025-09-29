@@ -46,7 +46,7 @@ public class CCGUtil {
 	 * @param <T>    目标类型
 	 * @return 转换后的对象或{@code null}
 	 */
-	public static <T> @Nullable T getAs(@NotNull Class<T> clazz, Object object) {
+	public static <T extends U, U> @Nullable T getAs(@NotNull Class<T> clazz, U object) {
 		return clazz.isInstance(object) ? clazz.cast(object) : null;
 	}
 	/**
@@ -85,7 +85,7 @@ public class CCGUtil {
 	 * @param clazz 目标方块实体的类型
 	 * @return 如果类型匹配则返回对应实例，否则返回{@code null}
 	 */
-	public static <T> T getBlockEntity(Class<T> clazz) {
+	public static <T extends BlockEntity> T getBlockEntity(Class<T> clazz) {
 		return getAs(clazz, getBlockEntity());
 	}
 	/**
@@ -99,6 +99,9 @@ public class CCGUtil {
 		if (result == null) return null;
 		if (result.getType() == Type.MISS) return null;
 		return mc.level.getBlockState(result.getBlockPos()).getBlock();
+	}
+	public static <T extends Block> T getBlock(Class<T> clazz) {
+		return getAs(clazz, getBlock());
 	}
 	/**
 	 * 获取当前玩家选中的实体。
@@ -176,8 +179,7 @@ public class CCGUtil {
 	 * @param builder 包含要显示消息内容的语言构建器
 	 */
 	public static void displayMessage(LangBuilder builder) {
-		var player = mc.player;
-		if (player != null) player.displayClientMessage(builder.component(), true);
+		if (mc.player != null) mc.player.displayClientMessage(builder.component(), true);
 	}
 	/**
 	 * 播放指定的音效，可自定义音调和音量。
@@ -222,11 +224,12 @@ public class CCGUtil {
 	public static void toggleConfig(boolean keyDown, boolean enabled, Consumer<Boolean> setter, String messageKey) {
 		if (!keyDown) return;
 		if (isInGUI()) return;
-		setter.accept(!enabled);
+		var newEnabled = !enabled;
+		setter.accept(newEnabled);
 		displayMessage(CCGLang.translate(messageKey)
 			.space()
-			.translate(enabled ? "message.disabled" : "message.enabled")
+			.add(CCGLang.enabled(newEnabled))
 			.style(enabled ? ChatFormatting.RED : ChatFormatting.GREEN));
-		playSound(!enabled ? AllSoundEvents.CONFIRM_2 : AllSoundEvents.DENY);
+		playSound(newEnabled ? AllSoundEvents.CONFIRM_2 : AllSoundEvents.DENY);
 	}
 }

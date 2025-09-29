@@ -18,13 +18,14 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 	@Inject(method = "isActive", at = @At("HEAD"), cancellable = true)
 	private static void isActive(CallbackInfoReturnable<Boolean> returnable) {
 		if (!CCG.CONFIG.chainConveyor.alwaysAllowRiding) return;
-		returnable.setReturnValue(false);
-		if (mc.player == null) return;
+		if (mc.player == null) {
+			returnable.setReturnValue(false);
+			return;
+		}
 		var mainHandItem = mc.player.getMainHandItem();
-		if (getBlock() instanceof ChainConveyorBlock && (
-			mc.player.isShiftKeyDown() || mainHandItem.getItem().equals(Items.CHAIN) || AllBlocks.CHAIN_CONVEYOR.isIn(mainHandItem)
-		)) return;
-		returnable.setReturnValue(true);
+		if (getBlock(ChainConveyorBlock.class) == null || !mc.player.isShiftKeyDown()
+			&& !mainHandItem.getItem().equals(Items.CHAIN)
+			&& !AllBlocks.CHAIN_CONVEYOR.isIn(mainHandItem)) returnable.setReturnValue(true);
 	}
 	@WrapOperation(
 		method = "onUse",

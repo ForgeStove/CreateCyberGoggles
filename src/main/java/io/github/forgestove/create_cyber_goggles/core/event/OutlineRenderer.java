@@ -3,6 +3,7 @@ import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.IOutlineRenderable;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
+import org.jetbrains.annotations.Contract;
 
 import java.util.*;
 
@@ -27,12 +28,14 @@ public class OutlineRenderer {
 			return newValue <= 0;
 		});
 	}
+	@Contract(pure = true)
 	public static int getColor(boolean pushing) {
 		return pushing ? CCG.CONFIG.outlineRenderer.windPushColor : CCG.CONFIG.outlineRenderer.windPullColor;
 	}
 	public static double getOffset(int i, int numberOfFlowBoxes) {
 		return (System.currentTimeMillis() + i * ((double) 3000 / numberOfFlowBoxes)) % 3000 / 3000.0;
 	}
+	@Contract(pure = true)
 	public static int getNumberOfFlowBoxes(float range) {
 		return (int) (Math.log(range) + 1);
 	}

@@ -64,8 +64,7 @@ public class KeyInput {
 	}
 	private static void previewFilterScreen() {
 		if (!previewFilter.isKeyDown()) return;
-		var player = mc.player;
-		if (player == null) return;
+		if (mc.player == null) return;
 		var itemStack = getRelevantFilterItem();
 		if (itemStack == null) return;
 		if (!(itemStack.getItem() instanceof FilterItem)) {
@@ -80,7 +79,7 @@ public class KeyInput {
 			(id, inv, stack) -> new AttributeFilterScreen(AttributeFilterMenu.create(id, inv, stack), inv, stack.getHoverName()),
 			AllItems.PACKAGE_FILTER.get(),
 			(id, inv, stack) -> new PackageFilterScreen(PackageFilterMenu.create(id, inv, stack), inv, stack.getHoverName())
-		).get(itemStack.getItem()).apply(-1, player.getInventory(), itemStack));
+		).get(itemStack.getItem()).apply(-1, mc.player.getInventory(), itemStack));
 		playSound(SoundEvents.BOOK_PAGE_TURN);
 	}
 }

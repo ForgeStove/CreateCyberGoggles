@@ -32,11 +32,10 @@ public abstract class ChainConveyorRidingHandlerMixin {
 	)
 	private static void injectCustomDiffCheck(CallbackInfo callbackInfo, @Local(name = "diff") Vec3 diff) {
 		if (CCG.CONFIG.chainConveyor.preventFalling) callbackInfo.cancel();
-		var player = mc.player;
-		if (player == null) return;
-		player.setDeltaMovement(player.getDeltaMovement().scale(0.75).add(diff.scale(0.25)));
+		if (mc.player == null) return;
+		mc.player.setDeltaMovement(mc.player.getDeltaMovement().scale(0.75).add(diff.scale(0.25)));
 		if (AnimationTickHolder.getTicks() % 10 == 0) AllPackets.getChannel()
 			.sendToServer(new ServerboundChainConveyorRidingPacket(ChainConveyorRidingHandler.ridingChainConveyor, false));
-		if (testForStealth(player)) player.connection.send(new ServerboundPlayerCommandPacket(player, Action.PRESS_SHIFT_KEY));
+		if (testForStealth(mc.player)) mc.player.connection.send(new ServerboundPlayerCommandPacket(mc.player, Action.PRESS_SHIFT_KEY));
 	}
 }

@@ -5,10 +5,15 @@ import net.minecraft.ChatFormatting;
 import org.jetbrains.annotations.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.getGradientColor;
+import static net.minecraft.ChatFormatting.*;
 public class CCGLang extends Lang {
 	@Contract(value = " -> new", pure = true)
 	public static @NotNull LangBuilder builder() {
 		return new LangBuilder(CCG.ID);
+	}
+	@Contract(value = " -> new", pure = true)
+	public static @NotNull LangBuilder configBuilder() {
+		return new LangBuilder("text.autoconfig." + CCG.ID);
 	}
 	public static @NotNull LangBuilder translate(String langKey, Object... args) {
 		return builder().translate(langKey, args);
@@ -33,11 +38,12 @@ public class CCGLang extends Lang {
 	}
 	public static @NotNull LangBuilder progress(float progress, int totalBars) {
 		var filledBars = (int) (progress * totalBars);
-		return text(ChatFormatting.GREEN, "|".repeat(filledBars)).text(ChatFormatting.GRAY, "|".repeat(totalBars - filledBars));
+		return text(GREEN, "|".repeat(filledBars)).text(GRAY, "|".repeat(totalBars - filledBars));
 	}
 	public static @NotNull LangBuilder fraction(int current, int total) {
-		return number(current).color(getGradientColor((float) current / total))
-			.text(ChatFormatting.GRAY, " / ")
-			.add(number(total).style(ChatFormatting.DARK_GRAY));
+		return number(current).color(getGradientColor((float) current / total)).text(GRAY, " / ").add(number(total).style(DARK_GRAY));
+	}
+	public static @NotNull LangBuilder enabled(boolean enabled) {
+		return enabled ? translate(GREEN, "message.enabled") : translate(RED, "message.disabled");
 	}
 }

@@ -3,7 +3,7 @@ import com.simibubi.create.content.fluids.drain.ItemDrainBlockEntity;
 import io.github.forgestove.create_cyber_goggles.core.util.IItemRenderable;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.*;
-@Mixin(ItemDrainBlockEntity.class)
+@Mixin(value = ItemDrainBlockEntity.class, remap = false)
 public abstract class ItemDrainBlockEntityMixin implements IItemRenderable {
 	@Shadow
 	public abstract ItemStack getHeldItemStack();

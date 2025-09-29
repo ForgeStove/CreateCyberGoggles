@@ -40,7 +40,7 @@ public class OverlayRenderer {
 	public static void renderOverlay(ForgeGui gui, GuiGraphics guiGraphics, float partialTicks, int width, int height) {
 		if (!CCG.CONFIG.goggles.renderExtraItems || !CCG.CONFIG.gameMode.enableGoggle) return;
 		var mc = Minecraft.getInstance();
-		if (mc.isPaused() || CCGUtil.isInGUI() || mc.options.hideGui) {
+		if (mc.isPaused() || isInGUI() || mc.options.hideGui) {
 			currentItemStack = null;
 			hoverTicks = 0;
 			return;

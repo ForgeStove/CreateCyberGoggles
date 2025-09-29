@@ -4,13 +4,14 @@ import com.simibubi.create.*;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.kinetics.chainConveyor.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.CCGUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.*;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.getB;
 @Mixin(value = ChainConveyorInteractionHandler.class, remap = false)
 public abstract class ChainConveyorInteractionHandlerMixin {
 	@Shadow public static BlockPos selectedConnection, selectedLift;
@@ -23,7 +24,7 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 		var player = mc.player;
 		if (player == null) return;
 		var mainHandItem = player.getMainHandItem();
-		if (CCGUtil.getB() instanceof ChainConveyorBlock && (
+		if (getB() instanceof ChainConveyorBlock && (
 			player.isShiftKeyDown() || mainHandItem.getItem().equals(Items.CHAIN) || AllBlocks.CHAIN_CONVEYOR.isIn(mainHandItem)
 		)) return;
 		returnable.setReturnValue(true);

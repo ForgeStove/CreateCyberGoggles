@@ -1,11 +1,11 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
 import com.simibubi.create.content.equipment.armor.*;
 import com.simibubi.create.foundation.utility.CreateLang;
-import io.github.forgestove.create_cyber_goggles.CCGLang;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -19,9 +19,7 @@ public class ItemTooltip {
 		if (!(stack.getItem() instanceof BacktankItem)) return;
 		var component = CreateLang.translate("gui.goggles.fluid_container.capacity")
 			.style(ChatFormatting.GRAY)
-			.add(CCGLang.number(BacktankItem.getRemainingAir(stack)).style(ChatFormatting.GOLD))
-			.text(ChatFormatting.GRAY, " / ")
-			.add(CCGLang.number(BacktankUtil.maxAir(stack)).style(ChatFormatting.DARK_GRAY))
+			.add(CCGLang.fraction((int) BacktankUtil.getAir(stack), BacktankUtil.maxAir(stack)))
 			.component();
 		tooltip.add(1, component);
 	}

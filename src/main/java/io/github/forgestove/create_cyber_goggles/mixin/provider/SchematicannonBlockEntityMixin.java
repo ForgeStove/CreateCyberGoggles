@@ -12,6 +12,8 @@ import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.*;
 
 import java.util.List;
+
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.getBounds;
 @Mixin(value = SchematicannonBlockEntity.class, remap = false)
 public abstract class SchematicannonBlockEntityMixin implements IHaveGoggleInformation, IItemRenderable, IOutlineRenderable {
 	@Shadow public State state;
@@ -33,7 +35,7 @@ public abstract class SchematicannonBlockEntityMixin implements IHaveGoggleInfor
 	public void ccg$render() {
 		var currentTarget = printer.getCurrentTarget();
 		if (currentTarget == null) return;
-		var bounds = CCGUtil.getBounds(currentTarget);
+		var bounds = getBounds(currentTarget);
 		if (bounds == null) return;
 		Outliner.getInstance()
 			.chaseAABB("SchematiCannonTargetBox" + this, bounds)

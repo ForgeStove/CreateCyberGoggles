@@ -20,8 +20,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.*;
 import net.minecraft.world.phys.HitResult.Type;
 import net.minecraft.world.phys.shapes.Shapes;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.*;
 
+import java.awt.Color;
 import java.util.stream.Stream;
 public class CCGUtil {
 	/**
@@ -154,5 +155,17 @@ public class CCGUtil {
 		if (level == null) return null;
 		var shape = level.getBlockState(blockPos).getShape(level, blockPos);
 		return (shape.isEmpty() ? Shapes.block() : shape).bounds().move(blockPos);
+	}
+	/**
+	 * 根据进度值生成渐变色。
+	 * <p>
+	 * 使用HSB色彩空间，色相随进度变化，饱和度和亮度固定为1.0。
+	 *
+	 * @param progress 渐变进度，范围通常为0.0~1.0
+	 * @return 代表渐变色的RGB整数值
+	 */
+	@Contract(pure = true)
+	public static int getGradientColor(float progress) {
+		return Color.HSBtoRGB(progress * 0.33f, 1.0f, 1.0f);
 	}
 }

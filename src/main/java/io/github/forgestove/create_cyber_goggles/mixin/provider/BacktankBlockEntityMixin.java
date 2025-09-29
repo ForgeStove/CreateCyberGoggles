@@ -1,9 +1,9 @@
 package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
-import com.simibubi.create.content.equipment.armor.*;
+import com.simibubi.create.content.equipment.armor.BacktankBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
-import io.github.forgestove.create_cyber_goggles.*;
+import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.TooltipUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;

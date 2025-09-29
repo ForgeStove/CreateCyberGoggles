@@ -1,16 +1,16 @@
 package io.github.forgestove.create_cyber_goggles.core.util;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.equipment.armor.BacktankUtil;
+import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity.FuelType;
 import com.simibubi.create.content.schematics.cannon.SchematicannonBlockEntity;
 import com.simibubi.create.content.schematics.cannon.SchematicannonBlockEntity.State;
 import com.simibubi.create.foundation.utility.CreateLang;
-import io.github.forgestove.create_cyber_goggles.*;
+import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.Color;
 import java.util.List;
 public class TooltipUtil {
 	public static boolean addFanTooltip(List<Component> tooltip, boolean pushing, float range, int divide) {
@@ -31,11 +31,10 @@ public class TooltipUtil {
 			default -> ChatFormatting.DARK_PURPLE;
 		};
 		CCGLang.translate("tooltip.burnerState").forGoggles(tooltip);
-		CCGLang.translate("tooltip.leftTime")
-			.style(ChatFormatting.GRAY)
-			.add(CCGLang.text(isCreative ? "∞" : String.valueOf(remainingBurnTime / 20)).style(format))
-			.space()
-			.add(CCGLang.translate("tooltip.seconds").style(ChatFormatting.GRAY))
+		CCGLang.translate(ChatFormatting.GRAY, "tooltip.leftTime")
+			.add(CCGLang.text(format, isCreative ? "∞" : String.valueOf(remainingBurnTime / 20)))
+			.add(CCGLang.text(" / %d ".formatted(BlazeBurnerBlockEntity.INSERTION_THRESHOLD)))
+			.add(CCGLang.translate("tooltip.seconds"))
 			.forGoggles(tooltip);
 		return true;
 	}
@@ -50,42 +49,31 @@ public class TooltipUtil {
 		} else {
 			var fillPercent = (int) (shotsLeft / (float) sbe.getShotsPerGunpowder() * 100);
 			CreateLang.translate("gui.schematicannon.gunpowderLevel", fillPercent).forGoggles(tooltip);
-			CreateLang.translate("gui.schematicannon.shotsRemaining", CCGLang.number(shotsLeft).style(ChatFormatting.BLUE))
+			CreateLang.translate("gui.schematicannon.shotsRemaining", CCGLang.number(ChatFormatting.BLUE, shotsLeft))
 				.style(ChatFormatting.GRAY)
 				.forGoggles(tooltip);
-			if (shotsLeftWithItems != shotsLeft) CreateLang.translate(
-					"gui.schematicannon.shotsRemainingWithBackup",
-					CCGLang.number(shotsLeftWithItems).style(ChatFormatting.BLUE)
-				)
-				.style(ChatFormatting.GRAY)
-				.forGoggles(tooltip);
+			if (shotsLeftWithItems != shotsLeft)
+				CreateLang.translate("gui.schematicannon.shotsRemainingWithBackup", CCGLang.number(ChatFormatting.BLUE,
+						shotsLeftWithItems))
+					.style(ChatFormatting.GRAY)
+					.forGoggles(tooltip);
 		}
 		if (!sbe.state.equals(State.RUNNING)) return;
-		var progress = sbe.schematicProgress * 100;
 		CCGLang.translate("tooltip.printProgress").forGoggles(tooltip);
-		CCGLang.text(String.format("%d/%d", sbe.blocksPlaced, sbe.blocksToPlace))
-			.text(String.format(" (%.2f%%)", progress))
-			.color(Color.HSBtoRGB(sbe.schematicProgress * 0.33f, 1.0f, 1.0f))
-			.forGoggles(tooltip);
-		var totalBars = 30;
-		var filledBars = (int) (sbe.schematicProgress * totalBars);
-		CCGLang.text(ChatFormatting.GREEN, "|".repeat(filledBars))
-			.add(CCGLang.text(ChatFormatting.GRAY, "|".repeat(totalBars - filledBars)))
-			.forGoggles(tooltip);
+		CCGLang.fraction(sbe.blocksPlaced, sbe.blocksToPlace).forGoggles(tooltip);
+		CCGLang.progress(sbe.schematicProgress, 20).forGoggles(tooltip);
 	}
 	public static void addBacktankTooltip(List<Component> tooltip, int capacityEnchantLevel, int airLevel, float speed, int leftTick) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return;
 		CreateLang.translate("gui.goggles.fluid_container").forGoggles(tooltip);
 		CreateLang.translate("gui.goggles.fluid_container.capacity")
 			.style(ChatFormatting.GRAY)
-			.add(CCGLang.number(airLevel).style(ChatFormatting.GOLD))
-			.text(ChatFormatting.GRAY, " / ")
-			.add(CCGLang.number(BacktankUtil.maxAir(capacityEnchantLevel)).style(ChatFormatting.DARK_GRAY))
+			.add(CCGLang.fraction(airLevel, BacktankUtil.maxAir(capacityEnchantLevel)))
 			.forGoggles(tooltip);
 		if (speed == 0 || leftTick == 0) return;
 		CCGLang.translate("tooltip.leftTime")
 			.style(ChatFormatting.GRAY)
-			.add(CCGLang.number(leftTick / 20).style(ChatFormatting.GOLD))
+			.add(CCGLang.number(ChatFormatting.GOLD, leftTick / 20))
 			.space()
 			.add(CCGLang.translate("tooltip.seconds").style(ChatFormatting.GRAY))
 			.forGoggles(tooltip);

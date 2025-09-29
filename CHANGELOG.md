@@ -1,2 +1,3 @@
-- Fix schematicannon item render
-- Added back tank information display
+- Optimize kinetic debugger
+- Refactor item tooltip for backtank
+- Optimize tooltips

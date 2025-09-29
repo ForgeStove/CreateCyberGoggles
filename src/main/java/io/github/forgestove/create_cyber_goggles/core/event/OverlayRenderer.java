@@ -3,7 +3,7 @@ import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBox;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.*;
+import io.github.forgestove.create_cyber_goggles.core.util.IItemRenderable;
 import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.outliner.Outliner;
 import net.createmod.catnip.outliner.Outliner.OutlineEntry;
@@ -18,6 +18,8 @@ import net.minecraftforge.client.gui.overlay.*;
 import org.jetbrains.annotations.*;
 
 import java.util.Map;
+
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class OverlayRenderer {
 	public static final Map<Object, OutlineEntry> outlines = Outliner.getInstance().getOutlines();
 	public static int hoverTicks;
@@ -63,8 +65,8 @@ public class OverlayRenderer {
 	 * @return 需要渲染的 {@link ItemStack}，若无则为 {@code null}
 	 */
 	public static @Nullable ItemStack toRenderItemStack() {
-		if (CCGUtil.getBE() instanceof IItemRenderable renderable) return renderable.ccg$getItemStack();
-		else if (CCGUtil.getE() instanceof IItemRenderable renderable) return renderable.ccg$getItemStack();
+		if (getBE() instanceof IItemRenderable renderable) return renderable.ccg$getItemStack();
+		else if (getE() instanceof IItemRenderable renderable) return renderable.ccg$getItemStack();
 		else return null;
 	}
 	/**

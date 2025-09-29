@@ -92,8 +92,8 @@ public class OverlayRenderer {
 		if (x + tooltipTextWidth > guiGraphics.guiWidth()) x = guiGraphics.guiWidth() - tooltipTextWidth;
 		if (fade < 1) x += (int) (Math.pow(1 - fade, 3) * Math.signum(cfg.overlayOffsetX.get() + .5f) * 8);
 		if (GoggleOverlayRenderer.hoverTicks != 0) y -= (tooltip.size() + 1) * 10;
-		x = Math.max(10, x);
-		y = Math.max(10, y);
+		x = Math.max(16, x);
+		y = Math.max(16, y);
 		guiGraphics.renderItem(itemStack, x - 10, y - 10);
 		guiGraphics.renderItemDecorations(font, itemStack, x - 10, y - 10);
 		guiGraphics.renderTooltip(font, itemStack, x, y);

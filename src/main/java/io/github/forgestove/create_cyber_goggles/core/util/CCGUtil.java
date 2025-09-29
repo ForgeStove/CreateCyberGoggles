@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.util;
+import com.simibubi.create.*;
 import com.simibubi.create.AllSoundEvents.SoundEntry;
-import com.simibubi.create.Create;
 import com.simibubi.create.content.equipment.armor.CardboardArmorItem;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
@@ -22,25 +22,49 @@ import net.minecraft.world.phys.shapes.Shapes;
 import org.jetbrains.annotations.*;
 
 import java.awt.Color;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 public class CCGUtil {
+	/** 获取当前的 {@link Minecraft} 客户端实例。 */
+	public static Minecraft mc = Minecraft.getInstance();
 	@Contract(pure = true)
 	public static boolean isInGUI() {
-		return Minecraft.getInstance().screen != null;
+		return mc.screen != null;
 	}
 	@Contract(pure = true)
 	public static boolean isInGame() {
-		return !isInGUI();
+		return mc.screen == null;
 	}
 	/**
-	 * 测试玩家是否穿着全套纸板盔甲并且不在飞行状态。
+	 * 尝试将给定对象转换为指定类型。
+	 * <p>
+	 * 该方法等价于：{@code object instanceof T ? (T) object : null}
 	 *
-	 * @param player 本地玩家实体
+	 * @param clazz  目标类型的Class对象
+	 * @param object 待转换的对象
+	 * @param <T>    目标类型
+	 * @return 转换后的对象或{@code null}
 	 */
-	public static boolean testForStealth(LocalPlayer player) {
-		var allMatch = Stream.of(EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET)
-			.allMatch(slot -> player.getItemBySlot(slot).getItem() instanceof CardboardArmorItem);
-		return CCG.CONFIG.chainConveyor.cardBoardedYourself && !player.getAbilities().flying && allMatch;
+	public static <T> @Nullable T getAs(@NotNull Class<T> clazz, Object object) {
+		return clazz.isInstance(object) ? clazz.cast(object) : null;
+	}
+	/**
+	 * 获取当前玩家的方块命中结果。
+	 *
+	 * @return 当前的 {@link BlockHitResult}，如果不是方块命中则返回 {@code null}
+	 */
+	@Contract(pure = true)
+	public static @Nullable BlockHitResult getBlockHitResult() {
+		return mc.hitResult instanceof BlockHitResult result ? result : null;
+	}
+	/**
+	 * 获取当前玩家的实体命中结果。
+	 *
+	 * @return 当前的 {@link EntityHitResult}，如果不是实体命中则返回 {@code null}
+	 */
+	@Contract(pure = true)
+	public static @Nullable EntityHitResult getEntityHitResult() {
+		return mc.hitResult instanceof EntityHitResult result ? result : null;
 	}
 	/**
 	 * 获取当前玩家选中的方块实体。
@@ -48,41 +72,41 @@ public class CCGUtil {
 	 *
 	 * @return 当前选中的{@link BlockEntity}实例，如果没有选中或类型不匹配则返回{@code null}
 	 */
-	public static @Nullable BlockEntity getBE() {
-		var mc = Minecraft.getInstance();
+	public static @Nullable BlockEntity getBlockEntity() {
 		if (mc.level == null) return null;
-		if (!(mc.hitResult instanceof BlockHitResult bhr)) return null;
-		return bhr.getType() == Type.BLOCK ? mc.level.getBlockEntity(bhr.getBlockPos()) : null;
-	}
-	public static <T> @Nullable T getAs(@NotNull Class<T> clazz, Object object) {
-		return clazz.isInstance(object) ? clazz.cast(object) : null;
-	}
-	public static <T> T getBE(Class<T> clazz) {
-		return getAs(clazz, getBE());
+		var result = getBlockHitResult();
+		if (result == null) return null;
+		return result.getType() == Type.MISS ? null : mc.level.getBlockEntity(result.getBlockPos());
 	}
 	/**
-	 * 获取当前玩家选中的实体。
-	 * 如果没有选中实体或选中的不是实体类型，则返回{@code null}。
+	 * 获取指定类型的方块实体实例。
 	 *
-	 * @return 当前选中的{@link Entity}实例，如果没有选中或类型不匹配则返回{@code null}
+	 * @param clazz 目标方块实体的类型
+	 * @return 如果类型匹配则返回对应实例，否则返回{@code null}
 	 */
-	public static @Nullable Entity getE() {
-		var mc = Minecraft.getInstance();
-		if (!(mc.hitResult instanceof EntityHitResult ehr)) return null;
-		return ehr.getType() == Type.ENTITY ? ehr.getEntity() : null;
+	public static <T> T getBlockEntity(Class<T> clazz) {
+		return getAs(clazz, getBlockEntity());
 	}
 	/**
 	 * 获取当前玩家选中的方块。
-	 * 如果没有选中方块或选中的方块不是{@link Block}类型，则返回{@code null}。
 	 *
 	 * @return 当前选中的{@link Block}实例，如果没有选中或类型不匹配则返回{@code null}
 	 */
-	public static @Nullable Block getB() {
-		var mc = Minecraft.getInstance();
+	public static @Nullable Block getBlock() {
 		if (mc.level == null) return null;
-		if (!(mc.hitResult instanceof BlockHitResult blockHitResult)) return null;
-		if (!(blockHitResult.getType() == Type.BLOCK)) return null;
-		return mc.level.getBlockState(blockHitResult.getBlockPos()).getBlock();
+		var result = getBlockHitResult();
+		if (result == null) return null;
+		if (result.getType() == Type.MISS) return null;
+		return mc.level.getBlockState(result.getBlockPos()).getBlock();
+	}
+	/**
+	 * 获取当前玩家选中的实体。
+	 *
+	 * @return 当前选中的{@link Entity}实例，如果没有选中或类型不匹配则返回{@code null}
+	 */
+	public static @Nullable Entity getEntity() {
+		var result = getEntityHitResult();
+		return result != null ? result.getEntity() : null;
 	}
 	/**
 	 * 获取当前上下文中的相关过滤器物品。
@@ -95,15 +119,53 @@ public class CCGUtil {
 	 * @return 相关的过滤器物品，如果无法获取则返回{@code null}
 	 */
 	public static @Nullable ItemStack getRelevantFilterItem() {
-		var mc = Minecraft.getInstance();
 		if (isInGUI()) {
 			if (!(mc.screen instanceof AbstractContainerScreen<?> screen)) return null;
 			var slot = screen.getSlotUnderMouse();
 			return slot == null ? null : slot.getItem();
 		}
-		if (!(getBE() instanceof SmartBlockEntity sbe) || !(mc.hitResult instanceof BlockHitResult blockHitResult)) return null;
+		var result = getBlockHitResult();
+		var sbe = getBlockEntity(SmartBlockEntity.class);
+		if (sbe == null || result == null) return null;
 		var behaviour = sbe.getBehaviour(FilteringBehaviour.TYPE);
-		return behaviour == null ? ItemStack.EMPTY : behaviour.getFilter(blockHitResult.getDirection());
+		return behaviour == null ? ItemStack.EMPTY : behaviour.getFilter(result.getDirection());
+	}
+	/**
+	 * 获取指定方块位置的包围盒{@link AABB}。
+	 * <p>
+	 * 如果{@code ClientLevel}为{@code null}，则返回{@code null}。
+	 * <p>
+	 * 若方块形状为空，则使用完整方块形状{@code Shapes.block()}。
+	 *
+	 * @param blockPos 方块位置
+	 * @return 该方块的{@link AABB}包围盒，若无法获取则返回{@code null}
+	 */
+	public static @NotNull AABB getBounds(BlockPos blockPos) {
+		if (mc.level == null) return Shapes.block().bounds();
+		var shape = mc.level.getBlockState(blockPos).getShape(mc.level, blockPos);
+		return (shape.isEmpty() ? Shapes.block() : shape).bounds().move(blockPos);
+	}
+	/**
+	 * 根据进度值生成渐变色。
+	 * <p>
+	 * 使用HSB色彩空间，色相随进度变化，饱和度和亮度固定为1.0。
+	 *
+	 * @param progress 渐变进度，范围通常为0.0~1.0
+	 * @return 代表渐变色的RGB整数值
+	 */
+	@Contract(pure = true)
+	public static int getGradientColor(float progress) {
+		return Color.HSBtoRGB(progress * 0.33f, 1.0f, 1.0f);
+	}
+	/**
+	 * 测试玩家是否穿着全套纸板盔甲并且不在飞行状态。
+	 *
+	 * @param player 本地玩家实体
+	 */
+	public static boolean testForStealth(LocalPlayer player) {
+		var allMatch = Stream.of(EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET)
+			.allMatch(slot -> player.getItemBySlot(slot).getItem() instanceof CardboardArmorItem);
+		return CCG.CONFIG.chainConveyor.cardBoardedYourself && !player.getAbilities().flying && allMatch;
 	}
 	/**
 	 * 向本地玩家显示客户端消息。
@@ -113,7 +175,7 @@ public class CCGUtil {
 	 * @param builder 包含要显示消息内容的语言构建器
 	 */
 	public static void displayMessage(LangBuilder builder) {
-		var player = Minecraft.getInstance().player;
+		var player = mc.player;
 		if (player != null) player.displayClientMessage(builder.component(), true);
 	}
 	/**
@@ -124,7 +186,7 @@ public class CCGUtil {
 	 * @param volume 音量大小，1.0f为正常音量
 	 */
 	public static void playSound(SoundEvent sound, float pitch, float volume) {
-		Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(sound, pitch, volume));
+		mc.getSoundManager().play(SimpleSoundInstance.forUI(sound, pitch, volume));
 	}
 	/**
 	 * 以预设的音调和音量播放{@link Create}模组的音效条目。
@@ -145,31 +207,22 @@ public class CCGUtil {
 		playSound(sound, 1f, 1f);
 	}
 	/**
-	 * 获取指定方块位置的包围盒{@link AABB}。
+	 * 切换配置项的启用状态，并显示提示消息与播放音效。
 	 * <p>
-	 * 如果{@code ClientLevel}为{@code null}，则返回{@code null}。
+	 * 仅在按键按下且玩家未处于GUI界面时生效。
 	 * <p>
-	 * 若方块形状为空，则使用完整方块形状{@code Shapes.block()}。
+	 * 切换后通过{@code setter}设置新状态，显示对应启用/禁用消息，并播放确认或拒绝音效。
 	 *
-	 * @param blockPos 方块位置
-	 * @return 该方块的{@link AABB}包围盒，若无法获取则返回{@code null}
+	 * @param keyDown    是否按下相关按键
+	 * @param enabled    当前配置项是否启用
+	 * @param setter     用于设置配置项状态的回调
+	 * @param messageKey 状态切换时显示消息的语言键
 	 */
-	public static @Nullable AABB getBounds(BlockPos blockPos) {
-		var level = Minecraft.getInstance().level;
-		if (level == null) return null;
-		var shape = level.getBlockState(blockPos).getShape(level, blockPos);
-		return (shape.isEmpty() ? Shapes.block() : shape).bounds().move(blockPos);
-	}
-	/**
-	 * 根据进度值生成渐变色。
-	 * <p>
-	 * 使用HSB色彩空间，色相随进度变化，饱和度和亮度固定为1.0。
-	 *
-	 * @param progress 渐变进度，范围通常为0.0~1.0
-	 * @return 代表渐变色的RGB整数值
-	 */
-	@Contract(pure = true)
-	public static int getGradientColor(float progress) {
-		return Color.HSBtoRGB(progress * 0.33f, 1.0f, 1.0f);
+	public static void toggleConfig(boolean keyDown, boolean enabled, Consumer<Boolean> setter, String messageKey) {
+		if (!keyDown) return;
+		if (isInGUI()) return;
+		setter.accept(!enabled);
+		displayMessage(CCGLang.translate(messageKey).space().translate(!enabled ? "message.enabled" : "message.disabled"));
+		playSound(!enabled ? AllSoundEvents.CONFIRM_2 : AllSoundEvents.DENY);
 	}
 }

@@ -4,14 +4,14 @@ import com.simibubi.create.*;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.kinetics.chainConveyor.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.CCGUtil;
 import net.createmod.catnip.platform.CatnipServices;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.*;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 @Mixin(ChainConveyorInteractionHandler.class)
 public abstract class ChainConveyorInteractionHandlerMixin {
 	@Shadow public static BlockPos selectedConnection, selectedLift;
@@ -20,12 +20,10 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 	private static void isActive(CallbackInfoReturnable<Boolean> returnable) {
 		if (!CCG.CONFIG.chainConveyor.alwaysAllowRiding) return;
 		returnable.setReturnValue(false);
-		var mc = Minecraft.getInstance();
-		var player = mc.player;
-		if (player == null) return;
-		var mainHandItem = player.getMainHandItem();
-		if (CCGUtil.getB() instanceof ChainConveyorBlock && (
-			player.isShiftKeyDown() || mainHandItem.getItem().equals(Items.CHAIN) || AllBlocks.CHAIN_CONVEYOR.isIn(mainHandItem)
+		if (mc.player == null) return;
+		var mainHandItem = mc.player.getMainHandItem();
+		if (getBlock() instanceof ChainConveyorBlock && (
+			mc.player.isShiftKeyDown() || mainHandItem.getItem().equals(Items.CHAIN) || AllBlocks.CHAIN_CONVEYOR.isIn(mainHandItem)
 		)) return;
 		returnable.setReturnValue(true);
 	}
@@ -39,14 +37,13 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 	@Inject(method = "onUse", at = @At("TAIL"))
 	private static void injectTail(CallbackInfoReturnable<Boolean> returnable) {
 		if (!CCG.CONFIG.chainConveyor.alwaysAllowRiding) return;
-		var player = Minecraft.getInstance().player;
-		if (player == null) return;
-		if (!player.isShiftKeyDown()) {
+		if (mc.player == null) return;
+		if (!mc.player.isShiftKeyDown()) {
 			ChainConveyorRidingHandler.embark(selectedLift, selectedChainPosition, selectedConnection);
 			return;
 		}
 		if (selectedConnection == null) return;
-		var mainHandItem = player.getMainHandItem();
+		var mainHandItem = mc.player.getMainHandItem();
 		CatnipServices.NETWORK.sendToServer(new ChainConveyorConnectionPacket(
 			selectedLift,
 			selectedLift.offset(selectedConnection),

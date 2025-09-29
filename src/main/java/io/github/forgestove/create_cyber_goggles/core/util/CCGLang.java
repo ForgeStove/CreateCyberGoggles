@@ -3,6 +3,8 @@ import io.github.forgestove.create_cyber_goggles.CCG;
 import net.createmod.catnip.lang.*;
 import net.minecraft.ChatFormatting;
 import org.jetbrains.annotations.*;
+
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.getGradientColor;
 public class CCGLang extends Lang {
 	@Contract(value = " -> new", pure = true)
 	public static @NotNull LangBuilder builder() {
@@ -34,7 +36,7 @@ public class CCGLang extends Lang {
 		return text(ChatFormatting.GREEN, "|".repeat(filledBars)).text(ChatFormatting.GRAY, "|".repeat(totalBars - filledBars));
 	}
 	public static @NotNull LangBuilder fraction(int current, int total) {
-		return number(current).color(CCGUtil.getGradientColor((float) current / total))
+		return number(current).color(getGradientColor((float) current / total))
 			.text(ChatFormatting.GRAY, " / ")
 			.add(number(total).style(ChatFormatting.DARK_GRAY));
 	}

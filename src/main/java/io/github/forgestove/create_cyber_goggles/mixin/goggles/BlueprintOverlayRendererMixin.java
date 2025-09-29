@@ -7,7 +7,7 @@ import com.simibubi.create.foundation.gui.AllGuiTextures;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.event.*;
 import net.createmod.catnip.gui.element.GuiGameElement;
-import net.minecraft.client.*;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
@@ -16,6 +16,8 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
+
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 @Mixin(BlueprintOverlayRenderer.class)
 public abstract class BlueprintOverlayRendererMixin {
 	@Shadow static List<ItemStack> results;
@@ -47,7 +49,7 @@ public abstract class BlueprintOverlayRendererMixin {
 				if (!invalidShop && shopContext != null && shopContext.stockLevel() > shopContext.purchases())
 					slot = AllGuiTextures.HOTSLOT_ACTIVE;
 				slot.render(guiGraphics, resultCraftable ? x - 1 : x, resultCraftable ? y - 1 : y);
-				BlueprintOverlayRenderer.drawItemStack(guiGraphics, Minecraft.getInstance(), x, y, result, null);
+				BlueprintOverlayRenderer.drawItemStack(guiGraphics, mc, x, y, result, null);
 				if (i == MouseScroll.index - 1) selectedX = x;
 				x += 21;
 			}

@@ -1,22 +1,22 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.*;
-import net.minecraft.client.Minecraft;
+import io.github.forgestove.create_cyber_goggles.core.util.IOutlineRenderable;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.client.event.ClientTickEvent.Post;
 
 import java.util.*;
+
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class OutlineRenderer {
 	public static final Map<BlockEntity, Integer> cachedBE = new HashMap<>();
 	public static void tick(Post ignoredEvent) {
 		if (!CCG.CONFIG.outlineRenderer.renderAnalogBox) return;
-		var mc = Minecraft.getInstance();
 		if (mc.level == null) {
 			cachedBE.clear();
 			return;
 		}
-		if (mc.isPaused() || CCGUtil.isInGUI()) return;
-		var be = CCGUtil.getBE();
+		if (mc.isPaused() || isInGUI()) return;
+		var be = getBlockEntity();
 		if (be instanceof IOutlineRenderable) cachedBE.put(be, CCG.CONFIG.outlineRenderer.delayRenderDuration);
 		if (cachedBE.isEmpty()) return;
 		cachedBE.entrySet().removeIf(entry -> {

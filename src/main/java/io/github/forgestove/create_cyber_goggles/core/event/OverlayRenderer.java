@@ -3,12 +3,12 @@ import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBox;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.*;
+import io.github.forgestove.create_cyber_goggles.core.util.IItemRenderable;
 import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.outliner.Outliner;
 import net.createmod.catnip.outliner.Outliner.OutlineEntry;
 import net.createmod.catnip.theme.Color;
-import net.minecraft.client.*;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -20,6 +20,8 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import org.jetbrains.annotations.*;
 
 import java.util.Map;
+
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class OverlayRenderer {
 	public static final Map<Object, OutlineEntry> outlines = Outliner.getInstance().getOutlines();
 	public static int hoverTicks;
@@ -43,8 +45,7 @@ public class OverlayRenderer {
 	}
 	public static void renderOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
 		if (!CCG.CONFIG.goggles.renderExtraItems || !CCG.CONFIG.gameMode.enableGoggle) return;
-		var mc = Minecraft.getInstance();
-		if (mc.isPaused() || CCGUtil.isInGUI() || mc.options.hideGui) {
+		if (mc.isPaused() || isInGUI() || mc.options.hideGui) {
 			currentItemStack = null;
 			hoverTicks = 0;
 			return;
@@ -69,8 +70,8 @@ public class OverlayRenderer {
 	 * @return 需要渲染的 {@link ItemStack}，若无则为 {@code null}
 	 */
 	public static @Nullable ItemStack toRenderItemStack() {
-		if (CCGUtil.getBE() instanceof IItemRenderable renderable) return renderable.ccg$getItemStack();
-		else if (CCGUtil.getE() instanceof IItemRenderable renderable) return renderable.ccg$getItemStack();
+		if (getBlockEntity() instanceof IItemRenderable renderable) return renderable.ccg$getItemStack();
+		else if (getEntity() instanceof IItemRenderable renderable) return renderable.ccg$getItemStack();
 		else return null;
 	}
 	/**
@@ -81,7 +82,6 @@ public class OverlayRenderer {
 	 */
 	public static void renderItemStack(GuiGraphics guiGraphics, ItemStack itemStack) {
 		if (itemStack == null || itemStack.isEmpty()) return;
-		var mc = Minecraft.getInstance();
 		var font = mc.font;
 		var flag = new Default(mc.options.advancedItemTooltips, true);
 		var tooltip = itemStack.getTooltipLines(TooltipContext.of(mc.level), mc.player, flag);

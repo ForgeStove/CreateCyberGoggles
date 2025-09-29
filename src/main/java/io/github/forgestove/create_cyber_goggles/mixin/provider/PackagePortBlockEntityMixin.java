@@ -8,8 +8,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.*;
 import org.spongepowered.asm.mixin.*;
-
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 @Mixin(PackagePortBlockEntity.class)
 public abstract class PackagePortBlockEntityMixin extends SmartBlockEntity implements IOutlineRenderable {
 	@Shadow public PackagePortTarget target;
@@ -21,7 +19,7 @@ public abstract class PackagePortBlockEntityMixin extends SmartBlockEntity imple
 		var pos = getBlockPos();
 		if (target == null) return;
 		var source = Vec3.atBottomCenterOf(pos);
-		var exactTarget = target.getExactTargetLocation((PackagePortBlockEntity) (Object) this, mc.level, pos);
+		var exactTarget = target.getExactTargetLocation((PackagePortBlockEntity) (Object) this, level, pos);
 		if (exactTarget == Vec3.ZERO) return;
 		var color = 0x9EDE73;
 		Outliner.getInstance().showLine("PackagePortConnection" + this, source, exactTarget).lineWidth(1 / 8f).colored(color);

@@ -25,7 +25,7 @@ public class KineticDebugger {
 		if (kbe == null) return;
 		renderAxisLine(kbe);
 		updateKBEPath(mc.level, kbe);
-		renderKineticPath(mc.level, cachedKBEPath, mc.level.getGameTime());
+		renderKineticPath(cachedKBEPath, mc.level.getGameTime());
 	}
 	/**
 	 * 更新并缓存当前选中动力方块实体的动力来源链路。
@@ -53,17 +53,16 @@ public class KineticDebugger {
 	 * <p>
 	 * 仅在节点或连线在视锥体内时才进行渲染，以提升性能。
 	 *
-	 * @param level   当前客户端世界
 	 * @param kbePath 动力链路节点列表（从源到目标）
 	 * @param time    当前时间戳
 	 */
-	public static void renderKineticPath(ClientLevel level, @NotNull List<KineticBlockEntity> kbePath, long time) {
+	public static void renderKineticPath(@NotNull List<KineticBlockEntity> kbePath, long time) {
 		var frustum = mc.levelRenderer.getFrustum();
 		for (var depth = 0; depth < kbePath.size(); depth++) {
 			var nodeBE = kbePath.get(depth);
 			// 渲染前判断包围盒是否在视锥体内
 			var rgb = getRainbowColor(depth, time);
-			if (isAABBInFrustum(nodeBE, level, frustum)) renderOutline(nodeBE, depth, rgb);
+			if (isAABBInFrustum(nodeBE, frustum)) renderOutline(nodeBE, depth, rgb);
 			// 连线渲染时也判断两端是否有一端在视锥体内，否则跳过
 			if (nodeBE.source == null) continue;
 			if (isLineInFrustum(nodeBE.getBlockPos(), nodeBE.source, frustum)) renderKineticLine(nodeBE, depth, rgb);
@@ -73,13 +72,13 @@ public class KineticDebugger {
 	 * 判断包围盒是否在视锥体内。
 	 *
 	 * @param kbe     动力方块实体
-	 * @param level   当前客户端世界
 	 * @param frustum 视锥体
 	 * @return 包围盒是否可见
 	 */
-	public static boolean isAABBInFrustum(@NotNull KineticBlockEntity kbe, @NotNull ClientLevel level, Frustum frustum) {
+	public static boolean isAABBInFrustum(@NotNull KineticBlockEntity kbe, Frustum frustum) {
+		if (mc.level == null) return false;
 		var pos = kbe.getBlockPos();
-		var shape = level.getBlockState(pos).getBlockSupportShape(level, pos);
+		var shape = mc.level.getBlockState(pos).getBlockSupportShape(mc.level, pos);
 		if (shape.isEmpty()) return false;
 		return frustum.isVisible(shape.bounds().move(pos));
 	}

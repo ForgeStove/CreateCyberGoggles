@@ -1,3 +1,4 @@
-- Optimize kinetic debugger
-- Refactor item tooltip for backtank
-- Optimize tooltips
+- Optimize backtank tooltip
+- Optimize item overlay render
+- Optimize item tooltip
+- Add option that use left click to dismantle component instantly with wrench

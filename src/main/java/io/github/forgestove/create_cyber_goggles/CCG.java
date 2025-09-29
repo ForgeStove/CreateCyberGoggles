@@ -24,5 +24,6 @@ public class CCG {
 		game.addListener(KineticDebugger::tick);
 		game.addListener(OutlineRenderer::tick);
 		game.addListener(OverlayRenderer::tickColor);
+		game.addListener(ItemTooltip::tick);
 	}
 }

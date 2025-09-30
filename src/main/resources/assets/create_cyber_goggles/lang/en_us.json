@@ -17,7 +17,6 @@
 	"create_cyber_goggles.tooltip.printProgress": "Print Progress:",
 	"create_cyber_goggles.tooltip.pullRange": "Pull range",
 	"create_cyber_goggles.tooltip.pushRange": "Push range",
-	"create_cyber_goggles.tooltip.seconds": "Seconds",
 	"create_cyber_goggles.tooltip.windState": "Wind State:",
 	"key.categories.create_cyber_goggles": "Create: Cyber Goggles",
 	"modmenu.descriptionTranslation.create_cyber_goggles": "A client-side mod for Create that provides modular assistance features.",

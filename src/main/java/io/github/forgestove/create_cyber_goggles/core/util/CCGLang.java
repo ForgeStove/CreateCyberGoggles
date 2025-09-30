@@ -1,7 +1,9 @@
 package io.github.forgestove.create_cyber_goggles.core.util;
+import com.simibubi.create.foundation.utility.CreateLang;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.createmod.catnip.lang.*;
 import net.minecraft.ChatFormatting;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.getGradientColor;
@@ -45,5 +47,12 @@ public class CCGLang extends Lang {
 	}
 	public static @NotNull LangBuilder enabled(boolean enabled) {
 		return enabled ? translate(GREEN, "message.enabled") : translate(RED, "message.disabled");
+	}
+	public static @NotNull LangBuilder seconds() {
+		return CreateLang.translate("generic.unit.seconds");
+	}
+	public static @NotNull LangBuilder item(@NotNull ItemStack stack) {
+		return builder().add(stack.getHoverName().copy().setStyle(stack.getDisplayName().getStyle()))
+			.text(GREEN, " x%d".formatted(stack.getCount()));
 	}
 }

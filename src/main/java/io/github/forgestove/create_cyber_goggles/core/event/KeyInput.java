@@ -54,7 +54,7 @@ public class KeyInput {
 		var stbe = getBlockEntity(StockTickerBlockEntity.class);
 		if (stbe != null) lastSTBE = stbe;
 		if (lastSTBE == null || lastSTBE.isRemoved()) {
-			displayMessage(CCGLang.translate("message.notStock").text("  ").translate("key.openStock").style(ChatFormatting.RED));
+			CCGLang.translate("message.notStock").text("  ").translate("key.openStock").style(ChatFormatting.RED).sendStatus(mc.player);
 			playSound(AllSoundEvents.DENY);
 			return;
 		}
@@ -68,7 +68,7 @@ public class KeyInput {
 		var itemStack = getRelevantFilterItem();
 		if (itemStack == null) return;
 		if (!(itemStack.getItem() instanceof FilterItem)) {
-			displayMessage(CCGLang.translate("message.notFilter").style(ChatFormatting.RED));
+			CCGLang.translate("message.notFilter").style(ChatFormatting.RED).sendStatus(mc.player);
 			playSound(AllSoundEvents.DENY);
 			return;
 		}

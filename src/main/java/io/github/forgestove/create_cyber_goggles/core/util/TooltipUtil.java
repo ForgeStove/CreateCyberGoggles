@@ -34,7 +34,7 @@ public class TooltipUtil {
 		CCGLang.translate(ChatFormatting.GRAY, "tooltip.leftTime")
 			.add(CCGLang.text(format, isCreative ? "∞" : String.valueOf(remainingBurnTime / 20)))
 			.add(CCGLang.text(" / %d ".formatted(BlazeBurnerBlockEntity.INSERTION_THRESHOLD)))
-			.add(CCGLang.translate("tooltip.seconds"))
+			.add(CCGLang.seconds())
 			.forGoggles(tooltip);
 		return true;
 	}
@@ -75,7 +75,7 @@ public class TooltipUtil {
 			.style(ChatFormatting.GRAY)
 			.add(CCGLang.number(ChatFormatting.GOLD, leftTick / 20))
 			.space()
-			.add(CCGLang.translate("tooltip.seconds").style(ChatFormatting.GRAY))
+			.add(CCGLang.seconds().style(ChatFormatting.GRAY))
 			.forGoggles(tooltip);
 	}
 }

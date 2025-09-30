@@ -5,7 +5,6 @@ import com.simibubi.create.content.equipment.armor.CardboardArmorItem;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -172,16 +171,6 @@ public class CCGUtil {
 		return CCG.CONFIG.chainConveyor.cardBoardedYourself && !player.getAbilities().flying && allMatch;
 	}
 	/**
-	 * 向本地玩家显示客户端消息。
-	 * <p>
-	 * 此方法将{@link LangBuilder}构建的组件显示为覆盖游戏界面的状态栏消息。
-	 *
-	 * @param builder 包含要显示消息内容的语言构建器
-	 */
-	public static void displayMessage(LangBuilder builder) {
-		if (mc.player != null) mc.player.displayClientMessage(builder.component(), true);
-	}
-	/**
 	 * 播放指定的音效，可自定义音调和音量。
 	 *
 	 * @param sound  要播放的音效事件
@@ -226,10 +215,12 @@ public class CCGUtil {
 		if (isInGUI()) return;
 		var newEnabled = !enabled;
 		setter.accept(newEnabled);
-		displayMessage(CCGLang.translate(messageKey)
+		if (mc.player == null) return;
+		CCGLang.translate(messageKey)
 			.space()
 			.add(CCGLang.enabled(newEnabled))
-			.style(enabled ? ChatFormatting.RED : ChatFormatting.GREEN));
+			.style(enabled ? ChatFormatting.RED : ChatFormatting.GREEN)
+			.sendStatus(mc.player);
 		playSound(newEnabled ? AllSoundEvents.CONFIRM_2 : AllSoundEvents.DENY);
 	}
 }

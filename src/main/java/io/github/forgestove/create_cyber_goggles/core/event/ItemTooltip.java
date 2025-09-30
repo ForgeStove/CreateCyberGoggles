@@ -1,4 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
+import com.simibubi.create.AllDataComponents;
+import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.equipment.armor.*;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import com.simibubi.create.content.equipment.wrench.WrenchItem;
@@ -11,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public class ItemTooltip {
@@ -23,6 +25,7 @@ public class ItemTooltip {
 		backtank(stack, tooltip);
 		divingBoots(stack, tooltip);
 		wrench(stack, tooltip);
+		toolbox(stack, tooltip);
 	}
 	private static void goggles(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!(stack.getItem() instanceof GogglesItem)) return;
@@ -50,5 +53,17 @@ public class ItemTooltip {
 			.add(CCGLang.enabled(CCG.CONFIG.wrench.leftClickFastDismantle))
 			.component();
 		tooltip.add(1, component);
+	}
+	private static void toolbox(@NotNull ItemStack stack, List<Component> tooltip) {
+		if (!AllItemTags.TOOLBOXES.matches(stack)) return;
+		var inventory = stack.getComponents().get(AllDataComponents.TOOLBOX_INVENTORY);
+		if (inventory == null) return;
+		List<Component> list = new ArrayList<>();
+		for (var i = 0; i < inventory.getSlots(); i++) {
+			var slot = inventory.getStackInSlot(i);
+			if (slot.isEmpty()) continue;
+			CCGLang.item(slot).addTo(list);
+		}
+		tooltip.addAll(1, list);
 	}
 }

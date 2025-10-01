@@ -34,7 +34,7 @@
 |           | 创造模式启用     |    ✅    | 在创造模式下始终启用护目镜                 |
 |           | 旁观模式启用     |    ✅    | 在旁观模式下始终启用护目镜                 |
 |           | 冒险模式启用     |    ✅    | 在冒险模式下始终启用护目镜                 |
-| **延时渲染**  | 渲染模拟盒      |    ✅    | 渲染各种方块显示的模拟盒                  |
+| **边框渲染**  | 渲染模拟盒      |    ✅    | 渲染各种方块显示的模拟盒                  |
 |           | 延时渲染时长     |   60    | 模拟盒继续渲染的时长（以刻为单位）             |
 |           | 气流推动颜色     | #DDC166 | 气流推动时的颜色                      |
 |           | 气流吸引颜色     | #7FCDE0 | 气流吸引时的颜色                      |
@@ -71,43 +71,43 @@
 
 ### Feature List
 
-|       Module       | Feature                             | Default | Description                                                                                          |
-|:------------------:|:------------------------------------|:-------:|:-----------------------------------------------------------------------------------------------------|
-|    **Goggles**     | Enhanced Info Display               |    ✅    | Show enhanced information in the goggles overlay                                                     |
-|                    | Hide Static Rotational Info         |    ❌    | Hide static block rotational info in goggles overlay                                                 |
-|                    | Better Store Info                   |    ✅    | Optimize display of tablecloth store information and operation logic                                 |
-|                    | Render More Item Info               |    ✅    | Allow rendering more item info on blocks                                                             |
-|                    | Render Rotational Particles         |    ✅    | Render rotational particle effects for target blocks                                                 |
-|                    | Precise Number                      |    ✅    | Show more precise numerical information                                                              |
-|                    | Disable Screen Goggles              |    ✅    | Disable goggles when Screen appears                                                                  |
-|                    | Can Render When Value Box Appear    |    ❌    | Allow rendering of goggle tooltip when Value Box appears                                             |
-|                    | Better Connection Lines             |    ✅    | Optimize the rendering of connection lines                                                           |
-|   **Game Mode**    | Enable Goggle                       |    ✅    | Main switch of game mode                                                                             |
-|                    | Enable in Survival Mode             |    ✅    | Always enable goggles in Survival mode                                                               |
-|                    | Enable in Creative Mode             |    ✅    | Always enable goggles in Creative mode                                                               |
-|                    | Enable in Spectator Mode            |    ✅    | Always enable goggles in Spectator mode                                                              |
-|                    | Enable in Adventure Mode            |    ✅    | Always enable goggles in Adventure mode                                                              |
-|  **Delay Render**  | Render Analog Box                   |    ✅    | Render the air box for encased fans and nozzles                                                      |
-|                    | Delay Render Duration               |   60    | Duration for which the analog box will be rendered (in tick)                                         |
-|                    | Wind Push Color                     | #DDC166 | Color when wind pushes                                                                               |
-|                    | Wind Pull Color                     | #7FCDE0 | Color when wind pulls                                                                                |
-|                    | Rainbow Debug                       |    ❌    | Enable rainbow debug mode                                                                            |
-| **Chain Conveyor** | Always Allow Hanging                |    ❌    | Hang on the chain conveyor without a wrench                                                          |
-|                    | Prevent Player Auto Separation      |    ❌    | Prevents the player from automatically detaching from the chain conveyor due to obstacles            |
-|                    | Enhanced Connection                 |    ✅    | Remove the minimum connection distance and maximum tilt angle restrictions for chain conveyors       |
-|                    | Automatically Pack Yourself         |    ❌    | Automatically turn yourself into a cardboard box when hanging on the chain                           |
-|     **Wrench**     | Left Click Fast Dismantle           |    ✅    | Use left click to dismantle component instantly                                                      |
-|                    | Always Allow Rotating Blocks        |    ✅    | Rotate blocks with hotkey without a wrench                                                           |
-|                    | Remove Cooldown                     |    ✅    | Remove the wrench cooldown                                                                           |
-|      **Misc**      | Inf Edit Box Length                 |    ❌    | Infinite edit box length (Actually 2^31 -1)                                                          |
-|                    | Remove Cardboard Overlay            |    ✅    | Remove the cardboard suit view obstruction when crouching                                            |
-|                    | Remove First Person Backtank Render |    ❌    | Remove the first-person render effect of the Netherite Backtank                                      |
-|                    | Allow Diving Boot                   |    ✅    | Function of diving boots, disable to make them behave like normal boots                              |
-|                    | Fix Schematic Name                  |    ✅    | Non-ASCII characters could be used when saving Blueprints                                            |
-|                    | Right Click Penetrate               |    ❌    | Allow right-clicking to penetrate moving contraption                                                 |
-|                    | Force Flywheel Optimization         |    ❌    | Force enable Flywheel rendering backend (conflicts with shaders, unless you know what you are doing) |
-|                    | NBT Fix                             |    ❌    | Fix crash caused by oversized NBT, may cause lag                                                     |
-|                    | Show Scrap Content                  |    ✅    | Display the specific content of random scrap in sequence assembly                                    |
+|        Module        | Feature                             | Default | Description                                                                                          |
+|:--------------------:|:------------------------------------|:-------:|:-----------------------------------------------------------------------------------------------------|
+|     **Goggles**      | Enhanced Info Display               |    ✅    | Show enhanced information in the goggles overlay                                                     |
+|                      | Hide Static Rotational Info         |    ❌    | Hide static block rotational info in goggles overlay                                                 |
+|                      | Better Store Info                   |    ✅    | Optimize display of tablecloth store information and operation logic                                 |
+|                      | Render More Item Info               |    ✅    | Allow rendering more item info on blocks                                                             |
+|                      | Render Rotational Particles         |    ✅    | Render rotational particle effects for target blocks                                                 |
+|                      | Precise Number                      |    ✅    | Show more precise numerical information                                                              |
+|                      | Disable Screen Goggles              |    ✅    | Disable goggles when Screen appears                                                                  |
+|                      | Can Render When Value Box Appear    |    ❌    | Allow rendering of goggle tooltip when Value Box appears                                             |
+|                      | Better Connection Lines             |    ✅    | Optimize the rendering of connection lines                                                           |
+|    **Game Mode**     | Enable Goggle                       |    ✅    | Main switch of game mode                                                                             |
+|                      | Enable in Survival Mode             |    ✅    | Always enable goggles in Survival mode                                                               |
+|                      | Enable in Creative Mode             |    ✅    | Always enable goggles in Creative mode                                                               |
+|                      | Enable in Spectator Mode            |    ✅    | Always enable goggles in Spectator mode                                                              |
+|                      | Enable in Adventure Mode            |    ✅    | Always enable goggles in Adventure mode                                                              |
+| **Outline Renderer** | Render Analog Box                   |    ✅    | Render the air box for encased fans and nozzles                                                      |
+|                      | Delay Render Duration               |   60    | Duration for which the analog box will be rendered (in tick)                                         |
+|                      | Wind Push Color                     | #DDC166 | Color when wind pushes                                                                               |
+|                      | Wind Pull Color                     | #7FCDE0 | Color when wind pulls                                                                                |
+|                      | Rainbow Debug                       |    ❌    | Enable rainbow debug mode                                                                            |
+|  **Chain Conveyor**  | Always Allow Hanging                |    ❌    | Hang on the chain conveyor without a wrench                                                          |
+|                      | Prevent Player Auto Separation      |    ❌    | Prevents the player from automatically detaching from the chain conveyor due to obstacles            |
+|                      | Enhanced Connection                 |    ✅    | Remove the minimum connection distance and maximum tilt angle restrictions for chain conveyors       |
+|                      | Automatically Pack Yourself         |    ❌    | Automatically turn yourself into a cardboard box when hanging on the chain                           |
+|      **Wrench**      | Left Click Fast Dismantle           |    ✅    | Use left click to dismantle component instantly                                                      |
+|                      | Always Allow Rotating Blocks        |    ✅    | Rotate blocks with hotkey without a wrench                                                           |
+|                      | Remove Cooldown                     |    ✅    | Remove the wrench cooldown                                                                           |
+|       **Misc**       | Inf Edit Box Length                 |    ❌    | Infinite edit box length (Actually 2^31 -1)                                                          |
+|                      | Remove Cardboard Overlay            |    ✅    | Remove the cardboard suit view obstruction when crouching                                            |
+|                      | Remove First Person Backtank Render |    ❌    | Remove the first-person render effect of the Netherite Backtank                                      |
+|                      | Allow Diving Boot                   |    ✅    | Function of diving boots, disable to make them behave like normal boots                              |
+|                      | Fix Schematic Name                  |    ✅    | Non-ASCII characters could be used when saving Blueprints                                            |
+|                      | Right Click Penetrate               |    ❌    | Allow right-clicking to penetrate moving contraption                                                 |
+|                      | Force Flywheel Optimization         |    ❌    | Force enable Flywheel rendering backend (conflicts with shaders, unless you know what you are doing) |
+|                      | NBT Fix                             |    ❌    | Fix crash caused by oversized NBT, may cause lag                                                     |
+|                      | Show Scrap Content                  |    ✅    | Display the specific content of random scrap in sequence assembly                                    |
 
 ### Hotkeys
 

@@ -8,9 +8,10 @@ import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
+import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket.Action;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.item.ItemStack;
@@ -82,6 +83,7 @@ public class CCGUtil {
 	 * 获取指定类型的方块实体实例。
 	 *
 	 * @param clazz 目标方块实体的类型
+	 * @param <T>   方块实体类型
 	 * @return 如果类型匹配则返回对应实例，否则返回{@code null}
 	 */
 	public static <T extends BlockEntity> T getBlockEntity(Class<T> clazz) {
@@ -99,6 +101,13 @@ public class CCGUtil {
 		if (result.getType() == Type.MISS) return null;
 		return mc.level.getBlockState(result.getBlockPos()).getBlock();
 	}
+	/**
+	 * 获取指定类型的方块实例。
+	 *
+	 * @param clazz 目标方块的类型
+	 * @param <T>   方块类型
+	 * @return 如果类型匹配则返回对应实例，否则返回{@code null}
+	 */
 	public static <T extends Block> T getBlock(Class<T> clazz) {
 		return getAs(clazz, getBlock());
 	}
@@ -113,11 +122,6 @@ public class CCGUtil {
 	}
 	/**
 	 * 获取当前上下文中的相关过滤器物品。
-	 * 此方法有两种工作模式：
-	 * <p>
-	 * 1. 如果玩家正在查看GUI界面，则返回鼠标悬停位置的物品
-	 * <p>
-	 * 2. 如果玩家在游戏世界中，则尝试从目标方块实体获取过滤器物品
 	 *
 	 * @return 相关的过滤器物品，如果无法获取则返回{@code null}
 	 */
@@ -161,42 +165,41 @@ public class CCGUtil {
 		return Color.HSBtoRGB(progress * 0.33f, 1.0f, 1.0f);
 	}
 	/**
-	 * 测试玩家是否穿着全套纸板盔甲并且不在飞行状态。
-	 *
-	 * @param player 本地玩家实体
+	 * 检测本地玩家是否穿着全套纸板盔甲并且不在飞行状态。
 	 */
-	public static boolean testForStealth(LocalPlayer player) {
+	public static boolean testForStealth() {
+		if (mc.player == null) return false;
 		var allMatch = Stream.of(EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET)
-			.allMatch(slot -> player.getItemBySlot(slot).getItem() instanceof CardboardArmorItem);
-		return CCG.CONFIG.chainConveyor.cardBoardedYourself && !player.getAbilities().flying && allMatch;
+			.allMatch(slot -> mc.player.getItemBySlot(slot).getItem() instanceof CardboardArmorItem);
+		return CCG.CONFIG.chainConveyor.cardBoardedYourself && !mc.player.getAbilities().flying && allMatch;
 	}
 	/**
-	 * 播放指定的音效，可自定义音调和音量。
+	 * 播放指定的音效
 	 *
-	 * @param sound  要播放的音效事件
-	 * @param pitch  音调值，影响播放速度和音高
-	 * @param volume 音量大小，1.0f为正常音量
+	 * @param sound  音效事件
+	 * @param pitch  音高
+	 * @param volume 音量
 	 */
 	public static void playSound(SoundEvent sound, float pitch, float volume) {
 		mc.getSoundManager().play(SimpleSoundInstance.forUI(sound, pitch, volume));
 	}
 	/**
-	 * 以预设的音调和音量播放{@link Create}模组的音效条目。
-	 * 默认使用较低的音调{@code 0.25f}和正常音量{@code 1.0f}。
+	 * 以预设的音高和音量播放{@link Create}模组的音效条目。
+	 * 默认使用较低的音高{@code 0.25f}和正常音量{@code 1.0f}。
 	 *
 	 * @param entry {@link Create}模组的音效条目
 	 */
-	public static void playSound(SoundEntry entry) {
-		playSound(entry.getMainEvent(), .25f, 1f);
+	public static void playSound(@NotNull SoundEntry entry) {
+		playSound(entry.getMainEvent(), 0.25f, 1.0f);
 	}
 	/**
-	 * 以默认音调和音量播放指定的音效。
-	 * 使用正常音调(1.0f)和正常音量(1.0f)。
+	 * 以默认音高和音量播放指定的音效。
+	 * 使用正常音高{@code 1.0f}和正常音量{@code 1.0f}。
 	 *
 	 * @param sound 要播放的音效事件
 	 */
 	public static void playSound(SoundEvent sound) {
-		playSound(sound, 1f, 1f);
+		playSound(sound, 1.0f, 1.0f);
 	}
 	/**
 	 * 切换配置项的启用状态，并显示提示消息与播放音效。
@@ -222,5 +225,14 @@ public class CCGUtil {
 			.style(enabled ? ChatFormatting.RED : ChatFormatting.GREEN)
 			.sendStatus(mc.player);
 		playSound(newEnabled ? AllSoundEvents.CONFIRM_2 : AllSoundEvents.DENY);
+	}
+	/**
+	 * 向服务器发送玩家动作指令。
+	 *
+	 * @param action 要发送的玩家动作类型
+	 */
+	public static void sendAction(Action action) {
+		if (mc.player == null) return;
+		mc.player.connection.send(new ServerboundPlayerCommandPacket(mc.player, action));
 	}
 }

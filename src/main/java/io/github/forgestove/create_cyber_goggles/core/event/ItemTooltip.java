@@ -1,5 +1,4 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
-import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.equipment.armor.*;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
@@ -8,6 +7,7 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -56,13 +56,17 @@ public class ItemTooltip {
 	}
 	private static void toolbox(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!AllItemTags.TOOLBOXES.matches(stack)) return;
-		var inventory = stack.getComponents().get(AllDataComponents.TOOLBOX_INVENTORY);
-		if (inventory == null) return;
+		var tag = stack.getOrCreateTag();
+		if (!tag.contains("Inventory")) return;
 		List<Component> list = new ArrayList<>();
-		for (var i = 0; i < inventory.getSlots(); i++) {
-			var slot = inventory.getStackInSlot(i);
-			if (slot.isEmpty()) continue;
-			CCGLang.item(slot).addTo(list);
+		var inventory = tag.getCompound("Inventory");
+		if (!inventory.contains("Items")) return;
+		var items = inventory.getList("Items", Tag.TAG_COMPOUND);
+		for (var i = 0; i < items.size(); i++) {
+			var slotTag = items.getCompound(i);
+			var slotStack = ItemStack.of(slotTag);
+			if (slotStack.isEmpty()) continue;
+			CCGLang.item(slotStack).addTo(list);
 		}
 		tooltip.addAll(1, list);
 	}

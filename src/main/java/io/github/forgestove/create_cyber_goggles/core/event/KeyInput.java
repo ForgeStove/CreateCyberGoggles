@@ -15,7 +15,6 @@ import net.minecraftforge.client.event.InputEvent.Key;
 
 import java.util.Map;
 
-import static io.github.forgestove.create_cyber_goggles.core.event.CCGKey.*;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class KeyInput {
 	public static StockTickerBlockEntity lastSTBE;
@@ -28,7 +27,7 @@ public class KeyInput {
 	}
 	private static void toggleGoggle() {
 		toggleConfig(
-			toggleGoggle.isKeyDown(),
+			CCGKey.toggleGoggle.isDown(),
 			CCG.CONFIG.gameMode.enableGoggle,
 			val -> CCG.CONFIG.gameMode.enableGoggle = val,
 			"message.goggle"
@@ -36,19 +35,19 @@ public class KeyInput {
 	}
 	private static void toggleDiving() {
 		toggleConfig(
-			toggleDiving.isKeyDown(),
+			CCGKey.toggleDiving.isDown(),
 			CCG.CONFIG.misc.allowDivingBoot,
 			val -> CCG.CONFIG.misc.allowDivingBoot = val,
 			"message.divingBoot"
 		);
 	}
 	private static void openConfigScreen() {
-		if (!openConfig.isKeyDown()) return;
+		if (!CCGKey.openConfig.isDown()) return;
 		if (isInGUI()) return;
 		mc.setScreen(AutoConfig.getConfigScreen(CCGConfig.class, null).get());
 	}
 	private static void openStockScreen() {
-		if (!openStock.isKeyDown()) return;
+		if (!CCGKey.openStock.isDown()) return;
 		if (isInGUI()) return;
 		if (mc.player == null) return;
 		var stbe = getBlockEntity(StockTickerBlockEntity.class);
@@ -63,7 +62,7 @@ public class KeyInput {
 		mc.setScreen(new StockKeeperRequestScreen(menu, inv, lastSTBE.getBlockState().getBlock().getName()));
 	}
 	private static void previewFilterScreen() {
-		if (!previewFilter.isKeyDown()) return;
+		if (!CCGKey.previewFilter.isDown()) return;
 		if (mc.player == null) return;
 		var itemStack = getRelevantFilterItem();
 		if (itemStack == null) return;

@@ -45,7 +45,7 @@ public class TooltipUtil {
 		var shotsLeftWithItems = shotsLeft + sbe.inventory.getStackInSlot(4).getCount() * sbe.getShotsPerGunpowder();
 		if (sbe.hasCreativeCrate) {
 			CreateLang.translate("gui.schematicannon.gunpowderLevel", "" + 100).forGoggles(tooltip);
-			CCGLang.text("(").add(AllBlocks.CREATIVE_CRATE.get().getName()).text(")").style(ChatFormatting.DARK_PURPLE).forGoggles(tooltip);
+			CCGLang.text(ChatFormatting.DARK_PURPLE, "(" + AllBlocks.CREATIVE_CRATE.get().getName() + ")").forGoggles(tooltip);
 		} else {
 			var fillPercent = (int) (shotsLeft / (float) sbe.getShotsPerGunpowder() * 100);
 			CreateLang.translate("gui.schematicannon.gunpowderLevel", fillPercent).forGoggles(tooltip);

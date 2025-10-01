@@ -14,7 +14,7 @@
 
 ## 功能 / Features
 
-> 此功能列表适用于版本 1.21.1 NeoForge，其余版本功能会有所不同。
+> 此列表适用于版本 1.21.1 NeoForge，其余版本功能会有所不同。
 
 ### 功能列表
 
@@ -67,7 +67,7 @@
 |    切换潜水模式     |
 |    切换护目镜模式    |
 
-> This feature list is for version 1.21.1 NeoForge, and the rest of the version features will vary.
+> This list is for version 1.21.1 NeoForge, and the rest of the version features will vary.
 
 ### Feature List
 

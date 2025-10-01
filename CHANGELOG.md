@@ -1,4 +1,5 @@
-- Optimize backtank tooltip
-- Optimize item overlay render
-- Optimize item tooltip
-- Add option that use left click to dismantle component instantly with wrench
+- Optimize the logic for leftClickFastDismantle
+- Fix bug that there is a delay in auto-packing to cardboard box
+- Fix bug where deployer was missing information when hideStaticKineticInfo was enabled
+- Fix bug where keys could not be used when they were bound to non-keyboard keys
+- Add contents display to the toolbox item

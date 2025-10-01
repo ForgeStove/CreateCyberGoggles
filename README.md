@@ -122,17 +122,13 @@
 
 ## 注意 / Notice
 
-> 主要在 1.21.1 NeoForge 上开发额外功能，其余版本不一定具有全部功能；
->
-> 1.20.1 Forge 版本已经完全跟进，2.0版本以后仅兼容6.0+版本的Create，仅限2.0以前的版本兼容0.5+版本的Create；
->
+> 主要在 1.21.1 NeoForge 上开发额外功能，其余版本不一定具有全部功能；  
+> 1.20.1 Forge 版本已经完全跟进，2.0版本以后仅兼容6.0+版本的Create，仅限2.0以前的版本兼容0.5+版本的Create；  
 > 1.20.1 Fabric 版本部分移植完成，其余功能需要等待Create-Fabric更新至6.0+版本后再进行移植。
 
-> Extra features are mainly developed in 1.21.1 NeoForge, the rest of the versions will not necessarily have all the features;
->
+> Extra features are mainly developed in 1.21.1 NeoForge, the rest of the versions will not necessarily have all the features;  
 > 1.20.1 Forge version has been fully updated, version 2.0 and later only compatible with Create 6.0+ version, only version 2.0 and below
-> compatible with Create 0.5+ version;
->
+> compatible with Create 0.5+ version;  
 > 1.20.1 Fabric version part migration completed, the rest of the features need to wait for Create-Fabric to be updated to version 6.0+
 > before migration.
 

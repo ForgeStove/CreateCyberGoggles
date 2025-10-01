@@ -25,7 +25,7 @@
 	"text.autoconfig.create_cyber_goggles.category.gameMode": "游戏模式",
 	"text.autoconfig.create_cyber_goggles.category.goggles": "护目镜",
 	"text.autoconfig.create_cyber_goggles.category.misc": "杂项",
-	"text.autoconfig.create_cyber_goggles.category.outlineRenderer": "延时渲染",
+	"text.autoconfig.create_cyber_goggles.category.outlineRenderer": "边框渲染",
 	"text.autoconfig.create_cyber_goggles.category.wrench": "扳手",
 	"text.autoconfig.create_cyber_goggles.option.chainConveyor.alwaysAllowRiding": "始终允许悬挂",
 	"text.autoconfig.create_cyber_goggles.option.chainConveyor.alwaysAllowRiding.@Tooltip": "无需扳手即可悬挂在锁链传动轮上",

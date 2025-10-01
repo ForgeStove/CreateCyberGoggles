@@ -13,8 +13,8 @@ public abstract class CardboardArmorHandlerMixin {
 	@Inject(method = "testForStealth", at = @At("HEAD"), cancellable = true)
 	private static void injectTestForStealth(Entity entityIn, CallbackInfoReturnable<Boolean> returnable) {
 		if (ChainConveyorRidingHandler.ridingChainConveyor == null) return;
-		if (!(entityIn instanceof LocalPlayer player)) return;
-		if (!testForStealth(player)) return;
+		if (!(entityIn instanceof LocalPlayer)) return;
+		if (!testForStealth()) return;
 		returnable.setReturnValue(true);
 	}
 }

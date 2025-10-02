@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
-import com.simibubi.create.content.equipment.wrench.WrenchItem;
+import com.simibubi.create.content.equipment.wrench.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket.Action;
 import net.minecraft.world.InteractionHand;
@@ -18,21 +18,23 @@ public class PlayerInteract {
 	public static void tick(@NotNull LeftClickBlock event) {
 		if (!CCG.CONFIG.wrench.leftClickFastDismantle) return;
 		if (dismantleDelay > 0) dismantleDelay--;
-		var canDismantle = System.currentTimeMillis() - lastDismantleTime > dismantleDelay * 20;
+		var canDismantle = System.currentTimeMillis() - lastDismantleTime > dismantleDelay * 30;
 		if (!canDismantle) return;
 		var action = event.getAction();
-		if (!action.equals(START) && !action.equals(CLIENT_HOLD)) return;
+		if (!(action == START || action == CLIENT_HOLD)) return;
 		var player = mc.player;
 		if (player == null || mc.gameMode == null) return;
 		var handWithWrench = player.getMainHandItem().getItem() instanceof WrenchItem
 			? InteractionHand.MAIN_HAND
 			: player.getOffhandItem().getItem() instanceof WrenchItem ? InteractionHand.OFF_HAND : null;
 		if (handWithWrench == null) return;
+		if (!(getBlock() instanceof IWrenchable)) return;
 		var result = getBlockHitResult();
 		if (result == null) return;
 		sendAction(Action.PRESS_SHIFT_KEY);
 		mc.gameMode.useItemOn(player, handWithWrench, result);
 		sendAction(Action.RELEASE_SHIFT_KEY);
 		lastDismantleTime = System.currentTimeMillis();
+		event.setCanceled(true);
 	}
 }

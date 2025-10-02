@@ -56,7 +56,7 @@ public class CCGUtil {
 	 */
 	@Contract(pure = true)
 	public static @Nullable BlockHitResult getBlockHitResult() {
-		return mc.hitResult instanceof BlockHitResult result ? result : null;
+		return mc.hitResult instanceof BlockHitResult result ? result.getType() != Type.MISS ? result : null : null;
 	}
 	/**
 	 * 获取当前玩家的实体命中结果。
@@ -76,8 +76,8 @@ public class CCGUtil {
 	public static @Nullable BlockEntity getBlockEntity() {
 		if (mc.level == null) return null;
 		var result = getBlockHitResult();
-		if (result == null) return null;
-		return result.getType() == Type.MISS ? null : mc.level.getBlockEntity(result.getBlockPos());
+		if (result == null || result.getType() == Type.MISS) return null;
+		return mc.level.getBlockEntity(result.getBlockPos());
 	}
 	/**
 	 * 获取指定类型的方块实体实例。
@@ -97,8 +97,7 @@ public class CCGUtil {
 	public static @Nullable Block getBlock() {
 		if (mc.level == null) return null;
 		var result = getBlockHitResult();
-		if (result == null) return null;
-		if (result.getType() == Type.MISS) return null;
+		if (result == null || result.getType() == Type.MISS) return null;
 		return mc.level.getBlockState(result.getBlockPos()).getBlock();
 	}
 	/**

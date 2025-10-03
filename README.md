@@ -6,16 +6,21 @@
 [![Modrinth](https://img.shields.io/modrinth/dt/create-cyber-goggles?logo=modrinth&label=&suffix=%20&style=flat&color=242629&labelColor=5ca424&logoColor=1c1c1c)](https://modrinth.com/mod/create-cyber-goggles)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/ForgeStove/CreateCyberGoggles)
 
+---
+
 ## 概述 / Overview
 
 > **Create: Cyber Goggles** 是[**机械动力**](https://modrinth.com/mod/create)的客户端附属模组，为其提供了模块化的辅助功能。
 
 > **Create: Cyber Goggles** is a client-side mod for [**Create**](https://modrinth.com/mod/create), providing modular assistance features.
 
+---
+
 ## 功能 / Features
 
+---
 <details>
-<summary>功能列表</summary>
+<summary><strong>功能列表</strong></summary>
 
 > 此列表适用于版本 1.21.1 NeoForge，其余版本功能会有所不同。
 
@@ -72,7 +77,7 @@
 
 </details>
 
-
+---
 <details>
 <summary>Feature List</summary>
 
@@ -131,6 +136,8 @@
 
 </details>
 
+---
+
 ## 注意 / Notice
 
 > 主要在 1.21.1 NeoForge 上开发额外功能，其余版本不一定具有全部功能；  
@@ -142,6 +149,8 @@
 > compatible with Create 0.5+ version;  
 > 1.20.1 Fabric version part migration completed, the rest of the features need to wait for Create-Fabric to be updated to version 6.0+
 > before migration.
+
+---
 
 ## 版本 / Versions
 

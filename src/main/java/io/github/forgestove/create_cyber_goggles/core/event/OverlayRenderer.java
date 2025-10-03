@@ -27,7 +27,7 @@ public class OverlayRenderer {
 	public static void register(@NotNull RegisterGuiOverlaysEvent event) {
 		event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "goggle_overlay", OverlayRenderer::renderOverlay);
 	}
-	public static void tick(@NotNull RenderTooltipEvent.Color event) {
+	public static void color(@NotNull RenderTooltipEvent.Color event) {
 		if (!event.getItemStack().equals(currentItemStack) || currentItemStack.isEmpty()) return;
 		var cfg = AllConfigs.client();
 		var colorBackground = cfg.overlayCustomColor.get()

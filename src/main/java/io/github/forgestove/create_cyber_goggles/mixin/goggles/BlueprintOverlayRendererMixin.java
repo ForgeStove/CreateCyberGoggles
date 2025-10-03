@@ -5,7 +5,7 @@ import com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer;
 import com.simibubi.create.content.logistics.tableCloth.BlueprintOverlayShopContext;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.event.*;
+import io.github.forgestove.create_cyber_goggles.core.event.OverlayRenderer;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
@@ -17,6 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
+import static io.github.forgestove.create_cyber_goggles.core.event.KeyInput.*;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 @Mixin(value = BlueprintOverlayRenderer.class, remap = false)
 public abstract class BlueprintOverlayRendererMixin {
@@ -42,10 +43,10 @@ public abstract class BlueprintOverlayRendererMixin {
 			guiGraphics.blit(WIDGETS_LOCATION, x, y, 24, 23, 22, 22);
 			GuiGameElement.of(Items.BARRIER).at(x + 3, y + 3).render(guiGraphics);
 		} else {
-			MouseScroll.index += MouseScroll.scrollDeltaY;
-			MouseScroll.scrollDeltaY = 0;
-			if (MouseScroll.index < 1) MouseScroll.index = results.size();
-			else if (MouseScroll.index > results.size()) MouseScroll.index = 1;
+			index += scrollDeltaY;
+			scrollDeltaY = 0;
+			if (index < 1) index = results.size();
+			else if (index > results.size()) index = 1;
 			var selectedX = 0;
 			for (var i = 0; i < results.size(); i++) {
 				var result = results.get(i);
@@ -54,11 +55,11 @@ public abstract class BlueprintOverlayRendererMixin {
 					slot = AllGuiTextures.HOTSLOT_ACTIVE;
 				slot.render(guiGraphics, resultCraftable ? x - 1 : x, resultCraftable ? y - 1 : y);
 				BlueprintOverlayRenderer.drawItemStack(guiGraphics, mc, x, y, result, null);
-				if (i == MouseScroll.index - 1) selectedX = x;
+				if (i == index - 1) selectedX = x;
 				x += 21;
 			}
 			if (selectedX != 0) guiGraphics.blit(WIDGETS_LOCATION, selectedX - 1, y - 1, 0, 22, 23, 23);
-			OverlayRenderer.renderItemStack(guiGraphics, results.get(MouseScroll.index - 1));
+			OverlayRenderer.renderItemStack(guiGraphics, results.get(index - 1));
 		}
 		RenderSystem.disableBlend();
 	}

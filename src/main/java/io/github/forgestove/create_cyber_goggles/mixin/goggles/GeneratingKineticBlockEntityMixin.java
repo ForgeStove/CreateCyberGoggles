@@ -30,7 +30,7 @@ public abstract class GeneratingKineticBlockEntityMixin extends KineticBlockEnti
 		var stressBase = calculateAddedStressCapacity();
 		if (!Mth.equal(stressBase, 0)) {
 			CreateLang.translate("gui.goggles.generator_stats").forGoggles(tooltip);
-			CreateLang.translate("tooltip.capacityProvided").style(ChatFormatting.GRAY).forGoggles(tooltip);
+			CreateLang.translate("itemTooltip.capacityProvided").style(ChatFormatting.GRAY).forGoggles(tooltip);
 			if (speed != getGeneratedSpeed()) stressBase *= getGeneratedSpeed() / speed;
 			CreateLang.number(Math.abs(stressBase * speed))
 				.translate("generic.unit.stress")

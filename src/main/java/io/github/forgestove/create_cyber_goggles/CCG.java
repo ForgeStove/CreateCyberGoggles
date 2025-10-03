@@ -18,14 +18,14 @@ public class CCG {
 		mod.addListener(CCGKey::register);
 		mod.addListener(OverlayRenderer::register);
 		var game = MinecraftForge.EVENT_BUS;
-		game.addListener(KeyInput::tick);
-		game.addListener(MouseScroll::tick);
-		game.addListener(PlayerInteract::tick);
+		game.addListener(KeyInput::key);
+		game.addListener(KeyInput::mouseScroll);
+		game.addListener(OverlayRenderer::color);
+		game.addListener(ItemTooltip::itemTooltip);
 		game.addListener(PlayerInteract::leftClick);
+		game.addListener(PlayerInteract::tick);
 		game.addListener(KineticParticle::tick);
 		game.addListener(KineticDebugger::tick);
 		game.addListener(OutlineRenderer::tick);
-		game.addListener(OverlayRenderer::tick);
-		game.addListener(ItemTooltip::tick);
 	}
 }

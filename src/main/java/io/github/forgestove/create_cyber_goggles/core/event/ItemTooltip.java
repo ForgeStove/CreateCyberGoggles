@@ -17,7 +17,7 @@ import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public class ItemTooltip {
-	public static void tick(@NotNull ItemTooltipEvent event) {
+	public static void itemTooltip(@NotNull ItemTooltipEvent event) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return;
 		var stack = event.getItemStack();
 		var tooltip = event.getToolTip();

@@ -21,7 +21,7 @@ public class CCG {
 		game.addListener(KeyInput::tick);
 		game.addListener(MouseScroll::tick);
 		game.addListener(PlayerInteract::tick);
-		game.addListener(PlayerInteract::resumeDelay);
+		game.addListener(PlayerInteract::leftClick);
 		game.addListener(KineticParticle::tick);
 		game.addListener(KineticDebugger::tick);
 		game.addListener(OutlineRenderer::tick);

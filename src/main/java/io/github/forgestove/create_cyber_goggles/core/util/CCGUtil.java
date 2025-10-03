@@ -27,7 +27,7 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 public class CCGUtil {
 	/** 获取当前的 {@link Minecraft} 客户端实例。 */
-	public static Minecraft mc = Minecraft.getInstance();
+	public static final Minecraft mc = Minecraft.getInstance();
 	@Contract(pure = true)
 	public static boolean isInGUI() {
 		return mc.screen != null;

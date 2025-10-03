@@ -77,7 +77,7 @@
 
 > This list is for version 1.21.1 NeoForge, and the rest of the version features will vary.
 
-### Feature List
+### Config
 
 | Feature                             | Default | Description                                                                                          |
 |:------------------------------------|:-------:|:-----------------------------------------------------------------------------------------------------|

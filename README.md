@@ -166,12 +166,3 @@
 | 1.20.1 |   ✅   |      ✅       |    ✅     |
 | 1.19.2 |   ❌   |      ❌       |          |
 | 1.18.2 |   ❌   |      ❌       |          |
-
-## 画廊 / Gallery
-
-![Rotate Particle](https://cdn.modrinth.com/data/TlQAWQCY/images/24a78978d9f6c90ee5066a12c32c4079fa28d0b7.gif)
-![Creative Motor](https://cdn.modrinth.com/data/TlQAWQCY/images/c43083ded90cbc003f8106da20efc555d98fc011.png)
-![Chain Conveyor](https://cdn.modrinth.com/data/TlQAWQCY/images/ce27867557c4d435d14b516ef7ca826576cebf2e.png)
-![Packager](https://cdn.modrinth.com/data/TlQAWQCY/images/e44995945a4bec4395c362c573b2566fbd5ac534.png)
-![Shop](https://cdn.modrinth.com/data/TlQAWQCY/images/47289adf052ee34f491dab67c90337b5027c8397.png)
-![Depot](https://cdn.modrinth.com/data/TlQAWQCY/images/a0991c39f1d860ce03db738ad9816a1e4bacdb8f.png)

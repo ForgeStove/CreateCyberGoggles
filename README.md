@@ -6,19 +6,14 @@
 [![Modrinth](https://img.shields.io/modrinth/dt/create-cyber-goggles?logo=modrinth&label=&suffix=%20&style=flat&color=242629&labelColor=5ca424&logoColor=1c1c1c)](https://modrinth.com/mod/create-cyber-goggles)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/ForgeStove/CreateCyberGoggles)
 
----
-
 ## 概述 / Overview
 
 > **Create: Cyber Goggles** 是[**机械动力**](https://modrinth.com/mod/create)的客户端附属模组，为其提供了模块化的辅助功能。
 
 > **Create: Cyber Goggles** is a client-side mod for [**Create**](https://modrinth.com/mod/create), providing modular assistance features.
 
----
-
 ## 功能 / Features
 
----
 <details>
 <summary><strong>功能列表</strong></summary>
 
@@ -77,9 +72,8 @@
 
 </details>
 
----
 <details>
-<summary>Feature List</summary>
+<summary><strong>Feature List</strong></summary>
 
 > This list is for version 1.21.1 NeoForge, and the rest of the version features will vary.
 
@@ -136,42 +130,26 @@
 
 </details>
 
----
+## 版本 / Versions
+
+| Minecraft | Forge | Fabric/Quilt | NeoForge | Create: Cyber Goggles |             Create             |
+|:---------:|:-----:|:------------:|:--------:|:---------------------:|:------------------------------:|
+|  1.21.8   |       |      ✅       |          |          3.x          |       6.0+ (Create-Fly)        |
+|  1.21.1   |       |              |    ✅     |        1.x~6.x        |              6.0+              |
+|  1.20.1   |   ✅   |      ✅       |    ✅     |        1.x~6.x        | 1.x: 0.5+, 6.0+; 2.x~6.x: 6.0+ |
+|  1.19.2   |   ✅   |      ✅       |          |          1.x          |              0.5+              |
+|  1.18.2   |   ✅   |      ✅       |          |          1.x          |              0.5+              |
 
 ## 注意 / Notice
 
 > 主要在 1.21.1 NeoForge 上开发额外功能，其余版本不一定具有全部功能；  
 > 1.20.1 Forge 版本已经完全跟进，2.0版本以后仅兼容6.0+版本的Create，仅限2.0以前的版本兼容0.5+版本的Create；  
-> 1.20.1 Fabric 版本部分移植完成，其余功能需要等待Create-Fabric更新至6.0+版本后再进行移植。
+> 1.20.1 Fabric 版本部分移植完成，其余功能需要等待Create-Fabric更新至6.0+版本后再进行移植。  
+> 1.21.8 Fabric 版本跟进 1.20.1 Fabric 版本，前置为非官方移植（Create-Fly）。
 
 > Extra features are mainly developed in 1.21.1 NeoForge, the rest of the versions will not necessarily have all the features;  
 > 1.20.1 Forge version has been fully updated, version 2.0 and later only compatible with Create 6.0+ version, only version 2.0 and below
 > compatible with Create 0.5+ version;  
 > 1.20.1 Fabric version part migration completed, the rest of the features need to wait for Create-Fabric to be updated to version 6.0+
-> before migration.
-
----
-
-## 版本 / Versions
-
-> 1.0版本之后模组支持的MineCraft版本列表：
-
-> Supported Minecraft version list of the mod version 1.0+:
-
-|        | Forge | Fabric/Quilt | NeoForge |
-|:------:|:-----:|:------------:|:--------:|
-| 1.21.1 |       |              |    ✅     |
-| 1.20.1 |   ✅   |      ✅       |    ✅     |
-| 1.19.2 |   ✅   |      ✅       |          |
-| 1.18.2 |   ✅   |      ✅       |          |
-
-> 2.0版本之后模组支持的MineCraft版本列表：
-
-> Supported Minecraft version list of the mod version 2.0+:
-
-|        | Forge | Fabric/Quilt | NeoForge |
-|:------:|:-----:|:------------:|:--------:|
-| 1.21.1 |       |              |    ✅     |
-| 1.20.1 |   ✅   |      ✅       |    ✅     |
-| 1.19.2 |   ❌   |      ❌       |          |
-| 1.18.2 |   ❌   |      ❌       |          |
+> before migration.  
+> 1.21.8 Fabric version follows the 1.20.1 Fabric version; prerequisite is the unofficial port (Create-Fly).

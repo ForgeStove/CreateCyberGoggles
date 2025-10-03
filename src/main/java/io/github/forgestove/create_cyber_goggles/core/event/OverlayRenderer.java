@@ -30,11 +30,11 @@ public class OverlayRenderer {
 	public static void register(@NotNull RegisterGuiLayersEvent event) {
 		event.registerAbove(
 			VanillaGuiLayers.HOTBAR,
-			ResourceLocation.fromNamespaceAndPath(CCG.ID, "goggle_overlay"),
+			ResourceLocation.fromNamespaceAndPath(CCG.ID, "item_tooltip_overlay"),
 			OverlayRenderer::renderOverlay
 		);
 	}
-	public static void tick(@NotNull RenderTooltipEvent.Color event) {
+	public static void color(@NotNull RenderTooltipEvent.Color event) {
 		if (!event.getItemStack().equals(currentItemStack) || currentItemStack.isEmpty()) return;
 		var cfg = AllConfigs.client();
 		var colorBackground = cfg.overlayCustomColor.get()

@@ -3,6 +3,7 @@ import com.mojang.datafixers.util.Function3;
 import com.simibubi.create.*;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.stockTicker.*;
+import com.simibubi.create.content.logistics.tableCloth.TableClothBlockEntity;
 import io.github.forgestove.create_cyber_goggles.*;
 import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import me.shedaniel.autoconfig.AutoConfig;
@@ -11,19 +12,24 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.*;
-import net.neoforged.neoforge.client.event.InputEvent.Key;
+import net.neoforged.neoforge.client.event.InputEvent.*;
 
 import java.util.Map;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class KeyInput {
 	public static StockTickerBlockEntity lastSTBE;
-	public static void tick(Key ignoredEvent) {
+	public static int index = 1;
+	public static int scrollDeltaY;
+	public static void key(Key ignoredEvent) {
 		toggleGoggle();
 		toggleDiving();
 		openConfigScreen();
 		openStockScreen();
 		previewFilterScreen();
+	}
+	public static void mouseScroll(MouseScrollingEvent event) {
+		clothStore(event);
 	}
 	private static void toggleGoggle() {
 		toggleConfig(
@@ -80,5 +86,14 @@ public class KeyInput {
 			(id, inv, stack) -> new PackageFilterScreen(PackageFilterMenu.create(id, inv, stack), inv, stack.getHoverName())
 		).get(itemStack.getItem()).apply(-1, mc.player.getInventory(), itemStack));
 		playSound(SoundEvents.BOOK_PAGE_TURN);
+	}
+	private static void clothStore(MouseScrollingEvent event) {
+		if (!CCG.CONFIG.goggles.betterStoreInfo) return;
+		var tcbe = getBlockEntity(TableClothBlockEntity.class);
+		if (tcbe != null && tcbe.isShop()) {
+			if (event.getScrollDeltaY() == 0) scrollDeltaY = 0;
+			else scrollDeltaY = event.getScrollDeltaY() > 0 ? -1 : 1;
+			event.setCanceled(true);
+		} else index = 1;
 	}
 }

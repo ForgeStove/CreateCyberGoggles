@@ -12,18 +12,18 @@ import static net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.Lef
 public class PlayerInteract {
 	private static long lastDismantleTime;
 	private static long dismantleDelay = 10;
-	public static void resumeDelay(Post ignoredEvent) {
+	public static void tick(Post ignoredEvent) {
 		if (dismantleDelay < 10) dismantleDelay++;
 	}
-	public static void tick(@NotNull LeftClickBlock event) {
+	public static void leftClick(@NotNull LeftClickBlock event) {
 		if (!CCG.CONFIG.wrench.leftClickFastDismantle) return;
 		if (dismantleDelay > 0) dismantleDelay--;
-		var canDismantle = System.currentTimeMillis() - lastDismantleTime > dismantleDelay * 30;
+		var canDismantle = System.currentTimeMillis() - lastDismantleTime > dismantleDelay * 20;
 		if (!canDismantle) return;
 		var action = event.getAction();
 		if (!(action == START || action == CLIENT_HOLD)) return;
 		var player = mc.player;
-		if (player == null || mc.gameMode == null) return;
+		if (player == null || mc.player.isCreative() || mc.gameMode == null) return;
 		var handWithWrench = player.getMainHandItem().getItem() instanceof WrenchItem
 			? InteractionHand.MAIN_HAND
 			: player.getOffhandItem().getItem() instanceof WrenchItem ? InteractionHand.OFF_HAND : null;

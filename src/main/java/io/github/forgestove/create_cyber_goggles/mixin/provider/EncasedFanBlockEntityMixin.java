@@ -25,7 +25,7 @@ public abstract class EncasedFanBlockEntityMixin extends KineticBlockEntity impl
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		var add = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
 		if (!CCG.CONFIG.goggles.enhancedInfo || getSpeed() == 0) return add;
-		return TooltipUtil.addFanTooltip(tooltip, airCurrent.pushing, airCurrent.maxDistance, 1);
+		return TooltipUtil.fan(tooltip, airCurrent.pushing, airCurrent.maxDistance, 1);
 	}
 	@Override
 	public void ccg$render() {

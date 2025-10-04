@@ -1,19 +1,74 @@
 package io.github.forgestove.create_cyber_goggles.core.util;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.equipment.armor.*;
+import com.simibubi.create.content.kinetics.base.*;
+import com.simibubi.create.content.kinetics.base.IRotate.*;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity.FuelType;
 import com.simibubi.create.content.schematics.cannon.SchematicannonBlockEntity;
 import com.simibubi.create.content.schematics.cannon.SchematicannonBlockEntity.State;
+import com.simibubi.create.foundation.item.TooltipHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import net.minecraft.ChatFormatting;
+import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+
+import static net.minecraft.ChatFormatting.*;
 public class TooltipUtil {
-	public static boolean addFanTooltip(List<Component> tooltip, boolean pushing, float range, int divide) {
+	public static void kinetic(List<Component> tooltip, @NotNull KineticBlockEntity kbe, float stress, float capacity) {
+		var speed = kbe.getTheoreticalSpeed();
+		if (StressImpact.isEnabled()) {
+			var stressAtBase = kbe.calculateStressApplied();
+			if (!Mth.equal(stressAtBase, 0)) {
+				CreateLang.translate("tooltip.stressImpact").style(GRAY).forGoggles(tooltip);
+				CreateLang.number(stressAtBase * Math.abs(speed))
+					.translate("generic.unit.stress")
+					.style(AQUA)
+					.space()
+					.add(CreateLang.translate("gui.goggles.at_current_speed").style(DARK_GRAY))
+					.forGoggles(tooltip, 1);
+			}
+		}
+		CreateLang.translate("gui.speedometer.title").style(GRAY).forGoggles(tooltip);
+		SpeedLevel.getFormattedSpeedText(speed, kbe.isOverStressed()).forGoggles(tooltip);
+		if (!CCGKey.showStress.isDown()) return;
+		double stressFraction = stress / (capacity == 0 ? 1 : capacity);
+		CreateLang.translate("gui.stressometer.title").style(GRAY).forGoggles(tooltip);
+		if (speed == 0) CreateLang.text(TooltipHelper.makeProgressBar(3, 0))
+			.translate("gui.stressometer.no_rotation")
+			.style(DARK_GRAY)
+			.forGoggles(tooltip);
+		else {
+			StressImpact.getFormattedStressText(stressFraction).forGoggles(tooltip);
+			CreateLang.translate("gui.stressometer.capacity").style(GRAY).forGoggles(tooltip);
+			double remainingCapacity = capacity - stress;
+			var su = CreateLang.translate("generic.unit.stress");
+			var stressTip = CreateLang.number(remainingCapacity).add(su).style(StressImpact.of(stressFraction).getRelativeColor());
+			if (remainingCapacity != capacity) stressTip.text(GRAY, " / ").add(CreateLang.number(capacity).add(su).style(DARK_GRAY));
+			stressTip.forGoggles(tooltip, 1);
+		}
+	}
+	public static void generatingKinetic(List<Component> tooltip, @NotNull GeneratingKineticBlockEntity gkbe) {
+		var stressBase = gkbe.calculateAddedStressCapacity();
+		if (!Mth.equal(stressBase, 0)) {
+			CreateLang.translate("gui.goggles.generator_stats").forGoggles(tooltip);
+			CreateLang.translate("tooltip.capacityProvided").style(GRAY).forGoggles(tooltip);
+			var speed = gkbe.getTheoreticalSpeed();
+			var generatedSpeed = gkbe.getGeneratedSpeed();
+			if (speed != generatedSpeed) stressBase *= generatedSpeed / speed;
+			CreateLang.number(Math.abs(stressBase * speed))
+				.translate("generic.unit.stress")
+				.style(AQUA)
+				.space()
+				.add(CreateLang.translate("gui.goggles.at_current_speed").style(DARK_GRAY))
+				.forGoggles(tooltip, 1);
+		}
+	}
+	public static boolean fan(List<Component> tooltip, boolean pushing, float range, int divide) {
 		if (range == 0) return false;
 		CCGLang.translate("itemTooltip.windState").forGoggles(tooltip);
 		CCGLang.number(range / divide)
@@ -23,39 +78,36 @@ public class TooltipUtil {
 			.forGoggles(tooltip);
 		return true;
 	}
-	public static boolean addBurnerTooltip(List<Component> tooltip, int remainingBurnTime, boolean isCreative, FuelType activeFuel) {
+	public static boolean burner(List<Component> tooltip, int remainingBurnTime, boolean isCreative, FuelType activeFuel) {
 		if (remainingBurnTime == 0 && !isCreative) return false;
 		var format = switch (activeFuel) {
-			case SPECIAL -> ChatFormatting.AQUA;
-			case NORMAL -> ChatFormatting.GOLD;
-			default -> ChatFormatting.DARK_PURPLE;
+			case SPECIAL -> AQUA;
+			case NORMAL -> GOLD;
+			default -> DARK_PURPLE;
 		};
 		CCGLang.translate("itemTooltip.burnerState").forGoggles(tooltip);
-		CCGLang.translate(ChatFormatting.GRAY, "itemTooltip.leftTime")
+		CCGLang.translate(GRAY, "itemTooltip.leftTime")
 			.add(CCGLang.text(format, isCreative ? "∞" : String.valueOf(remainingBurnTime / 20)))
 			.add(CCGLang.text(" / %d ".formatted(BlazeBurnerBlockEntity.INSERTION_THRESHOLD)))
 			.add(CCGLang.seconds())
 			.forGoggles(tooltip);
 		return true;
 	}
-	public static void addCannonTooltip(List<Component> tooltip, @NotNull SchematicannonBlockEntity sbe) {
+	public static void cannon(List<Component> tooltip, @NotNull SchematicannonBlockEntity sbe) {
 		CCGLang.translate("itemTooltip.cannonState").forGoggles(tooltip);
-		CreateLang.translate("schematicannon.status." + sbe.statusMsg).style(ChatFormatting.GOLD).forGoggles(tooltip);
+		CreateLang.translate("schematicannon.status." + sbe.statusMsg).style(GOLD).forGoggles(tooltip);
 		var shotsLeft = sbe.remainingFuel;
 		var shotsLeftWithItems = shotsLeft + sbe.inventory.getStackInSlot(4).getCount() * sbe.getShotsPerGunpowder();
 		if (sbe.hasCreativeCrate) {
 			CreateLang.translate("gui.schematicannon.gunpowderLevel", "" + 100).forGoggles(tooltip);
-			CCGLang.text(ChatFormatting.DARK_PURPLE, "(" + AllBlocks.CREATIVE_CRATE.get().getName() + ")").forGoggles(tooltip);
+			CCGLang.text(DARK_PURPLE, "(" + AllBlocks.CREATIVE_CRATE.get().getName() + ")").forGoggles(tooltip);
 		} else {
 			var fillPercent = (int) (shotsLeft / (float) sbe.getShotsPerGunpowder() * 100);
 			CreateLang.translate("gui.schematicannon.gunpowderLevel", fillPercent).forGoggles(tooltip);
-			CreateLang.translate("gui.schematicannon.shotsRemaining", CCGLang.number(ChatFormatting.BLUE, shotsLeft))
-				.style(ChatFormatting.GRAY)
-				.forGoggles(tooltip);
+			CreateLang.translate("gui.schematicannon.shotsRemaining", CCGLang.number(BLUE, shotsLeft)).style(GRAY).forGoggles(tooltip);
 			if (shotsLeftWithItems != shotsLeft)
-				CreateLang.translate("gui.schematicannon.shotsRemainingWithBackup", CCGLang.number(ChatFormatting.BLUE,
-						shotsLeftWithItems))
-					.style(ChatFormatting.GRAY)
+				CreateLang.translate("gui.schematicannon.shotsRemainingWithBackup", CCGLang.number(BLUE, shotsLeftWithItems))
+					.style(GRAY)
 					.forGoggles(tooltip);
 		}
 		if (!sbe.state.equals(State.RUNNING)) return;
@@ -63,19 +115,19 @@ public class TooltipUtil {
 		CCGLang.fraction(sbe.blocksPlaced, sbe.blocksToPlace).forGoggles(tooltip);
 		CCGLang.progress(sbe.schematicProgress, 20).forGoggles(tooltip);
 	}
-	public static void addBacktankTooltip(List<Component> tooltip, BacktankBlockEntity bbe, int capacityEnchantLevel, int leftTick) {
+	public static void backtank(List<Component> tooltip, BacktankBlockEntity bbe, int capacityEnchantLevel, int leftTick) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return;
 		CreateLang.translate("gui.goggles.fluid_container").forGoggles(tooltip);
 		CreateLang.translate("gui.goggles.fluid_container.capacity")
-			.style(ChatFormatting.GRAY)
+			.style(GRAY)
 			.add(CCGLang.fraction(bbe.airLevel, BacktankUtil.maxAir(capacityEnchantLevel)))
 			.forGoggles(tooltip);
 		if (bbe.getSpeed() == 0 || leftTick == 0) return;
 		CCGLang.translate("itemTooltip.leftTime")
-			.style(ChatFormatting.GRAY)
-			.add(CCGLang.number(ChatFormatting.GOLD, leftTick / 20))
+			.style(GRAY)
+			.add(CCGLang.number(GOLD, leftTick / 20))
 			.space()
-			.add(CCGLang.seconds().style(ChatFormatting.GRAY))
+			.add(CCGLang.seconds().style(GRAY))
 			.forGoggles(tooltip);
 	}
 }

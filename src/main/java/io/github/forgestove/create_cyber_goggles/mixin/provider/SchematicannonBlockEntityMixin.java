@@ -23,7 +23,7 @@ public abstract class SchematicannonBlockEntityMixin implements IHaveGoggleInfor
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return false;
-		TooltipUtil.addCannonTooltip(tooltip, (SchematicannonBlockEntity) (Object) this);
+		TooltipUtil.cannon(tooltip, (SchematicannonBlockEntity) (Object) this);
 		return true;
 	}
 	@Override

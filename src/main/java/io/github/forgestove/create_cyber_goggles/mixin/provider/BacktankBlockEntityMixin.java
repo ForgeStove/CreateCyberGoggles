@@ -27,7 +27,7 @@ public abstract class BacktankBlockEntityMixin extends KineticBlockEntity implem
 	}
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		TooltipUtil.addBacktankTooltip(tooltip, (BacktankBlockEntity) (Object) this, capacityEnchantLevel, ccg$leftTick);
+		TooltipUtil.backtank(tooltip, (BacktankBlockEntity) (Object) this, capacityEnchantLevel, ccg$leftTick);
 		return super.addToGoggleTooltip(tooltip, isPlayerSneaking);
 	}
 	@Inject(method = "tick", at = @At(value = "RETURN", ordinal = 3))

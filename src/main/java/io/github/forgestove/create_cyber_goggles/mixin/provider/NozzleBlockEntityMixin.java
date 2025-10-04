@@ -25,7 +25,7 @@ public abstract class NozzleBlockEntityMixin extends SmartBlockEntity implements
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return false;
-		return TooltipUtil.addFanTooltip(tooltip, pushing, range, 2);
+		return TooltipUtil.fan(tooltip, pushing, range, 2);
 	}
 	@Override
 	public void ccg$render() {

@@ -22,10 +22,11 @@ public class CCG {
 		game.addListener(KeyInput::mouseScroll);
 		game.addListener(OverlayRenderer::color);
 		game.addListener(ItemTooltip::itemTooltip);
-		game.addListener(PlayerInteract::leftClick);
-		game.addListener(PlayerInteract::tick);
 		game.addListener(KineticParticle::tick);
 		game.addListener(KineticDebugger::tick);
 		game.addListener(OutlineRenderer::tick);
+		game.addListener(PlayerInteract::tick);
+		game.addListener(PlayerInteract::leftClick);
+		game.addListener(PlayerInteract::rightClick);
 	}
 }

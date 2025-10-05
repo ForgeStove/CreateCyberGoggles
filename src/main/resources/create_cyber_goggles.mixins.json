@@ -5,8 +5,8 @@
 	"refmap": "create_cyber_goggles.refmap.json",
 	"client": [
 		"AbstractFilterScreenMixin",
-		"RadialWrenchHandlerMixin",
 		"StockKeeperRequestScreenMixin",
+		"accessor.RadialWrenchMenuAccessor",
 		"chainConveyor.CardboardArmorHandlerMixin",
 		"chainConveyor.ChainConveyorConnectionHandlerMixin",
 		"chainConveyor.ChainConveyorInteractionHandlerMixin",
@@ -50,6 +50,9 @@
 		"provider.PackageEntityMixin",
 		"provider.PackagePortBlockEntityMixin",
 		"provider.PackagerBlockEntityMixin",
-		"provider.SchematicannonBlockEntityMixin"
+		"provider.SchematicannonBlockEntityMixin",
+		"wrench.GuiGameElementMixin",
+		"wrench.RadialWrenchHandlerMixin",
+		"wrench.RadialWrenchMenuMixin"
 	]
 }

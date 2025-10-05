@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.*;
 import net.minecraft.world.phys.HitResult.Type;
 import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraftforge.fml.util.thread.EffectiveSide;
 import org.jetbrains.annotations.*;
 
 import java.awt.Color;
@@ -35,6 +36,9 @@ public class CCGUtil {
 	@Contract(pure = true)
 	public static boolean isInGame() {
 		return mc.screen == null;
+	}
+	public static boolean isClient() {
+		return EffectiveSide.get().isClient();
 	}
 	/**
 	 * 尝试将给定对象转换为指定类型。

@@ -2,6 +2,7 @@ package io.github.forgestove.create_cyber_goggles.core.event;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.client.KeyMapping;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraftforge.jarjar.nio.util.Lazy;
 import org.lwjgl.glfw.GLFW;
 public enum CCGKey {
 	openConfig(GLFW.GLFW_KEY_UNKNOWN),
@@ -10,14 +11,14 @@ public enum CCGKey {
 	showStress(GLFW.GLFW_KEY_TAB),
 	toggleDiving(GLFW.GLFW_KEY_UNKNOWN),
 	toggleGoggle(GLFW.GLFW_KEY_UNKNOWN);
-	public final KeyMapping keyMapping;
+	public final Lazy<KeyMapping> keyMapping;
 	CCGKey(int key) {
-		keyMapping = new KeyMapping(CCG.ID + ".key." + name(), key, "key.categories." + CCG.ID);
+		keyMapping = Lazy.of(new KeyMapping(CCG.ID + ".key." + name(), key, "key.categories." + CCG.ID));
 	}
 	public static void register(RegisterKeyMappingsEvent event) {
-		for (var key : values()) event.register(key.keyMapping);
+		for (var key : values()) event.register(key.keyMapping.get());
 	}
 	public boolean isDown() {
-		return keyMapping.isDown();
+		return keyMapping.get().isDown();
 	}
 }

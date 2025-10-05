@@ -50,8 +50,10 @@ public class CCGConfig implements ConfigData {
 		@Tooltip public boolean cardBoardedYourself = false;
 	}
 	public static class Wrench {
-		@Tooltip public boolean leftClickFastDismantle = true;
+		@Tooltip @RequiresRestart public boolean enchancedWrench = true;
+		@Tooltip public boolean betterEncasedPipe = true;
 		@Tooltip public boolean alwaysAllowRotating = true;
+		@Tooltip public boolean leftClickFastDismantle = true;
 		@Tooltip public boolean removeCooldown = true;
 	}
 	public static class Misc {

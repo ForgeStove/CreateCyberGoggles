@@ -1,1 +1,2 @@
 - Fix key input handling for GUI
+- Removed the restart request for the Enchanced Wrench option

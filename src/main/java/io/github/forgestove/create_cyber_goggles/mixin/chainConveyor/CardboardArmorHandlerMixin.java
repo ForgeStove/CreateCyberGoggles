@@ -1,6 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.mixin.chainConveyor;
 import com.simibubi.create.content.equipment.armor.CardboardArmorHandler;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorRidingHandler;
+import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,6 +13,7 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.testFo
 public abstract class CardboardArmorHandlerMixin {
 	@Inject(method = "testForStealth", at = @At("HEAD"), cancellable = true)
 	private static void injectTestForStealth(Entity entityIn, CallbackInfoReturnable<Boolean> returnable) {
+		if (!CCG.CONFIG.chainConveyor.cardBoardedYourself) return;
 		if (ChainConveyorRidingHandler.ridingChainConveyor == null) return;
 		if (!(entityIn instanceof LocalPlayer)) return;
 		if (!testForStealth()) return;

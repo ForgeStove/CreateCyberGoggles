@@ -56,21 +56,21 @@
 | 移除第一人称背罐渲染 |    ❌    | 移除下界合金背罐的第一人称渲染效果             |
 | 允许潜水靴      |    ✅    | 潜水靴的功能，禁用以使它们像普通的靴子一样         |
 | 修复蓝图名称     |    ✅    | 保存蓝图时可以使用非ASCII字符             |
-| 右键穿透       |    ❌    | 允许右键穿透移动结构                    |
 | 强制飞轮优化     |    ❌    | 强制启用飞轮渲染后端（与着色器冲突，除非你知道你在做什么） |
 | NBT修复      |    ❌    | 修复NBT过大导致的崩溃，可能导致卡顿           |
 | 显示废料内容     |    ✅    | 显示序列组装中随机废料的具体内容              |
 
 ### 快捷键
 
-|      功能       | 默认值 |
-|:-------------:|:---:|
-|     打开配置      | 未指定 |
-| 通过仓储发报机访问网络存储 | 未指定 |
-|     预览过滤器     | 未指定 |
-|   显示应力网络信息    | Tab |
-|    切换潜水模式     | 未指定 |
-|    切换护目镜模式    | 未指定 |
+|      功能       |  默认值  |
+|:-------------:|:-----:|
+|   移动结构交互穿透    | 左Ctrl |
+|     打开配置      |  未指定  |
+| 通过仓储发报机访问网络存储 |  未指定  |
+|     预览过滤器     |  未指定  |
+|   显示应力网络信息    |  Tab  |
+|    切换潜水模式     |  未指定  |
+|    切换护目镜模式    |  未指定  |
 
 </details>
 
@@ -116,21 +116,21 @@
 | Remove First Person Backtank Render |    ❌    | Remove the first-person render effect of the Netherite Backtank                                               |
 | Allow Diving Boot                   |    ✅    | Function of diving boots, disable to make them behave like normal boots                                       |
 | Fix Schematic Name                  |    ✅    | Non-ASCII characters could be used when saving Blueprints                                                     |
-| Right Click Penetrate               |    ❌    | Allow right-clicking to penetrate moving contraption                                                          |
 | Force Flywheel Optimization         |    ❌    | Force enable Flywheel rendering backend (conflicts with shaders, unless you know what you are doing)          |
 | NBT Fix                             |    ❌    | Fix crash caused by oversized NBT, may cause lag                                                              |
 | Show Scrap Content                  |    ✅    | Display the specific content of random scrap in sequence assembly                                             |
 
 ### Hotkeys
 
-|                Function                 |  Default  |
-|:---------------------------------------:|:---------:|
-|               Open Config               | Not Bound |
-| Access network storage via stock ticker | Not Bound |
-|             Preview Filter              | Not Bound |
-|        Show Stress Network Info         |    Tab    |
-|           Toggle Diving Mode            | Not Bound |
-|           Toggle Goggle Mode            | Not Bound |
+|                Function                 |   Default    |
+|:---------------------------------------:|:------------:|
+|       Contraption Click Penetrate       | Left Control |
+|               Open Config               |  Not Bound   |
+| Access network storage via stock ticker |  Not Bound   |
+|             Preview Filter              |  Not Bound   |
+|        Show Stress Network Info         |     Tab      |
+|           Toggle Diving Mode            |  Not Bound   |
+|           Toggle Goggle Mode            |  Not Bound   |
 
 </details>
 

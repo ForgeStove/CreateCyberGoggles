@@ -106,7 +106,7 @@
 | Prevent Player Auto Separation      |    ❌    | Prevents the player from automatically detaching from the chain conveyor due to obstacles                     |
 | Enhanced Connection                 |    ✅    | Remove the minimum connection distance and maximum tilt angle restrictions for chain conveyors                |
 | Automatically Pack Yourself         |    ❌    | Automatically turn yourself into a cardboard box when hanging on the chain                                    |
-| Enhanced Wrench                     |    ✅    | Allow using wrench to modify more block states (Warning: May be considered cheating on the server)            |
+| Enhanced Wrench                     |    ❌    | Allow using wrench to modify more block states (Warning: May be considered cheating on the server)            |
 | Better Encased Pipe                 |    ✅    | Allow right-clicking to toggle encased pipe state when empty-handed. Hold [Shift] to toggle the opposite side |
 | Always Allow Rotating Blocks        |    ✅    | Rotate blocks with hotkey without a wrench                                                                    |
 | Left Click Fast Dismantle           |    ✅    | Use left click to dismantle component instantly                                                               |

@@ -1,5 +1,3 @@
-- Optimize the logic for leftClickFastDismantle
-- Fix bug that there is a delay in auto-packing to cardboard box
-- Fix bug where deployer was missing information when hideStaticKineticInfo was enabled
-- Fix bug where keys could not be used when they were bound to non-keyboard keys
-- Add contents display to the toolbox item
+- Add Enchaned Wrench option that allow using wrench to modify more block states
+- Add Better Encased Pipe option that allow right-clicking to toggle encased pipe state when empty-handed and hold [Shift] to toggle the opposite side
+- Optimize Left Click Fast Dismantle

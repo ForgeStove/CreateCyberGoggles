@@ -19,8 +19,7 @@ import java.util.Map;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class KeyInput {
 	public static StockTickerBlockEntity lastSTBE;
-	public static int index = 1;
-	public static int scrollDeltaY;
+	public static int index = 1, scrollDeltaY;
 	public static void key(Key ignoredEvent) {
 		toggleGoggle();
 		toggleDiving();
@@ -72,11 +71,7 @@ public class KeyInput {
 		if (mc.player == null) return;
 		var itemStack = getRelevantFilterItem();
 		if (itemStack == null) return;
-		if (!(itemStack.getItem() instanceof FilterItem)) {
-			CCGLang.translate("message.notFilter").style(ChatFormatting.RED).sendStatus(mc.player);
-			playSound(AllSoundEvents.DENY);
-			return;
-		}
+		if (!(itemStack.getItem() instanceof FilterItem)) return;
 		mc.setScreen(Map.<Item, Function3<Integer, Inventory, ItemStack, Screen>>of(
 			AllItems.FILTER.get(),
 			(id, inv, stack) -> new FilterScreen(FilterMenu.create(id, inv, stack), inv, stack.getHoverName()),
@@ -90,10 +85,12 @@ public class KeyInput {
 	private static void clothStore(MouseScrollingEvent event) {
 		if (!CCG.CONFIG.goggles.betterStoreInfo) return;
 		var tcbe = getBlockEntity(TableClothBlockEntity.class);
-		if (tcbe != null && tcbe.isShop()) {
-			if (event.getScrollDeltaY() == 0) scrollDeltaY = 0;
-			else scrollDeltaY = event.getScrollDeltaY() > 0 ? -1 : 1;
-			event.setCanceled(true);
-		} else index = 1;
+		if (tcbe == null || !tcbe.isShop()) {
+			index = 1;
+			return;
+		}
+		if (event.getScrollDeltaY() == 0) scrollDeltaY = 0;
+		else scrollDeltaY = event.getScrollDeltaY() > 0 ? -1 : 1;
+		event.setCanceled(true);
 	}
 }

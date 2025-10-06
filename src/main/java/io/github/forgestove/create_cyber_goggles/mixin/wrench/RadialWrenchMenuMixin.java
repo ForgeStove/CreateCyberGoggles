@@ -55,6 +55,7 @@ public abstract class RadialWrenchMenuMixin {
 			AGE_25,
 			NOTEBLOCK_INSTRUMENT,
 			SIGNAL_FIRE,
+			SLAB_TYPE,
 			BlazeBurnerBlock.HEAT_LEVEL
 		).forEach(property -> PROPERTIES_BLACKLIST.put(property, property.getName()));
 	}

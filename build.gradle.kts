@@ -58,7 +58,6 @@ dependencies {
 	annotationProcessor("io.github.llamalad7:mixinextras-common:${p("mixinExtrasVersion")}")
 	compileOnly("io.github.llamalad7:mixinextras-common:${p("mixinExtrasVersion")}")
 	runtimeOnly("io.github.llamalad7:mixinextras-${p("loader")}:${p("mixinExtrasVersion")}")
-	compileOnly("org.jetbrains:annotations:${p("annotationsVersion")}")
 }
 publishMods {
 	file.set(tasks.named("reobfJar").get().outputs.files.singleFile)

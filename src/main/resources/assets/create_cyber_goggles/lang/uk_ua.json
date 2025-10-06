@@ -1,4 +1,5 @@
 {
+	"create_cyber_goggles.key.clickPenetrate": "Contraption Click Penetrate",
 	"create_cyber_goggles.key.openConfig": "Відкрити налашування",
 	"create_cyber_goggles.key.openStock": "Сховище мережі зі склад. замовником",
 	"create_cyber_goggles.key.previewFilter": "Фільтр попереднього перегляду",
@@ -77,8 +78,6 @@
 	"text.autoconfig.create_cyber_goggles.option.misc.removeCardboardOverlay.@Tooltip": "Видаляє накладення погляду картонного костюма під час присідання",
 	"text.autoconfig.create_cyber_goggles.option.misc.removeNetheriteFirstPerson": "Видалити промальовування балона від першої особи",
 	"text.autoconfig.create_cyber_goggles.option.misc.removeNetheriteFirstPerson.@Tooltip": "Видаляє промальовування ефекту незеритового балона від першої особи",
-	"text.autoconfig.create_cyber_goggles.option.misc.rightClickPenetrate": "Проникнення ПКМ",
-	"text.autoconfig.create_cyber_goggles.option.misc.rightClickPenetrate.@Tooltip": "Дозволяє ПКМ, щоб проникнути в рухому штуковину",
 	"text.autoconfig.create_cyber_goggles.option.misc.showScrapContent": "Показати вміст записки",
 	"text.autoconfig.create_cyber_goggles.option.misc.showScrapContent.@Tooltip": "Промальовує конкретний уміст випадкових записок у послідовному складанні",
 	"text.autoconfig.create_cyber_goggles.option.outlineRenderer.delayRenderDuration": "Тривалість затримки промальовування",

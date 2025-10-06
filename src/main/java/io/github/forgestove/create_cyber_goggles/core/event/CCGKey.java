@@ -1,20 +1,23 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
-import com.mojang.blaze3d.platform.InputConstants;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.client.KeyMapping;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.jarjar.nio.util.Lazy;
-import org.lwjgl.glfw.GLFW;
 
+import static com.mojang.blaze3d.platform.InputConstants.*;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public enum CCGKey {
-	openConfig(GLFW.GLFW_KEY_UNKNOWN),
-	openStock(GLFW.GLFW_KEY_UNKNOWN),
-	previewFilter(GLFW.GLFW_KEY_UNKNOWN),
-	showStress(GLFW.GLFW_KEY_TAB),
-	toggleDiving(GLFW.GLFW_KEY_UNKNOWN),
-	toggleGoggle(GLFW.GLFW_KEY_UNKNOWN);
+	openConfig,
+	openStock,
+	previewFilter,
+	showStress(KEY_TAB),
+	clickPenetrate(KEY_LCONTROL),
+	toggleDiving,
+	toggleGoggle;
 	public final Lazy<KeyMapping> keyMapping;
+	CCGKey() {
+		this(UNKNOWN.getValue());
+	}
 	CCGKey(int key) {
 		keyMapping = Lazy.of(new KeyMapping(CCG.ID + ".key." + name(), key, "key.categories." + CCG.ID));
 	}
@@ -23,6 +26,6 @@ public enum CCGKey {
 	}
 	public boolean isDown() {
 		var key = keyMapping.get().getKey();
-		return key != InputConstants.UNKNOWN && InputConstants.isKeyDown(mc.getWindow().getWindow(), key.getValue());
+		return !key.equals(UNKNOWN) && isKeyDown(mc.getWindow().getWindow(), key.getValue());
 	}
 }

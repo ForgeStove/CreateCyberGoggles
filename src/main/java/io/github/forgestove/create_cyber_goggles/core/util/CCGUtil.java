@@ -35,10 +35,13 @@ public class CCGUtil {
 	}
 	@Contract(pure = true)
 	public static boolean isInGame() {
-		return mc.screen == null;
+		return !isInGUI();
 	}
 	public static boolean isClient() {
 		return EffectiveSide.get().isClient();
+	}
+	public static boolean isServer() {
+		return !isClient();
 	}
 	/**
 	 * 尝试将给定对象转换为指定类型。

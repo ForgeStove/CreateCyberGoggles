@@ -61,7 +61,6 @@ public class CCGConfig implements ConfigData {
 		@Tooltip public boolean removeNetheriteFirstPerson = false;
 		@Tooltip public boolean allowDivingBoot = true;
 		@Tooltip public boolean fixSchematicName = true;
-		@Tooltip public boolean rightClickPenetrate = false;
 		@Tooltip public boolean forcedBackend = false;
 		@Tooltip public boolean nbtFix = false;
 		@Tooltip @RequiresRestart public boolean showScrapContent = true;

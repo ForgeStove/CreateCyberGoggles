@@ -1,2 +1,2 @@
-- Fix key input handling for GUI
-- Removed the restart request for the Enchanced Wrench option
+- Refactor Right Click Penetrate to a hot key "Click Penetrate" (default: "Left Ctrl")
+- Fix bug where Right Click Penetrate would not work normally

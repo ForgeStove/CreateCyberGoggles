@@ -1,3 +1,1 @@
-- Add Enchaned Wrench option that allow using wrench to modify more block states
-- Add Better Encased Pipe option that allow right-clicking to toggle encased pipe state when empty-handed and hold [Shift] to toggle the opposite side
-- Optimize Left Click Fast Dismantle
+- Fix key input handling for GUI

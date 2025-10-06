@@ -8,12 +8,13 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.testForStealth;
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 @Mixin(CardboardArmorHandler.class)
 public abstract class CardboardArmorHandlerMixin {
 	@Inject(method = "testForStealth", at = @At("HEAD"), cancellable = true)
 	private static void injectTestForStealth(Entity entityIn, CallbackInfoReturnable<Boolean> returnable) {
 		if (!CCG.CONFIG.chainConveyor.cardBoardedYourself) return;
+		if (isServer()) return;
 		if (ChainConveyorRidingHandler.ridingChainConveyor == null) return;
 		if (!(entityIn instanceof LocalPlayer)) return;
 		if (!testForStealth()) return;

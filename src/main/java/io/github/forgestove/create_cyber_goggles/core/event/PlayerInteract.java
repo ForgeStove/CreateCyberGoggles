@@ -22,7 +22,7 @@ public class PlayerInteract {
 		if (dismantleDelay < 10) dismantleDelay++;
 	}
 	public static void leftClick(@NotNull LeftClickBlock event) {
-		if (!isClient()) return;
+		if (isServer()) return;
 		if (!CCG.CONFIG.wrench.leftClickFastDismantle) return;
 		if (dismantleDelay > 0) dismantleDelay--;
 		var canDismantle = System.currentTimeMillis() - lastDismantleTime > dismantleDelay * 20;
@@ -45,7 +45,7 @@ public class PlayerInteract {
 		event.setCanceled(true);
 	}
 	public static void rightClick(RightClickBlock event) {
-		if (!isClient()) return;
+		if (isServer()) return;
 		if (!CCG.CONFIG.wrench.betterEncasedPipe) return;
 		if (event.getHand() != InteractionHand.MAIN_HAND) return;
 		if (mc.player == null) return;

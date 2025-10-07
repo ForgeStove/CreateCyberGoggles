@@ -4,7 +4,6 @@ import com.simibubi.create.*;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.kinetics.chainConveyor.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.*;
 import org.spongepowered.asm.mixin.*;
@@ -45,7 +44,7 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 		}
 		if (selectedConnection == null) return;
 		var mainHandItem = mc.player.getMainHandItem();
-		CatnipServices.NETWORK.sendToServer(new ChainConveyorConnectionPacket(
+		sendToServer(new ChainConveyorConnectionPacket(
 			selectedLift,
 			selectedLift.offset(selectedConnection),
 			mainHandItem.isEmpty() ? AllItems.WRENCH.asStack() : mainHandItem,

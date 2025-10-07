@@ -3,7 +3,6 @@ import com.simibubi.create.content.contraptions.wrench.RadialWrenchMenuSubmitPac
 import com.simibubi.create.content.equipment.wrench.*;
 import com.simibubi.create.content.fluids.pipes.EncasedPipeBlock;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket.Action;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.*;
@@ -65,7 +64,7 @@ public class PlayerInteract {
 		var property = EncasedPipeBlock.FACING_TO_PROPERTY_MAP.get(clickedFace);
 		boolean currentState = state.getValue(property);
 		var newState = state.setValue(property, !currentState);
-		CatnipServices.NETWORK.sendToServer(new RadialWrenchMenuSubmitPacket(pos, newState));
+		sendToServer(new RadialWrenchMenuSubmitPacket(pos, newState));
 		mc.player.swing(mc.player.getUsedItemHand());
 	}
 }

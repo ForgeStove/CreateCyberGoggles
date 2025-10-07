@@ -5,11 +5,13 @@ import com.simibubi.create.content.equipment.armor.CardboardArmorItem;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket.Action;
 import net.minecraft.sounds.SoundEvent;
@@ -240,5 +242,13 @@ public class CCGUtil {
 	public static void sendAction(Action action) {
 		if (mc.player == null) return;
 		mc.player.connection.send(new ServerboundPlayerCommandPacket(mc.player, action));
+	}
+	/**
+	 * 向服务器发送网络数据包。
+	 * <p>
+	 * 使用{@link Create}模组的网络通道系统将数据包发送到服务器端。
+	 */
+	public static void sendToServer(CustomPacketPayload packet) {
+		CatnipServices.NETWORK.sendToServer(packet);
 	}
 }

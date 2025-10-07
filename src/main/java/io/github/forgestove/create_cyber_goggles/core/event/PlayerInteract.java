@@ -1,5 +1,4 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
-import com.simibubi.create.AllPackets;
 import com.simibubi.create.content.contraptions.wrench.RadialWrenchMenuSubmitPacket;
 import com.simibubi.create.content.equipment.wrench.*;
 import com.simibubi.create.content.fluids.pipes.EncasedPipeBlock;
@@ -9,20 +8,21 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.*;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.*;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 import static net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock.Action.*;
 public class PlayerInteract {
-	private static long lastDismantleTime;
-	private static long dismantleDelay = 10;
+	private static long lastDismantleTime, dismantleDelay = 10;
 	public static void tick(ClientTickEvent ignoredEvent) {
 		if (dismantleDelay < 10) dismantleDelay++;
 	}
-	public static void leftClick(@NotNull LeftClickBlock event) {
+	public static void leftClick(LeftClickBlock event) {
 		if (isServer()) return;
+		wrench(event);
+	}
+	private static void wrench(LeftClickBlock event) {
 		if (!CCG.CONFIG.wrench.leftClickFastDismantle) return;
 		if (dismantleDelay > 0) dismantleDelay--;
 		var canDismantle = System.currentTimeMillis() - lastDismantleTime > dismantleDelay * 20;
@@ -46,22 +46,25 @@ public class PlayerInteract {
 	}
 	public static void rightClick(RightClickBlock event) {
 		if (isServer()) return;
+		enacesdPipe(event);
+	}
+	private static void enacesdPipe(RightClickBlock event) {
 		if (!CCG.CONFIG.wrench.betterEncasedPipe) return;
+		var pos = event.getPos();
+		var state = event.getLevel().getBlockState(pos);
+		if (!(state.getBlock() instanceof EncasedPipeBlock)) return;
 		if (event.getHand() != InteractionHand.MAIN_HAND) return;
 		if (mc.player == null) return;
 		var anyMatch = Stream.of(mc.player.getMainHandItem(), mc.player.getOffhandItem())
 			.map(ItemStack::getItem)
 			.anyMatch(item -> item instanceof BlockItem || item instanceof WrenchItem || item instanceof DebugStickItem);
 		if (anyMatch) return;
-		var pos = event.getPos();
-		var state = event.getLevel().getBlockState(pos);
-		if (!(state.getBlock() instanceof EncasedPipeBlock)) return;
 		var clickedFace = event.getHitVec().getDirection();
 		if (mc.player.isShiftKeyDown()) clickedFace = clickedFace.getOpposite();
 		var property = EncasedPipeBlock.FACING_TO_PROPERTY_MAP.get(clickedFace);
 		boolean currentState = state.getValue(property);
 		var newState = state.setValue(property, !currentState);
-		AllPackets.getChannel().sendToServer(new RadialWrenchMenuSubmitPacket(pos, newState));
+		sendToServer(new RadialWrenchMenuSubmitPacket(pos, newState));
 		mc.player.swing(mc.player.getUsedItemHand());
 	}
 }

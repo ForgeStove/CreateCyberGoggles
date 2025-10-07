@@ -44,7 +44,7 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 		}
 		if (selectedConnection == null) return;
 		var mainHandItem = mc.player.getMainHandItem();
-		AllPackets.getChannel().sendToServer(new ChainConveyorConnectionPacket(
+		sendToServer(new ChainConveyorConnectionPacket(
 			selectedLift,
 			selectedLift.offset(selectedConnection),
 			mainHandItem.isEmpty() ? AllItems.WRENCH.asStack() : mainHandItem,

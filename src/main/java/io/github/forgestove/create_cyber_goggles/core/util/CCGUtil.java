@@ -4,6 +4,7 @@ import com.simibubi.create.AllSoundEvents.SoundEntry;
 import com.simibubi.create.content.equipment.armor.CardboardArmorItem;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
+import com.simibubi.create.foundation.networking.SimplePacketBase;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -240,5 +241,13 @@ public class CCGUtil {
 	public static void sendAction(Action action) {
 		if (mc.player == null) return;
 		mc.player.connection.send(new ServerboundPlayerCommandPacket(mc.player, action));
+	}
+	/**
+	 * 向服务器发送网络数据包。
+	 * <p>
+	 * 使用{@link Create}模组的网络通道系统将数据包发送到服务器端。
+	 */
+	public static void sendToServer(SimplePacketBase packet) {
+		AllPackets.getChannel().sendToServer(packet);
 	}
 }

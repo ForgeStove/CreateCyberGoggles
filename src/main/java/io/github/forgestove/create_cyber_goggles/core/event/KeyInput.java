@@ -59,7 +59,6 @@ public class KeyInput {
 		if (stbe != null) lastSTBE = stbe;
 		if (lastSTBE == null || lastSTBE.isRemoved()) {
 			CCGLang.translate("message.notStock").text("  ").translate("key.openStock").style(ChatFormatting.RED).sendStatus(mc.player);
-			playSound(AllSoundEvents.DENY);
 			return;
 		}
 		var inv = mc.player.getInventory();
@@ -80,7 +79,7 @@ public class KeyInput {
 			AllItems.PACKAGE_FILTER.get(),
 			(id, inv, stack) -> new PackageFilterScreen(PackageFilterMenu.create(id, inv, stack), inv, stack.getHoverName())
 		).get(itemStack.getItem()).apply(-1, mc.player.getInventory(), itemStack));
-		playSound(SoundEvents.BOOK_PAGE_TURN);
+		playSound(SoundEvents.BOOK_PAGE_TURN, 1.0f, 1.0f);
 	}
 	private static void clothStore(MouseScrollingEvent event) {
 		if (!CCG.CONFIG.goggles.betterStoreInfo) return;

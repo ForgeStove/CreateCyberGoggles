@@ -49,11 +49,12 @@ public class CCGConfig implements ConfigData {
 		@Tooltip public boolean cardBoardedYourself = false;
 	}
 	public static class Wrench {
-		@Tooltip public boolean enchancedWrench = false;
+		@Tooltip public boolean fixRotationMenu = true;
 		@Tooltip public boolean betterEncasedPipe = true;
 		@Tooltip public boolean alwaysAllowRotating = true;
 		@Tooltip public boolean leftClickFastDismantle = true;
 		@Tooltip public boolean removeCooldown = true;
+		@Tooltip public boolean enchancedRotationMenu = false;
 	}
 	public static class Misc {
 		@Tooltip public boolean infEditBoxLength = false;

@@ -1,6 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.core.util;
-import com.simibubi.create.*;
-import com.simibubi.create.AllSoundEvents.SoundEntry;
+import com.simibubi.create.Create;
 import com.simibubi.create.content.equipment.armor.CardboardArmorItem;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
@@ -193,24 +192,6 @@ public class CCGUtil {
 		mc.getSoundManager().play(SimpleSoundInstance.forUI(sound, pitch, volume));
 	}
 	/**
-	 * 以预设的音高和音量播放{@link Create}模组的音效条目。
-	 * 默认使用较低的音高{@code 0.25f}和正常音量{@code 1.0f}。
-	 *
-	 * @param entry {@link Create}模组的音效条目
-	 */
-	public static void playSound(@NotNull SoundEntry entry) {
-		playSound(entry.getMainEvent(), 0.25f, 1.0f);
-	}
-	/**
-	 * 以默认音高和音量播放指定的音效。
-	 * 使用正常音高{@code 1.0f}和正常音量{@code 1.0f}。
-	 *
-	 * @param sound 要播放的音效事件
-	 */
-	public static void playSound(SoundEvent sound) {
-		playSound(sound, 1.0f, 1.0f);
-	}
-	/**
 	 * 切换配置项的启用状态，并显示提示消息与播放音效。
 	 * <p>
 	 * 仅在按键按下且玩家未处于GUI界面时生效。
@@ -233,7 +214,6 @@ public class CCGUtil {
 			.add(CCGLang.enabled(newEnabled))
 			.style(enabled ? ChatFormatting.RED : ChatFormatting.GREEN)
 			.sendStatus(mc.player);
-		playSound(newEnabled ? AllSoundEvents.CONFIRM_2 : AllSoundEvents.DENY);
 	}
 	/**
 	 * 向服务器发送玩家动作指令。

@@ -14,7 +14,7 @@ public abstract class GuiGameElementMixin {
 			+ "Lnet/createmod/catnip/gui/element/GuiGameElement$GuiRenderBuilder;", at = @At("HEAD"), cancellable = true
 	)
 	private static void of(BlockState state, BlockEntity blockEntity, CallbackInfoReturnable<GuiRenderBuilder> returnable) {
-		if (!CCG.CONFIG.wrench.enchancedWrench) return;
+		if (!CCG.CONFIG.wrench.fixRotationMenu) return;
 		if (blockEntity != null) return;
 		returnable.setReturnValue(GuiGameElement.of(state));
 	}

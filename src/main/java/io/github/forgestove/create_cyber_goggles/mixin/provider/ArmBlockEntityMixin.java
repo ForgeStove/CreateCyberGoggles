@@ -3,7 +3,6 @@ import com.simibubi.create.AllSpecialTextures;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.mechanicalArm.*;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
-import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -11,6 +10,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.*;
 
 import java.util.*;
+
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.outliner;
 @Mixin(ArmBlockEntity.class)
 public abstract class ArmBlockEntityMixin extends KineticBlockEntity implements IItemRenderable, IOutlineRenderable {
 	@Shadow ItemStack heldItem;
@@ -32,13 +33,11 @@ public abstract class ArmBlockEntityMixin extends KineticBlockEntity implements 
 			if (!point.isValid()) continue;
 			var level = point.getLevel();
 			var pos = point.getPos();
-			Outliner.getInstance()
-				.chaseAABB("ArmIOBox" + point, level.getBlockState(pos).getShape(level, pos).bounds().move(pos))
+			outliner.chaseAABB("ArmIOBox" + point, level.getBlockState(pos).getShape(level, pos).bounds().move(pos))
 				.withFaceTextures(AllSpecialTextures.HIGHLIGHT_CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
 				.lineWidth(1 / 16f)
 				.colored(point.getMode().getColor());
-			Outliner.getInstance()
-				.showLine("ArmIOLine" + point, getBlockPos().getCenter(), point.getPos().getCenter())
+			outliner.showLine("ArmIOLine" + point, getBlockPos().getCenter(), point.getPos().getCenter())
 				.lineWidth(1 / 8f)
 				.colored(point.getMode().getColor());
 		}

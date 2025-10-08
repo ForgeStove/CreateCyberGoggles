@@ -6,7 +6,6 @@ import com.simibubi.create.content.kinetics.fan.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.event.OutlineRenderer;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
-import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -15,6 +14,8 @@ import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.*;
 
 import java.util.List;
+
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.outliner;
 @Mixin(EncasedFanBlockEntity.class)
 public abstract class EncasedFanBlockEntityMixin extends KineticBlockEntity implements IHaveGoggleInformation, IOutlineRenderable {
 	@Shadow public AirCurrent airCurrent;
@@ -31,8 +32,7 @@ public abstract class EncasedFanBlockEntityMixin extends KineticBlockEntity impl
 	public void ccg$render() {
 		var color = OutlineRenderer.getColor(airCurrent.pushing);
 		var bounds = airCurrent.bounds;
-		Outliner.getInstance()
-			.chaseAABB("FanAirBox" + this, bounds)
+		outliner.chaseAABB("FanAirBox" + this, bounds)
 			.withFaceTextures(AllSpecialTextures.CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
 			.lineWidth(1 / 16f)
 			.colored(color);
@@ -61,11 +61,10 @@ public abstract class EncasedFanBlockEntityMixin extends KineticBlockEntity impl
 			};
 			var id = "FanAirFlowBox" + this + i;
 			if (offset > 0.98) {
-				Outliner.getInstance().remove(id);
+				outliner.remove(id);
 				continue;
 			}
-			Outliner.getInstance()
-				.chaseAABB(id, flowBound)
+			outliner.chaseAABB(id, flowBound)
 				.withFaceTextures(AllSpecialTextures.CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
 				.lineWidth(1 / 16f)
 				.colored(color);

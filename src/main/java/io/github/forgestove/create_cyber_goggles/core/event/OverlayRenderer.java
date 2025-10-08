@@ -5,7 +5,6 @@ import com.simibubi.create.infrastructure.config.AllConfigs;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.IItemRenderable;
 import net.createmod.catnip.gui.element.BoxElement;
-import net.createmod.catnip.outliner.Outliner;
 import net.createmod.catnip.outliner.Outliner.OutlineEntry;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.client.DeltaTracker;
@@ -23,7 +22,7 @@ import java.util.Map;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class OverlayRenderer {
-	public static final Map<Object, OutlineEntry> outlines = Outliner.getInstance().getOutlines();
+	public static final Map<Object, OutlineEntry> outlines = outliner.getOutlines();
 	public static int hoverTicks;
 	public static float fade;
 	public static ItemStack currentItemStack;

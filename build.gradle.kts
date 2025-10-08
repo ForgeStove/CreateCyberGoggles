@@ -37,7 +37,7 @@ repositories {
 	maven("https://mvn.devos.one/snapshots") // Registrate
 	maven("https://maven.shedaniel.me") // Cloth Config API
 	maven("https://maven.blamejared.com") // JEI
-	maven("https://api.modrinth.com/maven") // Modrinth
+	maven("https://api.modrinth.com/maven") { content { includeGroup("maven.modrinth") } } // Modrinth
 }
 dependencies {
 	implementation("com.simibubi.create:create-${p("mcVersion")}:${p("createVersion")}:slim") { isTransitive = false }

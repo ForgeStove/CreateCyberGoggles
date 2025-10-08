@@ -5,8 +5,6 @@ import com.simibubi.create.infrastructure.config.AllConfigs;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.IItemRenderable;
 import net.createmod.catnip.gui.element.BoxElement;
-import net.createmod.catnip.outliner.Outliner;
-import net.createmod.catnip.outliner.Outliner.OutlineEntry;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
@@ -16,11 +14,8 @@ import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.gui.overlay.*;
 import org.jetbrains.annotations.*;
 
-import java.util.Map;
-
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class OverlayRenderer {
-	public static final Map<Object, OutlineEntry> outlines = Outliner.getInstance().getOutlines();
 	public static int hoverTicks;
 	public static float fade;
 	public static ItemStack currentItemStack;
@@ -43,7 +38,7 @@ public class OverlayRenderer {
 			hoverTicks = 0;
 			return;
 		}
-		if (!CCG.CONFIG.goggles.canRenderOnValueBox) for (var entry : outlines.values()) {
+		if (!CCG.CONFIG.goggles.canRenderOnValueBox) for (var entry : outliner.getOutlines().values()) {
 			if (!entry.isAlive()) continue;
 			var outline = entry.getOutline();
 			if (outline instanceof ValueBox && !((ValueBox) outline).isPassive) return;

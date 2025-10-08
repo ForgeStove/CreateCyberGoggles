@@ -6,6 +6,7 @@ import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import com.simibubi.create.foundation.networking.SimplePacketBase;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -30,6 +31,7 @@ import java.util.stream.Stream;
 public class CCGUtil {
 	/** 获取当前的 {@link Minecraft} 客户端实例。 */
 	public static final Minecraft mc = Minecraft.getInstance();
+	public static final Outliner outliner = Outliner.getInstance();
 	@Contract(pure = true)
 	public static boolean isInGUI() {
 		return mc.screen != null;

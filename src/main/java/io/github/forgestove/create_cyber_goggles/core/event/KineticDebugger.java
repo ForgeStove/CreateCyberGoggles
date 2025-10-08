@@ -1,5 +1,4 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
-import com.simibubi.create.CreateClient;
 import com.simibubi.create.content.kinetics.base.*;
 import com.simibubi.create.foundation.utility.VecHelper;
 import io.github.forgestove.create_cyber_goggles.CCG;
@@ -103,7 +102,7 @@ public class KineticDebugger {
 	public static void renderOutline(@NotNull KineticBlockEntity kbe, int depth, int rgb) {
 		if (kbe.getTheoreticalSpeed() == 0) return;
 		var blockPos = kbe.getBlockPos();
-		CreateClient.OUTLINER.chaseAABB("KineticOutline" + depth, getBounds(blockPos)).lineWidth(1 / 16f).colored(rgb);
+		outliner.chaseAABB("KineticOutline" + depth, getBounds(blockPos)).lineWidth(1 / 16f).colored(rgb);
 	}
 	/**
 	 * 根据链路深度和时间生成彩虹色。
@@ -127,9 +126,7 @@ public class KineticDebugger {
 		var start = kbe.getBlockPos();
 		var end = kbe.source;
 		if (start.distManhattan(end) == 1) return;
-		CreateClient.OUTLINER.showLine("KineticLine" + depth, VecHelper.getCenterOf(start), VecHelper.getCenterOf(end))
-			.lineWidth(1 / 8f)
-			.colored(rgb);
+		outliner.showLine("KineticLine" + depth, VecHelper.getCenterOf(start), VecHelper.getCenterOf(end)).lineWidth(1 / 8f).colored(rgb);
 	}
 	/**
 	 * 渲染动力方块的旋转轴线。
@@ -141,6 +138,6 @@ public class KineticDebugger {
 		if (!(state.getBlock() instanceof IRotate iRotate)) return;
 		var vec = Vec3.atLowerCornerOf(Direction.get(AxisDirection.POSITIVE, iRotate.getRotationAxis(state)).getNormal());
 		var center = VecHelper.getCenterOf(kbe.getBlockPos());
-		CreateClient.OUTLINER.showLine("RotationAxis", center.add(vec), center.subtract(vec)).lineWidth(1 / 8f);
+		outliner.showLine("RotationAxis", center.add(vec), center.subtract(vec)).lineWidth(1 / 8f);
 	}
 }

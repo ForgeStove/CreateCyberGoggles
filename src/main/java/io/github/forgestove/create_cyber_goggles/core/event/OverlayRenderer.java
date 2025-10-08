@@ -1,10 +1,8 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
-import com.simibubi.create.CreateClient;
 import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBox;
 import com.simibubi.create.foundation.gui.Theme;
 import com.simibubi.create.foundation.gui.Theme.Key;
-import com.simibubi.create.foundation.outliner.Outliner.OutlineEntry;
 import com.simibubi.create.foundation.utility.Color;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import io.github.forgestove.create_cyber_goggles.CCG;
@@ -17,11 +15,8 @@ import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.gui.overlay.*;
 import org.jetbrains.annotations.*;
 
-import java.util.Map;
-
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class OverlayRenderer {
-	public static final Map<Object, OutlineEntry> outlines = CreateClient.OUTLINER.getOutlines();
 	public static int hoverTicks;
 	public static float fade;
 	public static ItemStack currentItemStack;
@@ -44,7 +39,7 @@ public class OverlayRenderer {
 			hoverTicks = 0;
 			return;
 		}
-		if (!CCG.CONFIG.goggles.canRenderOnValueBox) for (var entry : outlines.values()) {
+		if (!CCG.CONFIG.goggles.canRenderOnValueBox) for (var entry : outliner.getOutlines().values()) {
 			if (!entry.isAlive()) continue;
 			var outline = entry.getOutline();
 			if (outline instanceof ValueBox && !((ValueBox) outline).isPassive) return;

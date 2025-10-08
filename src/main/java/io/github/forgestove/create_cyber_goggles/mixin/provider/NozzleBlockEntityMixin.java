@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.mixin.provider;
-import com.simibubi.create.*;
+import com.simibubi.create.AllSpecialTextures;
 import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.fan.NozzleBlockEntity;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
@@ -14,6 +14,8 @@ import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.*;
 
 import java.util.List;
+
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.outliner;
 @Mixin(value = NozzleBlockEntity.class, remap = false)
 public abstract class NozzleBlockEntityMixin extends SmartBlockEntity implements IHaveGoggleInformation, IOutlineRenderable {
 	@Shadow private boolean pushing;
@@ -30,7 +32,7 @@ public abstract class NozzleBlockEntityMixin extends SmartBlockEntity implements
 	public void ccg$render() {
 		var center = getBlockPos().getCenter();
 		var color = OutlineRenderer.getColor(pushing);
-		CreateClient.OUTLINER.chaseAABB("NozzleAirBox" + this, new AABB(center, center).inflate(range / 2f))
+		outliner.chaseAABB("NozzleAirBox" + this, new AABB(center, center).inflate(range / 2f))
 			.withFaceTextures(AllSpecialTextures.CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
 			.lineWidth(1 / 16f)
 			.colored(color);
@@ -39,12 +41,12 @@ public abstract class NozzleBlockEntityMixin extends SmartBlockEntity implements
 			var offset = OutlineRenderer.getOffset(i, numberOfFlowBoxes);
 			var id = "NozzleAirFlowBox" + this + i;
 			if (offset > 0.98) {
-				CreateClient.OUTLINER.remove(id);
+				outliner.remove(id);
 				continue;
 			}
 			var radius = pushing ? offset * range / 2f : (1 - offset) * range / 2f;
 			var flowBound = new AABB(center, center).inflate(radius);
-			CreateClient.OUTLINER.chaseAABB(id, flowBound)
+			outliner.chaseAABB(id, flowBound)
 				.withFaceTextures(AllSpecialTextures.CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
 				.lineWidth(1 / 16f)
 				.colored(color);

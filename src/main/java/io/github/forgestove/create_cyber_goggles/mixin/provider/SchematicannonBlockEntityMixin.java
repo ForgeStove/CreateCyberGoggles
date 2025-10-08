@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.mixin.provider;
-import com.simibubi.create.*;
+import com.simibubi.create.AllSpecialTextures;
 import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.schematics.SchematicPrinter;
 import com.simibubi.create.content.schematics.cannon.*;
@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.*;
 
 import java.util.List;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.getBounds;
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 @Mixin(value = SchematicannonBlockEntity.class, remap = false)
 public abstract class SchematicannonBlockEntityMixin implements IHaveGoggleInformation, IItemRenderable, IOutlineRenderable {
 	@Shadow public State state;
@@ -34,7 +34,7 @@ public abstract class SchematicannonBlockEntityMixin implements IHaveGoggleInfor
 	public void ccg$render() {
 		var currentTarget = printer.getCurrentTarget();
 		if (currentTarget == null) return;
-		CreateClient.OUTLINER.chaseAABB("SchematiCannonTargetBox" + this, getBounds(currentTarget))
+		outliner.chaseAABB("SchematiCannonTargetBox" + this, getBounds(currentTarget))
 			.withFaceTextures(AllSpecialTextures.HIGHLIGHT_CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
 			.lineWidth(1 / 16f)
 			.colored(CCG.CONFIG.outlineRenderer.windPushColor);

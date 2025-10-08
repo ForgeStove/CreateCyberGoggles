@@ -51,7 +51,6 @@
 		"provider.PackagePortBlockEntityMixin",
 		"provider.PackagerBlockEntityMixin",
 		"provider.SchematicannonBlockEntityMixin",
-		"wrench.GuiGameElementMixin",
 		"wrench.RadialWrenchHandlerMixin",
 		"wrench.RadialWrenchMenuMixin"
 	]

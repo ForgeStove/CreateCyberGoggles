@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles;
-import io.github.forgestove.create_cyber_goggles.event.*;
+import io.github.forgestove.create_cyber_goggles.core.event.*;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.minecraftforge.api.distmarker.Dist;
@@ -18,9 +18,13 @@ public class CCG {
 		mod.addListener(CCGKey::register);
 		mod.addListener(OverlayRenderer::register);
 		var game = MinecraftForge.EVENT_BUS;
-		game.addListener(KeyInput::tick);
+		game.addListener(KeyInput::key);
+		game.addListener(OverlayRenderer::color);
+		game.addListener(ItemTooltip::itemTooltip);
 		game.addListener(KineticParticle::tick);
 		game.addListener(KineticDebugger::tick);
-		game.addListener(DelayRender::tick);
+		game.addListener(OutlineRenderer::tick);
+		game.addListener(PlayerInteract::tick);
+		game.addListener(PlayerInteract::leftClick);
 	}
 }

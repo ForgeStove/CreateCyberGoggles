@@ -1,9 +1,10 @@
-package io.github.forgestove.create_cyber_goggles.mixin.goggles;
+package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity.FuelType;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
-import io.github.forgestove.create_cyber_goggles.*;
+import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.util.TooltipUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -24,7 +25,7 @@ public abstract class BlazeBurnerBlockEntityMixin extends SmartBlockEntity imple
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return false;
-		return Common.addBurnerTooltip(tooltip, remainingBurnTime, isCreative, activeFuel);
+		return TooltipUtil.burner(tooltip, remainingBurnTime, isCreative, activeFuel);
 	}
 	@Inject(method = "tick", at = @At("HEAD"))
 	public void tick(CallbackInfo callbackInfo) {

@@ -14,69 +14,146 @@
 
 ## 功能 / Features
 
-该模组提供以下功能配置项：
+<details>
+<summary><strong>功能列表</strong></summary>
 
-* **护甲模块**：移除纸板渲染、移除潜水靴功能、移除第一人称背罐渲染；
-* **锁链传动轮模块**：始终允许悬挂、阻止玩家自动分离、增强型连接、自动打包你自己；
-* **护目镜模块**：生存/创造/冒险/旁观模式启用、渲染旋转粒子、精确数值、增强信息显示、更好的商店信息、隐藏静态旋转信息、渲染更多物品信息、更好的连接线、禁用界面内护目镜；
-* **扳手模块**：总是允许旋转方块、移除冷却；
-* **延时渲染模块**：渲染模拟盒、气流推动/吸引颜色、延时渲染时长；
-* **杂项模块**：强制飞轮优化、NBT修复、显示废料内容、彩虹调试、修复蓝图名称、右键穿透；
-* **快捷键支持**：快速访问配置界面、仓储界面、过滤器预览、显示应力网络信息、切换潜水模式。
+> 此列表适用于版本 1.21.1 NeoForge，其余版本功能会有所不同。
 
-This mod provides the following configurable features:
+### 配置
 
-* **Armor Module**: Remove cardboard rendering, remove diving boots function, remove first-person back tank rendering;
-* **Chain Conveyor Module**: Always allow hanging, prevent player auto separation, enhanced connection, auto-pack yourself;
-* **Goggles Module**: Enable in survival/creative/adventure/spectator modes, render rotation particles, precise numbers, enhanced info display, better store info, hide static rotation info, render more item info, better connection lines, disable screen goggles;
-* **Wrench Module**: Always allow block rotation, remove cooldown;
-* **Delay Render Module**: Render analog box, wind push/pull color, delay render duration;
-* **Misc Module**: Forced flywheel optimization, NBT fix, show scrap content, rainbow debug, fix schematic name, right click penetrate;
-* **Hotkey Support**: Quick access to config UI, stock UI, filter preview, show stress network info, toggle diving mode.
+| 功能         |   默认值   | 描述                            |
+|:-----------|:-------:|:------------------------------|
+| 增强信息显示     |    ✅    | 增强护目镜显示信息                     |
+| 隐藏静态旋转信息   |    ❌    | 在护目镜中隐藏静态方块的旋转信息              |
+| 更好的商店信息    |    ✅    | 优化桌布商店信息显示以及操作逻辑              |
+| 渲染更多物品信息   |    ✅    | 允许渲染更多方块上的物品信息                |
+| 渲染旋转粒子     |    ✅    | 渲染目标方块的旋转粒子效果                 |
+| 精确数值       |    ✅    | 显示更加精确的数值信息                   |
+| 禁用界面内护目镜   |    ✅    | 任意界面出现时禁用护目镜显示                |
+| 允许值框出现时渲染  |    ❌    | 出现值框时允许渲染护目镜工具提示              |
+| 更好的连接线     |    ✅    | 优化部分渲染连接线                     |
+| 启用护目镜      |    ✅    | 游戏模式主开关                       |
+| 生存模式启用     |    ✅    | 在生存模式下始终启用护目镜                 |
+| 创造模式启用     |    ✅    | 在创造模式下始终启用护目镜                 |
+| 旁观模式启用     |    ✅    | 在旁观模式下始终启用护目镜                 |
+| 冒险模式启用     |    ✅    | 在冒险模式下始终启用护目镜                 |
+| 渲染模拟盒      |    ✅    | 渲染各种方块显示的模拟盒                  |
+| 延时渲染时长     |   60    | 模拟盒继续渲染的时长（以刻为单位）             |
+| 气流推动颜色     | #DDC166 | 气流推动时的颜色                      |
+| 气流吸引颜色     | #7FCDE0 | 气流吸引时的颜色                      |
+| 彩虹调试       |    ❌    | 启用彩虹调试模式                      |
+| 始终允许悬挂     |    ❌    | 无需扳手即可悬挂在锁链传动轮上               |
+| 阻止玩家自动分离   |    ❌    | 阻止玩家从锁链传动轮上因为障碍物而自动分离         |
+| 增强型连接      |    ✅    | 移除锁链传动轮的最小距离和最大倾角限制           |
+| 自动打包你自己    |    ❌    | 在你挂上锁链的时候自动把你变成纸箱             |
+| 增强型扳手      |    ❌    | 允许扳手更改更多方块状态（警告：在服务器上可能被视为作弊） |
+| 更好的管道箱     |    ✅    | 空手时允许右键切换管道箱的开关状态，按住Shift切换反面 |
+| 始终允许旋转方块   |    ✅    | 无需扳手即可通过快捷键旋转方块               |
+| 左键快速拆除     |    ✅    | 使用左键单击立即拆除组件                  |
+| 移除冷却       |    ✅    | 移除扳手的冷却时间                     |
+| 无限编辑框长度    |    ❌    | 无限编辑框长度（实际上是 2^31 -1）         |
+| 移除纸板套视线遮挡  |    ✅    | 移除纸板套在潜行时的视线遮挡                |
+| 移除第一人称背罐渲染 |    ❌    | 移除下界合金背罐的第一人称渲染效果             |
+| 允许潜水靴      |    ✅    | 潜水靴的功能，禁用以使它们像普通的靴子一样         |
+| 修复蓝图名称     |    ✅    | 保存蓝图时可以使用非ASCII字符             |
+| 右键穿透       |    ❌    | 允许右键穿透移动结构                    |
+| 强制飞轮优化     |    ❌    | 强制启用飞轮渲染后端（与着色器冲突，除非你知道你在做什么） |
+| NBT修复      |    ❌    | 修复NBT过大导致的崩溃，可能导致卡顿           |
+| 显示废料内容     |    ✅    | 显示序列组装中随机废料的具体内容              |
 
-## 注意 / Notice
+### 快捷键
 
-> 主要在 1.21.1 NeoForge 上开发额外功能；
-> 
-> 1.20.1 Forge 版本已经完全跟进，2.0版本以后仅兼容6.0+版本的Create，仅限2.0以前的版本兼容0.5+版本的Create；
-> 
-> 1.20.1 Fabric 版本部分移植完成，其余功能需要等待Create-Fabric更新至6.0+版本后再进行移植。
+|      功能       | 默认值 |
+|:-------------:|:---:|
+|     打开配置      | 未指定 |
+| 通过仓储发报机访问网络存储 | 未指定 |
+|     预览过滤器     | 未指定 |
+|   显示应力网络信息    | Tab |
+|    切换潜水模式     | 未指定 |
+|    切换护目镜模式    | 未指定 |
 
-> Extra features are mainly developed in 1.21.1 NeoForge;
-> 
-> 1.20.1 Forge version has been fully updated, version 2.0 and later only compatible with Create 6.0+ version, only version 2.0 and below compatible with Create 0.5+ version;
-> 
-> 1.20.1 Fabric version part migration completed, the rest of the features need to wait for Create-Fabric to be updated to version 6.0+ before migration.
+</details>
+
+<details>
+<summary><strong>Feature List</strong></summary>
+
+> This list is for version 1.21.1 NeoForge, and the rest of the version features will vary.
+
+### Config
+
+| Feature                             | Default | Description                                                                                                   |
+|:------------------------------------|:-------:|:--------------------------------------------------------------------------------------------------------------|
+| Enhanced Info Display               |    ✅    | Show enhanced information in the goggles overlay                                                              |
+| Hide Static Rotational Info         |    ❌    | Hide static block rotational info in goggles overlay                                                          |
+| Better Store Info                   |    ✅    | Optimize display of tablecloth store information and operation logic                                          |
+| Render More Item Info               |    ✅    | Allow rendering more item info on blocks                                                                      |
+| Render Rotational Particles         |    ✅    | Render rotational particle effects for target blocks                                                          |
+| Precise Number                      |    ✅    | Show more precise numerical information                                                                       |
+| Disable Screen Goggles              |    ✅    | Disable goggles when Screen appears                                                                           |
+| Can Render When Value Box Appear    |    ❌    | Allow rendering of goggle tooltip when Value Box appears                                                      |
+| Better Connection Lines             |    ✅    | Optimize the rendering of connection lines                                                                    |
+| Enable Goggle                       |    ✅    | Main switch of game mode                                                                                      |
+| Enable in Survival Mode             |    ✅    | Always enable goggles in Survival mode                                                                        |
+| Enable in Creative Mode             |    ✅    | Always enable goggles in Creative mode                                                                        |
+| Enable in Spectator Mode            |    ✅    | Always enable goggles in Spectator mode                                                                       |
+| Enable in Adventure Mode            |    ✅    | Always enable goggles in Adventure mode                                                                       |
+| Render Analog Box                   |    ✅    | Render the air box for encased fans and nozzles                                                               |
+| Delay Render Duration               |   60    | Duration for which the analog box will be rendered (in tick)                                                  |
+| Wind Push Color                     | #DDC166 | Color when wind pushes                                                                                        |
+| Wind Pull Color                     | #7FCDE0 | Color when wind pulls                                                                                         |
+| Rainbow Debug                       |    ❌    | Enable rainbow debug mode                                                                                     |
+| Always Allow Hanging                |    ❌    | Hang on the chain conveyor without a wrench                                                                   |
+| Prevent Player Auto Separation      |    ❌    | Prevents the player from automatically detaching from the chain conveyor due to obstacles                     |
+| Enhanced Connection                 |    ✅    | Remove the minimum connection distance and maximum tilt angle restrictions for chain conveyors                |
+| Automatically Pack Yourself         |    ❌    | Automatically turn yourself into a cardboard box when hanging on the chain                                    |
+| Enhanced Wrench                     |    ❌    | Allow using wrench to modify more block states (Warning: May be considered cheating on the server)            |
+| Better Encased Pipe                 |    ✅    | Allow right-clicking to toggle encased pipe state when empty-handed. Hold [Shift] to toggle the opposite side |
+| Always Allow Rotating Blocks        |    ✅    | Rotate blocks with hotkey without a wrench                                                                    |
+| Left Click Fast Dismantle           |    ✅    | Use left click to dismantle component instantly                                                               |
+| Remove Cooldown                     |    ✅    | Remove the wrench cooldown                                                                                    |
+| Inf Edit Box Length                 |    ❌    | Infinite edit box length (Actually 2^31 -1)                                                                   |
+| Remove Cardboard Overlay            |    ✅    | Remove the cardboard suit view obstruction when crouching                                                     |
+| Remove First Person Backtank Render |    ❌    | Remove the first-person render effect of the Netherite Backtank                                               |
+| Allow Diving Boot                   |    ✅    | Function of diving boots, disable to make them behave like normal boots                                       |
+| Fix Schematic Name                  |    ✅    | Non-ASCII characters could be used when saving Blueprints                                                     |
+| Right Click Penetrate               |    ❌    | Allow right-clicking to penetrate moving contraption                                                          |
+| Force Flywheel Optimization         |    ❌    | Force enable Flywheel rendering backend (conflicts with shaders, unless you know what you are doing)          |
+| NBT Fix                             |    ❌    | Fix crash caused by oversized NBT, may cause lag                                                              |
+| Show Scrap Content                  |    ✅    | Display the specific content of random scrap in sequence assembly                                             |
+
+### Hotkeys
+
+|                Function                 |  Default  |
+|:---------------------------------------:|:---------:|
+|               Open Config               | Not Bound |
+| Access network storage via stock ticker | Not Bound |
+|             Preview Filter              | Not Bound |
+|        Show Stress Network Info         |    Tab    |
+|           Toggle Diving Mode            | Not Bound |
+|           Toggle Goggle Mode            | Not Bound |
+
+</details>
 
 ## 版本 / Versions
 
-> 1.0版本之后模组支持的MineCraft版本列表：
+| Minecraft | Forge | Fabric/Quilt | NeoForge | Create: Cyber Goggles |             Create             |
+|:---------:|:-----:|:------------:|:--------:|:---------------------:|:------------------------------:|
+|  1.21.8   |       |      ✅       |          |          3.x          |       6.0+ (Create-Fly)        |
+|  1.21.1   |       |              |    ✅     |        1.x~6.x        |              6.0+              |
+|  1.20.1   |   ✅   |      ✅       |    ✅     |        1.x~6.x        | 1.x: 0.5+, 6.0+; 2.x~6.x: 6.0+ |
+|  1.19.2   |   ✅   |      ✅       |          |          1.x          |              0.5+              |
+|  1.18.2   |   ✅   |      ✅       |          |          1.x          |              0.5+              |
 
-> Supported Minecraft version list of the mod version 1.0 or later:
+## 注意 / Notice
 
-|        | Forge | Fabric/Quilt | NeoForge |
-|:------:|:-----:|:------------:|:--------:|
-| 1.21.1 |       |              |    ✅     |
-| 1.20.1 |   ✅   |      ✅       |    ✅     |
-| 1.19.2 |   ✅   |      ✅       |          |
-| 1.18.2 |   ✅   |      ✅       |          |
+> 主要在 1.21.1 NeoForge 上开发额外功能，其余版本不一定具有全部功能；  
+> 1.20.1 Forge 版本已经完全跟进，2.0版本以后仅兼容6.0+版本的Create，仅限2.0以前的版本兼容0.5+版本的Create；  
+> 1.20.1 Fabric 版本部分移植完成，其余功能需要等待Create-Fabric更新至6.0+版本后再进行移植；  
+> 1.21.8 Fabric 版本跟进 1.20.1 Fabric 版本，前置为非官方移植（Create-Fly）。
 
-> 2.0版本之后模组支持的MineCraft版本列表：
-
-> Supported Minecraft version list of the mod version 2.0 or later:
-
-|        | Forge | Fabric/Quilt | NeoForge |
-|:------:|:-----:|:------------:|:--------:|
-| 1.21.1 |       |              |    ✅     |
-| 1.20.1 |   ✅   |      ✅       |    ✅     |
-| 1.19.2 |   ❌   |      ❌       |          |
-| 1.18.2 |   ❌   |      ❌       |          |
-
-## 画廊 / Gallery
-
-![Rotate Particle](https://cdn.modrinth.com/data/TlQAWQCY/images/24a78978d9f6c90ee5066a12c32c4079fa28d0b7.gif)
-![Creative Motor](https://cdn.modrinth.com/data/TlQAWQCY/images/c43083ded90cbc003f8106da20efc555d98fc011.png)
-![Chain Conveyor](https://cdn.modrinth.com/data/TlQAWQCY/images/ce27867557c4d435d14b516ef7ca826576cebf2e.png)
-![Packager](https://cdn.modrinth.com/data/TlQAWQCY/images/e44995945a4bec4395c362c573b2566fbd5ac534.png)
-![Shop](https://cdn.modrinth.com/data/TlQAWQCY/images/47289adf052ee34f491dab67c90337b5027c8397.png)
-![Depot](https://cdn.modrinth.com/data/TlQAWQCY/images/a0991c39f1d860ce03db738ad9816a1e4bacdb8f.png)
+> Extra features are mainly developed in 1.21.1 NeoForge, the rest of the versions will not necessarily have all the features;  
+> 1.20.1 Forge version has been fully updated, version 2.0 and later only compatible with Create 6.0+ version, only version 2.0 and below
+> compatible with Create 0.5+ version;  
+> 1.20.1 Fabric version part migration completed, the rest of the features need to wait for Create-Fabric to be updated to version 6.0+
+> before migration;  
+> 1.21.8 Fabric version follows the 1.20.1 Fabric version; prerequisite is the unofficial port (Create-Fly).

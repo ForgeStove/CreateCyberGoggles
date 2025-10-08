@@ -1,0 +1,95 @@
+package io.github.forgestove.create_cyber_goggles.core.event;
+import com.simibubi.create.CreateClient;
+import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
+import com.simibubi.create.foundation.blockEntity.behaviour.ValueBox;
+import com.simibubi.create.foundation.gui.Theme;
+import com.simibubi.create.foundation.gui.Theme.Key;
+import com.simibubi.create.foundation.outliner.Outliner.OutlineEntry;
+import com.simibubi.create.foundation.utility.Color;
+import com.simibubi.create.infrastructure.config.AllConfigs;
+import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.util.IItemRenderable;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag.Default;
+import net.minecraftforge.client.event.*;
+import net.minecraftforge.client.gui.overlay.*;
+import org.jetbrains.annotations.*;
+
+import java.util.Map;
+
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
+public class OverlayRenderer {
+	public static final Map<Object, OutlineEntry> outlines = CreateClient.OUTLINER.getOutlines();
+	public static int hoverTicks;
+	public static float fade;
+	public static ItemStack currentItemStack;
+	public static void register(@NotNull RegisterGuiOverlaysEvent event) {
+		event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "goggle_overlay", OverlayRenderer::renderOverlay);
+	}
+	public static void color(@NotNull RenderTooltipEvent.Color event) {
+		if (!event.getItemStack().equals(currentItemStack) || currentItemStack.isEmpty()) return;
+		var cfg = AllConfigs.client();
+		var colorBackground = cfg.overlayCustomColor.get()
+			? new Color(cfg.overlayBackgroundColor.get())
+			: Theme.c(Key.VANILLA_TOOLTIP_BACKGROUND).scaleAlpha(.75f);
+		if (fade < 1) colorBackground.scaleAlpha(fade);
+		event.setBackground(colorBackground.getRGB());
+	}
+	public static void renderOverlay(ForgeGui gui, GuiGraphics guiGraphics, float partialTicks, int width, int height) {
+		if (!CCG.CONFIG.goggles.renderExtraItems || !CCG.CONFIG.gameMode.enableGoggle) return;
+		if (mc.isPaused() || isInGUI() || mc.options.hideGui) {
+			currentItemStack = null;
+			hoverTicks = 0;
+			return;
+		}
+		if (!CCG.CONFIG.goggles.canRenderOnValueBox) for (var entry : outlines.values()) {
+			if (!entry.isAlive()) continue;
+			var outline = entry.getOutline();
+			if (outline instanceof ValueBox && !((ValueBox) outline).isPassive) return;
+		}
+		fade = Mth.clamp((hoverTicks++ + partialTicks) / 24f, 0, 1);
+		var itemStack = toRenderItemStack();
+		currentItemStack = itemStack;
+		if (itemStack == null || itemStack.isEmpty()) {
+			hoverTicks = 0;
+			return;
+		}
+		renderItemStack(guiGraphics, itemStack);
+	}
+	/**
+	 * 根据当前玩家选中的方块实体或实体，返回待渲染的{@link ItemStack}。
+	 *
+	 * @return 需要渲染的 {@link ItemStack}，若无则为 {@code null}
+	 */
+	public static @Nullable ItemStack toRenderItemStack() {
+		if (getBlockEntity() instanceof IItemRenderable renderable) return renderable.ccg$getItemStack();
+		else if (getEntity() instanceof IItemRenderable renderable) return renderable.ccg$getItemStack();
+		else return null;
+	}
+	/**
+	 * 在屏幕中央区域渲染指定物品堆的图标及关联的悬浮提示信息。
+	 *
+	 * @param guiGraphics GUI渲染上下文对象，用于执行图形绘制操作
+	 * @param itemStack   需要渲染的物品堆实例。若值为{@code null}或空物品堆叠时方法立即返回
+	 */
+	public static void renderItemStack(GuiGraphics guiGraphics, ItemStack itemStack) {
+		if (itemStack == null || itemStack.isEmpty()) return;
+		var font = mc.font;
+		var flag = new Default(mc.options.advancedItemTooltips, true);
+		var tooltip = itemStack.getTooltipLines(mc.player, flag);
+		var cfg = AllConfigs.client();
+		var tooltipTextWidth = tooltip.stream().mapToInt(mc.font::width).max().orElse(0) + 24;
+		var x = guiGraphics.guiWidth() / 2 + cfg.overlayOffsetX.get();
+		var y = guiGraphics.guiHeight() / 2 + cfg.overlayOffsetY.get();
+		if (x + tooltipTextWidth > guiGraphics.guiWidth()) x = guiGraphics.guiWidth() - tooltipTextWidth;
+		if (fade < 1) x += (int) (Math.pow(1 - fade, 3) * Math.signum(cfg.overlayOffsetX.get() + .5f) * 8);
+		if (GoggleOverlayRenderer.hoverTicks != 0) y -= (tooltip.size() + 1) * 10;
+		x = Math.max(16, x);
+		y = Math.max(16, y);
+		guiGraphics.renderItem(itemStack, x - 10, y - 10);
+		guiGraphics.renderItemDecorations(font, itemStack, x - 10, y - 10);
+		guiGraphics.renderTooltip(font, itemStack, x, y);
+	}
+}

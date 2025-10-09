@@ -1,8 +1,10 @@
 package io.github.forgestove.create_cyber_goggles.mixin.goggles;
 import com.zurrtum.create.client.AllBlockEntityBehaviours;
+import com.zurrtum.create.content.equipment.armor.BacktankBlockEntity;
 import com.zurrtum.create.content.kinetics.fan.*;
 import com.zurrtum.create.content.processing.burner.BlazeBurnerBlockEntity;
-import io.github.forgestove.create_cyber_goggles.tooltip.*;
+import com.zurrtum.create.content.schematics.cannon.SchematicannonBlockEntity;
+import io.github.forgestove.create_cyber_goggles.core.tooltip.*;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -15,5 +17,7 @@ public abstract class AllBlockEntityBehavioursMixin {
 		add(EncasedFanBlockEntity.class, EncasedFanTooltipBehavior::new);
 		add(NozzleBlockEntity.class, NozzleTooltipBehavior::new);
 		add(BlazeBurnerBlockEntity.class, BlazeBurnerTooltipBehavior::new);
+		add(SchematicannonBlockEntity.class, SchematicannonTooltipBehavior::new);
+		add(BacktankBlockEntity.class, BacktankBlockEntityTooltipBehavior::new);
 	}
 }

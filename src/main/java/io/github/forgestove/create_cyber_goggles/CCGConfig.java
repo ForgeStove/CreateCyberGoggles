@@ -9,8 +9,9 @@ import net.fabricmc.api.*;
 public class CCGConfig implements ConfigData, ModMenuApi {
 	@Category("goggles") @TransitiveObject public final Goggles goggles = new Goggles();
 	@Category("gameMode") @TransitiveObject public final GameMode gameMode = new GameMode();
-	@Category("delayRender") @TransitiveObject public final DelayRender delayRender = new DelayRender();
+	@Category("outlineRenderer") @TransitiveObject public final OutlineRenderer outlineRenderer = new OutlineRenderer();
 	@Category("chainConveyor") @TransitiveObject public final ChainConveyor chainConveyor = new ChainConveyor();
+	@Category("wrench") @TransitiveObject public final Wrench wrench = new Wrench();
 	@Category("misc") @TransitiveObject public final Misc misc = new Misc();
 	@Override
 	@Environment(EnvType.CLIENT)
@@ -24,19 +25,22 @@ public class CCGConfig implements ConfigData, ModMenuApi {
 		@Tooltip public boolean enableKineticEffect = true;
 		@Tooltip public boolean preciseNumber = true;
 		@Tooltip public boolean disableScreenGoggles = true;
+		@Tooltip public boolean canRenderOnValueBox = false;
 		@Tooltip public boolean betterLine = true;
 	}
 	public static class GameMode {
+		@Tooltip public boolean enableGoggle = true;
 		@Tooltip public boolean enableInSurvival = true;
 		@Tooltip public boolean enableInCreative = true;
 		@Tooltip public boolean enableInSpectator = true;
 		@Tooltip public boolean enableInAdventure = true;
 	}
-	public static class DelayRender {
+	public static class OutlineRenderer {
 		@Tooltip public boolean renderAnalogBox = true;
 		@Tooltip public int delayRenderDuration = 60;
 		@Tooltip @ColorPicker public int windPushColor = 0xDDC166;
 		@Tooltip @ColorPicker public int windPullColor = 0x7FCDE0;
+		@Tooltip public boolean rainbowDebug = false;
 	}
 	public static class ChainConveyor {
 		@Tooltip public boolean alwaysAllowRiding = false;
@@ -44,13 +48,15 @@ public class CCGConfig implements ConfigData, ModMenuApi {
 		@Tooltip public boolean enhancedConnection = true;
 		@Tooltip public boolean cardBoardedYourself = false;
 	}
+	public static class Wrench {
+		@Tooltip public boolean betterEncasedPipe = true;
+		@Tooltip public boolean leftClickFastDismantle = true;
+	}
 	public static class Misc {
-		@Tooltip public boolean infEditBoxLength = true;
+		@Tooltip public boolean infEditBoxLength = false;
 		@Tooltip public boolean removeCardboardOverlay = true;
-		@Tooltip public boolean removeDivingFunction = false;
+		@Tooltip public boolean allowDivingBoot = true;
 		@Tooltip public boolean fixSchematicName = true;
-		@Tooltip public boolean rightClickPenetrate = false;
-		@Tooltip public boolean rainbowDebug = false;
 		@Tooltip public boolean forcedBackend = false;
 		@Tooltip public boolean nbtFix = false;
 	}

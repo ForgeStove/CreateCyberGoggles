@@ -1,19 +1,23 @@
 package io.github.forgestove.create_cyber_goggles.mixin.chainConveyor;
 import com.zurrtum.create.client.content.kinetics.chainConveyor.ChainConveyorRidingHandler;
 import com.zurrtum.create.content.equipment.armor.CardboardArmorHandler;
-import io.github.forgestove.create_cyber_goggles.Common;
+import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 @Mixin(CardboardArmorHandler.class)
 public abstract class CardboardArmorHandlerMixin {
 	@Inject(method = "testForStealth", at = @At("HEAD"), cancellable = true)
-	private static void testForStealth(Entity entityIn, CallbackInfoReturnable<Boolean> returnable) {
+	private static void injectTestForStealth(Entity entityIn, CallbackInfoReturnable<Boolean> returnable) {
+		if (!CCG.CONFIG.chainConveyor.cardBoardedYourself) return;
+		if (isServer()) return;
 		if (ChainConveyorRidingHandler.ridingChainConveyor == null) return;
-		if (!(entityIn instanceof LocalPlayer player)) return;
-		if (!Common.testForStealth(player)) return;
+		if (!(entityIn instanceof LocalPlayer)) return;
+		if (!testForStealth()) return;
 		returnable.setReturnValue(true);
 	}
 }

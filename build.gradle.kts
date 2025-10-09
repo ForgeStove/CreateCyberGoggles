@@ -4,7 +4,7 @@ plugins {
 }
 base.archivesName.set(p("modId"))
 group = p("modGroupId")
-version = "${p("mcVersion")}-${p("modVersion")}+${p("loaderCap")}"
+version = "${p("mcVersion")}-${p("modVersion")}-${p("loaderCap")}"
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 tasks.jar { from("LICENSE") }
 var generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
@@ -49,7 +49,7 @@ publishMods {
 	changelog.set(file("CHANGELOG.md").readText())
 	type.set(BETA)
 	version.set(project.version.toString())
-	displayName.set("[${p("loaderCap")}] ${p("modName")} ${p("modVersion")}+${p("mcVersion")}")
+	displayName.set("[${p("loaderCap")}] ${p("modVersion")} for Create ${p("mcVersion")}-${p("createMainVersion")}")
 	modLoaders.addAll(p("loaderCap"), p("loaderOtherCap"))
 	modrinth {
 		accessToken.set(providers.environmentVariable("MODRINTH_TOKEN"))

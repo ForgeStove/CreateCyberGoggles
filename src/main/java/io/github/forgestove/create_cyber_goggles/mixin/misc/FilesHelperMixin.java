@@ -1,5 +1,4 @@
 package io.github.forgestove.create_cyber_goggles.mixin.misc;
-import com.zurrtum.create.client.catnip.lang.Lang;
 import com.zurrtum.create.foundation.utility.FilesHelper;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import org.spongepowered.asm.mixin.Mixin;
@@ -9,7 +8,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class FilesHelperMixin {
 	@Inject(method = "slug", at = @At("HEAD"), cancellable = true)
 	private static void slug(String name, CallbackInfoReturnable<String> returnable) {
-		if (!CCG.CONFIG.misc.fixSchematicName) return;
-		returnable.setReturnValue(Lang.asId(name).replaceAll("[\\\\/:*?\"<>|]+", "_"));
+		if (CCG.CONFIG.misc.fixSchematicName) returnable.setReturnValue(name.replaceAll("[\\\\/:*?\"<>|]+", "_"));
 	}
 }

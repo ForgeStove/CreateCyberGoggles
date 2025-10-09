@@ -1,10 +1,12 @@
 package io.github.forgestove.create_cyber_goggles;
-import io.github.forgestove.create_cyber_goggles.event.*;
+import io.github.forgestove.create_cyber_goggles.core.event.*;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.*;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 public class CCG implements ClientModInitializer {
 	public static final String ID = "create_cyber_goggles";
 	public static final CCGConfig CONFIG = AutoConfig.register(CCGConfig.class, Toml4jConfigSerializer::new).getConfig();
@@ -14,8 +16,12 @@ public class CCG implements ClientModInitializer {
 		CCGKey.register();
 		ClientTickEvents.END_CLIENT_TICK.register(KeyInput::register);
 		ClientTickEvents.END_CLIENT_TICK.register(DelayRender::tick);
+		ClientTickEvents.END_CLIENT_TICK.register(KineticParticle::tick);
+		ClientTickEvents.END_CLIENT_TICK.register(OutlineRenderer::tick);
+		ClientTickEvents.END_CLIENT_TICK.register(PlayerInteract::leftClick);
 		WorldRenderEvents.AFTER_ENTITIES.register(KineticDebugger::tick);
-		WorldRenderEvents.AFTER_ENTITIES.register(KineticParticle::tick);
 		HudRenderCallback.EVENT.register(OverlayRenderer::renderOverlay);
+		UseBlockCallback.EVENT.register(PlayerInteract::rightClick);
+		ItemTooltipCallback.EVENT.register(ItemTooltip::itemTooltip);
 	}
 }

@@ -1,11 +1,9 @@
 package io.github.forgestove.create_cyber_goggles.mixin.goggles;
 import com.zurrtum.create.client.foundation.blockEntity.behaviour.tooltip.*;
-import com.zurrtum.create.client.foundation.utility.CreateLang;
-import com.zurrtum.create.content.kinetics.base.KineticBlockEntity;
+import com.zurrtum.create.content.kinetics.base.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import net.minecraft.ChatFormatting;
+import io.github.forgestove.create_cyber_goggles.core.util.TooltipUtil;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -25,18 +23,7 @@ public abstract class GeneratingKineticBlockEntityMixin<T extends KineticBlockEn
 			returnable.setReturnValue(false);
 			return;
 		}
-		var stressBase = blockEntity.calculateAddedStressCapacity();
-		if (!Mth.equal(stressBase, 0)) {
-			CreateLang.translate("gui.goggles.generator_stats").forGoggles(tooltip);
-			CreateLang.translate("tooltip.capacityProvided").style(ChatFormatting.GRAY).forGoggles(tooltip);
-			if (speed != blockEntity.getGeneratedSpeed()) stressBase *= blockEntity.getGeneratedSpeed() / speed;
-			CreateLang.number(Math.abs(stressBase * speed))
-				.translate("generic.unit.stress")
-				.style(ChatFormatting.AQUA)
-				.space()
-				.add(CreateLang.translate("gui.goggles.at_current_speed").style(ChatFormatting.DARK_GRAY))
-				.forGoggles(tooltip);
-		}
+		TooltipUtil.generatingKinetic(tooltip, (GeneratingKineticBlockEntity) blockEntity);
 		returnable.setReturnValue(super.addToGoggleTooltip(tooltip, isPlayerSneaking));
 	}
 }

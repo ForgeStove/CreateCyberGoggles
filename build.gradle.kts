@@ -4,7 +4,7 @@ plugins {
 }
 base.archivesName.set(p("modId"))
 group = p("modGroupId")
-version = "${p("mcVersion")}-${p("modVersion")}+${p("loaderCap")}"
+version = "${p("mcVersion")}-${p("modVersion")}-${p("loaderCap")}"
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 tasks.jar {
 	from("LICENSE")
@@ -57,14 +57,13 @@ dependencies {
 	annotationProcessor("io.github.llamalad7:mixinextras-common:${p("mixinExtrasVersion")}")
 	compileOnly("io.github.llamalad7:mixinextras-common:${p("mixinExtrasVersion")}")
 	runtimeOnly("io.github.llamalad7:mixinextras-${p("loader")}:${p("mixinExtrasVersion")}")
-	compileOnly("org.jetbrains:annotations:${p("annotationsVersion")}")
 }
 publishMods {
 	file.set(tasks.named("reobfJar").get().outputs.files.singleFile)
 	changelog.set(file("CHANGELOG.md").readText())
 	type.set(STABLE)
 	version.set(project.version.toString())
-	displayName.set("[${p("loaderCap")}] ${p("modName")} ${p("modVersion")}+${p("mcVersion")}")
+	displayName.set("[${p("loaderCap")}] ${p("modVersion")} for Create ${p("mcVersion")}-${p("createMainVersion")}")
 	modLoaders.addAll(p("loaderCap"), p("loaderOtherCap"))
 	modrinth {
 		accessToken.set(providers.environmentVariable("MODRINTH_TOKEN"))

@@ -21,7 +21,7 @@ import static com.simibubi.create.content.contraptions.wrench.RadialWrenchMenu.B
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 @Mixin(RadialWrenchMenu.class)
 public abstract class RadialWrenchMenuMixin {
-	@Inject(method = "tryCreateFor", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "tryCreateFor", at = @At("HEAD"), cancellable = true, remap = false)
 	private static void tryCreateFor(
 		BlockState state,
 		BlockPos pos,

@@ -48,7 +48,8 @@ repositories {
 }
 dependencies {
 	modImplementation("com.simibubi.create:create-${p("mcVersion")}:${p("createVersion")}:slim") { isTransitive = false }
-	modImplementation("net.createmod.ponder:Ponder-${p("loaderCap")}-${p("mcVersion")}:${p("ponderVersion")}") { isTransitive = false }
+	modImplementation("net.createmod.ponder:Ponder-${p("loaderCap")}-${p("mcVersion")}:${p("ponderVersion")}")
+	modRuntimeOnly("dev.engine-room.vanillin:vanillin-${p("loader")}-${p("mcVersion")}:${p("vanillinVersion")}")
 	modImplementation("dev.engine-room.flywheel:flywheel-${p("loader")}-${p("mcVersion")}:${p("flywheelVersion")}")
 	modImplementation("com.tterrag.registrate:Registrate:${p("registrateVersion")}")
 	modImplementation("me.shedaniel.cloth:cloth-config-${p("loader")}:${p("clothConfigVersion")}")

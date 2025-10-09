@@ -1,2 +1,2 @@
-- Refactor Right Click Penetrate to a hot key "Click Penetrate" (default: "Left Ctrl")
-- Fix bug where Right Click Penetrate would not work normally
+- Fix rotantion menu rendering mixin
+- Remove unnecessary mixin for gui element

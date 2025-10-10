@@ -27,6 +27,8 @@ public class CCGConfig implements ConfigData {
 		@Tooltip public boolean disableScreenGoggles = true;
 		@Tooltip public boolean canRenderOnValueBox = false;
 		@Tooltip public boolean betterLine = true;
+		@Tooltip public int overlayOffsetX = 0;
+		@Tooltip public int overlayOffsetY = 0;
 	}
 	public static class GameMode {
 		@Tooltip public boolean enableGoggle = true;

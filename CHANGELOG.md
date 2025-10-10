@@ -1,2 +1,4 @@
-- Fix rotantion menu rendering mixin
-- Remove unnecessary mixin for gui element
+- Add betterChassis option to toggle glue state for chassis
+- Add alwaysShowScrollValue option to show scroll value without holdind wrench
+- Add tip render overlay
+- Fix translation

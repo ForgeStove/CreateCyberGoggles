@@ -1,26 +1,39 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
+import com.simibubi.create.CreateClient;
+import com.simibubi.create.content.contraptions.chassis.AbstractChassisBlock;
 import com.simibubi.create.content.contraptions.wrench.RadialWrenchMenuSubmitPacket;
 import com.simibubi.create.content.equipment.wrench.*;
 import com.simibubi.create.content.fluids.pipes.EncasedPipeBlock;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket.Action;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.item.*;
 import net.neoforged.neoforge.client.event.ClientTickEvent.Post;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.*;
 
-import java.util.stream.Stream;
+import java.util.ArrayList;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 import static net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.LeftClickBlock.Action.*;
 public class PlayerInteract {
 	private static long lastDismantleTime, dismantleDelay = 10;
 	public static void tick(Post ignoredEvent) {
-		if (dismantleDelay < 10) dismantleDelay++;
+		wrench();
+		enacesdPipe();
+		chassis();
 	}
 	public static void leftClick(LeftClickBlock event) {
 		if (isServer()) return;
 		wrench(event);
+	}
+	public static void rightClick(RightClickBlock event) {
+		if (isServer()) return;
+		enacesdPipe(event);
+		chassis(event);
+	}
+	private static void wrench() {
+		if (dismantleDelay < 10) dismantleDelay++;
 	}
 	private static void wrench(LeftClickBlock event) {
 		if (!CCG.CONFIG.wrench.leftClickFastDismantle) return;
@@ -44,9 +57,10 @@ public class PlayerInteract {
 		lastDismantleTime = System.currentTimeMillis();
 		event.setCanceled(true);
 	}
-	public static void rightClick(RightClickBlock event) {
-		if (isServer()) return;
-		enacesdPipe(event);
+	private static void enacesdPipe() {
+		if (!CCG.CONFIG.wrench.betterEncasedPipe) return;
+		if (!(getBlock() instanceof EncasedPipeBlock)) return;
+		showCommonTip("message.openState");
 	}
 	private static void enacesdPipe(RightClickBlock event) {
 		if (!CCG.CONFIG.wrench.betterEncasedPipe) return;
@@ -55,16 +69,47 @@ public class PlayerInteract {
 		if (!(state.getBlock() instanceof EncasedPipeBlock)) return;
 		if (event.getHand() != InteractionHand.MAIN_HAND) return;
 		if (mc.player == null) return;
-		var anyMatch = Stream.of(mc.player.getMainHandItem(), mc.player.getOffhandItem())
-			.map(ItemStack::getItem)
-			.anyMatch(item -> item instanceof BlockItem || item instanceof WrenchItem || item instanceof DebugStickItem);
-		if (anyMatch) return;
+		if (!event.getItemStack().isEmpty()) return;
 		var clickedFace = event.getHitVec().getDirection();
-		if (mc.player.isShiftKeyDown()) clickedFace = clickedFace.getOpposite();
+		if (CCGKey.interactOpposite.isDown()) clickedFace = clickedFace.getOpposite();
 		var property = EncasedPipeBlock.FACING_TO_PROPERTY_MAP.get(clickedFace);
 		boolean currentState = state.getValue(property);
 		var newState = state.setValue(property, !currentState);
 		sendToServer(new RadialWrenchMenuSubmitPacket(pos, newState));
 		mc.player.swing(mc.player.getUsedItemHand());
+	}
+	private static void chassis() {
+		if (!CCG.CONFIG.wrench.betterChassis) return;
+		if (mc.level == null) return;
+		if (!(getBlock() instanceof AbstractChassisBlock acb)) return;
+		var bhr = getBlockHitResult();
+		if (bhr == null || acb.getGlueableSide(mc.level.getBlockState(bhr.getBlockPos()), bhr.getDirection()) == null) return;
+		showCommonTip("message.glueState");
+	}
+	private static void chassis(RightClickBlock event) {
+		if (!CCG.CONFIG.wrench.betterChassis) return;
+		if (OverlayRenderer.hasActivedValueBox()) return;
+		var pos = event.getPos();
+		var state = event.getLevel().getBlockState(pos);
+		if (!(state.getBlock() instanceof AbstractChassisBlock acb)) return;
+		if (event.getHand() != InteractionHand.MAIN_HAND) return;
+		if (mc.player == null) return;
+		if (mc.player.isShiftKeyDown()) return;
+		if (!event.getItemStack().isEmpty()) return;
+		var clickedFace = event.getHitVec().getDirection();
+		if (CCGKey.interactOpposite.isDown()) clickedFace = clickedFace.getOpposite();
+		var property = acb.getGlueableSide(state, clickedFace);
+		if (property == null) return;
+		boolean currentState = state.getValue(property);
+		sendToServer(new RadialWrenchMenuSubmitPacket(pos, state.setValue(property, !currentState)));
+		mc.player.swing(mc.player.getUsedItemHand());
+	}
+	private static void showCommonTip(String title) {
+		if (OverlayRenderer.hasActivedValueBox()) return;
+		var tip = new ArrayList<MutableComponent>();
+		CCGLang.translate(title).addTo(tip);
+		CCGLang.translate("message.useSwitchState", CCGKey.getColoredDisplayName(mc.options.keyUse)).addTo(tip);
+		CCGLang.translate("message.pressToInteractOpposite", CCGKey.interactOpposite.getColoredDisplayName()).addTo(tip);
+		CreateClient.VALUE_SETTINGS_HANDLER.showHoverTip(tip);
 	}
 }

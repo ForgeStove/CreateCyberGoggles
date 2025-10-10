@@ -49,11 +49,7 @@ public class OverlayRenderer {
 			hoverTicks = 0;
 			return;
 		}
-		if (!CCG.CONFIG.goggles.canRenderOnValueBox) for (var entry : outlines.values()) {
-			if (!entry.isAlive()) continue;
-			var outline = entry.getOutline();
-			if (outline instanceof ValueBox && !((ValueBox) outline).isPassive) return;
-		}
+		if (!CCG.CONFIG.goggles.canRenderOnValueBox) if (hasActivedValueBox()) return;
 		fade = Mth.clamp((hoverTicks++ + deltaTracker.getGameTimeDeltaPartialTick(false)) / 24f, 0, 1);
 		var itemStack = toRenderItemStack();
 		currentItemStack = itemStack;
@@ -96,5 +92,13 @@ public class OverlayRenderer {
 		guiGraphics.renderItem(itemStack, x - 10, y - 10);
 		guiGraphics.renderItemDecorations(font, itemStack, x - 10, y - 10);
 		guiGraphics.renderTooltip(font, itemStack, x, y);
+	}
+	public static boolean hasActivedValueBox() {
+		for (var entry : outlines.values()) {
+			if (!entry.isAlive()) continue;
+			var outline = entry.getOutline();
+			if (outline instanceof ValueBox && !((ValueBox) outline).isPassive) return true;
+		}
+		return false;
 	}
 }

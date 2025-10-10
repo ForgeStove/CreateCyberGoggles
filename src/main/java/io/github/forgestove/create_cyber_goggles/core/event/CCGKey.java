@@ -1,17 +1,21 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.network.chat.Component;
 import net.neoforged.jarjar.nio.util.Lazy;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import org.jetbrains.annotations.NotNull;
 
 import static com.mojang.blaze3d.platform.InputConstants.*;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public enum CCGKey {
+	clickPenetrate(KEY_LCONTROL),
+	interactOpposite(KEY_TAB),
 	openConfig,
 	openStock,
 	previewFilter,
 	showStress(KEY_TAB),
-	clickPenetrate(KEY_LCONTROL),
 	toggleDiving,
 	toggleGoggle;
 	public final Lazy<KeyMapping> keyMapping;
@@ -24,8 +28,17 @@ public enum CCGKey {
 	public static void register(RegisterKeyMappingsEvent event) {
 		for (var key : values()) event.register(key.keyMapping.get());
 	}
+	public static @NotNull Component getColoredDisplayName(@NotNull KeyMapping keyMapping) {
+		return keyMapping.getKey().getDisplayName().copy().withStyle(keyMapping.isDown() ? ChatFormatting.GREEN : ChatFormatting.GRAY);
+	}
 	public boolean isDown() {
-		var key = keyMapping.get().getKey();
+		var key = getKey();
 		return !key.equals(UNKNOWN) && isKeyDown(mc.getWindow().getWindow(), key.getValue());
+	}
+	public @NotNull Key getKey() {
+		return keyMapping.get().getKey();
+	}
+	public @NotNull Component getColoredDisplayName() {
+		return getColoredDisplayName(keyMapping.get());
 	}
 }

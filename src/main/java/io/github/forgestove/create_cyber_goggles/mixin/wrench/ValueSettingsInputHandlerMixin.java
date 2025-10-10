@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.isClient;
-@Mixin(ValueSettingsInputHandler.class)
+@Mixin(value = ValueSettingsInputHandler.class, remap = false)
 public abstract class ValueSettingsInputHandlerMixin {
 	@WrapOperation(
 		method = "onBlockActivated",

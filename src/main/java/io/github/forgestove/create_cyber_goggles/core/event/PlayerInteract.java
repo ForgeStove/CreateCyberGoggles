@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
 import com.simibubi.create.CreateClient;
-import com.simibubi.create.content.contraptions.chassis.AbstractChassisBlock;
+import com.simibubi.create.content.contraptions.chassis.*;
 import com.simibubi.create.content.contraptions.wrench.RadialWrenchMenuSubmitPacket;
 import com.simibubi.create.content.equipment.wrench.*;
 import com.simibubi.create.content.fluids.pipes.EncasedPipeBlock;
@@ -9,6 +9,7 @@ import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket.Action;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.neoforged.neoforge.client.event.ClientTickEvent.Post;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.*;
 
@@ -97,7 +98,26 @@ public class PlayerInteract {
 		if (mc.player.isShiftKeyDown()) return;
 		if (!event.getItemStack().isEmpty()) return;
 		var clickedFace = event.getHitVec().getDirection();
-		if (CCGKey.interactOpposite.isDown()) clickedFace = clickedFace.getOpposite();
+		var oppositeMode = CCGKey.interactOpposite.isDown();
+		if (oppositeMode) {
+			clickedFace = clickedFace.getOpposite();
+			var level = event.getLevel();
+			var axisProp = RotatedPillarBlock.AXIS;
+			var baseAxis = state.hasProperty(axisProp) ? state.getValue(axisProp) : null;
+			var probePos = pos.relative(clickedFace);
+			var probeState = level.getBlockState(probePos);
+			var targetAcb = acb;
+			if (state.getBlock() instanceof LinearChassisBlock) while (probeState.getBlock() instanceof LinearChassisBlock lcb) {
+				var probeAxis = probeState.hasProperty(axisProp) ? probeState.getValue(axisProp) : null;
+				if (probeAxis == null || probeAxis != baseAxis) break;
+				pos = probePos;
+				state = probeState;
+				targetAcb = lcb;
+				probePos = probePos.relative(clickedFace);
+				probeState = level.getBlockState(probePos);
+			}
+			acb = targetAcb;
+		}
 		var property = acb.getGlueableSide(state, clickedFace);
 		if (property == null) return;
 		boolean currentState = state.getValue(property);

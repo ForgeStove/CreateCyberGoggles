@@ -16,7 +16,7 @@
 	"create_cyber_goggles.message.notStock": "There is no cached network storage",
 	"create_cyber_goggles.message.openState": "Open State",
 	"create_cyber_goggles.message.pressToInteractOpposite": "Hold [%1$s] switch the opposite side",
-	"create_cyber_goggles.message.useSwitchState": "Press [%1$s] to switch state",
+	"create_cyber_goggles.message.useSwitchState": "Press [%1$s] to switch state when empty-handed",
 	"create_cyber_goggles.tooltip.burnerState": "Burner State:",
 	"create_cyber_goggles.tooltip.cannonState": "Cannon State:",
 	"create_cyber_goggles.tooltip.leftTime": "Left Time:",

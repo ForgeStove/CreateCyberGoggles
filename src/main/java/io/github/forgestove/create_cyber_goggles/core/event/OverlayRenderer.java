@@ -5,6 +5,7 @@ import com.simibubi.create.infrastructure.config.AllConfigs;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.IItemRenderable;
 import net.createmod.catnip.gui.element.BoxElement;
+import net.createmod.catnip.outliner.Outliner.OutlineEntry;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
@@ -14,8 +15,11 @@ import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.gui.overlay.*;
 import org.jetbrains.annotations.*;
 
+import java.util.Map;
+
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class OverlayRenderer {
+	public static final Map<Object, OutlineEntry> outlines = outliner.getOutlines();
 	public static int hoverTicks;
 	public static float fade;
 	public static ItemStack currentItemStack;
@@ -38,11 +42,7 @@ public class OverlayRenderer {
 			hoverTicks = 0;
 			return;
 		}
-		if (!CCG.CONFIG.goggles.canRenderOnValueBox) for (var entry : outliner.getOutlines().values()) {
-			if (!entry.isAlive()) continue;
-			var outline = entry.getOutline();
-			if (outline instanceof ValueBox && !((ValueBox) outline).isPassive) return;
-		}
+		if (!CCG.CONFIG.goggles.canRenderOnValueBox) if (hasActivedValueBox()) return;
 		fade = Mth.clamp((hoverTicks++ + partialTicks) / 24f, 0, 1);
 		var itemStack = toRenderItemStack();
 		currentItemStack = itemStack;
@@ -85,5 +85,13 @@ public class OverlayRenderer {
 		guiGraphics.renderItem(itemStack, x - 10, y - 10);
 		guiGraphics.renderItemDecorations(font, itemStack, x - 10, y - 10);
 		guiGraphics.renderTooltip(font, itemStack, x, y);
+	}
+	public static boolean hasActivedValueBox() {
+		for (var entry : outlines.values()) {
+			if (!entry.isAlive()) continue;
+			var outline = entry.getOutline();
+			if (outline instanceof ValueBox && !((ValueBox) outline).isPassive) return true;
+		}
+		return false;
 	}
 }

@@ -51,6 +51,8 @@ public class CCGConfig implements ConfigData {
 	public static class Wrench {
 		@Tooltip public boolean fixRotationMenu = true;
 		@Tooltip public boolean betterEncasedPipe = true;
+		@Tooltip public boolean betterChassis = true;
+		@Tooltip public boolean alwaysShowScrollValue = true;
 		@Tooltip public boolean alwaysAllowRotating = true;
 		@Tooltip public boolean leftClickFastDismantle = true;
 		@Tooltip public boolean removeCooldown = true;

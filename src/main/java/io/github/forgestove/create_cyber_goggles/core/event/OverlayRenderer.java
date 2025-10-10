@@ -82,8 +82,8 @@ public class OverlayRenderer {
 		var tooltip = itemStack.getTooltipLines(TooltipContext.of(mc.level), mc.player, flag);
 		var cfg = AllConfigs.client();
 		var tooltipTextWidth = tooltip.stream().mapToInt(mc.font::width).max().orElse(0) + 24;
-		var x = guiGraphics.guiWidth() / 2 + cfg.overlayOffsetX.get();
-		var y = guiGraphics.guiHeight() / 2 + cfg.overlayOffsetY.get();
+		var x = guiGraphics.guiWidth() / 2 + cfg.overlayOffsetX.get() + CCG.CONFIG.goggles.overlayOffsetX;
+		var y = guiGraphics.guiHeight() / 2 + cfg.overlayOffsetY.get() + CCG.CONFIG.goggles.overlayOffsetY;
 		if (x + tooltipTextWidth > guiGraphics.guiWidth()) x = guiGraphics.guiWidth() - tooltipTextWidth;
 		if (fade < 1) x += (int) (Math.pow(1 - fade, 3) * Math.signum(cfg.overlayOffsetX.get() + .5f) * 8);
 		if (GoggleOverlayRenderer.hoverTicks != 0) y -= (tooltip.size() + 1) * 10;

@@ -1,4 +1,6 @@
-- Add betterChassis option to toggle glue state for chassis
-- Add alwaysShowScrollValue option to show scroll value without holdind wrench
-- Add tip render overlay
-- Fix translation
+- Add overlayOffset option to change the position of the extra item information overlay
+- Add always display chassis range when alwaysShowScrollValue option is enabled
+- Fix LinearChassisBlock glue when interactOpposite
+- Fix berries copy glitching
+- Fix Wrong location of kinetic block rotation particle
+- Optimize outline renderer cache hash map

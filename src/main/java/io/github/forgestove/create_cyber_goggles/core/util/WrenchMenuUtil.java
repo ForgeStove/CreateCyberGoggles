@@ -40,6 +40,7 @@ public class WrenchMenuUtil {
 			NOTEBLOCK_INSTRUMENT,
 			SIGNAL_FIRE,
 			SLAB_TYPE,
+			BERRIES,
 			BlazeBurnerBlock.HEAT_LEVEL
 		).forEach(PROPERTIES_BLACKLIST::add);
 	}

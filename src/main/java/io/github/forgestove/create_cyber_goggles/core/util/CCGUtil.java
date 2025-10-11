@@ -96,7 +96,7 @@ public class CCGUtil {
 	 * @param <T>   方块实体类型
 	 * @return 如果类型匹配则返回对应实例，否则返回{@code null}
 	 */
-	public static <T extends BlockEntity> T getBlockEntity(Class<T> clazz) {
+	public static <T extends BlockEntity> @Nullable T getBlockEntity(Class<T> clazz) {
 		return getAs(clazz, getBlockEntity());
 	}
 	/**
@@ -117,7 +117,7 @@ public class CCGUtil {
 	 * @param <T>   方块类型
 	 * @return 如果类型匹配则返回对应实例，否则返回{@code null}
 	 */
-	public static <T extends Block> T getBlock(Class<T> clazz) {
+	public static <T extends Block> @Nullable T getBlock(Class<T> clazz) {
 		return getAs(clazz, getBlock());
 	}
 	/**

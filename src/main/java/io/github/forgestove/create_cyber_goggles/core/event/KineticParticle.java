@@ -25,8 +25,8 @@ public class KineticParticle {
 		var particleData = new RotationIndicatorParticleData(
 			speedLevel.getColor(),
 			Math.max(15, speedLevel.getParticleSpeed()) * Math.signum(speed),
-			kb.getParticleInitialRadius() / 2,
-			kb.getParticleTargetRadius() / 2,
+			Math.max(0.3f, kb.getParticleInitialRadius() / 2),
+			Math.max(0.3f, kb.getParticleTargetRadius() / 2),
 			10,
 			axis
 		);

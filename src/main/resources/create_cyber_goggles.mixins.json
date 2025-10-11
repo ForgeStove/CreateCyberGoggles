@@ -6,6 +6,7 @@
 		"AbstractFilterScreenMixin",
 		"StockKeeperRequestScreenMixin",
 		"accessor.RadialWrenchMenuAccessor",
+		"accessor.RotationPropagatorAccessor",
 		"chainConveyor.CardboardArmorHandlerMixin",
 		"chainConveyor.ChainConveyorConnectionHandlerMixin",
 		"chainConveyor.ChainConveyorInteractionHandlerMixin",

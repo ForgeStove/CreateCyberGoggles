@@ -2,7 +2,9 @@ package io.github.forgestove.create_cyber_goggles.core.event;
 import com.simibubi.create.content.kinetics.base.IRotate.SpeedLevel;
 import com.simibubi.create.content.kinetics.base.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.mixin.accessor.RotationPropagatorAccessor;
 import net.createmod.catnip.math.VecHelper;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.ClientTickEvent.Post;
@@ -14,26 +16,24 @@ public class KineticParticle {
 		if (mc.level == null || isInGUI()) return;
 		var kbe = getBlockEntity(KineticBlockEntity.class);
 		if (kbe == null) return;
-		var speed = kbe.getSpeed();
-		if (speed == 0) return;
+		var kbeSpeed = kbe.getSpeed();
+		if (kbeSpeed == 0) return;
 		var state = kbe.getBlockState();
 		if (!(state.getBlock() instanceof KineticBlock kb)) return;
-		var axis = kb.getRotationAxis(state);
-		if (axis == null) return;
 		var center = VecHelper.getCenterOf(kbe.getBlockPos());
-		var speedLevel = SpeedLevel.of(speed);
-		var particleData = new RotationIndicatorParticleData(
-			speedLevel.getColor(),
-			Math.max(15, speedLevel.getParticleSpeed()) * Math.signum(speed),
-			Math.max(0.3f, kb.getParticleInitialRadius() / 2),
-			Math.max(0.3f, kb.getParticleTargetRadius() / 2),
-			10,
-			axis
-		);
-		var offset = 0.5;
-		var axisVec = new Vec3(axis == Axis.X ? offset : 0, axis == Axis.Y ? offset : 0, axis == Axis.Z ? offset : 0);
-		for (var i = -1; i <= 1; i += 2) {
-			var pos = center.add(axisVec.scale(i));
+		var speedLevel = SpeedLevel.of(kbeSpeed);
+		var color = speedLevel.getColor();
+		var particleSpeed = Math.max(15, speedLevel.getParticleSpeed()) * Math.signum(kbeSpeed);
+		var radiusInitial = Math.max(0.3f, kb.getParticleInitialRadius() / 2);
+		var radiusTarget = Math.max(0.3f, kb.getParticleTargetRadius() / 2);
+		for (var direction : Direction.values()) {
+			if (!kb.hasShaftTowards(mc.level, kbe.getBlockPos(), state, direction)) continue;
+			var axis = direction.getAxis();
+			var directionSpeed = particleSpeed * RotationPropagatorAccessor.getAxisModifier(kbe, direction);
+			var particleData = new RotationIndicatorParticleData(color, directionSpeed, radiusInitial, radiusTarget, 10, axis);
+			var offset = 0.5 * direction.getAxisDirection().getStep();
+			var axisVec = new Vec3(axis == Axis.X ? offset : 0, axis == Axis.Y ? offset : 0, axis == Axis.Z ? offset : 0);
+			var pos = center.add(axisVec);
 			for (var j = 0; j < 3; j++) mc.level.addParticle(particleData, pos.x, pos.y, pos.z, 0, 0, 0);
 		}
 	}

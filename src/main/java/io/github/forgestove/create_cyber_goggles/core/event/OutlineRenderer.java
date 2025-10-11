@@ -1,6 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.IOutlineRenderable;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import org.jetbrains.annotations.Contract;
@@ -9,7 +10,7 @@ import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class OutlineRenderer {
-	public static final Map<BlockEntity, Integer> cachedBE = new HashMap<>();
+	public static final Map<BlockEntity, Integer> cachedBE = new Object2IntOpenHashMap<>();
 	public static void tick(ClientTickEvent ignoredEvent) {
 		if (!CCG.CONFIG.outlineRenderer.renderAnalogBox) return;
 		if (mc.level == null) {

@@ -4,7 +4,7 @@ import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import net.minecraft.core.Direction;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
-@Mixin(RotationPropagator.class)
+@Mixin(value = RotationPropagator.class, remap = false)
 public interface RotationPropagatorAccessor {
 	@Invoker("getAxisModifier")
 	static float getAxisModifier(KineticBlockEntity be, Direction direction) {

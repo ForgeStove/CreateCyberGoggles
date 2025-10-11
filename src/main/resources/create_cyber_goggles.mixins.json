@@ -51,6 +51,7 @@
 		"provider.PackagePortBlockEntityMixin",
 		"provider.PackagerBlockEntityMixin",
 		"provider.SchematicannonBlockEntityMixin",
+		"wrench.ChassisRangeDisplayMixin",
 		"wrench.RadialWrenchHandlerMixin",
 		"wrench.RadialWrenchMenuMixin",
 		"wrench.ScrollValueRendererMixin",

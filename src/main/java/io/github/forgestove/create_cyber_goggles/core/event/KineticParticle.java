@@ -34,7 +34,7 @@ public class KineticParticle {
 			var offset = 0.5 * direction.getAxisDirection().getStep();
 			var axisVec = new Vec3(axis == Axis.X ? offset : 0, axis == Axis.Y ? offset : 0, axis == Axis.Z ? offset : 0);
 			var pos = center.add(axisVec);
-			for (var j = 0; j < 3; j++) mc.level.addParticle(particleData, pos.x, pos.y, pos.z, 0, 0, 0);
+			for (var i = 0; i < 3; i++) mc.level.addParticle(particleData, pos.x, pos.y, pos.z, 0, 0, 0);
 		}
 	}
 }

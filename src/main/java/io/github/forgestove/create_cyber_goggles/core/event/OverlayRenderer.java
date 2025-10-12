@@ -5,7 +5,6 @@ import com.simibubi.create.infrastructure.config.AllConfigs;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.IItemRenderable;
 import net.createmod.catnip.gui.element.BoxElement;
-import net.createmod.catnip.outliner.Outliner.OutlineEntry;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
@@ -16,16 +15,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag.Default;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
+import java.util.Objects;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class OverlayRenderer {
-	public static final Map<Object, OutlineEntry> outlines = outliner.getOutlines();
 	public static int hoverTicks;
 	public static float fade;
-	public static ItemStack currentItemStack;
+	@NotNull public static ItemStack currentItemStack = ItemStack.EMPTY;
 	public static void register(@NotNull RegisterGuiLayersEvent event) {
 		event.registerAbove(
 			VanillaGuiLayers.HOTBAR,
@@ -45,38 +43,35 @@ public class OverlayRenderer {
 	public static void renderOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
 		if (!CCG.CONFIG.goggles.renderExtraItems || !CCG.CONFIG.gameMode.enableGoggle) return;
 		if (mc.isPaused() || isInGUI() || mc.options.hideGui) {
-			currentItemStack = null;
+			currentItemStack = ItemStack.EMPTY;
 			hoverTicks = 0;
 			return;
 		}
-		if (!CCG.CONFIG.goggles.canRenderOnValueBox) if (hasActivedValueBox()) return;
+		if (!CCG.CONFIG.goggles.canRenderOnValueBox && hasActivedValueBox()) return;
 		fade = Mth.clamp((hoverTicks++ + deltaTracker.getGameTimeDeltaPartialTick(false)) / 24f, 0, 1);
-		var itemStack = toRenderItemStack();
-		currentItemStack = itemStack;
-		if (itemStack == null || itemStack.isEmpty()) {
-			hoverTicks = 0;
-			return;
-		}
-		renderItemStack(guiGraphics, itemStack);
+		currentItemStack = toRenderItemStack();
+		if (currentItemStack.isEmpty()) hoverTicks = 0;
+		else renderItemStack(guiGraphics, currentItemStack);
 	}
 	/**
 	 * 根据当前玩家选中的方块实体或实体，返回待渲染的{@link ItemStack}。
 	 *
-	 * @return 需要渲染的 {@link ItemStack}，若无则为 {@code null}
+	 * @return 需要渲染的 {@link ItemStack}，若无则为 {@link ItemStack#EMPTY}
 	 */
-	public static @Nullable ItemStack toRenderItemStack() {
-		if (getBlockEntity() instanceof IItemRenderable renderable) return renderable.ccg$getItemStack();
-		else if (getEntity() instanceof IItemRenderable renderable) return renderable.ccg$getItemStack();
-		else return null;
+	public static @NotNull ItemStack toRenderItemStack() {
+		ItemStack stack = null;
+		if (getBlockEntity() instanceof IItemRenderable renderable) stack = renderable.ccg$getItemStack();
+		else if (getEntity() instanceof IItemRenderable renderable) stack = renderable.ccg$getItemStack();
+		return Objects.requireNonNullElse(stack, ItemStack.EMPTY);
 	}
 	/**
 	 * 在屏幕中央区域渲染指定物品堆的图标及关联的悬浮提示信息。
 	 *
 	 * @param guiGraphics GUI渲染上下文对象，用于执行图形绘制操作
-	 * @param itemStack   需要渲染的物品堆实例。若值为{@code null}或空物品堆叠时方法立即返回
+	 * @param itemStack   需要渲染的物品堆实例。若值为{@link ItemStack#EMPTY}时方法立即返回
 	 */
-	public static void renderItemStack(GuiGraphics guiGraphics, ItemStack itemStack) {
-		if (itemStack == null || itemStack.isEmpty()) return;
+	public static void renderItemStack(GuiGraphics guiGraphics, @NotNull ItemStack itemStack) {
+		if (itemStack.isEmpty()) return;
 		var font = mc.font;
 		var flag = new Default(mc.options.advancedItemTooltips, true);
 		var tooltip = itemStack.getTooltipLines(TooltipContext.of(mc.level), mc.player, flag);
@@ -94,10 +89,10 @@ public class OverlayRenderer {
 		guiGraphics.renderTooltip(font, itemStack, x, y);
 	}
 	public static boolean hasActivedValueBox() {
-		for (var entry : outlines.values()) {
+		for (var entry : outliner.getOutlines().values()) {
 			if (!entry.isAlive()) continue;
 			var outline = entry.getOutline();
-			if (outline instanceof ValueBox && !((ValueBox) outline).isPassive) return true;
+			if (outline instanceof ValueBox valueBox && !valueBox.isPassive) return true;
 		}
 		return false;
 	}

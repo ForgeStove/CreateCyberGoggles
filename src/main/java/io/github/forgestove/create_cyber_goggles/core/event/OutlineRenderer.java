@@ -4,30 +4,28 @@ import io.github.forgestove.create_cyber_goggles.core.util.IOutlineRenderable;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
-import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.*;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class OutlineRenderer {
 	public static final Map<BlockEntity, Integer> cachedBE = new Object2IntOpenHashMap<>();
 	public static void tick(ClientTickEvent ignoredEvent) {
 		if (!CCG.CONFIG.outlineRenderer.renderAnalogBox) return;
-		if (mc.level == null) {
-			cachedBE.clear();
-			return;
-		}
 		if (mc.isPaused() || isInGUI()) return;
 		var be = getBlockEntity();
 		if (be instanceof IOutlineRenderable) cachedBE.put(be, CCG.CONFIG.outlineRenderer.delayRenderDuration);
 		if (cachedBE.isEmpty()) return;
-		cachedBE.entrySet().removeIf(entry -> {
-			var newValue = entry.getValue() - 1;
-			entry.setValue(newValue);
-			var key = entry.getKey();
-			if (!key.isRemoved() && key instanceof IOutlineRenderable ior) ior.ccg$render();
-			return newValue <= 0;
-		});
+		cachedBE.entrySet().removeIf(OutlineRenderer::render);
+	}
+	private static boolean render(@NotNull Entry<BlockEntity, Integer> entry) {
+		var nextDelay = entry.getValue() - 1;
+		entry.setValue(nextDelay);
+		var be = entry.getKey();
+		if (!be.isRemoved() && be instanceof IOutlineRenderable ior) ior.ccg$render();
+		return nextDelay <= 0;
 	}
 	@Contract(pure = true)
 	public static int getColor(boolean pushing) {

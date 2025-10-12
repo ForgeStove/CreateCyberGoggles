@@ -1,6 +1,4 @@
-- Add overlayOffset option to change the position of the extra item information overlay
-- Add always display chassis range when alwaysShowScrollValue option is enabled
-- Fix LinearChassisBlock glue when interactOpposite
-- Fix berries copy glitching
-- Fix Wrong location of kinetic block rotation particle
-- Optimize outline renderer cache hash map
+- Add conveyor belt throughput display
+- Fix default kinetic particle render for cogwheel
+- Fix the display of excess particles on the conveyor belt
+- Optimize overlay renderer performance

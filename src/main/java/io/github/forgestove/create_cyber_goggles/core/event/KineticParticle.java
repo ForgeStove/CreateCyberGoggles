@@ -1,6 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
 import com.simibubi.create.content.kinetics.base.IRotate.SpeedLevel;
 import com.simibubi.create.content.kinetics.base.*;
+import com.simibubi.create.content.kinetics.belt.BeltBlock;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.mixin.accessor.RotationPropagatorAccessor;
 import net.createmod.catnip.math.VecHelper;
@@ -25,6 +26,7 @@ public class KineticParticle {
 		var speedLevel = SpeedLevel.of(kbeSpeed);
 		var particleSpeed = Math.max(15, speedLevel.getParticleSpeed()) * Math.signum(kbeSpeed);
 		if (renderShaftParticles(kbe, kb, state, center, speedLevel.getColor(), particleSpeed)) return;
+		if (kb instanceof BeltBlock) return;
 		renderDefaultParticles(kb, state, center, speedLevel.getColor(), particleSpeed);
 	}
 	private static boolean renderShaftParticles(

@@ -130,4 +130,12 @@ public class TooltipUtil {
 			.add(CCGLang.seconds().style(GRAY))
 			.forGoggles(tooltip);
 	}
+	public static void beltThroughput(List<Component> tooltip, int itemsPerSecond) {
+		if (itemsPerSecond < 0.5) return;
+		CCGLang.translate("tooltip.beltThroughput").style(GRAY).forGoggles(tooltip);
+		CCGLang.number(itemsPerSecond)
+			.style(GOLD)
+			.add(CCGLang.text(" / ").style(DARK_GRAY).add(CCGLang.seconds().style(DARK_GRAY)))
+			.forGoggles(tooltip, 1);
+	}
 }

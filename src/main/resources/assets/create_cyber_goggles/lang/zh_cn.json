@@ -17,6 +17,7 @@
 	"create_cyber_goggles.message.openState": "打开状态",
 	"create_cyber_goggles.message.pressToInteractOpposite": "按住 [%1$s] 切换反面",
 	"create_cyber_goggles.message.useSwitchState": "空手时按 [%1$s] 切换状态",
+	"create_cyber_goggles.tooltip.beltThroughput": "传送带吞吐量：",
 	"create_cyber_goggles.tooltip.burnerState": "燃烧室状态：",
 	"create_cyber_goggles.tooltip.cannonState": "加农炮状态：",
 	"create_cyber_goggles.tooltip.leftTime": "剩余时间：",

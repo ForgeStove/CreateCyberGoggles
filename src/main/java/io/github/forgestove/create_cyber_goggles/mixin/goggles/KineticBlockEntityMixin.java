@@ -3,7 +3,6 @@ import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.TooltipUtil;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -18,7 +17,7 @@ public abstract class KineticBlockEntityMixin {
 		if (!goggles.enhancedInfo) return;
 		var kbe = (KineticBlockEntity) (Object) this;
 		var speed = kbe.getTheoreticalSpeed();
-		var hide = !goggles.hideStaticKineticInfo || !Mth.equal(speed, 0);
+		var hide = !goggles.hideStaticKineticInfo || speed != 0;
 		returnable.setReturnValue(hide);
 		if (!hide) return;
 		TooltipUtil.kinetic(tooltip, kbe, stress, capacity);

@@ -89,7 +89,7 @@ public class PlayerInteract {
 	}
 	private static void chassis(RightClickBlock event) {
 		if (!CCG.CONFIG.wrench.betterChassis) return;
-		if (OverlayRenderer.hasActivedValueBox()) return;
+		if (hasActivedValueBox()) return;
 		var pos = event.getPos();
 		var state = event.getLevel().getBlockState(pos);
 		if (!(state.getBlock() instanceof AbstractChassisBlock acb)) return;
@@ -125,7 +125,7 @@ public class PlayerInteract {
 		mc.player.swing(mc.player.getUsedItemHand());
 	}
 	private static void showCommonTip(String title) {
-		if (OverlayRenderer.hasActivedValueBox()) return;
+		if (hasActivedValueBox()) return;
 		var tip = new ArrayList<MutableComponent>();
 		CCGLang.translate(title).addTo(tip);
 		CCGLang.translate("message.useSwitchState", CCGKey.getColoredDisplayName(mc.options.keyUse)).addTo(tip);

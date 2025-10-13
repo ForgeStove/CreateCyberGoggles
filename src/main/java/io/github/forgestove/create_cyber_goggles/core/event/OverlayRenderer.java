@@ -1,6 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
 import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
-import com.simibubi.create.foundation.blockEntity.behaviour.ValueBox;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.IItemRenderable;
@@ -17,8 +16,6 @@ import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class OverlayRenderer {
 	public static int hoverTicks;
@@ -31,11 +28,10 @@ public class OverlayRenderer {
 			OverlayRenderer::renderOverlay
 		);
 	}
-	public static void color(@NotNull RenderTooltipEvent.Color event) {
-		if (!event.getItemStack().equals(currentItemStack) || currentItemStack.isEmpty()) return;
-		var cfg = AllConfigs.client();
-		var colorBackground = cfg.overlayCustomColor.get()
-			? new Color(cfg.overlayBackgroundColor.get())
+	public static void color(RenderTooltipEvent.@NotNull Color event) {
+		if (currentItemStack != event.getItemStack() || currentItemStack.isEmpty()) return;
+		var colorBackground = AllConfigs.client().overlayCustomColor.get()
+			? new Color(AllConfigs.client().overlayBackgroundColor.get())
 			: BoxElement.COLOR_VANILLA_BACKGROUND.scaleAlpha(.75f);
 		if (fade < 1) colorBackground.scaleAlpha(fade);
 		event.setBackground(colorBackground.getRGB());
@@ -53,16 +49,14 @@ public class OverlayRenderer {
 		if (currentItemStack.isEmpty()) hoverTicks = 0;
 		else renderItemStack(guiGraphics, currentItemStack);
 	}
-	/**
-	 * 根据当前玩家选中的方块实体或实体，返回待渲染的{@link ItemStack}。
-	 *
-	 * @return 需要渲染的 {@link ItemStack}，若无则为 {@link ItemStack#EMPTY}
-	 */
 	public static @NotNull ItemStack toRenderItemStack() {
-		ItemStack stack = null;
-		if (getBlockEntity() instanceof IItemRenderable renderable) stack = renderable.ccg$getItemStack();
-		else if (getEntity() instanceof IItemRenderable renderable) stack = renderable.ccg$getItemStack();
-		return Objects.requireNonNullElse(stack, ItemStack.EMPTY);
+		try {
+			if (getBlockEntity() instanceof IItemRenderable renderable) return orEmpty(renderable.ccg$getItemStack());
+			if (getEntity() instanceof IItemRenderable renderable) return orEmpty(renderable.ccg$getItemStack());
+		} catch (Exception exception) {
+			CCG.LOGGER.error("Failed to get item stack from IItemRenderable", exception);
+		}
+		return ItemStack.EMPTY;
 	}
 	/**
 	 * 在屏幕中央区域渲染指定物品堆的图标及关联的悬浮提示信息。
@@ -72,28 +66,20 @@ public class OverlayRenderer {
 	 */
 	public static void renderItemStack(GuiGraphics guiGraphics, @NotNull ItemStack itemStack) {
 		if (itemStack.isEmpty()) return;
-		var font = mc.font;
 		var flag = new Default(mc.options.advancedItemTooltips, true);
 		var tooltip = itemStack.getTooltipLines(TooltipContext.of(mc.level), mc.player, flag);
-		var cfg = AllConfigs.client();
 		var tooltipTextWidth = tooltip.stream().mapToInt(mc.font::width).max().orElse(0) + 24;
-		var x = guiGraphics.guiWidth() / 2 + cfg.overlayOffsetX.get() + CCG.CONFIG.goggles.overlayOffsetX;
-		var y = guiGraphics.guiHeight() / 2 + cfg.overlayOffsetY.get() + CCG.CONFIG.goggles.overlayOffsetY;
+		var x = guiGraphics.guiWidth() / 2 + AllConfigs.client().overlayOffsetX.get() + CCG.CONFIG.goggles.overlayOffsetX;
+		var y = guiGraphics.guiHeight() / 2 + AllConfigs.client().overlayOffsetY.get() + CCG.CONFIG.goggles.overlayOffsetY;
 		if (x + tooltipTextWidth > guiGraphics.guiWidth()) x = guiGraphics.guiWidth() - tooltipTextWidth;
-		if (fade < 1) x += (int) (Math.pow(1 - fade, 3) * Math.signum(cfg.overlayOffsetX.get() + .5f) * 8);
+		if (fade < 1) x += (int) (Math.pow(1 - fade, 3) * Math.signum(AllConfigs.client().overlayOffsetX.get() + .5f) * 8);
 		if (GoggleOverlayRenderer.hoverTicks != 0) y -= (tooltip.size() + 1) * 10;
 		x = Math.max(16, x);
 		y = Math.max(16, y);
-		guiGraphics.renderItem(itemStack, x - 10, y - 10);
-		guiGraphics.renderItemDecorations(font, itemStack, x - 10, y - 10);
-		guiGraphics.renderTooltip(font, itemStack, x, y);
-	}
-	public static boolean hasActivedValueBox() {
-		for (var entry : outliner.getOutlines().values()) {
-			if (!entry.isAlive()) continue;
-			var outline = entry.getOutline();
-			if (outline instanceof ValueBox valueBox && !valueBox.isPassive) return true;
-		}
-		return false;
+		var itemX = x - 10;
+		var itemY = y - 10;
+		guiGraphics.renderItem(itemStack, itemX, itemY);
+		guiGraphics.renderItemDecorations(mc.font, itemStack, itemX, itemY);
+		guiGraphics.renderTooltip(mc.font, itemStack, x, y);
 	}
 }

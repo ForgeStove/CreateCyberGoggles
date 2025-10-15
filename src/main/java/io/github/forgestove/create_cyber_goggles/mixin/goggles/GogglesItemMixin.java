@@ -9,7 +9,7 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 @Mixin(GogglesItem.class)
 public abstract class GogglesItemMixin {
 	@Inject(method = "isWearingGoggles", at = @At("HEAD"), cancellable = true)
-	private static void isWearingGoggles(CallbackInfoReturnable<Boolean> returnable) {
+	private static void isWearingGoggles(CallbackInfoReturnable<Boolean> cir) {
 		if (mc.gameMode == null) return;
 		var mode = CCG.CONFIG.gameMode;
 		if (mode.enableGoggle && switch (mc.gameMode.getPlayerMode()) {
@@ -17,6 +17,6 @@ public abstract class GogglesItemMixin {
 			case CREATIVE -> mode.enableInCreative;
 			case SPECTATOR -> mode.enableInSpectator;
 			case ADVENTURE -> mode.enableInAdventure;
-		}) returnable.setReturnValue(true);
+		}) cir.setReturnValue(true);
 	}
 }

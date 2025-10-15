@@ -30,13 +30,13 @@ public abstract class BlueprintOverlayRendererMixin {
 	private static void renderOverlay(
 		GuiGraphics guiGraphics,
 		DeltaTracker deltaTracker,
-		CallbackInfo callbackInfo,
+		CallbackInfo ci,
 		@Local(name = "x") int x,
 		@Local(name = "y") int y,
 		@Local(name = "invalidShop") boolean invalidShop
 	) {
 		if (!CCG.CONFIG.goggles.betterStoreInfo) return;
-		callbackInfo.cancel();
+		ci.cancel();
 		if (results.isEmpty()) {
 			guiGraphics.blitSprite(ResourceLocation.withDefaultNamespace("hud/hotbar_offhand_left"), x, y, 24, 23);
 			GuiGameElement.of(Items.BARRIER).at(x + 3, y + 3).render(guiGraphics);

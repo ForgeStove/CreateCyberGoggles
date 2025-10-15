@@ -12,13 +12,13 @@ import java.util.List;
 public abstract class KineticBlockEntityMixin {
 	@Shadow protected float capacity, stress;
 	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), cancellable = true)
-	public void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
+	public void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> cir) {
 		var goggles = CCG.CONFIG.goggles;
 		if (!goggles.enhancedInfo) return;
 		var kbe = (KineticBlockEntity) (Object) this;
 		var speed = kbe.getTheoreticalSpeed();
 		var hide = !goggles.hideStaticKineticInfo || speed != 0;
-		returnable.setReturnValue(hide);
+		cir.setReturnValue(hide);
 		if (!hide) return;
 		TooltipUtil.kinetic(tooltip, kbe, stress, capacity);
 	}

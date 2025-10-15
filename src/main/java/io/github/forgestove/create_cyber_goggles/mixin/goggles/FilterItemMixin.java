@@ -16,11 +16,11 @@ import java.util.*;
 @Mixin(FilterItem.class)
 public abstract class FilterItemMixin {
 	@Inject(method = "makeSummary", at = @At("HEAD"), cancellable = true)
-	private void makeSummary(ItemStack filter, CallbackInfoReturnable<List<Component>> returnable) {
+	private void makeSummary(ItemStack filter, CallbackInfoReturnable<List<Component>> cir) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return;
 		List<Component> list = new ArrayList<>();
 		if (filter.isComponentsPatchEmpty()) {
-			returnable.setReturnValue(list);
+			cir.setReturnValue(list);
 			return;
 		}
 		if (filter.getItem().equals(AllItems.FILTER.get())) {
@@ -37,7 +37,7 @@ public abstract class FilterItemMixin {
 				count++;
 			}
 			if (count == 0) {
-				returnable.setReturnValue(Collections.emptyList());
+				cir.setReturnValue(Collections.emptyList());
 				return;
 			}
 		} else if (filter.getItem().equals(AllItems.ATTRIBUTE_FILTER.get())) {
@@ -59,7 +59,7 @@ public abstract class FilterItemMixin {
 				count++;
 			}
 			if (count == 0) {
-				returnable.setReturnValue(Collections.emptyList());
+				cir.setReturnValue(Collections.emptyList());
 				return;
 			}
 		} else if (filter.getItem().equals(AllItems.PACKAGE_FILTER.get())) {
@@ -69,6 +69,6 @@ public abstract class FilterItemMixin {
 				.add(CreateLang.text(address).style(ChatFormatting.GOLD))
 				.component());
 		}
-		returnable.setReturnValue(list);
+		cir.setReturnValue(list);
 	}
 }

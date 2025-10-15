@@ -10,11 +10,11 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 @Mixin(ContraptionHandlerClient.class)
 public abstract class ContraptionHandlerClientMixin {
 	@Inject(method = "rightClickingOnContraptionsGetsHandledLocally", at = @At("HEAD"), cancellable = true)
-	private static void rightClickingOnContraptionsGetsHandledLocally(InteractionKeyMappingTriggered event, CallbackInfo callbackInfo) {
+	private static void rightClickingOnContraptionsGetsHandledLocally(InteractionKeyMappingTriggered event, CallbackInfo ci) {
 		if (!CCGKey.clickPenetrate.isDown()) return;
 		if (mc.player == null) return;
 		event.setCanceled(false);
 		event.setSwingHand(true);
-		callbackInfo.cancel();
+		ci.cancel();
 	}
 }

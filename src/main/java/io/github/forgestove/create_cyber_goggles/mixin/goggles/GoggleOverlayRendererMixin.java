@@ -15,9 +15,9 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.isInGa
 @Mixin(GoggleOverlayRenderer.class)
 public abstract class GoggleOverlayRendererMixin {
 	@Inject(method = "renderOverlay", at = @At("HEAD"), cancellable = true)
-	private static void renderOverlay(CallbackInfo callbackInfo) {
+	private static void renderOverlay(CallbackInfo ci) {
 		if (!CCG.CONFIG.goggles.disableScreenGoggles || isInGame()) return;
-		callbackInfo.cancel();
+		ci.cancel();
 	}
 	@WrapOperation(
 		method = "renderOverlay", at = @At(

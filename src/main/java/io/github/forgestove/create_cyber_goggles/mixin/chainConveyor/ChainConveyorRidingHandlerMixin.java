@@ -22,12 +22,12 @@ public abstract class ChainConveyorRidingHandlerMixin {
 		return CCG.CONFIG.chainConveyor.alwaysAllowRiding || original.call(instance, stack);
 	}
 	@Inject(method = "clientTick", at = @At(value = "TAIL"))
-	private static void injectTail(CallbackInfo callbackInfo) {
+	private static void injectTail(CallbackInfo ci) {
 		if (!CCG.CONFIG.chainConveyor.cardBoardedYourself) return;
 		if (testForStealth()) sendAction(Action.PRESS_SHIFT_KEY);
 	}
 	@Inject(method = "stopRiding", at = @At("HEAD"))
-	private static void stopRiding(CallbackInfo callbackInfo) {
+	private static void stopRiding(CallbackInfo ci) {
 		sendAction(Action.RELEASE_SHIFT_KEY);
 	}
 }

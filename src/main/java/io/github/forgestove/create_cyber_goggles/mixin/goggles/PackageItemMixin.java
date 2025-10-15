@@ -21,10 +21,10 @@ public abstract class PackageItemMixin extends Item {
 		TooltipContext tooltipContext,
 		List<Component> tooltipComponents,
 		TooltipFlag tooltipFlag,
-		CallbackInfo callbackInfo
+		CallbackInfo ci
 	) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return;
-		callbackInfo.cancel();
+		ci.cancel();
 		super.appendHoverText(stack, tooltipContext, tooltipComponents, tooltipFlag);
 		if (stack.has(AllDataComponents.PACKAGE_ADDRESS))
 			tooltipComponents.add(Component.literal("→ " + stack.get(AllDataComponents.PACKAGE_ADDRESS)).withStyle(ChatFormatting.GOLD));

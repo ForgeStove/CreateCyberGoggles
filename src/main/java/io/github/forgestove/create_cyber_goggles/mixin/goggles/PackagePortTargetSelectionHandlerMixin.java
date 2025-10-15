@@ -12,9 +12,9 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.outlin
 @Mixin(PackagePortTargetSelectionHandler.class)
 public abstract class PackagePortTargetSelectionHandlerMixin {
 	@Inject(method = "animateConnection", at = @At("HEAD"), cancellable = true)
-	private static void animateConnection(Minecraft mc, Vec3 source, Vec3 target, Color color, CallbackInfo callbackInfo) {
+	private static void animateConnection(Minecraft mc, Vec3 source, Vec3 target, Color color, CallbackInfo ci) {
 		if (!CCG.CONFIG.goggles.betterLine) return;
-		callbackInfo.cancel();
+		ci.cancel();
 		outliner.showLine("PackagePortConnectionAnimated", source, target).lineWidth(1 / 8f).colored(color);
 	}
 }

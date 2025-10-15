@@ -2,6 +2,7 @@ package io.github.forgestove.create_cyber_goggles.core.event;
 import com.simibubi.create.content.kinetics.base.IRotate.SpeedLevel;
 import com.simibubi.create.content.kinetics.base.*;
 import com.simibubi.create.content.kinetics.belt.BeltBlock;
+import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogwheelBlock;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.mixin.accessor.RotationPropagatorAccessor;
 import net.createmod.catnip.math.VecHelper;
@@ -45,12 +46,13 @@ public class KineticParticle {
 			var offset = 0.5 * direction.getAxisDirection().getStep();
 			var axisVec = new Vec3(axis == Axis.X ? offset : 0, axis == Axis.Y ? offset : 0, axis == Axis.Z ? offset : 0);
 			var pos = center.add(axisVec);
-			var initial = Math.max(0.3f, kb.getParticleInitialRadius() / 2);
-			var target = Math.max(0.3f, kb.getParticleTargetRadius() / 2);
+			var initial = Math.clamp(kb.getParticleInitialRadius() / 2, 0.1f, 0.3f);
+			var target = Math.clamp(kb.getParticleTargetRadius() / 2, 0.2f, 0.4f);
 			var particleData = new RotationIndicatorParticleData(color, directionSpeed, initial, target, 10, axis);
 			spawnParticles(particleData, pos);
 			hasRendered = true;
 		}
+		if (kb instanceof EncasedCogwheelBlock) return false;
 		//noinspection ConstantValue
 		return hasRendered;
 	}

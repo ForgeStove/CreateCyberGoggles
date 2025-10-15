@@ -149,6 +149,10 @@ public class CCGUtil {
 			.allMatch(slot -> mc.player.getItemBySlot(slot).getItem() instanceof CardboardArmorItem);
 		return CCG.CONFIG.chainConveyor.cardBoardedYourself && !mc.player.getAbilities().flying && allMatch;
 	}
+	/** @return 如果玩家主手或副手中有物品则返回{@code true}，否则返回{@code false} */
+	public static boolean hasItemInHand() {
+		return mc.player != null && !Stream.of(mc.player.getMainHandItem(), mc.player.getOffhandItem()).allMatch(ItemStack::isEmpty);
+	}
 	/**
 	 * 播放指定的音效
 	 *

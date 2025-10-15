@@ -13,6 +13,7 @@
 		"chainConveyor.ChainConveyorRidingHandlerMixin",
 		"goggles.BlueprintOverlayRendererMixin",
 		"goggles.DeployerBlockEntityMixin",
+		"goggles.EncasedCogwheelBlockMixin",
 		"goggles.FilterItemMixin",
 		"goggles.GeneratingKineticBlockEntityMixin",
 		"goggles.GoggleOverlayRendererMixin",

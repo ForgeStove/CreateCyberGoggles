@@ -21,25 +21,25 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 		super(typeIn, pos, state);
 	}
 	@Inject(method = "addToTooltip", at = @At("HEAD"), cancellable = true)
-	public void addToTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
+	public void addToTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> cir) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return;
 		if (overflowItems.isEmpty()) {
-			returnable.setReturnValue(false);
+			cir.setReturnValue(false);
 			return;
 		}
 		super.addToTooltip(tooltip, isPlayerSneaking);
 		TooltipHelper.addHint(tooltip, "hint.full_deployer");
 		overflowItems.forEach(itemStack -> CCGLang.item(itemStack).forGoggles(tooltip));
-		returnable.setReturnValue(true);
+		cir.setReturnValue(true);
 	}
 	@Inject(
 		method = "addToGoggleTooltip", at = @At(
 		value = "INVOKE", target = "Lcom/simibubi/create/content/kinetics/deployer/DeployerBlockEntity;calculateStressApplied()F"
 	), cancellable = true
 	)
-	public void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
+	public void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> cir) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return;
 		super.addToGoggleTooltip(tooltip, isPlayerSneaking);
-		returnable.setReturnValue(true);
+		cir.setReturnValue(true);
 	}
 }

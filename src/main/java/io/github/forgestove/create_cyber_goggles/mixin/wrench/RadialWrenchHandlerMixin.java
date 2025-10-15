@@ -30,9 +30,9 @@ public abstract class RadialWrenchHandlerMixin {
 		return CCG.CONFIG.wrench.alwaysAllowRotating ? AllItems.WRENCH.get() : original.call(instance);
 	}
 	@Inject(method = "clientTick", at = @At("HEAD"), remap = false, cancellable = true)
-	private static void clientTick(CallbackInfo callbackInfo) {
+	private static void clientTick(CallbackInfo ci) {
 		if (!CCG.CONFIG.wrench.removeCooldown) return;
-		callbackInfo.cancel();
+		ci.cancel();
 		RadialWrenchHandler.COOLDOWN = 0;
 	}
 }

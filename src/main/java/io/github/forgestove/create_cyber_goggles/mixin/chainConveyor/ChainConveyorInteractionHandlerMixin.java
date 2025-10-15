@@ -16,16 +16,16 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 	@Shadow public static BlockPos selectedConnection, selectedLift;
 	@Shadow public static float selectedChainPosition;
 	@Inject(method = "isActive", at = @At("HEAD"), cancellable = true)
-	private static void isActive(CallbackInfoReturnable<Boolean> returnable) {
+	private static void isActive(CallbackInfoReturnable<Boolean> cir) {
 		if (!CCG.CONFIG.chainConveyor.alwaysAllowRiding) return;
 		if (mc.player == null) {
-			returnable.setReturnValue(false);
+			cir.setReturnValue(false);
 			return;
 		}
 		var mainHandItem = mc.player.getMainHandItem();
 		if (getBlock(ChainConveyorBlock.class) == null || !mc.player.isShiftKeyDown()
 			&& !mainHandItem.getItem().equals(Items.CHAIN)
-			&& !AllBlocks.CHAIN_CONVEYOR.isIn(mainHandItem)) returnable.setReturnValue(true);
+			&& !AllBlocks.CHAIN_CONVEYOR.isIn(mainHandItem)) cir.setReturnValue(true);
 	}
 	@WrapOperation(
 		method = "onUse",
@@ -35,7 +35,7 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 		return !CCG.CONFIG.chainConveyor.alwaysAllowRiding && original.call(instance, stack);
 	}
 	@Inject(method = "onUse", at = @At("TAIL"))
-	private static void injectTail(CallbackInfoReturnable<Boolean> returnable) {
+	private static void injectTail(CallbackInfoReturnable<Boolean> cir) {
 		if (!CCG.CONFIG.chainConveyor.alwaysAllowRiding) return;
 		if (mc.player == null) return;
 		if (!mc.player.isShiftKeyDown()) {

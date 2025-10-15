@@ -17,14 +17,14 @@ public abstract class GeneratingKineticBlockEntityMixin extends KineticBlockEnti
 		super(typeIn, pos, state);
 	}
 	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), cancellable = true)
-	public void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
+	public void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> cir) {
 		var goggles = CCG.CONFIG.goggles;
 		if (!goggles.enhancedInfo) return;
 		if (goggles.hideStaticKineticInfo && speed == 0) {
-			returnable.setReturnValue(false);
+			cir.setReturnValue(false);
 			return;
 		}
 		TooltipUtil.generatingKinetic(tooltip, (GeneratingKineticBlockEntity) (Object) this);
-		returnable.setReturnValue(super.addToGoggleTooltip(tooltip, isPlayerSneaking));
+		cir.setReturnValue(super.addToGoggleTooltip(tooltip, isPlayerSneaking));
 	}
 }

@@ -31,7 +31,7 @@ public abstract class BacktankBlockEntityMixin extends KineticBlockEntity implem
 		return super.addToGoggleTooltip(tooltip, isPlayerSneaking);
 	}
 	@Inject(method = "tick", at = @At(value = "RETURN", ordinal = 3))
-	public void tick(CallbackInfo callbackInfo, @Local(name = "max") int max) {
+	public void tick(CallbackInfo ci, @Local(name = "max") int max) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return;
 		if (airLevel == max) return;
 		ccg$prevAirLevel = airLevel;

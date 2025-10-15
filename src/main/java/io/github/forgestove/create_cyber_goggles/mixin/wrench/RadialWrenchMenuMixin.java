@@ -26,12 +26,12 @@ public abstract class RadialWrenchMenuMixin {
 		BlockState state,
 		BlockPos pos,
 		Level level,
-		CallbackInfoReturnable<Optional<RadialWrenchMenu>> returnable
+		CallbackInfoReturnable<Optional<RadialWrenchMenu>> cir
 	) {
 		if (!CCG.CONFIG.wrench.enchancedRotationMenu) return;
 		var isCreative = mc.player != null && mc.player.isCreative();
 		if (!isCreative && BLOCK_BLACKLIST.contains(CatnipServices.REGISTRIES.getKeyOrThrow(state.getBlock()))) {
-			returnable.setReturnValue(Optional.empty());
+			cir.setReturnValue(Optional.empty());
 			return;
 		}
 		var properties = state.getProperties()
@@ -40,10 +40,10 @@ public abstract class RadialWrenchMenuMixin {
 			.filter(entry -> isCreative || !WrenchMenuUtil.PROPERTIES_BLACKLIST.contains(entry.getKey()))
 			.toList();
 		if (properties.isEmpty()) {
-			returnable.setReturnValue(Optional.empty());
+			cir.setReturnValue(Optional.empty());
 			return;
 		}
-		returnable.setReturnValue(Optional.of(RadialWrenchMenuAccessor.create(state, pos, level, properties)));
+		cir.setReturnValue(Optional.of(RadialWrenchMenuAccessor.create(state, pos, level, properties)));
 	}
 	@WrapOperation(
 		method = "renderRadialSectors", at = @At(

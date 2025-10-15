@@ -32,13 +32,13 @@ public abstract class BlueprintOverlayRendererMixin {
 		float partialTicks,
 		int width,
 		int height,
-		CallbackInfo callbackInfo,
+		CallbackInfo ci,
 		@Local(name = "x") int x,
 		@Local(name = "y") int y,
 		@Local(name = "invalidShop") boolean invalidShop
 	) {
 		if (!CCG.CONFIG.goggles.betterStoreInfo) return;
-		callbackInfo.cancel();
+		ci.cancel();
 		if (results.isEmpty()) {
 			AllGuiTextures.HOTSLOT.render(guiGraphics, x, y);
 			GuiGameElement.of(Items.BARRIER).at(x + 3, y + 3).render(guiGraphics);

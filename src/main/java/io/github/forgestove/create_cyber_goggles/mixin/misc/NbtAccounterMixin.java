@@ -7,9 +7,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(NbtAccounter.class)
 public abstract class NbtAccounterMixin {
 	@Inject(method = "accountBytes(J)V", at = @At("HEAD"), cancellable = true)
-	public void accountBytes(CallbackInfo callbackInfo) {
+	public void accountBytes(CallbackInfo ci) {
 		try {
-			if (CCG.CONFIG.misc.nbtFix) callbackInfo.cancel();
+			if (CCG.CONFIG.misc.nbtFix) ci.cancel();
 		} catch (Throwable ignored) {}
 	}
 }

@@ -22,10 +22,10 @@ public abstract class PackageItemMixin extends Item {
 		Level level,
 		List<Component> tooltipComponents,
 		TooltipFlag tooltipFlag,
-		CallbackInfo callbackInfo
+		CallbackInfo ci
 	) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return;
-		callbackInfo.cancel();
+		ci.cancel();
 		super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
 		var compoundNbt = stack.getOrCreateTag();
 		var address = compoundNbt.getString("Address");

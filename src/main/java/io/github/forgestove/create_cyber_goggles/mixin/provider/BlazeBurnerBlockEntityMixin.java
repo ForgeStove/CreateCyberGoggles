@@ -28,7 +28,7 @@ public abstract class BlazeBurnerBlockEntityMixin extends SmartBlockEntity imple
 		return TooltipUtil.burner(tooltip, remainingBurnTime, isCreative, activeFuel);
 	}
 	@Inject(method = "tick", at = @At("HEAD"))
-	public void tick(CallbackInfo callbackInfo) {
+	public void tick(CallbackInfo ci) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return;
 		if (level == null || !level.isClientSide) return;
 		if (isCreative) return;

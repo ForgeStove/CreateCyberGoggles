@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(value = CardboardArmorStealthOverlay.class, remap = false)
 public abstract class CardboardArmorStealthOverlayMixin {
 	@Inject(method = "renderHelmetOverlay", at = @At("HEAD"), cancellable = true)
-	public void renderHelmetOverlay(CallbackInfo callbackInfo) {
-		if (CCG.CONFIG.misc.removeCardboardOverlay) callbackInfo.cancel();
+	public void renderHelmetOverlay(CallbackInfo ci) {
+		if (CCG.CONFIG.misc.removeCardboardOverlay) ci.cancel();
 	}
 }

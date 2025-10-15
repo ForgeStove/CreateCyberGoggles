@@ -10,7 +10,6 @@ import io.github.forgestove.create_cyber_goggles.core.event.KeyInput;
 import io.github.forgestove.create_cyber_goggles.core.util.IItemIndex;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import org.spongepowered.asm.mixin.*;
@@ -22,7 +21,6 @@ import java.util.List;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 @Mixin(value = BlueprintOverlayRenderer.class, remap = false)
 public abstract class BlueprintOverlayRendererMixin {
-	@Unique private static final ResourceLocation WIDGETS_LOCATION = new ResourceLocation("textures/gui/widgets.png");
 	@Shadow static List<ItemStack> results;
 	@Shadow static boolean resultCraftable;
 	@Shadow static BlueprintOverlayShopContext shopContext;
@@ -42,7 +40,7 @@ public abstract class BlueprintOverlayRendererMixin {
 		if (!CCG.CONFIG.goggles.betterStoreInfo) return;
 		callbackInfo.cancel();
 		if (results.isEmpty()) {
-			guiGraphics.blit(WIDGETS_LOCATION, x, y, 24, 23, 22, 22);
+			AllGuiTextures.HOTSLOT.render(guiGraphics, x, y);
 			GuiGameElement.of(Items.BARRIER).at(x + 3, y + 3).render(guiGraphics);
 			RenderSystem.disableBlend();
 			return;
@@ -68,7 +66,7 @@ public abstract class BlueprintOverlayRendererMixin {
 			if (i == index) selectedX = x;
 			x += 21;
 		}
-		if (selectedX != 0) guiGraphics.blit(WIDGETS_LOCATION, selectedX - 1, y - 1, 0, 22, 23, 23);
+		if (selectedX != 0) AllGuiTextures.HOTSLOT_SUPER_ACTIVE.render(guiGraphics, selectedX - 1, y - 1);
 		RenderSystem.disableBlend();
 	}
 	@Inject(method = "displayClothShop", at = @At("HEAD"))

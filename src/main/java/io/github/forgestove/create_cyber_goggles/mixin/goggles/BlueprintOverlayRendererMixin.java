@@ -11,7 +11,6 @@ import io.github.forgestove.create_cyber_goggles.core.util.IItemIndex;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
@@ -38,7 +37,7 @@ public abstract class BlueprintOverlayRendererMixin {
 		if (!CCG.CONFIG.goggles.betterStoreInfo) return;
 		ci.cancel();
 		if (results.isEmpty()) {
-			guiGraphics.blitSprite(ResourceLocation.withDefaultNamespace("hud/hotbar_offhand_left"), x, y, 24, 23);
+			AllGuiTextures.HOTSLOT.render(guiGraphics, x, y);
 			GuiGameElement.of(Items.BARRIER).at(x + 3, y + 3).render(guiGraphics);
 			RenderSystem.disableBlend();
 			return;
@@ -64,8 +63,7 @@ public abstract class BlueprintOverlayRendererMixin {
 			if (i == index) selectedX = x;
 			x += 21;
 		}
-		if (selectedX != 0)
-			guiGraphics.blitSprite(ResourceLocation.withDefaultNamespace("hud/hotbar_selection"), selectedX - 1, y - 1, 24, 23);
+		if (selectedX != 0) AllGuiTextures.HOTSLOT_SUPER_ACTIVE.render(guiGraphics, selectedX - 1, y - 1);
 		RenderSystem.disableBlend();
 	}
 	@Inject(method = "displayClothShop", at = @At("HEAD"))

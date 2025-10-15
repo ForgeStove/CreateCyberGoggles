@@ -1,3 +1,2 @@
-- Optimize belt throughput
-- Optimize interaction of table cloth store
-- Refactor callbackinfo parm name
+- Add betterEncasedCogWheel option to toggle encased cogwheel opening
+- Optimize rotate particle rendering

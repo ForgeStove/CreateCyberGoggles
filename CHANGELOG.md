@@ -1,4 +1,3 @@
-- Add conveyor belt throughput display
-- Fix default kinetic particle render for cogwheel
-- Fix the display of excess particles on the conveyor belt
-- Optimize overlay renderer performance
+- Optimize belt throughput
+- Optimize interaction of table cloth store
+- Refactor callbackinfo parm name

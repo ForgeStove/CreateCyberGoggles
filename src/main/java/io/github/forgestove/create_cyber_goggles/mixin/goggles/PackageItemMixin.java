@@ -2,6 +2,7 @@ package io.github.forgestove.create_cyber_goggles.mixin.goggles;
 import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.*;
@@ -33,7 +34,7 @@ public abstract class PackageItemMixin extends Item {
 		for (var i = 0; i < contents.getSlots(); i++) {
 			var itemstack = contents.getStackInSlot(i);
 			if (itemstack.isEmpty()) continue;
-			tooltipComponents.add(itemstack.getHoverName().copy().append(" x" + itemstack.getCount()).withStyle(ChatFormatting.GRAY));
+			CCGLang.item(itemstack).addTo(tooltipComponents);
 		}
 	}
 }

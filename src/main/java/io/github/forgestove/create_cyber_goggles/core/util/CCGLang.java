@@ -53,6 +53,6 @@ public class CCGLang extends Lang {
 	}
 	public static @NotNull LangBuilder item(@NotNull ItemStack stack) {
 		return builder().add(stack.getHoverName().copy().setStyle(stack.getDisplayName().getStyle()))
-			.text(GREEN, " x%d".formatted(stack.getCount()));
+			.text(GRAY, " x%d".formatted(stack.getCount()));
 	}
 }

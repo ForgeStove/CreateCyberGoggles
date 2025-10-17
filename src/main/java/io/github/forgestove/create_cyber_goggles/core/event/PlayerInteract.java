@@ -124,7 +124,7 @@ public class PlayerInteract {
 		if (event.getHand() != InteractionHand.MAIN_HAND) return;
 		if (mc.player == null) return;
 		if (mc.player.isShiftKeyDown()) return;
-		if (!hasItemInHand()) return;
+		if (hasItemInHand()) return;
 		var clickedFace = event.getHitVec().getDirection();
 		var oppositeMode = CCGKey.interactOpposite.isDown();
 		if (oppositeMode) {
@@ -135,15 +135,16 @@ public class PlayerInteract {
 			var probePos = pos.relative(clickedFace);
 			var probeState = level.getBlockState(probePos);
 			var targetAcb = acb;
-			if (state.getBlock() instanceof LinearChassisBlock) while (probeState.getBlock() instanceof LinearChassisBlock lcb) {
-				var probeAxis = probeState.hasProperty(axisProp) ? probeState.getValue(axisProp) : null;
-				if (probeAxis == null || probeAxis != baseAxis) break;
-				pos = probePos;
-				state = probeState;
-				targetAcb = lcb;
-				probePos = probePos.relative(clickedFace);
-				probeState = level.getBlockState(probePos);
-			}
+			if (LinearChassisBlock.isChassis(state) && LinearChassisBlock.sameKind(state, probeState))
+				while (probeState.getBlock() instanceof LinearChassisBlock lcb) {
+					var probeAxis = probeState.hasProperty(axisProp) ? probeState.getValue(axisProp) : null;
+					if (probeAxis == null || probeAxis != baseAxis) break;
+					pos = probePos;
+					state = probeState;
+					targetAcb = lcb;
+					probePos = probePos.relative(clickedFace);
+					probeState = level.getBlockState(probePos);
+				}
 			acb = targetAcb;
 		}
 		var booleanProperty = acb.getGlueableSide(state, clickedFace);

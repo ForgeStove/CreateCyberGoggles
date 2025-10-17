@@ -1,2 +1,3 @@
-- Add betterEncasedCogWheel option to toggle encased cogwheel opening
-- Optimize rotate particle rendering
+- Add TranslateCatnip option to translate Catnip portions of hardcoded text into the current language
+- Fix betterChassis option
+- Optimize toolbox tooltip by merge itemstacks in same slot

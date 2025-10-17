@@ -2,6 +2,7 @@ package io.github.forgestove.create_cyber_goggles.core.event;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.equipment.armor.*;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
+import com.simibubi.create.content.equipment.toolbox.ToolboxInventory;
 import com.simibubi.create.content.equipment.wrench.WrenchItem;
 import com.simibubi.create.foundation.utility.CreateLang;
 import io.github.forgestove.create_cyber_goggles.CCG;
@@ -58,15 +59,33 @@ public class ItemTooltip {
 		if (!AllItemTags.TOOLBOXES.matches(stack)) return;
 		var tag = stack.getOrCreateTag();
 		if (!tag.contains("Inventory")) return;
-		List<Component> list = new ArrayList<>();
 		var inventory = tag.getCompound("Inventory");
 		if (!inventory.contains("Items")) return;
 		var items = inventory.getList("Items", Tag.TAG_COMPOUND);
-		for (var i = 0; i < items.size(); i++) {
-			var slotTag = items.getCompound(i);
-			var slotStack = ItemStack.of(slotTag);
-			if (slotStack.isEmpty()) continue;
-			CCGLang.item(slotStack).addTo(list);
+		var compartments = 8;
+		var stacksPerCompartment = ToolboxInventory.STACKS_PER_COMPARTMENT;
+		List<Component> list = new ArrayList<>();
+		for (var compartment = 0; compartment < compartments; compartment++) {
+			var baseIndex = compartment * stacksPerCompartment;
+			var consolidated = ItemStack.EMPTY;
+			var totalCount = 0;
+			for (var offset = 0; offset < stacksPerCompartment; offset++) {
+				var slotIndex = baseIndex + offset;
+				if (slotIndex >= items.size()) break;
+				var itemTag = items.getCompound(slotIndex);
+				var slot = ItemStack.of(itemTag);
+				if (slot.isEmpty()) continue;
+				if (consolidated.isEmpty()) {
+					consolidated = slot.copy();
+					consolidated.setCount(1);
+					totalCount = slot.getCount();
+				} else if (ItemStack.isSameItemSameTags(consolidated, slot)) totalCount += slot.getCount();
+			}
+			if (!consolidated.isEmpty()) {
+				var displayStack = consolidated.copy();
+				displayStack.setCount(totalCount);
+				CCGLang.item(displayStack).addTo(list);
+			}
 		}
 		tooltip.addAll(1, list);
 	}

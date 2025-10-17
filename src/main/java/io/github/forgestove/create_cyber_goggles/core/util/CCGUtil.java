@@ -7,7 +7,6 @@ import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringB
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.createmod.catnip.outliner.Outliner;
 import net.createmod.catnip.platform.CatnipServices;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -181,11 +180,7 @@ public class CCGUtil {
 		var newEnabled = !enabled;
 		setter.accept(newEnabled);
 		if (mc.player == null) return;
-		CCGLang.translate(messageKey)
-			.space()
-			.add(CCGLang.enabled(newEnabled))
-			.style(enabled ? ChatFormatting.RED : ChatFormatting.GREEN)
-			.sendStatus(mc.player);
+		CCGLang.translate(messageKey).space().add(CCGLang.enabled(newEnabled)).sendStatus(mc.player);
 	}
 	/** 向服务器发送玩家动作指令 */
 	public static void sendAction(Action action) {

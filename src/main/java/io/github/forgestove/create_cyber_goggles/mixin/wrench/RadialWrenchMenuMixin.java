@@ -22,12 +22,7 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 @Mixin(RadialWrenchMenu.class)
 public abstract class RadialWrenchMenuMixin {
 	@Inject(method = "tryCreateFor", at = @At("HEAD"), cancellable = true, remap = false)
-	private static void tryCreateFor(
-		BlockState state,
-		BlockPos pos,
-		Level level,
-		CallbackInfoReturnable<Optional<RadialWrenchMenu>> cir
-	) {
+	private static void tryCreateFor(BlockState state, BlockPos pos, Level level, CallbackInfoReturnable<Optional<RadialWrenchMenu>> cir) {
 		if (!CCG.CONFIG.wrench.enchancedRotationMenu) return;
 		var isCreative = mc.player != null && mc.player.isCreative();
 		if (!isCreative && BLOCK_BLACKLIST.contains(CatnipServices.REGISTRIES.getKeyOrThrow(state.getBlock()))) {

@@ -4,7 +4,7 @@ import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.createmod.catnip.gui.ConfirmationScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
-@Mixin(ConfirmationScreen.class)
+@Mixin(value = ConfirmationScreen.class, remap = false)
 public abstract class ConfirmationScreenMixin {
 	@ModifyArg(
 		method = "init", at = @At(

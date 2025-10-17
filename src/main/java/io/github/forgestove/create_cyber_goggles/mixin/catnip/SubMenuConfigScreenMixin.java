@@ -4,10 +4,10 @@ import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.createmod.catnip.config.ui.*;
 import net.minecraft.network.chat.*;
-import net.neoforged.fml.config.ModConfig.Type;
+import net.minecraftforge.fml.config.ModConfig.Type;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
-@Mixin(SubMenuConfigScreen.class)
+@Mixin(value = SubMenuConfigScreen.class, remap = false)
 public abstract class SubMenuConfigScreenMixin {
 	@Shadow @Final public Type type;
 	@WrapOperation(

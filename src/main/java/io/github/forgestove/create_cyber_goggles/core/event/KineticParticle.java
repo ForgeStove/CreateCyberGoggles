@@ -47,8 +47,8 @@ public class KineticParticle {
 			var offset = 0.5 * direction.getAxisDirection().getStep();
 			var axisVec = new Vec3(axis == Axis.X ? offset : 0, axis == Axis.Y ? offset : 0, axis == Axis.Z ? offset : 0);
 			var pos = center.add(axisVec);
-			var initial = Mth.clamp(kb.getParticleInitialRadius() / 2, 0.1f, 0.3f);
-			var target = Mth.clamp(kb.getParticleTargetRadius() / 2, 0.2f, 0.4f);
+			var initial = Mth.clamp(kb.getParticleInitialRadius() / 2, 0.2f, 0.3f);
+			var target = Mth.clamp(kb.getParticleTargetRadius() / 2, 0.4f, 0.5f);
 			var particleData = new RotationIndicatorParticleData(color, directionSpeed, initial, target, 10, axis);
 			spawnParticles(particleData, pos);
 			hasRendered = true;

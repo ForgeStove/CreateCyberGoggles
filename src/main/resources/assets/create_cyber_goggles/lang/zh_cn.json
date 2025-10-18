@@ -121,6 +121,8 @@
 	"text.autoconfig.create_cyber_goggles.option.misc.removeCardboardOverlay.@Tooltip": "移除纸板套在潜行时的视线遮挡",
 	"text.autoconfig.create_cyber_goggles.option.misc.removeNetheriteFirstPerson": "移除第一人称背罐渲染",
 	"text.autoconfig.create_cyber_goggles.option.misc.removeNetheriteFirstPerson.@Tooltip": "移除下界合金背罐的第一人称渲染效果",
+	"text.autoconfig.create_cyber_goggles.option.misc.selectionHandlerFix": "选择处理器修复",
+	"text.autoconfig.create_cyber_goggles.option.misc.selectionHandlerFix.@Tooltip": "修复切换物品时丢弃选择处理器的问题",
 	"text.autoconfig.create_cyber_goggles.option.misc.showScrapContent": "显示废料内容",
 	"text.autoconfig.create_cyber_goggles.option.misc.showScrapContent.@Tooltip": "显示序列组装中随机废料的具体内容",
 	"text.autoconfig.create_cyber_goggles.option.misc.translateCatnip": "翻译 Catnip",

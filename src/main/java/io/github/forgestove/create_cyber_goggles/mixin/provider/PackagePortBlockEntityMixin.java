@@ -24,7 +24,7 @@ public abstract class PackagePortBlockEntityMixin extends SmartBlockEntity imple
 		if (exactTarget == Vec3.ZERO) return;
 		var color = 0x9EDE73;
 		outliner.showLine("PackagePortConnection" + this, source, exactTarget).lineWidth(1 / 8f).colored(color);
-		outliner.chaseAABB("ChainPointSelected" + this, new AABB(exactTarget, exactTarget))
+		outliner.showAABB("ChainPointSelected" + this, new AABB(exactTarget, exactTarget))
 			.colored(color)
 			.lineWidth(1 / 5f)
 			.disableLineNormals();

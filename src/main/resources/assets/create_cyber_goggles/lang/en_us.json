@@ -121,6 +121,8 @@
 	"text.autoconfig.create_cyber_goggles.option.misc.removeCardboardOverlay.@Tooltip": "Remove the cardboard suit view obstruction when crouching",
 	"text.autoconfig.create_cyber_goggles.option.misc.removeNetheriteFirstPerson": "Remove First Person Backtank Render",
 	"text.autoconfig.create_cyber_goggles.option.misc.removeNetheriteFirstPerson.@Tooltip": "Remove the first-person render effect of the Netherite Backtank",
+	"text.autoconfig.create_cyber_goggles.option.misc.selectionHandlerFix": "Selection Handler Fix",
+	"text.autoconfig.create_cyber_goggles.option.misc.selectionHandlerFix.@Tooltip": "Fix selection handler discard when switching items",
 	"text.autoconfig.create_cyber_goggles.option.misc.showScrapContent": "Show Scrap Content",
 	"text.autoconfig.create_cyber_goggles.option.misc.showScrapContent.@Tooltip": "Display the specific content of random scrap in sequence assembly",
 	"text.autoconfig.create_cyber_goggles.option.misc.translateCatnip": "Translate Catnip",

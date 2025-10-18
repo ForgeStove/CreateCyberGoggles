@@ -39,6 +39,7 @@
 		"misc.NetheriteBacktankFirstPersonRendererMixin",
 		"misc.SequencedAssemblyCategoryMixin",
 		"misc.SimpleBackendMixin",
+		"misc.SuperGlueSelectionHandlerMixin",
 		"provider.ArmBlockEntityMixin",
 		"provider.BacktankBlockEntityMixin",
 		"provider.BeltBlockEntityMixin",

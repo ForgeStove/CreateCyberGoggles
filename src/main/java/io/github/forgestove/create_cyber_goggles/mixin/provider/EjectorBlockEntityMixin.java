@@ -10,6 +10,7 @@ import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
@@ -24,6 +25,8 @@ public abstract class EjectorBlockEntityMixin extends KineticBlockEntity impleme
 	public abstract BlockPos getTargetPosition();
 	@Shadow
 	protected abstract Direction getFacing();
+	@Shadow
+	protected abstract boolean cannotLaunch();
 	@Override
 	public ItemStack ccg$getItemStack() {
 		return depotBehaviour.getHeldItemStack();
@@ -31,9 +34,11 @@ public abstract class EjectorBlockEntityMixin extends KineticBlockEntity impleme
 	@Override
 	public void ccg$render() {
 		var targetPos = getTargetPosition();
-		outliner.chaseAABB("EjectorTargetBox" + this, getBounds(targetPos))
+		outliner.showAABB("EjectorTargetBox" + this, getBounds(targetPos))
 			.lineWidth(1 / 16f)
 			.colored(CCG.CONFIG.outlineRenderer.windPushColor);
+		var color = cannotLaunch() ? 0xFF7171 : 0x9EDE73;
+		outliner.showAABB("EjectorFromBox" + this, new AABB(0, 0, 0, 1, 0, 1).move(worldPosition)).lineWidth(1 / 16f).colored(color);
 		var xDiff = targetPos.getX() - worldPosition.getX();
 		var yDiff = targetPos.getY() - worldPosition.getY();
 		var zDiff = targetPos.getZ() - worldPosition.getZ();
@@ -41,7 +46,7 @@ public abstract class EjectorBlockEntityMixin extends KineticBlockEntity impleme
 		var totalFlyingTicks = ccg$launcher.getTotalFlyingTicks() + 3;
 		var segments = (int) totalFlyingTicks / 3 + 1;
 		var tickOffset = totalFlyingTicks / segments;
-		var data = new DustParticleOptions(new Color(0x9EDE73).asVectorF(), 1);
+		var data = new DustParticleOptions(new Color(color).asVectorF(), 1);
 		if (mc.level == null) return;
 		for (var i = 0; i < segments; i++) {
 			var ticks = (AnimationTickHolder.getRenderTime() / 3) % tickOffset + i * tickOffset;

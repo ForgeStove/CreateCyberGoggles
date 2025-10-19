@@ -33,7 +33,7 @@ public abstract class ArmBlockEntityMixin extends KineticBlockEntity implements 
 			if (!point.isValid()) continue;
 			var level = point.getLevel();
 			var pos = point.getPos();
-			outliner.chaseAABB("ArmIOBox" + point, level.getBlockState(pos).getShape(level, pos).bounds().move(pos))
+			outliner.showAABB("ArmIOBox" + point, level.getBlockState(pos).getShape(level, pos).bounds().move(pos))
 				.withFaceTextures(AllSpecialTextures.HIGHLIGHT_CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
 				.lineWidth(1 / 16f)
 				.colored(point.getMode().getColor());

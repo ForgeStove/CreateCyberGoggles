@@ -11,6 +11,6 @@ public abstract class SuperGlueSelectionHandlerMixin {
 		at = @At(value = "INVOKE", target = "Lcom/simibubi/create/content/contraptions/glue/SuperGlueSelectionHandler;discard()V")
 	)
 	private static boolean tick(SuperGlueSelectionHandler instance) {
-		return !CCG.CONFIG.misc.selectionHandlerFix;
+		return !CCG.CONFIG.misc.preventSelectionDiscard;
 	}
 }

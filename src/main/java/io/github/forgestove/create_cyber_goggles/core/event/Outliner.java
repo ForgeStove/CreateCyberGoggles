@@ -10,15 +10,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
-public class OutlineRenderer {
+public class Outliner {
 	public static final Map<BlockEntity, Integer> cachedBE = new Object2IntOpenHashMap<>();
 	public static void tick(ClientTickEvent ignoredEvent) {
-		if (!CCG.CONFIG.outlineRenderer.renderAnalogBox) return;
+		if (!CCG.CONFIG.outliner.renderAnalogBox) return;
 		if (mc.isPaused() || isInGUI()) return;
 		var be = getBlockEntity();
-		if (be instanceof IOutlineRenderable) cachedBE.put(be, CCG.CONFIG.outlineRenderer.delayRenderDuration);
+		if (be instanceof IOutlineRenderable) cachedBE.put(be, CCG.CONFIG.outliner.delayRenderDuration);
 		if (cachedBE.isEmpty()) return;
-		cachedBE.entrySet().removeIf(OutlineRenderer::render);
+		cachedBE.entrySet().removeIf(Outliner::render);
 	}
 	private static boolean render(@NotNull Entry<BlockEntity, Integer> entry) {
 		var nextDelay = entry.getValue() - 1;
@@ -29,7 +29,7 @@ public class OutlineRenderer {
 	}
 	@Contract(pure = true)
 	public static int getColor(boolean pushing) {
-		return pushing ? CCG.CONFIG.outlineRenderer.windPushColor : CCG.CONFIG.outlineRenderer.windPullColor;
+		return pushing ? CCG.CONFIG.outliner.outColor : CCG.CONFIG.outliner.inColor;
 	}
 	public static double getOffset(int i, int numberOfFlowBoxes) {
 		return (System.currentTimeMillis() + i * ((double) 3000 / numberOfFlowBoxes)) % 3000 / 3000.0;

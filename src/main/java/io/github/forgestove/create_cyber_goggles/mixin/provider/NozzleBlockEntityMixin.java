@@ -4,7 +4,7 @@ import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.fan.NozzleBlockEntity;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.event.OutlineRenderer;
+import io.github.forgestove.create_cyber_goggles.core.event.Outliner;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -31,14 +31,14 @@ public abstract class NozzleBlockEntityMixin extends SmartBlockEntity implements
 	@Override
 	public void ccg$render() {
 		var center = getBlockPos().getCenter();
-		var color = OutlineRenderer.getColor(pushing);
+		var color = Outliner.getColor(pushing);
 		outliner.chaseAABB("NozzleAirBox" + this, new AABB(center, center).inflate(range / 2f))
 			.withFaceTextures(AllSpecialTextures.CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
 			.lineWidth(1 / 16f)
 			.colored(color);
-		var numberOfFlowBoxes = OutlineRenderer.getNumberOfFlowBoxes(range);
+		var numberOfFlowBoxes = Outliner.getNumberOfFlowBoxes(range);
 		for (var i = 0; i < numberOfFlowBoxes; i++) {
-			var offset = OutlineRenderer.getOffset(i, numberOfFlowBoxes);
+			var offset = Outliner.getOffset(i, numberOfFlowBoxes);
 			var id = "NozzleAirFlowBox" + this + i;
 			if (offset > 0.98) {
 				outliner.remove(id);

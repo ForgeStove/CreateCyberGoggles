@@ -4,7 +4,7 @@ import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.fan.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.event.OutlineRenderer;
+import io.github.forgestove.create_cyber_goggles.core.event.Outliner;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -30,15 +30,15 @@ public abstract class EncasedFanBlockEntityMixin extends KineticBlockEntity impl
 	}
 	@Override
 	public void ccg$render() {
-		var color = OutlineRenderer.getColor(airCurrent.pushing);
+		var color = Outliner.getColor(airCurrent.pushing);
 		var bounds = airCurrent.bounds;
 		outliner.chaseAABB("FanAirBox" + this, bounds)
 			.withFaceTextures(AllSpecialTextures.CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
 			.lineWidth(1 / 16f)
 			.colored(color);
-		var numberOfFlowBoxes = OutlineRenderer.getNumberOfFlowBoxes(airCurrent.maxDistance);
+		var numberOfFlowBoxes = Outliner.getNumberOfFlowBoxes(airCurrent.maxDistance);
 		for (var i = 0; i < numberOfFlowBoxes; i++) {
-			var offset = OutlineRenderer.getOffset(i, numberOfFlowBoxes);
+			var offset = Outliner.getOffset(i, numberOfFlowBoxes);
 			var offsetDistance = airCurrent.maxDistance * offset;
 			var axis = airCurrent.direction.getAxis();
 			var min = switch (axis) {

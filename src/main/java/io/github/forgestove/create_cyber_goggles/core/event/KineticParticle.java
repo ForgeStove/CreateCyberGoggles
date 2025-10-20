@@ -26,7 +26,7 @@ public class KineticParticle {
 		if (!(state.getBlock() instanceof KineticBlock kb)) return;
 		var center = VecHelper.getCenterOf(kbe.getBlockPos());
 		var speedLevel = SpeedLevel.of(kbeSpeed);
-		var particleSpeed = Math.max(15, speedLevel.getParticleSpeed()) * Math.signum(kbeSpeed);
+		var particleSpeed = Math.max(10, speedLevel.getParticleSpeed()) * Math.signum(kbeSpeed);
 		if (renderShaftParticles(kbe, kb, state, center, speedLevel.getColor(), particleSpeed)) return;
 		if (kb instanceof BeltBlock) return;
 		renderDefaultParticles(kb, state, center, speedLevel.getColor(), particleSpeed);
@@ -44,11 +44,11 @@ public class KineticParticle {
 			if (!kb.hasShaftTowards(mc.level, kbe.getBlockPos(), state, direction)) continue;
 			var axis = direction.getAxis();
 			var directionSpeed = particleSpeed * RotationPropagatorAccessor.getAxisModifier(kbe, direction);
-			var offset = 0.5 * direction.getAxisDirection().getStep();
+			var offset = direction.getAxisDirection().getStep() / 2D;
 			var axisVec = new Vec3(axis == Axis.X ? offset : 0, axis == Axis.Y ? offset : 0, axis == Axis.Z ? offset : 0);
 			var pos = center.add(axisVec);
-			var initial = Mth.clamp(kb.getParticleInitialRadius() / 2, 0.2f, 0.3f);
-			var target = Mth.clamp(kb.getParticleTargetRadius() / 2, 0.4f, 0.5f);
+			var initial = Mth.clamp(kb.getParticleInitialRadius() / 2, 0.2F, 0.3F);
+			var target = Mth.clamp(kb.getParticleTargetRadius() / 2, 0.4F, 0.5F);
 			var particleData = new RotationIndicatorParticleData(color, directionSpeed, initial, target, 10, axis.name().charAt(0));
 			spawnParticles(particleData, pos);
 			hasRendered = true;

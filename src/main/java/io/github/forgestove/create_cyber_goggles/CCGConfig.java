@@ -9,7 +9,8 @@ import net.minecraftforge.fml.ModLoadingContext;
 public class CCGConfig implements ConfigData {
 	@Category("goggles") @TransitiveObject public final Goggles goggles = new Goggles();
 	@Category("gameMode") @TransitiveObject public final GameMode gameMode = new GameMode();
-	@Category("outlineRenderer") @TransitiveObject public final OutlineRenderer outlineRenderer = new OutlineRenderer();
+	@Category("overlay") @TransitiveObject public final Overlay overlay = new Overlay();
+	@Category("outliner") @TransitiveObject public final Outliner outliner = new Outliner();
 	@Category("chainConveyor") @TransitiveObject public final ChainConveyor chainConveyor = new ChainConveyor();
 	@Category("wrench") @TransitiveObject public final Wrench wrench = new Wrench();
 	@Category("misc") @TransitiveObject public final Misc misc = new Misc();
@@ -21,27 +22,33 @@ public class CCGConfig implements ConfigData {
 		@Tooltip public boolean enhancedInfo = true;
 		@Tooltip public boolean hideStaticKineticInfo = false;
 		@Tooltip public boolean betterStoreInfo = true;
-		@Tooltip public boolean renderExtraItems = true;
 		@Tooltip public boolean enableKineticEffect = true;
 		@Tooltip public boolean preciseNumber = true;
 		@Tooltip public boolean disableScreenGoggles = true;
 		@Tooltip public boolean canRenderOnValueBox = false;
-		@Tooltip public boolean betterLine = true;
-		@Tooltip public int overlayOffsetX = 0;
-		@Tooltip public int overlayOffsetY = 0;
 	}
 	public static class GameMode {
-		@Tooltip public boolean enableGoggle = true;
+		@Tooltip public boolean enableGoggles = true;
 		@Tooltip public boolean enableInSurvival = true;
 		@Tooltip public boolean enableInCreative = true;
 		@Tooltip public boolean enableInSpectator = true;
 		@Tooltip public boolean enableInAdventure = true;
 	}
-	public static class OutlineRenderer {
+	public static class Overlay {
+		@Tooltip public boolean renderExtraItems = true;
+		@Tooltip public int overlayOffsetX = 0;
+		@Tooltip public int overlayOffsetY = 0;
+		@Tooltip public boolean useCustomColor = false;
+		@Tooltip @ColorPicker(allowAlpha = true) public int backgroundColor = 0x00000000;
+		@Tooltip @ColorPicker(allowAlpha = true) public int borderTopColor = 0x00000000;
+		@Tooltip @ColorPicker(allowAlpha = true) public int borderBottomColor = 0x00000000;
+	}
+	public static class Outliner {
 		@Tooltip public boolean renderAnalogBox = true;
+		@Tooltip public boolean betterLine = true;
 		@Tooltip public int delayRenderDuration = 60;
-		@Tooltip @ColorPicker public int windPushColor = 0xDDC166;
-		@Tooltip @ColorPicker public int windPullColor = 0x7FCDE0;
+		@Tooltip @ColorPicker public int outColor = 0xDDC166;
+		@Tooltip @ColorPicker public int inColor = 0x7FCDE0;
 		@Tooltip public boolean rainbowDebug = false;
 	}
 	public static class ChainConveyor {

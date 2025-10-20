@@ -12,7 +12,7 @@ public abstract class GogglesItemMixin {
 	private static void isWearingGoggles(CallbackInfoReturnable<Boolean> cir) {
 		if (mc.gameMode == null) return;
 		var mode = CCG.CONFIG.gameMode;
-		if (mode.enableGoggle && switch (mc.gameMode.getPlayerMode()) {
+		if (mode.enableGoggles && switch (mc.gameMode.getPlayerMode()) {
 			case SURVIVAL -> mode.enableInSurvival;
 			case CREATIVE -> mode.enableInCreative;
 			case SPECTATOR -> mode.enableInSpectator;

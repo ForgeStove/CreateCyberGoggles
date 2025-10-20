@@ -33,8 +33,8 @@ public class KeyInput {
 	private static void toggleGoggle() {
 		toggleConfig(
 			CCGKey.toggleGoggle.isDown(),
-			CCG.CONFIG.gameMode.enableGoggle,
-			val -> CCG.CONFIG.gameMode.enableGoggle = val,
+			CCG.CONFIG.gameMode.enableGoggles,
+			val -> CCG.CONFIG.gameMode.enableGoggles = val,
 			"message.goggle"
 		);
 	}

@@ -1,3 +1,5 @@
-- Add TranslateCatnip option to translate Catnip portions of hardcoded text into the current language
-- Fix betterChassis option
-- Optimize toolbox tooltip by merge itemstacks in same slot
+- Add preventSelectionDiscard option to prevent selection discarding when changing items
+- Optimize ejector outline and particle rendering
+- Optimize translation
+- Optimize rotate particle radius calculation
+- Simplify filter item summary mixin

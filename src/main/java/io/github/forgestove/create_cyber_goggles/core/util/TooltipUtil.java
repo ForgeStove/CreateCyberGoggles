@@ -10,7 +10,7 @@ import com.simibubi.create.content.schematics.cannon.SchematicannonBlockEntity.S
 import com.simibubi.create.foundation.item.TooltipHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
+import io.github.forgestove.create_cyber_goggles.core.event.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
@@ -74,7 +74,7 @@ public class TooltipUtil {
 		CCGLang.number(range / divide)
 			.space()
 			.translate(pushing ? "tooltip.pushRange" : "tooltip.pullRange")
-			.color(pushing ? CCG.CONFIG.outlineRenderer.windPushColor : CCG.CONFIG.outlineRenderer.windPullColor)
+			.color(Outliner.getColor(pushing))
 			.forGoggles(tooltip);
 		return true;
 	}

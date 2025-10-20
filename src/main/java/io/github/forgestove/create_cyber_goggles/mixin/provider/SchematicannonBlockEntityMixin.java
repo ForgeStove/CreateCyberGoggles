@@ -37,6 +37,6 @@ public abstract class SchematicannonBlockEntityMixin implements IHaveGoggleInfor
 		outliner.chaseAABB("SchematiCannonTargetBox" + this, getBounds(currentTarget))
 			.withFaceTextures(AllSpecialTextures.HIGHLIGHT_CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
 			.lineWidth(1 / 16f)
-			.colored(CCG.CONFIG.outlineRenderer.windPushColor);
+			.colored(CCG.CONFIG.outliner.outColor);
 	}
 }

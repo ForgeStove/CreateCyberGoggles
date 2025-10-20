@@ -1,5 +1,5 @@
-- Add preventSelectionDiscard option to prevent selection discarding when changing items
-- Optimize ejector outline and particle rendering
+- Add overlay config category for extra item info
+- Refactor config
+- Optimize extra item info overlay
 - Optimize translation
-- Optimize rotate particle radius calculation
-- Simplify filter item summary mixin
+- Optimize kinetic particle

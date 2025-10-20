@@ -4,7 +4,7 @@ import com.simibubi.create.content.contraptions.glue.SuperGlueSelectionHandler;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-@Mixin(SuperGlueSelectionHandler.class)
+@Mixin(value = SuperGlueSelectionHandler.class, remap = false)
 public abstract class SuperGlueSelectionHandlerMixin {
 	@WrapWithCondition(
 		method = "tick",

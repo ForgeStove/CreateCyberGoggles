@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class Overlay {
 	public static int hoverTicks;
-	public static float fade;
 	@NotNull public static ItemStack currentItemStack = ItemStack.EMPTY;
 	public static void register(@NotNull RegisterGuiLayersEvent event) {
 		event.registerAbove(
@@ -38,7 +37,6 @@ public class Overlay {
 			return;
 		}
 		if (!CCG.CONFIG.goggles.canRenderOnValueBox && hasActivedValueBox()) return;
-		fade = Mth.clamp((hoverTicks++ + deltaTracker.getGameTimeDeltaPartialTick(false)) / 24f, 0, 1);
 		currentItemStack = toRenderItemStack();
 		if (currentItemStack.isEmpty()) hoverTicks = 0;
 		else renderItemStack(guiGraphics, currentItemStack);
@@ -47,37 +45,26 @@ public class Overlay {
 		try {
 			if (getBlockEntity() instanceof IItemRenderable renderable) return orEmpty(renderable.ccg$getItemStack());
 			if (getEntity() instanceof IItemRenderable renderable) return orEmpty(renderable.ccg$getItemStack());
-		} catch (Exception exception) {
-			CCG.LOGGER.error("Failed to get item stack from IItemRenderable", exception);
+		} catch (Throwable e) {
+			CCG.LOGGER.error("Failed to get item stack from IItemRenderable", e);
 		}
 		return ItemStack.EMPTY;
 	}
-	/**
-	 * 在屏幕中央区域渲染指定物品堆的图标及关联的悬浮提示信息。
-	 *
-	 * @param gui       GUI渲染上下文对象，用于执行图形绘制操作
-	 * @param itemStack 需要渲染的物品堆实例。若值为{@link ItemStack#EMPTY}时方法立即返回
-	 */
-	public static void renderItemStack(GuiGraphics gui, @NotNull ItemStack itemStack) {
-		if (itemStack.isEmpty()) return;
+	public static void renderItemStack(@NotNull GuiGraphics gui, @NotNull ItemStack itemStack) {
 		var flag = new Default(mc.options.advancedItemTooltips, true);
-		var tooltip = itemStack.getTooltipLines(TooltipContext.of(mc.level), mc.player, flag)
-			.stream()
-			.map(line -> line.getString().isBlank() ? line : Component.literal("    ").append(line))
-			.toList();
-		var tooltipTextWidth = tooltip.stream().mapToInt(mc.font::width).max().orElse(0) + 24;
+		var tooltips = itemStack.getTooltipLines(TooltipContext.of(mc.level), mc.player, flag);
+		tooltips.set(0, Component.literal(" ".repeat(Mth.ceil(16F / mc.font.width(" ")))).append(tooltips.getFirst()));
+		var tooltipTextWidth = tooltips.stream().mapToInt(mc.font::width).max().orElse(0) + 24;
 		var overlay = CCG.CONFIG.overlay;
 		var width = gui.guiWidth();
 		var height = gui.guiHeight();
-		var x = width / 2 + AllConfigs.client().overlayOffsetX.get() + overlay.overlayOffsetX;
-		var y = height / 2 + AllConfigs.client().overlayOffsetY.get() + overlay.overlayOffsetY;
-		if (x + tooltipTextWidth > width) x = width - tooltipTextWidth;
-		if (fade < 1) x += (int) (Math.pow(1 - fade, 3) * Math.signum(AllConfigs.client().overlayOffsetX.get() + .5f) * 8);
-		if (GoggleOverlayRenderer.hoverTicks != 0) y -= (tooltip.size() + 1) * 10;
-		x = Math.max(16, x);
-		y = Math.max(16, y);
-		var useCCGCustom = overlay.useCustomColor;
 		var cfg = AllConfigs.client();
+		var x = width / 2 + cfg.overlayOffsetX.get() + overlay.overlayOffsetX;
+		var y = height / 2 + cfg.overlayOffsetY.get() + overlay.overlayOffsetY;
+		if (GoggleOverlayRenderer.hoverTicks != 0) y -= (tooltips.size() + 1) * 10;
+		x = Mth.clamp(x, 18, width - tooltipTextWidth);
+		y = Mth.clamp(y, 18, height);
+		var useCCGCustom = overlay.useCustomColor;
 		var useCreateCustom = cfg.overlayCustomColor.get();
 		var back = useCCGCustom
 			? new Color(overlay.backgroundColor)
@@ -88,15 +75,22 @@ public class Overlay {
 		var bot = useCCGCustom
 			? new Color(overlay.borderBottomColor)
 			: useCreateCustom ? new Color(cfg.overlayBorderColorBot.get()) : BoxElement.COLOR_VANILLA_BORDER.getSecond().copy();
+		var poseStack = gui.pose();
+		poseStack.pushPose();
+		var fade = Mth.clamp((hoverTicks++ + mc.getTimer().getRealtimeDeltaTicks()) / 24F, 0, 1);
 		if (fade < 1) {
+			poseStack.translate(Math.pow(1 - fade, 3) * Math.signum(cfg.overlayOffsetX.get() + .5F) * 8, 0, 0);
 			back.scaleAlpha(fade);
 			top.scaleAlpha(fade);
 			bot.scaleAlpha(fade);
 		}
-		RemovedGuiUtils.drawHoveringText(gui, tooltip, x, y, width, height, -1, back.getRGB(), top.getRGB(), bot.getRGB(), mc.font);
-		var itemX = x + 10;
-		var itemY = y - 16;
+		RemovedGuiUtils.drawHoveringText(gui, tooltips, x, y, width, height, -1, back.getRGB(), top.getRGB(), bot.getRGB(), mc.font);
+		var scale = 0.75F;
+		var itemX = (int) ((x + 12) / scale);
+		var itemY = (int) ((y - 14) / scale);
+		poseStack.scale(scale, scale, 1F);
 		GuiGameElement.of(itemStack).at(itemX, itemY, 450).render(gui);
 		gui.renderItemDecorations(mc.font, itemStack, itemX, itemY);
+		poseStack.popPose();
 	}
 }

@@ -25,7 +25,6 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.neoforged.fml.util.thread.EffectiveSide;
 import org.jetbrains.annotations.*;
 
-import java.awt.Color;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -33,7 +32,7 @@ public class CCGUtil {
 	public static final Minecraft mc = Minecraft.getInstance();
 	public static final Outliner outliner = Outliner.getInstance();
 	private static HitResult cachedHitResult;
-	private static long lastTickCount;
+	private static float lastTick;
 	@Contract(pure = true)
 	public static boolean isInGUI() {
 		return mc.screen != null;
@@ -53,10 +52,10 @@ public class CCGUtil {
 	}
 	/** @return 当前帧的{@link HitResult} */
 	private static HitResult getCurrentHitResult() {
-		var currentTick = mc.level != null ? mc.level.getGameTime() : 0;
-		if (lastTickCount == currentTick && cachedHitResult != null) return cachedHitResult;
+		var currentTick = mc.level != null ? mc.getTimer().getRealtimeDeltaTicks() : 0;
+		if (lastTick == currentTick && cachedHitResult != null) return cachedHitResult;
 		cachedHitResult = mc.hitResult;
-		lastTickCount = currentTick;
+		lastTick = currentTick;
 		return cachedHitResult;
 	}
 	/** @return 当前的{@link BlockHitResult}，如果不是方块命中则返回 {@code null} */
@@ -119,18 +118,6 @@ public class CCGUtil {
 		if (mc.level == null) return Shapes.block().bounds();
 		var shape = mc.level.getBlockState(blockPos).getShape(mc.level, blockPos);
 		return (shape.isEmpty() ? Shapes.block() : shape).bounds().move(blockPos);
-	}
-	/**
-	 * 根据进度值生成渐变色。
-	 * <p>
-	 * 使用HSB色彩空间，色相随进度变化，饱和度和亮度固定为1.0。
-	 *
-	 * @param progress 渐变进度(0~1)
-	 * @return 代表渐变色的RGB整数值
-	 */
-	@Contract(pure = true)
-	public static int getGradientColor(float progress) {
-		return Color.HSBtoRGB(progress * 0.33f, 1.0f, 1.0f);
 	}
 	/** @return 如果存在激活的{@link ValueBox}则返回{@code true}，否则返回{@code false} */
 	public static boolean hasActivedValueBox() {

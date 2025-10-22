@@ -22,21 +22,19 @@ import java.util.stream.Collectors;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class Overlay {
 	public static int hoverTicks;
-	@NotNull public static ItemStack currentItemStack = ItemStack.EMPTY;
 	public static void register(@NotNull RegisterGuiOverlaysEvent event) {
 		event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "item_tooltip_overlay", Overlay::renderOverlay);
 	}
 	public static void renderOverlay(ForgeGui gui, GuiGraphics graphics, float partialTicks, int width, int height) {
 		if (!CCG.CONFIG.overlay.renderExtraItems || !CCG.CONFIG.gameMode.enableGoggles) return;
 		if (mc.isPaused() || isInGUI() || mc.options.hideGui) {
-			currentItemStack = ItemStack.EMPTY;
 			hoverTicks = 0;
 			return;
 		}
 		if (!CCG.CONFIG.goggles.canRenderOnValueBox && hasActivedValueBox()) return;
-		currentItemStack = toRenderItemStack();
-		if (currentItemStack.isEmpty()) hoverTicks = 0;
-		else renderItemStack(graphics, currentItemStack);
+		var itemStack = toRenderItemStack();
+		if (itemStack.isEmpty()) hoverTicks = 0;
+		else renderItemStack(graphics, itemStack);
 	}
 	public static @NotNull ItemStack toRenderItemStack() {
 		try {

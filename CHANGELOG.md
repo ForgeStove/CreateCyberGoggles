@@ -1,5 +1,2 @@
-- Add overlay config category for extra item info
-- Refactor config
-- Optimize extra item info overlay
+- Fix extra item info overlay
 - Optimize translation
-- Optimize kinetic particle

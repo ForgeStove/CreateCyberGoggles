@@ -32,7 +32,7 @@ public class Outliner {
 		return pushing ? CCG.CONFIG.outliner.outColor : CCG.CONFIG.outliner.inColor;
 	}
 	public static double getOffset(int i, int numberOfFlowBoxes) {
-		return (System.currentTimeMillis() + i * ((double) 3000 / numberOfFlowBoxes)) % 3000 / 3000.0;
+		return (System.currentTimeMillis() + i * (3000D / numberOfFlowBoxes)) % 3000 / 3000.0;
 	}
 	@Contract(pure = true)
 	public static int getNumberOfFlowBoxes(float range) {

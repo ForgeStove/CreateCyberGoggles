@@ -126,8 +126,7 @@ public class PlayerInteract {
 		if (mc.player.isShiftKeyDown()) return;
 		if (hasItemInHand()) return;
 		var clickedFace = event.getHitVec().getDirection();
-		var oppositeMode = CCGKey.interactOpposite.isDown();
-		if (oppositeMode) {
+		if (CCGKey.interactOpposite.isDown()) {
 			clickedFace = clickedFace.getOpposite();
 			var level = event.getLevel();
 			var axisProp = RotatedPillarBlock.AXIS;

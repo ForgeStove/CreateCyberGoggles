@@ -84,8 +84,8 @@ public class Overlay {
 		}
 		var components = tooltips.stream().map(ClientTooltipComponent::create).collect(Collectors.toList());
 		renderTooltip(graphics, itemStack, components, x, y, back.getRGB(), top.getRGB(), bot.getRGB());
-		pose.translate(x + 12, y - 14, 450);
-		pose.scale(0.75F, 0.75F, 1F);
+		pose.translate(x + 13F, y - 14F, 450F);
+		pose.scale(0.7F, 0.7F, 1F);
 		graphics.renderItem(itemStack, 0, 0);
 		graphics.renderItemDecorations(mc.font, itemStack, 0, 0);
 		pose.popPose();

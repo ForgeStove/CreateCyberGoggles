@@ -26,7 +26,7 @@ public class Overlay {
 	public static void register(@NotNull RegisterGuiOverlaysEvent event) {
 		event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "item_tooltip_overlay", Overlay::renderOverlay);
 	}
-	public static void renderOverlay(ForgeGui gui, GuiGraphics guiGraphics, float partialTicks, int width, int height) {
+	public static void renderOverlay(ForgeGui gui, GuiGraphics graphics, float partialTicks, int width, int height) {
 		if (!CCG.CONFIG.overlay.renderExtraItems || !CCG.CONFIG.gameMode.enableGoggles) return;
 		if (mc.isPaused() || isInGUI() || mc.options.hideGui) {
 			currentItemStack = ItemStack.EMPTY;
@@ -36,7 +36,7 @@ public class Overlay {
 		if (!CCG.CONFIG.goggles.canRenderOnValueBox && hasActivedValueBox()) return;
 		currentItemStack = toRenderItemStack();
 		if (currentItemStack.isEmpty()) hoverTicks = 0;
-		else renderItemStack(guiGraphics, currentItemStack);
+		else renderItemStack(graphics, currentItemStack);
 	}
 	public static @NotNull ItemStack toRenderItemStack() {
 		try {
@@ -47,9 +47,9 @@ public class Overlay {
 		}
 		return ItemStack.EMPTY;
 	}
-	public static void renderItemStack(@NotNull GuiGraphics gui, @NotNull ItemStack itemStack) {
-		var width = gui.guiWidth();
-		var height = gui.guiHeight();
+	public static void renderItemStack(@NotNull GuiGraphics graphics, @NotNull ItemStack itemStack) {
+		var width = graphics.guiWidth();
+		var height = graphics.guiHeight();
 		var overlay = CCG.CONFIG.overlay;
 		var cfg = AllConfigs.client();
 		var x = width / 2 + cfg.overlayOffsetX.get() + overlay.overlayOffsetX;
@@ -75,7 +75,7 @@ public class Overlay {
 		if (GoggleOverlayRenderer.hoverTicks != 0) y -= tooltipHeight;
 		x = Mth.clamp(x, 16, width - tooltipWidth);
 		y = Mth.clamp(y, 16, height - tooltipHeight);
-		var pose = gui.pose();
+		var pose = graphics.pose();
 		pose.pushPose();
 		var fade = Mth.clamp((hoverTicks++ + mc.getFrameTime()) / 24F, 0, 1);
 		if (fade < 1) {
@@ -85,15 +85,15 @@ public class Overlay {
 			bot.scaleAlpha(fade);
 		}
 		var components = tooltips.stream().map(ClientTooltipComponent::create).collect(Collectors.toList());
-		renderTooltip(gui, itemStack, components, x, y, back.getRGB(), top.getRGB(), bot.getRGB());
+		renderTooltip(graphics, itemStack, components, x, y, back.getRGB(), top.getRGB(), bot.getRGB());
 		pose.translate(x + 12, y - 14, 450);
 		pose.scale(0.75F, 0.75F, 1F);
-		gui.renderItem(itemStack, 0, 0);
-		gui.renderItemDecorations(mc.font, itemStack, 0, 0);
+		graphics.renderItem(itemStack, 0, 0);
+		graphics.renderItemDecorations(mc.font, itemStack, 0, 0);
 		pose.popPose();
 	}
 	private static void renderTooltip(
-		GuiGraphics gui,
+		GuiGraphics graphics,
 		ItemStack itemStack,
 		@NotNull List<ClientTooltipComponent> components,
 		int x,
@@ -103,12 +103,12 @@ public class Overlay {
 		int bot
 	) {
 		if (components.isEmpty()) return;
-		var pose = gui.pose();
-		var width = gui.guiWidth();
-		var height = gui.guiHeight();
+		var pose = graphics.pose();
+		var width = graphics.guiWidth();
+		var height = graphics.guiHeight();
 		var positioner = DefaultTooltipPositioner.INSTANCE;
 		//noinspection UnstableApiUsage
-		if (ForgeHooksClient.onRenderTooltipPre(itemStack, gui, x, y, width, height, components, mc.font, positioner).isCanceled()) return;
+		if (ForgeHooksClient.onRenderTooltipPre(itemStack, graphics, x, y, width, height, components, mc.font, positioner).isCanceled()) return;
 		var maxWidth = 0;
 		var totalHeight = components.size() == 1 ? -2 : 0;
 		for (var clientTooltipComponent : components) {
@@ -120,18 +120,18 @@ public class Overlay {
 		var tooltipX = tooltipPosition.x();
 		var tooltipY = tooltipPosition.y();
 		pose.pushPose();
-		TooltipRenderUtil.renderTooltipBackground(gui, tooltipX, tooltipY, maxWidth, totalHeight, 400, back, back, top, bot);
+		TooltipRenderUtil.renderTooltipBackground(graphics, tooltipX, tooltipY, maxWidth, totalHeight, 400, back, back, top, bot);
 		pose.translate(0, 0, 400);
 		var textY = tooltipY;
 		for (var i = 0; i < components.size(); i++) {
 			var component = components.get(i);
-			component.renderText(mc.font, tooltipX, textY, pose.last().pose(), gui.bufferSource());
+			component.renderText(mc.font, tooltipX, textY, pose.last().pose(), graphics.bufferSource());
 			textY += component.getHeight() + (i == 0 ? 2 : 0);
 		}
 		textY = tooltipY;
 		for (var i = 0; i < components.size(); i++) {
 			var component = components.get(i);
-			component.renderImage(mc.font, tooltipX, textY, gui);
+			component.renderImage(mc.font, tooltipX, textY, graphics);
 			textY += component.getHeight() + (i == 0 ? 2 : 0);
 		}
 		pose.popPose();

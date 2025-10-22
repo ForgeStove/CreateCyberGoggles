@@ -34,11 +34,9 @@ public abstract class EjectorBlockEntityMixin extends KineticBlockEntity impleme
 	@Override
 	public void ccg$render() {
 		var targetPos = getTargetPosition();
-		outliner.showAABB("EjectorTargetBox" + this, getBounds(targetPos))
-			.lineWidth(1 / 16f)
-			.colored(CCG.CONFIG.outliner.outColor);
+		outliner.showAABB("EjectorTargetBox" + this, getBounds(targetPos)).lineWidth(1 / 16f).colored(CCG.CONFIG.outliner.outColor);
 		var color = cannotLaunch() ? 0xFFFF7171 : 0xFF9EDE73;
-		outliner.showAABB("EjectorFromBox" + this, new AABB(0, 0, 0, 1, 0, 1).move(worldPosition)).lineWidth(1 / 16f).colored(new Color(color));
+		outliner.showAABB("EjectorFromBox" + this, new AABB(0, 0, 0, 1, 0, 1).move(worldPosition)).lineWidth(1 / 16f).colored(color);
 		var xDiff = targetPos.getX() - worldPosition.getX();
 		var yDiff = targetPos.getY() - worldPosition.getY();
 		var zDiff = targetPos.getZ() - worldPosition.getZ();

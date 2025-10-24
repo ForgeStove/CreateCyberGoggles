@@ -75,7 +75,7 @@ public class Overlay {
 		var tooltipHeight = tooltips.size() * 10;
 		if (GoggleOverlayRenderer.hoverTicks != 0) y -= tooltipHeight + 10;
 		x = Mth.clamp(x, 0, width - tooltipWidth);
-		y = Mth.clamp(y, 16, height - tooltipHeight);
+		y = Mth.clamp(y, 16, height - tooltipHeight - 100);
 		renderTooltip(graphics, itemStack, tooltips, x, y, tooltipWidth, tooltipHeight, back.getRGB(), top.getRGB(), bot.getRGB());
 		pose.translate(x + 14F, y - 14F, 450F);
 		pose.scale(0.75F, 0.75F, 1F);

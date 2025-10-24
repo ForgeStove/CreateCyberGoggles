@@ -4,11 +4,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer;
 import com.simibubi.create.content.logistics.tableCloth.*;
 import com.simibubi.create.content.logistics.tableCloth.ShoppingListItem.ShoppingList;
-import com.simibubi.create.foundation.gui.AllGuiTextures;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.event.KeyInput;
-import io.github.forgestove.create_cyber_goggles.core.util.IItemIndex;
-import net.createmod.catnip.gui.element.GuiGameElement;
+import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.*;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
@@ -17,8 +14,6 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
-
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 @Mixin(value = BlueprintOverlayRenderer.class, remap = false)
 public abstract class BlueprintOverlayRendererMixin {
 	@Shadow static List<ItemStack> results;
@@ -28,7 +23,7 @@ public abstract class BlueprintOverlayRendererMixin {
 	@Inject(method = "renderOverlay", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z", ordinal = 1), cancellable = true)
 	private static void renderOverlay(
 		ForgeGui gui,
-		GuiGraphics guiGraphics,
+		GuiGraphics graphics,
 		float partialTicks,
 		int width,
 		int height,
@@ -39,34 +34,7 @@ public abstract class BlueprintOverlayRendererMixin {
 	) {
 		if (!CCG.CONFIG.goggles.betterStoreInfo) return;
 		ci.cancel();
-		if (results.isEmpty()) {
-			AllGuiTextures.HOTSLOT.render(guiGraphics, x, y);
-			GuiGameElement.of(Items.BARRIER).at(x + 3, y + 3).render(guiGraphics);
-			RenderSystem.disableBlend();
-			return;
-		}
-		if (!(ccg$tcbe instanceof IItemIndex iItemIndex)) {
-			RenderSystem.disableBlend();
-			return;
-		}
-		var index = iItemIndex.ccg$getIndex() - KeyInput.scrollDeltaY;
-		KeyInput.scrollDeltaY = 0;
-		var size = results.size();
-		if (index < 0) index = size - 1;
-		else if (index >= size) index = 0;
-		iItemIndex.ccg$setIndex(index);
-		var selectedX = 0;
-		for (var i = 0; i < size; i++) {
-			var result = results.get(i);
-			var slot = resultCraftable ? AllGuiTextures.HOTSLOT_SUPER_ACTIVE : AllGuiTextures.HOTSLOT;
-			if (!invalidShop && shopContext != null && shopContext.stockLevel() > shopContext.purchases())
-				slot = AllGuiTextures.HOTSLOT_ACTIVE;
-			slot.render(guiGraphics, resultCraftable ? x - 1 : x, resultCraftable ? y - 1 : y);
-			BlueprintOverlayRenderer.drawItemStack(guiGraphics, mc, x, y, result, null);
-			if (i == index) selectedX = x;
-			x += 21;
-		}
-		if (selectedX != 0) AllGuiTextures.HOTSLOT_SUPER_ACTIVE.render(guiGraphics, selectedX - 1, y - 1);
+		OverlayUtil.clothStoreOverlay(graphics, x, y, invalidShop, results, resultCraftable, ccg$tcbe, shopContext);
 		RenderSystem.disableBlend();
 	}
 	@Inject(method = "displayClothShop", at = @At("HEAD"))

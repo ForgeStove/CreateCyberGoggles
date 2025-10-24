@@ -51,8 +51,8 @@ public abstract class BeltBlockEntityMixin extends KineticBlockEntity implements
 	@Override
 	public ItemStack ccg$getItemStack() {
 		var inventory = getInventory();
-		if (inventory == null) return ItemStack.EMPTY;
+		if (inventory == null) return null;
 		var stackAtOffset = inventory.getStackAtOffset(index);
-		return stackAtOffset == null ? ItemStack.EMPTY : stackAtOffset.stack;
+		return stackAtOffset == null ? null : stackAtOffset.stack;
 	}
 }

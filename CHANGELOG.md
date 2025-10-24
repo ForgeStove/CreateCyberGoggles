@@ -1,2 +1,3 @@
-- Fix extra item info overlay
-- Optimize translation
+- Add tooltipFlagType option for extra item info overlay
+- Optimize extra item info overlay
+- Simplify blaze enchanter mixin

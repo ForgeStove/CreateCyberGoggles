@@ -46,12 +46,15 @@ public class CCGUtil {
 	public static boolean isServer() {
 		return !isClient();
 	}
+	public static float getRealtimeDeltaTicks() {
+		return mc.getFrameTime();
+	}
 	public static <T extends U, U> @Nullable T getAs(@NotNull Class<T> clazz, U object) {
 		return clazz.isInstance(object) ? clazz.cast(object) : null;
 	}
 	/** @return 当前帧的{@link HitResult} */
 	private static HitResult getCurrentHitResult() {
-		var currentTick = mc.level != null ? mc.getFrameTime() : 0;
+		var currentTick = mc.level != null ? getRealtimeDeltaTicks() : 0;
 		if (lastTick == currentTick && cachedHitResult != null) return cachedHitResult;
 		cachedHitResult = mc.hitResult;
 		lastTick = currentTick;

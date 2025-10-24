@@ -1,8 +1,10 @@
 package io.github.forgestove.create_cyber_goggles;
+import io.github.forgestove.create_cyber_goggles.core.util.TooltipFlagType;
 import me.shedaniel.autoconfig.*;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry.*;
 import me.shedaniel.autoconfig.annotation.ConfigEntry.Gui.*;
+import me.shedaniel.autoconfig.annotation.ConfigEntry.Gui.EnumHandler.EnumDisplayOption;
 import net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory;
 import net.minecraftforge.fml.ModLoadingContext;
 @Config(name = CCG.ID)
@@ -36,6 +38,7 @@ public class CCGConfig implements ConfigData {
 	}
 	public static class Overlay {
 		@Tooltip public boolean renderExtraItems = true;
+		@Tooltip @EnumHandler(option = EnumDisplayOption.BUTTON) public TooltipFlagType tooltipFlagType = TooltipFlagType.Default;
 		@Tooltip public int overlayOffsetX = 0;
 		@Tooltip public int overlayOffsetY = 0;
 		@Tooltip public boolean useCustomColor = false;

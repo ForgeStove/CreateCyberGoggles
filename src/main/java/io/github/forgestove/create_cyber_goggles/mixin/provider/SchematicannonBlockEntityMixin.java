@@ -28,7 +28,9 @@ public abstract class SchematicannonBlockEntityMixin implements IHaveGoggleInfor
 	@Override
 	public ItemStack ccg$getItemStack() {
 		if (state == State.STOPPED) return null;
-		return missingItem == null ? flyingBlocks.isEmpty() ? null : flyingBlocks.get(flyingBlocks.size() - 1).stack : missingItem;
+		if (missingItem != null) return missingItem;
+		if (flyingBlocks.isEmpty()) return null;
+		return flyingBlocks.get(flyingBlocks.size() - 1).stack;
 	}
 	@Override
 	public void ccg$render() {

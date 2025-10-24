@@ -27,13 +27,13 @@ public class OverlayUtil {
 			GuiGameElement.of(Items.BARRIER).at(x + 3, y + 3).render(graphics);
 			return;
 		}
-		if (!(tcbe instanceof IItemIndex iItemIndex)) return;
-		var index = iItemIndex.ccg$getIndex() - KeyInput.scrollDeltaY;
+		if (!(tcbe instanceof IIndex iIndex)) return;
+		var index = iIndex.ccg$getIndex() - KeyInput.scrollDeltaY;
 		KeyInput.scrollDeltaY = 0;
 		var size = items.size();
 		if (index < 0) index = size - 1;
 		else if (index >= size) index = 0;
-		iItemIndex.ccg$setIndex(index);
+		iIndex.ccg$setIndex(index);
 		var selectedX = x + index * 21;
 		var resultX = x;
 		for (var item : items) {

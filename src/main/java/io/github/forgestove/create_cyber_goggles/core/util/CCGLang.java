@@ -13,11 +13,11 @@ import static net.minecraft.ChatFormatting.*;
 public class CCGLang extends Lang {
 	@Contract(value = " -> new", pure = true)
 	public static @NotNull LangBuilder builder() {
-		return new LangBuilder(CCG.ID);
+		return builder(CCG.ID);
 	}
 	@Contract(value = " -> new", pure = true)
 	public static @NotNull LangBuilder configBuilder() {
-		return new LangBuilder("text.autoconfig." + CCG.ID);
+		return builder("text.autoconfig." + CCG.ID);
 	}
 	public static @NotNull LangBuilder translate(String langKey, Object... args) {
 		return builder().translate(langKey, args);

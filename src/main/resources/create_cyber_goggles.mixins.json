@@ -5,7 +5,6 @@
 	"client": [
 		"AbstractFilterScreenMixin",
 		"StockKeeperRequestScreenMixin",
-		"accessor.RadialWrenchMenuAccessor",
 		"accessor.RotationPropagatorAccessor",
 		"catnip.BaseConfigScreenMixin",
 		"catnip.ConfigModListScreenMixin",

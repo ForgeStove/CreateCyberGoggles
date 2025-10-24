@@ -3,7 +3,6 @@ import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.simibubi.create.content.contraptions.wrench.RadialWrenchMenu;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.WrenchMenuUtil;
-import io.github.forgestove.create_cyber_goggles.mixin.accessor.RadialWrenchMenuAccessor;
 import net.createmod.catnip.registry.RegisteredObjectsHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -11,6 +10,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -21,6 +21,10 @@ import static com.simibubi.create.content.contraptions.wrench.RadialWrenchMenu.B
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 @Mixin(RadialWrenchMenu.class)
 public abstract class RadialWrenchMenuMixin {
+	@Invoker("<init>")
+	static RadialWrenchMenu init(BlockState state, BlockPos pos, Level level, List<Entry<Property<?>, String>> properties) {
+		throw new AssertionError();
+	}
 	@Inject(method = "tryCreateFor", at = @At("HEAD"), cancellable = true)
 	private static void tryCreateFor(BlockState state, BlockPos pos, Level level, CallbackInfoReturnable<Optional<RadialWrenchMenu>> cir) {
 		if (!CCG.CONFIG.wrench.enchancedRotationMenu) return;
@@ -38,7 +42,7 @@ public abstract class RadialWrenchMenuMixin {
 			cir.setReturnValue(Optional.empty());
 			return;
 		}
-		cir.setReturnValue(Optional.of(RadialWrenchMenuAccessor.create(state, pos, level, properties)));
+		cir.setReturnValue(Optional.of(init(state, pos, level, properties)));
 	}
 	@WrapOperation(
 		method = "renderRadialSectors", at = @At(

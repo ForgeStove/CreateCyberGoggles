@@ -1,4 +1,2 @@
-- Add tooltipTheme option to display tooltips with preset theme styles
-- Fix crash when nbt accounter is invoked before config is loaded
-- Optimize table cloth block overlay rendering
-- Optimize translation
+- Fix NullPointException of cloth-config's enum config
+- Simplify mixin by using ISelf interface

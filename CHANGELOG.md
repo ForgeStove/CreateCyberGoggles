@@ -1,3 +1,4 @@
-- Add tooltipFlagType option for extra item info overlay
-- Optimize extra item info overlay
-- Simplify blaze enchanter mixin
+- Add tooltipTheme option to display tooltips with preset theme styles
+- Fix crash when nbt accounter is invoked before config is loaded
+- Optimize table cloth block overlay rendering
+- Optimize translation

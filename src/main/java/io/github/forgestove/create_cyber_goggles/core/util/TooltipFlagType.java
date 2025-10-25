@@ -21,7 +21,4 @@ public enum TooltipFlagType {
 	public Default getFlag() {
 		return flag == null ? new Default(mc.options.advancedItemTooltips, false) : flag;
 	}
-	public @NotNull String toString() {
-		return CCGLang.translate("tooltipFlagType." + name()).string();
-	}
 }

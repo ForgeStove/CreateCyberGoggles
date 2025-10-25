@@ -17,9 +17,6 @@ public enum TooltipTheme {
 	TooltipTheme() {
 		theme = null;
 	}
-	public @NotNull String toString() {
-		return CCGLang.translate("tooltipTheme." + name()).string();
-	}
 	public record Theme(int back, int top, int bot) {
 		public Theme(@NotNull Color back, @NotNull Color top, @NotNull Color bot) {
 			this(back.getRGB(), top.getRGB(), bot.getRGB());

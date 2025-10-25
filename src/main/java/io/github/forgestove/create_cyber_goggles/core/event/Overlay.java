@@ -87,9 +87,8 @@ public class Overlay {
 	public static @NotNull Theme getTheme() {
 		var overlay = CCG.CONFIG.overlay;
 		var useCCGCustom = overlay.useCustomColor;
-		var tooltipTheme = CCG.CONFIG.overlay.tooltipTheme;
-		if (!useCCGCustom && tooltipTheme != null) {
-			var theme = tooltipTheme.theme;
+		if (!useCCGCustom) {
+			var theme = CCG.CONFIG.overlay.tooltipTheme.theme;
 			if (theme != null) return theme;
 			var cfg = AllConfigs.client();
 			var useCreateCustom = cfg.overlayCustomColor.get();
@@ -105,7 +104,6 @@ public class Overlay {
 	}
 	public static @NotNull @Unmodifiable List<FormattedCharSequence> getFormattedTooltips(@NotNull ItemStack itemStack, int maxWidth) {
 		var type = CCG.CONFIG.overlay.tooltipFlagType;
-		if (type == null) type = TooltipFlagType.Default;
 		var tooltipLines = itemStack.getTooltipLines(TooltipContext.of(mc.level), mc.player, type.getFlag());
 		tooltipLines.set(0, Component.literal(" ".repeat(Mth.ceil(16F / mc.font.width(" ")))).append(tooltipLines.getFirst()));
 		return tooltipLines.stream().flatMap(line -> mc.font.split(line, maxWidth).stream()).toList();

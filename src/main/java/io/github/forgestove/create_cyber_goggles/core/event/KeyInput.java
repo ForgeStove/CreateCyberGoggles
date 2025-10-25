@@ -5,7 +5,7 @@ import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.stockTicker.*;
 import com.simibubi.create.content.logistics.tableCloth.TableClothBlockEntity;
 import io.github.forgestove.create_cyber_goggles.*;
-import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
+import io.github.forgestove.create_cyber_goggles.core.util.*;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
@@ -83,8 +83,8 @@ public class KeyInput {
 	private static void clothStore(MouseScrollingEvent event) {
 		if (!CCG.CONFIG.goggles.betterStoreInfo) return;
 		var tcbe = getBlockEntity(TableClothBlockEntity.class);
-		if (tcbe == null || !tcbe.isShop()) return;
-		if (tcbe.getItemsForRender().size() <= 1) return;
+		if (tcbe == null) return;
+		if (TableClothUtil.getItems(tcbe).size() <= 1) return;
 		if (hasActivedValueBox()) return;
 		scrollDeltaY = (int) event.getScrollDelta();
 		event.setCanceled(true);

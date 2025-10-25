@@ -10,12 +10,8 @@ public abstract class TableClothBlockEntityMixin implements IItemRenderable, IIn
 	@Override
 	public ItemStack ccg$getItemStack() {
 		var tcbe = (TableClothBlockEntity) (Object) this;
-		var isShop = tcbe.isShop();
-		var items = isShop
-			? tcbe.requestData.encodedRequest.stacks().stream().map(bigItemStack -> bigItemStack.stack).toList()
-			: tcbe.manuallyAddedItems;
+		var items = TableClothUtil.getItems(tcbe);
 		if (items.isEmpty()) return null;
-		if (!isShop) return items.get(items.size() - 1);
 		if (!CCG.CONFIG.goggles.betterStoreInfo) return null;
 		if (ccg$index >= items.size()) ccg$index = 0;
 		return items.get(ccg$index);

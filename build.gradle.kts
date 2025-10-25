@@ -37,6 +37,7 @@ repositories {
 	maven("https://mvn.devos.one/snapshots") // Registrate
 	maven("https://maven.shedaniel.me") // Cloth Config API
 	maven("https://maven.blamejared.com") // JEI
+	maven("https://jitpack.io") // Jitpack
 	maven("https://api.modrinth.com/maven") { content { includeGroup("maven.modrinth") } } // Modrinth
 }
 dependencies {
@@ -47,7 +48,7 @@ dependencies {
 	implementation("com.tterrag.registrate:Registrate:${p("registrateVersion")}")
 	implementation("me.shedaniel.cloth:cloth-config-${p("loader")}:${p("clothConfigVersion")}")
 	implementation("mezz.jei:jei-${p("mcVersion")}-${p("loader")}:${p("jeiVersion")}")
-	runtimeOnly("maven.modrinth:jade:${p("jadeVersion")}")
+	implementation("com.github.Snownee:Jade:${p("jadeVersion")}")
 	compileOnly("maven.modrinth:create-enchantment-industry:${p("ceiVersion")}")
 	compileOnly("maven.modrinth:create-dragons-plus:${p("dragonPlusVersion")}")
 }

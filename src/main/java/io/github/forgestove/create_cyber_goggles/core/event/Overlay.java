@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.core.event;
 import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.*;
+import io.github.forgestove.create_cyber_goggles.core.util.IItemRenderable;
 import io.github.forgestove.create_cyber_goggles.core.util.TooltipTheme.Theme;
 import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.theme.Color;
@@ -85,12 +85,10 @@ public class Overlay {
 			if (theme != null) return theme;
 			var cfg = AllConfigs.client();
 			var useCreateCustom = cfg.overlayCustomColor.get();
-			var back = useCreateCustom ? new Color(cfg.overlayBackgroundColor.get())
-				: BoxElement.COLOR_VANILLA_BACKGROUND.scaleAlpha(.75f);
-			var top = useCreateCustom ? new Color(cfg.overlayBorderColorTop.get())
-				: BoxElement.COLOR_VANILLA_BORDER.getFirst().copy();
-			var bot = useCreateCustom ? new Color(cfg.overlayBorderColorBot.get())
-				: BoxElement.COLOR_VANILLA_BORDER.getSecond().copy();
+			var back = useCreateCustom ? new Color(cfg.overlayBackgroundColor.get()) :
+				BoxElement.COLOR_VANILLA_BACKGROUND.scaleAlpha(.75f);
+			var top = useCreateCustom ? new Color(cfg.overlayBorderColorTop.get()) : BoxElement.COLOR_VANILLA_BORDER.getFirst().copy();
+			var bot = useCreateCustom ? new Color(cfg.overlayBorderColorBot.get()) : BoxElement.COLOR_VANILLA_BORDER.getSecond().copy();
 			return new Theme(back, top, bot);
 		}
 		return new Theme(overlay.backgroundColor, overlay.borderTopColor, overlay.borderBottomColor);
@@ -119,7 +117,8 @@ public class Overlay {
 		var height = graphics.guiHeight();
 		var positioner = DefaultTooltipPositioner.INSTANCE;
 		//noinspection UnstableApiUsage
-		if (ForgeHooksClient.onRenderTooltipPre(itemStack, graphics, x, y, width, height, components, mc.font, positioner).isCanceled()) return;
+		if (ForgeHooksClient.onRenderTooltipPre(itemStack, graphics, x, y, width, height, components, mc.font, positioner).isCanceled())
+			return;
 		var tooltipPos = positioner.positionTooltip(width, height, x, y, tooltipWidth, tooltipHeight);
 		var tooltipX = tooltipPos.x();
 		var tooltipY = tooltipPos.y();

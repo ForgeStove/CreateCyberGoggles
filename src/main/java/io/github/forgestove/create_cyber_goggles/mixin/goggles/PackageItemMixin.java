@@ -18,13 +18,8 @@ public abstract class PackageItemMixin extends Item {
 		super(properties);
 	}
 	@Inject(method = "appendHoverText", at = @At("HEAD"), cancellable = true)
-	public void appendHoverText(
-		ItemStack stack,
-		Level level,
-		List<Component> tooltipComponents,
-		TooltipFlag tooltipFlag,
-		CallbackInfo ci
-	) {
+	public void appendHoverText(ItemStack stack, Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag,
+		CallbackInfo ci) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return;
 		ci.cancel();
 		super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);

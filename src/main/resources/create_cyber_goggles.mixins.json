@@ -58,6 +58,7 @@
 		"provider.PackageEntityMixin",
 		"provider.PackagePortBlockEntityMixin",
 		"provider.PackagerBlockEntityMixin",
+		"provider.SawBlockEntityMixin",
 		"provider.SchematicannonBlockEntityMixin",
 		"provider.TableClothBlockEntityMixin",
 		"wrench.ChassisRangeDisplayMixin",

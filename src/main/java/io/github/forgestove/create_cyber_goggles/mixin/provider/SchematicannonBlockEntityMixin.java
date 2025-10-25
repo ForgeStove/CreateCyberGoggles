@@ -14,7 +14,8 @@ import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 @Mixin(SchematicannonBlockEntity.class)
-public abstract class SchematicannonBlockEntityMixin implements IHaveGoggleInformation, IItemRenderable, IOutlineRenderable {
+public abstract class SchematicannonBlockEntityMixin
+	implements IHaveGoggleInformation, IItemRenderable, IOutlineRenderable, ISelf<SchematicannonBlockEntity> {
 	@Shadow public State state;
 	@Shadow public SchematicPrinter printer;
 	@Shadow public List<LaunchedItem> flyingBlocks;
@@ -22,7 +23,7 @@ public abstract class SchematicannonBlockEntityMixin implements IHaveGoggleInfor
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return false;
-		TooltipUtil.cannon(tooltip, (SchematicannonBlockEntity) (Object) this);
+		TooltipUtil.cannon(tooltip, self());
 		return true;
 	}
 	@Override

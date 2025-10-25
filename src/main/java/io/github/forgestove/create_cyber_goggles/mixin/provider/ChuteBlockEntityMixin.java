@@ -1,13 +1,12 @@
 package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.simibubi.create.content.logistics.chute.ChuteBlockEntity;
-import io.github.forgestove.create_cyber_goggles.core.util.IItemRenderable;
+import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.world.item.ItemStack;
-import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.Mixin;
 @Mixin(ChuteBlockEntity.class)
-public abstract class ChuteBlockEntityMixin implements IItemRenderable {
-	@Shadow ItemStack item;
+public abstract class ChuteBlockEntityMixin implements IItemRenderable, ISelf<ChuteBlockEntity> {
 	@Override
 	public ItemStack ccg$getItemStack() {
-		return item;
+		return self().getItem();
 	}
 }

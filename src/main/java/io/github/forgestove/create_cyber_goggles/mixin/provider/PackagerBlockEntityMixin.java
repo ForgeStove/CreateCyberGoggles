@@ -1,13 +1,12 @@
 package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
-import io.github.forgestove.create_cyber_goggles.core.util.IItemRenderable;
+import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.world.item.ItemStack;
-import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.Mixin;
 @Mixin(PackagerBlockEntity.class)
-public abstract class PackagerBlockEntityMixin implements IItemRenderable {
-	@Shadow public ItemStack heldBox;
+public abstract class PackagerBlockEntityMixin implements IItemRenderable, ISelf<PackagerBlockEntity> {
 	@Override
 	public ItemStack ccg$getItemStack() {
-		return heldBox;
+		return self().heldBox;
 	}
 }

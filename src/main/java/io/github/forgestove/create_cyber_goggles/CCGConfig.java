@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles;
-import io.github.forgestove.create_cyber_goggles.core.util.TooltipFlagType;
+import io.github.forgestove.create_cyber_goggles.core.util.*;
 import me.shedaniel.autoconfig.*;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry.*;
@@ -39,9 +39,10 @@ public class CCGConfig implements ConfigData {
 	}
 	public static class Overlay {
 		@Tooltip public boolean renderExtraItems = true;
-		@Tooltip @EnumHandler(option = EnumDisplayOption.BUTTON) public TooltipFlagType tooltipFlagType = TooltipFlagType.Default;
 		@Tooltip public int overlayOffsetX = 0;
 		@Tooltip public int overlayOffsetY = 0;
+		@EnumHandler(option = EnumDisplayOption.BUTTON) public TooltipFlagType tooltipFlagType = TooltipFlagType.Default;
+		@EnumHandler(option = EnumDisplayOption.BUTTON) public TooltipTheme tooltipTheme = TooltipTheme.Default;
 		@Tooltip public boolean useCustomColor = false;
 		@Tooltip @ColorPicker(allowAlpha = true) public int backgroundColor = 0x00000000;
 		@Tooltip @ColorPicker(allowAlpha = true) public int borderTopColor = 0x00000000;

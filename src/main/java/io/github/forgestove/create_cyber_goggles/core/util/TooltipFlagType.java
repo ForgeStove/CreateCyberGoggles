@@ -5,19 +5,23 @@ import org.jetbrains.annotations.*;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 @SuppressWarnings("unused")
 public enum TooltipFlagType {
-	Default(mc.options.advancedItemTooltips),
+	Default,
 	Normal(false),
 	Advanced(true);
-	private final Default flag;
+	private final @Nullable Default flag;
 	@Contract(pure = true)
-	TooltipFlagType(boolean flag) {
-		this.flag = new Default(flag, false);
+	TooltipFlagType(boolean advanced) {
+		flag = new Default(advanced, false);
+	}
+	@Contract(pure = true)
+	TooltipFlagType() {
+		flag = null;
 	}
 	@Contract(pure = true)
 	public Default getFlag() {
-		return this == Default ? new Default(mc.options.advancedItemTooltips, false) : flag;
+		return flag == null ? new Default(mc.options.advancedItemTooltips, false) : flag;
 	}
 	public @NotNull String toString() {
-		return CCGLang.translate("enum." + name()).string();
+		return CCGLang.translate("tooltipFlagType." + name()).string();
 	}
 }

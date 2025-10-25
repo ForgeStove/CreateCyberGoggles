@@ -4,7 +4,7 @@ import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.equipment.armor.BacktankBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.TooltipUtil;
+import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -16,23 +16,24 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 @Mixin(value = BacktankBlockEntity.class, remap = false)
-public abstract class BacktankBlockEntityMixin extends KineticBlockEntity implements IHaveGoggleInformation {
+public abstract class BacktankBlockEntityMixin extends KineticBlockEntity implements IHaveGoggleInformation, ISelf<BacktankBlockEntity> {
 	@Unique public int ccg$leftTick;
 	@Unique public int ccg$prevAirLevel;
-	@Shadow public int airLevel;
-	@Shadow public int airLevelTimer;
 	@Shadow private int capacityEnchantLevel;
 	public BacktankBlockEntityMixin(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
 		super(typeIn, pos, state);
 	}
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		TooltipUtil.backtank(tooltip, (BacktankBlockEntity) (Object) this, capacityEnchantLevel, ccg$leftTick);
+		TooltipUtil.backtank(tooltip, self(), capacityEnchantLevel, ccg$leftTick);
 		return super.addToGoggleTooltip(tooltip, isPlayerSneaking);
 	}
 	@Inject(method = "tick", at = @At(value = "RETURN", ordinal = 3))
 	public void tick(CallbackInfo ci, @Local(name = "max") int max) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return;
+		var bbe = self();
+		var airLevel = bbe.airLevel;
+		var airLevelTimer = bbe.airLevelTimer;
 		if (airLevel == max) return;
 		ccg$prevAirLevel = airLevel;
 		var abs = Math.abs(getSpeed());

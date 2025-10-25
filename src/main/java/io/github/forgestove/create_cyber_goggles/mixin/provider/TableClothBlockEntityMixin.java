@@ -5,12 +5,11 @@ import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.*;
 @Mixin(TableClothBlockEntity.class)
-public abstract class TableClothBlockEntityMixin implements IItemRenderable, IIndex {
+public abstract class TableClothBlockEntityMixin implements IItemRenderable, IIndex, ISelf<TableClothBlockEntity> {
 	@Unique public int ccg$index;
 	@Override
 	public ItemStack ccg$getItemStack() {
-		var tcbe = (TableClothBlockEntity) (Object) this;
-		var items = TableClothUtil.getItems(tcbe);
+		var items = TableClothUtil.getItems(self());
 		if (items.isEmpty()) return null;
 		if (!CCG.CONFIG.goggles.betterStoreInfo) return null;
 		if (ccg$index >= items.size()) ccg$index = 0;

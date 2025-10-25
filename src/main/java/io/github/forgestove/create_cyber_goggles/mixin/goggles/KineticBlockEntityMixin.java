@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.mixin.goggles;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.TooltipUtil;
+import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
@@ -9,13 +9,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 @Mixin(value = KineticBlockEntity.class, remap = false)
-public abstract class KineticBlockEntityMixin {
+public abstract class KineticBlockEntityMixin implements ISelf<KineticBlockEntity> {
 	@Shadow protected float capacity, stress;
 	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), cancellable = true)
 	public void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> cir) {
 		var goggles = CCG.CONFIG.goggles;
 		if (!goggles.enhancedInfo) return;
-		var kbe = (KineticBlockEntity) (Object) this;
+		var kbe = self();
 		var speed = kbe.getTheoreticalSpeed();
 		var hide = !goggles.hideStaticKineticInfo || speed != 0;
 		cir.setReturnValue(hide);

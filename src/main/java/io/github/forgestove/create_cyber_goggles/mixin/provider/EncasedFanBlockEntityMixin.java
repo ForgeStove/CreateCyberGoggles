@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.simibubi.create.AllSpecialTextures;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
-import com.simibubi.create.content.kinetics.fan.*;
+import com.simibubi.create.content.kinetics.fan.EncasedFanBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.event.Outliner;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
@@ -11,19 +11,20 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.Mixin;
 
 import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.outliner;
-@Mixin(value = EncasedFanBlockEntity.class, remap = false)
-public abstract class EncasedFanBlockEntityMixin extends KineticBlockEntity implements IHaveGoggleInformation, IOutlineRenderable {
-	@Shadow public AirCurrent airCurrent;
+@Mixin(EncasedFanBlockEntity.class)
+public abstract class EncasedFanBlockEntityMixin extends KineticBlockEntity
+	implements IHaveGoggleInformation, IOutlineRenderable, ISelf<EncasedFanBlockEntity> {
 	public EncasedFanBlockEntityMixin(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
 		super(typeIn, pos, state);
 	}
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+		var airCurrent = self().getAirCurrent();
 		var fan = TooltipUtil.fan(tooltip, airCurrent.pushing, airCurrent.maxDistance, 1);
 		var add = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
 		if (!CCG.CONFIG.goggles.enhancedInfo || getSpeed() == 0) return add;
@@ -31,6 +32,7 @@ public abstract class EncasedFanBlockEntityMixin extends KineticBlockEntity impl
 	}
 	@Override
 	public void ccg$render() {
+		var airCurrent = self().getAirCurrent();
 		var color = Outliner.getColor(airCurrent.pushing);
 		var bounds = airCurrent.bounds;
 		outliner.showAABB("FanAirBox" + this, bounds)

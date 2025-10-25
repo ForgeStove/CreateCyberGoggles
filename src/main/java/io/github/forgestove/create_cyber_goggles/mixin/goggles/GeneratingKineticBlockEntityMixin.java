@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.mixin.goggles;
 import com.simibubi.create.content.kinetics.base.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.TooltipUtil;
+import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 @Mixin(value = GeneratingKineticBlockEntity.class, remap = false)
-public abstract class GeneratingKineticBlockEntityMixin extends KineticBlockEntity {
+public abstract class GeneratingKineticBlockEntityMixin extends KineticBlockEntity implements ISelf<GeneratingKineticBlockEntity> {
 	public GeneratingKineticBlockEntityMixin(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
 		super(typeIn, pos, state);
 	}
@@ -24,7 +24,7 @@ public abstract class GeneratingKineticBlockEntityMixin extends KineticBlockEnti
 			cir.setReturnValue(false);
 			return;
 		}
-		TooltipUtil.generatingKinetic(tooltip, (GeneratingKineticBlockEntity) (Object) this);
+		TooltipUtil.generatingKinetic(tooltip, self());
 		cir.setReturnValue(super.addToGoggleTooltip(tooltip, isPlayerSneaking));
 	}
 }

@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.*;
 @Mixin(BeltBlockEntity.class)
 public abstract class BeltBlockEntityMixin extends KineticBlockEntity
-	implements IHaveGoggleInformation, IItemRenderable, ISelf<BeltBlockEntity> {
+	implements IHaveGoggleInformation, ItemRenderable, Self<BeltBlockEntity> {
 	@Unique public final Deque<Integer> ccg$itemHistory = new ArrayDeque<>();
 	@Unique public double ccg$rate;
 	@Unique public int ccg$lastTotalItems;
@@ -28,8 +28,8 @@ public abstract class BeltBlockEntityMixin extends KineticBlockEntity
 		if (level == null || !level.isClientSide) return;
 		if (self().index != 0) return;
 		var currentTotalItems = 0;
-		for (var ts : self().getInventory().getTransportedItems())
-			if (ts != null && ts.stack != null) currentTotalItems += ts.stack.getCount();
+		for (var tis : self().getInventory().getTransportedItems())
+			if (tis != null && tis.stack != null) currentTotalItems += tis.stack.getCount();
 		var itemsPassed = Math.max(0, ccg$lastTotalItems - currentTotalItems);
 		ccg$lastTotalItems = currentTotalItems;
 		ccg$itemHistory.addLast(itemsPassed);

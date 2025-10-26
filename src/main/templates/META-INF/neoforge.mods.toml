@@ -6,7 +6,7 @@ license = "${modLicense}"
 [[mods]]
 modId = "${modId}"
 version = "${modVersion}"
-displayName = "${modName}"
+displayName = "${modDisplayName}"
 authors = "${modAuthors}"
 displayURL = "${modDisplayUrl}"
 description = '''${modDescription}'''

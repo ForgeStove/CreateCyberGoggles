@@ -44,10 +44,10 @@ public class Overlay {
 	}
 	public static @NotNull ItemStack toRenderItemStack() {
 		try {
-			if (getBlockEntity() instanceof IItemRenderable renderable) return orEmpty(renderable.ccg$getItemStack());
-			if (getEntity() instanceof IItemRenderable renderable) return orEmpty(renderable.ccg$getItemStack());
+			if (getBlockEntity() instanceof ItemRenderable ir) return orEmpty(ir.ccg$getItemStack());
+			if (getEntity() instanceof ItemRenderable ir) return orEmpty(ir.ccg$getItemStack());
 		} catch (Throwable e) {
-			CCG.LOGGER.error("Failed to get item stack from IItemRenderable", e);
+			CCG.LOGGER.error("Failed to get item stack", e);
 		}
 		return ItemStack.EMPTY;
 	}
@@ -88,23 +88,23 @@ public class Overlay {
 		var overlay = CCG.CONFIG.overlay;
 		var useCCGCustom = overlay.useCustomColor;
 		if (!useCCGCustom) {
-			var theme = CCG.CONFIG.overlay.tooltipTheme.theme;
+			if (overlay.tooltipTheme == null) overlay.tooltipTheme = TooltipTheme.Default;
+			var theme = overlay.tooltipTheme.theme;
 			if (theme != null) return theme;
 			var cfg = AllConfigs.client();
 			var useCreateCustom = cfg.overlayCustomColor.get();
-			var back = useCreateCustom ? new Color(cfg.overlayBackgroundColor.get())
-				: BoxElement.COLOR_VANILLA_BACKGROUND.scaleAlpha(.75f);
-			var top = useCreateCustom ? new Color(cfg.overlayBorderColorTop.get())
-				: BoxElement.COLOR_VANILLA_BORDER.getFirst().copy();
-			var bot = useCreateCustom ? new Color(cfg.overlayBorderColorBot.get())
-				: BoxElement.COLOR_VANILLA_BORDER.getSecond().copy();
+			var back = useCreateCustom ? new Color(cfg.overlayBackgroundColor.get()) :
+				BoxElement.COLOR_VANILLA_BACKGROUND.scaleAlpha(.75f);
+			var top = useCreateCustom ? new Color(cfg.overlayBorderColorTop.get()) : BoxElement.COLOR_VANILLA_BORDER.getFirst().copy();
+			var bot = useCreateCustom ? new Color(cfg.overlayBorderColorBot.get()) : BoxElement.COLOR_VANILLA_BORDER.getSecond().copy();
 			return new Theme(back, top, bot);
 		}
 		return new Theme(overlay.backgroundColor, overlay.borderTopColor, overlay.borderBottomColor);
 	}
 	public static @NotNull @Unmodifiable List<FormattedCharSequence> getFormattedTooltips(@NotNull ItemStack itemStack, int maxWidth) {
-		var type = CCG.CONFIG.overlay.tooltipFlagType;
-		var tooltipLines = itemStack.getTooltipLines(TooltipContext.of(mc.level), mc.player, type.getFlag());
+		var overlay = CCG.CONFIG.overlay;
+		if (overlay.tooltipFlagType == null) overlay.tooltipFlagType = TooltipFlagType.Default;
+		var tooltipLines = itemStack.getTooltipLines(TooltipContext.of(mc.level), mc.player, overlay.tooltipFlagType.getFlag());
 		tooltipLines.set(0, Component.literal(" ".repeat(Mth.ceil(16F / mc.font.width(" ")))).append(tooltipLines.getFirst()));
 		return tooltipLines.stream().flatMap(line -> mc.font.split(line, maxWidth).stream()).toList();
 	}

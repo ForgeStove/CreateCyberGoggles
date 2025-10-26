@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.IOutlineRenderable;
+import io.github.forgestove.create_cyber_goggles.core.util.OutlineRenderable;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.client.event.ClientTickEvent.Post;
@@ -16,7 +16,7 @@ public class Outliner {
 		if (!CCG.CONFIG.outliner.renderAnalogBox) return;
 		if (mc.isPaused() || isInGUI()) return;
 		var be = getBlockEntity();
-		if (be instanceof IOutlineRenderable) cachedBE.put(be, CCG.CONFIG.outliner.delayRenderDuration);
+		if (be instanceof OutlineRenderable) cachedBE.put(be, CCG.CONFIG.outliner.delayRenderDuration);
 		if (cachedBE.isEmpty()) return;
 		cachedBE.entrySet().removeIf(Outliner::render);
 	}
@@ -24,7 +24,7 @@ public class Outliner {
 		var nextDelay = entry.getValue() - 1;
 		entry.setValue(nextDelay);
 		var be = entry.getKey();
-		if (!be.isRemoved() && be instanceof IOutlineRenderable ior) ior.ccg$render();
+		if (!be.isRemoved() && be instanceof OutlineRenderable or) or.ccg$render();
 		return nextDelay <= 0;
 	}
 	@Contract(pure = true)

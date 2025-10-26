@@ -1,28 +1,20 @@
 package io.github.forgestove.create_cyber_goggles.mixin.provider;
-import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.logistics.depot.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.theme.Color;
-import net.minecraft.core.*;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 @Mixin(EjectorBlockEntity.class)
-public abstract class EjectorBlockEntityMixin extends KineticBlockEntity implements IItemRenderable, IOutlineRenderable {
+public abstract class EjectorBlockEntityMixin implements ItemRenderable, OutlineRenderable, Self<EjectorBlockEntity> {
 	@Unique public EntityLauncher ccg$launcher;
 	@Shadow DepotBehaviour depotBehaviour;
-	public EjectorBlockEntityMixin(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
-		super(typeIn, pos, state);
-	}
-	@Shadow
-	public abstract BlockPos getTargetPosition();
 	@Shadow
 	protected abstract Direction getFacing();
 	@Shadow
@@ -33,13 +25,15 @@ public abstract class EjectorBlockEntityMixin extends KineticBlockEntity impleme
 	}
 	@Override
 	public void ccg$render() {
-		var targetPos = getTargetPosition();
+		var ebe = self();
+		var targetPos = ebe.getTargetPosition();
+		var blockPos = ebe.getBlockPos();
 		outliner.showAABB("EjectorTargetBox" + this, getBounds(targetPos)).lineWidth(1 / 16f).colored(CCG.CONFIG.outliner.outColor);
 		var color = cannotLaunch() ? 0xFFFF7171 : 0xFF9EDE73;
-		outliner.showAABB("EjectorFromBox" + this, new AABB(0, 0, 0, 1, 0, 1).move(worldPosition)).lineWidth(1 / 16f).colored(color);
-		var xDiff = targetPos.getX() - worldPosition.getX();
-		var yDiff = targetPos.getY() - worldPosition.getY();
-		var zDiff = targetPos.getZ() - worldPosition.getZ();
+		outliner.showAABB("EjectorFromBox" + this, new AABB(0, 0, 0, 1, 0, 1).move(blockPos)).lineWidth(1 / 16f).colored(color);
+		var xDiff = targetPos.getX() - blockPos.getX();
+		var yDiff = targetPos.getY() - blockPos.getY();
+		var zDiff = targetPos.getZ() - blockPos.getZ();
 		if (ccg$launcher == null) ccg$launcher = new EntityLauncher(Math.abs(xDiff + zDiff), yDiff);
 		var totalFlyingTicks = ccg$launcher.getTotalFlyingTicks() + 3;
 		var segments = (int) totalFlyingTicks / 3 + 1;
@@ -48,7 +42,7 @@ public abstract class EjectorBlockEntityMixin extends KineticBlockEntity impleme
 		if (mc.level == null) return;
 		for (var i = 0; i < segments; i++) {
 			var ticks = (AnimationTickHolder.getRenderTime() / 3) % tickOffset + i * tickOffset;
-			var vec = ccg$launcher.getGlobalPos(ticks, getFacing().getOpposite(), worldPosition);
+			var vec = ccg$launcher.getGlobalPos(ticks, getFacing().getOpposite(), blockPos);
 			mc.level.addParticle(data, vec.x, vec.y, vec.z, 0, 0, 0);
 		}
 	}

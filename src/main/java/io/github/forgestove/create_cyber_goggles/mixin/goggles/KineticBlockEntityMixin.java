@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 @Mixin(KineticBlockEntity.class)
-public abstract class KineticBlockEntityMixin implements ISelf<KineticBlockEntity> {
+public abstract class KineticBlockEntityMixin implements Self<KineticBlockEntity> {
 	@Shadow protected float capacity, stress;
 	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), cancellable = true)
 	public void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> cir) {

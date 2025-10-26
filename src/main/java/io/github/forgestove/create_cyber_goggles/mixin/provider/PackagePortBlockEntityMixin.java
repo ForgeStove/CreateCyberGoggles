@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.Mixin;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.outliner;
 @Mixin(PackagePortBlockEntity.class)
-public abstract class PackagePortBlockEntityMixin implements IOutlineRenderable, ISelf<PackagePortBlockEntity> {
+public abstract class PackagePortBlockEntityMixin implements OutlineRenderable, Self<PackagePortBlockEntity> {
 	@Override
 	public void ccg$render() {
 		var ppbe = self();

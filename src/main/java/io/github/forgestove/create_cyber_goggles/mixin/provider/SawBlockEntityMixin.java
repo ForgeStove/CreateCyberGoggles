@@ -4,7 +4,7 @@ import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 @Mixin(SawBlockEntity.class)
-public abstract class SawBlockEntityMixin implements IItemRenderable, ISelf<SawBlockEntity> {
+public abstract class SawBlockEntityMixin implements ItemRenderable, Self<SawBlockEntity> {
 	@Override
 	public ItemStack ccg$getItemStack() {
 		return self().inventory.getStackInSlot(0);

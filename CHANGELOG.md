@@ -1,2 +1,1 @@
-- Fix NullPointException of cloth-config's enum config
-- Simplify mixin by using ISelf interface
+- Update to Create 6.0.7

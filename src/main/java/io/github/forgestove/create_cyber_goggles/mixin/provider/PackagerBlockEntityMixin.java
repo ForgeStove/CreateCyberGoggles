@@ -4,7 +4,7 @@ import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 @Mixin(PackagerBlockEntity.class)
-public abstract class PackagerBlockEntityMixin implements IItemRenderable, ISelf<PackagerBlockEntity> {
+public abstract class PackagerBlockEntityMixin implements ItemRenderable, Self<PackagerBlockEntity> {
 	@Override
 	public ItemStack ccg$getItemStack() {
 		return self().heldBox;

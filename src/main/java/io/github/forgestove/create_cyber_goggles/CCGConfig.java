@@ -74,7 +74,6 @@ public class CCGConfig implements ConfigData {
 	}
 	public static class Misc {
 		@Tooltip public boolean preventSelectionDiscard = true;
-		@Tooltip public boolean translateCatnip = true;
 		@Tooltip public boolean infEditBoxLength = false;
 		@Tooltip public boolean removeCardboardOverlay = true;
 		@Tooltip public boolean removeNetheriteFirstPerson = false;

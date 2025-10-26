@@ -52,13 +52,13 @@ public class TableClothUtil {
 	}
 	@Contract("_, null -> null")
 	public static @Nullable Integer getIndex(@NotNull List<ItemStack> items, TableClothBlockEntity tcbe) {
-		if (!(tcbe instanceof IIndex iIndex)) return null;
-		var index = iIndex.ccg$getIndex() - KeyInput.scrollDeltaY;
+		if (!(tcbe instanceof Index i)) return null;
+		var index = i.ccg$getIndex() - KeyInput.scrollDeltaY;
 		KeyInput.scrollDeltaY = 0;
 		var size = items.size();
 		if (index < 0) index = size - 1;
 		else if (index >= size) index = 0;
-		iIndex.ccg$setIndex(index);
+		i.ccg$setIndex(index);
 		return index;
 	}
 	public static List<ItemStack> getItems(@NotNull TableClothBlockEntity tcbe) {

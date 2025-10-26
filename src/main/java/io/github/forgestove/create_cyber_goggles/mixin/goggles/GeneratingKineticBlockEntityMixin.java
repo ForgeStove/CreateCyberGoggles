@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 @Mixin(value = GeneratingKineticBlockEntity.class, remap = false)
-public abstract class GeneratingKineticBlockEntityMixin extends KineticBlockEntity implements ISelf<GeneratingKineticBlockEntity> {
+public abstract class GeneratingKineticBlockEntityMixin extends KineticBlockEntity implements Self<GeneratingKineticBlockEntity> {
 	public GeneratingKineticBlockEntityMixin(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
 		super(typeIn, pos, state);
 	}

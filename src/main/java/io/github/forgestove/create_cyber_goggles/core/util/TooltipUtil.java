@@ -68,10 +68,10 @@ public class TooltipUtil {
 				.forGoggles(tooltip, 1);
 		}
 	}
-	public static boolean fan(List<Component> tooltip, boolean pushing, float range, int divide) {
-		if (range == 0) return false;
+	public static boolean fan(List<Component> tooltip, boolean pushing, float range) {
+		if (!CCG.CONFIG.goggles.enhancedInfo || range == 0) return false;
 		CCGLang.translate("tooltip.windState").forGoggles(tooltip);
-		CCGLang.number(range / divide)
+		CCGLang.number(range)
 			.space()
 			.translate(pushing ? "tooltip.pushRange" : "tooltip.pullRange")
 			.color(Outliner.getColor(pushing))
@@ -79,6 +79,7 @@ public class TooltipUtil {
 		return true;
 	}
 	public static boolean burner(List<Component> tooltip, int remainingBurnTime, boolean isCreative, FuelType activeFuel) {
+		if (!CCG.CONFIG.goggles.enhancedInfo) return false;
 		if (remainingBurnTime == 0 && !isCreative) return false;
 		var format = switch (activeFuel) {
 			case SPECIAL -> AQUA;
@@ -93,7 +94,8 @@ public class TooltipUtil {
 			.forGoggles(tooltip);
 		return true;
 	}
-	public static void cannon(List<Component> tooltip, @NotNull SchematicannonBlockEntity sbe) {
+	public static boolean cannon(List<Component> tooltip, @NotNull SchematicannonBlockEntity sbe) {
+		if (!CCG.CONFIG.goggles.enhancedInfo) return false;
 		CCGLang.translate("tooltip.cannonState").forGoggles(tooltip);
 		CreateLang.translate("schematicannon.status." + sbe.statusMsg).style(GOLD).forGoggles(tooltip);
 		var shotsLeft = sbe.remainingFuel;
@@ -110,25 +112,27 @@ public class TooltipUtil {
 					.style(GRAY)
 					.forGoggles(tooltip);
 		}
-		if (!sbe.state.equals(State.RUNNING)) return;
+		if (!sbe.state.equals(State.RUNNING)) return true;
 		CCGLang.translate("tooltip.printProgress").forGoggles(tooltip);
 		CCGLang.fraction(sbe.blocksPlaced, sbe.blocksToPlace).forGoggles(tooltip);
 		CCGLang.progress(sbe.schematicProgress, 20).forGoggles(tooltip);
+		return true;
 	}
-	public static void backtank(List<Component> tooltip, BacktankBlockEntity bbe, int capacityEnchantLevel, int leftTick) {
-		if (!CCG.CONFIG.goggles.enhancedInfo) return;
+	public static boolean backtank(List<Component> tooltip, BacktankBlockEntity bbe, int capacityEnchantLevel, int leftTick) {
+		if (!CCG.CONFIG.goggles.enhancedInfo) return false;
 		CreateLang.translate("gui.goggles.fluid_container").forGoggles(tooltip);
 		CreateLang.translate("gui.goggles.fluid_container.capacity")
 			.style(GRAY)
 			.add(CCGLang.fraction(bbe.airLevel, BacktankUtil.maxAir(capacityEnchantLevel)))
 			.forGoggles(tooltip);
-		if (bbe.getSpeed() == 0 || leftTick == 0) return;
+		if (bbe.getSpeed() == 0 || leftTick == 0) return false;
 		CCGLang.translate("tooltip.leftTime")
 			.style(GRAY)
 			.add(CCGLang.number(GOLD, leftTick / 20))
 			.space()
 			.add(CCGLang.seconds().style(GRAY))
 			.forGoggles(tooltip);
+		return true;
 	}
 	public static void beltThroughput(List<Component> tooltip, double itemsPerSecond) {
 		if (itemsPerSecond < 0.1) return;

@@ -3,7 +3,6 @@ import com.simibubi.create.AllSpecialTextures;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.fan.EncasedFanBlockEntity;
-import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.event.Outliner;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.core.BlockPos;
@@ -18,17 +17,16 @@ import java.util.List;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.outliner;
 @Mixin(EncasedFanBlockEntity.class)
 public abstract class EncasedFanBlockEntityMixin extends KineticBlockEntity
-	implements IHaveGoggleInformation, IOutlineRenderable, ISelf<EncasedFanBlockEntity> {
+	implements IHaveGoggleInformation, OutlineRenderable, Self<EncasedFanBlockEntity> {
 	public EncasedFanBlockEntityMixin(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
 		super(typeIn, pos, state);
 	}
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		var airCurrent = self().getAirCurrent();
-		var fan = TooltipUtil.fan(tooltip, airCurrent.pushing, airCurrent.maxDistance, 1);
-		var add = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
-		if (!CCG.CONFIG.goggles.enhancedInfo || getSpeed() == 0) return add;
-		return fan;
+		var thiz = TooltipUtil.fan(tooltip, airCurrent.pushing, airCurrent.maxDistance);
+		var sup = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+		return thiz || sup;
 	}
 	@Override
 	public void ccg$render() {

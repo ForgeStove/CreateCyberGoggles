@@ -7,7 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.isClient;
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.isServer;
 @Mixin(value = ValueSettingsInputHandler.class, remap = false)
 public abstract class ValueSettingsInputHandlerMixin {
 	@WrapOperation(
@@ -15,7 +15,7 @@ public abstract class ValueSettingsInputHandlerMixin {
 		at = @At(value = "INVOKE", target = "Lcom/simibubi/create/AllTags$AllItemTags;matches(Lnet/minecraft/world/item/ItemStack;)Z")
 	)
 	private static boolean tick(AllItemTags instance, ItemStack stack, Operation<Boolean> original) {
-		return isClient() ? CCG.CONFIG.wrench.alwaysShowScrollValue || original.call(instance, stack) : original.call(instance, stack);
+		return isServer() ? original.call(instance, stack) : CCG.CONFIG.wrench.alwaysShowScrollValue || original.call(instance, stack);
 	}
 	@WrapOperation(
 		method = "onBlockActivated", at = @At(
@@ -23,6 +23,6 @@ public abstract class ValueSettingsInputHandlerMixin {
 	)
 	)
 	private static boolean tick(ValueSettingsBehaviour instance, Operation<Boolean> original) {
-		return isClient() ? CCG.CONFIG.wrench.alwaysShowScrollValue || original.call(instance) : original.call(instance);
+		return isServer() ? original.call(instance) : CCG.CONFIG.wrench.alwaysShowScrollValue || original.call(instance);
 	}
 }

@@ -5,7 +5,7 @@ import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.*;
 @Mixin(TableClothBlockEntity.class)
-public abstract class TableClothBlockEntityMixin implements IItemRenderable, IIndex, ISelf<TableClothBlockEntity> {
+public abstract class TableClothBlockEntityMixin implements ItemRenderable, Index, Self<TableClothBlockEntity> {
 	@Unique public int ccg$index;
 	@Override
 	public ItemStack ccg$getItemStack() {

@@ -7,12 +7,6 @@
 		"AbstractFilterScreenMixin",
 		"StockKeeperRequestScreenMixin",
 		"accessor.RotationPropagatorAccessor",
-		"catnip.BaseConfigScreenMixin",
-		"catnip.ConfigModListScreenMixin",
-		"catnip.ConfirmationScreenMixin",
-		"catnip.FontHelperMixin",
-		"catnip.ModEntryMixin",
-		"catnip.SubMenuConfigScreenMixin",
 		"chainConveyor.CardboardArmorHandlerMixin",
 		"chainConveyor.ChainConveyorConnectionHandlerMixin",
 		"chainConveyor.ChainConveyorInteractionHandlerMixin",
@@ -20,12 +14,12 @@
 		"goggles.BlueprintOverlayRendererMixin",
 		"goggles.DeployerBlockEntityMixin",
 		"goggles.EncasedCogwheelBlockMixin",
-		"goggles.FilterItemMixin",
 		"goggles.GeneratingKineticBlockEntityMixin",
 		"goggles.GoggleOverlayRendererMixin",
 		"goggles.GogglesItemMixin",
 		"goggles.KineticBlockEntityMixin",
 		"goggles.LangNumberFormatMixin",
+		"goggles.ListFilterItemMixin",
 		"goggles.PackageItemMixin",
 		"goggles.PackagePortTargetSelectionHandlerMixin",
 		"goggles.PoweredShaftBlockEntityMixin",
@@ -66,5 +60,8 @@
 		"wrench.RadialWrenchMenuMixin",
 		"wrench.ScrollValueRendererMixin",
 		"wrench.ValueSettingsInputHandlerMixin"
+	],
+	"mixins": [
+		"goggles.AttributeFilterItemMixin"
 	]
 }

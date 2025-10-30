@@ -1,1 +1,4 @@
-- Update to Create 6.0.7
+- Add tip for cloth store
+- Add useSchematic hotkey to create schematic without any schematic and quill
+- Add extraItemTooltip option for individually control item tooltip
+- Fix translation

@@ -1,31 +1,34 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
-import com.simibubi.create.CreateClient;
 import com.simibubi.create.content.contraptions.chassis.*;
 import com.simibubi.create.content.contraptions.wrench.RadialWrenchMenuSubmitPacket;
 import com.simibubi.create.content.equipment.wrench.*;
 import com.simibubi.create.content.fluids.pipes.EncasedPipeBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogwheelBlock;
+import com.simibubi.create.content.logistics.tableCloth.TableClothBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
+import io.github.forgestove.create_cyber_goggles.core.util.*;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket.Action;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.block.RotatedPillarBlock;
-import net.neoforged.neoforge.client.event.ClientTickEvent.Post;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.*;
 
-import java.util.ArrayList;
+import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 import static net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.LeftClickBlock.Action.*;
 public class PlayerInteract {
 	private static long lastDismantleTime, dismantleDelay = 10;
-	public static void tick(Post ignoredEvent) {
+	private static long lastTick;
+	public static void tick(ClientTickEvent.Pre ignoredEvent) {
 		wrench();
 		encasedCogWheel();
 		enacesdPipe();
 		chassis();
+		tableCloth();
 	}
 	public static void leftClick(LeftClickBlock event) {
 		if (isServer()) return;
@@ -48,7 +51,7 @@ public class PlayerInteract {
 		var action = event.getAction();
 		if (!(action == START || action == CLIENT_HOLD)) return;
 		var player = mc.player;
-		if (player == null || mc.player.isCreative() || mc.gameMode == null) return;
+		if (player == null || player.isCreative() || mc.gameMode == null) return;
 		var handWithWrench = player.getMainHandItem().getItem() instanceof WrenchItem
 			? InteractionHand.MAIN_HAND
 			: player.getOffhandItem().getItem() instanceof WrenchItem ? InteractionHand.OFF_HAND : null;
@@ -64,7 +67,8 @@ public class PlayerInteract {
 	}
 	private static void encasedCogWheel() {
 		if (!CCG.CONFIG.wrench.betterEncasedCogwheel) return;
-		if (!(getBlock() instanceof EncasedCogwheelBlock ecb)) return;
+		var ecb = getBlock(EncasedCogwheelBlock.class);
+		if (ecb == null) return;
 		var bhr = getBlockHitResult();
 		if (mc.level == null || bhr == null) return;
 		if (ecb.getRotationAxis(mc.level.getBlockState(bhr.getBlockPos())) != bhr.getDirection().getAxis()) return;
@@ -90,7 +94,7 @@ public class PlayerInteract {
 	}
 	private static void enacesdPipe() {
 		if (!CCG.CONFIG.wrench.betterEncasedPipe) return;
-		if (!(getBlock() instanceof EncasedPipeBlock)) return;
+		if (getBlock(EncasedPipeBlock.class) == null) return;
 		showCommonTip("message.openState");
 	}
 	private static void enacesdPipe(RightClickBlock event) {
@@ -110,7 +114,8 @@ public class PlayerInteract {
 	private static void chassis() {
 		if (!CCG.CONFIG.wrench.betterChassis) return;
 		if (mc.level == null) return;
-		if (!(getBlock() instanceof AbstractChassisBlock acb)) return;
+		var acb = getBlock(AbstractChassisBlock.class);
+		if (acb == null) return;
 		var bhr = getBlockHitResult();
 		if (bhr == null || acb.getGlueableSide(mc.level.getBlockState(bhr.getBlockPos()), bhr.getDirection()) == null) return;
 		showCommonTip("message.glueState");
@@ -151,13 +156,24 @@ public class PlayerInteract {
 		sendToServer(new RadialWrenchMenuSubmitPacket(pos, state.cycle(booleanProperty)));
 		mc.player.swing(mc.player.getUsedItemHand());
 	}
-	private static void showCommonTip(String title) {
-		if (hasActivedValueBox()) return;
+	public static void tableCloth() {
+		if (!CCG.CONFIG.goggles.betterStoreInfo) return;
+		if (mc.player == null) return;
+		var currentTick = mc.player.tickCount;
+		if (currentTick == lastTick) return;
+		lastTick = currentTick;
+		var tcbe = getBlockEntity(TableClothBlockEntity.class);
+		if (tcbe == null) return;
+		if (TableClothUtil.getItems(tcbe).size() <= 1) return;
+		var builder = CCGLang.translate("message.toggleItemOverlay", CCGKey.toggleItemOverlay.getFancyName()).style(ChatFormatting.WHITE);
+		TipOverlay.show(List.of(builder.component()), 0, 25);
+	}
+	public static void showCommonTip(String title) {
 		if (hasItemInHand()) return;
 		var tip = new ArrayList<MutableComponent>();
 		CCGLang.translate(title).addTo(tip);
-		CCGLang.translate("message.useSwitchState", CCGKey.getColoredDisplayName(mc.options.keyUse)).addTo(tip);
-		CCGLang.translate("message.pressToInteractOpposite", CCGKey.interactOpposite.getColoredDisplayName()).addTo(tip);
-		CreateClient.VALUE_SETTINGS_HANDLER.showHoverTip(tip);
+		CCGLang.translate("message.useSwitchState", CCGKey.getFancyName(mc.options.keyUse)).addTo(tip);
+		CCGLang.translate("message.pressToInteractOpposite", CCGKey.interactOpposite.getFancyName()).addTo(tip);
+		TipOverlay.show(tip);
 	}
 }

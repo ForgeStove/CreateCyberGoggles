@@ -17,7 +17,7 @@ public abstract class SchematicannonBlockEntityMixin
 	implements IHaveGoggleInformation, ItemRenderable, OutlineRenderable, Self<SchematicannonBlockEntity> {
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		return TooltipUtil.cannon(tooltip, self());
+		return GoggleTooltipUtil.cannon(tooltip, self());
 	}
 	@Override
 	public ItemStack ccg$getItemStack() {

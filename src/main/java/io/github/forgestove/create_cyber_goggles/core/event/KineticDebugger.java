@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.core.*;
 import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.world.phys.*;
-import net.neoforged.neoforge.client.event.ClientTickEvent.Post;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
@@ -17,7 +17,7 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class KineticDebugger {
 	public static BlockPos lastSource;
 	public static List<KineticBlockEntity> cachedKBEPath;
-	public static void tick(Post ignoredEvent) {
+	public static void tick(ClientTickEvent.Post ignoredEvent) {
 		if (!CCG.CONFIG.outliner.rainbowDebug) return;
 		if (mc.isPaused() || isInGUI() || mc.level == null) return;
 		var kbe = getBlockEntity(KineticBlockEntity.class);

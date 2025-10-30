@@ -10,7 +10,6 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.*;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.*;
 import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.ItemStack;
@@ -22,17 +21,13 @@ import org.jetbrains.annotations.*;
 import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
-public class Overlay {
+public class TooltipOverlay {
 	public static int hoverTicks;
 	public static void register(@NotNull RegisterGuiLayersEvent event) {
-		event.registerAbove(
-			VanillaGuiLayers.HOTBAR,
-			ResourceLocation.fromNamespaceAndPath(CCG.ID, "item_tooltip_overlay"),
-			Overlay::renderOverlay
-		);
+		event.registerAbove(VanillaGuiLayers.HOTBAR, getCCGRes("tooltip_overlay"), TooltipOverlay::renderOverlay);
 	}
 	public static void renderOverlay(GuiGraphics graphics, DeltaTracker deltaTracker) {
-		if (!CCG.CONFIG.overlay.renderExtraItems || !CCG.CONFIG.gameMode.enableGoggles) return;
+		if (!CCG.CONFIG.overlay.renderItemOverlay || !CCG.CONFIG.gameMode.enableGoggles) return;
 		if (mc.isPaused() || isInGUI() || mc.options.hideGui) {
 			hoverTicks = 0;
 			return;
@@ -94,7 +89,7 @@ public class Overlay {
 			var cfg = AllConfigs.client();
 			var useCreateCustom = cfg.overlayCustomColor.get();
 			var back = useCreateCustom ? new Color(cfg.overlayBackgroundColor.get()) :
-				BoxElement.COLOR_VANILLA_BACKGROUND.scaleAlpha(.75f);
+				BoxElement.COLOR_VANILLA_BACKGROUND.scaleAlpha(0.75F);
 			var top = useCreateCustom ? new Color(cfg.overlayBorderColorTop.get()) : BoxElement.COLOR_VANILLA_BORDER.getFirst().copy();
 			var bot = useCreateCustom ? new Color(cfg.overlayBorderColorBot.get()) : BoxElement.COLOR_VANILLA_BORDER.getSecond().copy();
 			return new Theme(back, top, bot);

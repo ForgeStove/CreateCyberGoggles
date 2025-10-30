@@ -18,16 +18,18 @@ public class CCG {
 		var mod = container.getEventBus();
 		if (mod == null) return;
 		mod.addListener(CCGKey::register);
-		mod.addListener(Overlay::register);
+		mod.addListener(TooltipOverlay::register);
+		mod.addListener(TipOverlay::register);
 		var game = NeoForge.EVENT_BUS;
 		game.addListener(KeyInput::key);
 		game.addListener(KeyInput::mouseScroll);
+		game.addListener(PlayerInteract::leftClick);
+		game.addListener(PlayerInteract::rightClick);
+		game.addListener(PlayerInteract::tick);
 		game.addListener(ItemTooltip::itemTooltip);
 		game.addListener(KineticParticle::tick);
 		game.addListener(KineticDebugger::tick);
 		game.addListener(Outliner::tick);
-		game.addListener(PlayerInteract::tick);
-		game.addListener(PlayerInteract::leftClick);
-		game.addListener(PlayerInteract::rightClick);
+		game.addListener(TipOverlay::tick);
 	}
 }

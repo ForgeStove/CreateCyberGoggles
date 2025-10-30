@@ -82,6 +82,7 @@ public class KeyInput {
 	}
 	private static void clothStore(MouseScrollingEvent event) {
 		if (!CCG.CONFIG.goggles.betterStoreInfo) return;
+		if (!CCGKey.toggleItemOverlay.isDown()) return;
 		var tcbe = getBlockEntity(TableClothBlockEntity.class);
 		if (tcbe == null) return;
 		if (TableClothUtil.getItems(tcbe).size() <= 1) return;

@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static net.minecraft.ChatFormatting.*;
-public class TooltipUtil {
+public class GoggleTooltipUtil {
 	public static void kinetic(List<Component> tooltip, @NotNull KineticBlockEntity kbe, float stress, float capacity) {
 		var speed = kbe.getTheoreticalSpeed();
 		if (StressImpact.isEnabled()) {
@@ -38,19 +38,20 @@ public class TooltipUtil {
 		if (!CCGKey.showStress.isDown()) return;
 		double stressFraction = stress / (capacity == 0 ? 1 : capacity);
 		CreateLang.translate("gui.stressometer.title").style(GRAY).forGoggles(tooltip);
-		if (speed == 0) CreateLang.text(TooltipHelper.makeProgressBar(3, 0))
-			.translate("gui.stressometer.no_rotation")
-			.style(DARK_GRAY)
-			.forGoggles(tooltip);
-		else {
-			StressImpact.getFormattedStressText(stressFraction).forGoggles(tooltip);
-			CreateLang.translate("gui.stressometer.capacity").style(GRAY).forGoggles(tooltip);
-			double remainingCapacity = capacity - stress;
-			var su = CreateLang.translate("generic.unit.stress");
-			var stressTip = CreateLang.number(remainingCapacity).add(su).style(StressImpact.of(stressFraction).getRelativeColor());
-			if (remainingCapacity != capacity) stressTip.text(GRAY, " / ").add(CreateLang.number(capacity).add(su).style(DARK_GRAY));
-			stressTip.forGoggles(tooltip, 1);
+		if (speed == 0) {
+			CreateLang.text(TooltipHelper.makeProgressBar(3, 0))
+				.translate("gui.stressometer.no_rotation")
+				.style(DARK_GRAY)
+				.forGoggles(tooltip);
+			return;
 		}
+		StressImpact.getFormattedStressText(stressFraction).forGoggles(tooltip);
+		CreateLang.translate("gui.stressometer.capacity").style(GRAY).forGoggles(tooltip);
+		double remainingCapacity = capacity - stress;
+		var su = CreateLang.translate("generic.unit.stress");
+		var stressTip = CreateLang.number(remainingCapacity).add(su).style(StressImpact.of(stressFraction).getRelativeColor());
+		if (remainingCapacity != capacity) stressTip.text(GRAY, " / ").add(CreateLang.number(capacity).add(su).style(DARK_GRAY));
+		stressTip.forGoggles(tooltip, 1);
 	}
 	public static void generatingKinetic(List<Component> tooltip, @NotNull GeneratingKineticBlockEntity gkbe) {
 		var stressBase = gkbe.calculateAddedStressCapacity();

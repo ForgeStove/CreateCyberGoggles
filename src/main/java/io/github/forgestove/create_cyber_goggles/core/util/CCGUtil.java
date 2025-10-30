@@ -14,6 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket.Action;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.item.ItemStack;
@@ -32,7 +33,7 @@ public class CCGUtil {
 	public static final Minecraft mc = Minecraft.getInstance();
 	public static final Outliner outliner = Outliner.getInstance();
 	private static HitResult cachedHitResult;
-	private static float lastTick;
+	private static float lastRealtimeTick;
 	@Contract(pure = true)
 	public static boolean isInGUI() {
 		return mc.screen != null;
@@ -56,9 +57,9 @@ public class CCGUtil {
 	/** @return 当前帧的{@link HitResult} */
 	private static HitResult getCurrentHitResult() {
 		var currentTick = mc.level != null ? getRealtimeDeltaTicks() : 0;
-		if (lastTick == currentTick && cachedHitResult != null) return cachedHitResult;
+		if (lastRealtimeTick == currentTick && cachedHitResult != null) return cachedHitResult;
 		cachedHitResult = mc.hitResult;
-		lastTick = currentTick;
+		lastRealtimeTick = currentTick;
 		return cachedHitResult;
 	}
 	/** @return 当前的{@link BlockHitResult}，如果不是方块命中则返回 {@code null} */
@@ -102,6 +103,14 @@ public class CCGUtil {
 	@Contract(value = "!null -> param1", pure = true)
 	public static @NotNull ItemStack orEmpty(@Nullable ItemStack itemStack) {
 		return Objects.requireNonNullElse(itemStack, ItemStack.EMPTY);
+	}
+	@Contract("_, _ -> new")
+	public static @NotNull ResourceLocation getRes(String namespace, String path) {
+		return ResourceLocation.fromNamespaceAndPath(namespace, path);
+	}
+	@Contract("_ -> new")
+	public static @NotNull ResourceLocation getCCGRes(String path) {
+		return getRes(CCG.ID, path);
 	}
 	/** @return 选中的过滤器物品，如果未选中则返回{@code null} */
 	public static @Nullable ItemStack getSelectedFilter() {

@@ -11,12 +11,12 @@ import net.minecraft.core.Direction.Axis;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.client.event.ClientTickEvent.Post;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class KineticParticle {
-	public static void tick(Post ignoredEvent) {
+	public static void tick(ClientTickEvent.Post ignoredEvent) {
 		if (!CCG.CONFIG.goggles.enableKineticEffect || mc.level == null || isInGUI()) return;
 		var kbe = getBlockEntity(KineticBlockEntity.class);
 		if (kbe == null) return;

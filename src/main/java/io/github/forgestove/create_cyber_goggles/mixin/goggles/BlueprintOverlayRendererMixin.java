@@ -2,8 +2,6 @@ package io.github.forgestove.create_cyber_goggles.mixin.goggles;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer;
-import com.simibubi.create.content.logistics.tableCloth.ShoppingListItem.ShoppingList;
-import com.simibubi.create.content.logistics.tableCloth.TableClothBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.TableClothUtil;
 import net.minecraft.client.gui.GuiGraphics;
@@ -17,8 +15,6 @@ import java.util.List;
 @Mixin(value = BlueprintOverlayRenderer.class, remap = false)
 public abstract class BlueprintOverlayRendererMixin {
 	@Shadow static List<ItemStack> results;
-	@Shadow static boolean active;
-	@Unique private static TableClothBlockEntity ccg$tcbe;
 	@Inject(method = "renderOverlay", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z", ordinal = 1), cancellable = true)
 	private static void renderOverlay(
 		ForgeGui gui,
@@ -28,12 +24,11 @@ public abstract class BlueprintOverlayRendererMixin {
 		int height,
 		CallbackInfo ci,
 		@Local(name = "x") int x,
-		@Local(name = "y") int y,
-		@Local(name = "invalidShop") boolean invalidShop
+		@Local(name = "y") int y
 	) {
 		if (!CCG.CONFIG.goggles.betterStoreInfo) return;
 		ci.cancel();
-		TableClothUtil.clothStoreOverlay(graphics, x, y, results, ccg$tcbe);
+		TableClothUtil.clothStoreOverlay(graphics, x, y, results);
 		RenderSystem.disableBlend();
 	}
 	@Inject(
@@ -42,12 +37,6 @@ public abstract class BlueprintOverlayRendererMixin {
 	)
 	private static void resetTCBE(ForgeGui gui, GuiGraphics graphics, float partialTicks, int width, int height, CallbackInfo ci) {
 		if (!CCG.CONFIG.goggles.betterStoreInfo) return;
-		if (active) return;
 		TableClothUtil.tableOverlay(graphics);
-	}
-	@Inject(method = "displayClothShop", at = @At("HEAD"))
-	private static void displayClothShop(TableClothBlockEntity tcbe, int alreadyPurchased, ShoppingList list, CallbackInfo ci) {
-		if (!CCG.CONFIG.goggles.betterStoreInfo) return;
-		ccg$tcbe = tcbe;
 	}
 }

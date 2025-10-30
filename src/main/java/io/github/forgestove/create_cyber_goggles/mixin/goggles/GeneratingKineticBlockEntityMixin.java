@@ -24,7 +24,7 @@ public abstract class GeneratingKineticBlockEntityMixin extends KineticBlockEnti
 			cir.setReturnValue(false);
 			return;
 		}
-		TooltipUtil.generatingKinetic(tooltip, self());
+		GoggleTooltipUtil.generatingKinetic(tooltip, self());
 		cir.setReturnValue(super.addToGoggleTooltip(tooltip, isPlayerSneaking));
 	}
 }

@@ -2,14 +2,11 @@ package io.github.forgestove.create_cyber_goggles.core.util;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import net.minecraft.world.level.block.state.properties.Property;
 
-import java.util.*;
-import java.util.stream.Stream;
+import java.util.List;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.*;
 public class WrenchMenuUtil {
-	public static final List<Property<?>> PROPERTIES_BLACKLIST = new ArrayList<>();
-	static {
-		Stream.of(
+	public static final List<Property<?>> PROPERTIES_BLACKLIST = List.of(
 			EYE,
 			DISTANCE,
 			SNOWY,
@@ -42,6 +39,5 @@ public class WrenchMenuUtil {
 			SLAB_TYPE,
 			BERRIES,
 			BlazeBurnerBlock.HEAT_LEVEL
-		).forEach(PROPERTIES_BLACKLIST::add);
-	}
+		);
 }

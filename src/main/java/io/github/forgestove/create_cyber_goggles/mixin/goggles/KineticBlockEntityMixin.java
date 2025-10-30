@@ -20,6 +20,6 @@ public abstract class KineticBlockEntityMixin implements Self<KineticBlockEntity
 		var hide = !goggles.hideStaticKineticInfo || speed != 0;
 		cir.setReturnValue(hide);
 		if (!hide) return;
-		TooltipUtil.kinetic(tooltip, kbe, stress, capacity);
+		GoggleTooltipUtil.kinetic(tooltip, kbe, stress, capacity);
 	}
 }

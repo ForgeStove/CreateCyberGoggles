@@ -17,7 +17,9 @@ public enum CCGKey {
 	previewFilter,
 	showStress(KEY_TAB),
 	toggleDiving,
-	toggleGoggle;
+	toggleGoggle,
+	toggleItemOverlay(KEY_LCONTROL),
+	useSchematic;
 	public final Lazy<KeyMapping> keyMapping;
 	CCGKey() {
 		this(UNKNOWN.getValue());
@@ -28,7 +30,7 @@ public enum CCGKey {
 	public static void register(RegisterKeyMappingsEvent event) {
 		for (var key : values()) event.register(key.keyMapping.get());
 	}
-	public static @NotNull Component getColoredDisplayName(@NotNull KeyMapping keyMapping) {
+	public static @NotNull Component getFancyName(@NotNull KeyMapping keyMapping) {
 		return keyMapping.getKey().getDisplayName().copy().withStyle(keyMapping.isDown() ? ChatFormatting.GREEN : ChatFormatting.GRAY);
 	}
 	public boolean isDown() {
@@ -38,7 +40,7 @@ public enum CCGKey {
 	public @NotNull Key getKey() {
 		return keyMapping.get().getKey();
 	}
-	public @NotNull Component getColoredDisplayName() {
-		return getColoredDisplayName(keyMapping.get());
+	public @NotNull Component getFancyName() {
+		return getFancyName(keyMapping.get());
 	}
 }

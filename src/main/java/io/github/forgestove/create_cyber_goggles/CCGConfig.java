@@ -28,6 +28,7 @@ public class CCGConfig implements ConfigData {
 		@Tooltip public boolean preciseNumber = true;
 		@Tooltip public boolean disableScreenGoggles = true;
 		@Tooltip public boolean canRenderOnValueBox = false;
+		@Tooltip public boolean extraItemTooltip = true;
 	}
 	public static class GameMode {
 		@Tooltip public boolean enableGoggles = true;
@@ -37,7 +38,7 @@ public class CCGConfig implements ConfigData {
 		@Tooltip public boolean enableInAdventure = true;
 	}
 	public static class Overlay {
-		@Tooltip public boolean renderExtraItems = true;
+		@Tooltip public boolean renderItemOverlay = true;
 		@Tooltip public int overlayOffsetX = 0;
 		@Tooltip public int overlayOffsetY = 0;
 		@EnumHandler(option = EnumDisplayOption.BUTTON) public TooltipFlagType tooltipFlagType = TooltipFlagType.Default;

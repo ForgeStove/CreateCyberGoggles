@@ -13,7 +13,9 @@ import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class TableClothUtil {
-	public static void clothStoreOverlay(GuiGraphics graphics, int x, int y, @NotNull List<ItemStack> items, TableClothBlockEntity tcbe) {
+	public static void clothStoreOverlay(GuiGraphics graphics, int x, int y, @NotNull List<ItemStack> items) {
+		var tcbe = getBlockEntity(TableClothBlockEntity.class);
+		if (tcbe == null) return;
 		if (items.isEmpty()) {
 			AllGuiTextures.HOTSLOT.render(graphics, x, y);
 			GuiGameElement.of(Items.BARRIER).at(x + 3, y + 3).render(graphics);
@@ -32,6 +34,7 @@ public class TableClothUtil {
 	public static void tableOverlay(@NotNull GuiGraphics graphics) {
 		var tcbe = getBlockEntity(TableClothBlockEntity.class);
 		if (tcbe == null) return;
+		if (tcbe.isShop()) return;
 		var items = getItems(tcbe);
 		if (items.isEmpty()) return;
 		var itemWidth = 21 * items.size();

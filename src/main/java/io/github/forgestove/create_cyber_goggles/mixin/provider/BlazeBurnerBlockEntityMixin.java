@@ -17,7 +17,7 @@ public abstract class BlazeBurnerBlockEntityMixin implements IHaveGoggleInformat
 	@Shadow protected FuelType activeFuel;
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		return TooltipUtil.burner(tooltip, remainingBurnTime, isCreative, activeFuel);
+		return GoggleTooltipUtil.burner(tooltip, remainingBurnTime, isCreative, activeFuel);
 	}
 	@Inject(method = "tick", at = @At("HEAD"))
 	public void tick(CallbackInfo ci) {

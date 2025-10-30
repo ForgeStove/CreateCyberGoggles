@@ -31,7 +31,7 @@ public class CCGUtil {
 	public static final Minecraft mc = Minecraft.getInstance();
 	public static final Outliner outliner = Outliner.getInstance();
 	private static HitResult cachedHitResult;
-	private static float lastTick;
+	private static float lastRealtimeTick;
 	@Contract(pure = true)
 	public static boolean isInGUI() {
 		return mc.screen != null;
@@ -55,9 +55,9 @@ public class CCGUtil {
 	/** @return 当前帧的{@link HitResult} */
 	private static HitResult getCurrentHitResult() {
 		var currentTick = mc.level != null ? getRealtimeDeltaTicks() : 0;
-		if (lastTick == currentTick && cachedHitResult != null) return cachedHitResult;
+		if (lastRealtimeTick == currentTick && cachedHitResult != null) return cachedHitResult;
 		cachedHitResult = mc.hitResult;
-		lastTick = currentTick;
+		lastRealtimeTick = currentTick;
 		return cachedHitResult;
 	}
 	/** @return 当前的{@link BlockHitResult}，如果不是方块命中则返回 {@code null} */

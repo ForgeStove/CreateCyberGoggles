@@ -19,13 +19,13 @@ import org.jetbrains.annotations.*;
 import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
-public class Overlay {
+public class TooltipOverlay {
 	public static int hoverTicks;
 	public static void register(@NotNull RegisterGuiOverlaysEvent event) {
-		event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "item_tooltip_overlay", Overlay::renderOverlay);
+		event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "item_tooltip_overlay", TooltipOverlay::renderOverlay);
 	}
 	public static void renderOverlay(ForgeGui gui, GuiGraphics graphics, float partialTicks, int width, int height) {
-		if (!CCG.CONFIG.overlay.renderExtraItems || !CCG.CONFIG.gameMode.enableGoggles) return;
+		if (!CCG.CONFIG.overlay.renderItemOverlay || !CCG.CONFIG.gameMode.enableGoggles) return;
 		if (mc.isPaused() || isInGUI() || mc.options.hideGui) {
 			hoverTicks = 0;
 			return;
@@ -87,7 +87,7 @@ public class Overlay {
 			var cfg = AllConfigs.client();
 			var useCreateCustom = cfg.overlayCustomColor.get();
 			var back = useCreateCustom ? new Color(cfg.overlayBackgroundColor.get()) :
-				BoxElement.COLOR_VANILLA_BACKGROUND.scaleAlpha(.75f);
+				BoxElement.COLOR_VANILLA_BACKGROUND.scaleAlpha(0.75F);
 			var top = useCreateCustom ? new Color(cfg.overlayBorderColorTop.get()) : BoxElement.COLOR_VANILLA_BORDER.getFirst().copy();
 			var bot = useCreateCustom ? new Color(cfg.overlayBorderColorBot.get()) : BoxElement.COLOR_VANILLA_BORDER.getSecond().copy();
 			return new Theme(back, top, bot);

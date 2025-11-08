@@ -5,16 +5,20 @@
 	"refmap": "create_cyber_goggles.refmap.json",
 	"client": [
 		"AbstractFilterScreenMixin",
+		"MouseHandlerMixin",
+		"SchematicAndQuillHandlerMixin",
 		"StockKeeperRequestScreenMixin",
 		"accessor.AbstractContainerScreenAccessor",
 		"accessor.KeyMappingAccessor",
 		"accessor.KineticBlockEntityAccessor",
 		"accessor.NozzleBlockEntityAccessor",
+		"accessor.RotationPropagatorAccessor",
 		"chainConveyor.CardboardArmorHandlerMixin",
 		"chainConveyor.ChainConveyorConnectionHandlerMixin",
 		"chainConveyor.ChainConveyorInteractionHandlerMixin",
 		"chainConveyor.ChainConveyorRidingHandlerMixin",
 		"goggles.AllBlockEntityBehavioursMixin",
+		"goggles.BlueprintOverlayRendererMixin",
 		"goggles.DeployerBlockEntityMixin",
 		"goggles.GeneratingKineticBlockEntityMixin",
 		"goggles.GoggleOverlayRendererMixin",
@@ -31,6 +35,7 @@
 		"misc.FilesHelperMixin",
 		"misc.NbtAccounterMixin",
 		"misc.SimpleBackendMixin",
+		"misc.SuperGlueSelectionHandlerMixin",
 		"provider.ArmBlockEntityMixin",
 		"provider.BacktankBlockEntityMixin",
 		"provider.BeltBlockEntityMixin",
@@ -49,6 +54,13 @@
 		"provider.PackageEntityMixin",
 		"provider.PackagePortBlockEntityMixin",
 		"provider.PackagerBlockEntityMixin",
-		"provider.SchematicannonBlockEntityMixin"
+		"provider.SawBlockEntityMixin",
+		"provider.SchematicannonBlockEntityMixin",
+		"provider.TableClothBlockEntityMixin",
+		"wrench.ChassisRangeDisplayMixin",
+		"wrench.RadialWrenchHandlerMixin",
+		"wrench.RadialWrenchMenuMixin",
+		"wrench.ScrollValueRendererMixin",
+		"wrench.ValueSettingsInputHandlerMixin"
 	]
 }

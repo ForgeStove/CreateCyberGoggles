@@ -12,12 +12,12 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 @Mixin(CardboardArmorHandler.class)
 public abstract class CardboardArmorHandlerMixin {
 	@Inject(method = "testForStealth", at = @At("HEAD"), cancellable = true)
-	private static void injectTestForStealth(Entity entityIn, CallbackInfoReturnable<Boolean> returnable) {
+	private static void injectTestForStealth(Entity entityIn, CallbackInfoReturnable<Boolean> cir) {
 		if (!CCG.CONFIG.chainConveyor.cardBoardedYourself) return;
 		if (isServer()) return;
 		if (ChainConveyorRidingHandler.ridingChainConveyor == null) return;
 		if (!(entityIn instanceof LocalPlayer)) return;
 		if (!testForStealth()) return;
-		returnable.setReturnValue(true);
+		cir.setReturnValue(true);
 	}
 }

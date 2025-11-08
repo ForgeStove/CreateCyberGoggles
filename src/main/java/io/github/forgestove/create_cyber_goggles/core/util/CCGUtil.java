@@ -1,5 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.util;
 import com.zurrtum.create.client.catnip.outliner.Outliner;
+import com.zurrtum.create.client.foundation.blockEntity.behaviour.ValueBox;
 import com.zurrtum.create.client.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import com.zurrtum.create.content.equipment.armor.CardboardArmorItem;
 import com.zurrtum.create.foundation.blockEntity.SmartBlockEntity;
@@ -7,13 +8,13 @@ import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.mixin.accessor.AbstractContainerScreenAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ServerboundPlayerInputPacket;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Input;
@@ -25,13 +26,14 @@ import net.minecraft.world.phys.HitResult.Type;
 import net.minecraft.world.phys.shapes.Shapes;
 import org.jetbrains.annotations.*;
 
-import java.awt.Color;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 public class CCGUtil {
-	/** 获取当前的 {@link Minecraft} 客户端实例。 */
 	public static final Minecraft mc = Minecraft.getInstance();
 	public static final Outliner outliner = Outliner.getInstance();
+	private static HitResult cachedHitResult;
+	private static float lastRealtimeTick;
 	@Contract(pure = true)
 	public static boolean isInGUI() {
 		return mc.screen != null;
@@ -46,95 +48,72 @@ public class CCGUtil {
 	public static boolean isServer() {
 		return !isClient();
 	}
-	/**
-	 * 尝试将给定对象转换为指定类型。
-	 * <p>
-	 * 该方法等价于：{@code object instanceof T ? (T) object : null}
-	 *
-	 * @param clazz  目标类型的Class对象
-	 * @param object 待转换的对象
-	 * @param <T>    目标类型
-	 * @return 转换后的对象或{@code null}
-	 */
+	public static float getRealtimeDeltaTicks() {
+		return mc.getDeltaTracker().getRealtimeDeltaTicks();
+	}
 	public static <T extends U, U> @Nullable T getAs(@NotNull Class<T> clazz, U object) {
 		return clazz.isInstance(object) ? clazz.cast(object) : null;
 	}
-	/**
-	 * 获取当前玩家的方块命中结果。
-	 *
-	 * @return 当前的 {@link BlockHitResult}，如果不是方块命中则返回 {@code null}
-	 */
+	/** @return 当前帧的{@link HitResult} */
+	private static HitResult getCurrentHitResult() {
+		var currentTick = mc.level != null ? getRealtimeDeltaTicks() : 0;
+		if (lastRealtimeTick == currentTick && cachedHitResult != null) return cachedHitResult;
+		cachedHitResult = mc.hitResult;
+		lastRealtimeTick = currentTick;
+		return cachedHitResult;
+	}
+	/** @return 当前的{@link BlockHitResult}，如果不是方块命中则返回 {@code null} */
 	@Contract(pure = true)
 	public static @Nullable BlockHitResult getBlockHitResult() {
-		return mc.hitResult instanceof BlockHitResult result ? result.getType() != Type.MISS ? result : null : null;
+		return getCurrentHitResult() instanceof BlockHitResult result && result.getType() != Type.MISS ? result : null;
 	}
-	/**
-	 * 获取当前玩家的实体命中结果。
-	 *
-	 * @return 当前的 {@link EntityHitResult}，如果不是实体命中则返回 {@code null}
-	 */
+	/** @return 当前的{@link EntityHitResult}，如果不是实体命中则返回 {@code null} */
 	@Contract(pure = true)
 	public static @Nullable EntityHitResult getEntityHitResult() {
-		return mc.hitResult instanceof EntityHitResult result ? result : null;
+		return getCurrentHitResult() instanceof EntityHitResult result ? result : null;
 	}
-	/**
-	 * 获取当前玩家选中的方块实体。
-	 * 如果没有选中方块或选中的方块不是{@link BlockEntity}类型，则返回{@code null}。
-	 *
-	 * @return 当前选中的{@link BlockEntity}实例，如果没有选中或类型不匹配则返回{@code null}
-	 */
+	/** @return 当前选中的{@link BlockEntity}实例，如果没有选中或类型不匹配则返回{@code null} */
 	public static @Nullable BlockEntity getBlockEntity() {
 		if (mc.level == null) return null;
 		var result = getBlockHitResult();
 		if (result == null || result.getType() == Type.MISS) return null;
 		return mc.level.getBlockEntity(result.getBlockPos());
 	}
-	/**
-	 * 获取指定类型的方块实体实例。
-	 *
-	 * @param clazz 目标方块实体的类型
-	 * @param <T>   方块实体类型
-	 * @return 如果类型匹配则返回对应实例，否则返回{@code null}
-	 */
-	public static <T extends BlockEntity> T getBlockEntity(Class<T> clazz) {
+	/** @return 如果类型匹配{@link T}则返回对应实例，否则返回{@code null} */
+	public static <T extends BlockEntity> @Nullable T getBlockEntity(Class<T> clazz) {
 		return getAs(clazz, getBlockEntity());
 	}
-	/**
-	 * 获取当前玩家选中的方块。
-	 *
-	 * @return 当前选中的{@link Block}实例，如果没有选中或类型不匹配则返回{@code null}
-	 */
+	/** @return 当前选中的{@link Block}实例，如果没有选中或类型不匹配则返回{@code null} */
 	public static @Nullable Block getBlock() {
 		if (mc.level == null) return null;
 		var result = getBlockHitResult();
 		if (result == null || result.getType() == Type.MISS) return null;
 		return mc.level.getBlockState(result.getBlockPos()).getBlock();
 	}
-	/**
-	 * 获取指定类型的方块实例。
-	 *
-	 * @param clazz 目标方块的类型
-	 * @param <T>   方块类型
-	 * @return 如果类型匹配则返回对应实例，否则返回{@code null}
-	 */
-	public static <T extends Block> T getBlock(Class<T> clazz) {
+	/** @return 如果类型匹配{@link T}则返回对应实例，否则返回{@code null} */
+	public static <T extends Block> @Nullable T getBlock(Class<T> clazz) {
 		return getAs(clazz, getBlock());
 	}
-	/**
-	 * 获取当前玩家选中的实体。
-	 *
-	 * @return 当前选中的{@link Entity}实例，如果没有选中或类型不匹配则返回{@code null}
-	 */
+	/** @return 选中的{@link Entity}实例，如果没有选中或类型不匹配则返回{@code null} */
 	public static @Nullable Entity getEntity() {
 		var result = getEntityHitResult();
 		return result != null ? result.getEntity() : null;
 	}
-	/**
-	 * 获取当前上下文中的相关过滤器物品。
-	 *
-	 * @return 相关的过滤器物品，如果无法获取则返回{@code null}
-	 */
-	public static @Nullable ItemStack getRelevantFilterItem() {
+	/** @return 如果输入不为{@code null}则返回其本身，否则返回{@link ItemStack#EMPTY} */
+	@Contract(value = "!null -> param1", pure = true)
+	public static @NotNull ItemStack orEmpty(@Nullable ItemStack itemStack) {
+		return Objects.requireNonNullElse(itemStack, ItemStack.EMPTY);
+	}
+	@Contract("_, _ -> new")
+	public static @NotNull ResourceLocation getRes(String namespace, String path) {
+		return ResourceLocation.fromNamespaceAndPath(namespace, path);
+	}
+	@Contract("_ -> new")
+	public static @NotNull ResourceLocation getCCGRes(String path) {
+		return getRes(CCG.ID, path);
+	}
+	/** @return 选中的过滤器物品，如果未选中则返回{@code null} */
+	public static @Nullable ItemStack getSelectedFilter() {
 		if (isInGUI()) {
 			if (!(mc.screen instanceof AbstractContainerScreen<?> screen)) return null;
 			var slot = ((AbstractContainerScreenAccessor) screen).getHoveredSlot();
@@ -144,43 +123,33 @@ public class CCGUtil {
 		var sbe = getBlockEntity(SmartBlockEntity.class);
 		if (sbe == null || result == null) return null;
 		var behaviour = sbe.getBehaviour(FilteringBehaviour.TYPE);
-		return behaviour == null ? ItemStack.EMPTY : behaviour.getFilter(result.getDirection());
+		return behaviour == null ? null : behaviour.getFilter(result.getDirection());
 	}
-	/**
-	 * 获取指定方块位置的包围盒{@link AABB}。
-	 * <p>
-	 * 如果{@code ClientLevel}为{@code null}，则返回{@code null}。
-	 * <p>
-	 * 若方块形状为空，则使用完整方块形状{@code Shapes.block()}。
-	 *
-	 * @param blockPos 方块位置
-	 * @return 该方块的{@link AABB}包围盒，若无法获取则返回{@code null}
-	 */
+	/** @return 该位置方块的{@link AABB}包围盒，若无法获取则返回{@link Shapes#block()}的包围盒 */
 	public static @NotNull AABB getBounds(BlockPos blockPos) {
 		if (mc.level == null) return Shapes.block().bounds();
 		var shape = mc.level.getBlockState(blockPos).getShape(mc.level, blockPos);
 		return (shape.isEmpty() ? Shapes.block() : shape).bounds().move(blockPos);
 	}
-	/**
-	 * 根据进度值生成渐变色。
-	 * <p>
-	 * 使用HSB色彩空间，色相随进度变化，饱和度和亮度固定为1.0。
-	 *
-	 * @param progress 渐变进度，范围通常为0.0~1.0
-	 * @return 代表渐变色的RGB整数值
-	 */
-	@Contract(pure = true)
-	public static int getGradientColor(float progress) {
-		return Color.HSBtoRGB(progress * 0.33f, 1.0f, 1.0f);
+	/** @return 如果存在激活的{@link ValueBox}则返回{@code true}，否则返回{@code false} */
+	public static boolean hasActivedValueBox() {
+		for (var entry : outliner.getOutlines().values()) {
+			if (!entry.isAlive()) continue;
+			var outline = entry.getOutline();
+			if (outline instanceof ValueBox valueBox && !valueBox.isPassive) return true;
+		}
+		return false;
 	}
-	/**
-	 * 检测本地玩家是否穿着全套纸板盔甲并且不在飞行状态。
-	 */
+	/** 检测本地玩家是否穿着全套纸板盔甲并且不在飞行状态 */
 	public static boolean testForStealth() {
 		if (mc.player == null) return false;
 		var allMatch = Stream.of(EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET)
 			.allMatch(slot -> mc.player.getItemBySlot(slot).getItem() instanceof CardboardArmorItem);
 		return CCG.CONFIG.chainConveyor.cardBoardedYourself && !mc.player.getAbilities().flying && allMatch;
+	}
+	/** @return 如果玩家主手或副手中有物品则返回{@code true}，否则返回{@code false} */
+	public static boolean hasItemInHand() {
+		return mc.player != null && !Stream.of(mc.player.getMainHandItem(), mc.player.getOffhandItem()).allMatch(ItemStack::isEmpty);
 	}
 	/**
 	 * 播放指定的音效
@@ -210,11 +179,7 @@ public class CCGUtil {
 		var newEnabled = !enabled;
 		setter.accept(newEnabled);
 		if (mc.player == null) return;
-		CCGLang.translate(messageKey)
-			.space()
-			.add(CCGLang.enabled(newEnabled))
-			.style(enabled ? ChatFormatting.RED : ChatFormatting.GREEN)
-			.sendStatus(mc.player);
+		CCGLang.translate(messageKey).space().add(CCGLang.enabled(newEnabled)).sendStatus(mc.player);
 	}
 	/** 向服务器发送玩家动作指令。 */
 	public static void sendShift(boolean shift) {

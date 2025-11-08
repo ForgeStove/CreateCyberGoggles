@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.mixin.goggles;
 import com.zurrtum.create.client.foundation.blockEntity.behaviour.tooltip.*;
 import com.zurrtum.create.content.kinetics.base.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.TooltipUtil;
+import io.github.forgestove.create_cyber_goggles.core.util.GoggleTooltipUtil;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
@@ -23,7 +23,7 @@ public abstract class GeneratingKineticBlockEntityMixin<T extends KineticBlockEn
 			returnable.setReturnValue(false);
 			return;
 		}
-		TooltipUtil.generatingKinetic(tooltip, (GeneratingKineticBlockEntity) blockEntity);
+		GoggleTooltipUtil.generatingKinetic(tooltip, (GeneratingKineticBlockEntity) blockEntity);
 		returnable.setReturnValue(super.addToGoggleTooltip(tooltip, isPlayerSneaking));
 	}
 }

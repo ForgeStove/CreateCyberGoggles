@@ -19,7 +19,7 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class DelayRender {
 	public static Object2IntOpenHashMap<BlockEntity> cachedBE = new Object2IntOpenHashMap<>();
 	public static void tick(Minecraft mc) {
-		if (!CCG.CONFIG.outlineRenderer.renderAnalogBox) return;
+		if (!CCG.CONFIG.outliner.renderAnalogBox) return;
 		if (mc.level == null) {
 			cachedBE.clear();
 			return;
@@ -30,7 +30,7 @@ public class DelayRender {
 			|| be instanceof NozzleBlockEntity
 			|| be instanceof ArmBlockEntity
 			|| be instanceof EjectorBlockEntity
-			|| be instanceof PackagePortBlockEntity) cachedBE.put(be, CCG.CONFIG.outlineRenderer.delayRenderDuration);
+			|| be instanceof PackagePortBlockEntity) cachedBE.put(be, CCG.CONFIG.outliner.delayRenderDuration);
 		if (cachedBE.isEmpty()) return;
 		cachedBE.object2IntEntrySet().removeIf(entry -> {
 			var blockEntity = entry.getKey();
@@ -120,7 +120,7 @@ public class DelayRender {
 		}
 	}
 	public static int getColor(boolean pushing) {
-		return pushing ? CCG.CONFIG.outlineRenderer.windPushColor : CCG.CONFIG.outlineRenderer.windPullColor;
+		return pushing ? CCG.CONFIG.outliner.outColor : CCG.CONFIG.outliner.inColor;
 	}
 	public static double getOffset(int i, int numberOfFlowBoxes) {
 		return (System.currentTimeMillis() + i * ((double) 3000 / numberOfFlowBoxes)) % 3000 / 3000.0;
@@ -151,7 +151,7 @@ public class DelayRender {
 		Outliner.getInstance()
 			.chaseAABB("EjectorTargetBox" + ebe, getBounds(ebe.getTargetPosition()))
 			.lineWidth(1 / 16f)
-			.colored(CCG.CONFIG.outlineRenderer.windPushColor);
+			.colored(CCG.CONFIG.outliner.outColor);
 	}
 	public static void render(@NotNull PackagePortBlockEntity ppbe) {
 		var mc = Minecraft.getInstance();

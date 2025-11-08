@@ -17,7 +17,7 @@ import java.util.*;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public class ItemTooltip {
 	public static void itemTooltip(ItemStack stack, TooltipContext ignoredContext, TooltipFlag ignoredFlag, List<Component> tooltip) {
-		if (!CCG.CONFIG.goggles.enhancedInfo) return;
+		if (!CCG.CONFIG.goggles.extraItemTooltip) return;
 		goggles(stack, tooltip);
 		backtank(stack, tooltip);
 		divingBoots(stack, tooltip);

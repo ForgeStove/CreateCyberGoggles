@@ -1,23 +1,23 @@
 package io.github.forgestove.create_cyber_goggles.mixin.provider;
-import com.zurrtum.create.content.logistics.packagePort.*;
+import com.zurrtum.create.content.logistics.packagePort.PackagePortBlockEntity;
 import com.zurrtum.create.foundation.blockEntity.SmartBlockEntity;
-import io.github.forgestove.create_cyber_goggles.core.util.IOutlineRenderable;
+import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.*;
-import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.Mixin;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.outliner;
-@Mixin(value = PackagePortBlockEntity.class, remap = false)
-public abstract class PackagePortBlockEntityMixin extends SmartBlockEntity implements IOutlineRenderable {
-	@Shadow public PackagePortTarget target;
+@Mixin(PackagePortBlockEntity.class)
+public abstract class PackagePortBlockEntityMixin extends SmartBlockEntity implements OutlineRenderable, Self<PackagePortBlockEntity> {
 	public PackagePortBlockEntityMixin(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
 	}
 	@Override
 	public void ccg$render() {
 		var pos = getBlockPos();
+		var target = self().target;
 		if (target == null) return;
 		var source = Vec3.atBottomCenterOf(pos);
 		var exactTarget = target.getExactTargetLocation((PackagePortBlockEntity) (Object) this, level, pos);

@@ -19,7 +19,6 @@
 	"create_cyber_goggles.tooltip.pullRange": "Діапазон витягування",
 	"create_cyber_goggles.tooltip.pushRange": "Діапазон натискання",
 	"create_cyber_goggles.tooltip.windState": "Стан вітру:",
-	"key.categories.create_cyber_goggles": "Create: Cyber Goggles",
 	"modmenu.descriptionTranslation.create_cyber_goggles": "Клієнтське доповнення для Create, яке надає модульні допоміжні функції",
 	"modmenu.nameTranslation.create_cyber_goggles": "Create: Cyber Goggles",
 	"text.autoconfig.create_cyber_goggles.category.chainConveyor": "Ланцюгівниця",

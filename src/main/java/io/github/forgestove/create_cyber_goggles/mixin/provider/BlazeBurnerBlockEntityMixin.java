@@ -18,7 +18,7 @@ public abstract class BlazeBurnerBlockEntityMixin extends SmartBlockEntity {
 	@Inject(method = "tick", at = @At("HEAD"))
 	public void tick(CallbackInfo callbackInfo) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return;
-		if (level == null || !level.isClientSide) return;
+		if (level == null || !level.isClientSide()) return;
 		if (isCreative) return;
 		if (remainingBurnTime > 0) remainingBurnTime--;
 	}

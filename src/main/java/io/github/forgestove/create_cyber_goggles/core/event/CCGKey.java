@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.*;
 
 import static com.mojang.blaze3d.platform.InputConstants.*;
+import static io.github.forgestove.create_cyber_goggles.CCG.ID;
 public enum CCGKey {
 	openConfig,
 	openStock,
@@ -20,18 +21,14 @@ public enum CCGKey {
 		this(UNKNOWN.getValue());
 	}
 	CCGKey(int key) {
-		keyMapping = new KeyMapping(CCG.ID + ".key." + name(), key, "key.categories." + CCG.ID);
+		keyMapping = new KeyMapping(ID + ".key." + name(), key, CCG.CATEGORY);
 	}
 	public static void register() {
 		for (var key : values()) KeyBindingHelper.registerKeyBinding(key.keyMapping);
 	}
-	//	public boolean isDown() {
-	//		var key = ((KeyMappingAccessor) keyMapping).getKey();
-	//		return !key.equals(UNKNOWN) && isKeyDown(mc.getWindow().getWindow(), key.getValue());
-	//	}
 	public boolean isDown() {
 		var key = ((KeyMappingAccessor) keyMapping).getKey();
-		var isDown = key != UNKNOWN && isKeyDown(Minecraft.getInstance().getWindow().getWindow(), key.getValue());
+		var isDown = key != UNKNOWN && isKeyDown(Minecraft.getInstance().getWindow(), key.getValue());
 		var currentTime = System.currentTimeMillis();
 		if (isDown && !wasDown) {
 			wasDown = true;

@@ -26,7 +26,7 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 		}
 		var mainHandItem = mc.player.getMainHandItem();
 		if (getBlock(ChainConveyorBlock.class) == null || !mc.player.isShiftKeyDown()
-			&& !mainHandItem.getItem().equals(Items.CHAIN)
+			&& !mainHandItem.getItem().equals(Items.IRON_CHAIN)
 			&& !mainHandItem.is(AllBlocks.CHAIN_CONVEYOR.asItem())) returnable.setReturnValue(true);
 	}
 	@WrapOperation(

@@ -43,7 +43,7 @@ public class PlayerInteract {
 		InteractionHand hand,
 		BlockHitResult hitResult
 	) {
-		if (!level.isClientSide) return InteractionResult.PASS;
+		if (!level.isClientSide()) return InteractionResult.PASS;
 		if (!CCG.CONFIG.wrench.betterEncasedPipe) return InteractionResult.PASS;
 		if (hand != InteractionHand.MAIN_HAND) return InteractionResult.PASS;
 		if (!(hitResult instanceof BlockHitResult bhr)) return InteractionResult.PASS;

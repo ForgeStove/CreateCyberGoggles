@@ -30,10 +30,10 @@
 		"fabricloader": "*",
 		"minecraft": "*",
 		"create": "*",
-		"cloth-config": "*"
+		"cloth-config": "*",
+		"modmenu": "*"
 	},
 	"suggests": {
-		"modmenu": "*",
 		"jei": "*"
 	}
 }

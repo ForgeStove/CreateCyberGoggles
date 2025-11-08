@@ -55,15 +55,13 @@ publishMods {
 		accessToken.set(providers.environmentVariable("MODRINTH_TOKEN"))
 		projectId.set("TlQAWQCY")
 		minecraftVersions.add(p("mcVersion"))
-		requires("create-fly", "cloth-config")
-		optional("modmenu")
+		requires("create-fly", "cloth-config", "modmenu")
 	}
 	curseforge {
 		accessToken.set(providers.environmentVariable("CURSEFORGE_TOKEN"))
 		projectId.set("1233804")
 		minecraftVersions.add(p("mcVersion"))
-		requires("create-fly", "cloth-config")
-		optional("modmenu")
+		requires("create-fly", "cloth-config", "modmenu")
 	}
 }
 fun p(key: String) = property(key).toString()

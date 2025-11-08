@@ -11,7 +11,7 @@ import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.outliner;
-@Mixin(value = NozzleBlockEntity.class, remap = false)
+@Mixin(NozzleBlockEntity.class)
 public abstract class NozzleBlockEntityMixin extends SmartBlockEntity implements OutlineRenderable {
 	@Shadow private boolean pushing;
 	@Shadow private float range;

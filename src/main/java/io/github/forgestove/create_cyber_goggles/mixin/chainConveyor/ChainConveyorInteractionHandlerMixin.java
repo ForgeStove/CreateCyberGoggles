@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
-@Mixin(value = ChainConveyorInteractionHandler.class, remap = false)
+@Mixin(ChainConveyorInteractionHandler.class)
 public abstract class ChainConveyorInteractionHandlerMixin {
 	@Shadow public static BlockPos selectedConnection, selectedLift;
 	@Shadow public static float selectedChainPosition;

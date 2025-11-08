@@ -2,7 +2,6 @@
 	"required": false,
 	"minVersion": "0",
 	"package": "io.github.forgestove.create_cyber_goggles.mixin",
-	"refmap": "create_cyber_goggles.refmap.json",
 	"client": [
 		"AbstractFilterScreenMixin",
 		"MouseHandlerMixin",

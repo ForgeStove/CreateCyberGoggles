@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
-@Mixin(value = PoweredShaftTooltipBehaviour.class, remap = false)
+@Mixin(PoweredShaftTooltipBehaviour.class)
 public abstract class PoweredShaftBlockEntityMixin extends GeneratingKineticTooltipBehaviour<PoweredShaftBlockEntity> {
 	public PoweredShaftBlockEntityMixin(PoweredShaftBlockEntity be) {
 		super(be);

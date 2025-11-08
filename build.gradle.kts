@@ -19,7 +19,6 @@ configurations.configureEach { resolutionStrategy.force("net.fabricmc:fabric-loa
 loom {
 	enableTransitiveAccessWideners = true
 	runConfigs.configureEach { ideConfigGenerated(false) }
-	@Suppress("UnstableApiUsage") mixin.defaultRefmapName.set("${p("modId")}.refmap.json")
 	runs {
 		configureEach { vmArgs("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition") }
 		remove(getByName("server"))

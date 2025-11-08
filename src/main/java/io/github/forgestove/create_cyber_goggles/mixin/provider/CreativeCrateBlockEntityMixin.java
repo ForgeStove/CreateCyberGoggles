@@ -4,7 +4,7 @@ import com.zurrtum.create.foundation.blockEntity.behaviour.filtering.ServerFilte
 import io.github.forgestove.create_cyber_goggles.core.util.ItemRenderable;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.*;
-@Mixin(value = CreativeCrateBlockEntity.class, remap = false)
+@Mixin(CreativeCrateBlockEntity.class)
 public abstract class CreativeCrateBlockEntityMixin implements ItemRenderable {
 	@Shadow ServerFilteringBehaviour filtering;
 	@Override

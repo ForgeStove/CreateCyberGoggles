@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
-@Mixin(value = DeployerTooltipBehaviour.class, remap = false)
+@Mixin(DeployerTooltipBehaviour.class)
 public abstract class DeployerBlockEntityMixin extends KineticTooltipBehaviour<DeployerBlockEntity> {
 	public DeployerBlockEntityMixin(DeployerBlockEntity be) {
 		super(be);

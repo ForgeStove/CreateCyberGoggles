@@ -5,7 +5,7 @@ import io.github.forgestove.create_cyber_goggles.core.util.Self;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-@Mixin(value = BlazeBurnerBlockEntity.class, remap = false)
+@Mixin(BlazeBurnerBlockEntity.class)
 public abstract class BlazeBurnerBlockEntityMixin implements Self<BlazeBurnerBlockEntity> {
 	@Shadow protected int remainingBurnTime;
 	@Inject(method = "tick", at = @At("HEAD"))

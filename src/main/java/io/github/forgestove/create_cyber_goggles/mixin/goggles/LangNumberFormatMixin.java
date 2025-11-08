@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.text.NumberFormat;
-@Mixin(value = LangNumberFormat.class, remap = false)
+@Mixin(LangNumberFormat.class)
 public abstract class LangNumberFormatMixin {
 	@Inject(method = "format", at = @At("HEAD"), cancellable = true)
 	private static void format(double d, CallbackInfoReturnable<String> cir) {

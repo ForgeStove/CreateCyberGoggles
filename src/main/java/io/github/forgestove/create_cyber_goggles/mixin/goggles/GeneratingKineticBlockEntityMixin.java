@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
-@Mixin(value = GeneratingKineticTooltipBehaviour.class, remap = false)
+@Mixin(GeneratingKineticTooltipBehaviour.class)
 public abstract class GeneratingKineticBlockEntityMixin<T extends KineticBlockEntity> extends KineticTooltipBehaviour<T> {
 	public GeneratingKineticBlockEntityMixin(T be) {
 		super(be);

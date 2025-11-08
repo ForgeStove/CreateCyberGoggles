@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static com.zurrtum.create.client.AllBlockEntityBehaviours.add;
-@Mixin(value = AllBlockEntityBehaviours.class, remap = false)
+@Mixin(AllBlockEntityBehaviours.class)
 public abstract class AllBlockEntityBehavioursMixin {
 	@Inject(method = "register", at = @At("TAIL"))
 	private static void register(CallbackInfo callbackInfo) {

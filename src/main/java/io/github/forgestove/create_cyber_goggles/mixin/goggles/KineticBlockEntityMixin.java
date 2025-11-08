@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
-@Mixin(value = KineticTooltipBehaviour.class, remap = false)
+@Mixin(KineticTooltipBehaviour.class)
 public abstract class KineticBlockEntityMixin<T extends KineticBlockEntity> extends TooltipBehaviour<T> {
 	public KineticBlockEntityMixin(T be) {
 		super(be);

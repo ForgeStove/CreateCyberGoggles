@@ -126,6 +126,8 @@
 	"text.autoconfig.create_cyber_goggles.option.misc.preventSelectionDiscard.@Tooltip": "Prevent selection discarding when switching items",
 	"text.autoconfig.create_cyber_goggles.option.misc.removeCardboardOverlay": "Remove Cardboard Overlay",
 	"text.autoconfig.create_cyber_goggles.option.misc.removeCardboardOverlay.@Tooltip": "Remove the cardboard suit view obstruction when crouching",
+	"text.autoconfig.create_cyber_goggles.option.misc.removeMechanicalArmLimit": "Remove Mechanical Arm Limit",
+	"text.autoconfig.create_cyber_goggles.option.misc.removeMechanicalArmLimit.@Tooltip": "Remove the reach limit of mechanical arm",
 	"text.autoconfig.create_cyber_goggles.option.misc.removeNetheriteFirstPerson": "Remove First Person Backtank Render",
 	"text.autoconfig.create_cyber_goggles.option.misc.removeNetheriteFirstPerson.@Tooltip": "Remove the first-person render effect of the Netherite Backtank",
 	"text.autoconfig.create_cyber_goggles.option.misc.showScrapContent": "Show Scrap Content",

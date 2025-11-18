@@ -24,6 +24,7 @@
 		"goggles.PackageItemMixin",
 		"goggles.PackagePortTargetSelectionHandlerMixin",
 		"goggles.PoweredShaftBlockEntityMixin",
+		"misc.ArmInteractionPointHandlerMixin",
 		"misc.CardboardArmorStealthOverlayMixin",
 		"misc.ContraptionHandlerClientMixin",
 		"misc.CreateJEIMixin",

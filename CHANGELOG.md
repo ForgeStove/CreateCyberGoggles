@@ -1,4 +1,1 @@
-- Add tip for cloth store
-- Add useSchematic hotkey to create schematic without any schematic and quill
-- Add extraItemTooltip option for individually control item tooltip
-- Fix translation
+- Add option to remove the range limit of the mechanical arm

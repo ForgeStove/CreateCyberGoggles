@@ -74,6 +74,7 @@ public class CCGConfig implements ConfigData {
 		@Tooltip public boolean enchancedRotationMenu = false;
 	}
 	public static class Misc {
+		@Tooltip public boolean removeMechanicalArmLimit = false;
 		@Tooltip public boolean preventSelectionDiscard = true;
 		@Tooltip public boolean infEditBoxLength = false;
 		@Tooltip public boolean removeCardboardOverlay = true;

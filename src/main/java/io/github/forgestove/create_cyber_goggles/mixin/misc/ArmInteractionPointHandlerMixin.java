@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.mixin.misc;
 import com.llamalad7.mixinextras.injector.wrapoperation.*;
-import com.simibubi.create.content.kinetics.mechanicalArm.ArmInteractionPointHandler;
+import com.zurrtum.create.client.content.kinetics.mechanicalArm.ArmInteractionPointHandler;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.core.*;
 import org.spongepowered.asm.mixin.Mixin;

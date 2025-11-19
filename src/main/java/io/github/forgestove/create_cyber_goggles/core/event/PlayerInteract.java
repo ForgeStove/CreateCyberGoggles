@@ -35,6 +35,7 @@ public class PlayerInteract {
 		chassis();
 		tableCloth();
 	}
+	@SuppressWarnings("SameReturnValue")
 	public static @NotNull InteractionResult rightClick(
 		Player player,
 		@NotNull Level level,
@@ -46,7 +47,7 @@ public class PlayerInteract {
 		encasedCogWheel(player, level, hand, hitResult);
 		chassis(player, level, hand, hitResult);
 		tableCloth();
-		return InteractionResult.SUCCESS;
+		return InteractionResult.PASS;
 	}
 	private static void wrench(Minecraft mc) {
 		if (dismantleDelay < 10) dismantleDelay++;

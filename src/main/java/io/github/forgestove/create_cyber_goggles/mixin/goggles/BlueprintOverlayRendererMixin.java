@@ -7,6 +7,7 @@ import io.github.forgestove.create_cyber_goggles.core.util.TableClothUtil;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -32,8 +33,11 @@ public abstract class BlueprintOverlayRendererMixin {
 		RenderSystem.disableBlend();
 	}
 	@Inject(
-		method = "renderOverlay",
-		at = @At(value = "FIELD", target = "Lcom/simibubi/create/content/equipment/blueprint/BlueprintOverlayRenderer;active:Z")
+		method = "renderOverlay", at = @At(
+		value = "FIELD",
+		target = "Lcom/simibubi/create/content/equipment/blueprint/BlueprintOverlayRenderer;active:Z",
+		opcode = Opcodes.GETSTATIC
+	)
 	)
 	private static void resetTCBE(ForgeGui gui, GuiGraphics graphics, float partialTicks, int width, int height, CallbackInfo ci) {
 		if (!CCG.CONFIG.goggles.betterStoreInfo) return;

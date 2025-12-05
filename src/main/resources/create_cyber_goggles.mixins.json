@@ -34,6 +34,7 @@
 		"misc.FilesHelperMixin",
 		"misc.NbtAccounterMixin",
 		"misc.NetheriteBacktankFirstPersonRendererMixin",
+		"misc.RedstoneRequesterScreenMixin",
 		"misc.SequencedAssemblyCategoryMixin",
 		"misc.SimpleBackendMixin",
 		"misc.SuperGlueSelectionHandlerMixin",

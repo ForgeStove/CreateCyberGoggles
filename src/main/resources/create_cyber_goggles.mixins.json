@@ -32,6 +32,7 @@
 		"misc.ContraptionHandlerClientMixin",
 		"misc.DivingBootsItemMixin",
 		"misc.EditBoxMixin",
+		"misc.FactoryPanelScreenMixin",
 		"misc.FilesHelperMixin",
 		"misc.NbtAccounterMixin",
 		"misc.SimpleBackendMixin",

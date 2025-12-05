@@ -75,7 +75,7 @@ public class CCGConfig implements ConfigData {
 	}
 	public static class Misc {
 		@Tooltip public boolean removeMechanicalArmLimit = false;
-		@Tooltip public boolean removeFactoryPanelLimit = true;
+		@Tooltip public boolean removeRequestLimit = true;
 		@Tooltip public boolean preventSelectionDiscard = true;
 		@Tooltip public boolean infEditBoxLength = false;
 		@Tooltip public boolean removeCardboardOverlay = true;

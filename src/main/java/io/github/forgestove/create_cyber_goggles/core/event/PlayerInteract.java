@@ -23,6 +23,7 @@ import static net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.Lef
 public class PlayerInteract {
 	private static long lastDismantleTime, dismantleDelay = 10;
 	private static long lastTick;
+	private static boolean isShiftKeyDown;
 	public static void tick(ClientTickEvent.Pre ignoredEvent) {
 		wrench();
 		encasedCogWheel();
@@ -36,6 +37,7 @@ public class PlayerInteract {
 	}
 	public static void rightClick(RightClickBlock event) {
 		if (isServer()) return;
+		if (isShiftKeyDown) event.setCanceled(true);
 		enacesdPipe(event);
 		encasedCogWheel(event);
 		chassis(event);
@@ -60,8 +62,10 @@ public class PlayerInteract {
 		var result = getBlockHitResult();
 		if (result == null) return;
 		sendAction(Action.PRESS_SHIFT_KEY);
+		isShiftKeyDown = true;
 		mc.gameMode.useItemOn(player, handWithWrench, result);
 		sendAction(Action.RELEASE_SHIFT_KEY);
+		isShiftKeyDown = false;
 		lastDismantleTime = System.currentTimeMillis();
 		event.setCanceled(true);
 	}

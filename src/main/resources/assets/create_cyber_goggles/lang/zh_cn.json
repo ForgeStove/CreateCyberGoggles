@@ -126,6 +126,8 @@
 	"text.autoconfig.create_cyber_goggles.option.misc.preventSelectionDiscard.@Tooltip": "防止在切换物品时丢弃选区",
 	"text.autoconfig.create_cyber_goggles.option.misc.removeCardboardOverlay": "移除纸板套视线遮挡",
 	"text.autoconfig.create_cyber_goggles.option.misc.removeCardboardOverlay.@Tooltip": "移除纸板套在潜行时的视线遮挡",
+	"text.autoconfig.create_cyber_goggles.option.misc.removeFactoryPanelLimit": "移除工厂仪表限制",
+	"text.autoconfig.create_cyber_goggles.option.misc.removeFactoryPanelLimit.@Tooltip": "移除工厂仪表的请求数量限制",
 	"text.autoconfig.create_cyber_goggles.option.misc.removeMechanicalArmLimit": "移除动力臂限制",
 	"text.autoconfig.create_cyber_goggles.option.misc.removeMechanicalArmLimit.@Tooltip": "移除动力臂的距离限制",
 	"text.autoconfig.create_cyber_goggles.option.misc.removeNetheriteFirstPerson": "移除第一人称背罐渲染",

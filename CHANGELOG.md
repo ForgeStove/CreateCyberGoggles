@@ -1,2 +1,2 @@
-- Add removeFactoryPanelLimit option to remove the request limit for the factory panel
+- Add removeRequestLimit option to remove the request limit for the factory panel and redstone requester
 - Fix crash when use leftClickFastDismantle on glass pipe

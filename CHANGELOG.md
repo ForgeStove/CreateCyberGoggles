@@ -1,1 +1,2 @@
-- Add option to remove the range limit of the mechanical arm
+- Add removeFactoryPanelLimit option to remove the request limit for the factory panel
+- Fix crash when use leftClickFastDismantle on glass pipe

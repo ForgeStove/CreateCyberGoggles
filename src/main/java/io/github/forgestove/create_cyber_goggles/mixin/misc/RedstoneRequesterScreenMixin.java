@@ -9,13 +9,13 @@ import org.spongepowered.asm.mixin.injection.*;
 import java.util.List;
 @Mixin(RedstoneRequesterScreen.class)
 public abstract class RedstoneRequesterScreenMixin {
-	@Shadow private List<Integer> amounts;
+	@Shadow(remap = false) private List<Integer> amounts;
 	@ModifyConstant(method = "mouseScrolled", constant = @Constant(intValue = 256))
 	public int modifyMaxScrollAmount(int original) {
 		return CCG.CONFIG.misc.removeRequestLimit ? Integer.MAX_VALUE : original;
 	}
 	@ModifyConstant(method = "mouseScrolled", constant = @Constant(intValue = 10))
 	public int modifyPerScrollAmount(int original, @Local(name = "i") int i) {
-		return CCG.CONFIG.misc.removeRequestLimit ? Item.DEFAULT_MAX_STACK_SIZE - (amounts.get(i) == 1 ? 1 : 0) : original;
+		return CCG.CONFIG.misc.removeRequestLimit ? Item.MAX_STACK_SIZE - (amounts.get(i) == 1 ? 1 : 0) : original;
 	}
 }

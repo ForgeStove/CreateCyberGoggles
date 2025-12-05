@@ -6,6 +6,7 @@ import io.github.forgestove.create_cyber_goggles.core.util.TableClothUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -27,8 +28,11 @@ public abstract class BlueprintOverlayRendererMixin {
 		TableClothUtil.clothStoreOverlay(graphics, x, y, results);
 	}
 	@Inject(
-		method = "renderOverlay",
-		at = @At(value = "FIELD", target = "Lcom/zurrtum/create/client/content/equipment/blueprint/BlueprintOverlayRenderer;active:Z")
+		method = "renderOverlay", at = @At(
+		value = "FIELD",
+		target = "Lcom/zurrtum/create/client/content/equipment/blueprint/BlueprintOverlayRenderer;active:Z",
+		opcode = Opcodes.GETSTATIC
+	)
 	)
 	private static void resetTCBE(Minecraft mc, GuiGraphics graphics, CallbackInfo ci) {
 		if (!CCG.CONFIG.goggles.betterStoreInfo) return;

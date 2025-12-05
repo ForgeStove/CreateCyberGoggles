@@ -1,11 +1,11 @@
 package io.github.forgestove.create_cyber_goggles.mixin.misc;
-import com.zurrtum.create.client.content.logistics.factoryBoard.FactoryPanelScreen;
+import com.zurrtum.create.client.content.logistics.redstoneRequester.RedstoneRequesterScreen;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
-@Mixin(FactoryPanelScreen.class)
-public abstract class FactoryPanelScreenMixin {
-	@ModifyConstant(method = "mouseScrolled", constant = @Constant(intValue = 64))
+@Mixin(RedstoneRequesterScreen.class)
+public abstract class RedstoneRequesterScreenMixin {
+	@ModifyConstant(method = "mouseScrolled", constant = @Constant(intValue = 256))
 	private int modifyMaxScrollAmount(int original) {
 		return CCG.CONFIG.misc.removeRequestLimit ? Integer.MAX_VALUE : original;
 	}

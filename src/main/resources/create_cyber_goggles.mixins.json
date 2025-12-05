@@ -35,6 +35,7 @@
 		"misc.FactoryPanelScreenMixin",
 		"misc.FilesHelperMixin",
 		"misc.NbtAccounterMixin",
+		"misc.RedstoneRequesterScreenMixin",
 		"misc.SimpleBackendMixin",
 		"misc.SuperGlueSelectionHandlerMixin",
 		"provider.ArmBlockEntityMixin",

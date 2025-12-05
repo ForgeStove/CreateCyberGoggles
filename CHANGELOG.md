@@ -1,1 +1,1 @@
-- Add support for block tag of leftClickFastDismantle
+- Optimize fast scrolling

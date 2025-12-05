@@ -1,4 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
+import com.zurrtum.create.AllBlockTags;
 import com.zurrtum.create.content.contraptions.chassis.*;
 import com.zurrtum.create.content.equipment.wrench.*;
 import com.zurrtum.create.content.fluids.pipes.EncasedPipeBlock;
@@ -59,7 +60,10 @@ public class PlayerInteract {
 			? InteractionHand.MAIN_HAND
 			: mc.player.getOffhandItem().getItem() instanceof WrenchItem ? InteractionHand.OFF_HAND : null;
 		if (handWithWrench == null) return;
-		if (!(mc.level.getBlockState(bhr.getBlockPos()).getBlock() instanceof IWrenchable)) return;
+		var pos = bhr.getBlockPos();
+		var state = mc.level.getBlockState(pos);
+		var block = state.getBlock();
+		if (!(block instanceof IWrenchable || state.is(AllBlockTags.WRENCH_PICKUP))) return;
 		if (dismantleDelay > 0) dismantleDelay--;
 		var canDismantle = System.currentTimeMillis() - lastDismantleTime > dismantleDelay * 20;
 		if (!canDismantle) return;

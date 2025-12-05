@@ -49,12 +49,11 @@ repositories {
 dependencies {
 	modImplementation("com.simibubi.create:create-${p("mcVersion")}:${p("createVersion")}:slim") { isTransitive = false }
 	modImplementation("net.createmod.ponder:Ponder-${p("loaderCap")}-${p("mcVersion")}:${p("ponderVersion")}")
-	modRuntimeOnly("dev.engine-room.vanillin:vanillin-${p("loader")}-${p("mcVersion")}:${p("vanillinVersion")}")
 	modImplementation("dev.engine-room.flywheel:flywheel-${p("loader")}-${p("mcVersion")}:${p("flywheelVersion")}")
 	modImplementation("com.tterrag.registrate:Registrate:${p("registrateVersion")}")
 	modImplementation("me.shedaniel.cloth:cloth-config-${p("loader")}:${p("clothConfigVersion")}")
 	modImplementation("mezz.jei:jei-${p("mcVersion")}-${p("loader")}:${p("jeiVersion")}")
-	modImplementation("maven.modrinth:jade:${p("jadeVersion")}")
+	modImplementation("maven.modrinth:jade:${p("jadeVersion")}+${p("loader")}")
 	annotationProcessor("org.spongepowered:mixin:${p("mixinVersion")}:processor")
 	annotationProcessor("io.github.llamalad7:mixinextras-common:${p("mixinExtrasVersion")}")
 	compileOnly("io.github.llamalad7:mixinextras-common:${p("mixinExtrasVersion")}")
@@ -65,7 +64,7 @@ publishMods {
 	changelog.set(file("CHANGELOG.md").readText())
 	type.set(STABLE)
 	version.set(project.version.toString())
-	displayName.set("[${p("loaderCap")}] ${p("modVersion")} for Create ${p("mcVersion")}-${p("createMainVersion")}")
+	displayName.set("[${p("loaderCap")}] ${p("modVersion")} for Create ${p("mcVersion")}-${p("createMinVersion")}")
 	modLoaders.addAll(p("loaderCap"), p("loaderOtherCap"))
 	modrinth {
 		accessToken.set(providers.environmentVariable("MODRINTH_TOKEN"))

@@ -30,6 +30,7 @@
 		"misc.CreateJEIMixin",
 		"misc.DivingBootsItemMixin",
 		"misc.EditBoxMixin",
+		"misc.FactoryPanelScreenMixin",
 		"misc.FilesHelperMixin",
 		"misc.NbtAccounterMixin",
 		"misc.NetheriteBacktankFirstPersonRendererMixin",

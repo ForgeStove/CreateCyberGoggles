@@ -10,9 +10,13 @@ import java.util.List;
 @Mixin(RedstoneRequesterScreen.class)
 public abstract class RedstoneRequesterScreenMixin {
 	@Shadow(remap = false) private List<Integer> amounts;
-	@ModifyConstant(method = "mouseScrolled", constant = @Constant(intValue = 256))
-	public int modifyMaxScrollAmount(int original) {
-		return CCG.CONFIG.misc.removeRequestLimit ? Integer.MAX_VALUE : original;
+	@ModifyArg(
+		method = "mouseScrolled", at = @At(
+		value = "INVOKE", target = "Lnet/minecraft/util/Mth;clamp(III)I"
+	), index = 2
+	)
+	public int modifyMaxScrollAmount(int max) {
+		return CCG.CONFIG.misc.removeRequestLimit ? Integer.MAX_VALUE : max;
 	}
 	@ModifyConstant(method = "mouseScrolled", constant = @Constant(intValue = 10))
 	public int modifyPerScrollAmount(int original, @Local(name = "i") int i) {

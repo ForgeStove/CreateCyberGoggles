@@ -1,1 +1,1 @@
-- Fix ejector target render bug
+- Fix mixin conflict with Create Factory Logistics

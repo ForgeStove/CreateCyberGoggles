@@ -10,7 +10,6 @@ tasks.jar {
 	from("LICENSE")
 	manifest.attributes("MixinConfigs" to "${p("modId")}.mixins.json")
 }
-tasks.publishMods { dependsOn(tasks.named("reobfJar")) }
 var generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
 	val values = properties.mapValues { it.value.toString() }
 	inputs.properties(values)

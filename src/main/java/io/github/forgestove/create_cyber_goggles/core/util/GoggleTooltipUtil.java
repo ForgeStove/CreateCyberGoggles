@@ -143,4 +143,8 @@ public class GoggleTooltipUtil {
 			.add(CCGLang.text(" / ").style(DARK_GRAY).add(CCGLang.seconds().style(DARK_GRAY)))
 			.forGoggles(tooltip, 1);
 	}
+	public static void pulse(List<Component> tooltip, int state, int maxState) {
+		CCGLang.translate("tooltip.pulse").forGoggles(tooltip);
+		CCGLang.fraction(state, maxState).forGoggles(tooltip);
+	}
 }

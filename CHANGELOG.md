@@ -1,1 +1,1 @@
-- Fix mixin conflict with Create Factory Logistics
+- Added a pulse progress display to the pulse redstone element

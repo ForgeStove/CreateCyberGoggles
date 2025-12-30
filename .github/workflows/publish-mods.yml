@@ -1,0 +1,46 @@
+name: Publish Mods
+
+on:
+  workflow_dispatch:
+    inputs:
+      gradle_task:
+        description: Gradle task to run
+        required: true
+        default: publishMods
+      java_version:
+        description: Java version
+        required: true
+        default: "21"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-mods
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Run publishMods
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ inputs.java_version }}
+          cache: gradle
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
+
+      - name: Publish via Gradle
+        env:
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+          CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
+        run: ./gradlew --no-daemon --stacktrace ${{ inputs.gradle_task }}
+

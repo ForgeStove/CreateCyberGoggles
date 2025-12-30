@@ -12,6 +12,7 @@
 		"chainConveyor.ChainConveyorConnectionHandlerMixin",
 		"chainConveyor.ChainConveyorInteractionHandlerMixin",
 		"chainConveyor.ChainConveyorRidingHandlerMixin",
+		"goggles.AttributeFilterItemMixin",
 		"goggles.BlueprintOverlayRendererMixin",
 		"goggles.DeployerBlockEntityMixin",
 		"goggles.EncasedCogwheelBlockMixin",
@@ -42,6 +43,7 @@
 		"provider.BacktankBlockEntityMixin",
 		"provider.BeltBlockEntityMixin",
 		"provider.BlazeBurnerBlockEntityMixin",
+		"provider.BrassDiodeBlockEntityMixin",
 		"provider.ChuteBlockEntityMixin",
 		"provider.CreativeCrateBlockEntityMixin",
 		"provider.CrushingWheelControllerBlockEntityMixin",
@@ -64,8 +66,5 @@
 		"wrench.RadialWrenchMenuMixin",
 		"wrench.ScrollValueRendererMixin",
 		"wrench.ValueSettingsInputHandlerMixin"
-	],
-	"mixins": [
-		"goggles.AttributeFilterItemMixin"
 	]
 }

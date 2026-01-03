@@ -1,12 +1,10 @@
 package io.github.forgestove.create_cyber_goggles.mixin.wrench;
-import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.simibubi.create.content.contraptions.wrench.RadialWrenchMenu;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.WrenchMenuUtil;
 import net.createmod.catnip.registry.RegisteredObjectsHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import org.spongepowered.asm.mixin.Mixin;
@@ -43,23 +41,5 @@ public abstract class RadialWrenchMenuMixin {
 			return;
 		}
 		cir.setReturnValue(Optional.of(init(state, pos, level, properties)));
-	}
-	@WrapOperation(
-		method = "renderRadialSectors", at = @At(
-		value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/BlockEntity;getLevel()Lnet/minecraft/world/level/Level;"
-	)
-	)
-	private Level fixNPE(BlockEntity instance, Operation<Level> original) {
-		if (CCG.CONFIG.wrench.fixRotationMenu && instance == null) return null;
-		return original.call(instance);
-	}
-	@WrapOperation(
-		method = "renderRadialSectors", at = @At(
-		value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/BlockEntity;setLevel(Lnet/minecraft/world/level/Level;)V"
-	)
-	)
-	private void fixNPE(BlockEntity instance, Level level, Operation<Void> original) {
-		if (CCG.CONFIG.wrench.fixRotationMenu && instance == null) return;
-		original.call(instance, level);
 	}
 }

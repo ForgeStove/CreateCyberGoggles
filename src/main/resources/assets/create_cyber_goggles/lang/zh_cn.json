@@ -175,8 +175,6 @@
 	"text.autoconfig.create_cyber_goggles.option.wrench.betterEncasedPipe.@Tooltip": "空手时允许右键切换管道箱的开关状态",
 	"text.autoconfig.create_cyber_goggles.option.wrench.enchancedRotationMenu": "增强的旋转菜单",
 	"text.autoconfig.create_cyber_goggles.option.wrench.enchancedRotationMenu.@Tooltip": "允许方块旋转菜单修改更多方块属性\n§c警告：在服务器上可能被视为作弊",
-	"text.autoconfig.create_cyber_goggles.option.wrench.fixRotationMenu": "修复方块旋转菜单",
-	"text.autoconfig.create_cyber_goggles.option.wrench.fixRotationMenu.@Tooltip": "修复方块旋转菜单的错误渲染",
 	"text.autoconfig.create_cyber_goggles.option.wrench.leftClickFastDismantle": "左键快速拆除",
 	"text.autoconfig.create_cyber_goggles.option.wrench.leftClickFastDismantle.@Tooltip": "使用左键单击立即拆除组件",
 	"text.autoconfig.create_cyber_goggles.option.wrench.removeCooldown": "移除冷却",

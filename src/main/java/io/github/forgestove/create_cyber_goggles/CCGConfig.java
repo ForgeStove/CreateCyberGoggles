@@ -64,7 +64,6 @@ public class CCGConfig implements ConfigData {
 		@Tooltip public boolean cardBoardedYourself = false;
 	}
 	public static class Wrench {
-		@Tooltip public boolean fixRotationMenu = true;
 		@Tooltip public boolean betterEncasedCogwheel = true;
 		@Tooltip public boolean betterEncasedPipe = true;
 		@Tooltip public boolean betterChassis = true;

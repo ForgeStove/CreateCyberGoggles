@@ -15,20 +15,4 @@ public abstract class CreateJEIMixin {
 	public int loadCategories(int height) {
 		return CCG.CONFIG.misc.showScrapContent ? height + 40 : height;
 	}
-	@SuppressWarnings(
-		{
-			"MixinAnnotationTarget",
-			"InvalidInjectorMethodSignature"
-		}
-	)
-	@ModifyArg(
-		method = "loadCategories", at = @At(
-		value = "INVOKE",
-		target = "Lcom/simibubi/create/compat/jei/CreateJEI$CategoryBuilder;emptyBackground(II)"
-			+ "Lcom/simibubi/create/compat/jei/CreateJEI$CategoryBuilder;"
-	), index = 1
-	)
-	public int loadCategoriesLegacy(int height) {
-		return loadCategories(height);
-	}
 }

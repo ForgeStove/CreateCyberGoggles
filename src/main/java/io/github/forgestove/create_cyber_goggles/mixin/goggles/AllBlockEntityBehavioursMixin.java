@@ -17,5 +17,8 @@ public abstract class AllBlockEntityBehavioursMixin {
 		add(AllBlockEntityTypes.SCHEMATICANNON, SchematicannonTooltipBehavior::new);
 		add(AllBlockEntityTypes.BACKTANK, BacktankBlockEntityTooltipBehavior::new);
 		add(AllBlockEntityTypes.BELT, BeltBlockEntityTooltipBehavior::new);
+		add(AllBlockEntityTypes.PULSE_REPEATER, BrassDiodeBlockEntityTooltipBehavior::new);
+		add(AllBlockEntityTypes.PULSE_EXTENDER, BrassDiodeBlockEntityTooltipBehavior::new);
+		add(AllBlockEntityTypes.PULSE_TIMER, BrassDiodeBlockEntityTooltipBehavior::new);
 	}
 }

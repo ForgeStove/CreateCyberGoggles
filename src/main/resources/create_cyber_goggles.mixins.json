@@ -8,6 +8,7 @@
 		"SchematicAndQuillHandlerMixin",
 		"StockKeeperRequestScreenMixin",
 		"accessor.AbstractContainerScreenAccessor",
+		"accessor.BrassDiodeBlockEntityAccessor",
 		"accessor.KeyMappingAccessor",
 		"accessor.KineticBlockEntityAccessor",
 		"accessor.NozzleBlockEntityAccessor",

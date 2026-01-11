@@ -24,10 +24,6 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class PlayerInteract {
 	private static long lastDismantleTime, dismantleDelay = 10;
 	private static long lastTick;
-	public static void leftClick(Minecraft mc) {
-		wrench(mc);
-		tick(mc);
-	}
 	private static void tick(Minecraft mc) {
 		if (mc == null || mc.level == null) return;
 		encasedCogWheel();
@@ -35,19 +31,22 @@ public class PlayerInteract {
 		chassis();
 		tableCloth();
 	}
-	@SuppressWarnings("SameReturnValue")
+	public static void leftClick(Minecraft mc) {
+		wrench(mc);
+		tick(mc);
+	}
 	public static @NotNull InteractionResult rightClick(
-		Player player,
+		Player ignoredPlayer,
 		@NotNull Level level,
 		InteractionHand hand,
 		BlockHitResult hitResult
 	) {
-		if (!level.isClientSide()) return InteractionResult.PASS;
-		enacesdPipe(player, level, hand, hitResult);
-		encasedCogWheel(player, level, hand, hitResult);
-		chassis(player, level, hand, hitResult);
-		tableCloth();
-		return InteractionResult.PASS;
+		var pass = InteractionResult.PASS;
+		if (!level.isClientSide()) return pass;
+		enacesdPipe(hand, hitResult);
+		encasedCogWheel(hand, hitResult);
+		chassis(hand, hitResult);
+		return pass;
 	}
 	private static void wrench(Minecraft mc) {
 		if (dismantleDelay < 10) dismantleDelay++;
@@ -78,12 +77,15 @@ public class PlayerInteract {
 		if (ecb.getRotationAxis(mc.level.getBlockState(bhr.getBlockPos())) != bhr.getDirection().getAxis()) return;
 		showCommonTip("message.openState");
 	}
-	private static void encasedCogWheel(Player player, Level level, InteractionHand hand, BlockHitResult hitResult) {
+	private static void encasedCogWheel(InteractionHand hand, BlockHitResult hitResult) {
 		if (!CCG.CONFIG.wrench.betterEncasedCogwheel) return;
 		var pos = hitResult.getBlockPos();
-		var state = level.getBlockState(pos);
-		if (!(state.getBlock() instanceof EncasedCogwheelBlock) || hand != InteractionHand.MAIN_HAND || player == null || hasItemInHand())
-			return;
+		if (mc.level == null) return;
+		var state = mc.level.getBlockState(pos);
+		if (!(state.getBlock() instanceof EncasedCogwheelBlock)
+			|| hand != InteractionHand.MAIN_HAND
+			|| mc.player == null
+			|| hasItemInHand()) return;
 		var clickedFace = hitResult.getDirection();
 		if (CCGKey.interactOpposite.isDown()) clickedFace = clickedFace.getOpposite();
 		var axis = state.getValue(RotatedPillarBlock.AXIS);
@@ -92,24 +94,25 @@ public class PlayerInteract {
 			? EncasedCogwheelBlock.TOP_SHAFT
 			: EncasedCogwheelBlock.BOTTOM_SHAFT;
 		sendToServer(new RadialWrenchMenuSubmitPacket(pos, state.cycle(booleanProperty)));
-		player.swing(player.getUsedItemHand());
+		mc.player.swing(mc.player.getUsedItemHand());
 	}
 	private static void enacesdPipe() {
 		if (!CCG.CONFIG.wrench.betterEncasedPipe) return;
 		if (getBlock(EncasedPipeBlock.class) == null) return;
 		showCommonTip("message.openState");
 	}
-	private static void enacesdPipe(Player player, Level level, InteractionHand hand, BlockHitResult hitResult) {
+	private static void enacesdPipe(InteractionHand hand, BlockHitResult hitResult) {
 		if (!CCG.CONFIG.wrench.betterEncasedPipe) return;
 		var pos = hitResult.getBlockPos();
-		var state = level.getBlockState(pos);
-		if (!(state.getBlock() instanceof EncasedPipeBlock) || hand != InteractionHand.MAIN_HAND || player == null || hasItemInHand())
+		if (mc.level == null) return;
+		var state = mc.level.getBlockState(pos);
+		if (!(state.getBlock() instanceof EncasedPipeBlock) || hand != InteractionHand.MAIN_HAND || mc.player == null || hasItemInHand())
 			return;
 		var clickedFace = hitResult.getDirection();
 		if (CCGKey.interactOpposite.isDown()) clickedFace = clickedFace.getOpposite();
 		var booleanProperty = EncasedPipeBlock.FACING_TO_PROPERTY_MAP.get(clickedFace);
 		sendToServer(new RadialWrenchMenuSubmitPacket(pos, state.cycle(booleanProperty)));
-		player.swing(player.getUsedItemHand());
+		mc.player.swing(mc.player.getUsedItemHand());
 	}
 	private static void chassis() {
 		if (!CCG.CONFIG.wrench.betterChassis) return;
@@ -120,15 +123,16 @@ public class PlayerInteract {
 		if (bhr == null || acb.getGlueableSide(mc.level.getBlockState(bhr.getBlockPos()), bhr.getDirection()) == null) return;
 		showCommonTip("message.glueState");
 	}
-	private static void chassis(Player player, Level level, InteractionHand hand, BlockHitResult hitResult) {
+	private static void chassis(InteractionHand hand, BlockHitResult hitResult) {
 		if (!CCG.CONFIG.wrench.betterChassis) return;
 		if (hasActivedValueBox()) return;
 		var pos = hitResult.getBlockPos();
-		var state = level.getBlockState(pos);
+		if (mc.level == null) return;
+		var state = mc.level.getBlockState(pos);
 		if (!(state.getBlock() instanceof AbstractChassisBlock acb)) return;
 		if (hand != InteractionHand.MAIN_HAND) return;
-		if (player == null) return;
-		if (player.isShiftKeyDown()) return;
+		if (mc.player == null) return;
+		if (mc.player.isShiftKeyDown()) return;
 		if (hasItemInHand()) return;
 		var clickedFace = hitResult.getDirection();
 		if (CCGKey.interactOpposite.isDown()) {
@@ -136,7 +140,7 @@ public class PlayerInteract {
 			var axisProp = RotatedPillarBlock.AXIS;
 			var baseAxis = state.hasProperty(axisProp) ? state.getValue(axisProp) : null;
 			var probePos = pos.relative(clickedFace);
-			var probeState = level.getBlockState(probePos);
+			var probeState = mc.level.getBlockState(probePos);
 			var targetAcb = acb;
 			if (LinearChassisBlock.isChassis(state) && LinearChassisBlock.sameKind(state, probeState))
 				while (probeState.getBlock() instanceof LinearChassisBlock lcb) {
@@ -146,14 +150,14 @@ public class PlayerInteract {
 					state = probeState;
 					targetAcb = lcb;
 					probePos = probePos.relative(clickedFace);
-					probeState = level.getBlockState(probePos);
+					probeState = mc.level.getBlockState(probePos);
 				}
 			acb = targetAcb;
 		}
 		var booleanProperty = acb.getGlueableSide(state, clickedFace);
 		if (booleanProperty == null) return;
 		sendToServer(new RadialWrenchMenuSubmitPacket(pos, state.cycle(booleanProperty)));
-		player.swing(player.getUsedItemHand());
+		mc.player.swing(mc.player.getUsedItemHand());
 	}
 	public static void tableCloth() {
 		if (!CCG.CONFIG.goggles.betterStoreInfo) return;

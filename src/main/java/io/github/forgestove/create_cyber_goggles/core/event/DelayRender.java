@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class DelayRender {
-	public static Object2IntOpenHashMap<BlockEntity> cachedBE = new Object2IntOpenHashMap<>();
+	public static final Object2IntOpenHashMap<BlockEntity> cachedBE = new Object2IntOpenHashMap<>();
 	public static void tick(Minecraft mc) {
 		if (!CCG.CONFIG.outliner.renderAnalogBox) return;
 		if (mc.level == null) {

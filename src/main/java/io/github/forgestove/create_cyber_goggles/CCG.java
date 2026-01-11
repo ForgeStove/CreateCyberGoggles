@@ -22,7 +22,6 @@ public class CCG implements ClientModInitializer {
 	public void onInitializeClient() {
 		CCGKey.register();
 		ClientTickEvents.START_CLIENT_TICK.register(KeyInput::register);
-		ClientTickEvents.START_CLIENT_TICK.register(DelayRender::tick);
 		ClientTickEvents.START_CLIENT_TICK.register(KineticParticle::tick);
 		ClientTickEvents.START_CLIENT_TICK.register(Outliner::tick);
 		ClientTickEvents.START_CLIENT_TICK.register(PlayerInteract::leftClick);

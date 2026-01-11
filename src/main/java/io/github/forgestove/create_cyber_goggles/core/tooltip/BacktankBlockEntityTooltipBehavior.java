@@ -15,7 +15,7 @@ public class BacktankBlockEntityTooltipBehavior<T extends BacktankBlockEntity> e
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return false;
-		if (!(blockEntity instanceof BacktankBlockEntityAccessor accessor)) return false;
+		var accessor = (BacktankBlockEntityAccessor) blockEntity;
 		var thiz = GoggleTooltipUtil.backtank(tooltip, blockEntity, accessor.ccg$getCapacityEnchantLevel(), accessor.ccg$getLeftTick());
 		var sup = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
 		return sup || thiz;

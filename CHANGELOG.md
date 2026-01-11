@@ -1,2 +1,1 @@
-- Add option to remove the range limit of the mechanical arm
-- Fix right click issue
+- Sync 1.21.1 NeoForge

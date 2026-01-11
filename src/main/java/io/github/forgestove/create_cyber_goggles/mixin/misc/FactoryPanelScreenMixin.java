@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.mixin.misc;
-import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelScreen;
+import com.zurrtum.create.client.content.logistics.factoryBoard.FactoryPanelScreen;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;

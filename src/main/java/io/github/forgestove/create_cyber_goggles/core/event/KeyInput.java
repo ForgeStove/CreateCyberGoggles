@@ -8,7 +8,7 @@ import com.zurrtum.create.content.logistics.stockTicker.*;
 import com.zurrtum.create.content.logistics.tableCloth.TableClothBlockEntity;
 import io.github.forgestove.create_cyber_goggles.*;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
-import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.AutoConfigClient;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -51,7 +51,7 @@ public class KeyInput {
 	private static void openConfigScreen() {
 		if (!CCGKey.openConfig.isDown()) return;
 		if (isInGUI()) return;
-		mc.setScreen(AutoConfig.getConfigScreen(CCGConfig.class, null).get());
+		mc.setScreen(AutoConfigClient.getConfigScreen(CCGConfig.class, null).get());
 	}
 	private static void openStockScreen() {
 		if (!CCGKey.openStock.isDown()) return;

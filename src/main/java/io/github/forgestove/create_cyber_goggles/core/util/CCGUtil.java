@@ -14,7 +14,7 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ServerboundPlayerInputPacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Input;
@@ -105,11 +105,11 @@ public class CCGUtil {
 		return Objects.requireNonNullElse(itemStack, ItemStack.EMPTY);
 	}
 	@Contract("_, _ -> new")
-	public static @NotNull ResourceLocation getRes(String namespace, String path) {
-		return ResourceLocation.fromNamespaceAndPath(namespace, path);
+	public static @NotNull Identifier getRes(String namespace, String path) {
+		return Identifier.fromNamespaceAndPath(namespace, path);
 	}
 	@Contract("_ -> new")
-	public static @NotNull ResourceLocation getCCGRes(String path) {
+	public static @NotNull Identifier getCCGRes(String path) {
 		return getRes(CCG.ID, path);
 	}
 	/** @return 选中的过滤器物品，如果未选中则返回{@code null} */

@@ -19,7 +19,7 @@ public class CCGConfig implements ConfigData, ModMenuApi {
 	@Override
 	@Environment(EnvType.CLIENT)
 	public ConfigScreenFactory<?> getModConfigScreenFactory() {
-		return screen -> AutoConfig.getConfigScreen(CCGConfig.class, screen).get();
+		return screen -> AutoConfigClient.getConfigScreen(CCGConfig.class, screen).get();
 	}
 	public static class Goggles {
 		@Tooltip public boolean enhancedInfo = true;

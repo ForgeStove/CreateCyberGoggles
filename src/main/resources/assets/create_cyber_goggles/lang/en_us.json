@@ -30,7 +30,6 @@
 	"create_cyber_goggles.tooltip.pushRange": "Push range",
 	"create_cyber_goggles.tooltip.windState": "Wind State:",
 	"key.category.create_cyber_goggles.main": "Create: Cyber Goggles",
-	"key.categories.ponder": "Ponder",
 	"modmenu.descriptionTranslation.create_cyber_goggles": "A client-side mod for Create that provides modular assistance features",
 	"modmenu.nameTranslation.create_cyber_goggles": "Create: Cyber Goggles",
 	"text.autoconfig.create_cyber_goggles.category.chainConveyor": "Chain Conveyor",

@@ -3,6 +3,7 @@ import com.zurrtum.create.*;
 import com.zurrtum.create.client.foundation.utility.CreateLang;
 import com.zurrtum.create.content.equipment.armor.*;
 import com.zurrtum.create.content.equipment.goggles.GogglesItem;
+import com.zurrtum.create.content.equipment.toolbox.ToolboxInventory;
 import com.zurrtum.create.content.equipment.wrench.WrenchItem;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
@@ -55,11 +56,24 @@ public class ItemTooltip {
 		if (!stack.is(AllItemTags.TOOLBOXES)) return;
 		var inventory = stack.getComponents().get(AllDataComponents.TOOLBOX_INVENTORY);
 		if (inventory == null) return;
+		var compartments = 8;
+		var stacksPerCompartment = ToolboxInventory.STACKS_PER_COMPARTMENT;
 		List<Component> list = new ArrayList<>();
-		for (var i = 0; i < inventory.getContainerSize(); i++) {
-			var slot = inventory.getItem(i);
-			if (slot.isEmpty()) continue;
-			CCGLang.item(slot).addTo(list);
+		for (var compartment = 0; compartment < compartments; compartment++) {
+			var baseIndex = compartment * stacksPerCompartment;
+			var consolidated = ItemStack.EMPTY;
+			var totalCount = 0;
+			for (var offset = 0; offset < stacksPerCompartment; offset++) {
+				var slotIndex = baseIndex + offset;
+				if (slotIndex >= inventory.getContainerSize()) break;
+				var slot = inventory.getItem(slotIndex);
+				if (slot.isEmpty()) continue;
+				if (consolidated.isEmpty()) {
+					consolidated = slot.copyWithCount(1);
+					totalCount = slot.getCount();
+				} else if (ItemStack.isSameItemSameComponents(consolidated, slot)) totalCount += slot.getCount();
+			}
+			if (!consolidated.isEmpty()) CCGLang.item(consolidated.copyWithCount(totalCount)).addTo(list);
 		}
 		tooltip.addAll(1, list);
 	}

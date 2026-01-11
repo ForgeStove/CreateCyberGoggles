@@ -1,2 +1,1 @@
-- Update to 1.21.11
-- Fix bugs
+- Optimize toolbox item prompts to merge the same item stack display

@@ -74,6 +74,7 @@ public class CCGConfig implements ConfigData, ModMenuApi {
 		@Tooltip public boolean preventSelectionDiscard = true;
 		@Tooltip public boolean infEditBoxLength = false;
 		@Tooltip public boolean removeCardboardOverlay = true;
+		@Tooltip public boolean removeNetheriteFirstPerson = false;
 		@Tooltip public boolean allowDivingBoot = true;
 		@Tooltip public boolean fixSchematicName = true;
 		@Tooltip public boolean forcedBackend = false;

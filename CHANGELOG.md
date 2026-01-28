@@ -1,1 +1,1 @@
-- Optimize toolbox item prompts to merge the same item stack display
+- Sync 1.21.1 NeoForge

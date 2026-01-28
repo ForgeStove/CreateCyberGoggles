@@ -2,13 +2,13 @@ package io.github.forgestove.create_cyber_goggles.core.event;
 import com.zurrtum.create.catnip.math.VecHelper;
 import com.zurrtum.create.content.kinetics.base.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.core.*;
 import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.world.phys.*;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.*;
 
 import java.awt.Color;
 import java.util.*;
@@ -17,14 +17,14 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class KineticDebugger {
 	public static BlockPos lastSource;
 	public static List<KineticBlockEntity> cachedKBEPath;
-	public static void tick(WorldRenderContext context) {
-		if (!CCG.CONFIG.outlineRenderer.rainbowDebug) return;
+	public static void tick(Minecraft mc) {
+		if (!CCG.CONFIG.outliner.rainbowDebug) return;
 		if (mc.isPaused() || isInGUI() || mc.level == null) return;
 		var kbe = getBlockEntity(KineticBlockEntity.class);
 		if (kbe == null) return;
 		renderAxisLine(kbe);
 		updateKBEPath(mc.level, kbe);
-		renderKineticPath(cachedKBEPath, mc.level.getGameTime(), context.frustum());
+		renderKineticPath(cachedKBEPath, mc.level.getGameTime());
 	}
 	/**
 	 * 更新并缓存当前选中动力方块实体的动力来源链路。
@@ -55,7 +55,8 @@ public class KineticDebugger {
 	 * @param kbePath 动力链路节点列表（从源到目标）
 	 * @param time    当前时间戳
 	 */
-	public static void renderKineticPath(@NotNull List<KineticBlockEntity> kbePath, long time, Frustum frustum) {
+	public static void renderKineticPath(@NotNull List<KineticBlockEntity> kbePath, long time) {
+		var frustum = mc.levelRenderer.getCapturedFrustum();
 		for (var depth = 0; depth < kbePath.size(); depth++) {
 			var nodeBE = kbePath.get(depth);
 			// 渲染前判断包围盒是否在视锥体内
@@ -88,8 +89,9 @@ public class KineticDebugger {
 	 * @param frustum 视锥体
 	 * @return 线段是否可见
 	 */
-	public static boolean isLineInFrustum(Vec3i start, Vec3i end, @NotNull Frustum frustum) {
-		return frustum.isVisible(new AABB(VecHelper.getCenterOf(start), VecHelper.getCenterOf(end)));
+	@Contract("_, _, null -> false")
+	public static boolean isLineInFrustum(Vec3i start, Vec3i end, Frustum frustum) {
+		return frustum != null && frustum.isVisible(new AABB(VecHelper.getCenterOf(start), VecHelper.getCenterOf(end)));
 	}
 	/**
 	 * 渲染指定{@link KineticBlockEntity}的包围盒轮廓。

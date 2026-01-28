@@ -2,17 +2,23 @@ package io.github.forgestove.create_cyber_goggles.core.event;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.mixin.accessor.KeyMappingAccessor;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.*;
+import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.NotNull;
 
 import static com.mojang.blaze3d.platform.InputConstants.*;
 public enum CCGKey {
+	clickPenetrate(KEY_LCONTROL),
+	interactOpposite(KEY_TAB),
 	openConfig,
 	openStock,
 	previewFilter,
 	showStress(KEY_TAB),
-	clickPenetrate(KEY_LCONTROL),
 	toggleDiving,
-	toggleGoggle;
+	toggleGoggle,
+	toggleItemOverlay(KEY_LCONTROL),
+	useSchematic;
 	public final KeyMapping keyMapping;
 	private boolean wasDown = false;
 	private long pressStartTime;
@@ -20,17 +26,17 @@ public enum CCGKey {
 		this(UNKNOWN.getValue());
 	}
 	CCGKey(int key) {
-		keyMapping = new KeyMapping(CCG.ID + ".key." + name(), key, "key.categories." + CCG.ID);
+		keyMapping = new KeyMapping(CCG.ID + ".key." + name(), key, "key.category." + CCG.ID + ".main");
 	}
 	public static void register() {
 		for (var key : values()) KeyBindingHelper.registerKeyBinding(key.keyMapping);
 	}
-	//	public boolean isDown() {
-	//		var key = ((KeyMappingAccessor) keyMapping).getKey();
-	//		return !key.equals(UNKNOWN) && isKeyDown(mc.getWindow().getWindow(), key.getValue());
-	//	}
-	public boolean isDown() {
+	public static @NotNull Component getFancyName(@NotNull KeyMapping keyMapping) {
 		var key = ((KeyMappingAccessor) keyMapping).getKey();
+		return key.getDisplayName().copy().withStyle(keyMapping.isDown() ? ChatFormatting.GREEN : ChatFormatting.GRAY);
+	}
+	public boolean isDown() {
+		var key = getKey();
 		var isDown = key != UNKNOWN && isKeyDown(Minecraft.getInstance().getWindow().getWindow(), key.getValue());
 		var currentTime = System.currentTimeMillis();
 		if (isDown && !wasDown) {
@@ -40,5 +46,11 @@ public enum CCGKey {
 		} else if (isDown) return currentTime - pressStartTime >= 500;
 		else wasDown = false;
 		return false;
+	}
+	public @NotNull Key getKey() {
+		return ((KeyMappingAccessor) keyMapping).getKey();
+	}
+	public @NotNull Component getFancyName() {
+		return getFancyName(keyMapping);
 	}
 }

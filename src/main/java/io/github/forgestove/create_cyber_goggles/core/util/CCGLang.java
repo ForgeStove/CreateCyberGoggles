@@ -3,19 +3,21 @@ import com.zurrtum.create.client.catnip.lang.*;
 import com.zurrtum.create.client.foundation.utility.CreateLang;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.ChatFormatting;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.*;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.getGradientColor;
+import java.awt.Color;
+
 import static net.minecraft.ChatFormatting.*;
 public class CCGLang extends Lang {
 	@Contract(value = " -> new", pure = true)
 	public static @NotNull LangBuilder builder() {
-		return new LangBuilder(CCG.ID);
+		return builder(CCG.ID);
 	}
 	@Contract(value = " -> new", pure = true)
 	public static @NotNull LangBuilder configBuilder() {
-		return new LangBuilder("text.autoconfig." + CCG.ID);
+		return builder("text.autoconfig." + CCG.ID);
 	}
 	public static @NotNull LangBuilder translate(String langKey, Object... args) {
 		return builder().translate(langKey, args);
@@ -39,11 +41,13 @@ public class CCGLang extends Lang {
 		return text(format, String.valueOf(number));
 	}
 	public static @NotNull LangBuilder progress(float progress, int totalBars) {
-		var filledBars = (int) (progress * totalBars);
+		var filledBars = (int) (Mth.clamp(progress, 0, 1) * totalBars);
 		return text(GREEN, "|".repeat(filledBars)).text(GRAY, "|".repeat(totalBars - filledBars));
 	}
 	public static @NotNull LangBuilder fraction(int current, int total) {
-		return number(current).color(getGradientColor((float) current / total)).text(GRAY, " / ").add(number(total).style(DARK_GRAY));
+		return number(current).color(Color.HSBtoRGB((float) current / total * 0.33F, 1, 1))
+			.text(GRAY, " / ")
+			.add(number(total).style(DARK_GRAY));
 	}
 	public static @NotNull LangBuilder enabled(boolean enabled) {
 		return enabled ? translate(GREEN, "message.enabled") : translate(RED, "message.disabled");
@@ -53,6 +57,6 @@ public class CCGLang extends Lang {
 	}
 	public static @NotNull LangBuilder item(@NotNull ItemStack stack) {
 		return builder().add(stack.getHoverName().copy().setStyle(stack.getDisplayName().getStyle()))
-			.text(GREEN, " x%d".formatted(stack.getCount()));
+			.text(GRAY, " x%d".formatted(stack.getCount()));
 	}
 }

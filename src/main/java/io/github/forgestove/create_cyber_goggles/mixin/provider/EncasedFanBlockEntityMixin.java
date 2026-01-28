@@ -2,43 +2,44 @@ package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.zurrtum.create.client.AllSpecialTextures;
 import com.zurrtum.create.client.api.goggles.IHaveGoggleInformation;
 import com.zurrtum.create.content.kinetics.base.KineticBlockEntity;
-import com.zurrtum.create.content.kinetics.fan.*;
-import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.event.OutlineRenderer;
+import com.zurrtum.create.content.kinetics.fan.EncasedFanBlockEntity;
+import io.github.forgestove.create_cyber_goggles.core.event.Outliner;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.Mixin;
 
 import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.outliner;
-@Mixin(value = EncasedFanBlockEntity.class, remap = false)
-public abstract class EncasedFanBlockEntityMixin extends KineticBlockEntity implements IHaveGoggleInformation, IOutlineRenderable {
-	@Shadow public AirCurrent airCurrent;
+@Mixin(EncasedFanBlockEntity.class)
+public abstract class EncasedFanBlockEntityMixin extends KineticBlockEntity
+	implements IHaveGoggleInformation, OutlineRenderable, Self<EncasedFanBlockEntity> {
 	public EncasedFanBlockEntityMixin(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
 		super(typeIn, pos, state);
 	}
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		var add = IHaveGoggleInformation.super.addToGoggleTooltip(tooltip, isPlayerSneaking);
-		if (!CCG.CONFIG.goggles.enhancedInfo || getSpeed() == 0) return add;
-		return TooltipUtil.fan(tooltip, airCurrent.pushing, airCurrent.maxDistance, 1);
+		var airCurrent = self().getAirCurrent();
+		if (airCurrent == null) return false;
+		return GoggleTooltipUtil.fan(tooltip, airCurrent.pushing, airCurrent.maxDistance);
 	}
 	@Override
 	public void ccg$render() {
-		var color = OutlineRenderer.getColor(airCurrent.pushing);
+		var airCurrent = self().getAirCurrent();
+		if (airCurrent == null) return;
+		var color = Outliner.getColor(airCurrent.pushing);
 		var bounds = airCurrent.bounds;
-		outliner.chaseAABB("FanAirBox" + this, bounds)
+		outliner.showAABB("FanAirBox" + this, bounds)
 			.withFaceTextures(AllSpecialTextures.CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
 			.lineWidth(1 / 16f)
 			.colored(color);
-		var numberOfFlowBoxes = OutlineRenderer.getNumberOfFlowBoxes(airCurrent.maxDistance);
+		var numberOfFlowBoxes = Outliner.getNumberOfFlowBoxes(airCurrent.maxDistance);
 		for (var i = 0; i < numberOfFlowBoxes; i++) {
-			var offset = OutlineRenderer.getOffset(i, numberOfFlowBoxes);
+			var offset = Outliner.getOffset(i, numberOfFlowBoxes);
 			var offsetDistance = airCurrent.maxDistance * offset;
 			var axis = airCurrent.direction.getAxis();
 			var min = switch (axis) {

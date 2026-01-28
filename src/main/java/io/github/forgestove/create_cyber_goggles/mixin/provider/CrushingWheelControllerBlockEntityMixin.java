@@ -1,14 +1,12 @@
 package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.zurrtum.create.content.kinetics.crusher.CrushingWheelControllerBlockEntity;
-import com.zurrtum.create.content.processing.recipe.ProcessingInventory;
-import io.github.forgestove.create_cyber_goggles.core.util.IItemRenderable;
+import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.world.item.ItemStack;
-import org.spongepowered.asm.mixin.*;
-@Mixin(value = CrushingWheelControllerBlockEntity.class, remap = false)
-public abstract class CrushingWheelControllerBlockEntityMixin implements IItemRenderable {
-	@Shadow public ProcessingInventory inventory;
+import org.spongepowered.asm.mixin.Mixin;
+@Mixin(CrushingWheelControllerBlockEntity.class)
+public abstract class CrushingWheelControllerBlockEntityMixin implements ItemRenderable, Self<CrushingWheelControllerBlockEntity> {
 	@Override
 	public ItemStack ccg$getItemStack() {
-		return inventory.getItem(0);
+		return self().inventory.getItem(0);
 	}
 }

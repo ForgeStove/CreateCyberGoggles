@@ -12,9 +12,10 @@ public abstract class ContraptionHandlerClientMixin {
 	private static void rightClickingOnContraptionsGetsHandledLocally(
 		Minecraft mc,
 		InteractionHand hand,
-		CallbackInfoReturnable<Boolean> returnable
+		CallbackInfoReturnable<Boolean> cir
 	) {
-		if (!CCGKey.clickPenetrate.isDown()) return;
-		returnable.setReturnValue(false);
+		if (!CCGKey.clickPenetrate.keyMapping.isDown()) return;
+		if (mc.player == null) return;
+		cir.setReturnValue(false);
 	}
 }

@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.mixin.goggles;
 import com.zurrtum.create.client.foundation.blockEntity.behaviour.tooltip.*;
 import com.zurrtum.create.content.kinetics.base.KineticBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.TooltipUtil;
+import io.github.forgestove.create_cyber_goggles.core.util.GoggleTooltipUtil;
 import io.github.forgestove.create_cyber_goggles.mixin.accessor.KineticBlockEntityAccessor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
-@Mixin(value = KineticTooltipBehaviour.class, remap = false)
+@Mixin(KineticTooltipBehaviour.class)
 public abstract class KineticBlockEntityMixin<T extends KineticBlockEntity> extends TooltipBehaviour<T> {
 	public KineticBlockEntityMixin(T be) {
 		super(be);
@@ -24,6 +24,6 @@ public abstract class KineticBlockEntityMixin<T extends KineticBlockEntity> exte
 		returnable.setReturnValue(hide);
 		if (!hide) return;
 		var accessor = (KineticBlockEntityAccessor) blockEntity;
-		TooltipUtil.kinetic(tooltip, blockEntity, accessor.getStress(), accessor.getCapacity());
+		GoggleTooltipUtil.kinetic(tooltip, blockEntity, accessor.getStress(), accessor.getCapacity());
 	}
 }

@@ -1,22 +1,23 @@
 package io.github.forgestove.create_cyber_goggles.core.tooltip;
 import com.zurrtum.create.client.api.goggles.IHaveGoggleInformation;
-import com.zurrtum.create.client.foundation.blockEntity.behaviour.tooltip.TooltipBehaviour;
+import com.zurrtum.create.client.foundation.blockEntity.behaviour.tooltip.KineticTooltipBehaviour;
 import com.zurrtum.create.content.equipment.armor.BacktankBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
-import io.github.forgestove.create_cyber_goggles.core.util.BacktankBlockEntityAccessor;
 import net.minecraft.network.chat.Component;
 
 import java.util.List;
-public class BacktankBlockEntityTooltipBehavior extends TooltipBehaviour<BacktankBlockEntity> implements IHaveGoggleInformation {
-	public BacktankBlockEntityTooltipBehavior(BacktankBlockEntity be) {
+public class BacktankBlockEntityTooltipBehavior<T extends BacktankBlockEntity> extends KineticTooltipBehaviour<T>
+	implements IHaveGoggleInformation {
+	public BacktankBlockEntityTooltipBehavior(T be) {
 		super(be);
 	}
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		if (!CCG.CONFIG.goggles.enhancedInfo) return false;
-		if (!(blockEntity instanceof BacktankBlockEntityAccessor leftTick)) return false;
-		TooltipUtil.backtank(tooltip, blockEntity, leftTick.ccg$getCapacityEnchantLevel(), leftTick.ccg$getLeftTick());
-		return true;
+		var accessor = (BacktankBlockEntityAccessor) blockEntity;
+		var thiz = GoggleTooltipUtil.backtank(tooltip, blockEntity, accessor.ccg$getCapacityEnchantLevel(), accessor.ccg$getLeftTick());
+		var sup = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+		return sup || thiz;
 	}
 }

@@ -5,8 +5,9 @@ import com.zurrtum.create.client.content.logistics.filter.*;
 import com.zurrtum.create.client.content.logistics.stockTicker.StockKeeperRequestScreen;
 import com.zurrtum.create.content.logistics.filter.*;
 import com.zurrtum.create.content.logistics.stockTicker.*;
+import com.zurrtum.create.content.logistics.tableCloth.TableClothBlockEntity;
 import io.github.forgestove.create_cyber_goggles.*;
-import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
+import io.github.forgestove.create_cyber_goggles.core.util.*;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -20,6 +21,7 @@ import java.util.Map;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class KeyInput {
 	public static StockTickerBlockEntity lastSTBE;
+	public static int scrollDeltaY;
 	public static void register(Minecraft ignoredMc) {
 		toggleGoggle();
 		toggleDiving();
@@ -27,11 +29,14 @@ public class KeyInput {
 		openStockScreen();
 		previewFilterScreen();
 	}
+	public static boolean mouseScroll(double scrollDelta) {
+		return clothStore(scrollDelta);
+	}
 	private static void toggleGoggle() {
 		toggleConfig(
 			CCGKey.toggleGoggle.isDown(),
-			CCG.CONFIG.gameMode.enableGoggle,
-			val -> CCG.CONFIG.gameMode.enableGoggle = val,
+			CCG.CONFIG.gameMode.enableGoggles,
+			val -> CCG.CONFIG.gameMode.enableGoggles = val,
 			"message.goggle"
 		);
 	}
@@ -65,9 +70,8 @@ public class KeyInput {
 	private static void previewFilterScreen() {
 		if (!CCGKey.previewFilter.isDown()) return;
 		if (mc.player == null) return;
-		var itemStack = getRelevantFilterItem();
-		if (itemStack == null) return;
-		if (!(itemStack.getItem() instanceof FilterItem)) return;
+		var itemStack = getSelectedFilter();
+		if (itemStack == null || !(itemStack.getItem() instanceof FilterItem)) return;
 		mc.setScreen(Map.<Item, Function3<Integer, Inventory, ItemStack, Screen>>of(
 			AllItems.FILTER.asItem(),
 			(id, inv, stack) -> new FilterScreen(new FilterMenu(id, inv, stack), inv, stack.getHoverName()),
@@ -76,6 +80,16 @@ public class KeyInput {
 			AllItems.PACKAGE_FILTER.asItem(),
 			(id, inv, stack) -> new PackageFilterScreen(new PackageFilterMenu(id, inv, stack), inv, stack.getHoverName())
 		).get(itemStack.getItem()).apply(-1, mc.player.getInventory(), itemStack));
-		playSound(SoundEvents.BOOK_PAGE_TURN, 1, 1);
+		playSound(SoundEvents.BOOK_PAGE_TURN, 1.0f, 1.0f);
+	}
+	private static boolean clothStore(double scrollDelta) {
+		if (!CCG.CONFIG.goggles.betterStoreInfo) return false;
+		if (!CCGKey.toggleItemOverlay.keyMapping.isDown()) return false;
+		var tcbe = getBlockEntity(TableClothBlockEntity.class);
+		if (tcbe == null) return false;
+		if (TableClothUtil.getItems(tcbe).size() <= 1) return false;
+		if (hasActivedValueBox()) return false;
+		scrollDeltaY = (int) scrollDelta;
+		return true;
 	}
 }

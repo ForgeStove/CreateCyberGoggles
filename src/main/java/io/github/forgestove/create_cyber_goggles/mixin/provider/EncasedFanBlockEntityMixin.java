@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.Mixin;
 
 import java.util.List;
@@ -39,7 +40,26 @@ public abstract class EncasedFanBlockEntityMixin extends KineticBlockEntity
 		var numberOfFlowBoxes = Outliner.getNumberOfFlowBoxes(airCurrent.maxDistance);
 		for (var i = 0; i < numberOfFlowBoxes; i++) {
 			var offset = Outliner.getOffset(i, numberOfFlowBoxes);
-			var flowBound = AirCurrentUtil.calculateFlowBound(airCurrent, bounds, offset);
+			var offsetDistance = airCurrent.maxDistance * offset;
+			var axis = airCurrent.direction.getAxis();
+			var min = switch (axis) {
+				case X -> bounds.minX;
+				case Y -> bounds.minY;
+				case Z -> bounds.minZ;
+			};
+			var max = switch (axis) {
+				case X -> bounds.maxX;
+				case Y -> bounds.maxY;
+				case Z -> bounds.maxZ;
+			};
+			var pos = airCurrent.pushing == airCurrent.direction.getAxisDirection().getStep() > 0
+				? min + offsetDistance
+				: max - offsetDistance;
+			var flowBound = switch (axis) {
+				case X -> new AABB(pos, bounds.minY, bounds.minZ, pos, bounds.maxY, bounds.maxZ);
+				case Y -> new AABB(bounds.minX, pos, bounds.minZ, bounds.maxX, pos, bounds.maxZ);
+				case Z -> new AABB(bounds.minX, bounds.minY, pos, bounds.maxX, bounds.maxY, pos);
+			};
 			var id = "FanAirFlowBox" + this + i;
 			if (offset > 0.98) {
 				outliner.remove(id);

@@ -1,14 +1,16 @@
 plugins {
-	id("fabric-loom") version "1.11.8"
+	id("fabric-loom") version "1.15.3"
 	id("me.modmuss50.mod-publish-plugin") version "+"
 }
-base.archivesName.set(p("modId"))
+base.archivesName.set(p("modName"))
 group = p("modGroupId")
 version = "${p("mcVersion")}-${p("modVersion")}-${p("loaderCap")}"
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 tasks.jar { from("LICENSE") }
 var generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
-	expand(properties.mapValues { it.value.toString() })
+	val values = properties.mapValues { it.value.toString() }
+	inputs.properties(values)
+	expand(values)
 	from("src/main/templates")
 	into("build/generated/sources/modMetadata")
 }
@@ -17,7 +19,6 @@ configurations.configureEach { resolutionStrategy.force("net.fabricmc:fabric-loa
 loom {
 	enableTransitiveAccessWideners = true
 	runConfigs.configureEach { ideConfigGenerated(false) }
-	@Suppress("UnstableApiUsage") mixin.defaultRefmapName.set("${p("modId")}.refmap.json")
 	runs {
 		configureEach { vmArgs("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition") }
 		remove(getByName("server"))
@@ -28,8 +29,8 @@ repositories {
 	mavenCentral()
 	maven("https://maven.parchmentmc.org") // Parchment mappings
 	maven("https://maven.shedaniel.me") // Cloth Config API, REI
-	maven("https://jitpack.io") // Create Fly
 	maven("https://maven.terraformersmc.com/releases") // Mod Menu
+	maven("https://api.modrinth.com/maven") { content { includeGroup("maven.modrinth") } } // Modrinth
 }
 dependencies {
 	minecraft("com.mojang:minecraft:${p("mcVersion")}")
@@ -39,10 +40,9 @@ dependencies {
 	})
 	modImplementation("net.fabricmc:fabric-loader:${p("fabricLoaderVersion")}")
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${p("fabricApiVersion")}")
-	modImplementation("com.github.ZurrTum:Create-Fly:${p("createVersion")}")
+	modImplementation("maven.modrinth:create-fly:${p("createVersion")}")
 	modImplementation("me.shedaniel.cloth:cloth-config-${p("loader")}:${p("clothConfigVersion")}")
 	modImplementation("com.terraformersmc:modmenu:${p("modmenuVersion")}")
-	modRuntimeOnly("me.shedaniel:RoughlyEnoughItems-${p("loader")}:${p("reiVersion")}")
 }
 publishMods {
 	file.set(tasks.remapJar.get().archiveFile)
@@ -55,15 +55,13 @@ publishMods {
 		accessToken.set(providers.environmentVariable("MODRINTH_TOKEN"))
 		projectId.set("TlQAWQCY")
 		minecraftVersions.add(p("mcVersion"))
-		requires("create-fly", "cloth-config")
-		optional("modmenu")
+		requires("create-fly", "cloth-config", "modmenu")
 	}
 	curseforge {
 		accessToken.set(providers.environmentVariable("CURSEFORGE_TOKEN"))
 		projectId.set("1233804")
 		minecraftVersions.add(p("mcVersion"))
-		requires("create-fly", "cloth-config")
-		optional("modmenu")
+		requires("create-fly", "cloth-config", "modmenu")
 	}
 }
 fun p(key: String) = property(key).toString()

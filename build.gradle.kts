@@ -1,5 +1,5 @@
 plugins {
-	id("fabric-loom") version "1.14.9"
+	id("fabric-loom") version "1.15.3"
 	id("me.modmuss50.mod-publish-plugin") version "+"
 }
 base.archivesName.set(p("modName"))

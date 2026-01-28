@@ -1,2 +1,1 @@
-- Sync 1.21.11 Fabric
-- Fix crash [#25]
+- Sync 1.21.1 NeoForge

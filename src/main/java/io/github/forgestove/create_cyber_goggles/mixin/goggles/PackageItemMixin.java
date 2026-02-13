@@ -24,7 +24,7 @@ public abstract class PackageItemMixin extends Item {
 		TooltipFlag tooltipFlag,
 		CallbackInfo ci
 	) {
-		if (!CCG.CONFIG.goggles.enhancedInfo) return;
+		if (!CCG.config.goggles.enhancedInfo) return;
 		ci.cancel();
 		super.appendHoverText(stack, tooltipContext, tooltipComponents, tooltipFlag);
 		if (stack.has(AllDataComponents.PACKAGE_ADDRESS))

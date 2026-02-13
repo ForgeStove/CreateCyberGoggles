@@ -33,7 +33,7 @@ public abstract class BacktankBlockEntityMixin extends KineticBlockEntity implem
 	}
 	@Inject(method = "tick", at = @At(value = "RETURN", ordinal = 3))
 	public void tick(CallbackInfo ci, @Local(name = "max") int max) {
-		if (!CCG.CONFIG.goggles.enhancedInfo) return;
+		if (!CCG.config.goggles.enhancedInfo) return;
 		if (airLevel == max) return;
 		ccg$prevAirLevel = airLevel;
 		var abs = Math.abs(getSpeed());

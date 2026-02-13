@@ -13,6 +13,6 @@ public abstract class CreateJEIMixin {
 	), index = 1
 	)
 	public int loadCategories(int height) {
-		return CCG.CONFIG.misc.showScrapContent ? height + 40 : height;
+		return CCG.config.misc.showScrapContent ? height + 40 : height;
 	}
 }

@@ -27,12 +27,12 @@ public class TooltipOverlay {
 		event.registerAbove(VanillaGuiLayers.HOTBAR, getCCGRes("tooltip_overlay"), TooltipOverlay::renderOverlay);
 	}
 	public static void renderOverlay(GuiGraphics graphics, DeltaTracker deltaTracker) {
-		if (!CCG.CONFIG.overlay.renderItemOverlay || !CCG.CONFIG.gameMode.enableGoggles) return;
+		if (!CCG.config.overlay.renderItemOverlay || !CCG.config.gameMode.enableGoggles) return;
 		if (mc.isPaused() || isInGUI() || mc.options.hideGui) {
 			hoverTicks = 0;
 			return;
 		}
-		if (!CCG.CONFIG.goggles.canRenderOnValueBox && hasActivedValueBox()) return;
+		if (!CCG.config.goggles.canRenderOnValueBox && hasActivedValueBox()) return;
 		var itemStack = toRenderItemStack();
 		if (itemStack.isEmpty()) hoverTicks = 0;
 		else renderItemStack(graphics, itemStack);
@@ -49,7 +49,7 @@ public class TooltipOverlay {
 	public static void renderItemStack(@NotNull GuiGraphics graphics, @NotNull ItemStack itemStack) {
 		var pose = graphics.pose();
 		pose.pushPose();
-		var overlay = CCG.CONFIG.overlay;
+		var overlay = CCG.config.overlay;
 		var cfg = AllConfigs.client();
 		var theme = getTheme();
 		var back = theme.backColor();
@@ -80,7 +80,7 @@ public class TooltipOverlay {
 		pose.popPose();
 	}
 	public static @NotNull Theme getTheme() {
-		var overlay = CCG.CONFIG.overlay;
+		var overlay = CCG.config.overlay;
 		var useCCGCustom = overlay.useCustomColor;
 		if (!useCCGCustom) {
 			if (overlay.tooltipTheme == null) overlay.tooltipTheme = TooltipTheme.Default;
@@ -88,8 +88,9 @@ public class TooltipOverlay {
 			if (theme != null) return theme;
 			var cfg = AllConfigs.client();
 			var useCreateCustom = cfg.overlayCustomColor.get();
-			var back = useCreateCustom ? new Color(cfg.overlayBackgroundColor.get()) :
-				BoxElement.COLOR_VANILLA_BACKGROUND.scaleAlpha(0.75F);
+			var back = useCreateCustom
+				? new Color(cfg.overlayBackgroundColor.get())
+				: BoxElement.COLOR_VANILLA_BACKGROUND.scaleAlpha(0.75F);
 			var top = useCreateCustom ? new Color(cfg.overlayBorderColorTop.get()) : BoxElement.COLOR_VANILLA_BORDER.getFirst().copy();
 			var bot = useCreateCustom ? new Color(cfg.overlayBorderColorBot.get()) : BoxElement.COLOR_VANILLA_BORDER.getSecond().copy();
 			return new Theme(back, top, bot);
@@ -97,7 +98,7 @@ public class TooltipOverlay {
 		return new Theme(overlay.backgroundColor, overlay.borderTopColor, overlay.borderBottomColor);
 	}
 	public static @NotNull @Unmodifiable List<FormattedCharSequence> getFormattedTooltips(@NotNull ItemStack itemStack, int maxWidth) {
-		var overlay = CCG.CONFIG.overlay;
+		var overlay = CCG.config.overlay;
 		if (overlay.tooltipFlagType == null) overlay.tooltipFlagType = TooltipFlagType.Default;
 		var tooltipLines = itemStack.getTooltipLines(TooltipContext.of(mc.level), mc.player, overlay.tooltipFlagType.getFlag());
 		tooltipLines.set(0, Component.literal(" ".repeat(Mth.ceil(16F / mc.font.width(" ")))).append(tooltipLines.getFirst()));

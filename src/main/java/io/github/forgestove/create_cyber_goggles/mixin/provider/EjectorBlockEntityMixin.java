@@ -27,7 +27,7 @@ public abstract class EjectorBlockEntityMixin implements ItemRenderable, Outline
 		var ebe = self();
 		var targetPos = ebe.getTargetPosition();
 		var blockPos = ebe.getBlockPos();
-		outliner.showAABB("EjectorTargetBox" + this, getBounds(targetPos)).lineWidth(1 / 16f).colored(CCG.CONFIG.outliner.outColor);
+		outliner.showAABB("EjectorTargetBox" + this, getBounds(targetPos)).lineWidth(1 / 16f).colored(CCG.config.outliner.outColor);
 		var color = cannotLaunch() ? 0xFFFF7171 : 0xFF9EDE73;
 		outliner.showAABB("EjectorFromBox" + this, new AABB(0, 0, 0, 1, 0, 1).move(blockPos)).lineWidth(1 / 16f).colored(color);
 		var xDiff = targetPos.getX() - blockPos.getX();

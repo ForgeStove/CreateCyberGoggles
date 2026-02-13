@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class KineticParticle {
 	public static void tick(ClientTickEvent.Post ignoredEvent) {
-		if (!CCG.CONFIG.goggles.enableKineticEffect || mc.level == null || isInGUI()) return;
+		if (!CCG.config.goggles.enableKineticEffect || mc.level == null || isInGUI()) return;
 		var kbe = getBlockEntity(KineticBlockEntity.class);
 		if (kbe == null) return;
 		var kbeSpeed = kbe.getSpeed();

@@ -13,7 +13,7 @@ public abstract class KineticBlockEntityMixin implements Self<KineticBlockEntity
 	@Shadow protected float capacity, stress;
 	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), cancellable = true)
 	public void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> cir) {
-		var goggles = CCG.CONFIG.goggles;
+		var goggles = CCG.config.goggles;
 		if (!goggles.enhancedInfo) return;
 		var kbe = self();
 		var speed = kbe.getTheoreticalSpeed();

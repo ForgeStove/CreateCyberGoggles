@@ -16,10 +16,10 @@ public abstract class RedstoneRequesterScreenMixin {
 	), index = 2
 	)
 	public int modifyMaxScrollAmount(int max) {
-		return CCG.CONFIG.misc.removeRequestLimit ? Integer.MAX_VALUE : max;
+		return CCG.config.misc.removeRequestLimit ? Integer.MAX_VALUE : max;
 	}
 	@ModifyConstant(method = "mouseScrolled", constant = @Constant(intValue = 10))
 	public int modifyPerScrollAmount(int original, @Local(name = "i") int i) {
-		return CCG.CONFIG.misc.removeRequestLimit ? Item.DEFAULT_MAX_STACK_SIZE - (amounts.get(i) == 1 ? 1 : 0) : original;
+		return CCG.config.misc.removeRequestLimit ? Item.DEFAULT_MAX_STACK_SIZE - (amounts.get(i) == 1 ? 1 : 0) : original;
 	}
 }

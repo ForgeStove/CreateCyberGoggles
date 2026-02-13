@@ -33,15 +33,3 @@ modId = "create"
 type = "required"
 ordering = "NONE"
 side = "CLIENT"
-
-[[dependencies."${modId}"]]
-modId = "cloth_config"
-type = "required"
-ordering = "NONE"
-side = "CLIENT"
-
-[[dependencies."${modId}"]]
-modId = "jei"
-type = "optional"
-ordering = "NONE"
-side = "CLIENT"

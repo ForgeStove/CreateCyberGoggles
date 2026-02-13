@@ -19,7 +19,7 @@ import java.util.*;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public class ItemTooltip {
 	public static void itemTooltip(@NotNull ItemTooltipEvent event) {
-		if (!CCG.CONFIG.goggles.extraItemTooltip) return;
+		if (!CCG.config.goggles.extraItemTooltip) return;
 		var stack = event.getItemStack();
 		var tooltip = event.getToolTip();
 		goggles(stack, tooltip);
@@ -43,7 +43,7 @@ public class ItemTooltip {
 	}
 	private static void divingBoots(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!(stack.getItem() instanceof DivingBootsItem)) return;
-		var component = CCGLang.enabled(CCG.CONFIG.misc.allowDivingBoot).component();
+		var component = CCGLang.enabled(CCG.config.misc.allowDivingBoot).component();
 		tooltip.add(1, component);
 	}
 	private static void wrench(@NotNull ItemStack stack, List<Component> tooltip) {
@@ -51,7 +51,7 @@ public class ItemTooltip {
 		var component = CCGLang.configBuilder()
 			.translate("option.wrench.leftClickFastDismantle")
 			.space()
-			.add(CCGLang.enabled(CCG.CONFIG.wrench.leftClickFastDismantle))
+			.add(CCGLang.enabled(CCG.config.wrench.leftClickFastDismantle))
 			.component();
 		tooltip.add(1, component);
 	}

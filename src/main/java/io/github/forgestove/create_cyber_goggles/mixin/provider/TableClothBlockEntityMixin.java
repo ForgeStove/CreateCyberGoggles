@@ -11,7 +11,7 @@ public abstract class TableClothBlockEntityMixin implements ItemRenderable, Inde
 	public ItemStack ccg$getItemStack() {
 		var items = TableClothUtil.getItems(self());
 		if (items.isEmpty()) return null;
-		if (!CCG.CONFIG.goggles.betterStoreInfo) return null;
+		if (!CCG.config.goggles.betterStoreInfo) return null;
 		if (ccg$index >= items.size()) ccg$index = 0;
 		return items.get(ccg$index);
 	}

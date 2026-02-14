@@ -27,7 +27,7 @@ public abstract class RadialWrenchMenuMixin {
 	}
 	@Inject(method = "tryCreateFor", at = @At("HEAD"), cancellable = true, remap = false)
 	private static void tryCreateFor(BlockState state, BlockPos pos, Level level, CallbackInfoReturnable<Optional<RadialWrenchMenu>> cir) {
-		if (!CCG.CONFIG.wrench.enchancedRotationMenu) return;
+		if (!CCG.config.wrench.enchancedRotationMenu) return;
 		var isCreative = mc.player != null && mc.player.isCreative();
 		if (!isCreative && BLOCK_BLACKLIST.contains(CatnipServices.REGISTRIES.getKeyOrThrow(state.getBlock()))) {
 			cir.setReturnValue(Optional.empty());
@@ -50,7 +50,7 @@ public abstract class RadialWrenchMenuMixin {
 	)
 	)
 	private Level fixNPE(BlockEntity instance, Operation<Level> original) {
-		if (CCG.CONFIG.wrench.fixRotationMenu && instance == null) return null;
+		if (CCG.config.wrench.fixRotationMenu && instance == null) return null;
 		return original.call(instance);
 	}
 	@WrapOperation(
@@ -59,7 +59,7 @@ public abstract class RadialWrenchMenuMixin {
 	)
 	)
 	private void fixNPE(BlockEntity instance, Level level, Operation<Void> original) {
-		if (CCG.CONFIG.wrench.fixRotationMenu && instance == null) return;
+		if (CCG.config.wrench.fixRotationMenu && instance == null) return;
 		original.call(instance, level);
 	}
 }

@@ -27,7 +27,7 @@ public abstract class BlueprintOverlayRendererMixin {
 		@Local(name = "x") int x,
 		@Local(name = "y") int y
 	) {
-		if (!CCG.CONFIG.goggles.betterStoreInfo) return;
+		if (!CCG.config.goggles.betterStoreInfo) return;
 		ci.cancel();
 		TableClothUtil.clothStoreOverlay(graphics, x, y, results);
 		RenderSystem.disableBlend();
@@ -40,7 +40,7 @@ public abstract class BlueprintOverlayRendererMixin {
 	)
 	)
 	private static void resetTCBE(ForgeGui gui, GuiGraphics graphics, float partialTicks, int width, int height, CallbackInfo ci) {
-		if (!CCG.CONFIG.goggles.betterStoreInfo) return;
+		if (!CCG.config.goggles.betterStoreInfo) return;
 		TableClothUtil.tableOverlay(graphics);
 	}
 }

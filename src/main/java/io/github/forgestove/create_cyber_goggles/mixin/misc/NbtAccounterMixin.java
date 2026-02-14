@@ -11,7 +11,7 @@ public abstract class NbtAccounterMixin {
 		try {
 			original.call(bytes);
 		} catch (Throwable throwable) {
-			if (!CCG.CONFIG.misc.nbtFix) throw throwable;
+			if (!CCG.config.misc.nbtFix) throw throwable;
 		}
 	}
 }

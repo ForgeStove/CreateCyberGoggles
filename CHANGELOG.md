@@ -1,1 +1,2 @@
-- Added a pulse progress display to the pulse redstone element
+- Update to 7.0.0
+- Replace cloth config with new config inside

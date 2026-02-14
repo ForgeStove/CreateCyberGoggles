@@ -1,89 +1,98 @@
 package io.github.forgestove.create_cyber_goggles;
+import io.github.forgestove.create_cyber_goggles.config.ConfigHandler;
+import io.github.forgestove.create_cyber_goggles.config.annotation.*;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
-import me.shedaniel.autoconfig.*;
-import me.shedaniel.autoconfig.annotation.Config;
-import me.shedaniel.autoconfig.annotation.ConfigEntry.*;
-import me.shedaniel.autoconfig.annotation.ConfigEntry.Gui.*;
-import me.shedaniel.autoconfig.annotation.ConfigEntry.Gui.EnumHandler.EnumDisplayOption;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory;
 import net.minecraftforge.fml.ModLoadingContext;
-@Config(name = CCG.ID)
-public class CCGConfig implements ConfigData {
-	@Category("goggles") @TransitiveObject public final Goggles goggles = new Goggles();
-	@Category("gameMode") @TransitiveObject public final GameMode gameMode = new GameMode();
-	@Category("overlay") @TransitiveObject public final Overlay overlay = new Overlay();
-	@Category("outliner") @TransitiveObject public final Outliner outliner = new Outliner();
-	@Category("chainConveyor") @TransitiveObject public final ChainConveyor chainConveyor = new ChainConveyor();
-	@Category("wrench") @TransitiveObject public final Wrench wrench = new Wrench();
-	@Category("misc") @TransitiveObject public final Misc misc = new Misc();
-	public static void register() {
-		var factory = new ConfigScreenFactory((mc, screen) -> AutoConfig.getConfigScreen(CCGConfig.class, screen).get());
-		ModLoadingContext.get().registerExtensionPoint(ConfigScreenFactory.class, () -> factory);
+import net.minecraftforge.fml.loading.FMLPaths;
+public class CCGConfig {
+	private static final String TRANSLATION_PREFIX = CCG.ID + ".config";
+	public static final ConfigHandler<CCGConfig> CONFIG_HANDLER = ConfigHandler.builder(CCGConfig.class)
+		.path(() -> FMLPaths.CONFIGDIR.get().resolve(CCG.ID + ".toml"))
+		.translationPrefix(TRANSLATION_PREFIX)
+		.translator(key -> I18n.exists(key) ? I18n.get(key) : null)
+		.logger(CCG.LOGGER)
+		.build();
+	@ConfigCategory(ordinal = 1) public final Goggles goggles = new Goggles();
+	@ConfigCategory(ordinal = 2) public final GameMode gameMode = new GameMode();
+	@ConfigCategory(ordinal = 3) public final Overlay overlay = new Overlay();
+	@ConfigCategory(ordinal = 4) public final Outliner outliner = new Outliner();
+	@ConfigCategory(ordinal = 5) public final ChainConveyor chainConveyor = new ChainConveyor();
+	@ConfigCategory(ordinal = 6) public final Wrench wrench = new Wrench();
+	@ConfigCategory(ordinal = 7) public final Misc misc = new Misc();
+	public static void init() {
+		CCG.config = CONFIG_HANDLER.getConfig();
+		ModLoadingContext.get()
+			.registerExtensionPoint(
+				ConfigScreenFactory.class,
+				() -> new ConfigScreenFactory((client, parent) -> CONFIG_HANDLER.createConfigScreen(parent))
+			);
 	}
 	public static class Goggles {
-		@Tooltip public boolean enhancedInfo = true;
-		@Tooltip public boolean hideStaticKineticInfo = false;
-		@Tooltip public boolean betterStoreInfo = true;
-		@Tooltip public boolean enableKineticEffect = true;
-		@Tooltip public boolean preciseNumber = true;
-		@Tooltip public boolean disableScreenGoggles = true;
-		@Tooltip public boolean canRenderOnValueBox = false;
-		@Tooltip public boolean extraItemTooltip = true;
+		public boolean enhancedInfo = true;
+		public boolean hideStaticKineticInfo = false;
+		public boolean betterStoreInfo = true;
+		public boolean enableKineticEffect = true;
+		public boolean preciseNumber = true;
+		public boolean disableScreenGoggles = true;
+		public boolean canRenderOnValueBox = false;
+		public boolean extraItemTooltip = true;
 	}
 	public static class GameMode {
-		@Tooltip public boolean enableGoggles = true;
-		@Tooltip public boolean enableInSurvival = true;
-		@Tooltip public boolean enableInCreative = true;
-		@Tooltip public boolean enableInSpectator = true;
-		@Tooltip public boolean enableInAdventure = true;
+		public boolean enableGoggles = true;
+		public boolean enableInSurvival = true;
+		public boolean enableInCreative = true;
+		public boolean enableInSpectator = true;
+		public boolean enableInAdventure = true;
 	}
 	public static class Overlay {
-		@Tooltip public boolean renderItemOverlay = true;
-		@Tooltip public int overlayOffsetX = 0;
-		@Tooltip public int overlayOffsetY = 0;
-		@EnumHandler(option = EnumDisplayOption.BUTTON) public TooltipFlagType tooltipFlagType = TooltipFlagType.Default;
-		@EnumHandler(option = EnumDisplayOption.BUTTON) public TooltipTheme tooltipTheme = TooltipTheme.Default;
-		@Tooltip public boolean useCustomColor = false;
-		@Tooltip @ColorPicker(allowAlpha = true) public int backgroundColor = 0x00000000;
-		@Tooltip @ColorPicker(allowAlpha = true) public int borderTopColor = 0x00000000;
-		@Tooltip @ColorPicker(allowAlpha = true) public int borderBottomColor = 0x00000000;
+		public boolean renderItemOverlay = true;
+		public int overlayOffsetX = 0;
+		public int overlayOffsetY = 0;
+		public TooltipFlagType tooltipFlagType = TooltipFlagType.Default;
+		public TooltipTheme tooltipTheme = TooltipTheme.Default;
+		public boolean useCustomColor = false;
+		@ColorValue(hasAlpha = true) public int backgroundColor = 0x00000000;
+		@ColorValue(hasAlpha = true) public int borderTopColor = 0x00000000;
+		@ColorValue(hasAlpha = true) public int borderBottomColor = 0x00000000;
 	}
 	public static class Outliner {
-		@Tooltip public boolean renderAnalogBox = true;
-		@Tooltip public boolean betterLine = true;
-		@Tooltip public int delayRenderDuration = 60;
-		@Tooltip @ColorPicker public int outColor = 0xDDC166;
-		@Tooltip @ColorPicker public int inColor = 0x7FCDE0;
-		@Tooltip public boolean rainbowDebug = false;
+		public boolean renderAnalogBox = true;
+		public boolean betterLine = true;
+		@Range(min = 0) public int delayRenderDuration = 60;
+		@ColorValue public int outColor = 0xDDC166;
+		@ColorValue public int inColor = 0x7FCDE0;
+		public boolean rainbowDebug = false;
 	}
 	public static class ChainConveyor {
-		@Tooltip public boolean alwaysAllowRiding = false;
-		@Tooltip public boolean preventFalling = false;
-		@Tooltip public boolean enhancedConnection = true;
-		@Tooltip public boolean cardBoardedYourself = false;
+		public boolean alwaysAllowRiding = false;
+		public boolean preventFalling = false;
+		public boolean enhancedConnection = true;
+		public boolean cardBoardedYourself = false;
 	}
 	public static class Wrench {
-		@Tooltip public boolean fixRotationMenu = true;
-		@Tooltip public boolean betterEncasedCogwheel = true;
-		@Tooltip public boolean betterEncasedPipe = true;
-		@Tooltip public boolean betterChassis = true;
-		@Tooltip public boolean alwaysShowScrollValue = true;
-		@Tooltip public boolean alwaysAllowRotating = true;
-		@Tooltip public boolean leftClickFastDismantle = true;
-		@Tooltip public boolean removeCooldown = true;
-		@Tooltip public boolean enchancedRotationMenu = false;
+		public boolean fixRotationMenu = true;
+		public boolean betterEncasedCogwheel = true;
+		public boolean betterEncasedPipe = true;
+		public boolean betterChassis = true;
+		public boolean alwaysShowScrollValue = true;
+		public boolean alwaysAllowRotating = true;
+		public boolean leftClickFastDismantle = true;
+		public boolean removeCooldown = true;
+		public boolean enchancedRotationMenu = false;
 	}
 	public static class Misc {
-		@Tooltip public boolean removeMechanicalArmLimit = false;
-		@Tooltip public boolean removeRequestLimit = true;
-		@Tooltip public boolean preventSelectionDiscard = true;
-		@Tooltip public boolean infEditBoxLength = false;
-		@Tooltip public boolean removeCardboardOverlay = true;
-		@Tooltip public boolean removeNetheriteFirstPerson = false;
-		@Tooltip public boolean allowDivingBoot = true;
-		@Tooltip public boolean fixSchematicName = true;
-		@Tooltip public boolean forcedBackend = false;
-		@Tooltip public boolean nbtFix = false;
-		@Tooltip @RequiresRestart public boolean showScrapContent = true;
+		public boolean removeMechanicalArmLimit = false;
+		public boolean removeRequestLimit = true;
+		public boolean preventSelectionDiscard = true;
+		public boolean infEditBoxLength = false;
+		public boolean removeCardboardOverlay = true;
+		public boolean removeNetheriteFirstPerson = false;
+		public boolean allowDivingBoot = true;
+		public boolean fixSchematicName = true;
+		public boolean forcedBackend = false;
+		public boolean nbtFix = false;
+		@RequiresRestart public boolean showScrapContent = true;
 	}
 }

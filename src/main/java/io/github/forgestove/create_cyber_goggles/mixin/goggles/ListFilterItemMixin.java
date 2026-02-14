@@ -8,6 +8,6 @@ import org.spongepowered.asm.mixin.injection.At;
 public abstract class ListFilterItemMixin {
 	@ModifyExpressionValue(method = "makeSummary", at = @At(value = "CONSTANT", args = "intValue=3"))
 	private static int makeSummary(int original) {
-		return CCG.CONFIG.goggles.enhancedInfo ? Integer.MAX_VALUE : original;
+		return CCG.config.goggles.enhancedInfo ? Integer.MAX_VALUE : original;
 	}
 }

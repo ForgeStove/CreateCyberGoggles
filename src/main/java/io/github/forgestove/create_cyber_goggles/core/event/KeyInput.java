@@ -6,7 +6,6 @@ import com.simibubi.create.content.logistics.stockTicker.*;
 import com.simibubi.create.content.logistics.tableCloth.TableClothBlockEntity;
 import io.github.forgestove.create_cyber_goggles.*;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
-import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.sounds.SoundEvents;
@@ -33,23 +32,23 @@ public class KeyInput {
 	private static void toggleGoggle() {
 		toggleConfig(
 			CCGKey.toggleGoggle.isDown(),
-			CCG.CONFIG.gameMode.enableGoggles,
-			val -> CCG.CONFIG.gameMode.enableGoggles = val,
+			CCG.config.gameMode.enableGoggles,
+			val -> CCG.config.gameMode.enableGoggles = val,
 			"message.goggle"
 		);
 	}
 	private static void toggleDiving() {
 		toggleConfig(
 			CCGKey.toggleDiving.isDown(),
-			CCG.CONFIG.misc.allowDivingBoot,
-			val -> CCG.CONFIG.misc.allowDivingBoot = val,
+			CCG.config.misc.allowDivingBoot,
+			val -> CCG.config.misc.allowDivingBoot = val,
 			"message.divingBoot"
 		);
 	}
 	private static void openConfigScreen() {
 		if (!CCGKey.openConfig.isDown()) return;
 		if (isInGUI()) return;
-		mc.setScreen(AutoConfig.getConfigScreen(CCGConfig.class, null).get());
+		mc.setScreen(CCGConfig.CONFIG_HANDLER.createConfigScreen(null));
 	}
 	private static void openStockScreen() {
 		if (!CCGKey.openStock.isDown()) return;
@@ -81,7 +80,7 @@ public class KeyInput {
 		playSound(SoundEvents.BOOK_PAGE_TURN, 1.0f, 1.0f);
 	}
 	private static void clothStore(MouseScrollingEvent event) {
-		if (!CCG.CONFIG.goggles.betterStoreInfo) return;
+		if (!CCG.config.goggles.betterStoreInfo) return;
 		if (!CCGKey.toggleItemOverlay.isDown()) return;
 		var tcbe = getBlockEntity(TableClothBlockEntity.class);
 		if (tcbe == null) return;

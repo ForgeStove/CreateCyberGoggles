@@ -8,6 +8,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class FilesHelperMixin {
 	@Inject(method = "slug", at = @At("HEAD"), cancellable = true)
 	private static void slug(String name, CallbackInfoReturnable<String> cir) {
-		if (CCG.CONFIG.misc.fixSchematicName) cir.setReturnValue(name.replaceAll("[\\\\/:*?\"<>|]+", "_"));
+		if (CCG.config.misc.fixSchematicName) cir.setReturnValue(name.replaceAll("[\\\\/:*?\"<>|]+", "_"));
 	}
 }

@@ -10,10 +10,10 @@ import org.spongepowered.asm.mixin.injection.*;
 public abstract class FactoryPanelScreenMixin {
 	@ModifyConstant(method = "mouseScrolled", constant = @Constant(intValue = 64))
 	public int modifyMaxScrollAmount(int original) {
-		return CCG.CONFIG.misc.removeRequestLimit ? Integer.MAX_VALUE : original;
+		return CCG.config.misc.removeRequestLimit ? Integer.MAX_VALUE : original;
 	}
 	@ModifyConstant(method = "mouseScrolled", constant = @Constant(intValue = 10))
 	public int modifyPerScrollAmount(int original, @Local(name = "itemStack") BigItemStack itemStack) {
-		return CCG.CONFIG.misc.removeRequestLimit ? Item.MAX_STACK_SIZE - (itemStack.count == 1 ? 1 : 0) : original;
+		return CCG.config.misc.removeRequestLimit ? Item.MAX_STACK_SIZE - (itemStack.count == 1 ? 1 : 0) : original;
 	}
 }

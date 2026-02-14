@@ -42,7 +42,6 @@ repositories {
 	mavenCentral()
 	maven("https://maven.createmod.net") // Create, Ponder, Flywheel
 	maven("https://maven.tterrag.com") // Registrate
-	maven("https://maven.shedaniel.me") // Cloth Config API
 	maven("https://maven.blamejared.com") // JEI
 	maven("https://api.modrinth.com/maven") { content { includeGroup("maven.modrinth") } } // Modrinth
 }
@@ -51,9 +50,8 @@ dependencies {
 	modImplementation("net.createmod.ponder:Ponder-${p("loaderCap")}-${p("mcVersion")}:${p("ponderVersion")}")
 	modImplementation("dev.engine-room.flywheel:flywheel-${p("loader")}-${p("mcVersion")}:${p("flywheelVersion")}")
 	modImplementation("com.tterrag.registrate:Registrate:${p("registrateVersion")}")
-	modImplementation("me.shedaniel.cloth:cloth-config-${p("loader")}:${p("clothConfigVersion")}")
 	modImplementation("mezz.jei:jei-${p("mcVersion")}-${p("loader")}:${p("jeiVersion")}")
-	modImplementation("maven.modrinth:jade:${p("jadeVersion")}+${p("loader")}")
+	modRuntimeOnly("maven.modrinth:jade:${p("jadeVersion")}+${p("loader")}")
 	annotationProcessor("org.spongepowered:mixin:${p("mixinVersion")}:processor")
 	annotationProcessor("io.github.llamalad7:mixinextras-common:${p("mixinExtrasVersion")}")
 	compileOnly("io.github.llamalad7:mixinextras-common:${p("mixinExtrasVersion")}")
@@ -70,13 +68,13 @@ publishMods {
 		accessToken.set(providers.environmentVariable("MODRINTH_TOKEN"))
 		projectId.set("TlQAWQCY")
 		minecraftVersions.add(p("mcVersion"))
-		requires("create", "cloth-config")
+		requires("create")
 	}
 	curseforge {
 		accessToken.set(providers.environmentVariable("CURSEFORGE_TOKEN"))
 		projectId.set("1233804")
 		minecraftVersions.add(p("mcVersion"))
-		requires("create", "cloth-config")
+		requires("create")
 	}
 }
 fun p(key: String) = property(key).toString()

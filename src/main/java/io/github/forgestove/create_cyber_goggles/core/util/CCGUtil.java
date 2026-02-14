@@ -135,7 +135,7 @@ public class CCGUtil {
 		if (mc.player == null) return false;
 		var allMatch = Stream.of(EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET)
 			.allMatch(slot -> mc.player.getItemBySlot(slot).getItem() instanceof CardboardArmorItem);
-		return CCG.CONFIG.chainConveyor.cardBoardedYourself && !mc.player.getAbilities().flying && allMatch;
+		return CCG.config.chainConveyor.cardBoardedYourself && !mc.player.getAbilities().flying && allMatch;
 	}
 	/** @return 如果玩家主手或副手中有物品则返回{@code true}，否则返回{@code false} */
 	public static boolean hasItemInHand() {

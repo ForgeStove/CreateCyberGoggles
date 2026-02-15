@@ -1,8 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.config.gui;
-import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.forgestove.create_cyber_goggles.config.tree.RootConfigNode;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.tabs.*;
 import net.minecraft.client.gui.layouts.*;
@@ -83,13 +81,6 @@ public final class ConfigScreen<C> extends Screen {
 				this.tabs.get(i).setTabButton(tabButton);
 				++i;
 			}
-	}
-	@Override
-	public void render(@NotNull GuiGraphics guiGraphics, int i, int j, float f) {
-		super.render(guiGraphics, i, j, f);
-		RenderSystem.enableBlend();
-		guiGraphics.blit(FOOTER_SEPARATOR, 0, this.height - this.getFooterHeight() - 2, 0.0F, 0.0F, this.width, 2, 32, 2);
-		RenderSystem.disableBlend();
 	}
 	@Override
 	protected void repositionElements() {

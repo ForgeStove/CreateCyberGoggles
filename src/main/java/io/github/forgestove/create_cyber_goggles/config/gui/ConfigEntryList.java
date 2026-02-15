@@ -153,8 +153,4 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 	public boolean hasEntryError() {
 		return this.children().stream().anyMatch(ConfigEntry::hasError);
 	}
-	@Override
-	protected void renderListSeparators(@NotNull GuiGraphics guiGraphics) {
-		// don't render separators
-	}
 }

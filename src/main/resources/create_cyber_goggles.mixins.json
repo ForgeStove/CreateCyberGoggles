@@ -18,6 +18,7 @@
 		"goggles.GeneratingKineticBlockEntityMixin",
 		"goggles.GoggleOverlayRendererMixin",
 		"goggles.GogglesItemMixin",
+		"goggles.HosePulleyBlockEntityMixin",
 		"goggles.KineticBlockEntityMixin",
 		"goggles.LangNumberFormatMixin",
 		"goggles.ListFilterItemMixin",

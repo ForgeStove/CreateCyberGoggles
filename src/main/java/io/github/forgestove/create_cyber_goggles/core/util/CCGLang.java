@@ -15,10 +15,6 @@ public class CCGLang extends Lang {
 	public static @NotNull LangBuilder builder() {
 		return builder(CCG.ID);
 	}
-	@Contract(value = " -> new", pure = true)
-	public static @NotNull LangBuilder configBuilder() {
-		return builder("text.autoconfig." + CCG.ID);
-	}
 	public static @NotNull LangBuilder translate(String langKey, Object... args) {
 		return builder().translate(langKey, args);
 	}

@@ -48,8 +48,8 @@ public class ItemTooltip {
 	}
 	private static void wrench(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!(stack.getItem() instanceof WrenchItem)) return;
-		var component = CCGLang.configBuilder()
-			.translate("option.wrench.leftClickFastDismantle")
+		var component = CCGLang.builder()
+			.translate("config.option.wrench.left_click_fast_dismantle")
 			.space()
 			.add(CCGLang.enabled(CCG.config.wrench.leftClickFastDismantle))
 			.component();

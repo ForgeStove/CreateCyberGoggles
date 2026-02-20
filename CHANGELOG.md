@@ -1,2 +1,2 @@
-- Update to 7.0.0
-- Replace cloth config with new config inside
+- Fix wrench text bug
+- Fix hose pulley hiding infinite fluid bug

@@ -52,4 +52,3 @@ public final class CategoryTitleConfigEntry extends ConfigEntry {
 		return List.of();
 	}
 }
-

@@ -1,34 +1,14 @@
 package io.github.forgestove.create_cyber_goggles;
-import io.github.forgestove.create_cyber_goggles.config.ConfigHandler;
 import io.github.forgestove.create_cyber_goggles.config.annotation.*;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
-import net.minecraft.client.resources.language.I18n;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.loading.FMLPaths;
-import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.function.Supplier;
 public class CCGConfig {
-	private static final String TRANSLATION_PREFIX = CCG.ID + ".config";
-	public static final ConfigHandler<CCGConfig> CONFIG_HANDLER = ConfigHandler.builder(CCGConfig.class)
-		.path(() -> FMLPaths.CONFIGDIR.get().resolve(CCG.ID + ".toml"))
-		.translationPrefix(TRANSLATION_PREFIX)
-		.translator(key -> I18n.exists(key) ? I18n.get(key) : null)
-		.logger(CCG.LOGGER)
-		.build();
-	@ConfigCategory(ordinal = 1) public final Goggles goggles = new Goggles();
-	@ConfigCategory(ordinal = 2) public final GameMode gameMode = new GameMode();
-	@ConfigCategory(ordinal = 3) public final Overlay overlay = new Overlay();
-	@ConfigCategory(ordinal = 4) public final Outliner outliner = new Outliner();
-	@ConfigCategory(ordinal = 5) public final ChainConveyor chainConveyor = new ChainConveyor();
-	@ConfigCategory(ordinal = 6) public final Wrench wrench = new Wrench();
-	@ConfigCategory(ordinal = 7) public final Misc misc = new Misc();
-	public static void init(@NotNull ModContainer container) {
-		CCG.config = CONFIG_HANDLER.getConfig();
-		Supplier<IConfigScreenFactory> extension = () -> (client, parent) -> CONFIG_HANDLER.createConfigScreen(parent);
-		container.registerExtensionPoint(IConfigScreenFactory.class, extension);
-	}
+	@ConfigCategory public final Goggles goggles = new Goggles();
+	@ConfigCategory public final GameMode gameMode = new GameMode();
+	@ConfigCategory public final Overlay overlay = new Overlay();
+	@ConfigCategory public final Outliner outliner = new Outliner();
+	@ConfigCategory public final ChainConveyor chainConveyor = new ChainConveyor();
+	@ConfigCategory public final Wrench wrench = new Wrench();
+	@ConfigCategory public final Misc misc = new Misc();
 	public static class Goggles {
 		public boolean enhancedInfo = true;
 		public boolean hideStaticKineticInfo = false;

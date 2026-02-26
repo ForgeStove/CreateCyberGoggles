@@ -1,14 +1,12 @@
 package io.github.forgestove.create_cyber_goggles.config.tree;
 import com.google.common.collect.ImmutableList;
-import io.github.forgestove.create_cyber_goggles.config.NbtType;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.*;
 
 import java.util.Objects;
 import java.util.function.UnaryOperator;
 public final class CategoryConfigNode<C> implements ConfigNode<C> {
-	public static final Component MULTIPLE_ERRORS = Component.translatable("create_cyber_goggles.config.validator.multiple_errors");
+	public static final Component MULTIPLE_ERRORS = Component.translatable("config.ui.validator.multiple_errors");
 	private String name;
 	private Component title;
 	private Component tooltip;
@@ -76,18 +74,6 @@ public final class CategoryConfigNode<C> implements ConfigNode<C> {
 		return this.children;
 	}
 	@Override
-	public void writeToNbt(C config, CompoundTag compound) {
-		var subTag = new CompoundTag();
-		this.children.forEach(node -> node.writeToNbt(config, subTag));
-		if (!subTag.isEmpty()) compound.put(this.getName(), subTag);
-	}
-	@Override
-	public void readFromNbt(C config, CompoundTag compound) {
-		if (!compound.contains(this.getName(), NbtType.COMPOUND)) return;
-		var subTag = compound.getCompound(this.getName());
-		this.children.forEach(node -> node.readFromNbt(config, subTag));
-	}
-	@Override
 	public void copy(C from, C to) {
 		this.children.forEach(node -> node.copy(from, to));
 	}
@@ -115,7 +101,7 @@ public final class CategoryConfigNode<C> implements ConfigNode<C> {
 			return this;
 		}
 		public <T, V> Builder<C> value(UnaryOperator<ValueConfigNode.Builder<C, T, V>> valueBuilder) {
-			this.childrenBuilder.add(valueBuilder.apply(ValueConfigNode.builder()).category(this.node).build());
+			this.childrenBuilder.add(valueBuilder.apply(ValueConfigNode.builder()).category(this.node).range(0,0).build());
 			return this;
 		}
 		public Builder<C> category(UnaryOperator<Builder<C>> categoryBuilder) {
@@ -133,4 +119,3 @@ public final class CategoryConfigNode<C> implements ConfigNode<C> {
 		}
 	}
 }
-

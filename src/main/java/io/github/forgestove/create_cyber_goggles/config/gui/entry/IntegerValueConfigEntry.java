@@ -122,4 +122,3 @@ public final class IntegerValueConfigEntry<C> extends ValueConfigEntry<C, Intege
 		this.undoButton.render(guiGraphics, mouseX, mouseY, delta);
 	}
 }
-

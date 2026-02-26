@@ -2,6 +2,10 @@ package io.github.forgestove.create_cyber_goggles.config;
 import io.github.forgestove.create_cyber_goggles.config.gui.ConfigScreen;
 import io.github.forgestove.create_cyber_goggles.config.tree.RootConfigNode;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.resources.language.I18n;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.loading.FMLPaths;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
@@ -11,8 +15,9 @@ import java.util.function.*;
  *
  * @param <T> Configuration class type
  */
-@SuppressWarnings("unused")
 public final class ConfigHandler<T> {
+	public static ConfigHandler<?> configHandler;
+	public static String id;
 	private final Class<T> configClass;
 	private final ConfigSerializer<T> serializer;
 	private final Logger logger;
@@ -31,14 +36,24 @@ public final class ConfigHandler<T> {
 	public static <T> Builder<T> builder(Class<T> configClass) {
 		return new Builder<>(configClass);
 	}
+	@SuppressWarnings("unchecked")
+	public static <T> T getConfig(Class<T> configClass, String id, Logger logger) {
+		if (configHandler == null) {
+			ConfigHandler.id = id;
+			configHandler = builder(configClass).path(() -> FMLPaths.CONFIGDIR.get().resolve(id + ".toml"))
+				.translationPrefix(id + ".config")
+				.translator(key -> I18n.exists(key) ? I18n.get(key) : null)
+				.logger(logger)
+				.build();
+		}
+		return (T) configHandler.getConfig();
+	}
+	public static void initConfigScreen(ModContainer container) {
+		Supplier<IConfigScreenFactory> extension = () -> (client, parent) -> configHandler.createConfigScreen(parent);
+		container.registerExtensionPoint(IConfigScreenFactory.class, extension);
+	}
 	public T getConfig() {
 		return activeConfig;
-	}
-	public T getSavedConfig() {
-		return savedConfig;
-	}
-	public RootConfigNode<T> getConfigTree() {
-		return configTree;
 	}
 	public void save(T config) {
 		configTree.copy(config, savedConfig);
@@ -69,9 +84,6 @@ public final class ConfigHandler<T> {
 		regenerateConfigFile();
 		return new ConfigScreen<>(parent, configTree, savedConfig, this::save);
 	}
-	public Consumer<T> getSaveConsumer() {
-		return this::save;
-	}
 	private T newInstance() {
 		try {
 			return configClass.getDeclaredConstructor().newInstance();
@@ -91,20 +103,12 @@ public final class ConfigHandler<T> {
 			serializerBuilder.path(configPath);
 			return this;
 		}
-		public Builder<T> path(Path configPath) {
-			serializerBuilder.path(configPath);
-			return this;
-		}
 		public Builder<T> translationPrefix(String prefix) {
 			serializerBuilder.translationPrefix(prefix);
 			return this;
 		}
 		public Builder<T> translator(Function<String, String> translator) {
 			serializerBuilder.translator(translator);
-			return this;
-		}
-		public Builder<T> header(Supplier<String> headerSupplier) {
-			serializerBuilder.header(headerSupplier);
 			return this;
 		}
 		public Builder<T> logger(Logger logger) {
@@ -116,5 +120,3 @@ public final class ConfigHandler<T> {
 		}
 	}
 }
-
-

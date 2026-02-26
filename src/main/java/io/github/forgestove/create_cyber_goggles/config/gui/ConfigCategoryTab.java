@@ -41,7 +41,7 @@ public final class ConfigCategoryTab<C> implements Tab {
 			this.screen.width,
 			this.screen.height - this.screen.getHeaderHeight() - this.screen.getFooterHeight(),
 			this.screen.getHeaderHeight(),
-			24,
+			22,
 			entries
 		);
 	}
@@ -109,5 +109,4 @@ public final class ConfigCategoryTab<C> implements Tab {
 		this.tabButton = tabButton;
 	}
 }
-
 

@@ -1,19 +1,20 @@
 package io.github.forgestove.create_cyber_goggles.config.tree;
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
+import io.github.forgestove.create_cyber_goggles.config.ConfigHandler;
 import io.github.forgestove.create_cyber_goggles.config.annotation.*;
 import io.github.forgestove.create_cyber_goggles.config.annotation.Range;
+import io.github.forgestove.create_cyber_goggles.config.gui.Translation;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode.*;
+import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode.ValueValidator.None;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.*;
 
 import java.lang.reflect.*;
 import java.util.*;
 public final class RootConfigNode<C> implements ConfigNode<C> {
-	public static final Component TITLE = Component.translatable("create_cyber_goggles.config.title");
-	private ImmutableList<CategoryConfigNode<C>> categories;
+	private final ImmutableList<CategoryConfigNode<C>> categories;
 	private RootConfigNode(ImmutableList<CategoryConfigNode<C>> categories) {
 		this.categories = categories;
 	}
@@ -31,10 +32,6 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 		}
 		return sb.toString();
 	}
-	@SuppressWarnings("unused")
-	public void reload(C defaultConfig) {
-		this.categories = new Builder<>(defaultConfig).build().getCategories();
-	}
 	@NotNull
 	@Override
 	public String getName() {
@@ -43,7 +40,7 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 	@NotNull
 	@Override
 	public Component getTitle() {
-		return TITLE;
+		return Translation.TITLE;
 	}
 	@Nullable
 	@Override
@@ -93,14 +90,6 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 		return this.categories;
 	}
 	@Override
-	public void writeToNbt(C config, CompoundTag compound) {
-		this.categories.forEach(node -> node.writeToNbt(config, compound));
-	}
-	@Override
-	public void readFromNbt(C config, CompoundTag compound) {
-		this.categories.forEach(node -> node.readFromNbt(config, compound));
-	}
-	@Override
 	public void copy(C from, C to) {
 		this.categories.forEach(node -> node.copy(from, to));
 	}
@@ -118,7 +107,7 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 			var configClass = this.defaultConfig.getClass();
 			var categories = Arrays.stream(configClass.getFields())
 				.filter(field -> field.isAnnotationPresent(ConfigCategory.class))
-				.map(field -> Pair.of(field.getAnnotation(ConfigCategory.class).ordinal(), field))
+				.map(field -> Pair.of(field.getAnnotation(ConfigCategory.class).value(), field))
 				.sorted(Comparator.comparingInt(Pair::getFirst))
 				.map(pair -> this.createCategoryNode(pair.getSecond()))
 				.collect(ImmutableList.toImmutableList());
@@ -137,7 +126,7 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 			var categoryName = categoryField.getName();
 			var categoryBuilder = CategoryConfigNode.<C>builder()
 				.name(categoryName)
-				.title(Component.translatable("create_cyber_goggles.config.category." + snakeCase(categoryName)));
+				.title(Component.translatable(ConfigHandler.id + ".config.category." + snakeCase(categoryName)));
 			for (var valueField : categoryClass.getDeclaredFields())
 				this.addValueNode(defaultCategory, categoryField, valueField, categoryBuilder);
 			return categoryBuilder.build();
@@ -165,7 +154,7 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 			CategoryConfigNode.Builder<C> categoryBuilder
 		) {
 			var valueName = valueField.getName();
-			var titleKey = "create_cyber_goggles.config.option." + snakeCase(categoryField.getName()) + "." + snakeCase(valueName);
+			var titleKey = ConfigHandler.id + ".config.option." + snakeCase(categoryField.getName()) + "." + snakeCase(valueName);
 			var title = Component.translatable(titleKey);
 			var tooltip = Component.translatable(titleKey + ".tooltip");
 			var prefixKey = titleKey + ".prefix";
@@ -187,19 +176,13 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 				if (rangeAnnotation != null) {
 					var isIntegerType = type.equals(Integer.class) || type.equals(int.class);
 					var hasRange = isIntegerType && (
-						rangeAnnotation.min() != Integer.MIN_VALUE
-							|| rangeAnnotation.max() != Integer.MAX_VALUE
+						rangeAnnotation.min() != Integer.MIN_VALUE || rangeAnnotation.max() != Integer.MAX_VALUE
 					);
-					var hasCustomValidator = rangeAnnotation.validator() != ValueConfigNode.ValueValidator.None.class;
+					var hasCustomValidator = rangeAnnotation.validator() != None.class;
 					if (hasRange) valueBuilder.range(rangeAnnotation.min(), rangeAnnotation.max());
 					// Create combined validator
-					ValueConfigNode.ValueValidator<T> rangeValidator = hasRange ? makeRangeValidator(
-						rangeAnnotation.min(),
-						rangeAnnotation.max()
-					) : null;
-					ValueConfigNode.ValueValidator<T> customValidator = hasCustomValidator
-						? makeCustomValidator(rangeAnnotation.validator())
-						: null;
+					ValueValidator<T> rangeValidator = hasRange ? makeRangeValidator(rangeAnnotation.min(), rangeAnnotation.max()) : null;
+					ValueValidator<T> customValidator = hasCustomValidator ? makeCustomValidator(rangeAnnotation.validator()) : null;
 					// Combine both validators
 					if (rangeValidator != null && customValidator != null) valueBuilder.validator(v -> {
 						var result = rangeValidator.validate(v);
@@ -212,19 +195,19 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 				return valueBuilder;
 			});
 		}
-		private <T> ValueConfigNode.ValueValidator<T> makeRangeValidator(int min, int max) {
+		private <T> ValueValidator<T> makeRangeValidator(int min, int max) {
 			return value -> {
 				if (value instanceof Integer intVal) {
-					if (intVal < min) return Component.translatable("create_cyber_goggles.config.validator.min", min);
-					if (intVal > max) return Component.translatable("create_cyber_goggles.config.validator.max", max);
+					if (intVal < min) return Translation.VALIDATOR_MIN.copy().append(Component.literal(String.valueOf(min)));
+					if (intVal > max) return Translation.VALIDATOR_MAX.copy().append(Component.literal(String.valueOf(max)));
 				}
 				return null;
 			};
 		}
 		@SuppressWarnings("unchecked")
-		private <T> ValueConfigNode.ValueValidator<T> makeCustomValidator(Class<? extends ValueConfigNode.ValueValidator<?>> validatorClass) {
+		private <T> ValueValidator<T> makeCustomValidator(Class<? extends ValueValidator<?>> validatorClass) {
 			try {
-				return (ValueConfigNode.ValueValidator<T>) validatorClass.getDeclaredConstructor().newInstance();
+				return (ValueValidator<T>) validatorClass.getDeclaredConstructor().newInstance();
 			} catch (ReflectiveOperationException e) {
 				throw new IllegalArgumentException("Failed to create validator: " + validatorClass.getName(), e);
 			}
@@ -259,4 +242,3 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 		}
 	}
 }
-

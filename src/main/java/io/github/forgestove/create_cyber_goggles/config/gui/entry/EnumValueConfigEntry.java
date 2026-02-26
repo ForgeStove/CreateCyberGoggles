@@ -116,6 +116,8 @@ public final class EnumValueConfigEntry<C, E extends Enum<E>> extends ValueConfi
 	/** Render the dropdown overlay - called after all entries are rendered */
 	public void renderDropdownOverlay(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY) {
 		if (!this.expanded) return;
+		guiGraphics.pose().pushPose();
+		guiGraphics.pose().translate(0, 0, 100); // Bring to front
 		var dropdownHeight = this.getDropdownHeight();
 		var contentWidth = this.needsScrollbar() ? this.dropdownWidth - SCROLLBAR_WIDTH - 2 : this.dropdownWidth;
 		// Draw background with border
@@ -173,6 +175,7 @@ public final class EnumValueConfigEntry<C, E extends Enum<E>> extends ValueConfi
 			var thumbColor = scrollbarHovered || this.isDraggingScrollbar ? 0xFF888888 : 0xFF555555;
 			guiGraphics.fill(scrollbarX, scrollbarY, scrollbarX + SCROLLBAR_WIDTH, scrollbarY + scrollbarHeight, thumbColor);
 		}
+		guiGraphics.pose().popPose();
 	}
 	public boolean isExpanded() {
 		return this.expanded;

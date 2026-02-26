@@ -45,4 +45,3 @@ public final class PrefixTextConfigEntry extends ConfigEntry {
 		return this.textWidgetAsList;
 	}
 }
-

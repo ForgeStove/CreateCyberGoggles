@@ -10,10 +10,10 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 	private final ConfigCategoryTab<?> tab;
 	@Nullable private EnumValueConfigEntry<?, ?> expandedDropdown;
 	// Highlight animation state
-	private float highlightY = -1;
-	private float highlightTargetY = -1;
-	private float highlightAlpha = 0;
-	private int highlightHeight = 24;
+	private float highlightY;
+	private float highlightTargetY;
+	private float highlightAlpha;
+	private int highlightHeight;
 	@Nullable private ConfigEntry lastHoveredEntry;
 	public ConfigEntryList(
 		ConfigCategoryTab<?> tab,
@@ -22,7 +22,7 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		int contentHeight,
 		int headerHeight,
 		int itemSpacing,
-		Iterable<ConfigEntry> entries
+		@NotNull Iterable<ConfigEntry> entries
 	) {
 		super(minecraft, width, contentHeight, headerHeight, itemSpacing);
 		this.tab = tab;
@@ -30,11 +30,6 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 	}
 	@Override
 	public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-		// Update highlight animation
-		this.updateHighlightAnimation(mouseX, mouseY, delta);
-		// Render highlight before entries
-		this.renderHighlight(guiGraphics);
-		super.renderWidget(guiGraphics, mouseX, mouseY, delta);
 		// Track which dropdown is expanded
 		this.expandedDropdown = null;
 		for (var entry : this.children())
@@ -43,26 +38,33 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 				break;
 			}
 		// Render dropdown overlay on top of everything (outside scissor)
+		var showTooltip = this.expandedDropdown == null;
 		if (this.expandedDropdown != null) {
-			guiGraphics.pose().pushPose();
-			guiGraphics.pose().translate(0, 0, 100); // Bring to front
 			this.expandedDropdown.renderDropdownOverlay(guiGraphics, mouseX, mouseY);
-			guiGraphics.pose().popPose();
 			// Don't show tooltips when mouse is over the dropdown
-			if (this.expandedDropdown.isMouseOverDropdown(mouseX, mouseY)) return;
+			showTooltip = !this.expandedDropdown.isMouseOverDropdown(mouseX, mouseY);
 		}
+		if (showTooltip) {
+			this.renderHighlight(guiGraphics);
+			this.updateHighlightAnimation(mouseX, mouseY, delta);
+		}
+		// Render highlight before entries
+		super.renderWidget(guiGraphics, mouseX, mouseY, delta);
 		// Tooltips
+		if (!showTooltip) return;
 		var entry = this.getHovered();
-		if (entry != null) {
-			if (entry instanceof ValueConfigEntry<?, ?, ?> valueEntry) if (valueEntry.resetButton.isHovered()) {
-				this.tab.getScreen().setTooltipForNextRenderPass(ValueConfigEntry.RESET_BUTTON_TOOLTIP);
-				return;
-			} else if (valueEntry.undoButton.isHovered()) {
-				this.tab.getScreen().setTooltipForNextRenderPass(ValueConfigEntry.UNDO_BUTTON_TOOLTIP);
-				return;
-			}
-			if (entry.getTooltip() != null) this.tab.getScreen().setTooltipForNextRenderPass(entry.getTooltip());
+		if (entry == null) return;
+		if (entry instanceof ValueConfigEntry<?, ?, ?> valueEntry) if (valueEntry.resetButton.isHovered()) {
+			this.tab.getScreen().setTooltipForNextRenderPass(Translation.RESET_TOOLTIP);
+			return;
+		} else if (valueEntry.undoButton.isHovered()) {
+			this.tab.getScreen().setTooltipForNextRenderPass(Translation.UNDO_TOOLTIP);
+			return;
+		} else if (valueEntry instanceof ColorValueConfigEntry<?> colorEntry && colorEntry.pickerButton.isHovered()) {
+			this.tab.getScreen().setTooltipForNextRenderPass(Translation.COLOR_PICKER_TOOLTIP);
+			return;
 		}
+		if (entry.getTooltip() != null) this.tab.getScreen().setTooltipForNextRenderPass(entry.getTooltip());
 	}
 	private void updateHighlightAnimation(int mouseX, int mouseY, float delta) {
 		var hoveredEntry = this.getEntryAtPosition(mouseX, mouseY);
@@ -103,7 +105,7 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		var color = alpha << 24 | 0xFFFFFF;
 		var left = this.getX();
 		var right = this.getX() + this.getWidth();
-		var offset = -2; // Move highlight up
+		var offset = -1; // Move highlight up
 		var top = (int) this.highlightY + offset;
 		var bottom = top + this.highlightHeight;
 		// Clip to visible area

@@ -40,7 +40,7 @@ public class CCGConfig {
 	public static class Outliner {
 		public boolean renderAnalogBox = true;
 		public boolean betterLine = true;
-		@Range(min = 0) public int delayRenderDuration = 60;
+		@IntRange(min = 0) public int delayRenderDuration = 60;
 		@ColorValue public int outColor = 0xDDC166;
 		@ColorValue public int inColor = 0x7FCDE0;
 		public boolean rainbowDebug = false;

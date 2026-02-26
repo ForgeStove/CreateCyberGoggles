@@ -62,4 +62,3 @@ public final class BooleanValueConfigEntry<C> extends ValueConfigEntry<C, Boolea
 		this.undoButton.render(guiGraphics, mouseX, mouseY, delta);
 	}
 }
-

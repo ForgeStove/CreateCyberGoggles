@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.config.gui.entry;
-import io.github.forgestove.create_cyber_goggles.config.gui.ConfigCategoryTab;
+import io.github.forgestove.create_cyber_goggles.config.gui.*;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -13,10 +13,6 @@ import org.jetbrains.annotations.*;
 
 import java.util.*;
 public abstract class ValueConfigEntry<C, T, V> extends ConfigEntry {
-	public static final Component RESET_BUTTON_LABEL = Component.translatable("create_cyber_goggles.config.reset_to_default.small");
-	public static final Component RESET_BUTTON_TOOLTIP = Component.translatable("create_cyber_goggles.config.reset_to_default.full");
-	public static final Component UNDO_BUTTON_LABEL = Component.translatable("create_cyber_goggles.config.undo.small");
-	public static final Component UNDO_BUTTON_TOOLTIP = Component.translatable("create_cyber_goggles.config.undo.full");
 	public final Button resetButton;
 	public final Button undoButton;
 	protected final ConfigCategoryTab<C> tab;
@@ -39,13 +35,13 @@ public abstract class ValueConfigEntry<C, T, V> extends ConfigEntry {
 		this.tooltip = valueNode.getTooltip() == null ? null : tab.getMinecraft().font.split(valueNode.getTooltip(), 350);
 		this.tooltipWithError = this.getTooltipWithError();
 		this.valueNode = valueNode;
-		this.resetButton = Button.builder(RESET_BUTTON_LABEL, b -> this.resetToDefault())
-			.bounds(0, 0, Math.max(tab.getMinecraft().font.width(RESET_BUTTON_LABEL) + 6, 20), 20)
+		this.resetButton = Button.builder(Translation.RESET_LABEL, b -> this.resetToDefault())
+			.bounds(0, 0, Math.max(tab.getMinecraft().font.width(Translation.RESET_LABEL) + 6, 20), 20)
 			.build();
 		this.resetButton.active = !valueNode.isDefaultValue(this.tab.getConfig());
 		this.children.add(this.resetButton);
-		this.undoButton = Button.builder(UNDO_BUTTON_LABEL, b -> this.resetToActive())
-			.bounds(0, 0, Math.max(tab.getMinecraft().font.width(UNDO_BUTTON_LABEL) + 6, 20), 20)
+		this.undoButton = Button.builder(Translation.UNDO_LABEL, b -> this.resetToActive())
+			.bounds(0, 0, Math.max(tab.getMinecraft().font.width(Translation.UNDO_LABEL) + 6, 20), 20)
 			.build();
 		this.undoButton.active = !valueNode.isActiveValue(this.tab.getConfig());
 		this.children.add(this.undoButton);
@@ -107,4 +103,3 @@ public abstract class ValueConfigEntry<C, T, V> extends ConfigEntry {
 		guiGraphics.drawString(this.tab.getMinecraft().font, l.getVisualOrderText(), x, y + 5, -1, false);
 	}
 }
-

@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.config.gui.entry;
-import io.github.forgestove.create_cyber_goggles.config.gui.ConfigCategoryTab;
+import io.github.forgestove.create_cyber_goggles.config.gui.*;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -14,11 +14,11 @@ import java.awt.Color;
 import java.util.function.IntConsumer;
 import java.util.regex.Pattern;
 public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer, Integer> {
-	private static final Pattern HEX_PATTERN = Pattern.compile("[0-9A-Fa-f]*");
-	private static final int COLOR_PREVIEW_SIZE = 16;
-	private final EditBox inputField;
-	private final Button pickerButton;
-	private final boolean hasAlpha;
+	public static final Pattern HEX_PATTERN = Pattern.compile("[0-9A-Fa-f]*");
+	public static final int COLOR_PREVIEW_SIZE = 16;
+	public final EditBox inputField;
+	public final Button pickerButton;
+	public final boolean hasAlpha;
 	public ColorValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Integer, Integer> valueNode, boolean hasAlpha) {
 		super(tab, valueNode);
 		this.hasAlpha = hasAlpha;
@@ -27,7 +27,7 @@ public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer,
 		this.inputField.setValue(formatColor(this.getValue()));
 		this.inputField.setFilter(s -> HEX_PATTERN.matcher(s).matches());
 		this.inputField.setResponder(this::onInputChange);
-		this.pickerButton = Button.builder(Component.literal("🎨"), b -> openColorPicker()).bounds(0, 0, 20, 20).build();
+		this.pickerButton = Button.builder(Translation.COLOR_PICKER_LABEL, b -> openColorPicker()).bounds(0, 0, 20, 20).build();
 		this.children.add(0, this.inputField);
 		this.children.add(this.pickerButton);
 	}

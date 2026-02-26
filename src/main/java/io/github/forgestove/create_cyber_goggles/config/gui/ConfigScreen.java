@@ -8,23 +8,12 @@ import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.*;
 import net.minecraft.client.renderer.PanoramaRenderer;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Consumer;
 public final class ConfigScreen<C> extends Screen {
-	private static final Component CANCEL_LABEL = CommonComponents.GUI_CANCEL;
-	private static final Component QUIT_UNSAVED_LABEL = Component.translatable("create_cyber_goggles.config.quit.unsaved");
-	private static final Component SAVE_LABEL = Component.translatable("create_cyber_goggles.config.save");
-	private static final Component CANNOT_SAVE_LABEL = Component.translatable("create_cyber_goggles.config.cannot_save");
-	private static final Component QUIT_CONFIRM_LABEL = Component.translatable("create_cyber_goggles.config.quit.confirm");
-	private static final Component QUIT_CONFIRM_TITLE = Component.translatable("create_cyber_goggles.config.quit.confirm.title");
-	private static final Component QUIT_CONFIRM_WARNING = Component.translatable("create_cyber_goggles.config.quit.confirm.warning");
-	private static final Component RESTART_REQUIRED_LABEL = Component.translatable("create_cyber_goggles.config.restart_required");
-	private static final Component RESTART_REQUIRED_TITLE = Component.translatable("create_cyber_goggles.config.restart_required.title");
-	private static final Component EXIT_MINECRAFT_LABEL = Component.translatable("create_cyber_goggles.config.exit_minecraft");
-	private static final Component IGNORE_RESTART_LABEL = Component.translatable("create_cyber_goggles.config.ignore_restart");
 	/** Cache for last selected tab index per config screen type */
 	private static final Map<String, Integer> lastSelectedTabCache = new HashMap<>();
 	private final RootConfigNode<C> root;
@@ -194,10 +183,10 @@ public final class ConfigScreen<C> extends Screen {
 		}
 		this.getMinecraft().setScreen(new ConfirmScreen(
 			confirmed -> this.getMinecraft().setScreen(confirmed ? this.previous : this),
-			QUIT_CONFIRM_TITLE,
-			QUIT_CONFIRM_WARNING,
-			QUIT_CONFIRM_LABEL,
-			CANCEL_LABEL
+			Translation.QUIT_CONFIRM_TITLE,
+			Translation.QUIT_CONFIRM_WARNING,
+			Translation.QUIT_CONFIRM_LABEL,
+			Translation.CANCEL_LABEL
 		));
 	}
 	public void saveAndQuit() {
@@ -208,7 +197,11 @@ public final class ConfigScreen<C> extends Screen {
 			confirmed -> {
 				if (confirmed) this.getMinecraft().stop();
 				else this.getMinecraft().setScreen(this.previous);
-			}, RESTART_REQUIRED_TITLE, RESTART_REQUIRED_LABEL, EXIT_MINECRAFT_LABEL, IGNORE_RESTART_LABEL
+			},
+			Translation.RESTART_REQUIRED_TITLE,
+			Translation.RESTART_REQUIRED_LABEL,
+			Translation.QUIT_GAME,
+			Translation.IGNORE_RESTART_LABEL
 		));
 		else this.getMinecraft().setScreen(this.previous);
 	}
@@ -229,10 +222,10 @@ public final class ConfigScreen<C> extends Screen {
 		this.saveAndQuitButton.setMessage(this.getSaveLabel(hasEntryError));
 	}
 	private Component getQuitLabel() {
-		return this.root.isActiveValue(this.config) ? CANCEL_LABEL : QUIT_UNSAVED_LABEL;
+		return this.root.isActiveValue(this.config) ? Translation.CANCEL_LABEL : Translation.QUIT_UNSAVED_LABEL;
 	}
 	private Component getSaveLabel(boolean hasEntryError) {
-		return this.root.validate(this.config) == null && !hasEntryError ? SAVE_LABEL : CANNOT_SAVE_LABEL;
+		return this.root.validate(this.config) == null && !hasEntryError ? Translation.SAVE_LABEL : Translation.CANNOT_SAVE_LABEL;
 	}
 	private Component getSaveLabel() {
 		return getSaveLabel(false);
@@ -241,4 +234,3 @@ public final class ConfigScreen<C> extends Screen {
 		return this.panoramaRenderer;
 	}
 }
-

@@ -41,7 +41,7 @@ public final class ConfigCategoryTab<C> implements Tab {
 			this.screen.width,
 			this.screen.height - this.screen.getHeaderHeight() - this.screen.getFooterHeight(),
 			this.screen.getHeaderHeight(),
-			24,
+			22,
 			entries,
 			this.screen.getPanoramaRenderer()
 		);
@@ -89,7 +89,7 @@ public final class ConfigCategoryTab<C> implements Tab {
 	}
 	@NotNull
 	public Minecraft getMinecraft() {
-		return this.screen.getMinecraft();
+		return Objects.requireNonNull(this.screen.getMinecraft());
 	}
 	public ConfigScreen<C> getScreen() {
 		return this.screen;
@@ -117,4 +117,3 @@ public final class ConfigCategoryTab<C> implements Tab {
 		this.tabButton = tabButton;
 	}
 }
-

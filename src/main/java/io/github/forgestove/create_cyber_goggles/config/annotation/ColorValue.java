@@ -4,8 +4,8 @@ import java.lang.annotation.*;
  * Marks an integer field as a color value.
  * This will display a color picker in the config GUI.
  */
-@Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
 public @interface ColorValue {
 	/**
 	 * Whether the color includes an alpha channel.
@@ -14,4 +14,3 @@ public @interface ColorValue {
 	 */
 	boolean hasAlpha() default false;
 }
-

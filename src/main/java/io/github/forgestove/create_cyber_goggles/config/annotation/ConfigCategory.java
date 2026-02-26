@@ -6,6 +6,12 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ConfigCategory {
-	int ordinal() default 0;
+	/**
+	 * Category order. Categories will be sorted by this value in ascending order.
+	 * <p>
+	 * Default value is 0.
+	 *
+	 * @return the order of the category
+	 */
+	int value() default 0;
 }
-

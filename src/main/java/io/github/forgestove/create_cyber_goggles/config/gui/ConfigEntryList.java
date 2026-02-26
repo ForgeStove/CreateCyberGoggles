@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.config.gui;
 import io.github.forgestove.create_cyber_goggles.config.gui.entry.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.ContainerObjectSelectionList;
+import net.minecraft.client.gui.components.*;
 import net.minecraft.client.renderer.PanoramaRenderer;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.*;
@@ -12,10 +12,10 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 	private final PanoramaRenderer panoramaRenderer;
 	@Nullable private EnumValueConfigEntry<?, ?> expandedDropdown;
 	// Highlight animation state
-	private float highlightY = -1;
-	private float highlightTargetY = -1;
-	private float highlightAlpha = 0;
-	private int highlightHeight = 24;
+	private float highlightY;
+	private float highlightTargetY;
+	private float highlightAlpha;
+	private int highlightHeight;
 	@Nullable private ConfigEntry lastHoveredEntry;
 	public ConfigEntryList(
 		ConfigCategoryTab<?> tab,
@@ -24,7 +24,7 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		int contentHeight,
 		int headerHeight,
 		int itemSpacing,
-		Iterable<ConfigEntry> entries,
+		@NotNull Iterable<ConfigEntry> entries,
 		PanoramaRenderer panoramaRenderer
 	) {
 		super(minecraft, width, contentHeight, headerHeight, headerHeight + contentHeight, itemSpacing);
@@ -49,28 +49,33 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 				break;
 			}
 		// Render dropdown overlay on top of everything (outside scissor)
+		var showTooltip = this.expandedDropdown == null;
 		if (this.expandedDropdown != null) {
-			guiGraphics.pose().pushPose();
-			guiGraphics.pose().translate(0, 0, 100); // Bring to front
 			this.expandedDropdown.renderDropdownOverlay(guiGraphics, mouseX, mouseY);
-			guiGraphics.pose().popPose();
 			// Don't show tooltips when mouse is over the dropdown
-			if (this.expandedDropdown.isMouseOverDropdown(mouseX, mouseY)) return;
+			showTooltip = !this.expandedDropdown.isMouseOverDropdown(mouseX, mouseY);
 		}
+		if (showTooltip) {
+			this.renderHighlight(guiGraphics);
+			this.updateHighlightAnimation(mouseX, mouseY, delta);
+		}
+		// Render highlight before entries
+		super.renderList(guiGraphics, mouseX, mouseY, delta);
 		// Tooltips
+		if (!showTooltip) return;
 		var entry = this.getEntryAt(mouseX, mouseY);
-		if (entry != null) {
-			if (entry instanceof ValueConfigEntry<?, ?, ?> valueEntry) if (valueEntry.resetButton.isHovered()) {
-				this.tab.getScreen()
-					.setTooltipForNextRenderPass(this.tab.getMinecraft().font.split(ValueConfigEntry.RESET_BUTTON_TOOLTIP, 200));
-				return;
-			} else if (valueEntry.undoButton.isHovered()) {
-				this.tab.getScreen()
-					.setTooltipForNextRenderPass(this.tab.getMinecraft().font.split(ValueConfigEntry.UNDO_BUTTON_TOOLTIP, 200));
-				return;
-			}
-			if (entry.getTooltip() != null) this.tab.getScreen().setTooltipForNextRenderPass(entry.getTooltip());
+		if (entry == null) return;
+		if (entry instanceof ValueConfigEntry<?, ?, ?> valueEntry) if (valueEntry.resetButton.isHovered()) {
+			this.tab.getScreen().setTooltipForNextRenderPass(Tooltip.splitTooltip(this.minecraft, Translation.RESET_TOOLTIP));
+			return;
+		} else if (valueEntry.undoButton.isHovered()) {
+			this.tab.getScreen().setTooltipForNextRenderPass(Tooltip.splitTooltip(this.minecraft, Translation.UNDO_TOOLTIP));
+			return;
+		} else if (valueEntry instanceof ColorValueConfigEntry<?> colorEntry && colorEntry.pickerButton.isHovered()) {
+			this.tab.getScreen().setTooltipForNextRenderPass(Tooltip.splitTooltip(this.minecraft, Translation.COLOR_PICKER_TOOLTIP));
+			return;
 		}
+		if (entry.getTooltip() != null) this.tab.getScreen().setTooltipForNextRenderPass(entry.getTooltip());
 	}
 	private void updateHighlightAnimation(int mouseX, int mouseY, float delta) {
 		var hoveredEntry = this.getEntryAt(mouseX, mouseY);
@@ -112,7 +117,7 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		// Use 0 and width for full width highlight
 		var left = 0;
 		var right = this.width;
-		var offset = -2; // Move highlight up
+		var offset = -1; // Move highlight up
 		var top = (int) this.highlightY + offset;
 		var bottom = top + this.highlightHeight;
 		// Clip to visible area

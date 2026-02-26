@@ -1,33 +1,14 @@
 package io.github.forgestove.create_cyber_goggles;
-import io.github.forgestove.create_cyber_goggles.config.ConfigHandler;
 import io.github.forgestove.create_cyber_goggles.config.annotation.*;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
-import net.minecraft.client.resources.language.I18n;
-import net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.loading.FMLPaths;
 public class CCGConfig {
-	public static final ConfigHandler<CCGConfig> CONFIG_HANDLER = ConfigHandler.builder(CCGConfig.class)
-		.path(() -> FMLPaths.CONFIGDIR.get().resolve(CCG.ID + ".toml"))
-		.translationPrefix(CCG.ID + ".config")
-		.translator(key -> I18n.exists(key) ? I18n.get(key) : null)
-		.logger(CCG.LOGGER)
-		.build();
-	@ConfigCategory(ordinal = 1) public final Goggles goggles = new Goggles();
-	@ConfigCategory(ordinal = 2) public final GameMode gameMode = new GameMode();
-	@ConfigCategory(ordinal = 3) public final Overlay overlay = new Overlay();
-	@ConfigCategory(ordinal = 4) public final Outliner outliner = new Outliner();
-	@ConfigCategory(ordinal = 5) public final ChainConveyor chainConveyor = new ChainConveyor();
-	@ConfigCategory(ordinal = 6) public final Wrench wrench = new Wrench();
-	@ConfigCategory(ordinal = 7) public final Misc misc = new Misc();
-	public static void init() {
-		CCG.config = CONFIG_HANDLER.getConfig();
-		ModLoadingContext.get()
-			.registerExtensionPoint(
-				ConfigScreenFactory.class,
-				() -> new ConfigScreenFactory((client, parent) -> CONFIG_HANDLER.createConfigScreen(parent))
-			);
-	}
+	@ConfigCategory public final Goggles goggles = new Goggles();
+	@ConfigCategory public final GameMode gameMode = new GameMode();
+	@ConfigCategory public final Overlay overlay = new Overlay();
+	@ConfigCategory public final Outliner outliner = new Outliner();
+	@ConfigCategory public final ChainConveyor chainConveyor = new ChainConveyor();
+	@ConfigCategory public final Wrench wrench = new Wrench();
+	@ConfigCategory public final Misc misc = new Misc();
 	public static class Goggles {
 		public boolean enhancedInfo = true;
 		public boolean hideStaticKineticInfo = false;

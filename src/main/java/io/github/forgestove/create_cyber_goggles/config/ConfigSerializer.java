@@ -19,13 +19,11 @@ public final class ConfigSerializer<T> {
 	private final Supplier<Path> configPath;
 	private final String translationPrefix;
 	private final Function<String, String> translator;
-	private final Supplier<String> headerSupplier;
 	private ConfigSerializer(Builder<T> builder) {
 		this.configClass = builder.configClass;
 		this.configPath = builder.configPath;
 		this.translationPrefix = builder.translationPrefix;
 		this.translator = builder.translator;
-		this.headerSupplier = builder.headerSupplier;
 	}
 	public static <T> Builder<T> builder(Class<T> configClass) {
 		return new Builder<>(configClass);
@@ -33,16 +31,10 @@ public final class ConfigSerializer<T> {
 	public void serialize(T config) throws SerializationException {
 		try (var fileConfig = CommentedFileConfig.builder(configPath.get()).writingMode(WritingMode.REPLACE).build()) {
 			var categories = getCategoryFields();
-			var firstCategory = true;
 			for (var categoryField : categories) {
 				categoryField.setAccessible(true);
 				var categoryName = categoryField.getName();
 				var categoryValue = categoryField.get(config);
-				if (firstCategory && headerSupplier != null) {
-					var header = headerSupplier.get();
-					if (header != null) fileConfig.setComment(categoryName, header);
-					firstCategory = false;
-				}
 				writeCategory(fileConfig, categoryName, categoryValue);
 			}
 			fileConfig.save();
@@ -67,7 +59,7 @@ public final class ConfigSerializer<T> {
 	private Field[] getCategoryFields() {
 		return Arrays.stream(configClass.getDeclaredFields())
 			.filter(f -> f.isAnnotationPresent(ConfigCategory.class))
-			.sorted(Comparator.comparingInt(f -> f.getAnnotation(ConfigCategory.class).ordinal()))
+			.sorted(Comparator.comparingInt(f -> f.getAnnotation(ConfigCategory.class).value()))
 			.toArray(Field[]::new);
 	}
 	private T newInstance() throws SerializationException {
@@ -131,40 +123,25 @@ public final class ConfigSerializer<T> {
 			} catch (IllegalArgumentException ignored) {}
 		}
 	}
-	@SuppressWarnings("UnusedReturnValue")
 	public static final class Builder<T> {
 		private final Class<T> configClass;
 		private Supplier<Path> configPath;
 		private String translationPrefix;
 		private Function<String, String> translator;
-		private Supplier<String> headerSupplier;
 		private Builder(Class<T> configClass) {
 			this.configClass = configClass;
 		}
-		public Builder<T> path(Supplier<Path> configPath) {
+		public void path(Supplier<Path> configPath) {
 			this.configPath = configPath;
-			return this;
 		}
-		public Builder<T> path(Path configPath) {
-			this.configPath = () -> configPath;
-			return this;
-		}
-		public Builder<T> translationPrefix(String prefix) {
+		public void translationPrefix(String prefix) {
 			this.translationPrefix = prefix;
-			return this;
 		}
-		public Builder<T> translator(Function<String, String> translator) {
+		public void translator(Function<String, String> translator) {
 			this.translator = translator;
-			return this;
-		}
-		public Builder<T> header(Supplier<String> headerSupplier) {
-			this.headerSupplier = headerSupplier;
-			return this;
 		}
 		public ConfigSerializer<T> build() {
-			if (configPath == null) throw new IllegalStateException("Config path is required");
 			return new ConfigSerializer<>(this);
 		}
 	}
 }
-

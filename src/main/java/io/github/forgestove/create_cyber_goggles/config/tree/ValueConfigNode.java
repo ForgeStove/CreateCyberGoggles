@@ -1,5 +1,4 @@
 package io.github.forgestove.create_cyber_goggles.config.tree;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.*;
 
@@ -19,8 +18,6 @@ public final class ValueConfigNode<C, T, V> implements ConfigNode<C> {
 	private int rangeMax;
 	private ValueReader<C, V> valueReader;
 	private ValueWriter<C, V> valueWriter;
-	@Nullable private ValueReader<CompoundTag, V> nbtReader;
-	@Nullable private ValueWriter<CompoundTag, V> nbtWriter;
 	@Nullable private ValueValidator<V> validator;
 	private V defaultValue;
 	private V editingValue;
@@ -113,16 +110,6 @@ public final class ValueConfigNode<C, T, V> implements ConfigNode<C> {
 		return this.rangeMax;
 	}
 	@Override
-	public void writeToNbt(C config, CompoundTag compound) {
-		if (this.nbtWriter == null) return;
-		this.nbtWriter.write(compound, this.getActiveValue(config));
-	}
-	@Override
-	public void readFromNbt(C config, CompoundTag compound) {
-		if (this.nbtReader == null) return;
-		this.setActiveValue(config, this.nbtReader.read(compound));
-	}
-	@Override
 	public void copy(C from, C to) {
 		this.setActiveValue(to, this.getActiveValue(from));
 	}
@@ -150,8 +137,7 @@ public final class ValueConfigNode<C, T, V> implements ConfigNode<C> {
 	}
 	@SuppressWarnings(
 		{
-			"UnusedReturnValue",
-			"unused"
+			"UnusedReturnValue"
 		}
 	)
 	public static class Builder<C, T, V> {
@@ -214,14 +200,6 @@ public final class ValueConfigNode<C, T, V> implements ConfigNode<C> {
 			this.node.validator = validator;
 			return this;
 		}
-		public Builder<C, T, V> nbtReader(ValueReader<CompoundTag, V> nbtReader) {
-			this.node.nbtReader = nbtReader;
-			return this;
-		}
-		public Builder<C, T, V> nbtWriter(ValueWriter<CompoundTag, V> nbtWriter) {
-			this.node.nbtWriter = nbtWriter;
-			return this;
-		}
 		public Builder<C, T, V> category(CategoryConfigNode<C> category) {
 			this.node.category = category;
 			return this;
@@ -240,5 +218,4 @@ public final class ValueConfigNode<C, T, V> implements ConfigNode<C> {
 		}
 	}
 }
-
 

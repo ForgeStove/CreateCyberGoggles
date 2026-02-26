@@ -12,15 +12,15 @@ import java.lang.annotation.*;
  * </ul>
  * If both are specified, both validations will be applied.
  */
-@Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
 public @interface Range {
 	/**
-	 * Minimum value (inclusive). Only applies to numeric types.
+	 * Minimum value (inclusive).
 	 */
 	int min() default Integer.MIN_VALUE;
 	/**
-	 * Maximum value (inclusive). Only applies to numeric types.
+	 * Maximum value (inclusive).
 	 */
 	int max() default Integer.MAX_VALUE;
 	/**

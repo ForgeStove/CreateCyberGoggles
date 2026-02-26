@@ -102,7 +102,7 @@ public final class CategoryConfigNode<C> implements ConfigNode<C> {
 			return this;
 		}
 		public <T, V> Builder<C> value(UnaryOperator<ValueConfigNode.Builder<C, T, V>> valueBuilder) {
-			this.childrenBuilder.add(valueBuilder.apply(ValueConfigNode.builder()).category(this.node).range(0,0).build());
+			this.childrenBuilder.add(valueBuilder.apply(ValueConfigNode.builder()).category(this.node).build());
 			return this;
 		}
 		public Builder<C> category(UnaryOperator<Builder<C>> categoryBuilder) {

@@ -133,7 +133,7 @@ public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer,
 		private EditBox hexInput;
 		private boolean updatingFromInput = false;
 		protected ColorPickerScreen(Screen parent, int initialColor, boolean hasAlpha, IntConsumer onColorSelected) {
-			super(Component.translatable("create_cyber_goggles.config.color_picker"));
+			super(Translation.COLOR_PICKER_TOOLTIP);
 			this.parent = parent;
 			this.hasAlpha = hasAlpha;
 			this.onColorSelected = onColorSelected;

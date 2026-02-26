@@ -1,0 +1,19 @@
+{
+	"config.ui.cannot_save": "错误！",
+	"config.ui.color_picker": "选择颜色",
+	"config.ui.ignore_restart": "忽略并继续",
+	"config.ui.quit.confirm": "确认",
+	"config.ui.quit.confirm.title": "放弃更改？",
+	"config.ui.quit.confirm.warning": "你有未保存的更改，确定要放弃吗？",
+	"config.ui.quit.unsaved": "放弃更改",
+	"config.ui.reset.full": "重置",
+	"config.ui.reset.small": "↺",
+	"config.ui.restart_required": "需要重启游戏才能使更改生效。",
+	"config.ui.restart_required.title": "需要重启",
+	"config.ui.save": "保存",
+	"config.ui.undo.full": "撤销",
+	"config.ui.undo.small": "↩",
+	"config.ui.validator.max": "值不能大于：",
+	"config.ui.validator.min": "值不能小于：",
+	"config.ui.validator.multiple_errors": "存在多个错误"
+}

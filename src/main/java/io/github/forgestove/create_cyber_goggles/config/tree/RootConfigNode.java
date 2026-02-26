@@ -29,7 +29,7 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 	@NotNull
 	@Override
 	public Component getTitle() {
-		return Translation.TITLE;
+		return Component.empty();
 	}
 	@Nullable
 	@Override

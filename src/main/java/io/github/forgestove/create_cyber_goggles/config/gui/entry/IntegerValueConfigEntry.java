@@ -20,7 +20,6 @@ public final class IntegerValueConfigEntry<C> extends ValueConfigEntry<C, Intege
 		this.inputField.setValue(this.getValue().toString());
 		this.inputField.setFilter(s -> INTEGER_PATTERN.matcher(s).matches());
 		this.inputField.setResponder(this::onInputChange);
-		// Set hint if it has range
 		if (valueNode.hasRange())
 			this.inputField.setHint(Component.literal("[" + valueNode.getRangeMin() + ", " + valueNode.getRangeMax() + "]")
 				.withStyle(ChatFormatting.DARK_GRAY));

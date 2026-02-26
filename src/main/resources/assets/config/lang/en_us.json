@@ -1,0 +1,19 @@
+{
+	"config.ui.cannot_save": "Error!",
+	"config.ui.color_picker": "Color Picker",
+	"config.ui.ignore_restart": "Ignore and Continue",
+	"config.ui.quit.confirm": "Confirm",
+	"config.ui.quit.confirm.title": "Discard Changes?",
+	"config.ui.quit.confirm.warning": "You have unsaved changes. Are you sure you want to discard them?",
+	"config.ui.quit.unsaved": "Discard Changes",
+	"config.ui.reset.full": "Reset",
+	"config.ui.reset.small": "↺",
+	"config.ui.restart_required": "A game restart is required for the changes to take effect.",
+	"config.ui.restart_required.title": "Restart Required",
+	"config.ui.save": "Save",
+	"config.ui.undo.full": "Undo",
+	"config.ui.undo.small": "↩",
+	"config.ui.validator.max": "Value cannot be greater than: ",
+	"config.ui.validator.min": "Value cannot be less than: ",
+	"config.ui.validator.multiple_errors": "Multiple errors exist"
+}

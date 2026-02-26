@@ -3,10 +3,8 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
 import io.github.forgestove.create_cyber_goggles.config.ConfigHandler;
 import io.github.forgestove.create_cyber_goggles.config.annotation.*;
-import io.github.forgestove.create_cyber_goggles.config.annotation.Range;
 import io.github.forgestove.create_cyber_goggles.config.gui.Translation;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode.*;
-import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode.ValueValidator.None;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.*;
@@ -160,46 +158,67 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 				// Check for ColorValue annotation
 				var colorAnnotation = valueField.getAnnotation(ColorValue.class);
 				if (colorAnnotation != null) valueBuilder.colorValue(true, colorAnnotation.hasAlpha());
-				// Check for Range annotation (handles both range and custom validator)
-				var rangeAnnotation = valueField.getAnnotation(Range.class);
-				if (rangeAnnotation != null) {
-					var isIntegerType = type.equals(Integer.class) || type.equals(int.class);
-					var hasRange = isIntegerType && (
-						rangeAnnotation.min() != Integer.MIN_VALUE || rangeAnnotation.max() != Integer.MAX_VALUE
-					);
-					var hasCustomValidator = rangeAnnotation.validator() != None.class;
-					if (hasRange) valueBuilder.range(rangeAnnotation.min(), rangeAnnotation.max());
-					// Create combined validator
-					ValueValidator<T> rangeValidator = hasRange ? makeRangeValidator(rangeAnnotation.min(), rangeAnnotation.max()) : null;
-					ValueValidator<T> customValidator = hasCustomValidator ? makeCustomValidator(rangeAnnotation.validator()) : null;
-					// Combine both validators
-					if (rangeValidator != null && customValidator != null) valueBuilder.validator(v -> {
-						var result = rangeValidator.validate(v);
-						return result != null ? result : customValidator.validate(v);
-					});
-					else if (rangeValidator != null) valueBuilder.validator(rangeValidator);
-					else if (customValidator != null) valueBuilder.validator(customValidator);
+				if (type.equals(Integer.class) || type.equals(int.class)) {
+					var intRange = valueField.getAnnotation(IntRange.class);
+					if (intRange != null) valueBuilder.validator(makeRangeValidatorInt(type, intRange.min(), intRange.max()));
+				} else if (type.equals(Long.class) || type.equals(long.class)) {
+					var longRange = valueField.getAnnotation(LongRange.class);
+					if (longRange != null) valueBuilder.validator(makeRangeValidatorLong(type, longRange.min(), longRange.max()));
+				} else if (type.equals(Float.class) || type.equals(float.class)) {
+					var floatRange = valueField.getAnnotation(FloatRange.class);
+					if (floatRange != null) valueBuilder.validator(makeRangeValidatorFloat(type, floatRange.min(), floatRange.max()));
+				} else if (type.equals(Double.class) || type.equals(double.class)) {
+					var doubleRange = valueField.getAnnotation(DoubleRange.class);
+					if (doubleRange != null) valueBuilder.validator(makeRangeValidatorDouble(type, doubleRange.min(), doubleRange.max()));
+				} else if (type.equals(String.class)) {
+					var strLen = valueField.getAnnotation(StringLength.class);
+					if (strLen != null) valueBuilder.validator(makeRangeValidatorInt(type, strLen.min(), strLen.max()));
 				}
 				if (I18n.exists(prefixKey)) valueBuilder.prefix(Component.translatable(prefixKey));
 				return valueBuilder;
 			});
 		}
-		private <T> ValueValidator<T> makeRangeValidator(int min, int max) {
-			return value -> {
-				if (value instanceof Integer intVal) {
-					if (intVal < min) return Translation.VALIDATOR_MIN.copy().append(Component.literal(String.valueOf(min)));
-					if (intVal > max) return Translation.VALIDATOR_MAX.copy().append(Component.literal(String.valueOf(max)));
-				}
+		private <T> ValueValidator<T> makeRangeValidatorInt(Class<? extends T> type, int min, int max) {
+			if (type.equals(Integer.class) || type.equals(int.class)) return value -> {
+				var v = (Integer) value;
+				if (v < min) return Translation.VALIDATOR_MIN.copy().append(String.valueOf(min));
+				if (v > max) return Translation.VALIDATOR_MAX.copy().append(String.valueOf(max));
 				return null;
 			};
+			else if (type.equals(String.class)) return value -> {
+				var v = (String) value;
+				if (v.length() < min) return Translation.VALIDATOR_MIN.copy().append(String.valueOf(min));
+				if (v.length() > max) return Translation.VALIDATOR_MAX.copy().append(String.valueOf(max));
+				return null;
+			};
+			throw new UnsupportedOperationException("Int range validator not supported for type: " + type);
 		}
-		@SuppressWarnings("unchecked")
-		private <T> ValueValidator<T> makeCustomValidator(Class<? extends ValueValidator<?>> validatorClass) {
-			try {
-				return (ValueValidator<T>) validatorClass.getDeclaredConstructor().newInstance();
-			} catch (ReflectiveOperationException e) {
-				throw new IllegalArgumentException("Failed to create validator: " + validatorClass.getName(), e);
-			}
+		private <T> ValueValidator<T> makeRangeValidatorLong(Class<? extends T> type, long min, long max) {
+			if (type.equals(Long.class) || type.equals(long.class)) return value -> {
+				var v = (Long) value;
+				if (v < min) return Translation.VALIDATOR_MIN.copy().append(String.valueOf(min));
+				if (v > max) return Translation.VALIDATOR_MAX.copy().append(String.valueOf(max));
+				return null;
+			};
+			throw new UnsupportedOperationException("Long range validator not supported for type: " + type);
+		}
+		private <T> ValueValidator<T> makeRangeValidatorFloat(Class<? extends T> type, float min, float max) {
+			if (type.equals(Float.class) || type.equals(float.class)) return value -> {
+				var v = (Float) value;
+				if (v < min) return Translation.VALIDATOR_MIN.copy().append(String.valueOf(min));
+				if (v > max) return Translation.VALIDATOR_MAX.copy().append(String.valueOf(max));
+				return null;
+			};
+			throw new UnsupportedOperationException("Float range validator not supported for type: " + type);
+		}
+		private <T> ValueValidator<T> makeRangeValidatorDouble(Class<? extends T> type, double min, double max) {
+			if (type.equals(Double.class) || type.equals(double.class)) return value -> {
+				var v = (Double) value;
+				if (v < min) return Translation.VALIDATOR_MIN.copy().append(String.valueOf(min));
+				if (v > max) return Translation.VALIDATOR_MAX.copy().append(String.valueOf(max));
+				return null;
+			};
+			throw new UnsupportedOperationException("Double range validator not supported for type: " + type);
 		}
 		private <T> ValueReader<C, T> makeValueReader(Class<? extends T> type, Field categoryField, Field valueField) {
 			try {

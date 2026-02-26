@@ -13,9 +13,6 @@ public final class ValueConfigNode<C, T, V> implements ConfigNode<C> {
 	private boolean requiresRestart;
 	private boolean isColorValue;
 	private boolean colorHasAlpha;
-	private boolean hasRange;
-	private int rangeMin;
-	private int rangeMax;
 	private ValueReader<C, V> valueReader;
 	private ValueWriter<C, V> valueWriter;
 	@Nullable private ValueValidator<V> validator;
@@ -100,15 +97,6 @@ public final class ValueConfigNode<C, T, V> implements ConfigNode<C> {
 	public boolean colorHasAlpha() {
 		return this.colorHasAlpha;
 	}
-	public boolean hasRange() {
-		return this.hasRange;
-	}
-	public int getRangeMin() {
-		return this.rangeMin;
-	}
-	public int getRangeMax() {
-		return this.rangeMax;
-	}
 	@Override
 	public void copy(C from, C to) {
 		this.setActiveValue(to, this.getActiveValue(from));
@@ -127,13 +115,6 @@ public final class ValueConfigNode<C, T, V> implements ConfigNode<C> {
 	}
 	public interface ValueValidator<V> {
 		@Nullable Component validate(V value);
-		/** Placeholder for no custom validator */
-		final class None implements ValueValidator<Object> {
-			@Override
-			public @Nullable Component validate(Object value) {
-				return null;
-			}
-		}
 	}
 	@SuppressWarnings(
 		{
@@ -180,12 +161,6 @@ public final class ValueConfigNode<C, T, V> implements ConfigNode<C> {
 		public Builder<C, T, V> colorValue(boolean isColorValue, boolean hasAlpha) {
 			this.node.isColorValue = isColorValue;
 			this.node.colorHasAlpha = hasAlpha;
-			return this;
-		}
-		public Builder<C, T, V> range(int min, int max) {
-			this.node.hasRange = true;
-			this.node.rangeMin = min;
-			this.node.rangeMax = max;
 			return this;
 		}
 		public Builder<C, T, V> valueReader(ValueReader<C, V> valueReader) {

@@ -1,2 +1,1 @@
-- Fix wrench text bug
-- Fix hose pulley hiding infinite fluid bug
+- Optimize the config system

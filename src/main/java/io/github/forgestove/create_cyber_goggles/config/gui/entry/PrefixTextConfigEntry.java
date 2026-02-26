@@ -35,7 +35,7 @@ public final class PrefixTextConfigEntry extends ConfigEntry {
 		float delta
 	) {
 		this.textWidget.setX(x);
-		this.textWidget.setY(y);
+		this.textWidget.setY(y + 5);
 		this.textWidget.setMaxWidth(entryWidth);
 		this.textWidget.renderWidget(guiGraphics, mouseX, mouseY, delta);
 	}

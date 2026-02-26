@@ -13,6 +13,7 @@
 	"config.ui.save": "保存",
 	"config.ui.undo.full": "撤销",
 	"config.ui.undo.small": "↩",
+	"config.ui.unsupported_type": "不支持的配置类型：",
 	"config.ui.validator.max": "值不能大于：",
 	"config.ui.validator.min": "值不能小于：",
 	"config.ui.validator.multiple_errors": "存在多个错误"

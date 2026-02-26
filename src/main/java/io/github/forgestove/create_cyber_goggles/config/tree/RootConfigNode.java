@@ -21,17 +21,6 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 	public static <C> RootConfigNode<C> create(C defaultConfig) {
 		return new Builder<>(defaultConfig).build();
 	}
-	public static String snakeCase(String str) {
-		var sb = new StringBuilder();
-		for (var i = 0; i < str.length(); i++) {
-			var c = str.charAt(i);
-			if (Character.isUpperCase(c)) {
-				if (i > 0) sb.append('_');
-				sb.append(Character.toLowerCase(c));
-			} else sb.append(c);
-		}
-		return sb.toString();
-	}
 	@NotNull
 	@Override
 	public String getName() {
@@ -126,7 +115,7 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 			var categoryName = categoryField.getName();
 			var categoryBuilder = CategoryConfigNode.<C>builder()
 				.name(categoryName)
-				.title(Component.translatable(ConfigHandler.id + ".config.category." + snakeCase(categoryName)));
+				.title(Component.translatable(ConfigHandler.id + ".config.category." + categoryName));
 			for (var valueField : categoryClass.getDeclaredFields())
 				this.addValueNode(defaultCategory, categoryField, valueField, categoryBuilder);
 			return categoryBuilder.build();
@@ -154,7 +143,7 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 			CategoryConfigNode.Builder<C> categoryBuilder
 		) {
 			var valueName = valueField.getName();
-			var titleKey = ConfigHandler.id + ".config.option." + snakeCase(categoryField.getName()) + "." + snakeCase(valueName);
+			var titleKey = ConfigHandler.id + ".config.option." + categoryField.getName() + "." + valueName;
 			var title = Component.translatable(titleKey);
 			var tooltip = Component.translatable(titleKey + ".tooltip");
 			var prefixKey = titleKey + ".prefix";

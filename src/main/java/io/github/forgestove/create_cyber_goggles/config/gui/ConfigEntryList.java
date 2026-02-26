@@ -6,8 +6,6 @@ import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.renderer.PanoramaRenderer;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.*;
-
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEntry> {
 	private static final float ANIMATION_SPEED = 0.4f;
 	private final ConfigCategoryTab<?> tab;
@@ -38,7 +36,7 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 	@Override
 	public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
 		// 渲染全景图背景（在所有控件之前）
-		if (mc.level == null) this.panoramaRenderer.render(delta, 1.0F);
+		if (Minecraft.getInstance().level == null) this.panoramaRenderer.render(delta, 1.0F);
 		// Update highlight animation first
 		this.updateHighlightAnimation(mouseX, mouseY, delta);
 		// Render list entries (this also renders background)

@@ -7,10 +7,9 @@ import net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 public class CCGConfig {
-	private static final String TRANSLATION_PREFIX = CCG.ID + ".config";
 	public static final ConfigHandler<CCGConfig> CONFIG_HANDLER = ConfigHandler.builder(CCGConfig.class)
 		.path(() -> FMLPaths.CONFIGDIR.get().resolve(CCG.ID + ".toml"))
-		.translationPrefix(TRANSLATION_PREFIX)
+		.translationPrefix(CCG.ID + ".config")
 		.translator(key -> I18n.exists(key) ? I18n.get(key) : null)
 		.logger(CCG.LOGGER)
 		.build();

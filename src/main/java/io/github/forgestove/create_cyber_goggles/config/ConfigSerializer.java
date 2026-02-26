@@ -3,7 +3,6 @@ import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import io.github.forgestove.create_cyber_goggles.config.annotation.ConfigCategory;
-import io.github.forgestove.create_cyber_goggles.config.tree.RootConfigNode;
 
 import java.lang.reflect.Field;
 import java.nio.file.Path;
@@ -71,22 +70,20 @@ public final class ConfigSerializer<T> {
 	}
 	private void writeCategory(CommentedConfig config, String categoryName, Object category) throws IllegalAccessException {
 		var subConfig = config.createSubConfig();
-		var categorySnake = RootConfigNode.snakeCase(categoryName);
-		var categoryComment = translate("category." + categorySnake);
+		var categoryComment = translate("category." + categoryName);
 		if (categoryComment != null) config.setComment(categoryName, " " + categoryComment);
 		for (var field : category.getClass().getDeclaredFields()) {
 			field.setAccessible(true);
 			var fieldName = field.getName();
 			var value = field.get(category);
 			subConfig.set(fieldName, value instanceof Enum<?> e ? e.name() : value);
-			var comment = buildFieldComment(categorySnake, fieldName);
+			var comment = buildFieldComment(categoryName, fieldName);
 			if (!comment.isEmpty()) subConfig.setComment(fieldName, comment);
 		}
 		config.set(categoryName, subConfig);
 	}
 	private String buildFieldComment(String categorySnake, String fieldName) {
-		var fieldSnake = RootConfigNode.snakeCase(fieldName);
-		var optionKey = "option." + categorySnake + "." + fieldSnake;
+		var optionKey = "option." + categorySnake + "." + fieldName;
 		var title = translate(optionKey);
 		var tooltip = translate(optionKey + ".tooltip");
 		var sb = new StringBuilder();

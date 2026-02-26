@@ -20,4 +20,5 @@ public class Translation {
 	public static final Component COLOR_PICKER_TOOLTIP = Component.translatable("config.ui.color_picker");
 	public static final Component VALIDATOR_MIN = Component.translatable("config.ui.validator.min");
 	public static final Component VALIDATOR_MAX = Component.translatable("config.ui.validator.max");
+	public static final Component UNSUPPORTED_TYPE = Component.translatable("config.ui.unsupported_type");
 }

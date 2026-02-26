@@ -78,7 +78,10 @@ public final class ConfigCategoryTab<C> implements Tab {
 			if (valueNode.isColorValue())
 				return new ColorValueConfigEntry<>(this, (ValueConfigNode<C, Integer, Integer>) valueNode, valueNode.colorHasAlpha());
 			return new IntegerValueConfigEntry<>(this, (ValueConfigNode<C, Integer, Integer>) valueNode);
-		} else throw new UnsupportedOperationException("Unsupported type: " + type);
+		} else return new PrefixTextConfigEntry(
+			this,
+			Translation.UNSUPPORTED_TYPE.copy().append(valueNode.getType().getSimpleName()).withStyle(ChatFormatting.RED)
+		);
 	}
 	private List<ConfigEntry> createSubCategoryEntries(CategoryConfigNode<C> categoryNode) {
 		var entries = new ArrayList<ConfigEntry>(categoryNode.getChildren().size() + 1);

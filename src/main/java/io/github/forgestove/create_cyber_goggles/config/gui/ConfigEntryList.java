@@ -46,9 +46,8 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		}
 		if (showTooltip) {
 			this.renderHighlight(guiGraphics);
-			this.updateHighlightAnimation(mouseX, mouseY, delta);
+			this.updateHighlightAnimation(delta);
 		}
-		// Render highlight before entries
 		super.renderWidget(guiGraphics, mouseX, mouseY, delta);
 		// Tooltips
 		if (!showTooltip) return;
@@ -66,38 +65,26 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		}
 		if (entry.getTooltip() != null) this.tab.getScreen().setTooltipForNextRenderPass(entry.getTooltip());
 	}
-	private void updateHighlightAnimation(int mouseX, int mouseY, float delta) {
-		var hoveredEntry = this.getEntryAtPosition(mouseX, mouseY);
-		if (hoveredEntry != null
-			&& !(hoveredEntry instanceof CategoryTitleConfigEntry)
-			&& !(hoveredEntry instanceof PrefixTextConfigEntry)) {
+	private void updateHighlightAnimation(float delta) {
+		var hoveredEntry = this.getHovered();
+		if (hoveredEntry != null) {
 			var index = this.children().indexOf(hoveredEntry);
 			if (index >= 0) {
 				var entryTop = this.getRowTop(index);
 				this.highlightTargetY = entryTop;
 				this.highlightHeight = this.itemHeight;
 				// Fade in
-				this.highlightAlpha = Mth.lerp(ANIMATION_SPEED * delta, this.highlightAlpha, 1.0f);
-				if (this.highlightAlpha > 0.95f) this.highlightAlpha = 1.0f;
+				this.highlightAlpha = Mth.lerp(ANIMATION_SPEED * delta, this.highlightAlpha, 0.95F);
 				// Initialize position if first hover
 				if (this.highlightY < 0 || this.lastHoveredEntry == null) this.highlightY = entryTop;
 			}
 			this.lastHoveredEntry = hoveredEntry;
-		} else {
-			// Fade out
-			this.highlightAlpha = Mth.lerp(ANIMATION_SPEED * delta, this.highlightAlpha, 0.0f);
-			if (this.highlightAlpha < 0.05f) {
-				this.highlightAlpha = 0;
-				this.lastHoveredEntry = null;
-				this.highlightY = -1;
-			}
-		}
+		} else this.highlightAlpha = Mth.lerp(ANIMATION_SPEED * delta, this.highlightAlpha, 0.0f); // Fade out
 		// Smooth position transition with snap to target
-		if (this.highlightTargetY >= 0 && this.highlightY >= 0) {
-			this.highlightY = Mth.lerp(ANIMATION_SPEED * delta * 2, this.highlightY, this.highlightTargetY);
-			// Snap to target when close enough
-			if (Math.abs(this.highlightY - this.highlightTargetY) < 1.0f) this.highlightY = this.highlightTargetY;
-		}
+		if (!(this.highlightTargetY >= 0) || !(this.highlightY >= 0)) return;
+		this.highlightY = Mth.lerp(ANIMATION_SPEED * delta * 2, this.highlightY, this.highlightTargetY);
+		// Snap to target when close enough
+		if (Math.abs(this.highlightY - this.highlightTargetY) < 1.0f) this.highlightY = this.highlightTargetY;
 	}
 	private void renderHighlight(@NotNull GuiGraphics guiGraphics) {
 		if (this.highlightAlpha <= 0.01f || this.highlightY < 0) return;

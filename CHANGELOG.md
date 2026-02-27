@@ -1,1 +1,1 @@
-- Optimize the config system
+- Fix translation

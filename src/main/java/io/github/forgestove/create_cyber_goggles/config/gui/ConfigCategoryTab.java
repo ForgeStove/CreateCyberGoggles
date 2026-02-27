@@ -42,8 +42,7 @@ public final class ConfigCategoryTab<C> implements Tab {
 			this.screen.height - this.screen.getHeaderHeight() - this.screen.getFooterHeight(),
 			this.screen.getHeaderHeight(),
 			22,
-			entries,
-			this.screen.getPanoramaRenderer()
+			entries
 		);
 	}
 	@NotNull
@@ -78,18 +77,14 @@ public final class ConfigCategoryTab<C> implements Tab {
 			if (valueNode.isColorValue())
 				return new ColorValueConfigEntry<>(this, (ValueConfigNode<C, Integer, Integer>) valueNode, valueNode.colorHasAlpha());
 			return new IntegerValueConfigEntry<>(this, (ValueConfigNode<C, Integer, Integer>) valueNode);
-		} else if (type.equals(Float.class)) {
-			return new FloatValueConfigEntry<>(this, (ValueConfigNode<C, Float, Float>) valueNode);
-		} else if (type.equals(Double.class)) {
-			return new DoubleValueConfigEntry<>(this, (ValueConfigNode<C, Double, Double>) valueNode);
-		} else if (type.equals(Long.class)) {
-			return new LongValueConfigEntry<>(this, (ValueConfigNode<C, Long, Long>) valueNode);
-		} else if (type.equals(String.class)) {
-			return new StringValueConfigEntry<>(this, (ValueConfigNode<C, String, String>) valueNode);
-		} else return new PrefixTextConfigEntry(
-			this,
-			Translation.UNSUPPORTED_TYPE.copy().append(valueNode.getType().getSimpleName()).withStyle(ChatFormatting.RED)
-		);
+		} else if (type.equals(Float.class)) return new FloatValueConfigEntry<>(this, (ValueConfigNode<C, Float, Float>) valueNode);
+		else if (type.equals(Double.class)) return new DoubleValueConfigEntry<>(this, (ValueConfigNode<C, Double, Double>) valueNode);
+		else if (type.equals(Long.class)) return new LongValueConfigEntry<>(this, (ValueConfigNode<C, Long, Long>) valueNode);
+		else if (type.equals(String.class)) return new StringValueConfigEntry<>(this, (ValueConfigNode<C, String, String>) valueNode);
+		else return new PrefixTextConfigEntry(
+				this,
+				Translation.UNSUPPORTED_TYPE.copy().append(valueNode.getType().getSimpleName()).withStyle(ChatFormatting.RED)
+			);
 	}
 	private List<ConfigEntry> createSubCategoryEntries(CategoryConfigNode<C> categoryNode) {
 		var entries = new ArrayList<ConfigEntry>(categoryNode.getChildren().size() + 1);

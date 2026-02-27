@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.tabs.*;
-import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
+import net.minecraft.client.gui.layouts.*;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.*;
 import net.minecraft.client.renderer.PanoramaRenderer;
@@ -84,11 +84,12 @@ public final class ConfigScreen<C> extends Screen {
 			}
 	}
 	@Override
-	public void render(@NotNull GuiGraphics guiGraphics, int i, int j, float f) {
+	public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+		if (Minecraft.getInstance().level == null) this.panoramaRenderer.render(partialTick, 1.0F);
 		// Render the current tab's list
 		var currentTab = this.tabManager.getCurrentTab();
-		if (currentTab instanceof ConfigCategoryTab<?> configTab) configTab.getList().render(guiGraphics, i, j, f);
-		super.render(guiGraphics, i, j, f);
+		if (currentTab instanceof ConfigCategoryTab<?> configTab) configTab.getList().render(guiGraphics, mouseX, mouseY, partialTick);
+		super.render(guiGraphics, mouseX, mouseY, partialTick);
 	}
 	@Override
 	protected void repositionElements() {
@@ -229,8 +230,5 @@ public final class ConfigScreen<C> extends Screen {
 	}
 	private Component getSaveLabel() {
 		return getSaveLabel(false);
-	}
-	public PanoramaRenderer getPanoramaRenderer() {
-		return this.panoramaRenderer;
 	}
 }

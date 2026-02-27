@@ -3,13 +3,11 @@ import io.github.forgestove.create_cyber_goggles.config.gui.entry.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
-import net.minecraft.client.renderer.PanoramaRenderer;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.*;
 public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEntry> {
 	private static final float ANIMATION_SPEED = 0.4f;
 	private final ConfigCategoryTab<?> tab;
-	private final PanoramaRenderer panoramaRenderer;
 	@Nullable private EnumValueConfigEntry<?, ?> expandedDropdown;
 	// Highlight animation state
 	private float highlightY;
@@ -24,21 +22,15 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		int contentHeight,
 		int headerHeight,
 		int itemSpacing,
-		@NotNull Iterable<ConfigEntry> entries,
-		PanoramaRenderer panoramaRenderer
+		@NotNull Iterable<ConfigEntry> entries
 	) {
 		super(minecraft, width, contentHeight, headerHeight, headerHeight + contentHeight, itemSpacing);
 		this.tab = tab;
 		entries.forEach(this::addEntry);
 		this.setRenderBackground(false);
-		this.panoramaRenderer = panoramaRenderer;
 	}
 	@Override
 	public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-		// 渲染全景图背景（在所有控件之前）
-		if (Minecraft.getInstance().level == null) this.panoramaRenderer.render(delta, 1.0F);
-		// Update highlight animation first
-		this.updateHighlightAnimation(mouseX, mouseY, delta);
 		// Render list entries (this also renders background)
 		super.render(guiGraphics, mouseX, mouseY, delta);
 		// Track which dropdown is expanded
@@ -57,13 +49,13 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		}
 		if (showTooltip) {
 			this.renderHighlight(guiGraphics);
-			this.updateHighlightAnimation(mouseX, mouseY, delta);
+			this.updateHighlightAnimation(delta);
 		}
 		// Render highlight before entries
 		super.renderList(guiGraphics, mouseX, mouseY, delta);
 		// Tooltips
 		if (!showTooltip) return;
-		var entry = this.getEntryAt(mouseX, mouseY);
+		var entry = this.getHovered();
 		if (entry == null) return;
 		if (entry instanceof ValueConfigEntry<?, ?, ?> valueEntry) if (valueEntry.resetButton.isHovered()) {
 			this.tab.getScreen().setTooltipForNextRenderPass(Tooltip.splitTooltip(this.minecraft, Translation.RESET_TOOLTIP));
@@ -77,38 +69,26 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		}
 		if (entry.getTooltip() != null) this.tab.getScreen().setTooltipForNextRenderPass(entry.getTooltip());
 	}
-	private void updateHighlightAnimation(int mouseX, int mouseY, float delta) {
-		var hoveredEntry = this.getEntryAt(mouseX, mouseY);
-		if (hoveredEntry != null
-			&& !(hoveredEntry instanceof CategoryTitleConfigEntry)
-			&& !(hoveredEntry instanceof PrefixTextConfigEntry)) {
+	private void updateHighlightAnimation(float delta) {
+		var hoveredEntry = this.getHovered();
+		if (hoveredEntry != null) {
 			var index = this.children().indexOf(hoveredEntry);
 			if (index >= 0) {
 				var entryTop = this.getRowTop(index);
 				this.highlightTargetY = entryTop;
 				this.highlightHeight = this.itemHeight;
 				// Fade in
-				this.highlightAlpha = Mth.lerp(ANIMATION_SPEED * delta, this.highlightAlpha, 1.0f);
-				if (this.highlightAlpha > 0.95f) this.highlightAlpha = 1.0f;
+				this.highlightAlpha = Mth.lerp(ANIMATION_SPEED * delta, this.highlightAlpha, 0.95F);
 				// Initialize position if first hover
 				if (this.highlightY < 0 || this.lastHoveredEntry == null) this.highlightY = entryTop;
 			}
 			this.lastHoveredEntry = hoveredEntry;
-		} else {
-			// Fade out
-			this.highlightAlpha = Mth.lerp(ANIMATION_SPEED * delta, this.highlightAlpha, 0.0f);
-			if (this.highlightAlpha < 0.05f) {
-				this.highlightAlpha = 0;
-				this.lastHoveredEntry = null;
-				this.highlightY = -1;
-			}
-		}
+		} else this.highlightAlpha = Mth.lerp(ANIMATION_SPEED * delta, this.highlightAlpha, 0.0f); // Fade out
 		// Smooth position transition with snap to target
-		if (this.highlightTargetY >= 0 && this.highlightY >= 0) {
-			this.highlightY = Mth.lerp(ANIMATION_SPEED * delta * 2, this.highlightY, this.highlightTargetY);
-			// Snap to target when close enough
-			if (Math.abs(this.highlightY - this.highlightTargetY) < 1.0f) this.highlightY = this.highlightTargetY;
-		}
+		if (!(this.highlightTargetY >= 0) || !(this.highlightY >= 0)) return;
+		this.highlightY = Mth.lerp(ANIMATION_SPEED * delta * 2, this.highlightY, this.highlightTargetY);
+		// Snap to target when close enough
+		if (Math.abs(this.highlightY - this.highlightTargetY) < 1.0f) this.highlightY = this.highlightTargetY;
 	}
 	private void renderHighlight(@NotNull GuiGraphics guiGraphics) {
 		if (this.highlightAlpha <= 0.01f || this.highlightY < 0) return;
@@ -140,7 +120,7 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 			return true;
 		}
 		// Find and click the entry at this position
-		var entry = this.getEntryAt(mouseX, mouseY);
+		var entry = this.getHovered();
 		if (entry != null && entry.mouseClicked(mouseX, mouseY, button)) {
 			this.setFocused(entry);
 			return true;
@@ -166,25 +146,6 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 	@Override
 	public int getRowWidth() {
 		return this.width - 80;
-	}
-	@Override
-	protected void renderList(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-		// Render highlight first (behind entries) while inside scissor region
-		this.renderHighlight(guiGraphics);
-		// Then render entries on top
-		super.renderList(guiGraphics, mouseX, mouseY, delta);
-	}
-	/**
-	 * Custom method to get entry at position using full width instead of limited row width
-	 */
-	@Nullable
-	public ConfigEntry getEntryAt(double mouseX, double mouseY) {
-		// Use full width (x0 to x1) instead of row width for hit detection
-		if (mouseX < this.x0 || mouseX > this.x1 || mouseY < this.y0 || mouseY > this.y1) return null;
-		var scrolledY = (int) (mouseY - this.y0 + this.getScrollAmount() - 4);
-		var index = scrolledY / this.itemHeight;
-		if (index >= 0 && index < this.getItemCount()) return this.getEntry(index);
-		return null;
 	}
 	public void refreshEntries() {
 		this.children().forEach(ConfigEntry::refresh);

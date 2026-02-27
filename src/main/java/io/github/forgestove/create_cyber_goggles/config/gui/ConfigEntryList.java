@@ -108,6 +108,36 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		if (top < bottom) guiGraphics.fill(left, top, right, bottom, color);
 	}
 	@Override
+	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		// First check if expanded dropdown should handle the click
+		if (this.expandedDropdown != null) {
+			if (this.expandedDropdown.isMouseOverDropdown(mouseX, mouseY)) return this.expandedDropdown.handleDropdownClick(mouseX,
+				mouseY);
+			// Click outside dropdown closes it
+			this.expandedDropdown.closeDropdown();
+			this.expandedDropdown = null;
+			// Don't process further if we just closed a dropdown
+			return true;
+		}
+		return super.mouseClicked(mouseX, mouseY, button);
+	}
+	@Override
+	public boolean mouseReleased(double mouseX, double mouseY, int button) {
+		if (this.expandedDropdown != null) this.expandedDropdown.mouseReleased(mouseX, mouseY, button);
+		return super.mouseReleased(mouseX, mouseY, button);
+	}
+	@Override
+	public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+		if (this.expandedDropdown != null) if (this.expandedDropdown.mouseDragged(mouseX, mouseY, button, dragX, dragY)) return true;
+		return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+	}
+	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double vertical) {
+		// First check if expanded dropdown should handle the scroll
+		if (this.expandedDropdown != null && this.expandedDropdown.handleDropdownScroll(mouseX, mouseY, vertical)) return true;
+		return super.mouseScrolled(mouseX, mouseY, vertical);
+	}
+	@Override
 	public int getRowWidth() {
 		return this.width - 80;
 	}

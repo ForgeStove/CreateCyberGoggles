@@ -31,8 +31,6 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 	}
 	@Override
 	public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-		// Render list entries (this also renders background)
-		super.render(guiGraphics, mouseX, mouseY, delta);
 		// Track which dropdown is expanded
 		this.expandedDropdown = null;
 		for (var entry : this.children())
@@ -51,8 +49,7 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 			this.renderHighlight(guiGraphics);
 			this.updateHighlightAnimation(delta);
 		}
-		// Render highlight before entries
-		super.renderList(guiGraphics, mouseX, mouseY, delta);
+		super.render(guiGraphics, mouseX, mouseY, delta);
 		// Tooltips
 		if (!showTooltip) return;
 		var entry = this.getHovered();

@@ -21,4 +21,5 @@ public class Translation {
 	public static final Component VALIDATOR_MIN = Component.translatable("config.ui.validator.min");
 	public static final Component VALIDATOR_MAX = Component.translatable("config.ui.validator.max");
 	public static final Component UNSUPPORTED_TYPE = Component.translatable("config.ui.unsupported_type");
+	public static final Component MULTIPLE_ERRORS = Component.translatable("config.ui.validator.multiple_errors");
 }

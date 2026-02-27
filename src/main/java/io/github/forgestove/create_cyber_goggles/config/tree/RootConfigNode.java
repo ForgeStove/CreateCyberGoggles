@@ -66,7 +66,7 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 		for (var node : this.categories) {
 			var result = node.validate(config);
 			if (result != null) {
-				if (error != null) return CategoryConfigNode.MULTIPLE_ERRORS;
+				if (error != null) return Translation.MULTIPLE_ERRORS;
 				error = result;
 			}
 		}

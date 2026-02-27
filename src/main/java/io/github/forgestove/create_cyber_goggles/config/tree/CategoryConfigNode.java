@@ -1,12 +1,12 @@
 package io.github.forgestove.create_cyber_goggles.config.tree;
 import com.google.common.collect.ImmutableList;
+import io.github.forgestove.create_cyber_goggles.config.gui.Translation;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.*;
 
 import java.util.Objects;
 import java.util.function.UnaryOperator;
 public final class CategoryConfigNode<C> implements ConfigNode<C> {
-	public static final Component MULTIPLE_ERRORS = Component.translatable("config.ui.validator.multiple_errors");
 	private String name;
 	private Component title;
 	private Component tooltip;
@@ -63,7 +63,7 @@ public final class CategoryConfigNode<C> implements ConfigNode<C> {
 		for (var node : this.children) {
 			var result = node.validate(config);
 			if (result != null) {
-				if (error != null) return MULTIPLE_ERRORS;
+				if (error != null) return Translation.MULTIPLE_ERRORS;
 				error = result;
 			}
 		}

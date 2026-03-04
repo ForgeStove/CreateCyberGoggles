@@ -5,7 +5,7 @@ import java.lang.annotation.*;
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ConfigCategory {
+public @interface Category {
 	/**
 	 * Category order. Categories will be sorted by this value in ascending order.
 	 * <p>

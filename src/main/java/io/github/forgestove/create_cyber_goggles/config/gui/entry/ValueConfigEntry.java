@@ -1,5 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.config.gui.entry;
-import io.github.forgestove.create_cyber_goggles.config.gui.*;
+import io.github.forgestove.create_cyber_goggles.config.Translation;
+import io.github.forgestove.create_cyber_goggles.config.gui.ConfigCategoryTab;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -8,7 +9,6 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
-import org.apache.commons.compress.utils.Lists;
 import org.jetbrains.annotations.*;
 
 import java.util.*;
@@ -16,7 +16,7 @@ public abstract class ValueConfigEntry<C, T, V> extends ConfigEntry {
 	public final Button resetButton;
 	public final Button undoButton;
 	protected final ConfigCategoryTab<C> tab;
-	protected final List<AbstractWidget> children = Lists.newArrayList();
+	protected final List<AbstractWidget> children = new ArrayList<>();
 	protected final ValueConfigNode<C, T, V> valueNode;
 	private final Component label;
 	private final Component labelChanged;
@@ -84,12 +84,13 @@ public abstract class ValueConfigEntry<C, T, V> extends ConfigEntry {
 	}
 	@Nullable
 	public List<FormattedCharSequence> getTooltip() {
-		return this.validationError != null ? this.tooltipWithError : this.tooltip;
+		return hasError() ? this.tooltipWithError : this.tooltip;
 	}
 	private List<FormattedCharSequence> getTooltipWithError() {
-		if (this.validationError != null) {
+		if (hasError()) {
 			List<FormattedCharSequence> errorTooltip = new ArrayList<>();
 			if (this.tooltip != null) errorTooltip.addAll(this.tooltip);
+			assert this.validationError != null;
 			errorTooltip.add(this.validationError.copy().withStyle(ChatFormatting.RED).getVisualOrderText());
 			return errorTooltip;
 		}
@@ -97,7 +98,7 @@ public abstract class ValueConfigEntry<C, T, V> extends ConfigEntry {
 	}
 	protected void renderLabel(GuiGraphics guiGraphics, int x, int y, int entryWidth) {
 		Component l;
-		if (this.validationError != null) l = this.hasChanged ? this.labelErrorChanged : this.labelError;
+		if (hasError()) l = this.hasChanged ? this.labelErrorChanged : this.labelError;
 		else l = this.hasChanged ? this.labelChanged : this.label;
 		if (this.tab.getMinecraft().font.isBidirectional()) x = x + entryWidth - this.tab.getMinecraft().font.width(l);
 		guiGraphics.drawString(this.tab.getMinecraft().font, l.getVisualOrderText(), x, y + 5, -1, false);

@@ -7,7 +7,6 @@ public final class ValueConfigNode<C, T, V> implements ConfigNode<C> {
 	private String name;
 	private Component title;
 	private Component tooltip;
-	private Component prefix;
 	private Class<? extends T> type;
 	private Class<? extends V> valueType;
 	private boolean requiresRestart;
@@ -68,12 +67,6 @@ public final class ValueConfigNode<C, T, V> implements ConfigNode<C> {
 		return this.validator == null ? null : this.validator.validate(this.getEditingValue(config));
 	}
 	@NotNull
-	@Override
-	public String getName() {
-		return this.name;
-	}
-	@NotNull
-	@Override
 	public Component getTitle() {
 		return this.title;
 	}
@@ -81,11 +74,6 @@ public final class ValueConfigNode<C, T, V> implements ConfigNode<C> {
 	@Override
 	public Component getTooltip() {
 		return this.tooltip;
-	}
-	@Nullable
-	@Override
-	public Component getPrefix() {
-		return this.prefix;
 	}
 	@Override
 	public boolean restartRequired(C config) {
@@ -144,10 +132,6 @@ public final class ValueConfigNode<C, T, V> implements ConfigNode<C> {
 		}
 		public Builder<C, T, V> tooltip(Component tooltip) {
 			this.node.tooltip = tooltip;
-			return this;
-		}
-		public Builder<C, T, V> prefix(Component prefix) {
-			this.node.prefix = prefix;
 			return this;
 		}
 		public Builder<C, T, V> defaultValue(V defaultValue) {

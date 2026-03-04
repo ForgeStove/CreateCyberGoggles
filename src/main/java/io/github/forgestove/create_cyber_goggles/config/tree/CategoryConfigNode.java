@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.config.tree;
 import com.google.common.collect.ImmutableList;
-import io.github.forgestove.create_cyber_goggles.config.gui.Translation;
+import io.github.forgestove.create_cyber_goggles.config.Translation;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.*;
 
@@ -17,12 +17,6 @@ public final class CategoryConfigNode<C> implements ConfigNode<C> {
 		return new Builder<>();
 	}
 	@NotNull
-	@Override
-	public String getName() {
-		return this.name;
-	}
-	@NotNull
-	@Override
 	public Component getTitle() {
 		return this.title;
 	}
@@ -30,11 +24,6 @@ public final class CategoryConfigNode<C> implements ConfigNode<C> {
 	@Override
 	public Component getTooltip() {
 		return this.tooltip;
-	}
-	@Nullable
-	@Override
-	public Component getPrefix() {
-		return null;
 	}
 	@Override
 	public void resetToDefault() {

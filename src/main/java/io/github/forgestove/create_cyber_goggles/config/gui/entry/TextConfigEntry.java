@@ -8,10 +8,10 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-public final class PrefixTextConfigEntry extends ConfigEntry {
+public final class TextConfigEntry extends ConfigEntry {
 	private final MultiLineTextWidget textWidget;
 	private final List<MultiLineTextWidget> textWidgetAsList;
-	public PrefixTextConfigEntry(ConfigCategoryTab<?> tab, Component text) {
+	public TextConfigEntry(ConfigCategoryTab<?> tab, Component text) {
 		super();
 		this.textWidget = new MultiLineTextWidget(text, tab.getMinecraft().font);
 		this.textWidgetAsList = List.of(this.textWidget);

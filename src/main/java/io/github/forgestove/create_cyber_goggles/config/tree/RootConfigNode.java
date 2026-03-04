@@ -1,42 +1,30 @@
 package io.github.forgestove.create_cyber_goggles.config.tree;
 import com.google.common.collect.ImmutableList;
-import com.mojang.datafixers.util.Pair;
-import io.github.forgestove.create_cyber_goggles.config.ConfigHandler;
+import io.github.forgestove.create_cyber_goggles.config.Translation;
 import io.github.forgestove.create_cyber_goggles.config.annotation.*;
-import io.github.forgestove.create_cyber_goggles.config.gui.Translation;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode.*;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.*;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.Map.Entry;
+import java.util.function.Predicate;
 public final class RootConfigNode<C> implements ConfigNode<C> {
 	private final ImmutableList<CategoryConfigNode<C>> categories;
 	private RootConfigNode(ImmutableList<CategoryConfigNode<C>> categories) {
 		this.categories = categories;
 	}
-	public static <C> RootConfigNode<C> create(C defaultConfig) {
-		return new Builder<>(defaultConfig).build();
+	public static <C> RootConfigNode<C> create(C defaultConfig, String modId) {
+		return new Builder<>(defaultConfig, modId).build();
 	}
 	@NotNull
-	@Override
-	public String getName() {
-		return "";
-	}
-	@NotNull
-	@Override
 	public Component getTitle() {
 		return Component.empty();
 	}
 	@Nullable
 	@Override
 	public Component getTooltip() {
-		return null;
-	}
-	@Nullable
-	@Override
-	public Component getPrefix() {
 		return null;
 	}
 	@Override
@@ -85,18 +73,62 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 		this.categories.forEach(node -> node.writeEditingToConfig(config));
 	}
 	private static class Builder<C> {
+		private static final Map<Class<?>, ValidatorFactory<?>> VALIDATOR_FACTORIES = Map.of(
+			Integer.class, (ValueConfigNode.Builder<?, Integer, Integer> b, Field f) -> {
+				var range = f.getAnnotation(IntRange.class);
+				if (range != null) b.validator(makeRangeValidator(v -> v < range.min(), v -> v > range.max(), range.min(), range.max()));
+			}, int.class, (ValueConfigNode.Builder<?, Integer, Integer> b, Field f) -> {
+				var range = f.getAnnotation(IntRange.class);
+				if (range != null) b.validator(makeRangeValidator(v -> v < range.min(), v -> v > range.max(), range.min(), range.max()));
+			}, Long.class, (ValueConfigNode.Builder<?, Long, Long> b, Field f) -> {
+				var range = f.getAnnotation(LongRange.class);
+				if (range != null) b.validator(makeRangeValidator(v -> v < range.min(), v -> v > range.max(), range.min(), range.max()));
+			}, long.class, (ValueConfigNode.Builder<?, Long, Long> b, Field f) -> {
+				var range = f.getAnnotation(LongRange.class);
+				if (range != null) b.validator(makeRangeValidator(v -> v < range.min(), v -> v > range.max(), range.min(), range.max()));
+			}, Float.class, (ValueConfigNode.Builder<?, Float, Float> b, Field f) -> {
+				var range = f.getAnnotation(FloatRange.class);
+				if (range != null) b.validator(makeRangeValidator(v -> v < range.min(), v -> v > range.max(), range.min(), range.max()));
+			}, float.class, (ValueConfigNode.Builder<?, Float, Float> b, Field f) -> {
+				var range = f.getAnnotation(FloatRange.class);
+				if (range != null) b.validator(makeRangeValidator(v -> v < range.min(), v -> v > range.max(), range.min(), range.max()));
+			}, Double.class, (ValueConfigNode.Builder<?, Double, Double> b, Field f) -> {
+				var range = f.getAnnotation(DoubleRange.class);
+				if (range != null) b.validator(makeRangeValidator(v -> v < range.min(), v -> v > range.max(), range.min(), range.max()));
+			}, double.class, (ValueConfigNode.Builder<?, Double, Double> b, Field f) -> {
+				var range = f.getAnnotation(DoubleRange.class);
+				if (range != null) b.validator(makeRangeValidator(v -> v < range.min(), v -> v > range.max(), range.min(), range.max()));
+			}, String.class, (ValueConfigNode.Builder<?, String, String> b, Field f) -> {
+				var strLen = f.getAnnotation(StringLength.class);
+				if (strLen != null) b.validator(makeRangeValidator(
+					v -> v.length() < strLen.min(),
+					v -> v.length() > strLen.max(),
+					strLen.min(),
+					strLen.max()
+				));
+			}
+		);
+		private final String id;
 		private Object defaultConfig;
-		private Builder(C defaultConfig) {
+		private Builder(C defaultConfig, String id) {
 			this.defaultConfig = defaultConfig;
+			this.id = id;
+		}
+		private static <T> ValueValidator<T> makeRangeValidator(Predicate<T> belowMin, Predicate<T> aboveMax, Object min, Object max) {
+			return value -> {
+				if (belowMin.test(value)) return Translation.VALIDATOR_MIN.copy().append(String.valueOf(min));
+				if (aboveMax.test(value)) return Translation.VALIDATOR_MAX.copy().append(String.valueOf(max));
+				return null;
+			};
 		}
 		@NotNull
 		public RootConfigNode<C> build() {
 			var configClass = this.defaultConfig.getClass();
 			var categories = Arrays.stream(configClass.getFields())
-				.filter(field -> field.isAnnotationPresent(ConfigCategory.class))
-				.map(field -> Pair.of(field.getAnnotation(ConfigCategory.class).value(), field))
-				.sorted(Comparator.comparingInt(Pair::getFirst))
-				.map(pair -> this.createCategoryNode(pair.getSecond()))
+				.filter(field -> field.isAnnotationPresent(Category.class))
+				.map(field -> Map.entry(field.getAnnotation(Category.class).value(), field))
+				.sorted(Comparator.comparingInt(Entry::getKey))
+				.map(pair -> this.createCategoryNode(pair.getValue()))
 				.collect(ImmutableList.toImmutableList());
 			this.defaultConfig = null;
 			return new RootConfigNode<>(categories);
@@ -113,7 +145,7 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 			var categoryName = categoryField.getName();
 			var categoryBuilder = CategoryConfigNode.<C>builder()
 				.name(categoryName)
-				.title(Component.translatable(ConfigHandler.id + ".config.category." + categoryName));
+				.title(Component.translatable(id + ".config.category." + categoryName));
 			for (var valueField : categoryClass.getDeclaredFields())
 				this.addValueNode(defaultCategory, categoryField, valueField, categoryBuilder);
 			return categoryBuilder.build();
@@ -133,6 +165,7 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 			}
 			this.addSingleValueField(defaultValue.getClass(), defaultValue, categoryField, valueField, categoryBuilder);
 		}
+		@SuppressWarnings("unchecked")
 		private <T> void addSingleValueField(
 			Class<? extends T> type,
 			T defaultValue,
@@ -141,10 +174,9 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 			CategoryConfigNode.Builder<C> categoryBuilder
 		) {
 			var valueName = valueField.getName();
-			var titleKey = ConfigHandler.id + ".config.option." + categoryField.getName() + "." + valueName;
+			var titleKey = id + ".config.option." + categoryField.getName() + "." + valueName;
 			var title = Component.translatable(titleKey);
 			var tooltip = Component.translatable(titleKey + ".tooltip");
-			var prefixKey = titleKey + ".prefix";
 			categoryBuilder.<T, T>value(valueBuilder -> {
 				valueBuilder.type(type)
 					.valueType(type)
@@ -158,67 +190,11 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 				// Check for ColorValue annotation
 				var colorAnnotation = valueField.getAnnotation(ColorValue.class);
 				if (colorAnnotation != null) valueBuilder.colorValue(true, colorAnnotation.hasAlpha());
-				if (type.equals(Integer.class) || type.equals(int.class)) {
-					var intRange = valueField.getAnnotation(IntRange.class);
-					if (intRange != null) valueBuilder.validator(makeRangeValidatorInt(type, intRange.min(), intRange.max()));
-				} else if (type.equals(Long.class) || type.equals(long.class)) {
-					var longRange = valueField.getAnnotation(LongRange.class);
-					if (longRange != null) valueBuilder.validator(makeRangeValidatorLong(type, longRange.min(), longRange.max()));
-				} else if (type.equals(Float.class) || type.equals(float.class)) {
-					var floatRange = valueField.getAnnotation(FloatRange.class);
-					if (floatRange != null) valueBuilder.validator(makeRangeValidatorFloat(type, floatRange.min(), floatRange.max()));
-				} else if (type.equals(Double.class) || type.equals(double.class)) {
-					var doubleRange = valueField.getAnnotation(DoubleRange.class);
-					if (doubleRange != null) valueBuilder.validator(makeRangeValidatorDouble(type, doubleRange.min(), doubleRange.max()));
-				} else if (type.equals(String.class)) {
-					var strLen = valueField.getAnnotation(StringLength.class);
-					if (strLen != null) valueBuilder.validator(makeRangeValidatorInt(type, strLen.min(), strLen.max()));
-				}
-				if (I18n.exists(prefixKey)) valueBuilder.prefix(Component.translatable(prefixKey));
+				// Look up validator factory from the table
+				var factory = (ValidatorFactory<T>) VALIDATOR_FACTORIES.get(type);
+				if (factory != null) factory.apply(valueBuilder, valueField);
 				return valueBuilder;
 			});
-		}
-		private <T> ValueValidator<T> makeRangeValidatorInt(Class<? extends T> type, int min, int max) {
-			if (type.equals(Integer.class) || type.equals(int.class)) return value -> {
-				var v = (Integer) value;
-				if (v < min) return Translation.VALIDATOR_MIN.copy().append(String.valueOf(min));
-				if (v > max) return Translation.VALIDATOR_MAX.copy().append(String.valueOf(max));
-				return null;
-			};
-			else if (type.equals(String.class)) return value -> {
-				var v = (String) value;
-				if (v.length() < min) return Translation.VALIDATOR_MIN.copy().append(String.valueOf(min));
-				if (v.length() > max) return Translation.VALIDATOR_MAX.copy().append(String.valueOf(max));
-				return null;
-			};
-			throw new UnsupportedOperationException("Int range validator not supported for type: " + type);
-		}
-		private <T> ValueValidator<T> makeRangeValidatorLong(Class<? extends T> type, long min, long max) {
-			if (type.equals(Long.class) || type.equals(long.class)) return value -> {
-				var v = (Long) value;
-				if (v < min) return Translation.VALIDATOR_MIN.copy().append(String.valueOf(min));
-				if (v > max) return Translation.VALIDATOR_MAX.copy().append(String.valueOf(max));
-				return null;
-			};
-			throw new UnsupportedOperationException("Long range validator not supported for type: " + type);
-		}
-		private <T> ValueValidator<T> makeRangeValidatorFloat(Class<? extends T> type, float min, float max) {
-			if (type.equals(Float.class) || type.equals(float.class)) return value -> {
-				var v = (Float) value;
-				if (v < min) return Translation.VALIDATOR_MIN.copy().append(String.valueOf(min));
-				if (v > max) return Translation.VALIDATOR_MAX.copy().append(String.valueOf(max));
-				return null;
-			};
-			throw new UnsupportedOperationException("Float range validator not supported for type: " + type);
-		}
-		private <T> ValueValidator<T> makeRangeValidatorDouble(Class<? extends T> type, double min, double max) {
-			if (type.equals(Double.class) || type.equals(double.class)) return value -> {
-				var v = (Double) value;
-				if (v < min) return Translation.VALIDATOR_MIN.copy().append(String.valueOf(min));
-				if (v > max) return Translation.VALIDATOR_MAX.copy().append(String.valueOf(max));
-				return null;
-			};
-			throw new UnsupportedOperationException("Double range validator not supported for type: " + type);
 		}
 		private <T> ValueReader<C, T> makeValueReader(Class<? extends T> type, Field categoryField, Field valueField) {
 			try {
@@ -247,6 +223,10 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 					throw new IllegalArgumentException("Failed to set value field", e);
 				}
 			};
+		}
+		@FunctionalInterface
+		private interface ValidatorFactory<T> {
+			void apply(ValueConfigNode.Builder<?, T, T> builder, Field valueField);
 		}
 	}
 }

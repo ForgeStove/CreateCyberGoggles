@@ -1,6 +1,6 @@
-package io.github.forgestove.create_cyber_goggles.config.gui;
+package io.github.forgestove.create_cyber_goggles.config;
 import net.minecraft.network.chat.Component;
-public class Translation {
+public final class Translation {
 	public static final Component RESET_LABEL = Component.translatable("config.ui.reset");
 	public static final Component RESET_TOOLTIP = Component.translatable("config.ui.reset.tooltip");
 	public static final Component UNDO_LABEL = Component.translatable("config.ui.undo");

@@ -30,7 +30,7 @@ public final class EnumValueConfigEntry<C, E extends Enum<E>> extends ValueConfi
 		this.enumClassName = valueNode.getValueType().getSimpleName();
 		this.dropdownButton =
 			Button.builder(this.getDisplayComponent(this.getValue()), this::toggleDropdown).bounds(0, 0, 160, 20).build();
-		this.children.add(0, this.dropdownButton);
+		this.children.add(this.dropdownButton);
 	}
 	private Component getDisplayComponent(E value) {
 		return Component.translatable(CCG.ID + ".config.enum." + this.enumClassName + "." + value.name());

@@ -1,4 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.config.gui;
+import io.github.forgestove.create_cyber_goggles.config.Translation;
 import io.github.forgestove.create_cyber_goggles.config.tree.RootConfigNode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;

@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles;
 import com.mojang.logging.LogUtils;
-import io.github.forgestove.create_cyber_goggles.config.ConfigHandler;
+import io.github.forgestove.create_cyber_goggles.config.Config;
 import io.github.forgestove.create_cyber_goggles.core.event.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -9,13 +9,13 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.slf4j.Logger;
 @Mod(CCG.ID)
-public class CCG {
+public final class CCG {
 	public static final String ID = "create_cyber_goggles";
 	public static final Logger LOGGER = LogUtils.getLogger();
-	public static CCGConfig config = ConfigHandler.getConfig(CCGConfig.class, ID, LOGGER);
+	public static CCGConfig config = Config.getConfig(CCGConfig.class, ID, LOGGER);
 	public CCG() {
 		if (FMLEnvironment.dist != Dist.CLIENT) return;
-		ConfigHandler.initConfigScreen();
+		Config.initConfigScreen(ID);
 		var mod = FMLJavaModLoadingContext.get().getModEventBus();
 		mod.addListener(CCGKey::register);
 		mod.addListener(TooltipOverlay::register);

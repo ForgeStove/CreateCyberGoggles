@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles;
 import com.mojang.logging.LogUtils;
-import io.github.forgestove.create_cyber_goggles.config.ConfigHandler;
+import io.github.forgestove.create_cyber_goggles.config.Config;
 import io.github.forgestove.create_cyber_goggles.core.event.*;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModContainer;
@@ -9,12 +9,12 @@ import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 @Mod(value = CCG.ID, dist = Dist.CLIENT)
-public class CCG {
+public final class CCG {
 	public static final String ID = "create_cyber_goggles";
 	public static final Logger LOGGER = LogUtils.getLogger();
-	public static CCGConfig config = ConfigHandler.getConfig(CCGConfig.class, ID, LOGGER);
+	public static CCGConfig config = Config.getConfig(CCGConfig.class, ID, LOGGER);
 	public CCG(@NotNull ModContainer container) {
-		ConfigHandler.initConfigScreen(container);
+		Config.initConfigScreen(container, ID);
 		var mod = container.getEventBus();
 		if (mod == null) return;
 		mod.addListener(CCGKey::register);

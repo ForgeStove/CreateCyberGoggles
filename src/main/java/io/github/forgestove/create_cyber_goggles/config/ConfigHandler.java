@@ -2,10 +2,6 @@ package io.github.forgestove.create_cyber_goggles.config;
 import io.github.forgestove.create_cyber_goggles.config.gui.ConfigScreen;
 import io.github.forgestove.create_cyber_goggles.config.tree.RootConfigNode;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.resources.language.I18n;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.loading.FMLPaths;
-import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
@@ -16,8 +12,6 @@ import java.util.function.*;
  * @param <T> Configuration class type
  */
 public final class ConfigHandler<T> {
-	public static ConfigHandler<?> configHandler;
-	public static String id;
 	private final Class<T> configClass;
 	private final ConfigSerializer<T> serializer;
 	private final Logger logger;
@@ -28,29 +22,13 @@ public final class ConfigHandler<T> {
 		this.configClass = builder.configClass;
 		this.serializer = builder.serializerBuilder.build();
 		this.logger = builder.logger;
-		this.configTree = RootConfigNode.create(newInstance());
+		this.configTree = RootConfigNode.create(newInstance(), builder.id);
 		this.savedConfig = load();
 		this.activeConfig = newInstance();
 		this.configTree.copy(savedConfig, activeConfig);
 	}
 	public static <T> Builder<T> builder(Class<T> configClass) {
 		return new Builder<>(configClass);
-	}
-	@SuppressWarnings("unchecked")
-	public static <T> T getConfig(Class<T> configClass, String id, Logger logger) {
-		if (configHandler == null) {
-			ConfigHandler.id = id;
-			configHandler = builder(configClass).path(() -> FMLPaths.CONFIGDIR.get().resolve(id + ".toml"))
-				.translationPrefix(id + ".config")
-				.translator(key -> I18n.exists(key) ? I18n.get(key) : null)
-				.logger(logger)
-				.build();
-		}
-		return (T) configHandler.getConfig();
-	}
-	public static void initConfigScreen(ModContainer container) {
-		Supplier<IConfigScreenFactory> extension = () -> (client, parent) -> configHandler.createConfigScreen(parent);
-		container.registerExtensionPoint(IConfigScreenFactory.class, extension);
 	}
 	public T getConfig() {
 		return activeConfig;
@@ -87,17 +65,22 @@ public final class ConfigHandler<T> {
 	private T newInstance() {
 		try {
 			return configClass.getDeclaredConstructor().newInstance();
-		} catch (ReflectiveOperationException e) {
+		} catch (Exception e) {
 			throw new RuntimeException("Failed to create config instance", e);
 		}
 	}
 	public static final class Builder<T> {
 		private final Class<T> configClass;
 		private final ConfigSerializer.Builder<T> serializerBuilder;
+		private String id;
 		private Logger logger;
 		private Builder(Class<T> configClass) {
 			this.configClass = configClass;
 			this.serializerBuilder = ConfigSerializer.builder(configClass);
+		}
+		public Builder<T> id(String id) {
+			this.id = id;
+			return this;
 		}
 		public Builder<T> path(Supplier<Path> configPath) {
 			serializerBuilder.path(configPath);
@@ -116,6 +99,7 @@ public final class ConfigHandler<T> {
 			return this;
 		}
 		public ConfigHandler<T> build() {
+			if (id == null || id.isBlank()) throw new IllegalStateException("id must be provided before building ConfigHandler");
 			return new ConfigHandler<>(this);
 		}
 	}

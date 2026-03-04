@@ -28,7 +28,10 @@ public abstract class GenericValueConfigEntry<C, T> extends ValueConfigEntry<C, 
 		this.inputField.setValue(this.getValue().toString());
 		this.inputField.setFilter(validator);
 		this.inputField.setResponder(this::onInputChange);
-		this.children.addFirst(this.inputField);
+		this.children.add(this.inputField);
+	}
+	public static boolean isZero(@NotNull String string) {
+		return string.isEmpty() || string.equals("-");
 	}
 	@Override
 	public void refresh() {

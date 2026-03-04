@@ -4,8 +4,8 @@ import com.simibubi.create.*;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.stockTicker.*;
 import com.simibubi.create.content.logistics.tableCloth.TableClothBlockEntity;
-import io.github.forgestove.create_cyber_goggles.*;
-import io.github.forgestove.create_cyber_goggles.config.ConfigHandler;
+import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.config.Config;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
@@ -49,7 +49,7 @@ public class KeyInput {
 	private static void openConfigScreen() {
 		if (!CCGKey.openConfig.isDown()) return;
 		if (isInGUI()) return;
-		mc.setScreen(ConfigHandler.configHandler.createConfigScreen(mc.screen));
+		mc.setScreen(Config.createConfigScreen(CCG.ID, mc.screen));
 	}
 	private static void openStockScreen() {
 		if (!CCGKey.openStock.isDown()) return;

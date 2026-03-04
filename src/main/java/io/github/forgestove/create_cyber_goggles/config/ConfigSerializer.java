@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.config;
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
-import io.github.forgestove.create_cyber_goggles.config.annotation.ConfigCategory;
+import io.github.forgestove.create_cyber_goggles.config.annotation.Category;
 
 import java.lang.reflect.Field;
 import java.nio.file.Path;
@@ -57,8 +57,8 @@ public final class ConfigSerializer<T> {
 	}
 	private Field[] getCategoryFields() {
 		return Arrays.stream(configClass.getDeclaredFields())
-			.filter(f -> f.isAnnotationPresent(ConfigCategory.class))
-			.sorted(Comparator.comparingInt(f -> f.getAnnotation(ConfigCategory.class).value()))
+			.filter(f -> f.isAnnotationPresent(Category.class))
+			.sorted(Comparator.comparingInt(f -> f.getAnnotation(Category.class).value()))
 			.toArray(Field[]::new);
 	}
 	private T newInstance() throws SerializationException {

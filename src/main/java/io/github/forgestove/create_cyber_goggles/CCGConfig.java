@@ -1,14 +1,14 @@
 package io.github.forgestove.create_cyber_goggles;
 import io.github.forgestove.create_cyber_goggles.config.annotation.*;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
-public class CCGConfig {
-	@ConfigCategory public final Goggles goggles = new Goggles();
-	@ConfigCategory public final GameMode gameMode = new GameMode();
-	@ConfigCategory public final Overlay overlay = new Overlay();
-	@ConfigCategory public final Outliner outliner = new Outliner();
-	@ConfigCategory public final ChainConveyor chainConveyor = new ChainConveyor();
-	@ConfigCategory public final Wrench wrench = new Wrench();
-	@ConfigCategory public final Misc misc = new Misc();
+public final class CCGConfig {
+	@Category public final Goggles goggles = new Goggles();
+	@Category public final GameMode gameMode = new GameMode();
+	@Category public final Overlay overlay = new Overlay();
+	@Category public final Outliner outliner = new Outliner();
+	@Category public final ChainConveyor chainConveyor = new ChainConveyor();
+	@Category public final Wrench wrench = new Wrench();
+	@Category public final Misc misc = new Misc();
 	public static class Goggles {
 		public boolean enhancedInfo = true;
 		public boolean hideStaticKineticInfo = false;

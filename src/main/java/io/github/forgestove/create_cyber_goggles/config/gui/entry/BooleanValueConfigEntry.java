@@ -19,7 +19,7 @@ public final class BooleanValueConfigEntry<C> extends ValueConfigEntry<C, Boolea
 			.withInitialValue(this.getValue())
 			.displayOnlyValue()
 			.create(0, 0, 160, 20, valueNode.getTitle(), (b, value) -> this.setValue(value));
-		this.children.addFirst(this.valueButton);
+		this.children.add(this.valueButton);
 	}
 	@Override
 	public void refresh() {

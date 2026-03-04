@@ -9,8 +9,7 @@ public abstract class ConfigEntry extends Entry<ConfigEntry> {
 	public List<FormattedCharSequence> getTooltip() {
 		return null;
 	}
-	public void refresh() {
-	}
+	public void refresh() {}
 	/**
 	 * Returns true if this entry has an error that should prevent saving.
 	 */

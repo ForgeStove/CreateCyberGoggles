@@ -9,7 +9,7 @@ import org.jetbrains.annotations.*;
 public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEntry> {
 	private static final float ANIMATION_SPEED = 0.4f;
 	private final ConfigCategoryTab<?> tab;
-	@Nullable private EnumValueConfigEntry<?, ?> expandedDropdown;
+	@Nullable private EnumValueConfigEntry<?> expandedDropdown;
 	// Highlight animation state
 	private float highlightY;
 	private float highlightTargetY;
@@ -35,7 +35,7 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		// Track which dropdown is expanded
 		this.expandedDropdown = null;
 		for (var entry : this.children())
-			if (entry instanceof EnumValueConfigEntry<?, ?> enumEntry && enumEntry.isExpanded()) {
+			if (entry instanceof EnumValueConfigEntry<?> enumEntry && enumEntry.isExpanded()) {
 				this.expandedDropdown = enumEntry;
 				break;
 			}

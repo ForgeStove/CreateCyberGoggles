@@ -9,12 +9,12 @@ import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-public final class EnumValueConfigEntry<C, E extends Enum<E>> extends ValueConfigEntry<C, E, E> {
+public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum<?>, Enum<?>> {
 	private static final int OPTION_HEIGHT = 18;
 	private static final int SCROLLBAR_WIDTH = 6;
 	private static final int DROPDOWN_PADDING = 2;
 	private final Button dropdownButton;
-	private final E[] enumValues;
+	private final Enum<?>[] enumValues;
 	private final String enumClassName;
 	private boolean expanded = false;
 	private int scrollOffset = 0;
@@ -24,7 +24,7 @@ public final class EnumValueConfigEntry<C, E extends Enum<E>> extends ValueConfi
 	private int maxVisibleOptions;
 	private int screenBottom;
 	private boolean isDraggingScrollbar = false;
-	public EnumValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, E, E> valueNode) {
+	public EnumValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Enum<?>, Enum<?>> valueNode) {
 		super(tab, valueNode);
 		this.enumValues = valueNode.getValueType().getEnumConstants();
 		this.enumClassName = valueNode.getValueType().getSimpleName();
@@ -32,7 +32,7 @@ public final class EnumValueConfigEntry<C, E extends Enum<E>> extends ValueConfi
 			Button.builder(this.getDisplayComponent(this.getValue()), this::toggleDropdown).bounds(0, 0, 160, 20).build();
 		this.children.add(this.dropdownButton);
 	}
-	private Component getDisplayComponent(E value) {
+	private Component getDisplayComponent(Enum<?> value) {
 		return Component.translatable(CCG.ID + ".config.enum." + this.enumClassName + "." + value.name());
 	}
 	private void toggleDropdown(Button button) {
@@ -46,7 +46,7 @@ public final class EnumValueConfigEntry<C, E extends Enum<E>> extends ValueConfi
 			this.scrollOffset = Mth.clamp(currentIndex - this.maxVisibleOptions / 2, 0, this.getMaxScrollOffset());
 		}
 	}
-	private void selectValue(E value) {
+	private void selectValue(Enum<?> value) {
 		this.setValue(value);
 		this.expanded = false;
 		this.dropdownButton.setMessage(this.getDisplayComponent(value));

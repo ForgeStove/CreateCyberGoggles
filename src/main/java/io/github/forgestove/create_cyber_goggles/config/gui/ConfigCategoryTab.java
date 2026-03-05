@@ -11,8 +11,24 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.*;
 
 import java.util.*;
-import java.util.function.*;
+import java.util.function.Consumer;
 public final class ConfigCategoryTab<C> implements Tab {
+	private static final Map<Class<?>, ConfigEntryFactory<?>> ENTRY_FACTORIES = Map.of(
+		Boolean.class,
+		(tab, node) -> new BooleanValueConfigEntry<>(tab, cast(node)),
+		Integer.class,
+		(tab, node) -> node.isColorValue()
+			? new ColorValueConfigEntry<>(tab, cast(node), node.colorHasAlpha())
+			: new IntegerValueConfigEntry<>(tab, cast(node)),
+		Long.class,
+		(tab, node) -> new LongValueConfigEntry<>(tab, cast(node)),
+		Float.class,
+		(tab, node) -> new FloatValueConfigEntry<>(tab, cast(node)),
+		Double.class,
+		(tab, node) -> new DoubleValueConfigEntry<>(tab, cast(node)),
+		String.class,
+		(tab, node) -> new StringValueConfigEntry<>(tab, cast(node))
+	);
 	private final ConfigScreen<C> screen;
 	private final CategoryConfigNode<C> category;
 	private final C config;
@@ -45,6 +61,10 @@ public final class ConfigCategoryTab<C> implements Tab {
 			entries
 		);
 	}
+	@SuppressWarnings("unchecked")
+	private static <C, T, V> ValueConfigNode<C, T, V> cast(ValueConfigNode<C, ?, ?> node) {
+		return (ValueConfigNode<C, T, V>) node;
+	}
 	@NotNull
 	@Override
 	public Component getTabTitle() {
@@ -62,38 +82,13 @@ public final class ConfigCategoryTab<C> implements Tab {
 			screenRectangle.top() + screenRectangle.height()
 		);
 	}
-	@FunctionalInterface
-	private interface ConfigEntryFactory<C> {
-		@Nullable ConfigEntry create(ConfigCategoryTab<C> tab, ValueConfigNode<C, ?, ?> node);
-	}
-	private static final Map<Class<?>, ConfigEntryFactory<?>> ENTRY_FACTORIES = Map.of(
-		Boolean.class, (tab, node) -> new BooleanValueConfigEntry<>(tab, cast(node)),
-		Integer.class, (tab, node) -> node.isColorValue()
-			? new ColorValueConfigEntry<>(tab, cast(node), node.colorHasAlpha())
-			: new IntegerValueConfigEntry<>(tab, cast(node)),
-		Long.class, (tab, node) -> new LongValueConfigEntry<>(tab, cast(node)),
-		Float.class, (tab, node) -> new FloatValueConfigEntry<>(tab, cast(node)),
-		Double.class, (tab, node) -> new DoubleValueConfigEntry<>(tab, cast(node)),
-		String.class, (tab, node) -> new StringValueConfigEntry<>(tab, cast(node))
-	);
-	@SuppressWarnings("unchecked")
-	private static <C, T, V> ValueConfigNode<C, T, V> cast(ValueConfigNode<C, ?, ?> node) {
-		return (ValueConfigNode<C, T, V>) node;
-	}
 	@SuppressWarnings("unchecked")
 	private <T, V> ConfigEntry createValueEntry(ValueConfigNode<C, T, V> valueNode) {
 		var type = valueNode.getType();
-		// Handle Enum types specially since we need isAssignableFrom check
-		if (Enum.class.isAssignableFrom(type))
-			return new EnumValueConfigEntry<>(this, cast(valueNode));
-		// Look up factory from the table
+		if (Enum.class.isAssignableFrom(type)) return new EnumValueConfigEntry<>(this, (ValueConfigNode<C, Enum<?>, Enum<?>>) valueNode);
 		var factory = (ConfigEntryFactory<C>) ENTRY_FACTORIES.get(type);
 		if (factory != null) return factory.create(this, valueNode);
-		// Unsupported type fallback
-		return new TextConfigEntry(
-			this,
-			Translation.UNSUPPORTED_TYPE.copy().append(type.getSimpleName()).withStyle(ChatFormatting.RED)
-		);
+		return new TextConfigEntry(this, Translation.UNSUPPORTED_TYPE.copy().append(type.getSimpleName()).withStyle(ChatFormatting.RED));
 	}
 	private List<ConfigEntry> createSubCategoryEntries(CategoryConfigNode<C> categoryNode) {
 		var entries = new ArrayList<ConfigEntry>(categoryNode.getChildren().size() + 1);
@@ -130,5 +125,9 @@ public final class ConfigCategoryTab<C> implements Tab {
 	}
 	public void setTabButton(@Nullable TabButton tabButton) {
 		this.tabButton = tabButton;
+	}
+	@FunctionalInterface
+	private interface ConfigEntryFactory<C> {
+		@Nullable ConfigEntry create(ConfigCategoryTab<C> tab, ValueConfigNode<C, ?, ?> node);
 	}
 }

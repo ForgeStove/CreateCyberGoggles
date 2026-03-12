@@ -3,6 +3,7 @@ import io.github.forgestove.create_cyber_goggles.config.annotation.*;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
 public final class CCGConfig {
 	@Category public final Goggles goggles = new Goggles();
+	@Category public final Tooltip tooltip = new Tooltip();
 	@Category public final GameMode gameMode = new GameMode();
 	@Category public final Overlay overlay = new Overlay();
 	@Category public final Outliner outliner = new Outliner();
@@ -17,7 +18,24 @@ public final class CCGConfig {
 		public boolean preciseNumber = true;
 		public boolean disableScreenGoggles = true;
 		public boolean canRenderOnValueBox = false;
+	}
+	public static class Tooltip {
 		public boolean extraItemTooltip = true;
+		public boolean goggles = true;
+		public boolean backtank = true;
+		public boolean divingBoots = true;
+		public boolean wrench = true;
+		public boolean linkedController = true;
+		public boolean shulkerBox = true;
+		public boolean toolbox = true;
+		public boolean listFilter = true;
+		public boolean attributeFilter = true;
+		public boolean packageItem = true;
+		public boolean packageEntity = true;
+		public boolean itemEntity = true;
+		public boolean deployer = true;
+		public boolean depot = true;
+		public boolean crushingController = true;
 	}
 	public static class GameMode {
 		public boolean enableGoggles = true;

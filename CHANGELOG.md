@@ -1,1 +1,1 @@
-- Fix translation
+- Optimized the tooltip display

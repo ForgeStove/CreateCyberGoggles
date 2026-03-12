@@ -3,16 +3,19 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.equipment.armor.*;
 import com.simibubi.create.content.kinetics.base.*;
 import com.simibubi.create.content.kinetics.base.IRotate.*;
+import com.simibubi.create.content.kinetics.crusher.CrushingWheelControllerBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity.FuelType;
 import com.simibubi.create.content.schematics.cannon.SchematicannonBlockEntity;
 import com.simibubi.create.content.schematics.cannon.SchematicannonBlockEntity.State;
 import com.simibubi.create.foundation.item.TooltipHelper;
 import com.simibubi.create.foundation.utility.CreateLang;
+import com.simibubi.create.infrastructure.config.AllConfigs;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.event.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -143,8 +146,45 @@ public class GoggleTooltipUtil {
 			.add(CCGLang.text(" / ").style(DARK_GRAY).add(CCGLang.seconds().style(DARK_GRAY)))
 			.forGoggles(tooltip, 1);
 	}
-	public static void pulse(List<Component> tooltip, int state, int maxState) {
+	public static boolean pulse(List<Component> tooltip, int state, int maxState) {
+		if (!CCG.config.goggles.enhancedInfo) return false;
 		CCGLang.translate("tooltip.pulse").forGoggles(tooltip);
 		CCGLang.fraction(state, maxState).forGoggles(tooltip);
+		return true;
+	}
+	public static boolean crushingController(List<Component> tooltip, CrushingWheelControllerBlockEntity cwcbe) {
+		if (!CCG.config.goggles.enhancedInfo) return false;
+		CCGLang.translate("tooltip.crushingController")
+			.add(CCGLang.fraction(cwcbe.crushingspeed * 50, AllConfigs.server().kinetics.maxRotationSpeed.get()))
+			.forGoggles(tooltip);
+		var inputCount = cwcbe.inventory.getStackInSlot(0).getCount();
+		var processingSpeed = Mth.clamp(
+			cwcbe.crushingspeed * 4 / (
+				!cwcbe.inventory.appliedRecipe ? (float) Math.log(inputCount) / (float) Math.log(2) : 1
+			), .25f, 20
+		);
+		var leftTick = (int) (cwcbe.inventory.remainingTime / processingSpeed);
+		if (leftTick == 0) return false;
+		CCGLang.translate("tooltip.expectedOutputs").forGoggles(tooltip);
+		cwcbe.findRecipe().ifPresentOrElse(
+			holder -> holder.value().getRollableResults().forEach(result -> {
+				var stack = result.getStack();
+				var chance = result.getChance();
+				CCGLang.itemWithoutCount(stack)
+					.text(DARK_GRAY, " x")
+					.add(CCGLang.number(inputCount * stack.getCount() * chance).style(GOLD))
+					.text(DARK_GRAY, " (")
+					.add(CCGLang.number(chance * 100).style(AQUA))
+					.text(DARK_GRAY, "%)")
+					.forGoggles(tooltip, 2);
+			}), () -> CCGLang.itemWithoutCount(ItemStack.EMPTY).forGoggles(tooltip, 2)
+		);
+		CCGLang.translate("tooltip.leftTime")
+			.style(GRAY)
+			.add(CCGLang.number(GOLD, leftTick / 20))
+			.space()
+			.add(CCGLang.seconds().style(GRAY))
+			.forGoggles(tooltip);
+		return true;
 	}
 }

@@ -30,6 +30,9 @@ public class CCGLang extends Lang {
 	public static @NotNull LangBuilder number(double number) {
 		return text(LangNumberFormat.format(number));
 	}
+	public static @NotNull LangBuilder number(float number) {
+		return text(LangNumberFormat.format(Double.parseDouble(Float.toString(number))));
+	}
 	public static @NotNull LangBuilder number(int number) {
 		return text(String.valueOf(number));
 	}
@@ -45,14 +48,19 @@ public class CCGLang extends Lang {
 			.text(GRAY, " / ")
 			.add(number(total).style(DARK_GRAY));
 	}
+	public static @NotNull LangBuilder fraction(float current, float total) {
+		return number(current).color(Color.HSBtoRGB(current / total * 0.33F, 1, 1)).text(GRAY, " / ").add(number(total).style(DARK_GRAY));
+	}
 	public static @NotNull LangBuilder enabled(boolean enabled) {
 		return enabled ? translate(GREEN, "message.enabled") : translate(RED, "message.disabled");
 	}
 	public static @NotNull LangBuilder seconds() {
 		return CreateLang.translate("generic.unit.seconds");
 	}
+	public static @NotNull LangBuilder itemWithoutCount(@NotNull ItemStack stack) {
+		return builder().add(stack.getHoverName().copy().setStyle(stack.getDisplayName().getStyle()));
+	}
 	public static @NotNull LangBuilder item(@NotNull ItemStack stack) {
-		return builder().add(stack.getHoverName().copy().setStyle(stack.getDisplayName().getStyle()))
-			.text(GRAY, " x%d".formatted(stack.getCount()));
+		return itemWithoutCount(stack).text(GRAY, " x%d".formatted(stack.getCount()));
 	}
 }

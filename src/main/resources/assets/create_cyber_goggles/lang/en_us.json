@@ -143,6 +143,8 @@
 	"create_cyber_goggles.tooltip.beltThroughput": "Belt Throughput:",
 	"create_cyber_goggles.tooltip.burnerState": "Burner State:",
 	"create_cyber_goggles.tooltip.cannonState": "Cannon State:",
+	"create_cyber_goggles.tooltip.crushingController": "Crushing Speed：",
+	"create_cyber_goggles.tooltip.expectedOutputs": "Expected Outputs:",
 	"create_cyber_goggles.tooltip.leftTime": "Left Time:",
 	"create_cyber_goggles.tooltip.printProgress": "Print Progress:",
 	"create_cyber_goggles.tooltip.pullRange": "Pull range",

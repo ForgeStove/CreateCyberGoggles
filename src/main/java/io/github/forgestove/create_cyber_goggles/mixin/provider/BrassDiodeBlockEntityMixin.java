@@ -13,7 +13,6 @@ public abstract class BrassDiodeBlockEntityMixin implements IHaveGoggleInformati
 	@Shadow ScrollValueBehaviour maxState;
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		GoggleTooltipUtil.pulse(tooltip, state, maxState.getValue());
-		return true;
+		return GoggleTooltipUtil.pulse(tooltip, state, maxState.getValue());
 	}
 }

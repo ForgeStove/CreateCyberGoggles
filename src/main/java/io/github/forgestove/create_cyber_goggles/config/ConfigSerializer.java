@@ -98,12 +98,7 @@ public final class ConfigSerializer<T> {
 		if (translator == null || translationPrefix == null) return null;
 		return translator.apply(translationPrefix + "." + key);
 	}
-	@SuppressWarnings(
-		{
-			"unchecked",
-			"rawtypes"
-		}
-	)
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	private void readCategory(CommentedConfig config, String categoryName, Object category) throws IllegalAccessException {
 		CommentedConfig subConfig = config.get(categoryName);
 		if (subConfig == null) return;

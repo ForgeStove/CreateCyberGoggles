@@ -14,9 +14,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.gui.overlay.*;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class TooltipOverlay {
@@ -64,13 +64,19 @@ public class TooltipOverlay {
 		var height = graphics.guiHeight();
 		var x = width / 2 + cfg.overlayOffsetX.get() + overlay.overlayOffsetX;
 		var y = height / 2 + cfg.overlayOffsetY.get() + overlay.overlayOffsetY;
-		var tooltips = getFormattedTooltips(itemStack, width - x - 16);
-		var tooltipWidth = tooltips.stream().mapToInt(mc.font::width).max().orElse(0);
-		var tooltipHeight = tooltips.size() * 10;
+		if (overlay.tooltipFlagType == null) overlay.tooltipFlagType = TooltipFlagType.Default;
+		var tooltipLines = itemStack.getTooltipLines(mc.player, overlay.tooltipFlagType.getFlag());
+		var components = buildTooltipComponents(tooltipLines, width - x - 16, true);
+		if (components.isEmpty()) {
+			pose.popPose();
+			return;
+		}
+		var tooltipWidth = components.stream().mapToInt(c -> c.getWidth(mc.font)).max().orElse(0);
+		var tooltipHeight = components.stream().mapToInt(ClientTooltipComponent::getHeight).sum();
 		if (GoggleOverlayRenderer.hoverTicks != 0) y -= tooltipHeight + 10;
 		x = Mth.clamp(x, 0, width - tooltipWidth);
 		y = Mth.clamp(y, 16, height - tooltipHeight - 100);
-		renderTooltip(graphics, itemStack, tooltips, x, y, tooltipWidth, tooltipHeight, back.getRGB(), top.getRGB(), bot.getRGB());
+		renderTooltip(graphics, itemStack, components, x, y, tooltipWidth, tooltipHeight, back.getRGB(), top.getRGB(), bot.getRGB());
 		pose.translate(x + 14F, y - 14F, 450F);
 		pose.scale(0.75F, 0.75F, 1F);
 		graphics.renderItem(itemStack, 0, 0);
@@ -94,17 +100,34 @@ public class TooltipOverlay {
 		}
 		return new Theme(overlay.backgroundColor, overlay.borderTopColor, overlay.borderBottomColor);
 	}
-	public static @NotNull @Unmodifiable List<FormattedCharSequence> getFormattedTooltips(@NotNull ItemStack itemStack, int maxWidth) {
-		var overlay = CCG.config.overlay;
-		if (overlay.tooltipFlagType == null) overlay.tooltipFlagType = TooltipFlagType.Default;
-		var tooltipLines = itemStack.getTooltipLines(mc.player, overlay.tooltipFlagType.getFlag());
-		tooltipLines.set(0, Component.literal(" ".repeat(Mth.ceil(16F / mc.font.width(" ")))).append(tooltipLines.get(0)));
-		return tooltipLines.stream().flatMap(line -> mc.font.split(line, maxWidth).stream()).toList();
+	public static @NotNull List<ClientTooltipComponent> buildTooltipComponents(
+		@NotNull List<Component> tooltipLines,
+		int maxWidth,
+		boolean firstLinePadding
+	) {
+		var effectiveMaxWidth = maxWidth > 0 ? maxWidth : Integer.MAX_VALUE;
+		var components = new ArrayList<ClientTooltipComponent>();
+		for (var i = 0; i < tooltipLines.size(); i++) {
+			var line = tooltipLines.get(i);
+			var entry = CCGLang.removeItemEntry(line);
+			if (entry != null) {
+				components.add(new ClientItemEntryTooltipComponent(entry.stack(), entry.label(), entry.indent()));
+				continue;
+			}
+			var data = CCGLang.removeItemList(line);
+			if (data != null) {
+				components.add(new ClientItemListTooltipComponent(data.items(), data.maxColumns(), data.indent()));
+				continue;
+			}
+			if (firstLinePadding && i == 0) line = Component.literal(" ".repeat(Mth.ceil(16F / mc.font.width(" ")))).append(line);
+			mc.font.split(line, effectiveMaxWidth).forEach(seq -> components.add(ClientTooltipComponent.create(seq)));
+		}
+		return components;
 	}
 	public static void renderTooltip(
 		GuiGraphics graphics,
 		ItemStack itemStack,
-		@NotNull List<FormattedCharSequence> tooltips,
+		@NotNull List<ClientTooltipComponent> components,
 		int x,
 		int y,
 		int tooltipWidth,
@@ -113,7 +136,6 @@ public class TooltipOverlay {
 		int top,
 		int bot
 	) {
-		var components = tooltips.stream().map(ClientTooltipComponent::create).toList();
 		if (components.isEmpty()) return;
 		var width = graphics.guiWidth();
 		var height = graphics.guiHeight();

@@ -1,6 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.crusher.CrushingWheelControllerBlockEntity;
+import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -17,6 +18,7 @@ public abstract class CrushingWheelControllerBlockEntityMixin
 	}
 	@Override
 	public ItemStack ccg$getItemStack() {
+		if (!CCG.config.tooltip.crushingController) return null;
 		var thiz = self();
 		if (thiz.processingEntity instanceof ItemEntity ie) return ie.getItem();
 		var inventory = thiz.inventory;

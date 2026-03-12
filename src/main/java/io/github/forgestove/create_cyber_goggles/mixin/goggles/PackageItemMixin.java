@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.List;
+import java.util.*;
 @Mixin(PackageItem.class)
 public abstract class PackageItemMixin extends Item {
 	public PackageItemMixin(Properties properties) {
@@ -20,7 +20,7 @@ public abstract class PackageItemMixin extends Item {
 	@Inject(method = "appendHoverText", at = @At("HEAD"), cancellable = true)
 	public void appendHoverText(ItemStack stack, Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag,
 		CallbackInfo ci) {
-		if (!CCG.config.goggles.enhancedInfo) return;
+		if (!CCG.config.tooltip.packageItem) return;
 		ci.cancel();
 		super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
 		var compoundNbt = stack.getOrCreateTag();
@@ -29,10 +29,12 @@ public abstract class PackageItemMixin extends Item {
 			tooltipComponents.add(Component.literal("→ " + address).withStyle(ChatFormatting.GOLD));
 		if (!compoundNbt.contains("Items", Tag.TAG_COMPOUND)) return;
 		var contents = PackageItem.getContents(stack);
+		List<ItemStack> items = new ArrayList<>();
 		for (var i = 0; i < contents.getSlots(); i++) {
 			var itemstack = contents.getStackInSlot(i);
 			if (itemstack.isEmpty()) continue;
-			CCGLang.item(itemstack).addTo(tooltipComponents);
+			items.add(itemstack);
 		}
+		if (!items.isEmpty()) CCGLang.itemList(items, 3).addTo(tooltipComponents.size(), tooltipComponents);
 	}
 }

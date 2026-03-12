@@ -141,6 +141,8 @@
 	"create_cyber_goggles.tooltip.beltThroughput": "传送带吞吐量：",
 	"create_cyber_goggles.tooltip.burnerState": "燃烧室状态：",
 	"create_cyber_goggles.tooltip.cannonState": "加农炮状态：",
+	"create_cyber_goggles.tooltip.crushingController": "粉碎速率：",
+	"create_cyber_goggles.tooltip.expectedOutputs": "预计产出：",
 	"create_cyber_goggles.tooltip.leftTime": "剩余时间：",
 	"create_cyber_goggles.tooltip.printProgress": "打印进度：",
 	"create_cyber_goggles.tooltip.pullRange": "吸引距离",

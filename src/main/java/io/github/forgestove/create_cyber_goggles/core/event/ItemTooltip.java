@@ -11,10 +11,12 @@ import com.simibubi.create.content.redstone.link.controller.LinkedControllerItem
 import com.simibubi.create.foundation.utility.CreateLang;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
+import io.github.forgestove.create_cyber_goggles.core.util.EnderChestTooltipUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.client.event.RenderTooltipEvent.GatherComponents;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fluids.*;
@@ -35,6 +37,7 @@ public class ItemTooltip {
 		linkedController(stack, tooltip);
 		redstoneRequester(stack, tooltip);
 		toolbox(stack, tooltip);
+		enderChest(stack, tooltip);
 		container(stack, tooltip);
 		fluidContainer(stack, tooltip);
 	}
@@ -199,5 +202,10 @@ public class ItemTooltip {
 			var capacity = i < capacities.size() ? capacities.get(i) : Math.max(1, fluid.getAmount());
 			CCGLang.fluid(fluid, capacity).addTo(1, tooltip);
 		}
+	}
+	private static void enderChest(@NotNull ItemStack stack, List<Component> tooltip) {
+		if (!CCG.config.tooltip.container) return;
+		if (!stack.is(Items.ENDER_CHEST)) return;
+		EnderChestTooltipUtil.appendForItem(tooltip);
 	}
 }

@@ -23,9 +23,8 @@ public abstract class ListFilterItemMixin implements Self<ListFilterItem> {
 			blacklist ? CreateLang.translateDirect("gui.filter.deny_list") : CreateLang.translateDirect("gui.filter.allow_list")
 		).withStyle(ChatFormatting.GOLD));
 		var respectNBT = filter.getOrDefault(AllDataComponents.FILTER_ITEMS_RESPECT_NBT, false);
-		list.add(respectNBT
-			? CreateLang.translateDirect("gui.filter.respect_data")
-			: CreateLang.translateDirect("gui.filter.ignore_data").withStyle(ChatFormatting.GOLD));
+		list.add(CreateLang.translateDirect(respectNBT ? "gui.filter.respect_data" : "gui.filter.ignore_data")
+			.withStyle(ChatFormatting.GOLD));
 		var added = false;
 		var items = new ArrayList<ItemStack>();
 		var filterItems = self().getFilterItemHandler(filter);

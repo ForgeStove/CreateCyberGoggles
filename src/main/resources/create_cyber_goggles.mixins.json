@@ -69,5 +69,8 @@
 		"wrench.RadialWrenchMenuMixin",
 		"wrench.ScrollValueRendererMixin",
 		"wrench.ValueSettingsInputHandlerMixin"
+	],
+	"mixins": [
+		"provider.RedstoneRequesterBlockEntityMixin"
 	]
 }

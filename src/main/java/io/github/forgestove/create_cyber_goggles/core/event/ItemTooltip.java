@@ -6,10 +6,13 @@ import com.simibubi.create.content.equipment.armor.*;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import com.simibubi.create.content.equipment.toolbox.ToolboxInventory;
 import com.simibubi.create.content.equipment.wrench.WrenchItem;
+import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterBlockItem;
+import com.simibubi.create.content.logistics.stockTicker.PackageOrderWithCrafts;
 import com.simibubi.create.content.redstone.link.controller.LinkedControllerItem;
 import com.simibubi.create.foundation.utility.CreateLang;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
+import net.createmod.catnip.codecs.CatnipCodecUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -31,6 +34,7 @@ public class ItemTooltip {
 		divingBoots(stack, tooltip);
 		wrench(stack, tooltip);
 		linkedController(stack, tooltip);
+		redstoneRequester(stack, tooltip);
 		toolbox(stack, tooltip);
 		container(stack, tooltip);
 	}
@@ -94,6 +98,21 @@ public class ItemTooltip {
 			}
 		if (!hasAnyItem) return;
 		CCGLang.itemList(items, 6).addTo(1, tooltip);
+	}
+	private static void redstoneRequester(@NotNull ItemStack stack, List<Component> tooltip) {
+		if (!CCG.config.tooltip.redstoneRequester) return;
+		if (!(stack.getItem() instanceof RedstoneRequesterBlockItem)) return;
+		var beData = stack.getComponents().get(DataComponents.BLOCK_ENTITY_DATA);
+		if (beData == null || !beData.contains("EncodedRequest")) return;
+		if (mc.level == null) return;
+		var encodedRequestTag = beData.copyTag().getCompound("EncodedRequest");
+		var encodedRequest = CatnipCodecUtils.decode(PackageOrderWithCrafts.CODEC, mc.level.registryAccess(), encodedRequestTag)
+			.orElse(PackageOrderWithCrafts.empty());
+		if (encodedRequest.isEmpty()) return;
+		var items = new ArrayList<ItemStack>();
+		encodedRequest.stacks().forEach(bigStack -> items.add(bigStack.stack.copyWithCount(bigStack.count)));
+		if (items.isEmpty()) return;
+		CCGLang.itemList(items, 9).addTo(2, tooltip);
 	}
 	private static void toolbox(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!CCG.config.tooltip.toolbox) return;

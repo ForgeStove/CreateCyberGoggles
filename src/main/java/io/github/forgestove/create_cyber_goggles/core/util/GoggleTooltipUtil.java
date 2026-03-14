@@ -5,6 +5,7 @@ import com.simibubi.create.content.kinetics.base.*;
 import com.simibubi.create.content.kinetics.base.IRotate.*;
 import com.simibubi.create.content.kinetics.crusher.CrushingWheelControllerBlockEntity;
 import com.simibubi.create.content.kinetics.millstone.*;
+import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.depot.DepotItemHandler;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity.FuelType;
@@ -171,6 +172,15 @@ public class GoggleTooltipUtil {
 		CCGLang.itemList(stacks, 8).forGoggles(tooltip);
 		return true;
 	}
+	public static boolean redstoneRequester(List<Component> tooltip, List<BigItemStack> bigStacks) {
+		if (!CCG.config.tooltip.redstoneRequester) return false;
+		if (bigStacks.isEmpty()) return false;
+		var stacks = new ArrayList<ItemStack>();
+		bigStacks.forEach(bigStack -> stacks.add(bigStack.stack.copyWithCount(bigStack.count)));
+		CCGLang.translate("tooltip.content").forGoggles(tooltip);
+		CCGLang.itemList(stacks, 9).forGoggles(tooltip);
+		return true;
+	}
 	public static boolean crushingController(List<Component> tooltip, CrushingWheelControllerBlockEntity cwcbe) {
 		if (!CCG.config.tooltip.crushingController) return false;
 		CCGLang.translate("tooltip.crushingController")
@@ -215,7 +225,7 @@ public class GoggleTooltipUtil {
 		return true;
 	}
 	public static boolean millstone(List<Component> tooltip, MillstoneBlockEntity mbe, MillingRecipe lastRecipe) {
-		if (!CCG.config.tooltip.crushingController) return false;
+		if (!CCG.config.tooltip.millstone) return false;
 		CCGLang.translate("tooltip.crushingController")
 			.add(CCGLang.fraction(mbe.getProcessingSpeed() * 16, AllConfigs.server().kinetics.maxRotationSpeed.get()))
 			.forGoggles(tooltip);
@@ -235,22 +245,22 @@ public class GoggleTooltipUtil {
 		}
 		var inputCount = Math.max(1, mbe.inputInv.getStackInSlot(0).getCount());
 		if (mc.player == null || mc.player.isShiftKeyDown()) lastRecipe.getRollableResults().forEach(result -> {
-				var stack = result.getStack();
-				var chance = result.getChance();
-				var label = CCGLang.itemWithoutCount(stack)
-					.add(CCGLang.text(DARK_GRAY, " x").add(CCGLang.number(chance * 100).style(AQUA)).text(DARK_GRAY, "%"))
-					.component();
-				CCGLang.item(stack.copyWithCount(inputCount * stack.getCount()), label).forGoggles(tooltip);
-			});
+			var stack = result.getStack();
+			var chance = result.getChance();
+			var label = CCGLang.itemWithoutCount(stack)
+				.add(CCGLang.text(DARK_GRAY, " x").add(CCGLang.number(chance * 100).style(AQUA)).text(DARK_GRAY, "%"))
+				.component();
+			CCGLang.item(stack.copyWithCount(inputCount * stack.getCount()), label).forGoggles(tooltip);
+		});
 		else lastRecipe.getRollableResults().forEach(result -> {
-				var stack = result.getStack();
-				var chance = result.getChance();
-				var line = CCGLang.itemWithoutCount(stack)
-					.text(DARK_GRAY, " x")
-					.add(CCGLang.number(inputCount * stack.getCount() * chance).style(GOLD))
-					.component();
-				CCGLang.item(stack.copyWithCount(1), line).forGoggles(tooltip);
-			});
+			var stack = result.getStack();
+			var chance = result.getChance();
+			var line = CCGLang.itemWithoutCount(stack)
+				.text(DARK_GRAY, " x")
+				.add(CCGLang.number(inputCount * stack.getCount() * chance).style(GOLD))
+				.component();
+			CCGLang.item(stack.copyWithCount(1), line).forGoggles(tooltip);
+		});
 		return true;
 	}
 }

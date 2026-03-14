@@ -106,7 +106,7 @@
 	"create_cyber_goggles.config.option.tooltip.backtank.tooltip": "为背罐显示额外工具提示信息",
 	"create_cyber_goggles.config.option.tooltip.container": "容器",
 	"create_cyber_goggles.config.option.tooltip.container.tooltip": "显示容器内容",
-	"create_cyber_goggles.config.option.tooltip.crushingController": "粉碎轮控制器工具提示",
+	"create_cyber_goggles.config.option.tooltip.crushingController": "粉碎控制器",
 	"create_cyber_goggles.config.option.tooltip.crushingController.tooltip": "显示粉碎控制器产出与进度",
 	"create_cyber_goggles.config.option.tooltip.deployer": "机械手",
 	"create_cyber_goggles.config.option.tooltip.deployer.tooltip": "显示机械手溢出物品",

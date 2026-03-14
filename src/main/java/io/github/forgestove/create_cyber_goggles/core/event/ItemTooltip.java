@@ -19,6 +19,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.event.RenderTooltipEvent.GatherComponents;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+import net.neoforged.neoforge.fluids.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -37,6 +38,7 @@ public class ItemTooltip {
 		redstoneRequester(stack, tooltip);
 		toolbox(stack, tooltip);
 		container(stack, tooltip);
+		fluidContainer(stack, tooltip);
 	}
 	public static void gatherComponents(@NotNull GatherComponents event) {
 		var elements = event.getTooltipElements();
@@ -46,6 +48,16 @@ public class ItemTooltip {
 			var entry = CCGLang.removeItemEntry(comp);
 			if (entry != null) {
 				elements.set(i, Either.right(entry));
+				continue;
+			}
+			var fluid = CCGLang.removeFluidEntry(comp);
+			if (fluid != null) {
+				elements.set(i, Either.right(fluid));
+				continue;
+			}
+			var fluidList = CCGLang.removeFluidList(comp);
+			if (fluidList != null) {
+				elements.set(i, Either.right(fluidList));
 				continue;
 			}
 			var data = CCGLang.removeItemList(comp);
@@ -150,5 +162,29 @@ public class ItemTooltip {
 		var advanced = mc.options.advancedItemTooltips ? 2 : 0;
 		if (tooltip.size() > 1) tooltip.subList(1, tooltip.size() - advanced).clear();
 		CCGLang.itemList(items, 9).addTo(1, tooltip);
+	}
+	private static void fluidContainer(@NotNull ItemStack stack, List<Component> tooltip) {
+		if (!CCG.config.tooltip.container) return;
+		var handler = FluidUtil.getFluidHandler(stack).orElse(null);
+		if (handler == null || handler.getTanks() == 0) return;
+		var entries = new ArrayList<FluidStack>();
+		var capacities = new ArrayList<Integer>();
+		for (var i = 0; i < handler.getTanks(); i++) {
+			var fluid = handler.getFluidInTank(i);
+			if (fluid.isEmpty()) continue;
+			entries.add(fluid.copy());
+			capacities.add(handler.getTankCapacity(i));
+		}
+		if (entries.isEmpty()) {
+			entries.add(FluidStack.EMPTY);
+			capacities.add(handler.getTankCapacity(0));
+		}
+		var advanced = mc.options.advancedItemTooltips ? 2 : 0;
+		if (tooltip.size() > 1) tooltip.subList(1, tooltip.size() - advanced).clear();
+		for (var i = 0; i < entries.size(); i++) {
+			var fluid = entries.get(i);
+			var capacity = i < capacities.size() ? capacities.get(i) : Math.max(1, fluid.getAmount());
+			CCGLang.fluid(fluid, capacity).addTo(1, tooltip);
+		}
 	}
 }

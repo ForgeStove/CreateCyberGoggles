@@ -19,6 +19,7 @@ import io.github.forgestove.create_cyber_goggles.core.event.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -181,6 +182,45 @@ public class GoggleTooltipUtil {
 		CCGLang.itemList(stacks, 9).forGoggles(tooltip);
 		return true;
 	}
+	public static boolean basin(
+		List<Component> tooltip,
+		@NotNull List<ItemStack> inputItems,
+		List<ItemStack> outputItems,
+		@NotNull List<FluidStack> inputFluids,
+		List<FluidStack> outputFluids,
+		List<Integer> inputCapacities,
+		List<Integer> outputCapacities
+	) {
+		var hasItems = !inputItems.isEmpty() || !outputItems.isEmpty();
+		var hasFluids = !inputFluids.isEmpty() || !outputFluids.isEmpty();
+		if (!hasItems && !hasFluids) return false;
+		CreateLang.translate("gui.goggles.basin_contents").forGoggles(tooltip);
+		if (!inputItems.isEmpty()) {
+			CCGLang.translate(GRAY, "tooltip.inputItems").forGoggles(tooltip, 1);
+			inputItems.forEach(stack -> CCGLang.item(stack, CCGLang.itemWithoutCount(stack).component()).forGoggles(tooltip, 1));
+		}
+		if (!inputFluids.isEmpty()) {
+			CCGLang.translate(GRAY, "tooltip.inputFluids").forGoggles(tooltip, 1);
+			for (var i = 0; i < inputFluids.size(); i++) {
+				var fluidStack = inputFluids.get(i);
+				var capacityMb = i < inputCapacities.size() ? inputCapacities.get(i) : Math.max(1000, fluidStack.getAmount());
+				CCGLang.fluid(fluidStack, capacityMb).forGoggles(tooltip, 1);
+			}
+		}
+		if (!outputItems.isEmpty()) {
+			CCGLang.translate(GRAY, "tooltip.outputItems").forGoggles(tooltip, 1);
+			outputItems.forEach(stack -> CCGLang.item(stack, CCGLang.itemWithoutCount(stack).component()).forGoggles(tooltip, 1));
+		}
+		if (!outputFluids.isEmpty()) {
+			CCGLang.translate(GRAY, "tooltip.outputFluids").forGoggles(tooltip, 1);
+			for (var i = 0; i < outputFluids.size(); i++) {
+				var fluidStack = outputFluids.get(i);
+				var capacityMb = i < outputCapacities.size() ? outputCapacities.get(i) : Math.max(1000, fluidStack.getAmount());
+				CCGLang.fluid(fluidStack, capacityMb).forGoggles(tooltip, 1);
+			}
+		}
+		return true;
+	}
 	public static boolean crushingController(List<Component> tooltip, CrushingWheelControllerBlockEntity cwcbe) {
 		if (!CCG.config.tooltip.crushingController) return false;
 		CCGLang.translate("tooltip.crushingController")
@@ -264,3 +304,4 @@ public class GoggleTooltipUtil {
 		return true;
 	}
 }
+

@@ -19,6 +19,7 @@
 		"goggles.GoggleOverlayRendererMixin",
 		"goggles.GogglesItemMixin",
 		"goggles.HosePulleyBlockEntityMixin",
+		"goggles.IHaveGoggleInformationMixin",
 		"goggles.KineticBlockEntityMixin",
 		"goggles.LangNumberFormatMixin",
 		"goggles.ListFilterItemMixin",
@@ -41,6 +42,7 @@
 		"misc.SuperGlueSelectionHandlerMixin",
 		"provider.ArmBlockEntityMixin",
 		"provider.BacktankBlockEntityMixin",
+		"provider.BasinBlockEntityMixin",
 		"provider.BeltBlockEntityMixin",
 		"provider.BlazeBurnerBlockEntityMixin",
 		"provider.BlazeEnchanterBlockEntityMixin",
@@ -60,6 +62,7 @@
 		"provider.PackageEntityMixin",
 		"provider.PackagePortBlockEntityMixin",
 		"provider.PackagerBlockEntityMixin",
+		"provider.RedstoneRequesterBlockEntityMixin",
 		"provider.SawBlockEntityMixin",
 		"provider.SchematicannonBlockEntityMixin",
 		"provider.TableClothBlockEntityMixin",
@@ -69,8 +72,5 @@
 		"wrench.RadialWrenchMenuMixin",
 		"wrench.ScrollValueRendererMixin",
 		"wrench.ValueSettingsInputHandlerMixin"
-	],
-	"mixins": [
-		"provider.RedstoneRequesterBlockEntityMixin"
 	]
 }

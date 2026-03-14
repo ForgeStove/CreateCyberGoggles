@@ -69,7 +69,7 @@ public abstract class GoggleOverlayRendererMixin {
 	) {
 		var hasItemList = false;
 		for (var line : tooltip) {
-			if (!CCGLang.hasItemList(line) && !CCGLang.hasItemEntry(line)) continue;
+			if (!CCGLang.hasItemList(line) && !CCGLang.hasItemEntry(line) && !CCGLang.hasFluidEntry(line) && !CCGLang.hasFluidList(line)) continue;
 			hasItemList = true;
 			break;
 		}

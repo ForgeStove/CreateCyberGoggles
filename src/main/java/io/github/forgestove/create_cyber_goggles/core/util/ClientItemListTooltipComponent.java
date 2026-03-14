@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 public class ClientItemListTooltipComponent implements ClientTooltipComponent {
-	private static final ResourceLocation SLOT_SPRITE = ResourceLocation.withDefaultNamespace("container/bundle/slot");
+	public static final ResourceLocation SLOT_SPRITE = ResourceLocation.withDefaultNamespace("container/bundle/slot");
 	private static final int SLOT_WIDTH = 18;
 	private static final int SLOT_HEIGHT = 20;
 	private final List<ItemStack> items;

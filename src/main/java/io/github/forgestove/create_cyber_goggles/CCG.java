@@ -23,6 +23,8 @@ public final class CCG {
 		mod.addListener(TipOverlay::register);
 		mod.addListener(ClientItemEntryTooltipComponent::register);
 		mod.addListener(ClientItemListTooltipComponent::register);
+		mod.addListener(ClientFluidEntryTooltipComponent::register);
+		mod.addListener(ClientFluidListTooltipComponent::register);
 		var game = NeoForge.EVENT_BUS;
 		game.addListener(KeyInput::key);
 		game.addListener(KeyInput::mouseScroll);

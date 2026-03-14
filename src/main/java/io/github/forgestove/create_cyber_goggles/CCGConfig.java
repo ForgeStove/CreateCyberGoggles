@@ -35,7 +35,9 @@ public final class CCGConfig {
 		public boolean itemEntity = true;
 		public boolean deployer = true;
 		public boolean depot = true;
+		public boolean redstoneRequester = true;
 		public boolean crushingController = true;
+		public boolean millstone = true;
 	}
 	public static class GameMode {
 		public boolean enableGoggles = true;

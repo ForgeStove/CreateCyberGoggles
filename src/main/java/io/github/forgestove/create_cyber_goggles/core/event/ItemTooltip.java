@@ -13,8 +13,7 @@ import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.*;
-import net.minecraft.world.level.block.ShulkerBoxBlock;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.event.RenderTooltipEvent.GatherComponents;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import org.jetbrains.annotations.NotNull;
@@ -32,8 +31,8 @@ public class ItemTooltip {
 		divingBoots(stack, tooltip);
 		wrench(stack, tooltip);
 		linkedController(stack, tooltip);
-		shulkerBox(stack, tooltip);
 		toolbox(stack, tooltip);
+		container(stack, tooltip);
 	}
 	public static void gatherComponents(@NotNull GatherComponents event) {
 		var elements = event.getTooltipElements();
@@ -96,18 +95,6 @@ public class ItemTooltip {
 		if (!hasAnyItem) return;
 		CCGLang.itemList(items, 6).addTo(1, tooltip);
 	}
-	private static void shulkerBox(@NotNull ItemStack stack, List<Component> tooltip) {
-		if (!CCG.config.tooltip.shulkerBox) return;
-		if (!(stack.getItem() instanceof BlockItem blockItem) || !(blockItem.getBlock() instanceof ShulkerBoxBlock)) return;
-		var container = stack.getComponents().get(DataComponents.CONTAINER);
-		if (container == null) return;
-		var items = new ArrayList<ItemStack>();
-		for (var i = 0; i < container.getSlots(); i++) items.add(container.getStackInSlot(i));
-		if (items.isEmpty()) return;
-		var advanced = mc.options.advancedItemTooltips ? 2 : 0;
-		if (tooltip.size() > 1) tooltip.subList(1, tooltip.size() - advanced).clear();
-		CCGLang.itemList(items, 9).addTo(1, tooltip);
-	}
 	private static void toolbox(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!CCG.config.tooltip.toolbox) return;
 		if (!AllItemTags.TOOLBOXES.matches(stack)) return;
@@ -133,5 +120,16 @@ public class ItemTooltip {
 			items.add(consolidated.copyWithCount(totalCount));
 		}
 		if (!items.isEmpty()) CCGLang.itemList(items, 4).addTo(1, tooltip);
+	}
+	private static void container(@NotNull ItemStack stack, List<Component> tooltip) {
+		if (!CCG.config.tooltip.container) return;
+		var container = stack.getComponents().get(DataComponents.CONTAINER);
+		if (container == null) return;
+		var items = new ArrayList<ItemStack>();
+		for (var i = 0; i < container.getSlots(); i++) items.add(container.getStackInSlot(i));
+		if (items.isEmpty()) return;
+		var advanced = mc.options.advancedItemTooltips ? 2 : 0;
+		if (tooltip.size() > 1) tooltip.subList(1, tooltip.size() - advanced).clear();
+		CCGLang.itemList(items, 9).addTo(1, tooltip);
 	}
 }

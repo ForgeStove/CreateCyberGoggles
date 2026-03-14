@@ -26,7 +26,7 @@ public final class CCGConfig {
 		public boolean divingBoots = true;
 		public boolean wrench = true;
 		public boolean linkedController = true;
-		public boolean shulkerBox = true;
+		public boolean container = true;
 		public boolean toolbox = true;
 		public boolean listFilter = true;
 		public boolean attributeFilter = true;

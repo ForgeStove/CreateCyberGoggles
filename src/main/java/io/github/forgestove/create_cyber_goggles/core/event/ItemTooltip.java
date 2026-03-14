@@ -12,8 +12,7 @@ import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.*;
-import net.minecraft.world.level.block.ShulkerBoxBlock;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.RenderTooltipEvent.GatherComponents;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import org.jetbrains.annotations.NotNull;
@@ -31,8 +30,8 @@ public class ItemTooltip {
 		divingBoots(stack, tooltip);
 		wrench(stack, tooltip);
 		linkedController(stack, tooltip);
-		shulkerBox(stack, tooltip);
 		toolbox(stack, tooltip);
+		container(stack, tooltip);
 	}
 	public static void gatherComponents(@NotNull GatherComponents event) {
 		var elements = event.getTooltipElements();
@@ -95,22 +94,6 @@ public class ItemTooltip {
 		if (!hasAnyItem) return;
 		CCGLang.itemList(items, 6).addTo(1, tooltip);
 	}
-	private static void shulkerBox(@NotNull ItemStack stack, List<Component> tooltip) {
-		if (!CCG.config.tooltip.shulkerBox) return;
-		if (!(stack.getItem() instanceof BlockItem blockItem) || !(blockItem.getBlock() instanceof ShulkerBoxBlock)) return;
-		var blockEntityTag = stack.getTagElement("BlockEntityTag");
-		if (blockEntityTag == null || !blockEntityTag.contains("Items", Tag.TAG_LIST)) return;
-		var itemsTag = blockEntityTag.getList("Items", Tag.TAG_COMPOUND);
-		var items = new ArrayList<ItemStack>();
-		for (var i = 0; i < itemsTag.size(); i++) {
-			var item = ItemStack.of(itemsTag.getCompound(i));
-			items.add(item);
-		}
-		if (items.isEmpty()) return;
-		var advanced = mc.options.advancedItemTooltips ? 2 : 0;
-		if (tooltip.size() > 1 + advanced) tooltip.subList(1, tooltip.size() - advanced).clear();
-		CCGLang.itemList(items, 9).addTo(1, tooltip);
-	}
 	private static void toolbox(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!CCG.config.tooltip.toolbox) return;
 		if (!AllItemTags.TOOLBOXES.matches(stack)) return;
@@ -147,5 +130,20 @@ public class ItemTooltip {
 			items.add(consolidated.copyWithCount(totalCount));
 		}
 		if (!items.isEmpty()) CCGLang.itemList(items, 4).addTo(1, tooltip);
+	}
+	private static void container(@NotNull ItemStack stack, List<Component> tooltip) {
+		if (!CCG.config.tooltip.container) return;
+		var blockEntityTag = stack.getTagElement("BlockEntityTag");
+		if (blockEntityTag == null || !blockEntityTag.contains("Items", Tag.TAG_LIST)) return;
+		var itemsTag = blockEntityTag.getList("Items", Tag.TAG_COMPOUND);
+		var items = new ArrayList<ItemStack>();
+		for (var i = 0; i < itemsTag.size(); i++) {
+			var item = ItemStack.of(itemsTag.getCompound(i));
+			items.add(item);
+		}
+		if (items.isEmpty()) return;
+		var advanced = mc.options.advancedItemTooltips ? 2 : 0;
+		if (tooltip.size() > 1 + advanced) tooltip.subList(1, tooltip.size() - advanced).clear();
+		CCGLang.itemList(items, 9).addTo(1, tooltip);
 	}
 }

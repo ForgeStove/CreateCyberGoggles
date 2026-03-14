@@ -1,1 +1,2 @@
-- Optimized the tooltip display
+- Add fluid tooltip display
+- Optimize item tooltip display

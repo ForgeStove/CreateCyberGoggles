@@ -1,10 +1,34 @@
 package io.github.forgestove.create_cyber_goggles.mixin.provider;
-import com.simibubi.create.content.kinetics.millstone.MillstoneBlockEntity;
+import com.simibubi.create.AllRecipeTypes;
+import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
+import com.simibubi.create.content.kinetics.millstone.*;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import org.spongepowered.asm.mixin.Mixin;
+import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
+import org.spongepowered.asm.mixin.*;
+
+import java.util.*;
 @Mixin(MillstoneBlockEntity.class)
-public abstract class MillstoneBlockEntityMixin implements ItemRenderable, Self<MillstoneBlockEntity> {
+public abstract class MillstoneBlockEntityMixin extends KineticBlockEntity
+	implements IHaveGoggleInformation, ItemRenderable, Self<MillstoneBlockEntity> {
+	public MillstoneBlockEntityMixin(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
+		super(typeIn, pos, state);
+	}
+	@Override
+	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+		var sup = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+		if (level == null) return sup;
+		Optional<RecipeHolder<MillingRecipe>> recipe = AllRecipeTypes.MILLING.find(new RecipeWrapper(self().inputInv), level);
+		if (recipe.isEmpty()) return sup;
+		var thiz = GoggleTooltipUtil.millstone(tooltip, self(), recipe.get().value());
+		return thiz || sup;
+	}
 	@Override
 	public ItemStack ccg$getItemStack() {
 		var thiz = self();

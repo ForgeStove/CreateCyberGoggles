@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.config;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory;
-import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.slf4j.Logger;
 
@@ -20,12 +20,11 @@ public final class Config {
 			+ ", expected "
 			+ configClass.getName());
 	}
-	public static void initConfigScreen(String id) {
-		ModLoadingContext.get()
-			.registerExtensionPoint(
-				ConfigScreenFactory.class,
-				() -> new ConfigScreenFactory((client, parent) -> createConfigScreen(id, parent))
-			);
+	public static void initConfigScreen(ModContainer container, String id) {
+		container.registerExtensionPoint(
+			ConfigScreenFactory.class,
+			() -> new ConfigScreenFactory((client, parent) -> createConfigScreen(id, parent))
+		);
 	}
 	public static Screen createConfigScreen(String id, Screen parent) {
 		var handler = HANDLERS.get(id);

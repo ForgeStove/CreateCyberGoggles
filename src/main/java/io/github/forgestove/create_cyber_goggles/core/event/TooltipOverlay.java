@@ -92,8 +92,9 @@ public class TooltipOverlay {
 			if (theme != null) return theme;
 			var cfg = AllConfigs.client();
 			var useCreateCustom = cfg.overlayCustomColor.get();
-			var back = useCreateCustom ? new Color(cfg.overlayBackgroundColor.get()) :
-				BoxElement.COLOR_VANILLA_BACKGROUND.scaleAlpha(0.75F);
+			var back = useCreateCustom
+				? new Color(cfg.overlayBackgroundColor.get())
+				: BoxElement.COLOR_VANILLA_BACKGROUND.scaleAlpha(0.75F);
 			var top = useCreateCustom ? new Color(cfg.overlayBorderColorTop.get()) : BoxElement.COLOR_VANILLA_BORDER.getFirst().copy();
 			var bot = useCreateCustom ? new Color(cfg.overlayBorderColorBot.get()) : BoxElement.COLOR_VANILLA_BORDER.getSecond().copy();
 			return new Theme(back, top, bot);
@@ -106,21 +107,55 @@ public class TooltipOverlay {
 		boolean firstLinePadding
 	) {
 		var effectiveMaxWidth = maxWidth > 0 ? maxWidth : Integer.MAX_VALUE;
-		var components = new ArrayList<ClientTooltipComponent>();
+		var parsed = new ArrayList<>();
+		var fluidEntries = new ArrayList<FluidEntryTooltipComponent>();
 		for (var i = 0; i < tooltipLines.size(); i++) {
 			var line = tooltipLines.get(i);
 			var entry = CCGLang.removeItemEntry(line);
 			if (entry != null) {
-				components.add(new ClientItemEntryTooltipComponent(entry.stack(), entry.label(), entry.indent()));
+				parsed.add(new ClientItemEntryTooltipComponent(entry.stack(), entry.label(), entry.indent()));
+				continue;
+			}
+			var fluid = CCGLang.removeFluidEntry(line);
+			if (fluid != null) {
+				parsed.add(fluid);
+				fluidEntries.add(fluid);
+				continue;
+			}
+			var fluidList = CCGLang.removeFluidList(line);
+			if (fluidList != null) {
+				parsed.add(new ClientFluidListTooltipComponent(fluidList.fluids(), fluidList.maxColumns(), fluidList.indent()));
 				continue;
 			}
 			var data = CCGLang.removeItemList(line);
 			if (data != null) {
-				components.add(new ClientItemListTooltipComponent(data.items(), data.maxColumns(), data.indent()));
+				parsed.add(new ClientItemListTooltipComponent(data.items(), data.maxColumns(), data.indent()));
 				continue;
 			}
 			if (firstLinePadding && i == 0) line = Component.literal(" ".repeat(Mth.ceil(16F / mc.font.width(" ")))).append(line);
-			mc.font.split(line, effectiveMaxWidth).forEach(seq -> components.add(ClientTooltipComponent.create(seq)));
+			parsed.addAll(mc.font.split(line, effectiveMaxWidth));
+		}
+		var sharedFluidWidth = 0;
+		for (var fluidEntry : fluidEntries) {
+			var preferred = ClientFluidEntryTooltipComponent.preferredBarWidth(mc.font, fluidEntry.fluid(), fluidEntry.capacityMb());
+			if (preferred > sharedFluidWidth) sharedFluidWidth = preferred;
+		}
+		var components = new ArrayList<ClientTooltipComponent>(parsed.size());
+		for (var value : parsed) {
+			if (value instanceof ClientTooltipComponent client) {
+				components.add(client);
+				continue;
+			}
+			if (value instanceof FluidEntryTooltipComponent fluidEntry) {
+				components.add(new ClientFluidEntryTooltipComponent(
+					fluidEntry.fluid(),
+					fluidEntry.capacityMb(),
+					fluidEntry.indent(),
+					sharedFluidWidth
+				));
+				continue;
+			}
+			if (value instanceof FormattedCharSequence text) components.add(ClientTooltipComponent.create(text));
 		}
 		return components;
 	}

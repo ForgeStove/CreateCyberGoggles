@@ -7,6 +7,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.*;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
 public class CCGLangBuilder {
 	public static final float DEFAULT_SPACE_WIDTH = 4.0F;
 	public String namespace;
-	@Nullable MutableComponent component;
+	private @Nullable MutableComponent component;
 	public CCGLangBuilder(String namespace) {
 		this.namespace = namespace;
 	}
@@ -37,6 +38,9 @@ public class CCGLangBuilder {
 	public CCGLangBuilder translate(String langKey, Object... args) {
 		var args1 = resolveBuilders(args);
 		return add(Component.translatable(namespace + "." + langKey, args1));
+	}
+	public CCGLangBuilder translate(ChatFormatting format, String langKey, Object... args) {
+		return translate(langKey, args).style(format);
 	}
 	public CCGLangBuilder text(String literalText) {
 		return add(Component.literal(literalText));
@@ -68,6 +72,9 @@ public class CCGLangBuilder {
 	}
 	public CCGLangBuilder color(Color color) {
 		return this.color(color.getRGB());
+	}
+	public CCGLangBuilder fluidName(FluidStack stack) {
+		return this.add(stack.getDisplayName().copy());
 	}
 	public MutableComponent component() {
 		if (component == null) throw new IllegalStateException("Component is null");

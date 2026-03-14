@@ -14,15 +14,19 @@ public final class CCG {
 	public static final String ID = "create_cyber_goggles";
 	public static final Logger LOGGER = LogUtils.getLogger();
 	public static CCGConfig config = Config.getConfig(CCGConfig.class, ID, LOGGER);
-	public CCG() {
+	public CCG(FMLJavaModLoadingContext context) {
 		if (FMLEnvironment.dist != Dist.CLIENT) return;
-		Config.initConfigScreen(ID);
-		var mod = FMLJavaModLoadingContext.get().getModEventBus();
+		var container = context.getContainer();
+		Config.initConfigScreen(container, ID);
+		var mod = container.getEventBus();
+		if (mod == null) return;
 		mod.addListener(CCGKey::register);
 		mod.addListener(TooltipOverlay::register);
 		mod.addListener(TipOverlay::register);
 		mod.addListener(ClientItemEntryTooltipComponent::register);
 		mod.addListener(ClientItemListTooltipComponent::register);
+		mod.addListener(ClientFluidEntryTooltipComponent::register);
+		mod.addListener(ClientFluidListTooltipComponent::register);
 		var game = MinecraftForge.EVENT_BUS;
 		game.addListener(KeyInput::key);
 		game.addListener(KeyInput::mouseScroll);

@@ -11,13 +11,13 @@ import com.simibubi.create.content.redstone.link.controller.LinkedControllerItem
 import com.simibubi.create.foundation.utility.CreateLang;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
-import net.createmod.catnip.codecs.CatnipCodecUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.RenderTooltipEvent.GatherComponents;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.fluids.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -36,6 +36,7 @@ public class ItemTooltip {
 		redstoneRequester(stack, tooltip);
 		toolbox(stack, tooltip);
 		container(stack, tooltip);
+		fluidContainer(stack, tooltip);
 	}
 	public static void gatherComponents(@NotNull GatherComponents event) {
 		var elements = event.getTooltipElements();
@@ -45,6 +46,16 @@ public class ItemTooltip {
 			var entry = CCGLang.removeItemEntry(comp);
 			if (entry != null) {
 				elements.set(i, Either.right(entry));
+				continue;
+			}
+			var fluid = CCGLang.removeFluidEntry(comp);
+			if (fluid != null) {
+				elements.set(i, Either.right(fluid));
+				continue;
+			}
+			var fluidList = CCGLang.removeFluidList(comp);
+			if (fluidList != null) {
+				elements.set(i, Either.right(fluidList));
 				continue;
 			}
 			var data = CCGLang.removeItemList(comp);
@@ -101,12 +112,11 @@ public class ItemTooltip {
 	private static void redstoneRequester(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!CCG.config.tooltip.redstoneRequester) return;
 		if (!(stack.getItem() instanceof RedstoneRequesterBlockItem)) return;
-		var beData = stack.getComponents().get(DataComponents.BLOCK_ENTITY_DATA);
-		if (beData == null || !beData.contains("EncodedRequest")) return;
+		var beData = stack.getTagElement("BlockEntityTag");
+		if (beData == null || !beData.contains("EncodedRequest", Tag.TAG_COMPOUND)) return;
 		if (mc.level == null) return;
-		var encodedRequestTag = beData.copyTag().getCompound("EncodedRequest");
-		var encodedRequest = CatnipCodecUtils.decode(PackageOrderWithCrafts.CODEC, mc.level.registryAccess(), encodedRequestTag)
-			.orElse(PackageOrderWithCrafts.empty());
+		var encodedRequestTag = beData.getCompound("EncodedRequest");
+		var encodedRequest = PackageOrderWithCrafts.read(encodedRequestTag);
 		if (encodedRequest.isEmpty()) return;
 		var items = new ArrayList<ItemStack>();
 		encodedRequest.stacks().forEach(bigStack -> items.add(bigStack.stack.copyWithCount(bigStack.count)));
@@ -164,5 +174,30 @@ public class ItemTooltip {
 		var advanced = mc.options.advancedItemTooltips ? 2 : 0;
 		if (tooltip.size() > 1 + advanced) tooltip.subList(1, tooltip.size() - advanced).clear();
 		CCGLang.itemList(items, 9).addTo(1, tooltip);
+	}
+	private static void fluidContainer(@NotNull ItemStack stack, List<Component> tooltip) {
+		if (!CCG.config.tooltip.container) return;
+		var optional = FluidUtil.getFluidHandler(stack);
+		var resolve = optional.resolve();
+		if (resolve.isEmpty()) return;
+		var handler = resolve.get();
+		if (handler.getTanks() == 0) return;
+		var entries = new ArrayList<FluidStack>();
+		var capacities = new ArrayList<Integer>();
+		for (var i = 0; i < handler.getTanks(); i++) {
+			var fluid = handler.getFluidInTank(i);
+			if (fluid.isEmpty()) continue;
+			entries.add(fluid.copy());
+			capacities.add(handler.getTankCapacity(i));
+		}
+		if (entries.isEmpty()) {
+			entries.add(FluidStack.EMPTY);
+			capacities.add(handler.getTankCapacity(0));
+		}
+		for (var i = 0; i < entries.size(); i++) {
+			var fluid = entries.get(i);
+			var capacity = i < capacities.size() ? capacities.get(i) : Math.max(1, fluid.getAmount());
+			CCGLang.fluid(fluid, capacity).addTo(1, tooltip);
+		}
 	}
 }

@@ -28,7 +28,7 @@ public class ClientItemEntryTooltipComponent implements ClientTooltipComponent {
 	}
 	@Override
 	public int getHeight() {
-		return SLOT_HEIGHT - 2;
+		return SLOT_HEIGHT;
 	}
 	@Override
 	public int getWidth(@NotNull Font font) {

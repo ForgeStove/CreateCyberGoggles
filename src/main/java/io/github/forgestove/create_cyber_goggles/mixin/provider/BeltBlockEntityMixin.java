@@ -38,11 +38,11 @@ public abstract class BeltBlockEntityMixin extends KineticBlockEntity
 	}
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		var add = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
-		if (!CCG.config.goggles.enhancedInfo || getSpeed() == 0) return add;
+		var sup = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+		if (!CCG.config.goggles.enhancedInfo || getSpeed() == 0) return sup;
 		var controllerBE = self().getControllerBE();
 		if (controllerBE != null) GoggleTooltipUtil.beltThroughput(tooltip, ((BeltBlockEntityMixin) (Object) controllerBE).ccg$rate);
-		return add;
+		return sup;
 	}
 	@Override
 	public ItemStack ccg$getItemStack() {

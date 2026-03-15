@@ -1,2 +1,1 @@
-- Add fluid tooltip display
-- Optimize item tooltip display
+- Fix #28

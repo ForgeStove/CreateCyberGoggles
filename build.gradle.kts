@@ -33,6 +33,7 @@ legacyForge {
 		configureEach {
 			jvmArguments.addAll("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition")
 			systemProperty("terminal.jline", "true")
+			systemProperty("mixin.debug.export", "true")
 		}
 	}
 	mods.create(p("modId")).sourceSet(sourceSets.main.get())

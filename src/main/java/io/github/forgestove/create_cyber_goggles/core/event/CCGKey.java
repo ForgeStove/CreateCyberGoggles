@@ -19,7 +19,8 @@ public enum CCGKey {
 	toggleDiving,
 	toggleGoggle,
 	toggleItemOverlay(KEY_LCONTROL),
-	useSchematic;
+	useSchematic,
+	showSuperGlue;
 	public final Lazy<KeyMapping> keyMapping;
 	CCGKey() {
 		this(UNKNOWN.getValue());

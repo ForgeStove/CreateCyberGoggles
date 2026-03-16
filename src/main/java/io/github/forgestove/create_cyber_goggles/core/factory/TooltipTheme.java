@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.core.util;
+package io.github.forgestove.create_cyber_goggles.core.factory;
 import net.createmod.catnip.theme.Color;
 import org.jetbrains.annotations.*;
 @SuppressWarnings("unused")

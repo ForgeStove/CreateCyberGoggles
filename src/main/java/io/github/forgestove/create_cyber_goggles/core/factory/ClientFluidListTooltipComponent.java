@@ -1,10 +1,11 @@
-package io.github.forgestove.create_cyber_goggles.core.util;
+package io.github.forgestove.create_cyber_goggles.core.factory;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.minecraft.util.FastColor;
+import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -19,17 +20,17 @@ public class ClientFluidListTooltipComponent implements ClientTooltipComponent {
 	private final int columns;
 	private final int rows;
 	private final int indent;
-	public ClientFluidListTooltipComponent(List<FluidStack> fluids, int maxColumns, int indent) {
+	public ClientFluidListTooltipComponent(List<FluidStack> fluids, int indent, int maxColumns) {
 		this.fluids = fluids;
+		this.indent = indent;
 		this.maxColumns = maxColumns;
 		this.columns = Math.min(fluids.size(), maxColumns);
 		this.rows = (fluids.size() + maxColumns - 1) / maxColumns;
-		this.indent = Math.max(0, indent);
 	}
 	public static void register(@NotNull RegisterClientTooltipComponentFactoriesEvent event) {
 		event.register(
 			FluidListTooltipComponent.class,
-			data -> new ClientFluidListTooltipComponent(data.fluids(), data.maxColumns(), data.indent())
+			data -> new ClientFluidListTooltipComponent(data.fluids(), data.indent(), data.maxColumns())
 		);
 	}
 	public static void renderFluidBar(@NotNull GuiGraphics guiGraphics, @NotNull FluidStack stack, int x, int y, int width, int height) {
@@ -47,10 +48,10 @@ public class ClientFluidListTooltipComponent implements ClientTooltipComponent {
 		var still = ext.getStillTexture(stack);
 		var sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(still);
 		var tint = ext.getTintColor(stack);
-		var r = FastColor.ARGB32.red(tint) / 255F;
-		var g = FastColor.ARGB32.green(tint) / 255F;
-		var b = FastColor.ARGB32.blue(tint) / 255F;
-		var a = FastColor.ARGB32.alpha(tint) / 255F;
+		var r = ARGB32.red(tint) / 255F;
+		var g = ARGB32.green(tint) / 255F;
+		var b = ARGB32.blue(tint) / 255F;
+		var a = ARGB32.alpha(tint) / 255F;
 		RenderSystem.enableBlend();
 		RenderSystem.setShaderColor(r, g, b, a);
 		for (var dx = 0; dx < width; dx += 16) {
@@ -81,4 +82,5 @@ public class ClientFluidListTooltipComponent implements ClientTooltipComponent {
 	private int indentPixels(@NotNull Font font) {
 		return indent * font.width(" ");
 	}
+	public record FluidListTooltipComponent(List<FluidStack> fluids, int indent, int maxColumns) implements TooltipComponent {}
 }

@@ -3,8 +3,8 @@ import net.createmod.catnip.theme.Color;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.MutableComponent;
-import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.event.ClientTickEvent.Post;
+import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,7 +47,7 @@ public class TipOverlay {
 	public static void show(List<MutableComponent> tip) {
 		show(tip, 0, 0);
 	}
-	public static void tick(ClientTickEvent.Post ignoredEvent) {
+	public static void tick(Post ignoredEvent) {
 		if (hoverTicks > 0) hoverTicks--;
 	}
 }

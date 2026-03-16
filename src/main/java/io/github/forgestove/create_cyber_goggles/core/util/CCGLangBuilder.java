@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.Component.Serializer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -85,7 +86,7 @@ public class CCGLangBuilder {
 		return component().getString();
 	}
 	public String json() {
-		return Component.Serializer.toJson(component(), RegistryAccess.EMPTY);
+		return Serializer.toJson(component(), RegistryAccess.EMPTY);
 	}
 	public void sendStatus(Player player) {
 		player.displayClientMessage(component(), true);

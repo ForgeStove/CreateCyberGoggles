@@ -1,9 +1,9 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.OutlineRenderable;
+import io.github.forgestove.create_cyber_goggles.core.api.OutlineRenderable;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent.Post;
 import org.jetbrains.annotations.*;
 
 import java.util.Map;
@@ -12,7 +12,7 @@ import java.util.Map.Entry;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class Outliner {
 	public static final Map<BlockEntity, Integer> cachedBE = new Object2IntOpenHashMap<>();
-	public static void tick(ClientTickEvent.Post ignoredEvent) {
+	public static void tick(Post ignoredEvent) {
 		if (!CCG.config.outliner.renderAnalogBox) return;
 		if (mc.isPaused() || isInGUI()) return;
 		var be = getBlockEntity();

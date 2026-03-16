@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
-import com.simibubi.create.AllTags;
+import com.simibubi.create.AllTags.AllBlockTags;
 import com.simibubi.create.content.contraptions.chassis.*;
 import com.simibubi.create.content.contraptions.wrench.RadialWrenchMenuSubmitPacket;
 import com.simibubi.create.content.equipment.wrench.*;
@@ -14,7 +14,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket.Action;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.block.RotatedPillarBlock;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent.Pre;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.*;
 
 import java.util.*;
@@ -25,7 +25,7 @@ public class PlayerInteract {
 	private static long lastDismantleTime, dismantleDelay = 10;
 	private static long lastTick;
 	private static boolean isShiftKeyDown;
-	public static void tick(ClientTickEvent.Pre ignoredEvent) {
+	public static void tick(Pre ignoredEvent) {
 		wrench();
 		encasedCogWheel();
 		enacesdPipe();
@@ -62,7 +62,7 @@ public class PlayerInteract {
 		var pos = event.getPos();
 		var state = event.getLevel().getBlockState(pos);
 		var block = state.getBlock();
-		if (!(block instanceof IWrenchable || AllTags.AllBlockTags.WRENCH_PICKUP.matches(state))) return;
+		if (!(block instanceof IWrenchable || AllBlockTags.WRENCH_PICKUP.matches(state))) return;
 		var result = getBlockHitResult();
 		if (result == null) return;
 		sendAction(Action.PRESS_SHIFT_KEY);

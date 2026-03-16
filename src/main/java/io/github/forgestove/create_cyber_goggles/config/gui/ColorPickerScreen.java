@@ -5,7 +5,8 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.*;
+import net.minecraft.util.FastColor.ARGB32;
+import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
@@ -47,10 +48,10 @@ public final class ColorPickerScreen extends Screen {
 		updateHSBFromColor(initialColor);
 	}
 	private void updateHSBFromColor(int color) {
-		if (hasAlpha) this.alpha = FastColor.ARGB32.alpha(color);
-		var r = FastColor.ARGB32.red(color);
-		var g = FastColor.ARGB32.green(color);
-		var b = FastColor.ARGB32.blue(color);
+		if (hasAlpha) this.alpha = ARGB32.alpha(color);
+		var r = ARGB32.red(color);
+		var g = ARGB32.green(color);
+		var b = ARGB32.blue(color);
 		var hsb = Color.RGBtoHSB(r, g, b, null);
 		this.hue = hsb[0];
 		this.saturation = hsb[1];

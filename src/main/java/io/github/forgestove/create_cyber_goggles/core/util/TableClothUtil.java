@@ -2,6 +2,7 @@ package io.github.forgestove.create_cyber_goggles.core.util;
 import com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer;
 import com.simibubi.create.content.logistics.tableCloth.TableClothBlockEntity;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
+import io.github.forgestove.create_cyber_goggles.core.api.Index;
 import io.github.forgestove.create_cyber_goggles.core.event.KeyInput;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.minecraft.client.gui.GuiGraphics;

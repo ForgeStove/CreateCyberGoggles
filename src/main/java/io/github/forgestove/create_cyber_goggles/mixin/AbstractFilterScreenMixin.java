@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.mixin;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.simibubi.create.content.logistics.filter.AbstractFilterScreen;
-import io.github.forgestove.create_cyber_goggles.core.util.Self;
+import io.github.forgestove.create_cyber_goggles.core.api.Self;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

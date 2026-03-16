@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles;
 import com.mojang.logging.LogUtils;
 import io.github.forgestove.create_cyber_goggles.config.Config;
 import io.github.forgestove.create_cyber_goggles.core.event.*;
-import io.github.forgestove.create_cyber_goggles.core.util.*;
+import io.github.forgestove.create_cyber_goggles.core.factory.*;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;

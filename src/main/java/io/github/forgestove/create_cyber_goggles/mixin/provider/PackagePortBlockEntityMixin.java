@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.simibubi.create.content.logistics.packagePort.PackagePortBlockEntity;
-import io.github.forgestove.create_cyber_goggles.core.util.*;
+import io.github.forgestove.create_cyber_goggles.core.api.*;
 import net.minecraft.world.phys.*;
 import org.spongepowered.asm.mixin.Mixin;
 

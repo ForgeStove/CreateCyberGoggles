@@ -1,40 +1,31 @@
-package io.github.forgestove.create_cyber_goggles.core.util;
+package io.github.forgestove.create_cyber_goggles.core.factory;
 import com.mojang.blaze3d.systems.RenderSystem;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.*;
+import net.minecraft.util.FastColor.ARGB32;
+import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
-public class ClientFluidEntryTooltipComponent implements ClientTooltipComponent {
+public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int capacityMb, int sharedBarWidth)
+	implements ClientTooltipComponent {
 	private static final int SLOT_WIDTH = 18;
 	private static final int MIN_WIDTH = SLOT_WIDTH * 4;
 	private static final int SLOT_HEIGHT = 14;
 	private static final int H_PADDING = 4;
 	private static final int BORDER_COLOR = 0xFF777777;
-	private final FluidStack fluid;
-	private final int capacityMb;
-	private final int sharedBarWidth;
-	private final int indent;
-	public ClientFluidEntryTooltipComponent(FluidStack fluid, int capacityMb, int indent) {
-		this(fluid, capacityMb, indent, 0);
-	}
-	public ClientFluidEntryTooltipComponent(FluidStack fluid, int capacityMb, int indent, int sharedBarWidth) {
-		this.fluid = fluid.copy();
-		this.capacityMb = Math.max(1, capacityMb);
-		this.sharedBarWidth = Math.max(0, sharedBarWidth);
-		this.indent = Math.max(0, indent);
-	}
 	public static void register(@NotNull RegisterClientTooltipComponentFactoriesEvent event) {
 		event.register(
 			FluidEntryTooltipComponent.class,
-			data -> new ClientFluidEntryTooltipComponent(data.fluid(), data.capacityMb(), data.indent())
+			data -> new ClientFluidEntryTooltipComponent(data.fluid(), data.indent(), data.capacityMb(), 0)
 		);
 	}
 	public static void renderFluidBar(
@@ -65,10 +56,10 @@ public class ClientFluidEntryTooltipComponent implements ClientTooltipComponent 
 		var still = ext.getStillTexture(stack);
 		var sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(still);
 		var tint = ext.getTintColor(stack);
-		var r = FastColor.ARGB32.red(tint) / 255F;
-		var g = FastColor.ARGB32.green(tint) / 255F;
-		var b = FastColor.ARGB32.blue(tint) / 255F;
-		var a = FastColor.ARGB32.alpha(tint) / 255F;
+		var r = ARGB32.red(tint) / 255F;
+		var g = ARGB32.green(tint) / 255F;
+		var b = ARGB32.blue(tint) / 255F;
+		var a = ARGB32.alpha(tint) / 255F;
 		RenderSystem.enableBlend();
 		RenderSystem.setShaderColor(r, g, b, a);
 		guiGraphics.enableScissor(x, y, x + width, y + height);
@@ -127,5 +118,5 @@ public class ClientFluidEntryTooltipComponent implements ClientTooltipComponent 
 	private int indentPixels(@NotNull Font font) {
 		return indent * font.width(" ");
 	}
+	public record FluidEntryTooltipComponent(FluidStack fluid, int indent, int capacityMb) implements TooltipComponent {}
 }
-

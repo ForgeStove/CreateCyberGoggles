@@ -116,14 +116,18 @@ public class GoggleTooltipUtil {
 			var fillPercent = (int) (shotsLeft / (float) sbe.getShotsPerGunpowder() * 100);
 			CreateLang.translate("gui.schematicannon.gunpowderLevel", fillPercent).forGoggles(tooltip);
 			CreateLang.builder()
- 				.add(CreateLang.translateDirect("gui.schematicannon.shotsRemaining",
-					Component.literal(String.valueOf(shotsLeft)).withStyle(BLUE)).withStyle(GRAY))
+				.add(CreateLang.translateDirect(
+					"gui.schematicannon.shotsRemaining",
+					Component.literal(String.valueOf(shotsLeft)).withStyle(BLUE)
+				).withStyle(GRAY))
 				.forGoggles(tooltip);
-			if (shotsLeftWithItems != shotsLeft)
-				CreateLang.builder()
-					.add(CreateLang.translateDirect("gui.schematicannon.shotsRemainingWithBackup",
-						Component.literal(String.valueOf(shotsLeftWithItems)).withStyle(BLUE)).withStyle(GRAY))
-					.forGoggles(tooltip);
+			if (shotsLeftWithItems != shotsLeft) CreateLang.builder()
+				.add(CreateLang.translateDirect(
+						"gui.schematicannon.shotsRemainingWithBackup",
+						Component.literal(String.valueOf(shotsLeftWithItems)).withStyle(BLUE)
+					)
+					.withStyle(GRAY))
+				.forGoggles(tooltip);
 		}
 		if (!sbe.state.equals(State.RUNNING)) return true;
 		CCGLang.translate("tooltip.printProgress").forGoggles(tooltip);

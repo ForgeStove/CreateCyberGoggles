@@ -3,7 +3,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.event.TooltipOverlay;
-import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
+import io.github.forgestove.create_cyber_goggles.core.util.TooltipComponentUtil;
 import net.createmod.catnip.outliner.Outliner.OutlineEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
@@ -69,7 +69,7 @@ public abstract class GoggleOverlayRendererMixin {
 	) {
 		var hasItemList = false;
 		for (var line : tooltip) {
-			if (!CCGLang.hasItemList(line) && !CCGLang.hasItemEntry(line) && !CCGLang.hasFluidEntry(line) && !CCGLang.hasFluidList(line)) continue;
+			if (!TooltipComponentUtil.hasIcon(line)) continue;
 			hasItemList = true;
 			break;
 		}

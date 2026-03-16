@@ -22,7 +22,7 @@ public final class CategoryTitleConfigEntry extends ConfigEntry {
 		return List.of(new NarratableEntry() {
 			@NotNull
 			@Override
-			public NarratableEntry.NarrationPriority narrationPriority() {
+			public NarrationPriority narrationPriority() {
 				return NarrationPriority.HOVERED;
 			}
 			@Override

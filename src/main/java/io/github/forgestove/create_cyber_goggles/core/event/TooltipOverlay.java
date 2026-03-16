@@ -2,8 +2,12 @@ package io.github.forgestove.create_cyber_goggles.core.event;
 import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.*;
-import io.github.forgestove.create_cyber_goggles.core.util.TooltipTheme.Theme;
+import io.github.forgestove.create_cyber_goggles.core.api.ItemRenderable;
+import io.github.forgestove.create_cyber_goggles.core.factory.*;
+import io.github.forgestove.create_cyber_goggles.core.factory.ClientFluidEntryTooltipComponent.FluidEntryTooltipComponent;
+import io.github.forgestove.create_cyber_goggles.core.factory.ClientItemEntryTooltipComponent.ItemEntryTooltipComponent;
+import io.github.forgestove.create_cyber_goggles.core.factory.TooltipTheme.Theme;
+import io.github.forgestove.create_cyber_goggles.core.util.TooltipComponentUtil;
 import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.client.gui.GuiGraphics;
@@ -67,20 +71,14 @@ public class TooltipOverlay {
 		if (overlay.tooltipFlagType == null) overlay.tooltipFlagType = TooltipFlagType.Default;
 		var tooltipLines = itemStack.getTooltipLines(mc.player, overlay.tooltipFlagType.getFlag());
 		var components = buildTooltipComponents(tooltipLines, width - x - 16, true);
-		if (components.isEmpty()) {
-			pose.popPose();
-			return;
-		}
+		var itemEntryComponent = new ItemEntryTooltipComponent(itemStack);
+		components.set(0, ClientTooltipComponent.create(itemEntryComponent));
 		var tooltipWidth = components.stream().mapToInt(c -> c.getWidth(mc.font)).max().orElse(0);
 		var tooltipHeight = components.stream().mapToInt(ClientTooltipComponent::getHeight).sum();
 		if (GoggleOverlayRenderer.hoverTicks != 0) y -= tooltipHeight + 10;
 		x = Mth.clamp(x, 0, width - tooltipWidth);
 		y = Mth.clamp(y, 16, height - tooltipHeight - 100);
 		renderTooltip(graphics, itemStack, components, x, y, tooltipWidth, tooltipHeight, back.getRGB(), top.getRGB(), bot.getRGB());
-		pose.translate(x + 14F, y - 14F, 450F);
-		pose.scale(0.75F, 0.75F, 1F);
-		graphics.renderItem(itemStack, 0, 0);
-		graphics.renderItemDecorations(mc.font, itemStack, 0, 0);
 		pose.popPose();
 	}
 	public static @NotNull Theme getTheme() {
@@ -111,25 +109,25 @@ public class TooltipOverlay {
 		var fluidEntries = new ArrayList<FluidEntryTooltipComponent>();
 		for (var i = 0; i < tooltipLines.size(); i++) {
 			var line = tooltipLines.get(i);
-			var entry = CCGLang.removeItemEntry(line);
-			if (entry != null) {
-				parsed.add(new ClientItemEntryTooltipComponent(entry.stack(), entry.label(), entry.indent()));
+			var item = TooltipComponentUtil.removeItemEntry(line);
+			if (item != null) {
+				parsed.add(new ClientItemEntryTooltipComponent(item.stack(), item.indent(), item.label()));
 				continue;
 			}
-			var fluid = CCGLang.removeFluidEntry(line);
+			var fluid = TooltipComponentUtil.removeFluidEntry(line);
 			if (fluid != null) {
 				parsed.add(fluid);
 				fluidEntries.add(fluid);
 				continue;
 			}
-			var fluidList = CCGLang.removeFluidList(line);
-			if (fluidList != null) {
-				parsed.add(new ClientFluidListTooltipComponent(fluidList.fluids(), fluidList.maxColumns(), fluidList.indent()));
+			var itemList = TooltipComponentUtil.removeItemList(line);
+			if (itemList != null) {
+				parsed.add(new ClientItemListTooltipComponent(itemList.items(), itemList.indent(), itemList.maxColumns()));
 				continue;
 			}
-			var data = CCGLang.removeItemList(line);
-			if (data != null) {
-				parsed.add(new ClientItemListTooltipComponent(data.items(), data.maxColumns(), data.indent()));
+			var fluidList = TooltipComponentUtil.removeFluidList(line);
+			if (fluidList != null) {
+				parsed.add(new ClientFluidListTooltipComponent(fluidList.fluids(), fluidList.indent(), fluidList.maxColumns()));
 				continue;
 			}
 			if (firstLinePadding && i == 0) line = Component.literal(" ".repeat(Mth.ceil(16F / mc.font.width(" ")))).append(line);
@@ -149,8 +147,8 @@ public class TooltipOverlay {
 			if (value instanceof FluidEntryTooltipComponent fluidEntry) {
 				components.add(new ClientFluidEntryTooltipComponent(
 					fluidEntry.fluid(),
-					fluidEntry.capacityMb(),
 					fluidEntry.indent(),
+					fluidEntry.capacityMb(),
 					sharedFluidWidth
 				));
 				continue;

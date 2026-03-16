@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.core.util;
+package io.github.forgestove.create_cyber_goggles.core.factory;
 import net.minecraft.world.item.TooltipFlag.Default;
 import org.jetbrains.annotations.*;
 

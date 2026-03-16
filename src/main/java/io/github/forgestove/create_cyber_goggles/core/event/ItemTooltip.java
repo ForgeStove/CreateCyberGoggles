@@ -10,13 +10,11 @@ import com.simibubi.create.content.logistics.stockTicker.PackageOrderWithCrafts;
 import com.simibubi.create.content.redstone.link.controller.LinkedControllerItem;
 import com.simibubi.create.foundation.utility.CreateLang;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
-import io.github.forgestove.create_cyber_goggles.core.util.EnderChestTooltipUtil;
+import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.*;
 import net.minecraftforge.client.event.RenderTooltipEvent.GatherComponents;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fluids.*;
@@ -46,22 +44,22 @@ public class ItemTooltip {
 		for (var i = 0; i < elements.size(); i++) {
 			var left = elements.get(i).left().orElse(null);
 			if (!(left instanceof Component comp)) continue;
-			var entry = CCGLang.removeItemEntry(comp);
+			var entry = TooltipComponentUtil.removeItemEntry(comp);
 			if (entry != null) {
 				elements.set(i, Either.right(entry));
 				continue;
 			}
-			var fluid = CCGLang.removeFluidEntry(comp);
+			var fluid = TooltipComponentUtil.removeFluidEntry(comp);
 			if (fluid != null) {
 				elements.set(i, Either.right(fluid));
 				continue;
 			}
-			var fluidList = CCGLang.removeFluidList(comp);
+			var fluidList = TooltipComponentUtil.removeFluidList(comp);
 			if (fluidList != null) {
 				elements.set(i, Either.right(fluidList));
 				continue;
 			}
-			var data = CCGLang.removeItemList(comp);
+			var data = TooltipComponentUtil.removeItemList(comp);
 			if (data != null) elements.set(i, Either.right(data));
 		}
 	}

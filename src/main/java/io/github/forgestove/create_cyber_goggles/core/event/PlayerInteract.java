@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
-import com.simibubi.create.AllTags;
+import com.simibubi.create.AllTags.AllBlockTags;
 import com.simibubi.create.content.contraptions.chassis.*;
 import com.simibubi.create.content.contraptions.wrench.RadialWrenchMenuSubmitPacket;
 import com.simibubi.create.content.equipment.wrench.*;
@@ -62,7 +62,7 @@ public class PlayerInteract {
 		var pos = event.getPos();
 		var state = event.getLevel().getBlockState(pos);
 		var block = state.getBlock();
-		if (!(block instanceof IWrenchable || AllTags.AllBlockTags.WRENCH_PICKUP.matches(state))) return;
+		if (!(block instanceof IWrenchable || AllBlockTags.WRENCH_PICKUP.matches(state))) return;
 		var result = getBlockHitResult();
 		if (result == null) return;
 		sendAction(Action.PRESS_SHIFT_KEY);

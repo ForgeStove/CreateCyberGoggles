@@ -1,7 +1,8 @@
-package io.github.forgestove.create_cyber_goggles.core.util;
+package io.github.forgestove.create_cyber_goggles.core.factory;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import org.jetbrains.annotations.NotNull;
@@ -16,17 +17,17 @@ public class ClientItemListTooltipComponent implements ClientTooltipComponent {
 	private final int columns;
 	private final int rows;
 	private final int indent;
-	public ClientItemListTooltipComponent(List<ItemStack> items, int maxColumns, int indent) {
+	public ClientItemListTooltipComponent(List<ItemStack> items, int indent, int maxColumns) {
 		this.items = items;
+		this.indent = indent;
 		this.maxColumns = maxColumns;
 		this.columns = Math.min(items.size(), maxColumns);
 		this.rows = (items.size() + maxColumns - 1) / maxColumns;
-		this.indent = Math.max(0, indent);
 	}
 	public static void register(@NotNull RegisterClientTooltipComponentFactoriesEvent event) {
 		event.register(
 			ItemListTooltipComponent.class,
-			data -> new ClientItemListTooltipComponent(data.items(), data.maxColumns(), data.indent())
+			data -> new ClientItemListTooltipComponent(data.items(), data.indent(), data.maxColumns())
 		);
 	}
 	@Override
@@ -55,9 +56,5 @@ public class ClientItemListTooltipComponent implements ClientTooltipComponent {
 	private int indentPixels(@NotNull Font font) {
 		return indent * font.width(" ");
 	}
+	public record ItemListTooltipComponent(List<ItemStack> items, int indent, int maxColumns) implements TooltipComponent {}
 }
-
-
-
-
-

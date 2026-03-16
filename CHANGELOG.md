@@ -1,1 +1,2 @@
-- Fix #28
+- Add showSuperGlue hotkey to show the selection of super glue
+- Optimize tooltip component

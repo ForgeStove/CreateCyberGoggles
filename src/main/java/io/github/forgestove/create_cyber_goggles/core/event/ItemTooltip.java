@@ -180,8 +180,6 @@ public class ItemTooltip {
 			entries.add(FluidStack.EMPTY);
 			capacities.add(handler.getTankCapacity(0));
 		}
-		var advanced = mc.options.advancedItemTooltips ? 2 : 0;
-		if (tooltip.size() > 1) tooltip.subList(1, tooltip.size() - advanced).clear();
 		for (var i = 0; i < entries.size(); i++) {
 			var fluid = entries.get(i);
 			var capacity = i < capacities.size() ? capacities.get(i) : Math.max(1, fluid.getAmount());

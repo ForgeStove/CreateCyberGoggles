@@ -5,6 +5,7 @@
 	"client": [
 		"AbstractFilterScreenMixin",
 		"SchematicAndQuillHandlerMixin",
+		"ShulkerBoxBlockMixin",
 		"StockKeeperRequestScreenMixin",
 		"accessor.RotationPropagatorAccessor",
 		"chainConveyor.CardboardArmorHandlerMixin",

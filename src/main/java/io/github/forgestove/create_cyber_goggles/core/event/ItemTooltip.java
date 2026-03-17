@@ -160,12 +160,10 @@ public class ItemTooltip {
 		var items = new ArrayList<ItemStack>();
 		for (var i = 0; i < container.getSlots(); i++) items.add(container.getStackInSlot(i));
 		if (items.isEmpty()) return;
-		var advanced = mc.options.advancedItemTooltips ? 2 : 0;
-		if (tooltip.size() > 1) tooltip.subList(1, tooltip.size() - advanced).clear();
 		CCGLang.itemList(items, 9).addTo(1, tooltip);
 	}
 	private static void fluidContainer(@NotNull ItemStack stack, List<Component> tooltip) {
-		if (!CCG.config.tooltip.container) return;
+		if (!CCG.config.tooltip.fluidContainer) return;
 		var handler = FluidUtil.getFluidHandler(stack).orElse(null);
 		if (handler == null || handler.getTanks() == 0) return;
 		var entries = new ArrayList<FluidStack>();
@@ -187,7 +185,7 @@ public class ItemTooltip {
 		}
 	}
 	private static void enderChest(@NotNull ItemStack stack, List<Component> tooltip) {
-		if (!CCG.config.tooltip.container) return;
+		if (!CCG.config.tooltip.enderChest) return;
 		if (!stack.is(Items.ENDER_CHEST)) return;
 		EnderChestTooltipUtil.appendForItem(tooltip);
 	}

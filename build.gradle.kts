@@ -15,6 +15,14 @@ var generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
 	into("build/generated/sources/modMetadata")
 }
 sourceSets.main.get().resources.srcDir(generateMetadata)
+val mixinAgent = "mixinAgent"
+configurations {
+	create(mixinAgent) {
+		isCanBeConsumed = false
+		isCanBeResolved = true
+		defaultDependencies { add(dependencyFactory.create("dev.vfyjxf:mixin-hotswap-agent:1.1").setTransitive(false)) }
+	}
+}
 neoForge {
 	version = p("loaderVersion")
 	parchment {
@@ -26,6 +34,8 @@ neoForge {
 		configureEach {
 			jvmArguments.addAll("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition")
 			systemProperty("terminal.jline", "true")
+			val files = configurations[mixinAgent].files
+			if(files.isNotEmpty()) jvmArgument("-javaagent:${files.first().toPath()}")
 		}
 	}
 	mods.create(p("modId")).sourceSet(sourceSets.main.get())
@@ -48,6 +58,7 @@ dependencies {
 	runtimeOnly("com.github.Snownee:Jade:${p("loader")}-${p("jadeVersion")}")
 	compileOnly("maven.modrinth:create-enchantment-industry:${p("ceiVersion")}")
 	compileOnly("maven.modrinth:create-dragons-plus:${p("dragonPlusVersion")}")
+	add("additionalRuntimeClasspath", "dev.vfyjxf:mixin-hotswap-agent:1.1")
 }
 publishMods {
 	file.set(tasks.jar.get().archiveFile)

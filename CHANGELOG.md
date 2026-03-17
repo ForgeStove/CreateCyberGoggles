@@ -1,2 +1,3 @@
-- Add showSuperGlue hotkey to show the selection of super glue
-- Optimize tooltip component
+- Add config for fluid container and ender chest
+- Optimize container content tooltip
+- Optimize fluid container content tooltip

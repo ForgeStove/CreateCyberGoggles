@@ -21,13 +21,15 @@ public final class CCGConfig {
 	}
 	public static class Tooltip {
 		public boolean extraItemTooltip = true;
+		public boolean container = true;
+		public boolean fluidContainer = true;
+		public boolean toolbox = true;
+		public boolean enderChest = true;
 		public boolean goggles = true;
 		public boolean backtank = true;
 		public boolean divingBoots = true;
 		public boolean wrench = true;
 		public boolean linkedController = true;
-		public boolean container = true;
-		public boolean toolbox = true;
 		public boolean listFilter = true;
 		public boolean attributeFilter = true;
 		public boolean packageItem = true;

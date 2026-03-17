@@ -172,12 +172,10 @@ public class ItemTooltip {
 			items.add(item);
 		}
 		if (items.isEmpty()) return;
-		var advanced = mc.options.advancedItemTooltips ? 2 : 0;
-		if (tooltip.size() > 1 + advanced) tooltip.subList(1, tooltip.size() - advanced).clear();
 		CCGLang.itemList(items, 9).addTo(1, tooltip);
 	}
 	private static void fluidContainer(@NotNull ItemStack stack, List<Component> tooltip) {
-		if (!CCG.config.tooltip.container) return;
+		if (!CCG.config.tooltip.fluidContainer) return;
 		var optional = FluidUtil.getFluidHandler(stack);
 		var resolve = optional.resolve();
 		if (resolve.isEmpty()) return;
@@ -202,7 +200,7 @@ public class ItemTooltip {
 		}
 	}
 	private static void enderChest(@NotNull ItemStack stack, List<Component> tooltip) {
-		if (!CCG.config.tooltip.container) return;
+		if (!CCG.config.tooltip.enderChest) return;
 		if (!stack.is(Items.ENDER_CHEST)) return;
 		EnderChestTooltipUtil.appendForItem(tooltip);
 	}

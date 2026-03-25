@@ -1,3 +1,2 @@
-- Add config for fluid container and ender chest
-- Optimize container content tooltip
-- Optimize fluid container content tooltip
+- Add custom quantity request pop-up for stock request
+- Add recursive Blueprint scanning function to support Blueprint refresh in subfolders

@@ -34,9 +34,6 @@ public class CCGLang {
 	public static @NotNull CCGLangBuilder text(ChatFormatting format, String literalText) {
 		return builder().text(format, literalText);
 	}
-	public static @NotNull CCGLangBuilder number(double number) {
-		return text(LangNumberFormat.format(number));
-	}
 	public static @NotNull CCGLangBuilder number(float number) {
 		return text(LangNumberFormat.format(Double.parseDouble(Float.toString(number))));
 	}

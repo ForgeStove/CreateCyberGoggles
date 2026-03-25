@@ -88,6 +88,7 @@ public final class CCGConfig {
 		public boolean removeMechanicalArmLimit = false;
 		public boolean removeRequestLimit = true;
 		public boolean stockRequestQuickActions = true;
+		public boolean recursiveSchematicScan = true;
 		public boolean preventSelectionDiscard = true;
 		public boolean infEditBoxLength = false;
 		public boolean removeCardboardOverlay = true;

@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.*;
 import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
-@Mixin(StockKeeperRequestScreen.class)
+@Mixin(value = StockKeeperRequestScreen.class, remap = false)
 public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperRequestScreen> {
 	@Unique private final StockRequestAmountOverlay ccg$popup = new StockRequestAmountOverlay();
 	@Shadow public List<BigItemStack> itemsToOrder;
@@ -66,7 +66,7 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 		if (ccg$openPopupForHoveredItem((int) mouseX, (int) mouseY)) cir.setReturnValue(true);
 	}
 	@Inject(method = "mouseScrolled", at = @At("HEAD"), cancellable = true)
-	private void ccg$mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY, CallbackInfoReturnable<Boolean> cir) {
+	private void ccg$mouseScrolled(double mouseX, double mouseY, double delta, CallbackInfoReturnable<Boolean> cir) {
 		if (!CCG.config.misc.stockRequestQuickActions) return;
 		if (ccg$popup.isOpen()) cir.setReturnValue(true);
 	}

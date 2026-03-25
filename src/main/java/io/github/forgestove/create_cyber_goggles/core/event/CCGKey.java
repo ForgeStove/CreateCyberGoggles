@@ -16,11 +16,12 @@ public enum CCGKey {
 	openStock,
 	previewFilter,
 	showStress(KEY_TAB),
+	showSuperGlue,
+	stockRequestModifier(KEY_LALT),
 	toggleDiving,
 	toggleGoggle,
 	toggleItemOverlay(KEY_LCONTROL),
-	useSchematic,
-	showSuperGlue;
+	useSchematic;
 	public final Lazy<KeyMapping> keyMapping;
 	CCGKey() {
 		this(UNKNOWN.getValue());

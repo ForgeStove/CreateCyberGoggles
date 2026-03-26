@@ -1,2 +1,2 @@
-- Add custom quantity request pop-up for stock request
-- Add recursive Blueprint scanning function to support Blueprint refresh in subfolders
+- Add support for mouse key mapping
+- Add the Stock Request Quantity setting key

@@ -1,5 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.mixin;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.stockTicker.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
@@ -11,7 +12,6 @@ import net.createmod.catnip.data.Couple;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
@@ -55,14 +55,14 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 			cir.setReturnValue(true);
 			return;
 		}
-		if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT && CCGKey.stockRequestModifier.isDown() && ccg$applyAltFullAmount(
+		if (button == InputConstants.MOUSE_BUTTON_LEFT && CCGKey.stockRequestSelectAll.isDown() && ccg$applyAltFullAmount(
 			(int) mouseX,
 			(int) mouseY
 		)) {
 			cir.setReturnValue(true);
 			return;
 		}
-		if (button != GLFW.GLFW_MOUSE_BUTTON_MIDDLE) return;
+		if (!CCGKey.stockRequestSetter.isDown()) return;
 		if (ccg$openPopupForHoveredItem((int) mouseX, (int) mouseY)) cir.setReturnValue(true);
 	}
 	@Inject(method = "mouseScrolled", at = @At("HEAD"), cancellable = true)

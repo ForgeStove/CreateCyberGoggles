@@ -6,28 +6,33 @@ import net.minecraft.network.chat.Component;
 import net.neoforged.jarjar.nio.util.Lazy;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.glfw.GLFW;
 
 import static com.mojang.blaze3d.platform.InputConstants.*;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public enum CCGKey {
-	clickPenetrate(KEY_LCONTROL),
-	interactOpposite(KEY_TAB),
+	clickPenetrate(Type.KEYSYM, KEY_LCONTROL),
+	interactOpposite(Type.KEYSYM, KEY_TAB),
 	openConfig,
 	openStock,
 	previewFilter,
-	showStress(KEY_TAB),
+	showStress(Type.KEYSYM, KEY_TAB),
 	showSuperGlue,
-	stockRequestModifier(KEY_LALT),
+	stockRequestSelectAll(Type.KEYSYM, KEY_LALT),
+	stockRequestSetter(Type.MOUSE, MOUSE_BUTTON_MIDDLE),
 	toggleDiving,
 	toggleGoggle,
-	toggleItemOverlay(KEY_LCONTROL),
+	toggleItemOverlay(Type.KEYSYM, KEY_LCONTROL),
 	useSchematic;
 	public final Lazy<KeyMapping> keyMapping;
 	CCGKey() {
-		this(UNKNOWN.getValue());
+		this(UNKNOWN);
 	}
-	CCGKey(int key) {
-		keyMapping = Lazy.of(new KeyMapping(CCG.ID + ".key." + name(), key, "key.categories." + CCG.ID));
+	CCGKey(@NotNull Type type, int key) {
+		this(type.getOrCreate(key));
+	}
+	CCGKey(@NotNull Key key) {
+		keyMapping = Lazy.of(new KeyMapping(CCG.ID + ".key." + name(), key.getType(), key.getValue(), "key.categories." + CCG.ID));
 	}
 	public static void register(RegisterKeyMappingsEvent event) {
 		for (var key : values()) event.register(key.keyMapping.get());
@@ -37,7 +42,12 @@ public enum CCGKey {
 	}
 	public boolean isDown() {
 		var key = getKey();
-		return !key.equals(UNKNOWN) && isKeyDown(mc.getWindow().getWindow(), key.getValue());
+		if (key.equals(UNKNOWN)) return false;
+		var window = mc.getWindow().getWindow();
+		return switch (key.getType()) {
+			case MOUSE -> GLFW.glfwGetMouseButton(window, key.getValue()) == GLFW.GLFW_PRESS;
+			case KEYSYM, SCANCODE -> isKeyDown(window, key.getValue());
+		};
 	}
 	public @NotNull Key getKey() {
 		return keyMapping.get().getKey();

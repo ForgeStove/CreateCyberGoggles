@@ -3,6 +3,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.event.TooltipOverlay;
+import io.github.forgestove.create_cyber_goggles.core.util.GoggleTooltipDedupUtil;
 import io.github.forgestove.create_cyber_goggles.core.util.TooltipComponentUtil;
 import net.createmod.catnip.outliner.Outliner.OutlineEntry;
 import net.minecraft.client.Minecraft;
@@ -19,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.isInGame;
-@Mixin(GoggleOverlayRenderer.class)
+@Mixin(value = GoggleOverlayRenderer.class, remap = false)
 public abstract class GoggleOverlayRendererMixin {
 	@Inject(method = "renderOverlay", at = @At("HEAD"), cancellable = true)
 	private static void renderOverlay(CallbackInfo ci) {
@@ -67,6 +68,7 @@ public abstract class GoggleOverlayRendererMixin {
 		Font font,
 		Operation<Void> original
 	) {
+		if (CCG.config.goggles.dedupTooltipLines) tooltip = GoggleTooltipDedupUtil.dedupAdjacentLines(tooltip);
 		var hasItemList = false;
 		for (var line : tooltip) {
 			if (!TooltipComponentUtil.hasIcon(line)) continue;

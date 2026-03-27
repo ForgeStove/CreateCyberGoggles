@@ -18,6 +18,7 @@ public final class CCGConfig {
 		public boolean preciseNumber = true;
 		public boolean disableScreenGoggles = true;
 		public boolean canRenderOnValueBox = false;
+		public boolean dedupTooltipLines = true;
 	}
 	public static class Tooltip {
 		public boolean extraItemTooltip = true;

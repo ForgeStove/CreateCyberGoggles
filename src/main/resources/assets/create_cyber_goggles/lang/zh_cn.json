@@ -40,6 +40,8 @@
 	"create_cyber_goggles.config.option.goggles.canRenderOnValueBox.tooltip": "出现值框时允许渲染护目镜工具提示",
 	"create_cyber_goggles.config.option.goggles.disableScreenGoggles": "禁用界面内护目镜",
 	"create_cyber_goggles.config.option.goggles.disableScreenGoggles.tooltip": "任意界面出现时禁用护目镜显示",
+	"create_cyber_goggles.config.option.goggles.dedupTooltipLines": "去重工具提示行",
+	"create_cyber_goggles.config.option.goggles.dedupTooltipLines.tooltip": "移除护目镜工具提示中相邻的重复或近似重复行",
 	"create_cyber_goggles.config.option.goggles.enableKineticEffect": "渲染旋转粒子",
 	"create_cyber_goggles.config.option.goggles.enableKineticEffect.tooltip": "渲染目标方块的旋转粒子效果",
 	"create_cyber_goggles.config.option.goggles.enhancedInfo": "高级信息显示",

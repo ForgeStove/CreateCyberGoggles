@@ -125,7 +125,7 @@ public class ItemTooltip {
 		var items = new ArrayList<ItemStack>();
 		encodedRequest.stacks().forEach(bigStack -> items.add(bigStack.stack.copyWithCount(bigStack.count)));
 		if (items.isEmpty()) return;
-		CCGLang.itemList(items, 9).addTo(2, tooltip);
+		CCGLang.itemList(items, 9).addTo(3, tooltip);
 	}
 	private static void toolbox(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!CCG.config.tooltip.toolbox) return;

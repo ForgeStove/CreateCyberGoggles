@@ -69,6 +69,7 @@
 		"provider.PackagePortBlockEntityMixin",
 		"provider.PackagerBlockEntityMixin",
 		"provider.RedstoneRequesterBlockEntityMixin",
+		"provider.RedstoneRequesterBlockMixin",
 		"provider.SawBlockEntityMixin",
 		"provider.SchematicannonBlockEntityMixin",
 		"provider.TableClothBlockEntityMixin",

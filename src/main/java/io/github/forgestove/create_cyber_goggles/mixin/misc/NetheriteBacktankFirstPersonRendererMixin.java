@@ -8,9 +8,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class NetheriteBacktankFirstPersonRendererMixin {
 	@Shadow private static boolean rendererActive;
 	@Inject(method = "clientTick", at = @At("HEAD"), cancellable = true)
-	private static void clientTick(CallbackInfo callbackInfo) {
-		if (!CCG.CONFIG.misc.removeNetheriteFirstPerson) return;
-		callbackInfo.cancel();
+	private static void clientTick(CallbackInfo ci) {
+		if (!CCG.config.misc.removeNetheriteFirstPerson) return;
+		ci.cancel();
 		rendererActive = false;
 	}
 }

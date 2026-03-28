@@ -28,12 +28,12 @@ repositories {
 	mavenCentral()
 	maven("https://maven.parchmentmc.org") // Parchment mappings
 	maven("https://mvn.devos.one/releases") // Porting Lib releases
+	maven("https://maven.createmod.net") // Porting Lib releases
 	maven("https://mvn.devos.one/snapshots") // Create and several dependencies
 	maven("https://modmaven.dev") // Flywheel
 	maven("https://maven.jamieswhiteshirt.com/libs-release") // Reach Entity Attributes
 	maven("https://raw.githubusercontent.com/Fuzss/modresources/main/maven") // Forge Config API Port
 	maven("https://jitpack.io") // Fabric ASM for Porting Lib
-	maven("https://maven.shedaniel.me") // Cloth Config API
 	maven("https://maven.terraformersmc.com/releases") // Mod Menu
 	maven("https://maven.blamejared.com") // JEI
 }
@@ -44,9 +44,8 @@ dependencies {
 		parchment("org.parchmentmc.data:parchment-${p("mcVersion")}:${p("parchmentVersion")}@zip")
 	})
 	modImplementation("net.fabricmc:fabric-loader:${p("fabricLoaderVersion")}")
-	modImplementation("net.fabricmc.fabric-api:fabric-api:${p("fabricApiVersion")}")
-	modImplementation("com.simibubi.create:create-${p("loader")}-${p("mcVersion")}:${p("createVersion")}")
-	modImplementation("me.shedaniel.cloth:cloth-config-${p("loader")}:${p("clothConfigVersion")}")
+	modImplementation("net.fabricmc.fabric-api:fabric-api:${p("fabricApiVersion")}+${p("mcVersion")}")
+	modImplementation("com.simibubi.create:create-${p("loader")}:${p("createVersion")}-mc${p("mcVersion")}")
 	modImplementation("com.terraformersmc:modmenu:${p("modmenuVersion")}")
 	modImplementation("mezz.jei:jei-${p("mcVersion")}-${p("loader")}:${p("jeiVersion")}")
 }

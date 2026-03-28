@@ -1,15 +1,17 @@
 package io.github.forgestove.create_cyber_goggles.mixin.misc;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.nbt.NbtAccounter;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.*;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(NbtAccounter.class)
 public abstract class NbtAccounterMixin {
-	@Inject(method = "accountBytes(J)V", at = @At("HEAD"), cancellable = true)
-	public void accountBytes(CallbackInfo callbackInfo) {
+	@WrapMethod(method = "accountBytes(J)V")
+	public void accountBytes(long bytes, Operation<Void> original) {
 		try {
-			if (CCG.CONFIG.misc.nbtFix) callbackInfo.cancel();
-		} catch (Throwable ignored) {}
+			original.call(bytes);
+		} catch (Throwable throwable) {
+			if (!CCG.config.misc.nbtFix) throw throwable;
+		}
 	}
 }

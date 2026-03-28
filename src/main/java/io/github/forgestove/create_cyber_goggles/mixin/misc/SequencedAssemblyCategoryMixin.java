@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.mixin.misc;
 import com.simibubi.create.compat.jei.category.SequencedAssemblyCategory;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
-import com.simibubi.create.foundation.utility.Lang;
+import com.simibubi.create.foundation.utility.CreateLang;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -17,15 +17,15 @@ import org.spongepowered.asm.mixin.injection.callback.*;
 @Mixin(value = SequencedAssemblyCategory.class, remap = false)
 public abstract class SequencedAssemblyCategoryMixin {
 	@Inject(method = "setRecipe*", at = @At("TAIL"))
-	public void setRecipe(IRecipeLayoutBuilder builder, SequencedAssemblyRecipe recipe, IFocusGroup focuses, CallbackInfo callbackInfo) {
-		if (!CCG.CONFIG.misc.showScrapContent) return;
+	public void setRecipe(IRecipeLayoutBuilder builder, SequencedAssemblyRecipe recipe, IFocusGroup focuses, CallbackInfo ci) {
+		if (!CCG.config.misc.showScrapContent) return;
 		var size = 8;
 		for (var i = 1; i < recipe.resultPool.size(); i++) {
 			var out = recipe.resultPool.get(i);
 			builder.addSlot(RecipeIngredientRole.OUTPUT, (i - 1) % size * 19 + 15, (i - 1) / size * 19 + 120).setBackground(
 				new IDrawable() {
-					public int getWidth() {return AllGuiTextures.JEI_CHANCE_SLOT.width;}
-					public int getHeight() {return AllGuiTextures.JEI_CHANCE_SLOT.height;}
+					public int getWidth() {return AllGuiTextures.JEI_CHANCE_SLOT.getWidth();}
+					public int getHeight() {return AllGuiTextures.JEI_CHANCE_SLOT.getHeight();}
 					public void draw(@NotNull GuiGraphics guiGraphics, int xOffset, int yOffset) {
 						AllGuiTextures.JEI_CHANCE_SLOT.render(guiGraphics, xOffset, yOffset);
 					}
@@ -40,9 +40,9 @@ public abstract class SequencedAssemblyCategoryMixin {
 	@Shadow
 	protected abstract MutableComponent chanceComponent(float chance);
 	@Inject(method = "chanceComponent", at = @At("HEAD"), cancellable = true)
-	public void chanceComponent(float chance, CallbackInfoReturnable<MutableComponent> returnable) {
-		if (!CCG.CONFIG.goggles.preciseNumber) return;
+	public void chanceComponent(float chance, CallbackInfoReturnable<MutableComponent> cir) {
+		if (!CCG.config.goggles.preciseNumber) return;
 		if (chance * 100 == (int) (chance * 100)) return;
-		returnable.setReturnValue(Lang.translateDirect("recipe.processing.chance", chance * 100).withStyle(ChatFormatting.GOLD));
+		cir.setReturnValue(CreateLang.translateDirect("recipe.processing.chance", chance * 100).withStyle(ChatFormatting.GOLD));
 	}
 }

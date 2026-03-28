@@ -29,11 +29,6 @@
 		"fabric": "*",
 		"fabricloader": "*",
 		"minecraft": "*",
-		"create": "*",
-		"cloth-config": "*"
-	},
-	"suggests": {
-		"modmenu": "*",
-		"jei": "*"
+		"create": "*"
 	}
 }

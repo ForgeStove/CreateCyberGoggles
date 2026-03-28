@@ -9,7 +9,7 @@ public final class GoggleTooltipDedupUtil {
 		var deduped = new ArrayList<Component>(tooltip.size());
 		var replacedDuplicate = false;
 		for (var current : tooltip) {
-			var previousKept = deduped.isEmpty() ? null : deduped.getLast();
+			var previousKept = deduped.isEmpty() ? null : deduped.get(deduped.size() - 1);
 			if (isDedupTarget(previousKept) && isDedupTarget(current) && isSimilarLine(previousKept, current)) {
 				// Keep newer info when adjacent lines are similar.
 				deduped.set(deduped.size() - 1, current);
@@ -59,7 +59,7 @@ public final class GoggleTooltipDedupUtil {
 			cleaned.add(line);
 			previousBlank = blank;
 		}
-		while (!cleaned.isEmpty() && isBlankLine(cleaned.getLast())) cleaned.removeLast();
+		while (!cleaned.isEmpty() && isBlankLine(cleaned.get(cleaned.size() - 1))) cleaned.remove(cleaned.size() - 1);
 		return cleaned;
 	}
 }

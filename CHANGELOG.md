@@ -1,2 +1,2 @@
-- Add support for mouse key mapping
-- Add the Stock Request Quantity setting key
+- Add RedstoneRequesterBlockMixin to support table cloth item tooltip display
+- Fix [#31](https://github.com/ForgeStove/CreateCyberGoggles/issues/31)

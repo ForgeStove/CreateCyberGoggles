@@ -31,7 +31,27 @@
 | 精确数值       |     ✅      | 显示更加精确的数值信息                   |
 | 禁用界面内护目镜   |     ✅      | 任意界面出现时禁用护目镜显示                |
 | 允许值框出现时渲染  |     ❌      | 出现值框时允许渲染护目镜工具提示              |
+| 去重工具提示行    |     ✅      | 移除护目镜工具提示中相邻的重复或近似重复行         |
 | 额外物品工具提示   |     ✅      | 在物品工具提示中显示额外信息                |
+| 属性过滤器      |     ✅      | 显示属性过滤器详情                     |
+| 背罐         |     ✅      | 为背罐显示额外工具提示信息                 |
+| 容器         |     ✅      | 显示容器内容                        |
+| 粉碎控制器      |     ✅      | 显示粉碎控制器产出与进度                  |
+| 机械手        |     ✅      | 显示机械手溢出物品                     |
+| 置物台        |     ✅      | 显示置物台内容                       |
+| 潜水靴        |     ✅      | 为潜水靴显示额外工具提示信息                |
+| 末影箱        |     ✅      | 显示末影箱内容                       |
+| 流体容器       |     ✅      | 显示流体容器内容                      |
+| 护目镜        |     ✅      | 为护目镜显示额外工具提示信息                |
+| 物品实体       |     ✅      | 显示携带物品信息                      |
+| 控制器        |     ✅      | 显示控制器的频率槽位                    |
+| 列表过滤器      |     ✅      | 显示列表过滤器内容                     |
+| 石磨         |     ✅      | 显示石磨的额外工具提示信息                 |
+| 包裹实体       |     ✅      | 显示包裹实体内容                      |
+| 包裹物品       |     ✅      | 显示包裹物品内容                      |
+| 红石请求器      |     ✅      | 显示红石请求器内容                     |
+| 工具箱        |     ✅      | 显示工具箱内容                       |
+| 扳手         |     ✅      | 为扳手显示额外工具提示信息                 |
 | 启用护目镜      |     ✅      | 游戏模式主开关                       |
 | 生存模式启用     |     ✅      | 在生存模式下始终启用护目镜                 |
 | 创造模式启用     |     ✅      | 在创造模式下始终启用护目镜                 |
@@ -67,7 +87,9 @@
 | 增强型扳手      |     ❌      | 允许扳手更改更多方块状态（警告：在服务器上可能被视为作弊） |
 | 移除动力臂限制    |     ❌      | 移除动力臂限制                       |
 | 移除请求限制     |     ✅      | 移除请求限制                        |
+| 仓储请求快捷操作   |     ✅      | 启用仓储请求界面的快捷操作                 |
 | 防止选区丢弃     |     ✅      | 防止选区丢弃                        |
+| 递归扫描蓝图     |     ✅      | 刷新蓝图列表时包含子文件夹中的蓝图             |
 | 无限编辑框长度    |     ❌      | 无限编辑框长度（实际上是 2^31 -1）         |
 | 移除纸板套视线遮挡  |     ✅      | 移除纸板套在潜行时的视线遮挡                |
 | 移除第一人称背罐渲染 |     ❌      | 移除下界合金背罐的第一人称渲染效果             |
@@ -86,10 +108,13 @@
 | 通过仓储发报机访问网络存储 |  未指定  |
 |     预览过滤器     |  未指定  |
 |   显示应力网络信息    |  Tab  |
+|     显示强力胶     |  未指定  |
 |    切换潜水模式     |  未指定  |
 |    切换护目镜模式    |  未指定  |
 |   切换要显示的物品    | 左Ctrl |
 |   穿透移动结构交互    | 左Ctrl |
+|   仓储请求快捷全选    | 左Alt  |
+| 打开仓储请求数量设置界面  |  中键   |
 |  与选中方块面的反面交互  |  Tab  |
 |     使用蓝图      |  未指定  |
 
@@ -112,7 +137,27 @@
 | Precise Number                      |     ✅      | Show more precise numerical information                                                                       |
 | Disable Screen Goggles              |     ✅      | Disable goggles when Screen appears                                                                           |
 | Can Render When Value Box Appear    |     ❌      | Allow rendering of goggle tooltip when Value Box appears                                                      |
+| Deduplicate Tooltip Lines           |     ✅      | Remove adjacent duplicate or near-duplicate lines in goggles tooltip                                          |
 | Extra Item Tooltip                  |     ✅      | Show extra information in item tooltip                                                                        |
+| Attribute Filter                    |     ✅      | Show attribute filter details                                                                                 |
+| Backtank                            |     ✅      | Show extra tooltip info for backtank                                                                          |
+| Container                           |     ✅      | Show container content                                                                                        |
+| Crushing Controller                 |     ✅      | Show crushing controller outputs and progress                                                                 |
+| Deployer                            |     ✅      | Show deployer overflow items                                                                                  |
+| Depot                               |     ✅      | Show depot content                                                                                            |
+| Diving Boots                        |     ✅      | Show extra tooltip info for diving boots                                                                      |
+| Ender Chest                         |     ✅      | Show ender chest content                                                                                      |
+| Fluid Container                     |     ✅      | Show fluid container content                                                                                  |
+| Goggles                             |     ✅      | Show extra tooltip info for goggles                                                                           |
+| Item Entity                         |     ✅      | Show carried item info                                                                                        |
+| Linked Controller                   |     ✅      | Show frequency slots for linked controller                                                                    |
+| List Filter                         |     ✅      | Show list filter content                                                                                      |
+| Millstone                           |     ✅      | Show extra tooltip info for millstone                                                                         |
+| Package Entity                      |     ✅      | Show package entity content                                                                                   |
+| Package Item                        |     ✅      | Show package item content                                                                                     |
+| Redstone Requester                  |     ✅      | Show redstone requester content                                                                               |
+| Toolbox                             |     ✅      | Show toolbox content                                                                                          |
+| Wrench                              |     ✅      | Show extra tooltip info for wrench                                                                            |
 | Enable Goggle                       |     ✅      | Main switch of game mode                                                                                      |
 | Enable in Survival Mode             |     ✅      | Always enable goggles in Survival mode                                                                        |
 | Enable in Creative Mode             |     ✅      | Always enable goggles in Creative mode                                                                        |
@@ -148,7 +193,9 @@
 | Enhanced Wrench                     |     ❌      | Allow using wrench to modify more block states (Warning: May be considered cheating on the server)            |
 | Remove Mechanical Arm Limit         |     ❌      | Remove mechanical arm limit                                                                                   |
 | Remove Request Limit                |     ✅      | Remove request limit                                                                                          |
+| Stock Request Quick Actions         |     ✅      | Enable quick actions in stock request screen                                                                  |
 | Prevent Selection Discard           |     ✅      | Prevent selection discard                                                                                     |
+| Recursive Schematic Scan            |     ✅      | Include schematics in subfolders when refreshing the list                                                     |
 | Inf Edit Box Length                 |     ❌      | Infinite edit box length (Actually 2^31 -1)                                                                   |
 | Remove Cardboard Overlay            |     ✅      | Remove the cardboard suit view obstruction when crouching                                                     |
 | Remove First Person Backtank Render |     ❌      | Remove the first-person render effect of the Netherite Backtank                                               |
@@ -167,10 +214,13 @@
 | Access network storage via stock ticker |  Not Bound   |
 |             Preview Filter              |  Not Bound   |
 |        Show Stress Network Info         |     Tab      |
+|             Show Super Glue             |  Not Bound   |
 |           Toggle Diving Mode            |  Not Bound   |
 |           Toggle Goggle Mode            |  Not Bound   |
 |           Toggle Item Overlay           | Left Control |
 |             Click Penetrate             | Left Control |
+|     Stock Request Quick Select All      |   Left Alt   |
+|  Open Stock Request Quantity Settings   | Middle Mouse |
 |            Interact Opposite            |     Tab      |
 |              Use Schematic              |  Not Bound   |
 
@@ -180,19 +230,21 @@
 
 | Minecraft | Forge | Fabric/Quilt | NeoForge | Create: Cyber Goggles |             Create             |
 |:---------:|:-----:|:------------:|:--------:|:---------------------:|:------------------------------:|
-|  1.21.8   |       |      ✅       |          |          3.x          |       6.0+ (Create-Fly)        |
-|  1.21.1   |       |              |    ✅     |        1.x~6.x        |              6.0+              |
-|  1.20.1   |   ✅   |      ✅       |    ✅     |        1.x~6.x        | 1.x: 0.5+, 6.0+; 2.x~6.x: 6.0+ |
+|  1.21.11  |       |      ✅       |          |         3.0+          |       6.0+ (Create-Fly)        |
+|  1.21.10  |       |      ✅       |          |         3.0+          |       6.0+ (Create-Fly)        |
+|  1.21.8   |       |      ✅       |          |         3.0+          |       6.0+ (Create-Fly)        |
+|  1.21.1   |       |              |    ✅     |        1.x~7.x        |              6.0+              |
+|  1.20.1   |   ✅   |      ✅       |    ✅     |        1.x~7.x        | 1.x: 0.5+, 6.0+; 2.x~7.x: 6.0+ |
 |  1.19.2   |   ✅   |      ✅       |          |          1.x          |              0.5+              |
 |  1.18.2   |   ✅   |      ✅       |          |          1.x          |              0.5+              |
 
 ## 注意 / Notice
 
 > 主要在 1.21.1 NeoForge 上开发额外功能，其余版本不一定具有全部功能；  
-> 1.20.1 Forge 版本已经完全跟进，2.0版本以后仅兼容6.0+版本的Create，仅限2.0以前的版本兼容0.5+版本的Create；  
-> 1.21.8 Fabric 版本跟进 1.20.1 Fabric 版本，前置为非官方移植（Create-Fly）。
+> 1.20.1 Forge 与 1.20.1 Fabric 版本已进行功能对齐，2.0版本以后仅兼容6.0+版本的Create，仅限2.0以前的版本兼容0.5+版本的Create；  
+> 1.21.8+ Fabric 版本跟进 1.21.1 Fabric 版本，前置为非官方移植（Create-Fly）。
 
-> Extra features are mainly developed in 1.21.1 NeoForge, the rest of the versions will not necessarily have all the features;  
-> 1.20.1 Forge version has been fully updated, version 2.0 and later only compatible with Create 6.0+ version, only version 2.0 and below
-> compatible with Create 0.5+ version;  
-> 1.21.8 Fabric version follows the 1.20.1 Fabric version; prerequisite is the unofficial port (Create-Fly).
+> Extra features are mainly developed on 1.21.1 NeoForge, and other versions may not include all features;  
+> 1.20.1 Forge and 1.20.1 Fabric are now feature-aligned. Version 2.0+ is compatible only with Create 6.0+, while versions before 2.0 remain
+> compatible with Create 0.5+;  
+> 1.21.8+ Fabric follows the 1.21.1 Fabric branch and depends on the unofficial port (Create-Fly).

@@ -1,10 +1,7 @@
 package io.github.forgestove.create_cyber_goggles;
-import com.terraformersmc.modmenu.api.*;
-import io.github.forgestove.create_cyber_goggles.config.Config;
 import io.github.forgestove.create_cyber_goggles.config.annotation.*;
 import io.github.forgestove.create_cyber_goggles.core.factory.*;
-import org.jetbrains.annotations.*;
-public final class CCGConfig implements ModMenuApi {
+public final class CCGConfig {
 	@Category public final Goggles goggles = new Goggles();
 	@Category public final Tooltip tooltip = new Tooltip();
 	@Category public final GameMode gameMode = new GameMode();
@@ -13,11 +10,6 @@ public final class CCGConfig implements ModMenuApi {
 	@Category public final ChainConveyor chainConveyor = new ChainConveyor();
 	@Category public final Wrench wrench = new Wrench();
 	@Category public final Misc misc = new Misc();
-	@Contract(pure = true)
-	@Override
-	public @NotNull ConfigScreenFactory<?> getModConfigScreenFactory() {
-		return Config.createModMenuFactory(CCG.ID);
-	}
 	public static class Goggles {
 		public boolean enhancedInfo = true;
 		public boolean hideStaticKineticInfo = false;

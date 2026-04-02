@@ -3,7 +3,6 @@ import io.github.forgestove.create_cyber_goggles.core.api.Self;
 import io.github.forgestove.create_cyber_goggles.core.event.TooltipOverlay;
 import io.github.forgestove.create_cyber_goggles.core.util.TooltipComponentUtil;
 import net.minecraft.client.gui.*;
-import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
@@ -50,8 +49,7 @@ public abstract class GuiGraphicsMixin implements Self<GuiGraphics> {
 			tooltipHeight,
 			TooltipOverlay.VANILLA_BACKGROUND,
 			TooltipOverlay.VANILLA_BORDER_TOP,
-			TooltipOverlay.VANILLA_BORDER_BOTTOM,
-			DefaultTooltipPositioner.INSTANCE
+			TooltipOverlay.VANILLA_BORDER_BOTTOM
 		);
 		ci.cancel();
 	}

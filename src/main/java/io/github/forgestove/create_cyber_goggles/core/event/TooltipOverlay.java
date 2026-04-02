@@ -76,7 +76,7 @@ public class TooltipOverlay {
 		if (GoggleOverlayRenderer.hoverTicks != 0) y -= tooltipHeight + 10;
 		x = Mth.clamp(x, 0, width - tooltipWidth);
 		y = Mth.clamp(y, 16, height - tooltipHeight - 100);
-		renderTooltip(graphics, components, x, y, tooltipWidth, tooltipHeight, back.getRGB(), top.getRGB(), bot.getRGB(), null);
+		renderTooltip(graphics, components, x, y, tooltipWidth, tooltipHeight, back.getRGB(), top.getRGB(), bot.getRGB());
 		pose.popPose();
 	}
 	public static int calculateTooltipHeight(@NotNull List<ClientTooltipComponent> components) {
@@ -168,15 +168,19 @@ public class TooltipOverlay {
 		int tooltipHeight,
 		int back,
 		int top,
-		int bot,
-		ClientTooltipPositioner positioner
+		int bot
 	) {
 		if (components.isEmpty()) return;
-		if (positioner != null) {
-			var positioned = positioner.positionTooltip(graphics.guiWidth(), graphics.guiHeight(), x, y, tooltipWidth, tooltipHeight);
-			x = positioned.x();
-			y = positioned.y();
-		}
+		var positioned = DefaultTooltipPositioner.INSTANCE.positionTooltip(
+			graphics.guiWidth(),
+			graphics.guiHeight(),
+			x,
+			y,
+			tooltipWidth,
+			tooltipHeight
+		);
+		x = positioned.x();
+		y = positioned.y();
 		var pose = graphics.pose();
 		pose.pushPose();
 		renderTooltipBackgroundThemed(graphics, x, y, tooltipWidth, tooltipHeight, back, top, bot);
@@ -206,9 +210,9 @@ public class TooltipOverlay {
 		int bot
 	) {
 		var left = x - 3;
-		var topY = y - 4;
-		var width = tooltipWidth + 6;
-		var height = tooltipHeight + 8;
+		var topY = y - 3;
+		var width = tooltipWidth + 5;
+		var height = tooltipHeight + 7;
 		graphics.fillGradient(left, topY - 1, left + width, topY, 400, back, back);
 		graphics.fillGradient(left, topY + height, left + width, topY + height + 1, 400, back, back);
 		graphics.fillGradient(left, topY, left + width, topY + height, 400, back, back);

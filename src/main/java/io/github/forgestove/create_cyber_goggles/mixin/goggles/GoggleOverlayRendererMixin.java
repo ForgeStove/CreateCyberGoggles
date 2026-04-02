@@ -7,7 +7,6 @@ import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.createmod.catnip.outliner.Outliner.OutlineEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
-import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.GameType;
@@ -102,8 +101,7 @@ public abstract class GoggleOverlayRendererMixin {
 			tooltipHeight,
 			backgroundColor,
 			borderColorStart,
-			borderColorEnd,
-			DefaultTooltipPositioner.INSTANCE
+			borderColorEnd
 		);
 	}
 }

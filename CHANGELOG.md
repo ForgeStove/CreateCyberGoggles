@@ -1,1 +1,2 @@
-- Sync 1.20.1 Forge
+- Fix crash without ModMenu installed
+- Fix tooltip offset issue

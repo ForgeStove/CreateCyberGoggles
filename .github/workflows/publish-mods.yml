@@ -2,15 +2,6 @@ name: Publish Mods
 
 on:
   workflow_dispatch:
-    inputs:
-      gradle_task:
-        description: Gradle task to run
-        required: true
-        default: publishMods
-      java_version:
-        description: Java version
-        required: true
-        default: "21"
 
 permissions:
   contents: read
@@ -28,19 +19,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Java
+      - name: Get Java Version
+        id: java_version
+        run: echo "version=$(grep '^javaVersion=' gradle.properties | cut -d'=' -f2)" >> $GITHUB_OUTPUT
+
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: ${{ inputs.java_version }}
+          java-version: ${{ steps.java_version.outputs.version }}
           cache: gradle
 
-      - name: Make Gradle wrapper executable
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Grant execute permission to gradlew
         run: chmod +x ./gradlew
+
+      - name: Build Mod
+        run: ./gradlew build
 
       - name: Publish via Gradle
         env:
           MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
           CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
-        run: ./gradlew --no-daemon --stacktrace ${{ inputs.gradle_task }}
-
+        run: ./gradlew --no-daemon publishMods

@@ -10,7 +10,7 @@ on:
       java_version:
         description: Java version
         required: true
-        default: "21"
+        default: "17"
 
 permissions:
   contents: read

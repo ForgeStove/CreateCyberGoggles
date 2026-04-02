@@ -2,13 +2,15 @@ plugins {
 	id("fabric-loom") version "1.10.5"
 	id("me.modmuss50.mod-publish-plugin") version "+"
 }
-base.archivesName.set(p("modId"))
+base.archivesName.set(p("modName"))
 group = p("modGroupId")
-version = "${p("mcVersion")}-${p("modVersion")}+${p("loaderCap")}"
+version = "${p("mcVersion")}-${p("modVersion")}-${p("loaderCap")}"
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 tasks.jar { from("LICENSE") }
 var generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
-	expand(properties.mapValues { it.value.toString() })
+	val values = properties.mapValues { it.value.toString() }
+	inputs.properties(values)
+	expand(values)
 	from("src/main/templates")
 	into("build/generated/sources/modMetadata")
 }
@@ -54,20 +56,20 @@ publishMods {
 	changelog.set(file("CHANGELOG.md").readText())
 	type.set(STABLE)
 	version.set(project.version.toString())
-	displayName.set("[${p("loaderCap")}] ${p("modName")} ${p("modVersion")}+${p("mcVersion")}")
+	displayName.set("[${p("loaderCap")}] ${p("modVersion")} for Create ${p("mcVersion")}-${p("createMinVersion")}")
 	modLoaders.addAll(p("loaderCap"), p("loaderOtherCap"))
 	modrinth {
 		accessToken.set(providers.environmentVariable("MODRINTH_TOKEN"))
 		projectId.set("TlQAWQCY")
 		minecraftVersions.add(p("mcVersion"))
-		requires("create-fabric", "cloth-config")
+		requires("create-fabric")
 		optional("modmenu")
 	}
 	curseforge {
 		accessToken.set(providers.environmentVariable("CURSEFORGE_TOKEN"))
 		projectId.set("1233804")
 		minecraftVersions.add(p("mcVersion"))
-		requires("create-fabric", "cloth-config")
+		requires("create-fabric")
 		optional("modmenu")
 	}
 }

@@ -5,7 +5,7 @@ plugins {
 base.archivesName.set(p("modName"))
 group = p("modGroupId")
 version = "${p("mcVersion")}-${p("modVersion")}-${p("loaderCap")}"
-java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+java.toolchain.languageVersion.set(JavaLanguageVersion.of(p("javaVersion")))
 tasks.jar { from("LICENSE") }
 var generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
 	val values = properties.mapValues { it.value.toString() }

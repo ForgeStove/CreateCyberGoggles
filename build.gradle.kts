@@ -1,5 +1,5 @@
 plugins {
-	id("fabric-loom") version "1.15.3"
+	id("fabric-loom") version "1.15.5"
 	id("me.modmuss50.mod-publish-plugin") version "+"
 }
 base.archivesName.set(p("modName"))
@@ -36,11 +36,11 @@ dependencies {
 	minecraft("com.mojang:minecraft:${p("mcVersion")}")
 	@Suppress("UnstableApiUsage") mappings(loom.layered {
 		officialMojangMappings { nameSyntheticMembers = false }
-		parchment("org.parchmentmc.data:parchment-1.21.10:${p("parchmentVersion")}@zip")
+		parchment("org.parchmentmc.data:parchment-${p("mcVersion")}:${p("parchmentVersion")}@zip")
 	})
 	modImplementation("net.fabricmc:fabric-loader:${p("fabricLoaderVersion")}")
-	modImplementation("net.fabricmc.fabric-api:fabric-api:${p("fabricApiVersion")}")
-	modImplementation("maven.modrinth:create-fly:${p("createVersion")}")
+	modImplementation("net.fabricmc.fabric-api:fabric-api:${p("fabricApiVersion")}+${p("mcVersion")}")
+	modImplementation("maven.modrinth:create-fly:${p("mcVersion")}-${p("createVersion")}")
 	modImplementation("me.shedaniel.cloth:cloth-config-${p("loader")}:${p("clothConfigVersion")}")
 	modImplementation("com.terraformersmc:modmenu:${p("modmenuVersion")}")
 }

@@ -1,2 +1,1 @@
-- Fix crash without ModMenu installed
-- Fix tooltip offset issue
+- Fix mod display name

@@ -1,5 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.factory;
 import com.mojang.blaze3d.systems.RenderSystem;
+import io.github.forgestove.create_cyber_goggles.core.util.SlotUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -13,8 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 public class ClientFluidListTooltipComponent implements ClientTooltipComponent {
-	private static final int SLOT_WIDTH = 18;
-	private static final int SLOT_HEIGHT = 20;
 	private final List<FluidStack> fluids;
 	private final int maxColumns;
 	private final int columns;
@@ -34,7 +33,7 @@ public class ClientFluidListTooltipComponent implements ClientTooltipComponent {
 		);
 	}
 	public static void renderFluidBar(@NotNull GuiGraphics guiGraphics, @NotNull FluidStack stack, int x, int y, int width, int height) {
-		guiGraphics.blitSprite(ClientItemListTooltipComponent.SLOT_SPRITE, x, y, 0, SLOT_WIDTH, SLOT_HEIGHT);
+		guiGraphics.blitSprite(SlotUtil.SLOT, x, y, 0, SlotUtil.SIZE, SlotUtil.SIZE + 2);
 		if (stack.isEmpty()) return;
 		var innerX = x + 1;
 		var innerY = y + 1;
@@ -63,20 +62,20 @@ public class ClientFluidListTooltipComponent implements ClientTooltipComponent {
 	}
 	@Override
 	public int getHeight() {
-		return SLOT_HEIGHT + Math.max(0, rows - 1) * (SLOT_HEIGHT - 2) + 2;
+		return Math.max(1, rows) * SlotUtil.SIZE + 4;
 	}
 	@Override
 	public int getWidth(@NotNull Font font) {
-		return columns * SLOT_WIDTH + indentPixels(font);
+		return columns * SlotUtil.SIZE + indentPixels(font);
 	}
 	@Override
 	public void renderImage(@NotNull Font font, int x, int y, @NotNull GuiGraphics guiGraphics) {
 		for (var i = 0; i < fluids.size(); i++) {
 			var col = i % maxColumns;
 			var row = i / maxColumns;
-			var slotX = x + col * SLOT_WIDTH + indentPixels(font);
-			var slotY = y + row * (SLOT_HEIGHT - 2);
-			renderFluidBar(guiGraphics, fluids.get(i), slotX, slotY, SLOT_WIDTH, SLOT_HEIGHT - 2);
+			var slotX = x + col * SlotUtil.SIZE + indentPixels(font);
+			var slotY = y + row * SlotUtil.SIZE;
+			renderFluidBar(guiGraphics, fluids.get(i), slotX, slotY, SlotUtil.SIZE, SlotUtil.SIZE);
 		}
 	}
 	private int indentPixels(@NotNull Font font) {

@@ -26,7 +26,7 @@ import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 import static net.minecraft.ChatFormatting.*;
-public class GoggleTooltipUtil {
+public final class GoggleTooltipUtil {
 	public static void kinetic(List<Component> tooltip, @NotNull KineticBlockEntity kbe, float stress, float capacity) {
 		var speed = kbe.getTheoreticalSpeed();
 		if (StressImpact.isEnabled()) {

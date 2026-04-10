@@ -5,7 +5,7 @@ import net.minecraft.world.level.block.state.properties.Property;
 import java.util.List;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.*;
-public class WrenchMenuUtil {
+public final class WrenchMenuUtil {
 	public static final List<Property<?>> PROPERTIES_BLACKLIST = List.of(
 		EYE,
 		VAULT_STATE,

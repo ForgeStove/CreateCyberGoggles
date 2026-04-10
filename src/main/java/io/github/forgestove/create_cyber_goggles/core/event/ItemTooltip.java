@@ -1,34 +1,32 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
 import com.mojang.datafixers.util.Either;
-import com.simibubi.create.AllDataComponents;
-import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.equipment.armor.*;
-import com.simibubi.create.content.equipment.clipboard.ClipboardBlockItem;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
-import com.simibubi.create.content.equipment.toolbox.ToolboxInventory;
 import com.simibubi.create.content.equipment.wrench.WrenchItem;
-import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterBlockItem;
-import com.simibubi.create.content.logistics.stockTicker.PackageOrderWithCrafts;
-import com.simibubi.create.content.redstone.link.controller.LinkedControllerItem;
 import com.simibubi.create.foundation.utility.CreateLang;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.gui.*;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
-import net.createmod.catnip.codecs.CatnipCodecUtils;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.event.RenderTooltipEvent.*;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.fluids.*;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector2ic;
 
 import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
-public class ItemTooltip {
-	private static final int CLIPBOARD_TOOLTIP_GAP = 6;
+public final class ItemTooltip {
+	public static final List<TooltipOverlayRenderer> OVERLAY_RENDERERS = Arrays.asList(
+		new ClipboardRenderer(),
+		new ExtraItemRenderer(),
+		new ContainerRenderer()
+	);
+	private static final int OVERLAY_GAP = 6;
 	public static void itemTooltip(@NotNull ItemTooltipEvent event) {
 		if (!CCG.config.tooltip.extraItemTooltip) return;
 		var stack = event.getItemStack();
@@ -37,11 +35,6 @@ public class ItemTooltip {
 		backtank(stack, tooltip);
 		divingBoots(stack, tooltip);
 		wrench(stack, tooltip);
-		linkedController(stack, tooltip);
-		redstoneRequester(stack, tooltip);
-		toolbox(stack, tooltip);
-		enderChest(stack, tooltip);
-		container(stack, tooltip);
 		fluidContainer(stack, tooltip);
 	}
 	public static void gatherComponents(@NotNull GatherComponents event) {
@@ -99,72 +92,6 @@ public class ItemTooltip {
 			.component();
 		tooltip.add(1, component);
 	}
-	private static void linkedController(@NotNull ItemStack stack, List<Component> tooltip) {
-		if (!CCG.config.tooltip.linkedController) return;
-		if (!(stack.getItem() instanceof LinkedControllerItem)) return;
-		var frequencyItems = LinkedControllerItem.getFrequencyItems(stack);
-		var items = new ArrayList<ItemStack>(12);
-		var hasAnyItem = false;
-		for (var row = 0; row < 2; row++)
-			for (var column = 0; column < 6; column++) {
-				var slotIndex = column * 2 + row;
-				var slot = frequencyItems.getStackInSlot(slotIndex);
-				if (!slot.isEmpty()) hasAnyItem = true;
-				items.add(slot.copyWithCount(1));
-			}
-		if (!hasAnyItem) return;
-		CCGLang.itemList(items, 6).addTo(1, tooltip);
-	}
-	private static void redstoneRequester(@NotNull ItemStack stack, List<Component> tooltip) {
-		if (!CCG.config.tooltip.redstoneRequester) return;
-		if (!(stack.getItem() instanceof RedstoneRequesterBlockItem)) return;
-		var beData = stack.getComponents().get(DataComponents.BLOCK_ENTITY_DATA);
-		if (beData == null || !beData.contains("EncodedRequest")) return;
-		if (mc.level == null) return;
-		var encodedRequestTag = beData.copyTag().getCompound("EncodedRequest");
-		var encodedRequest = CatnipCodecUtils.decode(PackageOrderWithCrafts.CODEC, mc.level.registryAccess(), encodedRequestTag)
-			.orElse(PackageOrderWithCrafts.empty());
-		if (encodedRequest.isEmpty()) return;
-		var items = new ArrayList<ItemStack>();
-		encodedRequest.stacks().forEach(bigStack -> items.add(bigStack.stack.copyWithCount(bigStack.count)));
-		if (items.isEmpty()) return;
-		CCGLang.itemList(items, 9).addTo(3, tooltip);
-	}
-	private static void toolbox(@NotNull ItemStack stack, List<Component> tooltip) {
-		if (!CCG.config.tooltip.toolbox) return;
-		if (!AllItemTags.TOOLBOXES.matches(stack)) return;
-		var inventory = stack.getComponents().get(AllDataComponents.TOOLBOX_INVENTORY);
-		if (inventory == null) return;
-		var compartments = 8;
-		var stacksPerCompartment = ToolboxInventory.STACKS_PER_COMPARTMENT;
-		List<ItemStack> items = new ArrayList<>();
-		for (var compartment = 0; compartment < compartments; compartment++) {
-			var baseIndex = compartment * stacksPerCompartment;
-			var consolidated = ItemStack.EMPTY;
-			var totalCount = 0;
-			for (var offset = 0; offset < stacksPerCompartment; offset++) {
-				var slotIndex = baseIndex + offset;
-				if (slotIndex >= inventory.getSlots()) break;
-				var slot = inventory.getStackInSlot(slotIndex);
-				if (slot.isEmpty()) continue;
-				if (consolidated.isEmpty()) {
-					consolidated = slot.copyWithCount(1);
-					totalCount = slot.getCount();
-				} else if (ItemStack.isSameItemSameComponents(consolidated, slot)) totalCount += slot.getCount();
-			}
-			items.add(consolidated.copyWithCount(totalCount));
-		}
-		if (!items.isEmpty()) CCGLang.itemList(items, 4).addTo(1, tooltip);
-	}
-	private static void container(@NotNull ItemStack stack, List<Component> tooltip) {
-		if (!CCG.config.tooltip.container) return;
-		var container = stack.getComponents().get(DataComponents.CONTAINER);
-		if (container == null) return;
-		var items = new ArrayList<ItemStack>();
-		for (var i = 0; i < container.getSlots(); i++) items.add(container.getStackInSlot(i));
-		if (items.isEmpty()) return;
-		CCGLang.itemList(items, 9).addTo(1, tooltip);
-	}
 	private static void fluidContainer(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!CCG.config.tooltip.fluidContainer) return;
 		var handler = FluidUtil.getFluidHandler(stack).orElse(null);
@@ -187,38 +114,37 @@ public class ItemTooltip {
 			CCGLang.fluid(fluid, capacity).addTo(1, tooltip);
 		}
 	}
-	private static void enderChest(@NotNull ItemStack stack, List<Component> tooltip) {
-		if (!CCG.config.tooltip.enderChest) return;
-		if (!stack.is(Items.ENDER_CHEST)) return;
-		EnderChestTooltipUtil.appendForItem(tooltip);
-	}
 	public static void renderTooltipPre(@NotNull Pre event) {
-		if (!CCG.config.tooltip.extraItemTooltip || !CCG.config.tooltip.clipboard) return;
+		if (!CCG.config.tooltip.extraItemTooltip) return;
 		var stack = event.getItemStack();
-		if (!(stack.getItem() instanceof ClipboardBlockItem)) return;
-		var graphics = event.getGraphics();
-		var font = event.getFont();
+		var renderer = OVERLAY_RENDERERS.stream().filter(r -> r.supports(stack)).findFirst().orElse(null);
+		if (renderer == null) return;
 		var components = event.getComponents();
 		if (components.isEmpty()) return;
-		var tooltipWidth = 0;
-		var tooltipHeight = 0;
-		for (var c : components) {
-			tooltipWidth = Math.max(tooltipWidth, c.getWidth(font));
-			tooltipHeight += c.getHeight();
+		int tooltipWidth = 0, tooltipHeight = 0;
+		var font = event.getFont();
+		for (var component : components) {
+			tooltipWidth = Math.max(tooltipWidth, component.getWidth(font));
+			tooltipHeight += component.getHeight();
 		}
-		var overlayWidth = ClipboardUtil.getWidth();
-		var overlayHeight = ClipboardUtil.getHeight();
-		var pos = event.getTooltipPositioner()
-			.positionTooltip(event.getScreenWidth(), event.getScreenHeight(), event.getX(), event.getY(), tooltipWidth, tooltipHeight);
-		var overlayX = Mth.clamp(pos.x(), 0, Math.max(0, event.getScreenWidth() - overlayWidth));
-		var overlayY = pos.y() - overlayHeight - CLIPBOARD_TOOLTIP_GAP;
+		var overlayWidth = renderer.width(stack);
+		var overlayHeight = renderer.height(stack);
+		var pos = getPos(event, tooltipWidth, tooltipHeight);
+		var overlayX = getOverlayX(event, pos, overlayWidth);
+		var overlayY = pos.y() - overlayHeight - OVERLAY_GAP;
 		if (overlayY < 0) {
 			event.setY(event.getY() - overlayY);
-			pos = event.getTooltipPositioner()
-				.positionTooltip(event.getScreenWidth(), event.getScreenHeight(), event.getX(), event.getY(), tooltipWidth, tooltipHeight);
-			overlayX = Mth.clamp(pos.x(), 0, Math.max(0, event.getScreenWidth() - overlayWidth));
-			overlayY = Math.max(0, pos.y() - overlayHeight - CLIPBOARD_TOOLTIP_GAP);
+			pos = getPos(event, tooltipWidth, tooltipHeight);
+			overlayX = getOverlayX(event, pos, overlayWidth);
+			overlayY = Math.max(0, pos.y() - overlayHeight - OVERLAY_GAP);
 		}
-		ClipboardUtil.renderTooltipOverlay(graphics, stack, overlayX, overlayY);
+		renderer.render(event.getGraphics(), stack, overlayX - 4, overlayY);
+	}
+	private static int getOverlayX(@NotNull Pre event, Vector2ic pos, int overlayWidth) {
+		return Mth.clamp(pos.x(), 0, Math.max(0, event.getScreenWidth() - overlayWidth));
+	}
+	private static @NotNull Vector2ic getPos(@NotNull Pre event, int width, int height) {
+		return event.getTooltipPositioner()
+			.positionTooltip(event.getScreenWidth(), event.getScreenHeight(), event.getX(), event.getY(), width, height);
 	}
 }

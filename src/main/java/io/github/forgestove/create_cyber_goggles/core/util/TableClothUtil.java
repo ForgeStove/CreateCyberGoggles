@@ -13,7 +13,7 @@ import org.jetbrains.annotations.*;
 import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
-public class TableClothUtil {
+public final class TableClothUtil {
 	public static void clothStoreOverlay(GuiGraphics graphics, int x, int y, @NotNull List<ItemStack> items) {
 		var tcbe = getBlockEntity(TableClothBlockEntity.class);
 		if (tcbe == null) return;

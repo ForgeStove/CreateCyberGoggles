@@ -30,7 +30,7 @@ import org.jetbrains.annotations.*;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
-public class CCGUtil {
+public final class CCGUtil {
 	public static final Minecraft mc = Minecraft.getInstance();
 	public static final Outliner outliner = Outliner.getInstance();
 	private static HitResult cachedHitResult;
@@ -139,6 +139,10 @@ public class CCGUtil {
 	@Contract("_, _ -> new")
 	public static @NotNull ResourceLocation getRes(String namespace, String path) {
 		return ResourceLocation.fromNamespaceAndPath(namespace, path);
+	}
+	@Contract("_ -> new")
+	public static @NotNull ResourceLocation getMCRes(String path) {
+		return ResourceLocation.withDefaultNamespace(path);
 	}
 	@Contract("_ -> new")
 	public static @NotNull ResourceLocation getCCGRes(String path) {

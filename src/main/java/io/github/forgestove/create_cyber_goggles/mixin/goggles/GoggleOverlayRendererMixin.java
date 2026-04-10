@@ -3,10 +3,8 @@ import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.event.TooltipOverlay;
-import io.github.forgestove.create_cyber_goggles.core.util.GoggleTooltipDedupUtil;
-import io.github.forgestove.create_cyber_goggles.core.util.TooltipComponentUtil;
+import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.createmod.catnip.outliner.Outliner.OutlineEntry;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
@@ -19,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.*;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.isInGame;
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 @Mixin(value = GoggleOverlayRenderer.class, remap = false)
 public abstract class GoggleOverlayRendererMixin {
 	@Inject(method = "renderOverlay", at = @At("HEAD"), cancellable = true)
@@ -81,7 +79,7 @@ public abstract class GoggleOverlayRendererMixin {
 		}
 		var components = TooltipOverlay.buildTooltipComponents(tooltip, maxWidth, false);
 		if (components.isEmpty()) return;
-		var tooltipWidth = components.stream().mapToInt(c -> c.getWidth(Minecraft.getInstance().font)).max().orElse(0);
+		var tooltipWidth = components.stream().mapToInt(c -> c.getWidth(mc.font)).max().orElse(0);
 		var tooltipHeight = components.stream().mapToInt(ClientTooltipComponent::getHeight).sum() + (components.size() > 1 ? 2 : 0);
 		TooltipOverlay.renderTooltip(graphics, ItemStack.EMPTY, components, x, y, tooltipWidth, tooltipHeight, back, top, bot);
 	}

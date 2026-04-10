@@ -1,9 +1,10 @@
-package io.github.forgestove.create_cyber_goggles.core.util;
+package io.github.forgestove.create_cyber_goggles.core.gui;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.content.equipment.clipboard.*;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
+import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.client.gui.Font.DisplayMode;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.*;
@@ -12,70 +13,13 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
-public final class ClipboardUtil {
+public final class ClipboardRenderer implements TooltipOverlayRenderer {
 	private static final float SCALE = 0.5F;
-	public static int getWidth() {
-		return Mth.ceil(AllGuiTextures.CLIPBOARD.getWidth() * SCALE);
-	}
-	public static int getHeight() {
-		return Mth.ceil(AllGuiTextures.CLIPBOARD.getHeight() * SCALE);
-	}
-	public static void renderTooltipOverlay(GuiGraphics graphics, ItemStack stack, int x, int y) {
-		var pose = graphics.pose();
-		pose.pushPose();
-		pose.translate(x - 16, y, 600F);
-		pose.scale(SCALE, SCALE, 1F);
-		AllGuiTextures.CLIPBOARD.render(graphics, 0, 0);
-		renderTooltipOverlayText(graphics, stack);
-		pose.popPose();
-	}
-	private static void renderTooltipOverlayText(GuiGraphics graphics, ItemStack stack) {
-		// 读取剪贴板内容
-		var content = stack.getOrDefault(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY);
-		var pages = ClipboardEntry.readAll(content);
-		if (pages.isEmpty()) return;
-		var currentPage = Mth.clamp(content.previouslyOpenedPage(), 0, pages.size() - 1);
-		var entries = pages.get(currentPage);
-		if (entries.isEmpty()) return;
-		var font = mc.font;
-		// 渲染剪贴板内容
-		int x = 45, y = 50;
-		for (var entry : entries) {
-			var raw = entry.text.getString();
-			var address = raw.startsWith("#") && !raw.substring(1).isBlank();
-			var text = address ? raw.substring(1).stripLeading() : raw;
-			if (text.isBlank()) continue;
-			var color = entry.checked ? address ? 0x668D7F6B : 0x31B25D : 0x311A00;
-			if (address) {
-				var texture = entry.checked ? AllGuiTextures.CLIPBOARD_ADDRESS_INACTIVE : AllGuiTextures.CLIPBOARD_ADDRESS;
-				texture.render(graphics, x - 1, y + 1);
-			} else {
-				graphics.drawString(font, "□", x, y + 1, entry.checked ? 0x668D7F6B : 0xFF8D7F6B, false);
-				if (entry.checked) graphics.drawString(font, "✔", x, y, 0x31B25D, false);
-			}
-			for (var sequence : font.split(Component.literal(text), 150)) {
-				graphics.drawString(font, sequence, x + 13, y, color, false);
-				y += 9;
-			}
-			y += 3;
-		}
-		// 渲染页数指示器
-		var pageIndicator = Component.translatable("book.pageIndicator", currentPage + 1, pages.size());
-		var indicator = pageIndicator.getString();
-		var slashCenterX = AllGuiTextures.CLIPBOARD.getWidth() / 2F;
-		var slashIndex = indicator.indexOf('/');
-		int indicatorX;
-		if (slashIndex >= 0) {
-			var leftPart = indicator.substring(0, slashIndex);
-			indicatorX = (int) (slashCenterX - font.width(leftPart) - font.width("/") / 2F);
-		} else indicatorX = (int) (slashCenterX - font.width(indicator) / 2F);
-		graphics.drawString(font, pageIndicator, indicatorX, 235, 0x311A00, false);
-	}
 	public static void renderClipboardPage(PoseStack poseStack, MultiBufferSource buffer, int light, ItemStack stack) {
 		poseStack.mulPose(Axis.YP.rotationDegrees(180F));
 		poseStack.mulPose(Axis.ZP.rotationDegrees(180F));
 		var matrix = poseStack.last().pose();
-		matrix.translate(-0.25F, -0.25F, 0F);
+		matrix.translate(-0.25F, -0.3F, 0F);
 		matrix.scale(0.004F);
 		renderBack(poseStack, buffer, light);
 		renderText(poseStack, buffer, light, stack);
@@ -162,5 +106,65 @@ public final class ClipboardUtil {
 		vertex.addVertex(matrix, x1, y1, 0F).setColor(-1).setUv(maxU, maxV).setLight(light);
 		vertex.addVertex(matrix, x1, y, 0F).setColor(-1).setUv(maxU, minV).setLight(light);
 		vertex.addVertex(matrix, x, y, 0F).setColor(-1).setUv(minU, minV).setLight(light);
+	}
+	@Override
+	public boolean supports(ItemStack stack) {
+		return CCG.config.tooltip.clipboard && stack.getItem() instanceof ClipboardBlockItem;
+	}
+	@Override
+	public int width(ItemStack stack) {
+		return Mth.ceil(AllGuiTextures.CLIPBOARD.getWidth() * SCALE);
+	}
+	@Override
+	public int height(ItemStack stack) {
+		return Mth.ceil(AllGuiTextures.CLIPBOARD.getHeight() * SCALE);
+	}
+	@Override
+	public void render(GuiGraphics graphics, ItemStack stack, int x, int y) {
+		// 读取剪贴板内容
+		var content = stack.getOrDefault(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY);
+		var pages = ClipboardEntry.readAll(content);
+		if (pages.isEmpty()) return;
+		var currentPage = Mth.clamp(content.previouslyOpenedPage(), 0, pages.size() - 1);
+		var entries = pages.get(currentPage);
+		if (entries.isEmpty()) return;
+		var pose = graphics.pose();
+		pose.pushPose();
+		pose.translate(x - 12, y, 600F);
+		pose.scale(SCALE, SCALE, 1F);
+		AllGuiTextures.CLIPBOARD.render(graphics, 0, 0);
+		// 渲染剪贴板内容
+		var font = mc.font;
+		int x1 = 45, y1 = 50;
+		for (var entry : entries) {
+			var raw = entry.text.getString();
+			var address = raw.startsWith("#") && !raw.substring(1).isBlank();
+			var text = address ? raw.substring(1).stripLeading() : raw;
+			if (text.isBlank()) continue;
+			var color = entry.checked ? address ? 0x668D7F6B : 0x31B25D : 0x311A00;
+			if (address) {
+				var texture = entry.checked ? AllGuiTextures.CLIPBOARD_ADDRESS_INACTIVE : AllGuiTextures.CLIPBOARD_ADDRESS;
+				texture.render(graphics, x1 - 1, y1 + 1);
+			} else {
+				graphics.drawString(font, "□", x1, y1 + 1, entry.checked ? 0x668D7F6B : 0xFF8D7F6B, false);
+				if (entry.checked) graphics.drawString(font, "✔", x1, y1, 0x31B25D, false);
+			}
+			for (var sequence : font.split(Component.literal(text), 150)) {
+				graphics.drawString(font, sequence, x1 + 13, y1, color, false);
+				y1 += 9;
+			}
+			y1 += 3;
+		}// 渲染页数指示器
+		var pageIndicator = Component.translatable("book.pageIndicator", currentPage + 1, pages.size());
+		var indicator = pageIndicator.getString();
+		var slashCenterX = AllGuiTextures.CLIPBOARD.getWidth() / 2F;
+		var slashIndex = indicator.indexOf('/');
+		int indicatorX;
+		if (slashIndex >= 0) {
+			var leftPart = indicator.substring(0, slashIndex);
+			indicatorX = (int) (slashCenterX - font.width(leftPart) - font.width("/") / 2F);
+		} else indicatorX = (int) (slashCenterX - font.width(indicator) / 2F);
+		graphics.drawString(font, pageIndicator, indicatorX, 235, 0x311A00, false);
+		pose.popPose();
 	}
 }

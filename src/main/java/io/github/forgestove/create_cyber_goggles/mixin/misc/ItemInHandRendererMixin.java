@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.mixin.misc;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.content.equipment.clipboard.ClipboardBlockItem;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.ClipboardUtil;
+import io.github.forgestove.create_cyber_goggles.core.gui.ClipboardRenderer;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.*;
 import net.minecraft.world.InteractionHand;
@@ -42,9 +42,7 @@ public abstract class ItemInHandRendererMixin {
 		if (!(stack.getItem() instanceof ClipboardBlockItem)) return;
 		var mainHand = hand == InteractionHand.MAIN_HAND;
 		var arm = mainHand ? player.getMainArm() : player.getMainArm().getOpposite();
-		poseStack.pushPose();
 		renderOneHandedMap(poseStack, buffer, combinedLight, equippedProgress, arm, swingProgress, stack);
-		poseStack.popPose();
 		ci.cancel();
 	}
 	@Inject(method = "renderMap", at = @At("HEAD"), cancellable = true)
@@ -52,6 +50,6 @@ public abstract class ItemInHandRendererMixin {
 		if (!CCG.config.tooltip.clipboard) return;
 		if (!(stack.getItem() instanceof ClipboardBlockItem)) return;
 		ci.cancel();
-		ClipboardUtil.renderClipboardPage(poseStack, buffer, packedLight, stack);
+		ClipboardRenderer.renderClipboardPage(poseStack, buffer, packedLight, stack);
 	}
 }

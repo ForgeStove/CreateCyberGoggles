@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.factory;
 import com.mojang.blaze3d.systems.RenderSystem;
-import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
+import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
@@ -9,7 +9,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.util.Mth;
-import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.inventory.*;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
@@ -17,9 +17,6 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int capacityMb, int sharedBarWidth)
 	implements ClientTooltipComponent {
-	private static final int SLOT_WIDTH = 18;
-	private static final int MIN_WIDTH = SLOT_WIDTH * 4;
-	private static final int SLOT_HEIGHT = 14;
 	private static final int H_PADDING = 4;
 	private static final int BORDER_COLOR = 0xFF777777;
 	public static void register(@NotNull RegisterClientTooltipComponentFactoriesEvent event) {
@@ -77,7 +74,7 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 	}
 	public static int preferredBarWidth(@NotNull Font font, @NotNull FluidStack fluid, int capacityMb) {
 		var label = buildLabel(fluid, capacityMb, Screen.hasShiftDown());
-		return Math.max(MIN_WIDTH, font.width(label) + H_PADDING * 2);
+		return Math.max(SlotUtil.SIZE * 4, font.width(label) + H_PADDING * 2);
 	}
 	private static @NotNull Component buildLabel(@NotNull FluidStack fluid, int capacityMb, boolean showCapacity) {
 		if (fluid.isEmpty()) return CCGLang.translate("tooltip.empty")
@@ -86,8 +83,8 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 			.append(" ")
 			.append(Component.literal(formatFluidAmount(capacityMb)));
 		var label = fluid.getHoverName().copy().append(" ").append(Component.literal(formatFluidAmount(fluid.getAmount())));
-		if (showCapacity) return label.append(Component.literal(" / ").withStyle(ChatFormatting.DARK_GRAY))
-			.append(Component.literal(formatFluidAmount(capacityMb)).withStyle(ChatFormatting.DARK_GRAY));
+		if (showCapacity) return label.append(Component.literal(" / ").withStyle(ChatFormatting.GRAY))
+			.append(Component.literal(formatFluidAmount(capacityMb)).withStyle(ChatFormatting.GRAY));
 		return label;
 	}
 	private @NotNull Component buildLabel() {
@@ -95,7 +92,7 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 	}
 	@Override
 	public int getHeight() {
-		return SLOT_HEIGHT + 2;
+		return SlotUtil.SIZE_SLIM + 2;
 	}
 	@Override
 	public int getWidth(@NotNull Font font) {
@@ -106,9 +103,9 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 		var label = buildLabel();
 		var barX = x + indentPixels(font);
 		var barWidth = barWidth(font);
-		renderFluidBar(guiGraphics, fluid, capacityMb, barX, y, barWidth, SLOT_HEIGHT);
+		renderFluidBar(guiGraphics, fluid, capacityMb, barX, y, barWidth, SlotUtil.SIZE_SLIM);
 		var textX = barX + H_PADDING;
-		var textY = y + Mth.floor((SLOT_HEIGHT - font.lineHeight) / 2F) + 1;
+		var textY = y + Mth.floor((SlotUtil.SIZE_SLIM - font.lineHeight) / 2F) + 1;
 		guiGraphics.drawString(font, label, textX, textY, 0xFFFFFFFF, true);
 	}
 	private int barWidth(@NotNull Font font) {

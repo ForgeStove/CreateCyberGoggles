@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.core.factory;
+import io.github.forgestove.create_cyber_goggles.core.util.SlotUtil;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
@@ -9,9 +9,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 public class ClientItemListTooltipComponent implements ClientTooltipComponent {
-	public static final ResourceLocation SLOT_SPRITE = ResourceLocation.withDefaultNamespace("container/bundle/slot");
-	private static final int SLOT_WIDTH = 18;
-	private static final int SLOT_HEIGHT = 20;
 	private final List<ItemStack> items;
 	private final int maxColumns;
 	private final int columns;
@@ -32,24 +29,24 @@ public class ClientItemListTooltipComponent implements ClientTooltipComponent {
 	}
 	@Override
 	public int getHeight() {
-		return SLOT_HEIGHT + Math.max(0, rows - 1) * (SLOT_HEIGHT - 2) + 2;
+		return Math.max(1, rows) * SlotUtil.SIZE + 2;
 	}
 	@Override
 	public int getWidth(@NotNull Font font) {
-		return columns * SLOT_WIDTH + indentPixels(font);
+		return columns * SlotUtil.SIZE + indentPixels(font);
 	}
 	@Override
 	public void renderImage(@NotNull Font font, int x, int y, @NotNull GuiGraphics guiGraphics) {
 		for (var i = 0; i < items.size(); i++) {
 			var col = i % maxColumns;
 			var row = i / maxColumns;
-			var slotX = x + col * SLOT_WIDTH + indentPixels(font);
-			var slotY = y + row * (SLOT_HEIGHT - 2);
+			var slotX = x + col * SlotUtil.SIZE + indentPixels(font);
+			var slotY = y + row * SlotUtil.SIZE;
 			renderSlot(guiGraphics, font, items.get(i), slotX, slotY);
 		}
 	}
 	private void renderSlot(GuiGraphics guiGraphics, Font font, ItemStack stack, int x, int y) {
-		guiGraphics.blitSprite(SLOT_SPRITE, x, y, 0, SLOT_WIDTH, SLOT_HEIGHT);
+		guiGraphics.blitSprite(SlotUtil.SLOT, x, y, 0, SlotUtil.SIZE, SlotUtil.SIZE);
 		guiGraphics.renderItem(stack, x + 1, y + 1);
 		guiGraphics.renderItemDecorations(font, stack, x + 1, y + 1);
 	}

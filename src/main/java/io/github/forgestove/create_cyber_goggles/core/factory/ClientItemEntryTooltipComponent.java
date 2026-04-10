@@ -1,4 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.core.factory;
+import io.github.forgestove.create_cyber_goggles.core.util.SlotUtil;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.Font.DisplayMode;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -11,9 +12,6 @@ import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactori
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 public record ClientItemEntryTooltipComponent(ItemStack stack, int indent, Component label) implements ClientTooltipComponent {
-	private static final int SLOT_WIDTH = 14;
-	private static final int SLOT_HEIGHT = 14;
-	private static final int TEXT_GAP = 0;
 	public static void register(@NotNull RegisterClientTooltipComponentFactoriesEvent event) {
 		event.register(
 			ItemEntryTooltipComponent.class,
@@ -22,16 +20,16 @@ public record ClientItemEntryTooltipComponent(ItemStack stack, int indent, Compo
 	}
 	@Override
 	public int getHeight() {
-		return SLOT_HEIGHT;
+		return SlotUtil.SIZE_SLIM;
 	}
 	@Override
 	public int getWidth(@NotNull Font font) {
-		return indentPixels(font) + SLOT_WIDTH + TEXT_GAP + font.width(label);
+		return indentPixels(font) + SlotUtil.SIZE_SLIM + font.width(label);
 	}
 	@Override
 	public void renderText(@NotNull Font font, int x, int y, @NotNull Matrix4f matrix, @NotNull BufferSource source) {
-		var textX = x + indentPixels(font) + SLOT_WIDTH + TEXT_GAP;
-		var textY = y + Mth.floor((SLOT_HEIGHT - font.lineHeight) / 2F);
+		var textX = x + indentPixels(font) + SlotUtil.SIZE_SLIM;
+		var textY = y + Mth.floor((SlotUtil.SIZE_SLIM - font.lineHeight) / 2F);
 		font.drawInBatch(label, textX, textY, -1, true, matrix, source, DisplayMode.NORMAL, 0, 15728880);
 	}
 	@Override

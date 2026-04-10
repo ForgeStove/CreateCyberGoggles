@@ -4,10 +4,11 @@ import io.github.forgestove.create_cyber_goggles.core.factory.ClientFluidListToo
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientItemEntryTooltipComponent.ItemEntryTooltipComponent;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientItemListTooltipComponent.ItemListTooltipComponent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import org.jetbrains.annotations.*;
 
 import java.util.IdentityHashMap;
-public class TooltipComponentUtil {
+public final class TooltipComponentUtil {
 	public static final IdentityHashMap<Component, ItemListTooltipComponent> ITEM_LIST_MAP = new IdentityHashMap<>();
 	public static final IdentityHashMap<Component, ItemEntryTooltipComponent> ITEM_ENTRY_MAP = new IdentityHashMap<>();
 	public static final IdentityHashMap<Component, FluidListTooltipComponent> FLUID_LIST_MAP = new IdentityHashMap<>();
@@ -19,7 +20,7 @@ public class TooltipComponentUtil {
 			if (text.charAt(i) != ' ') return 0;
 		return text.length();
 	}
-	private static <T> @Nullable MarkerResult<T> removeMarker(
+	private static <T extends TooltipComponent> @Nullable MarkerResult<T> removeMarker(
 		@NotNull Component component,
 		@NotNull IdentityHashMap<Component, T> map,
 		int indent

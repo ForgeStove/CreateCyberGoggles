@@ -33,6 +33,7 @@ public final class CCG {
 		game.addListener(PlayerInteract::tick);
 		game.addListener(ItemTooltip::itemTooltip);
 		game.addListener(ItemTooltip::gatherComponents);
+		game.addListener(ItemTooltip::renderTooltipPre);
 		game.addListener(KineticParticle::tick);
 		game.addListener(KineticDebugger::tick);
 		game.addListener(Outliner::tick);

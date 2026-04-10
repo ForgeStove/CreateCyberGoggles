@@ -12,6 +12,7 @@ import static com.mojang.blaze3d.platform.InputConstants.*;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public enum CCGKey {
 	clickPenetrate(Type.KEYSYM, KEY_LCONTROL),
+	clipboardPageScroll(Type.KEYSYM, KEY_LCONTROL),
 	interactOpposite(Type.KEYSYM, KEY_TAB),
 	openConfig,
 	openStock,

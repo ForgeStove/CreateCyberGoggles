@@ -1,6 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.mixin.misc;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.content.equipment.clipboard.ClipboardBlockItem;
+import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.ClipboardUtil;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.*;
@@ -37,6 +38,7 @@ public abstract class ItemInHandRendererMixin {
 		CallbackInfo ci
 	) {
 		if (player.isScoping()) return;
+		if (!CCG.config.tooltip.clipboard) return;
 		if (!(stack.getItem() instanceof ClipboardBlockItem)) return;
 		var mainHand = hand == InteractionHand.MAIN_HAND;
 		var arm = mainHand ? player.getMainArm() : player.getMainArm().getOpposite();
@@ -47,6 +49,7 @@ public abstract class ItemInHandRendererMixin {
 	}
 	@Inject(method = "renderMap", at = @At("HEAD"), cancellable = true)
 	private void renderClipboardPage(PoseStack poseStack, MultiBufferSource buffer, int packedLight, ItemStack stack, CallbackInfo ci) {
+		if (!CCG.config.tooltip.clipboard) return;
 		if (!(stack.getItem() instanceof ClipboardBlockItem)) return;
 		ci.cancel();
 		ClipboardUtil.renderClipboardPage(poseStack, buffer, packedLight, stack);

@@ -1,6 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
 import com.mojang.datafixers.util.Function3;
 import com.simibubi.create.*;
+import com.simibubi.create.content.equipment.clipboard.*;
 import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.stockTicker.*;
 import com.simibubi.create.content.logistics.tableCloth.TableClothBlockEntity;
@@ -10,6 +11,7 @@ import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.*;
 import net.neoforged.neoforge.client.event.InputEvent.*;
@@ -29,6 +31,7 @@ public class KeyInput {
 	}
 	public static void mouseScroll(MouseScrollingEvent event) {
 		clothStore(event);
+		tryScrollClipboardPage(event);
 	}
 	private static void toggleGoggle() {
 		toggleConfig(
@@ -89,5 +92,25 @@ public class KeyInput {
 		if (hasActivedValueBox()) return;
 		scrollDeltaY = (int) event.getScrollDeltaY();
 		event.setCanceled(true);
+	}
+	private static void tryScrollClipboardPage(MouseScrollingEvent event) {
+		if (!CCGKey.clipboardPageScroll.isDown()) return;
+		if (mc.player == null || mc.screen != null) return;
+		var stack = mc.player.getMainHandItem();
+		if (!(stack.getItem() instanceof ClipboardBlockItem)) {
+			stack = mc.player.getOffhandItem();
+			if (!(stack.getItem() instanceof ClipboardBlockItem)) return;
+		}
+		var delta = event.getScrollDeltaY();
+		if (delta == 0) return;
+		var content = stack.getOrDefault(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY);
+		var pages = ClipboardEntry.readAll(content);
+		if (pages.isEmpty()) return;
+		event.setCanceled(true);
+		var page = Mth.clamp(content.previouslyOpenedPage(), 0, pages.size() - 1);
+		var target = Mth.clamp(page + (delta < 0 ? 1 : -1), 0, pages.size() - 1);
+		if (target == page) return;
+		stack.set(AllDataComponents.CLIPBOARD_CONTENT, content.setPreviouslyOpenedPage(target));
+		playSound(SoundEvents.BOOK_PAGE_TURN, 1.0f, 1.0f);
 	}
 }

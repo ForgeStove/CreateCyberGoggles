@@ -3,6 +3,7 @@ import com.mojang.datafixers.util.Either;
 import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.equipment.armor.*;
+import com.simibubi.create.content.equipment.clipboard.ClipboardBlockItem;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import com.simibubi.create.content.equipment.toolbox.ToolboxInventory;
 import com.simibubi.create.content.equipment.wrench.WrenchItem;
@@ -16,8 +17,9 @@ import net.createmod.catnip.codecs.CatnipCodecUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.*;
-import net.neoforged.neoforge.client.event.RenderTooltipEvent.GatherComponents;
+import net.neoforged.neoforge.client.event.RenderTooltipEvent.*;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.fluids.*;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +28,7 @@ import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public class ItemTooltip {
+	private static final int CLIPBOARD_TOOLTIP_GAP = 6;
 	public static void itemTooltip(@NotNull ItemTooltipEvent event) {
 		if (!CCG.config.tooltip.extraItemTooltip) return;
 		var stack = event.getItemStack();
@@ -188,5 +191,34 @@ public class ItemTooltip {
 		if (!CCG.config.tooltip.enderChest) return;
 		if (!stack.is(Items.ENDER_CHEST)) return;
 		EnderChestTooltipUtil.appendForItem(tooltip);
+	}
+	public static void renderTooltipPre(@NotNull Pre event) {
+		if (!CCG.config.tooltip.extraItemTooltip || !CCG.config.tooltip.clipboard) return;
+		var stack = event.getItemStack();
+		if (!(stack.getItem() instanceof ClipboardBlockItem)) return;
+		var graphics = event.getGraphics();
+		var font = event.getFont();
+		var components = event.getComponents();
+		if (components.isEmpty()) return;
+		var tooltipWidth = 0;
+		var tooltipHeight = 0;
+		for (var c : components) {
+			tooltipWidth = Math.max(tooltipWidth, c.getWidth(font));
+			tooltipHeight += c.getHeight();
+		}
+		var overlayWidth = ClipboardUtil.getWidth();
+		var overlayHeight = ClipboardUtil.getHeight();
+		var pos = event.getTooltipPositioner()
+			.positionTooltip(event.getScreenWidth(), event.getScreenHeight(), event.getX(), event.getY(), tooltipWidth, tooltipHeight);
+		var overlayX = Mth.clamp(pos.x(), 0, Math.max(0, event.getScreenWidth() - overlayWidth));
+		var overlayY = pos.y() - overlayHeight - CLIPBOARD_TOOLTIP_GAP;
+		if (overlayY < 0) {
+			event.setY(event.getY() - overlayY);
+			pos = event.getTooltipPositioner()
+				.positionTooltip(event.getScreenWidth(), event.getScreenHeight(), event.getX(), event.getY(), tooltipWidth, tooltipHeight);
+			overlayX = Mth.clamp(pos.x(), 0, Math.max(0, event.getScreenWidth() - overlayWidth));
+			overlayY = Math.max(0, pos.y() - overlayHeight - CLIPBOARD_TOOLTIP_GAP);
+		}
+		ClipboardUtil.renderTooltipOverlay(graphics, stack, overlayX, overlayY);
 	}
 }

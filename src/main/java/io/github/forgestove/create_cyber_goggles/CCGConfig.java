@@ -24,6 +24,7 @@ public final class CCGConfig {
 		public boolean extraItemTooltip = true;
 		public boolean container = true;
 		public boolean fluidContainer = true;
+		public boolean clipboard = true;
 		public boolean toolbox = true;
 		public boolean enderChest = true;
 		public boolean goggles = true;

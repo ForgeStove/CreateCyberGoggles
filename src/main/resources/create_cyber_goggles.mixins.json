@@ -36,6 +36,7 @@
 		"misc.EditBoxMixin",
 		"misc.FactoryPanelScreenMixin",
 		"misc.FilesHelperMixin",
+		"misc.ItemInHandRendererMixin",
 		"misc.NbtAccounterMixin",
 		"misc.NetheriteBacktankFirstPersonRendererMixin",
 		"misc.PlayerEnderChestContainerMixin",

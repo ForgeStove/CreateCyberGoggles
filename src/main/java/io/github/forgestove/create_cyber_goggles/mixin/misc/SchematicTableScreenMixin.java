@@ -23,6 +23,7 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 	@Shadow @Final private Component availableSchematicsTitle;
 	@Unique private SelectionScrollInput ccg$folderArea;
 	@Unique private Label ccg$folderLabel;
+	@Unique private IconButton ccg$folderPickerButton;
 	@Unique private List<String> ccg$folders = List.of();
 	protected SchematicTableScreenMixin(SchematicTableMenu container, Inventory inv, Component title) {
 		super(container, inv, title);
@@ -53,10 +54,10 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 		ccg$setFolderPickerVisible(false);
 		addRenderableWidget(ccg$folderArea);
 		addRenderableWidget(ccg$folderLabel);
-		var folderPickerButton = new IconButton(folderButton.getX() - 19, folderButton.getY(), AllIcons.I_VIEW_SCHEDULE);
-		folderPickerButton.withCallback(() -> ccg$setFolderPickerVisible(!ccg$folderArea.visible));
-		folderPickerButton.setToolTip(Component.translatable("create_cyber_goggles.screen.schematicTable.selectFolder"));
-		addRenderableWidget(folderPickerButton);
+		ccg$folderPickerButton = new IconButton(folderButton.getX() - 19, folderButton.getY(), AllIcons.I_VIEW_SCHEDULE);
+		ccg$folderPickerButton.withCallback(() -> ccg$setFolderPickerVisible(!ccg$folderArea.visible));
+		ccg$folderPickerButton.setToolTip(Component.translatable("create_cyber_goggles.screen.schematicTable.selectFolder"));
+		addRenderableWidget(ccg$folderPickerButton);
 		refreshButton.withCallback(this::ccg$refreshFoldersAndFiles);
 	}
 	@Unique
@@ -87,6 +88,7 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 			ccg$folderArea.active = visible;
 		}
 		if (ccg$folderLabel != null) ccg$folderLabel.visible = visible;
+		if (ccg$folderPickerButton != null) ccg$folderPickerButton.green = visible;
 		if (schematicsArea != null) {
 			schematicsArea.visible = !visible;
 			schematicsArea.active = !visible;

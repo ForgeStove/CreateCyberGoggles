@@ -1,2 +1,7 @@
-- Add RedstoneRequesterBlockMixin to support table cloth item tooltip display
-- Fix [#31](https://github.com/ForgeStove/CreateCyberGoggles/issues/31)
+- Add clipboard rendering and quick interaction functions
+- Add shortcut key settings tab to support custom key bindings
+- Add power arm placement preview connection rendering function
+- Add a function to prevent selection loss when switching mechanical arms
+- Rework container tooltip rendering
+- Optimize the status display of the folder selection button
+- Optimize placement preview connection rendering

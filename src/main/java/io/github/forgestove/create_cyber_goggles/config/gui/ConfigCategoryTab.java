@@ -1,4 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.config.gui;
+import com.mojang.blaze3d.platform.InputConstants.Key;
 import io.github.forgestove.create_cyber_goggles.config.Translation;
 import io.github.forgestove.create_cyber_goggles.config.gui.entry.*;
 import io.github.forgestove.create_cyber_goggles.config.tree.*;
@@ -27,7 +28,9 @@ public final class ConfigCategoryTab<C> implements Tab {
 		Double.class,
 		(tab, node) -> new DoubleValueConfigEntry<>(tab, cast(node)),
 		String.class,
-		(tab, node) -> new StringValueConfigEntry<>(tab, cast(node))
+		(tab, node) -> new StringValueConfigEntry<>(tab, cast(node)),
+		Key.class,
+		(tab, node) -> new KeybindValueConfigEntry<>(tab, cast(node))
 	);
 	private final ConfigScreen<C> screen;
 	private final CategoryConfigNode<C> category;
@@ -118,6 +121,15 @@ public final class ConfigCategoryTab<C> implements Tab {
 	}
 	public void setTabButton(@Nullable TabButton tabButton) {
 		this.tabButton = tabButton;
+	}
+	public boolean handleKeyCapture(int keyCode) {
+		return this.list.handleKeyCapture(keyCode);
+	}
+	public boolean handleMouseCapture(int button) {
+		return this.list.handleMouseCapture(button);
+	}
+	public boolean isCapturingKeybind() {
+		return this.list.isCapturingKeybind();
 	}
 	@FunctionalInterface
 	private interface ConfigEntryFactory<C> {

@@ -1,6 +1,8 @@
 package io.github.forgestove.create_cyber_goggles.config.gui;
+import com.mojang.blaze3d.platform.InputConstants.Key;
 import io.github.forgestove.create_cyber_goggles.config.Translation;
-import io.github.forgestove.create_cyber_goggles.config.tree.RootConfigNode;
+import io.github.forgestove.create_cyber_goggles.config.tree.*;
+import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.tabs.*;
@@ -22,6 +24,7 @@ public final class ConfigScreen<C> extends Screen {
 	private final HeaderAndFooterLayout layout;
 	private final TabManager tabManager;
 	private final String cacheKey;
+	private final CategoryConfigNode<C> keybindCategory;
 	private TabNavigationBar tabNavigationBar;
 	private List<ConfigCategoryTab<C>> tabs;
 	private Button quitButton;
@@ -36,10 +39,12 @@ public final class ConfigScreen<C> extends Screen {
 		this.tabManager = new TabManager(this::addRenderableWidget, this::removeWidget);
 		this.tabs = List.of();
 		this.cacheKey = root.getTitle().getString();
+		this.keybindCategory = createKeybindCategory();
 	}
 	@Override
 	protected void init() {
 		this.root.resetToActive(this.config);
+		this.keybindCategory.resetToActive(this.config);
 		var tabNavigationBarBuilder = TabNavigationBar.builder(this.tabManager, this.width);
 		this.tabs = new ArrayList<>();
 		for (var category : this.root.getCategories()) {
@@ -47,18 +52,20 @@ public final class ConfigScreen<C> extends Screen {
 			tabNavigationBarBuilder.addTabs(tab);
 			this.tabs.add(tab);
 		}
+		var keybindTab = new ConfigCategoryTab<>(this, this.keybindCategory, this.config);
+		tabNavigationBarBuilder.addTabs(keybindTab);
+		this.tabs.add(keybindTab);
 		this.tabNavigationBar = tabNavigationBarBuilder.build();
 		this.initTabs(this.tabNavigationBar);
 		this.addRenderableWidget(this.tabNavigationBar);
 		var footerLayout = this.layout.addToFooter(LinearLayout.horizontal().spacing(8));
 		this.quitButton = footerLayout.addChild(Button.builder(this.getQuitLabel(), b -> this.onClose()).width(200).build());
 		this.saveAndQuitButton = footerLayout.addChild(Button.builder(this.getSaveLabel(), b -> this.saveAndQuit()).width(200).build());
-		this.saveAndQuitButton.active = !this.root.isActiveValue(this.config) && this.root.validate(this.config) == null;
+		this.saveAndQuitButton.active = !this.isActiveValue() && this.validate() == null;
 		this.layout.visitWidgets(abstractWidget -> {
 			abstractWidget.setTabOrderGroup(1);
 			this.addRenderableWidget(abstractWidget);
 		});
-		// Restore last selected tab or default to first tab
 		int cachedTabIndex = lastSelectedTabCache.getOrDefault(this.cacheKey, 0);
 		if (cachedTabIndex >= this.tabs.size()) cachedTabIndex = 0;
 		this.tabNavigationBar.selectTab(cachedTabIndex, false);
@@ -87,6 +94,8 @@ public final class ConfigScreen<C> extends Screen {
 	}
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+		var currentTab = this.tabManager.getCurrentTab();
+		if (currentTab instanceof ConfigCategoryTab<?> categoryTab && categoryTab.handleKeyCapture(keyCode)) return true;
 		if (this.tabNavigationBar.keyPressed(keyCode)) {
 			this.cacheCurrentTabIndex();
 			return true;
@@ -95,8 +104,10 @@ public final class ConfigScreen<C> extends Screen {
 	}
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		var currentTab = this.tabManager.getCurrentTab();
+		if (currentTab instanceof ConfigCategoryTab<?> categoryTab && categoryTab.isCapturingKeybind() && categoryTab.handleMouseCapture(
+			button)) return true;
 		var result = super.mouseClicked(mouseX, mouseY, button);
-		// Cache tab index after mouse click (may have clicked a tab)
 		this.cacheCurrentTabIndex();
 		return result;
 	}
@@ -109,8 +120,7 @@ public final class ConfigScreen<C> extends Screen {
 	}
 	@Override
 	public void onClose() {
-		if (this.root.isActiveValue(this.config)) {
-			// no changes, no need to confirm
+		if (this.isActiveValue()) {
 			this.getMinecraft().setScreen(this.previous);
 			return;
 		}
@@ -125,6 +135,8 @@ public final class ConfigScreen<C> extends Screen {
 	public void saveAndQuit() {
 		var restartRequired = this.root.restartRequired(this.config);
 		this.root.writeEditingToConfig(this.config);
+		this.keybindCategory.writeEditingToConfig(this.config);
+		this.getMinecraft().options.save();
 		this.onSave.accept(this.config);
 		if (restartRequired) this.getMinecraft().setScreen(new ConfirmScreen(
 			confirmed -> {
@@ -150,17 +162,40 @@ public final class ConfigScreen<C> extends Screen {
 	public void refresh() {
 		this.tabs.forEach(ConfigCategoryTab::refresh);
 		var hasEntryError = this.tabs.stream().anyMatch(ConfigCategoryTab::hasEntryError);
-		this.saveAndQuitButton.active = !this.root.isActiveValue(this.config) && this.root.validate(this.config) == null && !hasEntryError;
+		this.saveAndQuitButton.active = !this.isActiveValue() && this.validate() == null && !hasEntryError;
 		this.quitButton.setMessage(this.getQuitLabel());
 		this.saveAndQuitButton.setMessage(this.getSaveLabel(hasEntryError));
 	}
+	private boolean isActiveValue() {
+		return this.root.isActiveValue(this.config) && this.keybindCategory.isActiveValue(this.config);
+	}
+	private Component validate() {
+		var rootError = this.root.validate(this.config);
+		if (rootError != null) return rootError;
+		return this.keybindCategory.validate(this.config);
+	}
 	private Component getQuitLabel() {
-		return this.root.isActiveValue(this.config) ? Translation.CANCEL_LABEL : Translation.QUIT_UNSAVED_LABEL;
+		return this.isActiveValue() ? Translation.CANCEL_LABEL : Translation.QUIT_UNSAVED_LABEL;
 	}
 	private Component getSaveLabel(boolean hasEntryError) {
-		return this.root.validate(this.config) == null && !hasEntryError ? Translation.SAVE_LABEL : Translation.CANNOT_SAVE_LABEL;
+		return this.validate() == null && !hasEntryError ? Translation.SAVE_LABEL : Translation.CANNOT_SAVE_LABEL;
 	}
 	private Component getSaveLabel() {
 		return getSaveLabel(false);
+	}
+	private CategoryConfigNode<C> createKeybindCategory() {
+		var builder = CategoryConfigNode.<C>builder().name("keybinds").title(Translation.KEYBINDS_LABEL);
+		for (var key : CCGKey.values()) {
+			var mapping = key.keyMapping.get();
+			builder.<Key, Key>value(value -> value.type(Key.class)
+				.valueType(Key.class)
+				.name(key.name())
+				.title(Component.translatable(mapping.getName()))
+				.defaultValue(mapping.getDefaultKey())
+				.valueReader(config -> key.keyMapping.get().getKey())
+				.valueWriter((config, valueKey) -> key.keyMapping.get().setKey(valueKey))
+				.requiresRestart(false));
+		}
+		return builder.build();
 	}
 }

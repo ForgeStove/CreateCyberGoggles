@@ -143,4 +143,19 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 	public boolean hasEntryError() {
 		return this.children().stream().anyMatch(ConfigEntry::hasError);
 	}
+	public boolean handleKeyCapture(int keyCode) {
+		for (var entry : this.children())
+			if (entry instanceof KeybindValueConfigEntry<?> keybindEntry && keybindEntry.handleCaptureKey(keyCode)) return true;
+		return false;
+	}
+	public boolean handleMouseCapture(int button) {
+		for (var entry : this.children())
+			if (entry instanceof KeybindValueConfigEntry<?> keybindEntry && keybindEntry.handleCaptureMouse(button)) return true;
+		return false;
+	}
+	public boolean isCapturingKeybind() {
+		for (var entry : this.children())
+			if (entry instanceof KeybindValueConfigEntry<?> keybindEntry && keybindEntry.isCapturing()) return true;
+		return false;
+	}
 }

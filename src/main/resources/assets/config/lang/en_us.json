@@ -3,6 +3,7 @@
 	"config.ui.color_picker": "\uD83C\uDFA8",
 	"config.ui.color_picker.tooltip": "Color Picker",
 	"config.ui.ignore_restart": "Ignore and Continue",
+	"config.ui.keybinds": "Keybinds",
 	"config.ui.quit.confirm": "Confirm",
 	"config.ui.quit.confirm.title": "Discard Changes?",
 	"config.ui.quit.confirm.warning": "You have unsaved changes. Are you sure you want to discard them?",

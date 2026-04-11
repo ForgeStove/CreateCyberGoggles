@@ -3,10 +3,11 @@ import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.simibubi.create.AllSpecialTextures;
 import com.simibubi.create.content.kinetics.mechanicalArm.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.*;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.*;
+import net.minecraft.world.phys.HitResult.Type;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -28,11 +29,24 @@ public class ArmInteractionPointHandlerMixin {
 	private static boolean flushSettings(BlockPos instance, Vec3i vector, double distance, Operation<Boolean> original) {
 		return CCG.config.misc.removeMechanicalArmLimit || original.call(instance, vector, distance);
 	}
+	@WrapOperation(method = "tick", at = @At(value = "INVOKE", target = "Ljava/util/List;clear()V"))
+	private static void ccg$preventSelectionDiscardOnArmSwitch(List<?> instance, Operation<Void> original) {
+		if (CCG.config.misc.preventSelectionDiscard) return;
+		original.call(instance);
+	}
 	@Inject(method = "tick", at = @At("TAIL"))
 	private static void ccg$renderPlacementPreviewConnections(CallbackInfo ci) {
 		if (!CCG.config.outliner.betterLine) return;
+		if (currentItem != null && currentSelection != null && !currentSelection.isEmpty()) {
+			var player = mc.player;
+			var hit = mc.hitResult;
+			if (player != null && player.isShiftKeyDown() && (hit == null || hit.getType() == Type.MISS) && mc.options.keyUse.isDown()) {
+				player.swing(InteractionHand.MAIN_HAND);
+				currentSelection.clear();
+				return;
+			}
+		}
 		if (currentItem == null || currentSelection == null || currentSelection.isEmpty()) return;
-		var mc = Minecraft.getInstance();
 		var hit = mc.hitResult;
 		if (!(hit instanceof BlockHitResult blockHit)) return;
 		if (mc.level == null) return;
@@ -59,7 +73,11 @@ public class ArmInteractionPointHandlerMixin {
 	}
 	@Unique
 	private static Set<BlockPos> ccg$getMergedRange() {
-		var key = ccg$selectionKey();
+		long key = ArmBlockEntity.getRange();
+		for (var point : currentSelection) {
+			if (point == null || !point.isValid()) continue;
+			key = key * 31L + point.getPos().asLong();
+		}
 		if (key == ccg$rangeCacheKey) return ccg$cachedMergedRange;
 		var range = ArmBlockEntity.getRange();
 		Set<BlockPos> intersection = null;
@@ -80,14 +98,5 @@ public class ArmInteractionPointHandlerMixin {
 		ccg$rangeCacheKey = key;
 		ccg$cachedMergedRange = intersection == null ? Set.of() : intersection;
 		return ccg$cachedMergedRange;
-	}
-	@Unique
-	private static long ccg$selectionKey() {
-		long key = ArmBlockEntity.getRange();
-		for (var point : currentSelection) {
-			if (point == null || !point.isValid()) continue;
-			key = key * 31L + point.getPos().asLong();
-		}
-		return key;
 	}
 }

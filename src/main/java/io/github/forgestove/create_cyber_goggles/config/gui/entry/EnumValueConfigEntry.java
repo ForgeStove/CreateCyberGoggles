@@ -20,7 +20,6 @@ public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum<?>, 
 	private int scrollOffset = 0;
 	private int dropdownX;
 	private int dropdownY;
-	private int dropdownWidth;
 	private int maxVisibleOptions;
 	private int screenBottom;
 	private boolean isDraggingScrollbar = false;
@@ -28,7 +27,7 @@ public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum<?>, 
 		super(tab, valueNode);
 		enumValues = valueNode.getValueType().getEnumConstants();
 		enumClassName = valueNode.getValueType().getSimpleName();
-		dropdownButton = Button.builder(getDisplayComponent(getValue()), this::toggleDropdown).bounds(0, 0, 160, 20).build();
+		dropdownButton = Button.builder(getDisplayComponent(getValue()), this::toggleDropdown).size(WIDTH, HEIGHT).build();
 		children.add(dropdownButton);
 	}
 	private Component getDisplayComponent(Enum<?> value) {
@@ -81,8 +80,6 @@ public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum<?>, 
 		float delta
 	) {
 		renderLabel(guiGraphics, x, y);
-		dropdownWidth = 160 - resetButton.getWidth() - 2 - undoButton.getWidth() - 2;
-		dropdownButton.setWidth(dropdownWidth);
 		undoButton.setX(x + entryWidth - undoButton.getWidth());
 		resetButton.setX(undoButton.getX() - resetButton.getWidth() - 2);
 		dropdownButton.setX(resetButton.getX() - dropdownButton.getWidth() - 2);
@@ -110,10 +107,10 @@ public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum<?>, 
 		pose.pushPose();
 		pose.translate(0, 0, 100); // Bring to front
 		var dropdownHeight = getDropdownHeight();
-		var contentWidth = needsScrollbar() ? dropdownWidth - SCROLLBAR_WIDTH - 2 : dropdownWidth;
+		var contentWidth = needsScrollbar() ? WIDTH - SCROLLBAR_WIDTH - 2 : WIDTH;
 		// Draw background with border
-		guiGraphics.fill(dropdownX - 1, dropdownY - 1, dropdownX + dropdownWidth + 1, dropdownY + dropdownHeight + 1, 0xFF000000);
-		guiGraphics.fill(dropdownX, dropdownY, dropdownX + dropdownWidth, dropdownY + dropdownHeight, 0xFF2D2D2D);
+		guiGraphics.fill(dropdownX - 1, dropdownY - 1, dropdownX + WIDTH + 1, dropdownY + dropdownHeight + 1, 0xFF000000);
+		guiGraphics.fill(dropdownX, dropdownY, dropdownX + WIDTH, dropdownY + dropdownHeight, 0xFF2D2D2D);
 		// Draw options
 		for (var i = 0; i < maxVisibleOptions; i++) {
 			var optionIndex = i + scrollOffset;
@@ -140,7 +137,7 @@ public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum<?>, 
 			pose.popPose();
 			return;
 		}
-		var scrollbarX = dropdownX + dropdownWidth - SCROLLBAR_WIDTH - 1;
+		var scrollbarX = dropdownX + WIDTH - SCROLLBAR_WIDTH - 1;
 		var scrollbarTrackHeight = dropdownHeight - DROPDOWN_PADDING * 2;
 		var scrollbarHeight = Math.max(15, scrollbarTrackHeight * maxVisibleOptions / enumValues.length);
 		var maxScrollOffset = getMaxScrollOffset();
@@ -171,17 +168,17 @@ public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum<?>, 
 		if (!expanded) return false;
 		var dropdownHeight = getDropdownHeight();
 		return mouseX >= dropdownX - 1
-			&& mouseX < dropdownX + dropdownWidth + 1
+			&& mouseX < dropdownX + WIDTH + 1
 			&& mouseY >= dropdownY - 1
 			&& mouseY < dropdownY + dropdownHeight + 1;
 	}
 	public boolean handleDropdownClick(double mouseX, double mouseY) {
 		if (!expanded) return false;
 		var dropdownHeight = getDropdownHeight();
-		var contentWidth = needsScrollbar() ? dropdownWidth - SCROLLBAR_WIDTH - 2 : dropdownWidth;
+		var contentWidth = needsScrollbar() ? WIDTH - SCROLLBAR_WIDTH - 2 : WIDTH;
 		// Check scrollbar click
 		if (needsScrollbar()) {
-			var scrollbarX = dropdownX + dropdownWidth - SCROLLBAR_WIDTH - 1;
+			var scrollbarX = dropdownX + WIDTH - SCROLLBAR_WIDTH - 1;
 			if (mouseX >= scrollbarX
 				&& mouseX < scrollbarX + SCROLLBAR_WIDTH
 				&& mouseY >= dropdownY

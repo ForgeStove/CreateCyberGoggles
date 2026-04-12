@@ -33,11 +33,11 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 	public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
 		// Track which dropdown is expanded
 		expandedDropdown = null;
-		for (var entry : children())
-			if (entry instanceof EnumValueConfigEntry<?> enumEntry && enumEntry.isExpanded()) {
-				expandedDropdown = enumEntry;
-				break;
-			}
+		for (var entry : children()) {
+			if (!(entry instanceof EnumValueConfigEntry<?> enumEntry) || !enumEntry.isExpanded()) continue;
+			expandedDropdown = enumEntry;
+			break;
+		}
 		// Render dropdown overlay on top of everything (outside scissor)
 		var showTooltip = expandedDropdown == null;
 		if (expandedDropdown != null) {

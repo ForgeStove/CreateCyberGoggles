@@ -19,12 +19,12 @@ public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer,
 	public ColorValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Integer, Integer> valueNode, boolean hasAlpha) {
 		super(tab, valueNode);
 		this.hasAlpha = hasAlpha;
-		inputField = new EditBox(tab.getMinecraft().font, 0, 0, 80, 18, this.valueNode.getTitle());
+		inputField = new EditBox(tab.getMinecraft().font, 0, 0, 50, HEIGHT, this.valueNode.getTitle());
 		inputField.setMaxLength(hasAlpha ? 8 : 6);
 		inputField.setValue(formatColor(getValue()));
 		inputField.setFilter(s -> HEX_PATTERN.matcher(s).matches());
 		inputField.setResponder(this::onInputChange);
-		pickerButton = Button.builder(Translation.COLOR_PICKER_LABEL, b -> openColorPicker()).bounds(0, 0, 20, 20).build();
+		pickerButton = Button.builder(Translation.COLOR_PICKER_LABEL, b -> openColorPicker()).size(SIZE, SIZE).build();
 		children.add(inputField);
 		children.add(pickerButton);
 	}
@@ -86,15 +86,12 @@ public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer,
 		guiGraphics.renderOutline(colorPreviewX, y + 2, COLOR_PREVIEW_SIZE, COLOR_PREVIEW_SIZE, 0xFFA0A0A0);
 		// Picker button
 		pickerButton.setX(colorPreviewX - 24);
-		pickerButton.setY(y);
-		// Input field
-		inputField.setX(pickerButton.getX() - 75);
-		inputField.setY(y + 1);
-		inputField.setWidth(70);
-		// Reset and undo buttons
+		inputField.setX(pickerButton.getX() - 60);
 		resetButton.setX(colorPreviewX + COLOR_PREVIEW_SIZE + 2);
-		resetButton.setY(y);
 		undoButton.setX(resetButton.getX() + resetButton.getWidth() + 2);
+		pickerButton.setY(y);
+		inputField.setY(y);
+		resetButton.setY(y);
 		undoButton.setY(y);
 		inputField.render(guiGraphics, mouseX, mouseY, delta);
 		pickerButton.render(guiGraphics, mouseX, mouseY, delta);

@@ -18,17 +18,17 @@ public class TipOverlay {
 	public static void register(@NotNull RegisterGuiLayersEvent event) {
 		event.registerAbove(VanillaGuiLayers.HOTBAR, getCCGRes("tip_overlay"), TipOverlay::renderOverlay);
 	}
-	public static void renderOverlay(GuiGraphics graphics, DeltaTracker deltaTracker) {
+	public static void renderOverlay(GuiGraphics gui, DeltaTracker deltaTracker) {
 		if (mc.options.hideGui) return;
 		if (hoverTicks == 0 || lastTip == null) return;
-		var x = graphics.guiWidth() / 2 + deltaX;
-		var y = graphics.guiHeight() - 75 - lastTip.size() * 12 + deltaY;
+		var x = gui.guiWidth() / 2 + deltaX;
+		var y = gui.guiHeight() - 75 - lastTip.size() * 12 + deltaY;
 		var alpha = hoverTicks > 5 ? (11 - hoverTicks) / 5F : Math.min(1, hoverTicks / 5F);
 		var color = new Color(0xFFFFFF).setAlpha(alpha);
 		var titleColor = new Color(0xFBDC7D).setAlpha(alpha);
 		var i = 0;
 		for (var component : lastTip) {
-			graphics.drawString(mc.font, component, x - mc.font.width(component) / 2, y + i * 12, (i == 0 ? titleColor : color).getRGB());
+			gui.drawString(mc.font, component, x - mc.font.width(component) / 2, y + i * 12, (i == 0 ? titleColor : color).getRGB());
 			i++;
 		}
 	}

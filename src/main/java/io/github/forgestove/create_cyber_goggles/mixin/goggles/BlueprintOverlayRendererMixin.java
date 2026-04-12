@@ -18,7 +18,7 @@ public abstract class BlueprintOverlayRendererMixin {
 	@Shadow static List<ItemStack> results;
 	@Inject(method = "renderOverlay", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z", ordinal = 1), cancellable = true)
 	private static void renderOverlay(
-		GuiGraphics graphics,
+		GuiGraphics gui,
 		DeltaTracker deltaTracker,
 		CallbackInfo ci,
 		@Local(name = "x") int x,
@@ -26,7 +26,7 @@ public abstract class BlueprintOverlayRendererMixin {
 	) {
 		if (!CCG.config.goggles.betterStoreInfo) return;
 		ci.cancel();
-		TableClothUtil.clothStoreOverlay(graphics, x, y, results);
+		TableClothUtil.clothStoreOverlay(gui, x, y, results);
 		RenderSystem.disableBlend();
 	}
 	@Inject(
@@ -36,8 +36,8 @@ public abstract class BlueprintOverlayRendererMixin {
 		opcode = Opcodes.GETSTATIC
 	)
 	)
-	private static void resetTCBE(GuiGraphics graphics, DeltaTracker deltaTracker, CallbackInfo ci) {
+	private static void resetTCBE(GuiGraphics gui, DeltaTracker deltaTracker, CallbackInfo ci) {
 		if (!CCG.config.goggles.betterStoreInfo) return;
-		TableClothUtil.tableOverlay(graphics);
+		TableClothUtil.tableOverlay(gui);
 	}
 }

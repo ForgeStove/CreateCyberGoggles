@@ -36,19 +36,19 @@ public class ClientItemListTooltipComponent implements ClientTooltipComponent {
 		return columns * SlotUtil.SIZE + indentPixels(font);
 	}
 	@Override
-	public void renderImage(@NotNull Font font, int x, int y, @NotNull GuiGraphics guiGraphics) {
+	public void renderImage(@NotNull Font font, int x, int y, @NotNull GuiGraphics gui) {
 		for (var i = 0; i < items.size(); i++) {
 			var col = i % maxColumns;
 			var row = i / maxColumns;
 			var slotX = x + col * SlotUtil.SIZE + indentPixels(font);
 			var slotY = y + row * SlotUtil.SIZE;
-			renderSlot(guiGraphics, font, items.get(i), slotX, slotY);
+			renderSlot(gui, font, items.get(i), slotX, slotY);
 		}
 	}
-	private void renderSlot(GuiGraphics guiGraphics, Font font, ItemStack stack, int x, int y) {
-		guiGraphics.blitSprite(SlotUtil.SLOT, x, y, 0, SlotUtil.SIZE, SlotUtil.SIZE);
-		guiGraphics.renderItem(stack, x + 1, y + 1);
-		guiGraphics.renderItemDecorations(font, stack, x + 1, y + 1);
+	private void renderSlot(GuiGraphics gui, Font font, ItemStack stack, int x, int y) {
+		gui.blitSprite(SlotUtil.SLOT, x, y, 0, SlotUtil.SIZE, SlotUtil.SIZE);
+		gui.renderItem(stack, x + 1, y + 1);
+		gui.renderItemDecorations(font, stack, x + 1, y + 1);
 	}
 	private int indentPixels(@NotNull Font font) {
 		return indent * font.width(" ");

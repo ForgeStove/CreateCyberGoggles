@@ -23,7 +23,7 @@ public final class TextConfigEntry extends ConfigEntry {
 	}
 	@Override
 	public void render(
-		@NotNull GuiGraphics guiGraphics,
+		@NotNull GuiGraphics gui,
 		int index,
 		int y,
 		int x,
@@ -37,7 +37,7 @@ public final class TextConfigEntry extends ConfigEntry {
 		textWidget.setX(x);
 		textWidget.setY(y + 5);
 		textWidget.setMaxWidth(entryWidth);
-		textWidget.renderWidget(guiGraphics, mouseX, mouseY, delta);
+		textWidget.renderWidget(gui, mouseX, mouseY, delta);
 	}
 	@NotNull
 	@Override

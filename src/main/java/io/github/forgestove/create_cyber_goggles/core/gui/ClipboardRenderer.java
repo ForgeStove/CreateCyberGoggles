@@ -105,7 +105,7 @@ public final class ClipboardRenderer implements TooltipOverlayRenderer {
 		return Mth.ceil(AllGuiTextures.CLIPBOARD.getHeight() * SCALE);
 	}
 	@Override
-	public void render(GuiGraphics graphics, ItemStack stack, int x, int y) {
+	public void render(GuiGraphics gui, ItemStack stack, int x, int y) {
 		// 读取剪贴板内容
 		var content = stack.getOrDefault(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY);
 		var pages = ClipboardEntry.readAll(content);
@@ -113,11 +113,11 @@ public final class ClipboardRenderer implements TooltipOverlayRenderer {
 		var currentPage = Mth.clamp(content.previouslyOpenedPage(), 0, pages.size() - 1);
 		var entries = pages.get(currentPage);
 		if (entries.isEmpty()) return;
-		var pose = graphics.pose();
+		var pose = gui.pose();
 		pose.pushPose();
 		pose.translate(x - 12, y, 600F);
 		pose.scale(SCALE, SCALE, 1F);
-		AllGuiTextures.CLIPBOARD.render(graphics, 0, 0);
+		AllGuiTextures.CLIPBOARD.render(gui, 0, 0);
 		// 渲染剪贴板内容
 		var font = mc.font;
 		int x1 = 45, y1 = 50;
@@ -129,14 +129,14 @@ public final class ClipboardRenderer implements TooltipOverlayRenderer {
 			var checked = entry.checked;
 			if (address) {
 				var texture = checked ? AllGuiTextures.CLIPBOARD_ADDRESS_INACTIVE : AllGuiTextures.CLIPBOARD_ADDRESS;
-				texture.render(graphics, x1 - 1, y1 + 1);
+				texture.render(gui, x1 - 1, y1 + 1);
 			} else {
-				graphics.drawString(font, "□", x1, y1 + 1, checked ? 0x668D7F6B : 0xFF8D7F6B, false);
-				if (checked) graphics.drawString(font, "✔", x1, y1, 0x31B25D, false);
+				gui.drawString(font, "□", x1, y1 + 1, checked ? 0x668D7F6B : 0xFF8D7F6B, false);
+				if (checked) gui.drawString(font, "✔", x1, y1, 0x31B25D, false);
 			}
 			var color = checked ? address ? 0x668D7F6B : 0x31B25D : 0x311A00;
 			for (var sequence : font.split(Component.literal(text), 150)) {
-				graphics.drawString(font, sequence, x1 + 13, y1, color, false);
+				gui.drawString(font, sequence, x1 + 13, y1, color, false);
 				y1 += 9;
 			}
 			y1 += 3;
@@ -151,7 +151,7 @@ public final class ClipboardRenderer implements TooltipOverlayRenderer {
 			var leftPart = indicator.substring(0, slashIndex);
 			indicatorX = (int) (slashCenterX - font.width(leftPart) - font.width("/") / 2F);
 		} else indicatorX = (int) (slashCenterX - font.width(indicator) / 2F);
-		graphics.drawString(font, pageIndicator, indicatorX, 235, 0x311A00, false);
+		gui.drawString(font, pageIndicator, indicatorX, 235, 0x311A00, false);
 		pose.popPose();
 	}
 }

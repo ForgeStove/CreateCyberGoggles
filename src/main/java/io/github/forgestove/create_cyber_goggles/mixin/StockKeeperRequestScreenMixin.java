@@ -87,13 +87,13 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 		cir.setReturnValue(true);
 	}
 	@Inject(method = "renderForeground", at = @At("TAIL"))
-	private void ccg$renderPopup(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
+	private void ccg$renderPopup(GuiGraphics gui, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
 		if (!CCG.config.misc.stockRequestQuickActions) {
 			if (ccg$popup.isOpen()) ccg$popup.close();
 			return;
 		}
 		if (!ccg$popup.isOpen()) return;
-		ccg$popup.render(graphics, mc.font, mouseX, mouseY, partialTicks, ccg$popupX(), ccg$popupY());
+		ccg$popup.render(gui, mc.font, mouseX, mouseY, partialTicks, ccg$popupX(), ccg$popupY());
 	}
 	@Unique
 	private boolean ccg$openPopupForHoveredItem(int mouseX, int mouseY) {

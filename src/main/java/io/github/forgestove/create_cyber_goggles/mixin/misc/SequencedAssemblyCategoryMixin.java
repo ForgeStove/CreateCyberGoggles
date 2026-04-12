@@ -26,8 +26,8 @@ public abstract class SequencedAssemblyCategoryMixin {
 				new IDrawable() {
 					public int getWidth() {return AllGuiTextures.JEI_CHANCE_SLOT.getWidth();}
 					public int getHeight() {return AllGuiTextures.JEI_CHANCE_SLOT.getHeight();}
-					public void draw(@NotNull GuiGraphics guiGraphics, int xOffset, int yOffset) {
-						AllGuiTextures.JEI_CHANCE_SLOT.render(guiGraphics, xOffset, yOffset);
+					public void draw(@NotNull GuiGraphics gui, int xOffset, int yOffset) {
+						AllGuiTextures.JEI_CHANCE_SLOT.render(gui, xOffset, yOffset);
 					}
 				}, -1, -1
 			).addItemStack(out.getStack()).addRichTooltipCallback((iRecipeSlotView, iTooltipBuilder) -> {

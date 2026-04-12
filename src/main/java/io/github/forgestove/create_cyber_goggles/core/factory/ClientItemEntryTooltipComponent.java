@@ -33,14 +33,14 @@ public record ClientItemEntryTooltipComponent(ItemStack stack, int indent, Compo
 		font.drawInBatch(label, textX, textY, -1, true, matrix, source, DisplayMode.NORMAL, 0, 15728880);
 	}
 	@Override
-	public void renderImage(@NotNull Font font, int x, int y, @NotNull GuiGraphics guiGraphics) {
-		var pose = guiGraphics.pose();
+	public void renderImage(@NotNull Font font, int x, int y, @NotNull GuiGraphics gui) {
+		var pose = gui.pose();
 		pose.pushPose();
 		var slotX = x + indentPixels(font);
 		pose.translate(slotX, y, 450F);
 		pose.scale(0.75F, 0.75F, 1F);
-		guiGraphics.renderItem(stack, 0, 0);
-		guiGraphics.renderItemDecorations(font, stack, 0, 0);
+		gui.renderItem(stack, 0, 0);
+		gui.renderItemDecorations(font, stack, 0, 0);
 		pose.popPose();
 	}
 	private int indentPixels(@NotNull Font font) {

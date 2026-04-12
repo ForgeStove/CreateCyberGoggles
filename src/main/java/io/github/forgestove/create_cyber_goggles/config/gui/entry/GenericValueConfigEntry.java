@@ -24,7 +24,7 @@ public abstract class GenericValueConfigEntry<C, T> extends ValueConfigEntry<C, 
 		super(tab, valueNode);
 		this.parser = parser;
 		this.validator = validator;
-		inputField = new EditBox(tab.getMinecraft().font, 0, 0, 100, 20, this.valueNode.getTitle());
+		inputField = new EditBox(this.tab.getMinecraft().font, 0, 0, WIDTH, HEIGHT, this.valueNode.getTitle());
 		inputField.setValue(getValue().toString());
 		inputField.setFilter(validator);
 		inputField.setResponder(this::onInputChange);
@@ -46,10 +46,9 @@ public abstract class GenericValueConfigEntry<C, T> extends ValueConfigEntry<C, 
 			inputField.setFormatter((s, i) -> FormattedCharSequence.forward(s, Style.EMPTY));
 		} else inputField.setFormatter((s, i) -> FormattedCharSequence.forward(s, Style.EMPTY.withColor(ChatFormatting.RED)));
 		super.refresh();
-		if (hasParseError) {
-			resetButton.active = true;
-			undoButton.active = true;
-		}
+		if (!hasParseError) return;
+		resetButton.active = true;
+		undoButton.active = true;
 	}
 	@Override
 	public void resetToDefault() {
@@ -90,30 +89,18 @@ public abstract class GenericValueConfigEntry<C, T> extends ValueConfigEntry<C, 
 	}
 	@Override
 	public void render(
-		@NotNull GuiGraphics guiGraphics,
+		@NotNull GuiGraphics gui,
 		int index,
 		int y,
 		int x,
-		int entryWidth,
-		int entryHeight,
+		int width,
+		int height,
 		int mouseX,
 		int mouseY,
-		boolean hovered,
-		float delta
+		boolean hovering,
+		float partialTick
 	) {
-		renderLabel(guiGraphics, x, y);
-		inputField.setY(y);
-		resetButton.setY(y);
-		undoButton.setY(y);
-		undoButton.setX(x + entryWidth - undoButton.getWidth());
-		resetButton.setX(undoButton.getX() - resetButton.getWidth() - 2);
-		inputField.setX(resetButton.getX() - inputField.getWidth() - 3);
-		undoButton.setY(y);
-		resetButton.setY(y);
-		inputField.setY(y);
-		inputField.render(guiGraphics, mouseX, mouseY, delta);
-		resetButton.render(guiGraphics, mouseX, mouseY, delta);
-		undoButton.render(guiGraphics, mouseX, mouseY, delta);
+		renderGui(gui, y, x, width, mouseX, mouseY, partialTick, undoButton, resetButton, inputField);
 	}
 }
 

@@ -32,16 +32,16 @@ public class ClientFluidListTooltipComponent implements ClientTooltipComponent {
 			data -> new ClientFluidListTooltipComponent(data.fluids(), data.indent(), data.maxColumns())
 		);
 	}
-	public static void renderFluidBar(@NotNull GuiGraphics guiGraphics, @NotNull FluidStack stack, int x, int y, int width, int height) {
-		guiGraphics.blitSprite(SlotUtil.SLOT, x, y, 0, SlotUtil.SIZE, SlotUtil.SIZE + 2);
+	public static void renderFluidBar(@NotNull GuiGraphics gui, @NotNull FluidStack stack, int x, int y, int width, int height) {
+		gui.blitSprite(SlotUtil.SLOT, x, y, 0, SlotUtil.SIZE, SlotUtil.SIZE + 2);
 		if (stack.isEmpty()) return;
 		var innerX = x + 1;
 		var innerY = y + 1;
 		var innerW = Math.max(0, width - 2);
 		var innerH = Math.max(0, height - 2);
-		renderFluid(guiGraphics, stack, innerX, innerY, innerW, innerH);
+		renderFluid(gui, stack, innerX, innerY, innerW, innerH);
 	}
-	private static void renderFluid(@NotNull GuiGraphics guiGraphics, @NotNull FluidStack stack, int x, int y, int width, int height) {
+	private static void renderFluid(@NotNull GuiGraphics gui, @NotNull FluidStack stack, int x, int y, int width, int height) {
 		if (stack.isEmpty()) return;
 		var ext = IClientFluidTypeExtensions.of(stack.getFluid());
 		var still = ext.getStillTexture(stack);
@@ -56,7 +56,7 @@ public class ClientFluidListTooltipComponent implements ClientTooltipComponent {
 		for (var dx = 0; dx < width; dx += 16) {
 			var sliceWidth = Math.min(16, width - dx);
 			if (sliceWidth <= 0) break;
-			guiGraphics.blit(x + dx, y, 0, sliceWidth, height, sprite);
+			gui.blit(x + dx, y, 0, sliceWidth, height, sprite);
 		}
 		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 	}
@@ -69,13 +69,13 @@ public class ClientFluidListTooltipComponent implements ClientTooltipComponent {
 		return columns * SlotUtil.SIZE + indentPixels(font);
 	}
 	@Override
-	public void renderImage(@NotNull Font font, int x, int y, @NotNull GuiGraphics guiGraphics) {
+	public void renderImage(@NotNull Font font, int x, int y, @NotNull GuiGraphics gui) {
 		for (var i = 0; i < fluids.size(); i++) {
 			var col = i % maxColumns;
 			var row = i / maxColumns;
 			var slotX = x + col * SlotUtil.SIZE + indentPixels(font);
 			var slotY = y + row * SlotUtil.SIZE;
-			renderFluidBar(guiGraphics, fluids.get(i), slotX, slotY, SlotUtil.SIZE, SlotUtil.SIZE);
+			renderFluidBar(gui, fluids.get(i), slotX, slotY, SlotUtil.SIZE, SlotUtil.SIZE);
 		}
 	}
 	private int indentPixels(@NotNull Font font) {

@@ -25,30 +25,22 @@ public final class BooleanValueConfigEntry<C> extends ValueConfigEntry<C, Boolea
 	public void refresh() {
 		super.refresh();
 		var value = getValue();
-		if (!Objects.equals(valueButton.getValue(), value)) valueButton.setValue(value);
+		if (Objects.equals(valueButton.getValue(), value)) return;
+		valueButton.setValue(value);
 	}
 	@Override
 	public void render(
-		@NotNull GuiGraphics graphics,
+		@NotNull GuiGraphics gui,
 		int index,
 		int y,
 		int x,
-		int entryWidth,
-		int entryHeight,
+		int width,
+		int height,
 		int mouseX,
 		int mouseY,
-		boolean hovered,
-		float delta
+		boolean hovering,
+		float partialTick
 	) {
-		renderLabel(graphics, x, y);
-		undoButton.setX(x + entryWidth - undoButton.getWidth());
-		resetButton.setX(undoButton.getX() - resetButton.getWidth() - 2);
-		valueButton.setX(resetButton.getX() - valueButton.getWidth() - 2);
-		valueButton.setY(y);
-		resetButton.setY(y);
-		undoButton.setY(y);
-		valueButton.render(graphics, mouseX, mouseY, delta);
-		resetButton.render(graphics, mouseX, mouseY, delta);
-		undoButton.render(graphics, mouseX, mouseY, delta);
+		renderGui(gui, y, x, width, mouseX, mouseY, partialTick, undoButton, resetButton, valueButton);
 	}
 }

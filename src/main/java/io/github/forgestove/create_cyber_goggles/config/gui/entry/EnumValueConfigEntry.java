@@ -1,65 +1,41 @@
 package io.github.forgestove.create_cyber_goggles.config.gui.entry;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.config.gui.ConfigCategoryTab;
+import io.github.forgestove.create_cyber_goggles.config.gui.widget.EnumDropdownOverlayWidget;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
 public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum<?>, Enum<?>> {
-	private static final int OPTION_HEIGHT = 18;
-	private static final int SCROLLBAR_WIDTH = 6;
-	private static final int DROPDOWN_PADDING = 2;
 	private final Button dropdownButton;
-	private final Enum<?>[] enumValues;
 	private final String enumClassName;
-	private boolean expanded = false;
-	private int scrollOffset = 0;
-	private int dropdownX;
-	private int dropdownY;
-	private int maxVisibleOptions;
-	private int screenBottom;
-	private boolean isDraggingScrollbar = false;
+	private final EnumDropdownOverlayWidget dropdownOverlay;
 	public EnumValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Enum<?>, Enum<?>> valueNode) {
 		super(tab, valueNode);
-		enumValues = valueNode.getValueType().getEnumConstants();
+		var enumValues = valueNode.getValueType().getEnumConstants();
 		enumClassName = valueNode.getValueType().getSimpleName();
 		dropdownButton = Button.builder(getDisplayComponent(getValue()), this::toggleDropdown).size(WIDTH, HEIGHT).build();
+		dropdownOverlay = new EnumDropdownOverlayWidget(enumValues, this::getValue, this::selectValue, this::getDisplayComponent);
 		children.add(dropdownButton);
 	}
 	private Component getDisplayComponent(Enum<?> value) {
 		return Component.translatable(CCG.ID + ".config.enum." + enumClassName + "." + value.name());
 	}
 	private void toggleDropdown(Button button) {
-		expanded = !expanded;
-		if (!expanded) return;
-		// Calculate available space and max visible options
-		var availableHeight = screenBottom - dropdownY - DROPDOWN_PADDING * 2;
-		maxVisibleOptions = Mth.clamp(availableHeight / OPTION_HEIGHT, 1, enumValues.length);
-		// Scroll to show current selection
-		var currentIndex = Arrays.asList(enumValues).indexOf(getValue());
-		scrollOffset = Mth.clamp(currentIndex - maxVisibleOptions / 2, 0, getMaxScrollOffset());
+		var wasExpanded = dropdownOverlay.expanded;
+		dropdownOverlay.toggle();
+		if (wasExpanded) dropdownButton.playDownSound(tab.getMinecraft().getSoundManager());
 	}
 	private void selectValue(Enum<?> value) {
 		setValue(value);
-		expanded = false;
+		closeDropdown();
 		dropdownButton.setMessage(getDisplayComponent(value));
 	}
 	public void closeDropdown() {
-		expanded = false;
-		isDraggingScrollbar = false;
-	}
-	private int getMaxScrollOffset() {
-		return Math.max(0, enumValues.length - maxVisibleOptions);
-	}
-	private boolean needsScrollbar() {
-		return enumValues.length > maxVisibleOptions;
-	}
-	private int getDropdownHeight() {
-		return maxVisibleOptions * OPTION_HEIGHT + DROPDOWN_PADDING * 2;
+		if (!dropdownOverlay.expanded) return;
+		dropdownOverlay.close();
+		dropdownButton.playDownSound(tab.getMinecraft().getSoundManager());
 	}
 	@Override
 	public void refresh() {
@@ -68,7 +44,7 @@ public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum<?>, 
 	}
 	@Override
 	public void render(
-		@NotNull GuiGraphics guiGraphics,
+		@NotNull GuiGraphics gui,
 		int index,
 		int y,
 		int x,
@@ -79,156 +55,49 @@ public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum<?>, 
 		boolean hovered,
 		float delta
 	) {
-		renderLabel(guiGraphics, x, y);
+		renderLabel(gui, x, y);
+		var screenBottom = tab.getScreen().height - tab.getScreen().getFooterHeight();
 		undoButton.setX(x + entryWidth - undoButton.getWidth());
-		resetButton.setX(undoButton.getX() - resetButton.getWidth() - 2);
-		dropdownButton.setX(resetButton.getX() - dropdownButton.getWidth() - 2);
+		resetButton.setX(undoButton.getX() - resetButton.getWidth() - GAP);
+		dropdownButton.setX(resetButton.getX() - dropdownButton.getWidth() - GAP);
 		undoButton.setY(y);
 		resetButton.setY(y);
 		dropdownButton.setY(y);
-		dropdownX = dropdownButton.getX();
-		dropdownY = y + 22;
-		// Recalculate max visible options when position changes
-		if (expanded) {
-			// Calculate screen bottom for dropdown height limit
-			screenBottom = tab.getScreen().height - tab.getScreen().getFooterHeight();
-			var availableHeight = screenBottom - dropdownY - DROPDOWN_PADDING * 2;
-			maxVisibleOptions = Mth.clamp(availableHeight / OPTION_HEIGHT, 1, enumValues.length);
-			scrollOffset = Mth.clamp(scrollOffset, 0, getMaxScrollOffset());
-		}
-		dropdownButton.render(guiGraphics, mouseX, mouseY, delta);
-		resetButton.render(guiGraphics, mouseX, mouseY, delta);
-		undoButton.render(guiGraphics, mouseX, mouseY, delta);
+		undoButton.render(gui, mouseX, mouseY, delta);
+		resetButton.render(gui, mouseX, mouseY, delta);
+		dropdownButton.render(gui, mouseX, mouseY, delta);
+		dropdownOverlay.updateLayout(dropdownButton.getX(), y + HEIGHT + GAP, screenBottom);
 	}
 	/** Render the dropdown overlay - called after all entries are rendered */
-	public void renderDropdownOverlay(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY) {
-		if (!expanded) return;
-		var pose = guiGraphics.pose();
-		pose.pushPose();
-		pose.translate(0, 0, 100); // Bring to front
-		var dropdownHeight = getDropdownHeight();
-		var contentWidth = needsScrollbar() ? WIDTH - SCROLLBAR_WIDTH - 2 : WIDTH;
-		// Draw background with border
-		guiGraphics.fill(dropdownX - 1, dropdownY - 1, dropdownX + WIDTH + 1, dropdownY + dropdownHeight + 1, 0xFF000000);
-		guiGraphics.fill(dropdownX, dropdownY, dropdownX + WIDTH, dropdownY + dropdownHeight, 0xFF2D2D2D);
-		// Draw options
-		for (var i = 0; i < maxVisibleOptions; i++) {
-			var optionIndex = i + scrollOffset;
-			if (optionIndex >= enumValues.length) break;
-			var enumValue = enumValues[optionIndex];
-			var optionY = dropdownY + DROPDOWN_PADDING + i * OPTION_HEIGHT;
-			var isHovered = mouseX >= dropdownX
-				&& mouseX < dropdownX + contentWidth
-				&& mouseY >= optionY
-				&& mouseY < optionY + OPTION_HEIGHT;
-			var isSelected = enumValue == getValue();
-			// Background
-			if (isSelected) guiGraphics.fill(dropdownX + 1, optionY, dropdownX + contentWidth - 1, optionY + OPTION_HEIGHT - 1,
-				0xFF3366BB);
-			else if (isHovered)
-				guiGraphics.fill(dropdownX + 1, optionY, dropdownX + contentWidth - 1, optionY + OPTION_HEIGHT - 1, 0xFF404040);
-			// Text
-			var text = getDisplayComponent(enumValue);
-			var textColor = isSelected ? 0xFFFFFFFF : isHovered ? 0xFFFFFF00 : 0xFFE0E0E0;
-			guiGraphics.drawString(tab.getMinecraft().font, text, dropdownX + 4, optionY + 4, textColor, false);
-		}
-		// Draw scrollbar if needed
-		if (!needsScrollbar()) {
-			pose.popPose();
-			return;
-		}
-		var scrollbarX = dropdownX + WIDTH - SCROLLBAR_WIDTH - 1;
-		var scrollbarTrackHeight = dropdownHeight - DROPDOWN_PADDING * 2;
-		var scrollbarHeight = Math.max(15, scrollbarTrackHeight * maxVisibleOptions / enumValues.length);
-		var maxScrollOffset = getMaxScrollOffset();
-		var scrollbarY = dropdownY + DROPDOWN_PADDING + (
-			maxScrollOffset > 0 ? (scrollbarTrackHeight - scrollbarHeight) * scrollOffset / maxScrollOffset : 0
-		);
-		// Scrollbar track
-		guiGraphics.fill(
-			scrollbarX,
-			dropdownY + DROPDOWN_PADDING,
-			scrollbarX + SCROLLBAR_WIDTH,
-			dropdownY + dropdownHeight - DROPDOWN_PADDING,
-			0xFF1A1A1A
-		);
-		// Scrollbar thumb
-		var scrollbarHovered = mouseX >= scrollbarX
-			&& mouseX < scrollbarX + SCROLLBAR_WIDTH
-			&& mouseY >= scrollbarY
-			&& mouseY < scrollbarY + scrollbarHeight;
-		var thumbColor = scrollbarHovered || isDraggingScrollbar ? 0xFF888888 : 0xFF555555;
-		guiGraphics.fill(scrollbarX, scrollbarY, scrollbarX + SCROLLBAR_WIDTH, scrollbarY + scrollbarHeight, thumbColor);
-		pose.popPose();
+	public void renderDropdownOverlay(@NotNull GuiGraphics gui, int mouseX, int mouseY) {
+		dropdownOverlay.renderOverlay(gui, tab, mouseX, mouseY);
 	}
 	public boolean isExpanded() {
-		return expanded;
+		return dropdownOverlay.expanded;
 	}
 	public boolean isMouseOverDropdown(double mouseX, double mouseY) {
-		if (!expanded) return false;
-		var dropdownHeight = getDropdownHeight();
-		return mouseX >= dropdownX - 1
-			&& mouseX < dropdownX + WIDTH + 1
-			&& mouseY >= dropdownY - 1
-			&& mouseY < dropdownY + dropdownHeight + 1;
+		return dropdownOverlay.isMouseOver(mouseX, mouseY);
 	}
 	public boolean handleDropdownClick(double mouseX, double mouseY) {
-		if (!expanded) return false;
-		var dropdownHeight = getDropdownHeight();
-		var contentWidth = needsScrollbar() ? WIDTH - SCROLLBAR_WIDTH - 2 : WIDTH;
-		// Check scrollbar click
-		if (needsScrollbar()) {
-			var scrollbarX = dropdownX + WIDTH - SCROLLBAR_WIDTH - 1;
-			if (mouseX >= scrollbarX
-				&& mouseX < scrollbarX + SCROLLBAR_WIDTH
-				&& mouseY >= dropdownY
-				&& mouseY < dropdownY + dropdownHeight) {
-				isDraggingScrollbar = true;
-				updateScrollFromMouse(mouseY);
-				return true;
-			}
-		}
-		// Check option click
-		for (var i = 0; i < maxVisibleOptions; i++) {
-			var optionIndex = i + scrollOffset;
-			if (optionIndex >= enumValues.length) break;
-			var optionY = dropdownY + DROPDOWN_PADDING + i * OPTION_HEIGHT;
-			if (mouseX >= dropdownX && mouseX < dropdownX + contentWidth && mouseY >= optionY && mouseY < optionY + OPTION_HEIGHT) {
-				selectValue(enumValues[optionIndex]);
-				return true;
-			}
-		}
-		return false;
+		return dropdownOverlay.handleClick(mouseX, mouseY);
 	}
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		if (expanded && isMouseOverDropdown(mouseX, mouseY)) return handleDropdownClick(mouseX, mouseY);
+		if (dropdownOverlay.expanded && isMouseOverDropdown(mouseX, mouseY)) return handleDropdownClick(mouseX, mouseY);
 		return super.mouseClicked(mouseX, mouseY, button);
 	}
 	@Override
 	public boolean mouseReleased(double mouseX, double mouseY, int button) {
-		isDraggingScrollbar = false;
+		dropdownOverlay.stopDragging();
 		return super.mouseReleased(mouseX, mouseY, button);
 	}
 	@Override
 	public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-		if (!isDraggingScrollbar) return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
-		updateScrollFromMouse(mouseY);
+		if (!dropdownOverlay.handleDrag(mouseY)) return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
 		return true;
-	}
-	private void updateScrollFromMouse(double mouseY) {
-		var dropdownHeight = getDropdownHeight();
-		var scrollbarTrackHeight = dropdownHeight - DROPDOWN_PADDING * 2;
-		var scrollbarHeight = Math.max(15, scrollbarTrackHeight * maxVisibleOptions / enumValues.length);
-		var relativeY = mouseY - dropdownY - DROPDOWN_PADDING - scrollbarHeight / 2.0;
-		double scrollRange = scrollbarTrackHeight - scrollbarHeight;
-		if (scrollRange > 0)
-			scrollOffset = Mth.clamp((int) Math.round(relativeY / scrollRange * getMaxScrollOffset()), 0, getMaxScrollOffset());
 	}
 	public boolean handleDropdownScroll(double mouseX, double mouseY, double vertical) {
-		if (!expanded || !isMouseOverDropdown(mouseX, mouseY)) return false;
-		scrollOffset = Mth.clamp(scrollOffset - (int) vertical, 0, getMaxScrollOffset());
-		return true;
+		return dropdownOverlay.handleScroll(mouseX, mouseY, vertical);
 	}
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
@@ -236,3 +105,4 @@ public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum<?>, 
 		return super.mouseScrolled(mouseX, mouseY, horizontal, vertical);
 	}
 }
+

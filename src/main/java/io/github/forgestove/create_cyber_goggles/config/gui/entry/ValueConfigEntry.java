@@ -32,16 +32,17 @@ public abstract class ValueConfigEntry<C, T, V> extends ConfigEntry {
 		labelChanged = label.copy().withStyle(ChatFormatting.ITALIC, ChatFormatting.YELLOW);
 		labelError = label.copy().withStyle(ChatFormatting.RED);
 		labelErrorChanged = label.copy().withStyle(ChatFormatting.ITALIC, ChatFormatting.RED);
-		tooltip = valueNode.getTooltip() == null ? null : tab.getMinecraft().font.split(valueNode.getTooltip(), 350);
+		var font = tab.getMinecraft().font;
+		tooltip = valueNode.getTooltip() == null ? null : font.split(valueNode.getTooltip(), 350);
 		tooltipWithError = getTooltipWithError();
 		this.valueNode = valueNode;
 		resetButton = Button.builder(Translation.RESET_LABEL, b -> resetToDefault())
-			.bounds(0, 0, Math.max(tab.getMinecraft().font.width(Translation.RESET_LABEL) + 6, 20), 20)
+			.size(Math.max(font.width(Translation.RESET_LABEL) + 6, SIZE), SIZE)
 			.build();
 		resetButton.active = !valueNode.isDefaultValue(this.tab.getConfig());
 		children.add(resetButton);
 		undoButton = Button.builder(Translation.UNDO_LABEL, b -> resetToActive())
-			.bounds(0, 0, Math.max(tab.getMinecraft().font.width(Translation.UNDO_LABEL) + 6, 20), 20)
+			.size(Math.max(font.width(Translation.UNDO_LABEL) + 6, SIZE), SIZE)
 			.build();
 		undoButton.active = !valueNode.isActiveValue(this.tab.getConfig());
 		children.add(undoButton);
@@ -87,19 +88,43 @@ public abstract class ValueConfigEntry<C, T, V> extends ConfigEntry {
 		return hasError() ? tooltipWithError : tooltip;
 	}
 	private List<FormattedCharSequence> getTooltipWithError() {
-		if (hasError()) {
-			List<FormattedCharSequence> errorTooltip = new ArrayList<>();
-			if (tooltip != null) errorTooltip.addAll(tooltip);
-			assert validationError != null;
-			errorTooltip.add(validationError.copy().withStyle(ChatFormatting.RED).getVisualOrderText());
-			return errorTooltip;
-		}
-		return tooltip;
+		if (!hasError()) return tooltip;
+		List<FormattedCharSequence> errorTooltip = new ArrayList<>();
+		if (tooltip != null) errorTooltip.addAll(tooltip);
+		assert validationError != null;
+		errorTooltip.add(validationError.copy().withStyle(ChatFormatting.RED).getVisualOrderText());
+		return errorTooltip;
 	}
-	protected void renderLabel(GuiGraphics guiGraphics, int x, int y) {
+	protected void renderLabel(GuiGraphics gui, int x, int y) {
 		Component l;
 		if (hasError()) l = hasChanged ? labelErrorChanged : labelError;
 		else l = hasChanged ? labelChanged : label;
-		guiGraphics.drawString(tab.getMinecraft().font, l.getVisualOrderText(), x, y + 5, -1, false);
+		gui.drawString(tab.getMinecraft().font, l.getVisualOrderText(), x, y + 5, -1, false);
+	}
+	protected void layoutRightToLeft(int x, int y, int entryWidth, AbstractWidget... widgets) {
+		var right = x + entryWidth;
+		for (var widget : widgets) {
+			right -= widget.getWidth();
+			widget.setX(right);
+			widget.setY(y);
+			right -= GAP;
+		}
+	}
+	protected void renderWidgets(GuiGraphics gui, int mouseX, int mouseY, float delta, Renderable... widgets) {
+		for (var widget : widgets) widget.render(gui, mouseX, mouseY, delta);
+	}
+	protected void renderGui(
+		@NotNull GuiGraphics gui,
+		int y,
+		int x,
+		int width,
+		int mouseX,
+		int mouseY,
+		float partialTick,
+		AbstractWidget... widgets
+	) {
+		renderLabel(gui, x, y);
+		layoutRightToLeft(x, y, width, widgets);
+		renderWidgets(gui, mouseX, mouseY, partialTick, widgets);
 	}
 }

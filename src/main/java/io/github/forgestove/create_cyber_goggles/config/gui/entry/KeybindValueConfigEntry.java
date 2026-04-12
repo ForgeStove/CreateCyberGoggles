@@ -17,7 +17,7 @@ public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key, K
 				capturing = true;
 				this.tab.getScreen().refresh();
 			}
-		).bounds(0, 0, WIDTH, HEIGHT).build();
+		).size(WIDTH, HEIGHT).build();
 		children.add(bindButton);
 		refresh();
 	}
@@ -48,27 +48,17 @@ public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key, K
 	}
 	@Override
 	public void render(
-		@NotNull GuiGraphics guiGraphics,
+		@NotNull GuiGraphics gui,
 		int index,
 		int y,
 		int x,
-		int entryWidth,
-		int entryHeight,
+		int width,
+		int height,
 		int mouseX,
 		int mouseY,
-		boolean hovered,
-		float delta
+		boolean hovering,
+		float partialTick
 	) {
-		renderLabel(guiGraphics, x, y);
-		undoButton.setX(x + entryWidth - undoButton.getWidth());
-		resetButton.setX(undoButton.getX() - resetButton.getWidth() - 2);
-		bindButton.setX(resetButton.getX() - bindButton.getWidth() - 3);
-		undoButton.setY(y);
-		resetButton.setY(y);
-		bindButton.setY(y);
-		resetButton.render(guiGraphics, mouseX, mouseY, delta);
-		undoButton.render(guiGraphics, mouseX, mouseY, delta);
-		bindButton.render(guiGraphics, mouseX, mouseY, delta);
+		renderGui(gui, y, x, width, mouseX, mouseY, partialTick, undoButton, resetButton, bindButton);
 	}
 }
-

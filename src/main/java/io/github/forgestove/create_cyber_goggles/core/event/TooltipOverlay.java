@@ -30,7 +30,7 @@ public class TooltipOverlay {
 	public static void register(@NotNull RegisterGuiLayersEvent event) {
 		event.registerAbove(VanillaGuiLayers.HOTBAR, getCCGRes("tooltip_overlay"), TooltipOverlay::renderOverlay);
 	}
-	public static void renderOverlay(GuiGraphics graphics, DeltaTracker deltaTracker) {
+	public static void renderOverlay(GuiGraphics gui, DeltaTracker deltaTracker) {
 		if (!CCG.config.overlay.renderItemOverlay || !CCG.config.gameMode.enableGoggles) return;
 		if (mc.isPaused() || isInGUI() || mc.options.hideGui) {
 			hoverTicks = 0;
@@ -39,7 +39,7 @@ public class TooltipOverlay {
 		if (!CCG.config.goggles.canRenderOnValueBox && hasActivedValueBox()) return;
 		var itemStack = toRenderItemStack();
 		if (itemStack.isEmpty()) hoverTicks = 0;
-		else renderItemStack(graphics, itemStack);
+		else renderItemStack(gui, itemStack);
 	}
 	public static @NotNull ItemStack toRenderItemStack() {
 		try {
@@ -50,8 +50,8 @@ public class TooltipOverlay {
 		}
 		return ItemStack.EMPTY;
 	}
-	public static void renderItemStack(@NotNull GuiGraphics graphics, @NotNull ItemStack itemStack) {
-		var pose = graphics.pose();
+	public static void renderItemStack(@NotNull GuiGraphics gui, @NotNull ItemStack itemStack) {
+		var pose = gui.pose();
 		pose.pushPose();
 		var overlay = CCG.config.overlay;
 		var cfg = AllConfigs.client();
@@ -66,8 +66,8 @@ public class TooltipOverlay {
 			top.scaleAlpha(fade);
 			bot.scaleAlpha(fade);
 		}
-		var width = graphics.guiWidth();
-		var height = graphics.guiHeight();
+		var width = gui.guiWidth();
+		var height = gui.guiHeight();
 		var x = width / 2 + cfg.overlayOffsetX.get() + overlay.overlayOffsetX;
 		var y = height / 2 + cfg.overlayOffsetY.get() + overlay.overlayOffsetY;
 		if (overlay.tooltipFlagType == null) overlay.tooltipFlagType = TooltipFlagType.Default;
@@ -80,7 +80,7 @@ public class TooltipOverlay {
 		if (GoggleOverlayRenderer.hoverTicks != 0) y -= tooltipHeight + 10;
 		x = Mth.clamp(x, 0, width - tooltipWidth);
 		y = Mth.clamp(y, 16, height - tooltipHeight - 100);
-		renderTooltip(graphics, itemStack, components, x, y, tooltipWidth, tooltipHeight, back.getRGB(), top.getRGB(), bot.getRGB());
+		renderTooltip(gui, itemStack, components, x, y, tooltipWidth, tooltipHeight, back.getRGB(), top.getRGB(), bot.getRGB());
 		pose.popPose();
 	}
 	public static @NotNull Theme getTheme() {
@@ -155,7 +155,7 @@ public class TooltipOverlay {
 		return components;
 	}
 	public static void renderTooltip(
-		GuiGraphics graphics,
+		GuiGraphics gui,
 		ItemStack itemStack,
 		@NotNull List<ClientTooltipComponent> components,
 		int x,
@@ -167,21 +167,21 @@ public class TooltipOverlay {
 		int bot
 	) {
 		if (components.isEmpty()) return;
-		var width = graphics.guiWidth();
-		var height = graphics.guiHeight();
+		var width = gui.guiWidth();
+		var height = gui.guiHeight();
 		var positioner = DefaultTooltipPositioner.INSTANCE;
-		if (ClientHooks.onRenderTooltipPre(itemStack, graphics, x, y, width, height, components, mc.font, positioner).isCanceled()) return;
+		if (ClientHooks.onRenderTooltipPre(itemStack, gui, x, y, width, height, components, mc.font, positioner).isCanceled()) return;
 		var tooltipPos = positioner.positionTooltip(width, height, x, y, tooltipWidth, tooltipHeight);
 		var tooltipX = tooltipPos.x();
 		var tooltipY = tooltipPos.y();
-		var pose = graphics.pose();
+		var pose = gui.pose();
 		pose.pushPose();
-		TooltipRenderUtil.renderTooltipBackground(graphics, tooltipX, tooltipY, tooltipWidth, tooltipHeight, 400, back, back, top, bot);
+		TooltipRenderUtil.renderTooltipBackground(gui, tooltipX, tooltipY, tooltipWidth, tooltipHeight, 400, back, back, top, bot);
 		pose.translate(0, 0, 400);
 		int i = 0, textY = tooltipY;
 		for (var component : components) {
-			component.renderText(mc.font, tooltipX, textY, pose.last().pose(), graphics.bufferSource());
-			component.renderImage(mc.font, tooltipX, textY, graphics);
+			component.renderText(mc.font, tooltipX, textY, pose.last().pose(), gui.bufferSource());
+			component.renderImage(mc.font, tooltipX, textY, gui);
 			textY += component.getHeight() + (i == 0 ? 2 : 0);
 			i++;
 		}

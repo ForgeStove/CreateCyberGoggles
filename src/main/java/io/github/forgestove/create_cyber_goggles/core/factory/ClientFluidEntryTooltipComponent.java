@@ -26,7 +26,7 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 		);
 	}
 	public static void renderFluidBar(
-		@NotNull GuiGraphics guiGraphics,
+		@NotNull GuiGraphics gui,
 		@NotNull FluidStack stack,
 		int capacityMb,
 		int x,
@@ -34,10 +34,10 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 		int width,
 		int height
 	) {
-		guiGraphics.fill(x, y, x + width, y + 1, BORDER_COLOR);
-		guiGraphics.fill(x, y + height - 1, x + width, y + height, BORDER_COLOR);
-		guiGraphics.fill(x, y, x + 1, y + height, BORDER_COLOR);
-		guiGraphics.fill(x + width - 1, y, x + width, y + height, BORDER_COLOR);
+		gui.fill(x, y, x + width, y + 1, BORDER_COLOR);
+		gui.fill(x, y + height - 1, x + width, y + height, BORDER_COLOR);
+		gui.fill(x, y, x + 1, y + height, BORDER_COLOR);
+		gui.fill(x + width - 1, y, x + width, y + height, BORDER_COLOR);
 		if (stack.isEmpty()) return;
 		var innerX = x + 1;
 		var innerY = y + 1;
@@ -45,9 +45,9 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 		var innerH = Math.max(0, height - 2);
 		var fillRatio = Mth.clamp(stack.getAmount() / (float) Math.max(1, capacityMb), 0F, 1F);
 		var fillWidth = Mth.clamp(Mth.floor(innerW * fillRatio), 1, innerW);
-		renderFluid(guiGraphics, stack, innerX, innerY, fillWidth, innerH);
+		renderFluid(gui, stack, innerX, innerY, fillWidth, innerH);
 	}
-	private static void renderFluid(@NotNull GuiGraphics guiGraphics, @NotNull FluidStack stack, int x, int y, int width, int height) {
+	private static void renderFluid(@NotNull GuiGraphics gui, @NotNull FluidStack stack, int x, int y, int width, int height) {
 		if (stack.isEmpty()) return;
 		var ext = IClientFluidTypeExtensions.of(stack.getFluid());
 		var still = ext.getStillTexture(stack);
@@ -59,11 +59,11 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 		var a = ARGB32.alpha(tint) / 255F;
 		RenderSystem.enableBlend();
 		RenderSystem.setShaderColor(r, g, b, a);
-		guiGraphics.enableScissor(x, y, x + width, y + height);
+		gui.enableScissor(x, y, x + width, y + height);
 		for (var dx = 0; dx < width; dx += 16)
 			for (var dy = 0; dy < height; dy += 16)
-				guiGraphics.blit(x + dx, y + dy, 0, 16, 16, sprite);
-		guiGraphics.disableScissor();
+				gui.blit(x + dx, y + dy, 0, 16, 16, sprite);
+		gui.disableScissor();
 		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 	}
 	public static @NotNull String formatFluidAmount(int amountMb) {
@@ -99,14 +99,14 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 		return indentPixels(font) + barWidth(font);
 	}
 	@Override
-	public void renderImage(@NotNull Font font, int x, int y, @NotNull GuiGraphics guiGraphics) {
+	public void renderImage(@NotNull Font font, int x, int y, @NotNull GuiGraphics gui) {
 		var label = buildLabel();
 		var barX = x + indentPixels(font);
 		var barWidth = barWidth(font);
-		renderFluidBar(guiGraphics, fluid, capacityMb, barX, y, barWidth, SlotUtil.SIZE_SLIM);
+		renderFluidBar(gui, fluid, capacityMb, barX, y, barWidth, SlotUtil.SIZE_SLIM);
 		var textX = barX + H_PADDING;
 		var textY = y + Mth.floor((SlotUtil.SIZE_SLIM - font.lineHeight) / 2F) + 1;
-		guiGraphics.drawString(font, label, textX, textY, 0xFFFFFFFF, true);
+		gui.drawString(font, label, textX, textY, 0xFFFFFFFF, true);
 	}
 	private int barWidth(@NotNull Font font) {
 		var preferred = preferredBarWidth(font, fluid, capacityMb);

@@ -1,6 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.config.gui.entry;
 import io.github.forgestove.create_cyber_goggles.config.Translation;
 import io.github.forgestove.create_cyber_goggles.config.gui.*;
+import io.github.forgestove.create_cyber_goggles.config.gui.widget.ColorPreviewWidget;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -12,21 +13,23 @@ import org.jetbrains.annotations.NotNull;
 import java.util.regex.Pattern;
 public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer, Integer> {
 	public static final Pattern HEX_PATTERN = Pattern.compile("[0-9A-Fa-f]*");
-	public static final int COLOR_PREVIEW_SIZE = 16;
 	public final EditBox inputField;
 	public final Button pickerButton;
+	public final ColorPreviewWidget previewWidget;
 	public final boolean hasAlpha;
 	public ColorValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Integer, Integer> valueNode, boolean hasAlpha) {
 		super(tab, valueNode);
 		this.hasAlpha = hasAlpha;
-		inputField = new EditBox(tab.getMinecraft().font, 0, 0, 50, HEIGHT, this.valueNode.getTitle());
+		inputField = new EditBox(tab.getMinecraft().font, 0, 0, WIDTH - 44, HEIGHT, this.valueNode.getTitle());
 		inputField.setMaxLength(hasAlpha ? 8 : 6);
 		inputField.setValue(formatColor(getValue()));
 		inputField.setFilter(s -> HEX_PATTERN.matcher(s).matches());
 		inputField.setResponder(this::onInputChange);
 		pickerButton = Button.builder(Translation.COLOR_PICKER_LABEL, b -> openColorPicker()).size(SIZE, SIZE).build();
+		previewWidget = new ColorPreviewWidget(0, 0, SIZE, SIZE, this::getValue, hasAlpha);
 		children.add(inputField);
 		children.add(pickerButton);
+		children.add(previewWidget);
 	}
 	private String formatColor(int color) {
 		if (hasAlpha) return String.format("%08X", color);
@@ -54,48 +57,21 @@ public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer,
 		try {
 			var color = (int) Long.parseLong(value, 16);
 			setValue(color);
-		} catch (NumberFormatException e) {
-			// Ignore
-		}
+		} catch (NumberFormatException ignored) {}
 	}
 	@Override
 	public void render(
-		@NotNull GuiGraphics guiGraphics,
+		@NotNull GuiGraphics gui,
 		int index,
 		int y,
 		int x,
-		int entryWidth,
-		int entryHeight,
+		int width,
+		int height,
 		int mouseX,
 		int mouseY,
-		boolean hovered,
-		float delta
+		boolean hovering,
+		float partialTick
 	) {
-		renderLabel(guiGraphics, x, y);
-		var rightEdge = x + entryWidth;
-		var colorPreviewX = rightEdge - COLOR_PREVIEW_SIZE - undoButton.getWidth() - resetButton.getWidth() - 4;
-		// Color preview box
-		int currentColor = getValue();
-		guiGraphics.fill(
-			colorPreviewX,
-			y + 2,
-			colorPreviewX + COLOR_PREVIEW_SIZE,
-			y + 2 + COLOR_PREVIEW_SIZE,
-			hasAlpha ? currentColor : 0xFF000000 | currentColor
-		);
-		guiGraphics.renderOutline(colorPreviewX, y + 2, COLOR_PREVIEW_SIZE, COLOR_PREVIEW_SIZE, 0xFFA0A0A0);
-		// Picker button
-		pickerButton.setX(colorPreviewX - 24);
-		inputField.setX(pickerButton.getX() - 60);
-		resetButton.setX(colorPreviewX + COLOR_PREVIEW_SIZE + 2);
-		undoButton.setX(resetButton.getX() + resetButton.getWidth() + 2);
-		pickerButton.setY(y);
-		inputField.setY(y);
-		resetButton.setY(y);
-		undoButton.setY(y);
-		inputField.render(guiGraphics, mouseX, mouseY, delta);
-		pickerButton.render(guiGraphics, mouseX, mouseY, delta);
-		resetButton.render(guiGraphics, mouseX, mouseY, delta);
-		undoButton.render(guiGraphics, mouseX, mouseY, delta);
+		renderGui(gui, y, x, width, mouseX, mouseY, partialTick, undoButton, resetButton, previewWidget, pickerButton, inputField);
 	}
 }

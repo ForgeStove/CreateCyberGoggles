@@ -33,7 +33,7 @@ public final class CategoryTitleConfigEntry extends ConfigEntry {
 	}
 	@Override
 	public void render(
-		GuiGraphics guiGraphics,
+		GuiGraphics gui,
 		int index,
 		int y,
 		int x,
@@ -44,7 +44,7 @@ public final class CategoryTitleConfigEntry extends ConfigEntry {
 		boolean hovered,
 		float delta
 	) {
-		guiGraphics.drawCenteredString(minecraft.font, label, x + entryWidth / 2, y + 5, -1);
+		gui.drawCenteredString(minecraft.font, label, x + entryWidth / 2, y + 5, -1);
 	}
 	@NotNull
 	@Override

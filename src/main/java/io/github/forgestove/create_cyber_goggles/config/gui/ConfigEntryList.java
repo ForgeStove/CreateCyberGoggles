@@ -30,7 +30,7 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		entries.forEach(this::addEntry);
 	}
 	@Override
-	public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+	public void renderWidget(@NotNull GuiGraphics gui, int mouseX, int mouseY, float delta) {
 		// Track which dropdown is expanded
 		expandedDropdown = null;
 		for (var entry : children()) {
@@ -41,15 +41,15 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		// Render dropdown overlay on top of everything (outside scissor)
 		var showTooltip = expandedDropdown == null;
 		if (expandedDropdown != null) {
-			expandedDropdown.renderDropdownOverlay(guiGraphics, mouseX, mouseY);
+			expandedDropdown.renderDropdownOverlay(gui, mouseX, mouseY);
 			// Don't show tooltips when mouse is over the dropdown
 			showTooltip = !expandedDropdown.isMouseOverDropdown(mouseX, mouseY);
 		}
 		if (showTooltip) {
-			renderHighlight(guiGraphics);
+			renderHighlight(gui);
 			updateHighlightAnimation(delta);
 		}
-		super.renderWidget(guiGraphics, mouseX, mouseY, delta);
+		super.renderWidget(gui, mouseX, mouseY, delta);
 		// Tooltips
 		if (!showTooltip) return;
 		var entry = getHovered();
@@ -87,7 +87,7 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		// Snap to target when close enough
 		if (Math.abs(highlightY - highlightTargetY) < 1.0f) highlightY = highlightTargetY;
 	}
-	private void renderHighlight(@NotNull GuiGraphics guiGraphics) {
+	private void renderHighlight(@NotNull GuiGraphics gui) {
 		if (highlightAlpha <= 0.01f || highlightY < 0) return;
 		var alpha = (int) (highlightAlpha * 48); // Max alpha 48 (0x30)
 		var color = alpha << 24 | 0xFFFFFF;
@@ -101,7 +101,7 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		var visibleBottom = getY() + getHeight();
 		if (top < visibleTop) top = visibleTop;
 		if (bottom > visibleBottom) bottom = visibleBottom;
-		if (top < bottom) guiGraphics.fill(left, top, right, bottom, color);
+		if (top < bottom) gui.fill(left, top, right, bottom, color);
 	}
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {

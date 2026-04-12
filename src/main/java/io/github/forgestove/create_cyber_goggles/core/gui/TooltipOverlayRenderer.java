@@ -8,5 +8,5 @@ public interface TooltipOverlayRenderer {
 	}
 	int width(ItemStack stack);
 	int height(ItemStack stack);
-	void render(GuiGraphics graphics, ItemStack stack, int x, int y);
+	void render(GuiGraphics gui, ItemStack stack, int x, int y);
 }

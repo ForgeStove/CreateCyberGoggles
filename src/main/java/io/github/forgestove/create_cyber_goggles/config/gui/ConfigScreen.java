@@ -35,7 +35,7 @@ public final class ConfigScreen<C> extends Screen {
 		this.config = config;
 		this.onSave = onSave;
 		this.previous = previous;
-		layout = new HeaderAndFooterLayout(this, 24, 33);
+		layout = new HeaderAndFooterLayout(this, 33, 33);
 		tabManager = new TabManager(this::addRenderableWidget, this::removeWidget);
 		tabs = List.of();
 		cacheKey = root.getTitle().getString();
@@ -82,15 +82,14 @@ public final class ConfigScreen<C> extends Screen {
 	@Override
 	protected void repositionElements() {
 		refresh();
-		if (tabNavigationBar != null) {
-			tabNavigationBar.setWidth(width);
-			tabNavigationBar.arrangeElements();
-			var i = tabNavigationBar.getRectangle().bottom();
-			var screenRectangle = new ScreenRectangle(0, i, width, height - layout.getFooterHeight() - i);
-			tabManager.setTabArea(screenRectangle);
-			layout.setHeaderHeight(i);
-			layout.arrangeElements();
-		}
+		if (tabNavigationBar == null) return;
+		tabNavigationBar.setWidth(width);
+		tabNavigationBar.arrangeElements();
+		var i = tabNavigationBar.getRectangle().bottom();
+		var screenRectangle = new ScreenRectangle(0, i, width, height - layout.getFooterHeight() - i);
+		tabManager.setTabArea(screenRectangle);
+		layout.setHeaderHeight(i);
+		layout.arrangeElements();
 	}
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
@@ -112,11 +111,11 @@ public final class ConfigScreen<C> extends Screen {
 		return result;
 	}
 	private void cacheCurrentTabIndex() {
-		for (var i = 0; i < tabs.size(); i++)
-			if (tabManager.getCurrentTab() == tabs.get(i)) {
-				lastSelectedTabCache.put(cacheKey, i);
-				break;
-			}
+		for (var i = 0; i < tabs.size(); i++) {
+			if (tabManager.getCurrentTab() != tabs.get(i)) continue;
+			lastSelectedTabCache.put(cacheKey, i);
+			break;
+		}
 	}
 	@Override
 	public void onClose() {
@@ -138,7 +137,7 @@ public final class ConfigScreen<C> extends Screen {
 		keybindCategory.writeEditingToConfig(config);
 		getMinecraft().options.save();
 		onSave.accept(config);
-		if (restartRequired) getMinecraft().setScreen(new ConfirmScreen(
+		getMinecraft().setScreen(restartRequired ? new ConfirmScreen(
 			confirmed -> {
 				if (confirmed) getMinecraft().stop();
 				else getMinecraft().setScreen(previous);
@@ -147,8 +146,7 @@ public final class ConfigScreen<C> extends Screen {
 			Translation.RESTART_REQUIRED_LABEL,
 			Translation.QUIT_GAME,
 			Translation.IGNORE_RESTART_LABEL
-		));
-		else getMinecraft().setScreen(previous);
+		) : previous);
 	}
 	public @NotNull Minecraft getMinecraft() {
 		return Objects.requireNonNull(minecraft);

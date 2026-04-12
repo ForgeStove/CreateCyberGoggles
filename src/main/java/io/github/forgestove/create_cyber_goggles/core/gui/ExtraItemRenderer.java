@@ -141,17 +141,17 @@ public final class ExtraItemRenderer implements TooltipOverlayRenderer {
 		return 0;
 	}
 	@Override
-	public void render(GuiGraphics graphics, ItemStack stack, int x, int y) {
+	public void render(GuiGraphics gui, ItemStack stack, int x, int y) {
 		var data = buildItemGrid(stack);
 		if (data == null) return;
 		var color = NativeImageUtil.getColor(stack);
 		var r = color.getRed() / 255F;
 		var g = color.getGreen() / 255F;
 		var b = color.getBlue() / 255F;
-		if (data.items != null) renderItemGrid(graphics, data.items, resolveColumns(data), x, y, r, g, b, data.zeroCountSlots);
+		if (data.items != null) renderItemGrid(gui, data.items, resolveColumns(data), x, y, r, g, b, data.zeroCountSlots);
 	}
 	private void renderItemGrid(
-		GuiGraphics graphics,
+		GuiGraphics gui,
 		@NotNull List<ItemStack> items,
 		int columns,
 		int x,
@@ -164,20 +164,20 @@ public final class ExtraItemRenderer implements TooltipOverlayRenderer {
 		var rows = Math.max(1, Mth.ceil((float) items.size() / columns));
 		var panelWidth = columns * SlotUtil.SIZE + PAD * 2;
 		var panelHeight = rows * SlotUtil.SIZE + PAD * 2;
-		var pose = graphics.pose();
+		var pose = gui.pose();
 		pose.pushPose();
 		pose.translate(x, y, 600F);
-		OverlayPanelRenderer.renderPanel(graphics, panelWidth, panelHeight, r, g, b);
+		OverlayPanelRenderer.renderPanel(gui, panelWidth, panelHeight, r, g, b);
 		for (var i = 0; i < items.size(); i++) {
 			var col = i % columns;
 			var row = i / columns;
 			var slotX = PAD + col * SlotUtil.SIZE;
 			var slotY = PAD + row * SlotUtil.SIZE;
-			OverlayPanelRenderer.renderTintedSlot(graphics, slotX, slotY, r, g, b);
+			OverlayPanelRenderer.renderTintedSlot(gui, slotX, slotY, r, g, b);
 			var item = items.get(i);
-			graphics.renderItem(item, slotX + 1, slotY + 1);
-			if (zeroCountSlots.contains(i)) graphics.renderItemDecorations(mc.font, item, slotX + 1, slotY + 1, "0");
-			else graphics.renderItemDecorations(mc.font, item, slotX + 1, slotY + 1);
+			gui.renderItem(item, slotX + 1, slotY + 1);
+			if (zeroCountSlots.contains(i)) gui.renderItemDecorations(mc.font, item, slotX + 1, slotY + 1, "0");
+			else gui.renderItemDecorations(mc.font, item, slotX + 1, slotY + 1);
 		}
 		pose.popPose();
 	}

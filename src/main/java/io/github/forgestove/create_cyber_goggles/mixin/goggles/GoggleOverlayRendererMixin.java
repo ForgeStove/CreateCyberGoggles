@@ -53,7 +53,7 @@ public abstract class GoggleOverlayRendererMixin {
 	)
 	)
 	private static void wrapTooltipRender(
-		GuiGraphics graphics,
+		GuiGraphics gui,
 		List<Component> tooltip,
 		int x,
 		int y,
@@ -74,13 +74,13 @@ public abstract class GoggleOverlayRendererMixin {
 			break;
 		}
 		if (!hasItemList) {
-			original.call(graphics, tooltip, x, y, screenWidth, screenHeight, maxWidth, back, top, bot, font);
+			original.call(gui, tooltip, x, y, screenWidth, screenHeight, maxWidth, back, top, bot, font);
 			return;
 		}
 		var components = TooltipOverlay.buildTooltipComponents(tooltip, maxWidth, false);
 		if (components.isEmpty()) return;
 		var tooltipWidth = components.stream().mapToInt(c -> c.getWidth(mc.font)).max().orElse(0);
 		var tooltipHeight = components.stream().mapToInt(ClientTooltipComponent::getHeight).sum() + (components.size() > 1 ? 2 : 0);
-		TooltipOverlay.renderTooltip(graphics, ItemStack.EMPTY, components, x, y, tooltipWidth, tooltipHeight, back, top, bot);
+		TooltipOverlay.renderTooltip(gui, ItemStack.EMPTY, components, x, y, tooltipWidth, tooltipHeight, back, top, bot);
 	}
 }

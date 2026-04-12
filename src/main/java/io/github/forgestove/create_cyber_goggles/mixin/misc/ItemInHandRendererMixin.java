@@ -50,6 +50,6 @@ public abstract class ItemInHandRendererMixin {
 		if (!CCG.config.tooltip.clipboard) return;
 		if (!(stack.getItem() instanceof ClipboardBlockItem)) return;
 		ci.cancel();
-		ClipboardRenderer.renderClipboardPage(poseStack, buffer, packedLight, stack);
+		ClipboardRenderer.renderClipboardPage(poseStack.last().pose(), buffer, packedLight, stack);
 	}
 }

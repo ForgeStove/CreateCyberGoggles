@@ -21,7 +21,7 @@ import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public final class ItemTooltip {
-	public static final List<TooltipOverlayRenderer> OVERLAY_RENDERERS = Arrays.asList(
+	public static final List<TooltipOverlayRenderer> OVERLAY_RENDERERS = List.of(
 		new ClipboardRenderer(),
 		new ExtraItemRenderer(),
 		new ContainerRenderer()
@@ -117,12 +117,18 @@ public final class ItemTooltip {
 	public static void renderTooltipPre(@NotNull Pre event) {
 		if (!CCG.config.tooltip.extraItemTooltip) return;
 		var stack = event.getItemStack();
-		var renderer = OVERLAY_RENDERERS.stream().filter(r -> r.supports(stack)).findFirst().orElse(null);
+		TooltipOverlayRenderer renderer = null;
+		for (var overlayRenderer : OVERLAY_RENDERERS) {
+			if (!overlayRenderer.supports(stack)) continue;
+			renderer = overlayRenderer;
+			break;
+		}
 		if (renderer == null) return;
+		if (!renderer.canRender(stack)) return;
+		var font = event.getFont();
 		var components = event.getComponents();
 		if (components.isEmpty()) return;
 		int tooltipWidth = 0, tooltipHeight = 0;
-		var font = event.getFont();
 		for (var component : components) {
 			tooltipWidth = Math.max(tooltipWidth, component.getWidth(font));
 			tooltipHeight += component.getHeight();
@@ -131,17 +137,20 @@ public final class ItemTooltip {
 		var overlayHeight = renderer.height(stack);
 		var pos = getPos(event, tooltipWidth, tooltipHeight);
 		var overlayX = getOverlayX(event, pos, overlayWidth);
-		var overlayY = pos.y() - overlayHeight - OVERLAY_GAP;
+		var overlayY = getOverlayY(pos, overlayHeight);
 		if (overlayY < 0) {
 			event.setY(event.getY() - overlayY);
 			pos = getPos(event, tooltipWidth, tooltipHeight);
 			overlayX = getOverlayX(event, pos, overlayWidth);
-			overlayY = Math.max(0, pos.y() - overlayHeight - OVERLAY_GAP);
+			overlayY = Math.max(0, getOverlayY(pos, overlayHeight));
 		}
 		renderer.render(event.getGraphics(), stack, overlayX - 4, overlayY);
 	}
 	private static int getOverlayX(@NotNull Pre event, Vector2ic pos, int overlayWidth) {
 		return Mth.clamp(pos.x(), 0, Math.max(0, event.getScreenWidth() - overlayWidth));
+	}
+	private static int getOverlayY(Vector2ic pos, int overlayHeight) {
+		return pos.y() - overlayHeight - OVERLAY_GAP;
 	}
 	private static @NotNull Vector2ic getPos(@NotNull Pre event, int width, int height) {
 		return event.getTooltipPositioner()

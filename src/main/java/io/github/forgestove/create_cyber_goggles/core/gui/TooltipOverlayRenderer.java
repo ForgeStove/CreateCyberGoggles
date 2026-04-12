@@ -3,6 +3,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
 public interface TooltipOverlayRenderer {
 	boolean supports(ItemStack stack);
+	default boolean canRender(ItemStack stack) {
+		return true;
+	}
 	int width(ItemStack stack);
 	int height(ItemStack stack);
 	void render(GuiGraphics graphics, ItemStack stack, int x, int y);

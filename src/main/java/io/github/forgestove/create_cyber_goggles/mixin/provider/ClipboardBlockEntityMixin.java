@@ -13,7 +13,7 @@ public abstract class ClipboardBlockEntityMixin implements ItemRenderable, Self<
 		var state = thiz.getBlockState();
 		var level = thiz.getLevel();
 		if (level == null) return null;
-		if (!(state.getBlock() instanceof ClipboardBlock tb)) return null;
-		return tb.getCloneItemStack(level, thiz.getBlockPos(), state);
+		if (!(state.getBlock() instanceof ClipboardBlock block)) return null;
+		return block.getCloneItemStack(level, thiz.getBlockPos(), state);
 	}
 }

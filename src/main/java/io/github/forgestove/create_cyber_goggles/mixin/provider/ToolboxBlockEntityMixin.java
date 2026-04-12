@@ -13,7 +13,7 @@ public abstract class ToolboxBlockEntityMixin implements ItemRenderable, Self<To
 		var state = thiz.getBlockState();
 		var level = thiz.getLevel();
 		if (level == null) return null;
-		if (!(state.getBlock() instanceof ToolboxBlock tb)) return null;
-		return tb.getCloneItemStack(level, thiz.getBlockPos(), state);
+		if (!(state.getBlock() instanceof ToolboxBlock block)) return null;
+		return block.getCloneItemStack(level, thiz.getBlockPos(), state);
 	}
 }

@@ -1,5 +1,4 @@
 package io.github.forgestove.create_cyber_goggles.core.gui;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.content.equipment.clipboard.*;
@@ -11,41 +10,42 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Matrix4f;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public final class ClipboardRenderer implements TooltipOverlayRenderer {
 	private static final float SCALE = 0.5F;
-	public static void renderClipboardPage(PoseStack poseStack, MultiBufferSource buffer, int light, ItemStack stack) {
-		poseStack.mulPose(Axis.YP.rotationDegrees(180F));
-		poseStack.mulPose(Axis.ZP.rotationDegrees(180F));
-		var matrix = poseStack.last().pose();
-		matrix.translate(-0.25F, -0.3F, 0F);
-		matrix.scale(0.004F);
-		renderBack(poseStack, buffer, light);
-		renderText(poseStack, buffer, light, stack);
+	public static void renderClipboardPage(Matrix4f matrix, MultiBufferSource buffer, int light, ItemStack stack) {
+		var local = new Matrix4f(matrix).rotate(Axis.YP.rotationDegrees(180F))
+			.rotate(Axis.ZP.rotationDegrees(180F))
+			.translate(-0.25F, -0.3F, 0F)
+			.scale(0.01F * 0.4F * SCALE);
+		renderGuiTexure(AllGuiTextures.CLIPBOARD, local, buffer, light, 0, 0);
+		renderText(local, buffer, light, stack);
 	}
-	private static void renderBack(PoseStack poseStack, MultiBufferSource buffer, int light) {
-		// 渲染剪贴板背景界面
-		var vertex = buffer.getBuffer(RenderType.text(AllGuiTextures.CLIPBOARD.getLocation()));
-		var matrix = poseStack.last().pose();
-		vertex.addVertex(matrix, 0F, 128F, 1F).setColor(-1).setUv(0F, 1F).setLight(light);
-		vertex.addVertex(matrix, 128F, 128F, 1F).setColor(-1).setUv(1F, 1F).setLight(light);
-		vertex.addVertex(matrix, 128F, 0F, 1F).setColor(-1).setUv(1F, 0F).setLight(light);
-		vertex.addVertex(matrix, 0F, 0F, 1F).setColor(-1).setUv(0F, 0F).setLight(light);
+	private static void renderGuiTexure(AllGuiTextures texture, Matrix4f matrix, MultiBufferSource buffer, int light, int x, int y) {
+		var local = new Matrix4f(matrix).translate(x, y, 0F);
+		var startX = texture.getStartX();
+		var startY = texture.getStartY();
+		var width = texture.getWidth();
+		var height = texture.getHeight();
+		var vertex = buffer.getBuffer(RenderType.text(texture.getLocation()));
+		var minU = startX / 256F;
+		var minV = startY / 256F;
+		var maxU = (startX + width) / 256F;
+		var maxV = (startY + height) / 256F;
+		vertex.addVertex(local, 0F, height, 0F).setColor(-1).setUv(minU, maxV).setLight(light);
+		vertex.addVertex(local, width, height, 0F).setColor(-1).setUv(maxU, maxV).setLight(light);
+		vertex.addVertex(local, width, 0F, 0F).setColor(-1).setUv(maxU, minV).setLight(light);
+		vertex.addVertex(local, 0F, 0F, 0F).setColor(-1).setUv(minU, minV).setLight(light);
 	}
-	private static void renderText(PoseStack poseStack, MultiBufferSource buffer, int light, ItemStack stack) {
-		poseStack.scale(SCALE, SCALE, 1F);
+	private static void renderText(Matrix4f matrix, MultiBufferSource buffer, int light, ItemStack stack) {
 		var font = mc.font;
-		var matrix = poseStack.last().pose();
 		var mode = DisplayMode.POLYGON_OFFSET;
 		// 读取剪贴板内容
 		var content = stack.getOrDefault(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY);
 		var pages = ClipboardEntry.readAll(content);
 		if (pages.isEmpty()) return;
-		// 预设颜色
-		var normalC = 0x311A00;
-		var greenC = 0x31B25D;
-		var lightC = 0x668D7F6B;
 		var currentPage = Mth.clamp(content.previouslyOpenedPage(), 0, pages.size() - 1);
 		var entries = pages.get(currentPage);
 		if (entries.isEmpty()) return;
@@ -56,18 +56,17 @@ public final class ClipboardRenderer implements TooltipOverlayRenderer {
 			var address = text.startsWith("#") && !text.substring(1).isBlank();
 			if (address) text = text.substring(1).stripLeading();
 			if (text.isBlank()) continue;
-			// 渲染包裹图标
 			var checked = entry.checked;
-			var checkColor = checked ? lightC : normalC;
-			if (address) renderAddressIcon(poseStack, buffer, light, checked, x, y + 1);
-			else {
-				// 渲染勾选框
-				font.drawInBatch("□", x, y, checkColor, false, matrix, buffer, mode, 0, light);
-				if (checked) font.drawInBatch("✔", x, y - 1, greenC, false, matrix, buffer, mode, 0, light);
+			if (address) {
+				var texture = checked ? AllGuiTextures.CLIPBOARD_ADDRESS_INACTIVE : AllGuiTextures.CLIPBOARD_ADDRESS;
+				matrix.translate(0F, 0F, -1F);
+				renderGuiTexure(texture, matrix, buffer, light, x - 1, y);
+			} else {
+				font.drawInBatch("□", x, y, checked ? 0x668D7F6B : 0xFF8D7F6B, false, matrix, buffer, mode, 0, light);
+				if (checked) font.drawInBatch("✔", x, y - 1, 0x31B25D, false, matrix, buffer, mode, 0, light);
 			}
-			// 渲染每行文本
 			for (var sequence : font.split(Component.literal(text), 150)) {
-				var textColor = address ? checkColor : checked ? greenC : normalC;
+				var textColor = checked ? address ? 0x668D7F6B : 0x31B25D : 0x311A00;
 				font.drawInBatch(sequence, x + 13, y, textColor, false, matrix, buffer, mode, 0, light);
 				y += 9;
 			}
@@ -83,33 +82,19 @@ public final class ClipboardRenderer implements TooltipOverlayRenderer {
 			var leftPart = indicator.substring(0, slashIndex);
 			indicatorX = slashCenterX - font.width(leftPart) - font.width("/") / 2F;
 		} else indicatorX = slashCenterX - font.width(indicator) / 2F;
-		font.drawInBatch(indicator, indicatorX, 235, normalC, false, matrix, buffer, mode, 0, light);
-	}
-	private static void renderAddressIcon(PoseStack poseStack, MultiBufferSource buffer, int light, boolean checked, int x, int y) {
-		var texture = checked ? AllGuiTextures.CLIPBOARD_ADDRESS_INACTIVE : AllGuiTextures.CLIPBOARD_ADDRESS;
-		var vertex = buffer.getBuffer(RenderType.text(texture.getLocation()));
-		var matrix = poseStack.last().pose();
-		var startX = texture.getStartX();
-		var startY = texture.getStartY();
-		var width = texture.getWidth();
-		var height = texture.getHeight();
-		var v = 256F;
-		var minU = startX / v;
-		var minV = startY / v;
-		var maxU = (startX + width) / v;
-		var maxV = (startY + height) / v;
-		x -= 1;
-		y -= 1;
-		var x1 = x + width;
-		var y1 = y + height;
-		vertex.addVertex(matrix, x, y1, 0F).setColor(-1).setUv(minU, maxV).setLight(light);
-		vertex.addVertex(matrix, x1, y1, 0F).setColor(-1).setUv(maxU, maxV).setLight(light);
-		vertex.addVertex(matrix, x1, y, 0F).setColor(-1).setUv(maxU, minV).setLight(light);
-		vertex.addVertex(matrix, x, y, 0F).setColor(-1).setUv(minU, minV).setLight(light);
+		font.drawInBatch(indicator, indicatorX, 235, 0x311A00, false, matrix, buffer, mode, 0, light);
 	}
 	@Override
 	public boolean supports(ItemStack stack) {
 		return CCG.config.tooltip.clipboard && stack.getItem() instanceof ClipboardBlockItem;
+	}
+	@Override
+	public boolean canRender(ItemStack stack) {
+		var content = stack.getOrDefault(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY);
+		var pages = ClipboardEntry.readAll(content);
+		if (pages.isEmpty()) return false;
+		var currentPage = Mth.clamp(content.previouslyOpenedPage(), 0, pages.size() - 1);
+		return !pages.get(currentPage).isEmpty();
 	}
 	@Override
 	public int width(ItemStack stack) {
@@ -141,20 +126,22 @@ public final class ClipboardRenderer implements TooltipOverlayRenderer {
 			var address = raw.startsWith("#") && !raw.substring(1).isBlank();
 			var text = address ? raw.substring(1).stripLeading() : raw;
 			if (text.isBlank()) continue;
-			var color = entry.checked ? address ? 0x668D7F6B : 0x31B25D : 0x311A00;
+			var checked = entry.checked;
 			if (address) {
-				var texture = entry.checked ? AllGuiTextures.CLIPBOARD_ADDRESS_INACTIVE : AllGuiTextures.CLIPBOARD_ADDRESS;
+				var texture = checked ? AllGuiTextures.CLIPBOARD_ADDRESS_INACTIVE : AllGuiTextures.CLIPBOARD_ADDRESS;
 				texture.render(graphics, x1 - 1, y1 + 1);
 			} else {
-				graphics.drawString(font, "□", x1, y1 + 1, entry.checked ? 0x668D7F6B : 0xFF8D7F6B, false);
-				if (entry.checked) graphics.drawString(font, "✔", x1, y1, 0x31B25D, false);
+				graphics.drawString(font, "□", x1, y1 + 1, checked ? 0x668D7F6B : 0xFF8D7F6B, false);
+				if (checked) graphics.drawString(font, "✔", x1, y1, 0x31B25D, false);
 			}
+			var color = checked ? address ? 0x668D7F6B : 0x31B25D : 0x311A00;
 			for (var sequence : font.split(Component.literal(text), 150)) {
 				graphics.drawString(font, sequence, x1 + 13, y1, color, false);
 				y1 += 9;
 			}
 			y1 += 3;
-		}// 渲染页数指示器
+		}
+		// 渲染页数指示器
 		var pageIndicator = Component.translatable("book.pageIndicator", currentPage + 1, pages.size());
 		var indicator = pageIndicator.getString();
 		var slashCenterX = AllGuiTextures.CLIPBOARD.getWidth() / 2F;

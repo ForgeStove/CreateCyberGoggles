@@ -28,79 +28,79 @@ public abstract class ValueConfigEntry<C, T, V> extends ConfigEntry {
 	private boolean hasChanged;
 	protected ValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, T, V> valueNode) {
 		this.tab = tab;
-		this.label = valueNode.getTitle().copy().withStyle(ChatFormatting.WHITE);
-		this.labelChanged = label.copy().withStyle(ChatFormatting.ITALIC, ChatFormatting.YELLOW);
-		this.labelError = label.copy().withStyle(ChatFormatting.RED);
-		this.labelErrorChanged = label.copy().withStyle(ChatFormatting.ITALIC, ChatFormatting.RED);
-		this.tooltip = valueNode.getTooltip() == null ? null : tab.getMinecraft().font.split(valueNode.getTooltip(), 350);
-		this.tooltipWithError = this.getTooltipWithError();
+		label = valueNode.getTitle().copy().withStyle(ChatFormatting.WHITE);
+		labelChanged = label.copy().withStyle(ChatFormatting.ITALIC, ChatFormatting.YELLOW);
+		labelError = label.copy().withStyle(ChatFormatting.RED);
+		labelErrorChanged = label.copy().withStyle(ChatFormatting.ITALIC, ChatFormatting.RED);
+		tooltip = valueNode.getTooltip() == null ? null : tab.getMinecraft().font.split(valueNode.getTooltip(), 350);
+		tooltipWithError = getTooltipWithError();
 		this.valueNode = valueNode;
-		this.resetButton = Button.builder(Translation.RESET_LABEL, b -> this.resetToDefault())
+		resetButton = Button.builder(Translation.RESET_LABEL, b -> resetToDefault())
 			.bounds(0, 0, Math.max(tab.getMinecraft().font.width(Translation.RESET_LABEL) + 6, 20), 20)
 			.build();
-		this.resetButton.active = !valueNode.isDefaultValue(this.tab.getConfig());
-		this.children.add(this.resetButton);
-		this.undoButton = Button.builder(Translation.UNDO_LABEL, b -> this.resetToActive())
+		resetButton.active = !valueNode.isDefaultValue(this.tab.getConfig());
+		children.add(resetButton);
+		undoButton = Button.builder(Translation.UNDO_LABEL, b -> resetToActive())
 			.bounds(0, 0, Math.max(tab.getMinecraft().font.width(Translation.UNDO_LABEL) + 6, 20), 20)
 			.build();
-		this.undoButton.active = !valueNode.isActiveValue(this.tab.getConfig());
-		this.children.add(this.undoButton);
+		undoButton.active = !valueNode.isActiveValue(this.tab.getConfig());
+		children.add(undoButton);
 	}
 	public void resetToDefault() {
-		this.valueNode.resetToDefault();
-		this.tab.getScreen().refresh();
+		valueNode.resetToDefault();
+		tab.getScreen().refresh();
 	}
 	public void resetToActive() {
-		this.valueNode.resetToActive(this.tab.getConfig());
-		this.tab.getScreen().refresh();
+		valueNode.resetToActive(tab.getConfig());
+		tab.getScreen().refresh();
 	}
 	public V getValue() {
-		return this.valueNode.getEditingValue(this.tab.getConfig());
+		return valueNode.getEditingValue(tab.getConfig());
 	}
 	public void setValue(V value) {
-		this.valueNode.setEditingValue(value);
-		this.tab.getScreen().refresh();
+		valueNode.setEditingValue(value);
+		tab.getScreen().refresh();
 	}
 	public void refresh() {
-		this.resetButton.active = !valueNode.isDefaultValue(this.tab.getConfig());
-		this.undoButton.active = !valueNode.isActiveValue(this.tab.getConfig());
-		this.validationError = this.valueNode.validate(this.tab.getConfig());
-		this.hasChanged = !valueNode.isActiveValue(this.tab.getConfig());
-		this.tooltipWithError = this.getTooltipWithError();
+		resetButton.active = !valueNode.isDefaultValue(tab.getConfig());
+		undoButton.active = !valueNode.isActiveValue(tab.getConfig());
+		validationError = valueNode.validate(tab.getConfig());
+		hasChanged = !valueNode.isActiveValue(tab.getConfig());
+		tooltipWithError = getTooltipWithError();
 	}
 	@Override
 	public boolean hasError() {
-		return this.validationError != null;
+		return validationError != null;
 	}
 	@NotNull
 	@Override
 	public List<? extends GuiEventListener> children() {
-		return this.children;
+		return children;
 	}
 	@NotNull
 	@Override
 	public List<? extends NarratableEntry> narratables() {
-		return this.children;
+		return children;
 	}
 	@Nullable
 	public List<FormattedCharSequence> getTooltip() {
-		return hasError() ? this.tooltipWithError : this.tooltip;
+		return hasError() ? tooltipWithError : tooltip;
 	}
 	private List<FormattedCharSequence> getTooltipWithError() {
 		if (hasError()) {
 			List<FormattedCharSequence> errorTooltip = new ArrayList<>();
-			if (this.tooltip != null) errorTooltip.addAll(this.tooltip);
-			assert this.validationError != null;
-			errorTooltip.add(this.validationError.copy().withStyle(ChatFormatting.RED).getVisualOrderText());
+			if (tooltip != null) errorTooltip.addAll(tooltip);
+			assert validationError != null;
+			errorTooltip.add(validationError.copy().withStyle(ChatFormatting.RED).getVisualOrderText());
 			return errorTooltip;
 		}
-		return this.tooltip;
+		return tooltip;
 	}
 	protected void renderLabel(GuiGraphics guiGraphics, int x, int y, int entryWidth) {
 		Component l;
-		if (hasError()) l = this.hasChanged ? this.labelErrorChanged : this.labelError;
-		else l = this.hasChanged ? this.labelChanged : this.label;
-		if (this.tab.getMinecraft().font.isBidirectional()) x = x + entryWidth - this.tab.getMinecraft().font.width(l);
-		guiGraphics.drawString(this.tab.getMinecraft().font, l.getVisualOrderText(), x, y + 5, -1, false);
+		if (hasError()) l = hasChanged ? labelErrorChanged : labelError;
+		else l = hasChanged ? labelChanged : label;
+		if (tab.getMinecraft().font.isBidirectional()) x = x + entryWidth - tab.getMinecraft().font.width(l);
+		guiGraphics.drawString(tab.getMinecraft().font, l.getVisualOrderText(), x, y + 5, -1, false);
 	}
 }

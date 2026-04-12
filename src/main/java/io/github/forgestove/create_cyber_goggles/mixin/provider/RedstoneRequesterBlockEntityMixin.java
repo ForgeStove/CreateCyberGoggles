@@ -4,7 +4,7 @@ import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequester
 import io.github.forgestove.create_cyber_goggles.core.api.Self;
 import io.github.forgestove.create_cyber_goggles.core.util.GoggleTooltipUtil;
 import net.minecraft.network.chat.Component;
-import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.Mixin;
 
 import java.util.List;
 @Mixin(RedstoneRequesterBlockEntity.class)

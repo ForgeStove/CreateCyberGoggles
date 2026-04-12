@@ -24,65 +24,65 @@ public abstract class GenericValueConfigEntry<C, T> extends ValueConfigEntry<C, 
 		super(tab, valueNode);
 		this.parser = parser;
 		this.validator = validator;
-		this.inputField = new EditBox(tab.getMinecraft().font, 0, 0, 158, 18, this.valueNode.getTitle());
-		this.inputField.setValue(this.getValue().toString());
-		this.inputField.setFilter(validator);
-		this.inputField.setResponder(this::onInputChange);
-		this.children.add(this.inputField);
+		inputField = new EditBox(tab.getMinecraft().font, 0, 0, 100, 20, this.valueNode.getTitle());
+		inputField.setValue(getValue().toString());
+		inputField.setFilter(validator);
+		inputField.setResponder(this::onInputChange);
+		children.add(inputField);
 	}
 	public static boolean isZero(@NotNull String string) {
 		return string.isEmpty() || string.equals("-");
 	}
 	@Override
 	public void refresh() {
-		var hasError = hasParseError || this.valueNode.validate(this.tab.getConfig()) != null;
+		var hasError = hasParseError || valueNode.validate(tab.getConfig()) != null;
 		if (!hasError) {
-			var valueStr = this.getValue().toString();
-			if (!this.inputField.getValue().equals(valueStr)) {
+			var valueStr = getValue().toString();
+			if (!inputField.getValue().equals(valueStr)) {
 				updatingFromCode = true;
-				this.inputField.setValue(valueStr);
+				inputField.setValue(valueStr);
 				updatingFromCode = false;
 			}
-			this.inputField.setFormatter((s, i) -> FormattedCharSequence.forward(s, Style.EMPTY));
-		} else this.inputField.setFormatter((s, i) -> FormattedCharSequence.forward(s, Style.EMPTY.withColor(ChatFormatting.RED)));
+			inputField.setFormatter((s, i) -> FormattedCharSequence.forward(s, Style.EMPTY));
+		} else inputField.setFormatter((s, i) -> FormattedCharSequence.forward(s, Style.EMPTY.withColor(ChatFormatting.RED)));
 		super.refresh();
 		if (hasParseError) {
-			this.resetButton.active = true;
-			this.undoButton.active = true;
+			resetButton.active = true;
+			undoButton.active = true;
 		}
 	}
 	@Override
 	public void resetToDefault() {
 		hasParseError = false;
-		this.valueNode.resetToDefault();
+		valueNode.resetToDefault();
 		updatingFromCode = true;
-		this.inputField.setValue(this.getValue().toString());
+		inputField.setValue(getValue().toString());
 		updatingFromCode = false;
-		this.tab.getScreen().refresh();
+		tab.getScreen().refresh();
 	}
 	@Override
 	public void resetToActive() {
 		hasParseError = false;
-		this.valueNode.resetToActive(this.tab.getConfig());
+		valueNode.resetToActive(tab.getConfig());
 		updatingFromCode = true;
-		this.inputField.setValue(this.getValue().toString());
+		inputField.setValue(getValue().toString());
 		updatingFromCode = false;
-		this.tab.getScreen().refresh();
+		tab.getScreen().refresh();
 	}
 	private void onInputChange(String value) {
 		if (updatingFromCode) return;
 		if (!validator.test(value)) {
 			hasParseError = true;
-			this.tab.getScreen().refresh();
+			tab.getScreen().refresh();
 			return;
 		}
 		try {
-			this.setValue(parser.apply(value));
+			setValue(parser.apply(value));
 			hasParseError = false;
 		} catch (Exception e) {
 			hasParseError = true;
 		}
-		this.tab.getScreen().refresh();
+		tab.getScreen().refresh();
 	}
 	@Override
 	public boolean hasError() {
@@ -101,32 +101,26 @@ public abstract class GenericValueConfigEntry<C, T> extends ValueConfigEntry<C, 
 		boolean hovered,
 		float delta
 	) {
-		this.renderLabel(guiGraphics, x, y, entryWidth);
-		this.inputField.setX(x + entryWidth - 158 - 1);
-		this.inputField.setY(y + 1);
-		this.resetButton.setX(x + entryWidth - this.resetButton.getWidth() - 2 - this.undoButton.getWidth());
-		this.resetButton.setY(y);
-		this.undoButton.setX(x + entryWidth - this.undoButton.getWidth());
-		this.undoButton.setY(y);
-		this.inputField.setWidth(158 - this.resetButton.getWidth() - 2 - this.undoButton.getWidth() - 2);
-		if (this.tab.getMinecraft().font.isBidirectional()) {
-			this.undoButton.setX(x);
-			this.undoButton.setY(y);
-			this.resetButton.setX(this.undoButton.getX() + this.undoButton.getWidth() + 2);
-			this.resetButton.setY(y);
-			this.inputField.setX(this.resetButton.getX() + this.resetButton.getWidth() + 2);
-			this.inputField.setY(y + 1);
+		renderLabel(guiGraphics, x, y, entryWidth);
+		inputField.setY(y);
+		resetButton.setY(y);
+		undoButton.setY(y);
+		//		this.inputField.setWidth(158 - this.resetButton.getWidth() - 2 - this.undoButton.getWidth() - 2);
+		if (tab.getMinecraft().font.isBidirectional()) {
+			undoButton.setX(x);
+			resetButton.setX(undoButton.getX() + undoButton.getWidth() + 2);
+			inputField.setX(resetButton.getX() + resetButton.getWidth() + 2);
 		} else {
-			this.undoButton.setX(x + entryWidth - this.undoButton.getWidth());
-			this.undoButton.setY(y);
-			this.resetButton.setX(this.undoButton.getX() - this.resetButton.getWidth() - 2);
-			this.resetButton.setY(y);
-			this.inputField.setX(this.resetButton.getX() - this.inputField.getWidth() - 3);
-			this.inputField.setY(y + 1);
+			undoButton.setX(x + entryWidth - undoButton.getWidth());
+			resetButton.setX(undoButton.getX() - resetButton.getWidth() - 2);
+			inputField.setX(resetButton.getX() - inputField.getWidth() - 3);
 		}
-		this.inputField.render(guiGraphics, mouseX, mouseY, delta);
-		this.resetButton.render(guiGraphics, mouseX, mouseY, delta);
-		this.undoButton.render(guiGraphics, mouseX, mouseY, delta);
+		undoButton.setY(y);
+		resetButton.setY(y);
+		inputField.setY(y);
+		inputField.render(guiGraphics, mouseX, mouseY, delta);
+		resetButton.render(guiGraphics, mouseX, mouseY, delta);
+		undoButton.render(guiGraphics, mouseX, mouseY, delta);
 	}
 }
 

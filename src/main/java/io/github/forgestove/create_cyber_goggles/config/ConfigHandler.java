@@ -19,13 +19,13 @@ public final class ConfigHandler<T> {
 	private final T activeConfig;
 	private final T savedConfig;
 	private ConfigHandler(Builder<T> builder) {
-		this.configClass = builder.configClass;
-		this.serializer = builder.serializerBuilder.build();
-		this.logger = builder.logger;
-		this.configTree = RootConfigNode.create(newInstance(), builder.id);
-		this.savedConfig = load();
-		this.activeConfig = newInstance();
-		this.configTree.copy(savedConfig, activeConfig);
+		configClass = builder.configClass;
+		serializer = builder.serializerBuilder.build();
+		logger = builder.logger;
+		configTree = RootConfigNode.create(newInstance(), builder.id);
+		savedConfig = load();
+		activeConfig = newInstance();
+		configTree.copy(savedConfig, activeConfig);
 	}
 	public static <T> Builder<T> builder(Class<T> configClass) {
 		return new Builder<>(configClass);
@@ -76,7 +76,7 @@ public final class ConfigHandler<T> {
 		private Logger logger;
 		private Builder(Class<T> configClass) {
 			this.configClass = configClass;
-			this.serializerBuilder = ConfigSerializer.builder(configClass);
+			serializerBuilder = ConfigSerializer.builder(configClass);
 		}
 		public Builder<T> id(String id) {
 			this.id = id;

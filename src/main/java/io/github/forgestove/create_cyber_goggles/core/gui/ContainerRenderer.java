@@ -20,7 +20,7 @@ public final class ContainerRenderer implements TooltipOverlayRenderer {
 		return isVanilla27Container(stack) ? 27 : storedSlots;
 	}
 	private static Grid resolveGrid(int slots) {
-		var columns = Math.clamp(slots, 1, COLUMNS);
+		var columns = Mth.clamp(slots, 1, COLUMNS);
 		var rows = Math.max(1, Mth.ceil((float) slots / COLUMNS));
 		return new Grid(columns, rows);
 	}

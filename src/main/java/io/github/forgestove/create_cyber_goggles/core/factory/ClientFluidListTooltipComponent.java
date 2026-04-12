@@ -23,8 +23,8 @@ public class ClientFluidListTooltipComponent implements ClientTooltipComponent {
 		this.fluids = fluids;
 		this.indent = indent;
 		this.maxColumns = maxColumns;
-		this.columns = Math.min(fluids.size(), maxColumns);
-		this.rows = (fluids.size() + maxColumns - 1) / maxColumns;
+		columns = Math.min(fluids.size(), maxColumns);
+		rows = (fluids.size() + maxColumns - 1) / maxColumns;
 	}
 	public static void register(@NotNull RegisterClientTooltipComponentFactoriesEvent event) {
 		event.register(

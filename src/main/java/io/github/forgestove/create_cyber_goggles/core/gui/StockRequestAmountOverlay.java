@@ -24,7 +24,7 @@ public final class StockRequestAmountOverlay {
 		return stack;
 	}
 	public void open(ItemStack stack, int initial, int max, Font font, int popupX, int popupY) {
-		this.open = true;
+		open = true;
 		this.stack = stack.copyWithCount(1);
 		this.max = Math.max(0, max);
 		ensureInput(font, popupX, popupY);

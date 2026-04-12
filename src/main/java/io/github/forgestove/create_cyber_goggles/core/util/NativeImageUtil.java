@@ -3,6 +3,7 @@ import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor.ABGR32;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.*;
 import net.neoforged.neoforge.client.model.data.ModelData;
 
@@ -51,11 +52,11 @@ public class NativeImageUtil {
 		var luma = 0.299F * r + 0.587F * g + 0.114F * b;
 		if (luma <= 0F) return BASE;
 		if (luma >= MIN_LUMA && luma <= MAX_LUMA) return rgb;
-		var target = Math.clamp(luma < MIN_LUMA ? MIN_LUMA : MAX_LUMA, 0F, 255F);
+		var target = Mth.clamp(luma < MIN_LUMA ? MIN_LUMA : MAX_LUMA, 0F, 255F);
 		var scale = target / luma;
-		var outR = Math.clamp((int) (r * scale), 0, 255);
-		var outG = Math.clamp((int) (g * scale), 0, 255);
-		var outB = Math.clamp((int) (b * scale), 0, 255);
+		var outR = Mth.clamp((int) (r * scale), 0, 255);
+		var outG = Mth.clamp((int) (g * scale), 0, 255);
+		var outB = Mth.clamp((int) (b * scale), 0, 255);
 		return outR << 16 | outG << 8 | outB;
 	}
 	private static int sampleTexture(ResourceLocation texture) {

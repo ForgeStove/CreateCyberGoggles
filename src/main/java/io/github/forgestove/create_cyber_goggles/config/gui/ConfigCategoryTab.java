@@ -45,18 +45,18 @@ public final class ConfigCategoryTab<C> implements Tab {
 		this.screen = screen;
 		this.category = category;
 		this.config = config;
-		this.title = category.getTitle();
-		this.titleChanged = title.copy().withStyle(ChatFormatting.ITALIC, ChatFormatting.YELLOW);
-		this.titleError = title.copy().withStyle(ChatFormatting.RED);
-		this.titleErrorChanged = title.copy().withStyle(ChatFormatting.ITALIC, ChatFormatting.RED);
+		title = category.getTitle();
+		titleChanged = title.copy().withStyle(ChatFormatting.ITALIC, ChatFormatting.YELLOW);
+		titleError = title.copy().withStyle(ChatFormatting.RED);
+		titleErrorChanged = title.copy().withStyle(ChatFormatting.ITALIC, ChatFormatting.RED);
 		List<ConfigEntry> entries = new ArrayList<>();
 		category.getChildren().forEach(node -> {
-			if (node instanceof ValueConfigNode<C, ?, ?> valueNode) entries.add(this.createValueEntry(valueNode));
-			else if (node instanceof CategoryConfigNode<C> categoryNode) entries.addAll(this.createSubCategoryEntries(categoryNode));
+			if (node instanceof ValueConfigNode<C, ?, ?> valueNode) entries.add(createValueEntry(valueNode));
+			else if (node instanceof CategoryConfigNode<C> categoryNode) entries.addAll(createSubCategoryEntries(categoryNode));
 		});
-		this.list = new ConfigEntryList(
+		list = new ConfigEntryList(
 			this,
-			this.getMinecraft(),
+			getMinecraft(),
 			this.screen.width,
 			this.screen.height - this.screen.getHeaderHeight() - this.screen.getFooterHeight(),
 			this.screen.getHeaderHeight(),
@@ -71,15 +71,15 @@ public final class ConfigCategoryTab<C> implements Tab {
 	@NotNull
 	@Override
 	public Component getTabTitle() {
-		return this.title;
+		return title;
 	}
 	@Override
 	public void visitChildren(Consumer<AbstractWidget> consumer) {
-		consumer.accept(this.list);
+		consumer.accept(list);
 	}
 	@Override
 	public void doLayout(ScreenRectangle screenRectangle) {
-		this.list.setRectangle(screenRectangle.width(), screenRectangle.height(), screenRectangle.left(), screenRectangle.top());
+		list.setRectangle(screenRectangle.width(), screenRectangle.height(), screenRectangle.left(), screenRectangle.top());
 	}
 	@SuppressWarnings("unchecked")
 	private <T, V> ConfigEntry createValueEntry(ValueConfigNode<C, T, V> valueNode) {
@@ -93,43 +93,43 @@ public final class ConfigCategoryTab<C> implements Tab {
 		var entries = new ArrayList<ConfigEntry>(categoryNode.getChildren().size() + 1);
 		entries.add(new CategoryTitleConfigEntry(this, categoryNode.getTitle()));
 		for (var node : categoryNode.getChildren())
-			if (node instanceof ValueConfigNode<C, ?, ?> valueNode) entries.add(this.createValueEntry(valueNode));
+			if (node instanceof ValueConfigNode<C, ?, ?> valueNode) entries.add(createValueEntry(valueNode));
 		return entries;
 	}
 	@NotNull
 	public Minecraft getMinecraft() {
-		return Objects.requireNonNull(this.screen.getMinecraft());
+		return Objects.requireNonNull(screen.getMinecraft());
 	}
 	public ConfigScreen<C> getScreen() {
-		return this.screen;
+		return screen;
 	}
 	public void refresh() {
-		if (this.tabButton == null) return;
+		if (tabButton == null) return;
 		Component newTitle;
-		var hasChanged = !this.category.isActiveValue(this.config);
-		var hasError = this.category.validate(this.config) != null || this.list.hasEntryError();
-		if (hasError) newTitle = hasChanged ? this.titleErrorChanged : this.titleError;
-		else newTitle = hasChanged ? this.titleChanged : this.title;
+		var hasChanged = !category.isActiveValue(config);
+		var hasError = category.validate(config) != null || list.hasEntryError();
+		if (hasError) newTitle = hasChanged ? titleErrorChanged : titleError;
+		else newTitle = hasChanged ? titleChanged : title;
 		tabButton.setMessage(newTitle);
-		this.list.refreshEntries();
+		list.refreshEntries();
 	}
 	public boolean hasEntryError() {
-		return this.list.hasEntryError();
+		return list.hasEntryError();
 	}
 	public C getConfig() {
-		return this.config;
+		return config;
 	}
 	public void setTabButton(@Nullable TabButton tabButton) {
 		this.tabButton = tabButton;
 	}
 	public boolean handleKeyCapture(int keyCode) {
-		return this.list.handleKeyCapture(keyCode);
+		return list.handleKeyCapture(keyCode);
 	}
 	public boolean handleMouseCapture(int button) {
-		return this.list.handleMouseCapture(button);
+		return list.handleMouseCapture(button);
 	}
 	public boolean isCapturingKeybind() {
-		return this.list.isCapturingKeybind();
+		return list.isCapturingKeybind();
 	}
 	@FunctionalInterface
 	private interface ConfigEntryFactory<C> {

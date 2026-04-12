@@ -13,7 +13,7 @@ public final class CategoryTitleConfigEntry extends ConfigEntry {
 	private final Component label;
 	public CategoryTitleConfigEntry(ConfigCategoryTab<?> tab, Component label) {
 		super();
-		this.minecraft = tab.getMinecraft();
+		minecraft = tab.getMinecraft();
 		this.label = label;
 	}
 	@NotNull
@@ -27,7 +27,7 @@ public final class CategoryTitleConfigEntry extends ConfigEntry {
 			}
 			@Override
 			public void updateNarration(@NotNull NarrationElementOutput narrationElementOutput) {
-				narrationElementOutput.add(NarratedElementType.TITLE, CategoryTitleConfigEntry.this.label);
+				narrationElementOutput.add(NarratedElementType.TITLE, label);
 			}
 		});
 	}
@@ -44,7 +44,7 @@ public final class CategoryTitleConfigEntry extends ConfigEntry {
 		boolean hovered,
 		float delta
 	) {
-		guiGraphics.drawCenteredString(this.minecraft.font, this.label, x + entryWidth / 2, y + 5, -1);
+		guiGraphics.drawCenteredString(minecraft.font, label, x + entryWidth / 2, y + 5, -1);
 	}
 	@NotNull
 	@Override

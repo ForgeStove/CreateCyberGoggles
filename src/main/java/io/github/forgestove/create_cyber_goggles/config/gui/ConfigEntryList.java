@@ -32,73 +32,73 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 	@Override
 	public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
 		// Track which dropdown is expanded
-		this.expandedDropdown = null;
-		for (var entry : this.children())
+		expandedDropdown = null;
+		for (var entry : children())
 			if (entry instanceof EnumValueConfigEntry<?> enumEntry && enumEntry.isExpanded()) {
-				this.expandedDropdown = enumEntry;
+				expandedDropdown = enumEntry;
 				break;
 			}
 		// Render dropdown overlay on top of everything (outside scissor)
-		var showTooltip = this.expandedDropdown == null;
-		if (this.expandedDropdown != null) {
-			this.expandedDropdown.renderDropdownOverlay(guiGraphics, mouseX, mouseY);
+		var showTooltip = expandedDropdown == null;
+		if (expandedDropdown != null) {
+			expandedDropdown.renderDropdownOverlay(guiGraphics, mouseX, mouseY);
 			// Don't show tooltips when mouse is over the dropdown
-			showTooltip = !this.expandedDropdown.isMouseOverDropdown(mouseX, mouseY);
+			showTooltip = !expandedDropdown.isMouseOverDropdown(mouseX, mouseY);
 		}
 		if (showTooltip) {
-			this.renderHighlight(guiGraphics);
-			this.updateHighlightAnimation(delta);
+			renderHighlight(guiGraphics);
+			updateHighlightAnimation(delta);
 		}
 		super.renderWidget(guiGraphics, mouseX, mouseY, delta);
 		// Tooltips
 		if (!showTooltip) return;
-		var entry = this.getHovered();
+		var entry = getHovered();
 		if (entry == null) return;
 		if (entry instanceof ValueConfigEntry<?, ?, ?> valueEntry) if (valueEntry.resetButton.isHovered()) {
-			this.tab.getScreen().setTooltipForNextRenderPass(Translation.RESET_TOOLTIP);
+			tab.getScreen().setTooltipForNextRenderPass(Translation.RESET_TOOLTIP);
 			return;
 		} else if (valueEntry.undoButton.isHovered()) {
-			this.tab.getScreen().setTooltipForNextRenderPass(Translation.UNDO_TOOLTIP);
+			tab.getScreen().setTooltipForNextRenderPass(Translation.UNDO_TOOLTIP);
 			return;
 		} else if (valueEntry instanceof ColorValueConfigEntry<?> colorEntry && colorEntry.pickerButton.isHovered()) {
-			this.tab.getScreen().setTooltipForNextRenderPass(Translation.COLOR_PICKER_TOOLTIP);
+			tab.getScreen().setTooltipForNextRenderPass(Translation.COLOR_PICKER_TOOLTIP);
 			return;
 		}
-		if (entry.getTooltip() != null) this.tab.getScreen().setTooltipForNextRenderPass(entry.getTooltip());
+		if (entry.getTooltip() != null) tab.getScreen().setTooltipForNextRenderPass(entry.getTooltip());
 	}
 	private void updateHighlightAnimation(float delta) {
-		var hoveredEntry = this.getHovered();
+		var hoveredEntry = getHovered();
 		if (hoveredEntry != null) {
-			var index = this.children().indexOf(hoveredEntry);
+			var index = children().indexOf(hoveredEntry);
 			if (index >= 0) {
-				var entryTop = this.getRowTop(index);
-				this.highlightTargetY = entryTop;
-				this.highlightHeight = this.itemHeight;
+				var entryTop = getRowTop(index);
+				highlightTargetY = entryTop;
+				highlightHeight = itemHeight;
 				// Fade in
-				this.highlightAlpha = Mth.lerp(ANIMATION_SPEED * delta, this.highlightAlpha, 0.95F);
+				highlightAlpha = Mth.lerp(ANIMATION_SPEED * delta, highlightAlpha, 0.95F);
 				// Initialize position if first hover
-				if (this.highlightY < 0 || this.lastHoveredEntry == null) this.highlightY = entryTop;
+				if (highlightY < 0 || lastHoveredEntry == null) highlightY = entryTop;
 			}
-			this.lastHoveredEntry = hoveredEntry;
-		} else this.highlightAlpha = Mth.lerp(ANIMATION_SPEED * delta, this.highlightAlpha, 0.0f); // Fade out
+			lastHoveredEntry = hoveredEntry;
+		} else highlightAlpha = Mth.lerp(ANIMATION_SPEED * delta, highlightAlpha, 0.0f); // Fade out
 		// Smooth position transition with snap to target
-		if (!(this.highlightTargetY >= 0) || !(this.highlightY >= 0)) return;
-		this.highlightY = Mth.lerp(ANIMATION_SPEED * delta * 2, this.highlightY, this.highlightTargetY);
+		if (!(highlightTargetY >= 0) || !(highlightY >= 0)) return;
+		highlightY = Mth.lerp(ANIMATION_SPEED * delta * 2, highlightY, highlightTargetY);
 		// Snap to target when close enough
-		if (Math.abs(this.highlightY - this.highlightTargetY) < 1.0f) this.highlightY = this.highlightTargetY;
+		if (Math.abs(highlightY - highlightTargetY) < 1.0f) highlightY = highlightTargetY;
 	}
 	private void renderHighlight(@NotNull GuiGraphics guiGraphics) {
-		if (this.highlightAlpha <= 0.01f || this.highlightY < 0) return;
-		var alpha = (int) (this.highlightAlpha * 48); // Max alpha 48 (0x30)
+		if (highlightAlpha <= 0.01f || highlightY < 0) return;
+		var alpha = (int) (highlightAlpha * 48); // Max alpha 48 (0x30)
 		var color = alpha << 24 | 0xFFFFFF;
-		var left = this.getX();
-		var right = this.getX() + this.getWidth();
+		var left = getX();
+		var right = getX() + getWidth();
 		var offset = -1; // Move highlight up
-		var top = (int) this.highlightY + offset;
-		var bottom = top + this.highlightHeight;
+		var top = (int) highlightY + offset;
+		var bottom = top + highlightHeight;
 		// Clip to visible area
-		var visibleTop = this.getY();
-		var visibleBottom = this.getY() + this.getHeight();
+		var visibleTop = getY();
+		var visibleBottom = getY() + getHeight();
 		if (top < visibleTop) top = visibleTop;
 		if (bottom > visibleBottom) bottom = visibleBottom;
 		if (top < bottom) guiGraphics.fill(left, top, right, bottom, color);
@@ -106,12 +106,11 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		// First check if expanded dropdown should handle the click
-		if (this.expandedDropdown != null) {
-			if (this.expandedDropdown.isMouseOverDropdown(mouseX, mouseY)) return this.expandedDropdown.handleDropdownClick(mouseX,
-				mouseY);
+		if (expandedDropdown != null) {
+			if (expandedDropdown.isMouseOverDropdown(mouseX, mouseY)) return expandedDropdown.handleDropdownClick(mouseX, mouseY);
 			// Click outside dropdown closes it
-			this.expandedDropdown.closeDropdown();
-			this.expandedDropdown = null;
+			expandedDropdown.closeDropdown();
+			expandedDropdown = null;
 			// Don't process further if we just closed a dropdown
 			return true;
 		}
@@ -119,42 +118,42 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 	}
 	@Override
 	public boolean mouseReleased(double mouseX, double mouseY, int button) {
-		if (this.expandedDropdown != null) this.expandedDropdown.mouseReleased(mouseX, mouseY, button);
+		if (expandedDropdown != null) expandedDropdown.mouseReleased(mouseX, mouseY, button);
 		return super.mouseReleased(mouseX, mouseY, button);
 	}
 	@Override
 	public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-		if (this.expandedDropdown != null) if (this.expandedDropdown.mouseDragged(mouseX, mouseY, button, dragX, dragY)) return true;
+		if (expandedDropdown != null) if (expandedDropdown.mouseDragged(mouseX, mouseY, button, dragX, dragY)) return true;
 		return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
 	}
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
 		// First check if expanded dropdown should handle the scroll
-		if (this.expandedDropdown != null && this.expandedDropdown.handleDropdownScroll(mouseX, mouseY, vertical)) return true;
+		if (expandedDropdown != null && expandedDropdown.handleDropdownScroll(mouseX, mouseY, vertical)) return true;
 		return super.mouseScrolled(mouseX, mouseY, horizontal, vertical);
 	}
 	@Override
 	public int getRowWidth() {
-		return this.width - 80;
+		return width - 80;
 	}
 	public void refreshEntries() {
-		this.children().forEach(ConfigEntry::refresh);
+		children().forEach(ConfigEntry::refresh);
 	}
 	public boolean hasEntryError() {
-		return this.children().stream().anyMatch(ConfigEntry::hasError);
+		return children().stream().anyMatch(ConfigEntry::hasError);
 	}
 	public boolean handleKeyCapture(int keyCode) {
-		for (var entry : this.children())
+		for (var entry : children())
 			if (entry instanceof KeybindValueConfigEntry<?> keybindEntry && keybindEntry.handleCaptureKey(keyCode)) return true;
 		return false;
 	}
 	public boolean handleMouseCapture(int button) {
-		for (var entry : this.children())
+		for (var entry : children())
 			if (entry instanceof KeybindValueConfigEntry<?> keybindEntry && keybindEntry.handleCaptureMouse(button)) return true;
 		return false;
 	}
 	public boolean isCapturingKeybind() {
-		for (var entry : this.children())
+		for (var entry : children())
 			if (entry instanceof KeybindValueConfigEntry<?> keybindEntry && keybindEntry.isCapturing()) return true;
 		return false;
 	}

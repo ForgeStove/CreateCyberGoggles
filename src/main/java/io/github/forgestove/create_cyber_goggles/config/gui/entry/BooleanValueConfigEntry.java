@@ -12,20 +12,20 @@ public final class BooleanValueConfigEntry<C> extends ValueConfigEntry<C, Boolea
 	private final CycleButton<Boolean> valueButton;
 	public BooleanValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Boolean, Boolean> valueNode) {
 		super(tab, valueNode);
-		this.valueButton = CycleButton.booleanBuilder(
+		valueButton = CycleButton.booleanBuilder(
 				CommonComponents.GUI_YES.copy().withStyle(ChatFormatting.GREEN),
 				CommonComponents.GUI_NO.copy().withStyle(ChatFormatting.RED)
 			)
-			.withInitialValue(this.getValue())
+			.withInitialValue(getValue())
 			.displayOnlyValue()
-			.create(0, 0, 160, 20, valueNode.getTitle(), (b, value) -> this.setValue(value));
-		this.children.add(this.valueButton);
+			.create(0, 0, WIDTH, HEIGHT, valueNode.getTitle(), (b, value) -> setValue(value));
+		children.add(valueButton);
 	}
 	@Override
 	public void refresh() {
 		super.refresh();
-		var value = this.getValue();
-		if (!Objects.equals(this.valueButton.getValue(), value)) this.valueButton.setValue(value);
+		var value = getValue();
+		if (!Objects.equals(valueButton.getValue(), value)) valueButton.setValue(value);
 	}
 	@Override
 	public void render(
@@ -40,25 +40,21 @@ public final class BooleanValueConfigEntry<C> extends ValueConfigEntry<C, Boolea
 		boolean hovered,
 		float delta
 	) {
-		this.renderLabel(guiGraphics, x, y, entryWidth);
-		this.valueButton.setWidth(160 - this.resetButton.getWidth() - 2 - this.undoButton.getWidth() - 2);
-		if (this.tab.getMinecraft().font.isBidirectional()) {
-			this.undoButton.setX(x);
-			this.undoButton.setY(y);
-			this.resetButton.setX(x + undoButton.getWidth() + 2);
-			this.resetButton.setY(y);
-			this.valueButton.setX(x + undoButton.getWidth() + 2 + resetButton.getWidth() + 2);
-			this.valueButton.setY(y);
+		renderLabel(guiGraphics, x, y, entryWidth);
+		if (tab.getMinecraft().font.isBidirectional()) {
+			undoButton.setX(x);
+			resetButton.setX(x + undoButton.getWidth() + 2);
+			valueButton.setX(x + undoButton.getWidth() + 2 + resetButton.getWidth() + 2);
 		} else {
-			this.undoButton.setX(x + entryWidth - this.undoButton.getWidth());
-			this.undoButton.setY(y);
-			this.resetButton.setX(this.undoButton.getX() - this.resetButton.getWidth() - 2);
-			this.resetButton.setY(y);
-			this.valueButton.setX(this.resetButton.getX() - this.valueButton.getWidth() - 2);
-			this.valueButton.setY(y);
+			undoButton.setX(x + entryWidth - undoButton.getWidth());
+			resetButton.setX(undoButton.getX() - resetButton.getWidth() - 2);
+			valueButton.setX(resetButton.getX() - valueButton.getWidth() - 2);
 		}
-		this.valueButton.render(guiGraphics, mouseX, mouseY, delta);
-		this.resetButton.render(guiGraphics, mouseX, mouseY, delta);
-		this.undoButton.render(guiGraphics, mouseX, mouseY, delta);
+		valueButton.setY(y);
+		resetButton.setY(y);
+		undoButton.setY(y);
+		valueButton.render(guiGraphics, mouseX, mouseY, delta);
+		resetButton.render(guiGraphics, mouseX, mouseY, delta);
+		undoButton.render(guiGraphics, mouseX, mouseY, delta);
 	}
 }

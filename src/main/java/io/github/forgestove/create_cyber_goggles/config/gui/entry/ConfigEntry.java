@@ -5,6 +5,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 public abstract class ConfigEntry extends Entry<ConfigEntry> {
+	public static final int WIDTH = 100;
+	public static final int HEIGHT = 20;
 	@Nullable
 	public List<FormattedCharSequence> getTooltip() {
 		return null;

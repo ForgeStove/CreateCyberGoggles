@@ -13,13 +13,13 @@ public final class TextConfigEntry extends ConfigEntry {
 	private final List<MultiLineTextWidget> textWidgetAsList;
 	public TextConfigEntry(ConfigCategoryTab<?> tab, Component text) {
 		super();
-		this.textWidget = new MultiLineTextWidget(text, tab.getMinecraft().font);
-		this.textWidgetAsList = List.of(this.textWidget);
+		textWidget = new MultiLineTextWidget(text, tab.getMinecraft().font);
+		textWidgetAsList = List.of(textWidget);
 	}
 	@NotNull
 	@Override
 	public List<? extends NarratableEntry> narratables() {
-		return this.textWidgetAsList;
+		return textWidgetAsList;
 	}
 	@Override
 	public void render(
@@ -34,14 +34,14 @@ public final class TextConfigEntry extends ConfigEntry {
 		boolean hovered,
 		float delta
 	) {
-		this.textWidget.setX(x);
-		this.textWidget.setY(y + 5);
-		this.textWidget.setMaxWidth(entryWidth);
-		this.textWidget.renderWidget(guiGraphics, mouseX, mouseY, delta);
+		textWidget.setX(x);
+		textWidget.setY(y + 5);
+		textWidget.setMaxWidth(entryWidth);
+		textWidget.renderWidget(guiGraphics, mouseX, mouseY, delta);
 	}
 	@NotNull
 	@Override
 	public List<? extends GuiEventListener> children() {
-		return this.textWidgetAsList;
+		return textWidgetAsList;
 	}
 }

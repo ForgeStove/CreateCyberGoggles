@@ -29,29 +29,29 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 	}
 	@Override
 	public void resetToDefault() {
-		this.categories.forEach(ConfigNode::resetToDefault);
+		categories.forEach(ConfigNode::resetToDefault);
 	}
 	@Override
 	public void resetToActive(C config) {
-		this.categories.forEach(category -> category.resetToActive(config));
+		categories.forEach(category -> category.resetToActive(config));
 	}
 	@Override
 	public boolean restartRequired(C config) {
-		return this.categories.stream().anyMatch(categoryConfigNode -> categoryConfigNode.restartRequired(config));
+		return categories.stream().anyMatch(categoryConfigNode -> categoryConfigNode.restartRequired(config));
 	}
 	@Override
 	public boolean isDefaultValue(C config) {
-		return this.categories.stream().allMatch(node -> node.isDefaultValue(config));
+		return categories.stream().allMatch(node -> node.isDefaultValue(config));
 	}
 	@Override
 	public boolean isActiveValue(C config) {
-		return this.categories.stream().allMatch(node -> node.isActiveValue(config));
+		return categories.stream().allMatch(node -> node.isActiveValue(config));
 	}
 	@Nullable
 	@Override
 	public Component validate(C config) {
 		Component error = null;
-		for (var node : this.categories) {
+		for (var node : categories) {
 			var result = node.validate(config);
 			if (result != null) {
 				if (error != null) return Translation.MULTIPLE_ERRORS;
@@ -62,15 +62,15 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 	}
 	@NotNull
 	public ImmutableList<CategoryConfigNode<C>> getCategories() {
-		return this.categories;
+		return categories;
 	}
 	@Override
 	public void copy(C from, C to) {
-		this.categories.forEach(node -> node.copy(from, to));
+		categories.forEach(node -> node.copy(from, to));
 	}
 	@Override
 	public void writeEditingToConfig(C config) {
-		this.categories.forEach(node -> node.writeEditingToConfig(config));
+		categories.forEach(node -> node.writeEditingToConfig(config));
 	}
 	private static class Builder<C> {
 		private static final Map<Class<?>, ValidatorFactory<?>> VALIDATOR_FACTORIES = Map.of(
@@ -123,21 +123,21 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 		}
 		@NotNull
 		public RootConfigNode<C> build() {
-			var configClass = this.defaultConfig.getClass();
+			var configClass = defaultConfig.getClass();
 			var categories = Arrays.stream(configClass.getFields())
 				.filter(field -> field.isAnnotationPresent(Category.class))
 				.map(field -> Map.entry(field.getAnnotation(Category.class).value(), field))
 				.sorted(Comparator.comparingInt(Entry::getKey))
-				.map(pair -> this.createCategoryNode(pair.getValue()))
+				.map(pair -> createCategoryNode(pair.getValue()))
 				.collect(ImmutableList.toImmutableList());
-			this.defaultConfig = null;
+			defaultConfig = null;
 			return new RootConfigNode<>(categories);
 		}
 		private CategoryConfigNode<C> createCategoryNode(Field categoryField) {
 			Object defaultCategory;
 			try {
 				categoryField.setAccessible(true);
-				defaultCategory = categoryField.get(this.defaultConfig);
+				defaultCategory = categoryField.get(defaultConfig);
 			} catch (IllegalAccessException | InaccessibleObjectException | SecurityException e) {
 				throw new IllegalArgumentException("Failed to get category field", e);
 			}
@@ -147,7 +147,7 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 				.name(categoryName)
 				.title(Component.translatable(id + ".config.category." + categoryName));
 			for (var valueField : categoryClass.getDeclaredFields())
-				this.addValueNode(defaultCategory, categoryField, valueField, categoryBuilder);
+				addValueNode(defaultCategory, categoryField, valueField, categoryBuilder);
 			return categoryBuilder.build();
 		}
 		private void addValueNode(
@@ -163,7 +163,7 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 			} catch (IllegalAccessException | InaccessibleObjectException | SecurityException e) {
 				throw new IllegalArgumentException("Failed to get value field", e);
 			}
-			this.addSingleValueField(defaultValue.getClass(), defaultValue, categoryField, valueField, categoryBuilder);
+			addSingleValueField(defaultValue.getClass(), defaultValue, categoryField, valueField, categoryBuilder);
 		}
 		@SuppressWarnings("unchecked")
 		private <T> void addSingleValueField(
@@ -184,8 +184,8 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 					.title(title)
 					.tooltip(tooltip)
 					.defaultValue(defaultValue)
-					.valueReader(this.makeValueReader(type, categoryField, valueField))
-					.valueWriter(this.makeValueWriter(type, categoryField, valueField))
+					.valueReader(makeValueReader(type, categoryField, valueField))
+					.valueWriter(makeValueWriter(type, categoryField, valueField))
 					.requiresRestart(valueField.isAnnotationPresent(RequiresRestart.class));
 				// Check for ColorValue annotation
 				var colorAnnotation = valueField.getAnnotation(ColorValue.class);

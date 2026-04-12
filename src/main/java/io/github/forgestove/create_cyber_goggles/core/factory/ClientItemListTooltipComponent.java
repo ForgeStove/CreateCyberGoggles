@@ -18,8 +18,8 @@ public class ClientItemListTooltipComponent implements ClientTooltipComponent {
 		this.items = items;
 		this.indent = indent;
 		this.maxColumns = maxColumns;
-		this.columns = Math.min(items.size(), maxColumns);
-		this.rows = (items.size() + maxColumns - 1) / maxColumns;
+		columns = Math.min(items.size(), maxColumns);
+		rows = (items.size() + maxColumns - 1) / maxColumns;
 	}
 	public static void register(@NotNull RegisterClientTooltipComponentFactoriesEvent event) {
 		event.register(

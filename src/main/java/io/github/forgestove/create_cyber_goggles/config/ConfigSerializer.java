@@ -19,10 +19,10 @@ public final class ConfigSerializer<T> {
 	private final String translationPrefix;
 	private final Function<String, String> translator;
 	private ConfigSerializer(Builder<T> builder) {
-		this.configClass = builder.configClass;
-		this.configPath = builder.configPath;
-		this.translationPrefix = builder.translationPrefix;
-		this.translator = builder.translator;
+		configClass = builder.configClass;
+		configPath = builder.configPath;
+		translationPrefix = builder.translationPrefix;
+		translator = builder.translator;
 	}
 	public static <T> Builder<T> builder(Class<T> configClass) {
 		return new Builder<>(configClass);
@@ -127,7 +127,7 @@ public final class ConfigSerializer<T> {
 			this.configPath = configPath;
 		}
 		public void translationPrefix(String prefix) {
-			this.translationPrefix = prefix;
+			translationPrefix = prefix;
 		}
 		public void translator(Function<String, String> translator) {
 			this.translator = translator;

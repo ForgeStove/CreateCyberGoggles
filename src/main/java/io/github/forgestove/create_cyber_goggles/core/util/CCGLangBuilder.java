@@ -73,10 +73,10 @@ public class CCGLangBuilder {
 		return this;
 	}
 	public CCGLangBuilder color(Color color) {
-		return this.color(color.getRGB());
+		return color(color.getRGB());
 	}
 	public CCGLangBuilder fluidName(FluidStack stack) {
-		return this.add(stack.getHoverName().copy());
+		return add(stack.getHoverName().copy());
 	}
 	public MutableComponent component() {
 		if (component == null) throw new IllegalStateException("Component is null");

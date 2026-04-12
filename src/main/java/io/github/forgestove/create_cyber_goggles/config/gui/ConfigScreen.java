@@ -35,97 +35,97 @@ public final class ConfigScreen<C> extends Screen {
 		this.config = config;
 		this.onSave = onSave;
 		this.previous = previous;
-		this.layout = new HeaderAndFooterLayout(this, 24, 33);
-		this.tabManager = new TabManager(this::addRenderableWidget, this::removeWidget);
-		this.tabs = List.of();
-		this.cacheKey = root.getTitle().getString();
-		this.keybindCategory = createKeybindCategory();
+		layout = new HeaderAndFooterLayout(this, 24, 33);
+		tabManager = new TabManager(this::addRenderableWidget, this::removeWidget);
+		tabs = List.of();
+		cacheKey = root.getTitle().getString();
+		keybindCategory = createKeybindCategory();
 	}
 	@Override
 	protected void init() {
-		this.root.resetToActive(this.config);
-		this.keybindCategory.resetToActive(this.config);
-		var tabNavigationBarBuilder = TabNavigationBar.builder(this.tabManager, this.width);
-		this.tabs = new ArrayList<>();
-		for (var category : this.root.getCategories()) {
-			var tab = new ConfigCategoryTab<>(this, category, this.config);
+		root.resetToActive(config);
+		keybindCategory.resetToActive(config);
+		var tabNavigationBarBuilder = TabNavigationBar.builder(tabManager, width);
+		tabs = new ArrayList<>();
+		for (var category : root.getCategories()) {
+			var tab = new ConfigCategoryTab<>(this, category, config);
 			tabNavigationBarBuilder.addTabs(tab);
-			this.tabs.add(tab);
+			tabs.add(tab);
 		}
-		var keybindTab = new ConfigCategoryTab<>(this, this.keybindCategory, this.config);
+		var keybindTab = new ConfigCategoryTab<>(this, keybindCategory, config);
 		tabNavigationBarBuilder.addTabs(keybindTab);
-		this.tabs.add(keybindTab);
-		this.tabNavigationBar = tabNavigationBarBuilder.build();
-		this.initTabs(this.tabNavigationBar);
-		this.addRenderableWidget(this.tabNavigationBar);
-		var footerLayout = this.layout.addToFooter(LinearLayout.horizontal().spacing(8));
-		this.quitButton = footerLayout.addChild(Button.builder(this.getQuitLabel(), b -> this.onClose()).width(200).build());
-		this.saveAndQuitButton = footerLayout.addChild(Button.builder(this.getSaveLabel(), b -> this.saveAndQuit()).width(200).build());
-		this.saveAndQuitButton.active = !this.isActiveValue() && this.validate() == null;
-		this.layout.visitWidgets(abstractWidget -> {
+		tabs.add(keybindTab);
+		tabNavigationBar = tabNavigationBarBuilder.build();
+		initTabs(tabNavigationBar);
+		addRenderableWidget(tabNavigationBar);
+		var footerLayout = layout.addToFooter(LinearLayout.horizontal().spacing(8));
+		quitButton = footerLayout.addChild(Button.builder(getQuitLabel(), b -> onClose()).width(200).build());
+		saveAndQuitButton = footerLayout.addChild(Button.builder(getSaveLabel(), b -> saveAndQuit()).width(200).build());
+		saveAndQuitButton.active = !isActiveValue() && validate() == null;
+		layout.visitWidgets(abstractWidget -> {
 			abstractWidget.setTabOrderGroup(1);
-			this.addRenderableWidget(abstractWidget);
+			addRenderableWidget(abstractWidget);
 		});
-		int cachedTabIndex = lastSelectedTabCache.getOrDefault(this.cacheKey, 0);
-		if (cachedTabIndex >= this.tabs.size()) cachedTabIndex = 0;
-		this.tabNavigationBar.selectTab(cachedTabIndex, false);
-		this.repositionElements();
+		int cachedTabIndex = lastSelectedTabCache.getOrDefault(cacheKey, 0);
+		if (cachedTabIndex >= tabs.size()) cachedTabIndex = 0;
+		tabNavigationBar.selectTab(cachedTabIndex, false);
+		repositionElements();
 	}
 	private void initTabs(TabNavigationBar bar) {
 		var i = 0;
 		for (var child : bar.children())
 			if (child instanceof TabButton tabButton) {
-				this.tabs.get(i).setTabButton(tabButton);
+				tabs.get(i).setTabButton(tabButton);
 				++i;
 			}
 	}
 	@Override
 	protected void repositionElements() {
-		this.refresh();
-		if (this.tabNavigationBar != null) {
-			this.tabNavigationBar.setWidth(this.width);
-			this.tabNavigationBar.arrangeElements();
-			var i = this.tabNavigationBar.getRectangle().bottom();
-			var screenRectangle = new ScreenRectangle(0, i, this.width, this.height - this.layout.getFooterHeight() - i);
-			this.tabManager.setTabArea(screenRectangle);
-			this.layout.setHeaderHeight(i);
-			this.layout.arrangeElements();
+		refresh();
+		if (tabNavigationBar != null) {
+			tabNavigationBar.setWidth(width);
+			tabNavigationBar.arrangeElements();
+			var i = tabNavigationBar.getRectangle().bottom();
+			var screenRectangle = new ScreenRectangle(0, i, width, height - layout.getFooterHeight() - i);
+			tabManager.setTabArea(screenRectangle);
+			layout.setHeaderHeight(i);
+			layout.arrangeElements();
 		}
 	}
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		var currentTab = this.tabManager.getCurrentTab();
+		var currentTab = tabManager.getCurrentTab();
 		if (currentTab instanceof ConfigCategoryTab<?> categoryTab && categoryTab.handleKeyCapture(keyCode)) return true;
-		if (this.tabNavigationBar.keyPressed(keyCode)) {
-			this.cacheCurrentTabIndex();
+		if (tabNavigationBar.keyPressed(keyCode)) {
+			cacheCurrentTabIndex();
 			return true;
 		}
 		return super.keyPressed(keyCode, scanCode, modifiers);
 	}
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		var currentTab = this.tabManager.getCurrentTab();
+		var currentTab = tabManager.getCurrentTab();
 		if (currentTab instanceof ConfigCategoryTab<?> categoryTab && categoryTab.isCapturingKeybind() && categoryTab.handleMouseCapture(
 			button)) return true;
 		var result = super.mouseClicked(mouseX, mouseY, button);
-		this.cacheCurrentTabIndex();
+		cacheCurrentTabIndex();
 		return result;
 	}
 	private void cacheCurrentTabIndex() {
-		for (var i = 0; i < this.tabs.size(); i++)
-			if (this.tabManager.getCurrentTab() == this.tabs.get(i)) {
-				lastSelectedTabCache.put(this.cacheKey, i);
+		for (var i = 0; i < tabs.size(); i++)
+			if (tabManager.getCurrentTab() == tabs.get(i)) {
+				lastSelectedTabCache.put(cacheKey, i);
 				break;
 			}
 	}
 	@Override
 	public void onClose() {
-		if (this.isActiveValue()) {
-			this.getMinecraft().setScreen(this.previous);
+		if (isActiveValue()) {
+			getMinecraft().setScreen(previous);
 			return;
 		}
-		this.getMinecraft().setScreen(new ConfirmScreen(
-			confirmed -> this.getMinecraft().setScreen(confirmed ? this.previous : this),
+		getMinecraft().setScreen(new ConfirmScreen(
+			confirmed -> getMinecraft().setScreen(confirmed ? previous : this),
 			Translation.QUIT_CONFIRM_TITLE,
 			Translation.QUIT_CONFIRM_WARNING,
 			Translation.QUIT_CONFIRM_LABEL,
@@ -133,52 +133,52 @@ public final class ConfigScreen<C> extends Screen {
 		));
 	}
 	public void saveAndQuit() {
-		var restartRequired = this.root.restartRequired(this.config);
-		this.root.writeEditingToConfig(this.config);
-		this.keybindCategory.writeEditingToConfig(this.config);
-		this.getMinecraft().options.save();
-		this.onSave.accept(this.config);
-		if (restartRequired) this.getMinecraft().setScreen(new ConfirmScreen(
+		var restartRequired = root.restartRequired(config);
+		root.writeEditingToConfig(config);
+		keybindCategory.writeEditingToConfig(config);
+		getMinecraft().options.save();
+		onSave.accept(config);
+		if (restartRequired) getMinecraft().setScreen(new ConfirmScreen(
 			confirmed -> {
-				if (confirmed) this.getMinecraft().stop();
-				else this.getMinecraft().setScreen(this.previous);
+				if (confirmed) getMinecraft().stop();
+				else getMinecraft().setScreen(previous);
 			},
 			Translation.RESTART_REQUIRED_TITLE,
 			Translation.RESTART_REQUIRED_LABEL,
 			Translation.QUIT_GAME,
 			Translation.IGNORE_RESTART_LABEL
 		));
-		else this.getMinecraft().setScreen(this.previous);
+		else getMinecraft().setScreen(previous);
 	}
 	public @NotNull Minecraft getMinecraft() {
-		return Objects.requireNonNull(this.minecraft);
+		return Objects.requireNonNull(minecraft);
 	}
 	public int getHeaderHeight() {
-		return this.layout.getHeaderHeight();
+		return layout.getHeaderHeight();
 	}
 	public int getFooterHeight() {
-		return this.layout.getFooterHeight();
+		return layout.getFooterHeight();
 	}
 	public void refresh() {
-		this.tabs.forEach(ConfigCategoryTab::refresh);
-		var hasEntryError = this.tabs.stream().anyMatch(ConfigCategoryTab::hasEntryError);
-		this.saveAndQuitButton.active = !this.isActiveValue() && this.validate() == null && !hasEntryError;
-		this.quitButton.setMessage(this.getQuitLabel());
-		this.saveAndQuitButton.setMessage(this.getSaveLabel(hasEntryError));
+		tabs.forEach(ConfigCategoryTab::refresh);
+		var hasEntryError = tabs.stream().anyMatch(ConfigCategoryTab::hasEntryError);
+		saveAndQuitButton.active = !isActiveValue() && validate() == null && !hasEntryError;
+		quitButton.setMessage(getQuitLabel());
+		saveAndQuitButton.setMessage(getSaveLabel(hasEntryError));
 	}
 	private boolean isActiveValue() {
-		return this.root.isActiveValue(this.config) && this.keybindCategory.isActiveValue(this.config);
+		return root.isActiveValue(config) && keybindCategory.isActiveValue(config);
 	}
 	private Component validate() {
-		var rootError = this.root.validate(this.config);
+		var rootError = root.validate(config);
 		if (rootError != null) return rootError;
-		return this.keybindCategory.validate(this.config);
+		return keybindCategory.validate(config);
 	}
 	private Component getQuitLabel() {
-		return this.isActiveValue() ? Translation.CANCEL_LABEL : Translation.QUIT_UNSAVED_LABEL;
+		return isActiveValue() ? Translation.CANCEL_LABEL : Translation.QUIT_UNSAVED_LABEL;
 	}
 	private Component getSaveLabel(boolean hasEntryError) {
-		return this.validate() == null && !hasEntryError ? Translation.SAVE_LABEL : Translation.CANNOT_SAVE_LABEL;
+		return validate() == null && !hasEntryError ? Translation.SAVE_LABEL : Translation.CANNOT_SAVE_LABEL;
 	}
 	private Component getSaveLabel() {
 		return getSaveLabel(false);

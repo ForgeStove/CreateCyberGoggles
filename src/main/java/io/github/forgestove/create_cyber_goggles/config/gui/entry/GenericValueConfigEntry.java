@@ -101,20 +101,13 @@ public abstract class GenericValueConfigEntry<C, T> extends ValueConfigEntry<C, 
 		boolean hovered,
 		float delta
 	) {
-		renderLabel(guiGraphics, x, y, entryWidth);
+		renderLabel(guiGraphics, x, y);
 		inputField.setY(y);
 		resetButton.setY(y);
 		undoButton.setY(y);
-		//		this.inputField.setWidth(158 - this.resetButton.getWidth() - 2 - this.undoButton.getWidth() - 2);
-		if (tab.getMinecraft().font.isBidirectional()) {
-			undoButton.setX(x);
-			resetButton.setX(undoButton.getX() + undoButton.getWidth() + 2);
-			inputField.setX(resetButton.getX() + resetButton.getWidth() + 2);
-		} else {
-			undoButton.setX(x + entryWidth - undoButton.getWidth());
-			resetButton.setX(undoButton.getX() - resetButton.getWidth() - 2);
-			inputField.setX(resetButton.getX() - inputField.getWidth() - 3);
-		}
+		undoButton.setX(x + entryWidth - undoButton.getWidth());
+		resetButton.setX(undoButton.getX() - resetButton.getWidth() - 2);
+		inputField.setX(resetButton.getX() - inputField.getWidth() - 3);
 		undoButton.setY(y);
 		resetButton.setY(y);
 		inputField.setY(y);

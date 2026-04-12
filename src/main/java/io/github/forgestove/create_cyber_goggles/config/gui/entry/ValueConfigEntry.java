@@ -96,11 +96,10 @@ public abstract class ValueConfigEntry<C, T, V> extends ConfigEntry {
 		}
 		return tooltip;
 	}
-	protected void renderLabel(GuiGraphics guiGraphics, int x, int y, int entryWidth) {
+	protected void renderLabel(GuiGraphics guiGraphics, int x, int y) {
 		Component l;
 		if (hasError()) l = hasChanged ? labelErrorChanged : labelError;
 		else l = hasChanged ? labelChanged : label;
-		if (tab.getMinecraft().font.isBidirectional()) x = x + entryWidth - tab.getMinecraft().font.width(l);
 		guiGraphics.drawString(tab.getMinecraft().font, l.getVisualOrderText(), x, y + 5, -1, false);
 	}
 }

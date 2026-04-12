@@ -30,7 +30,7 @@ public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer,
 	}
 	private String formatColor(int color) {
 		if (hasAlpha) return String.format("%08X", color);
-		else return String.format("%06X", color & 0xFFFFFF);
+		return String.format("%06X", color & 0xFFFFFF);
 	}
 	private void openColorPicker() {
 		var mc = tab.getMinecraft();
@@ -71,7 +71,7 @@ public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer,
 		boolean hovered,
 		float delta
 	) {
-		renderLabel(guiGraphics, x, y, entryWidth);
+		renderLabel(guiGraphics, x, y);
 		var rightEdge = x + entryWidth;
 		var colorPreviewX = rightEdge - COLOR_PREVIEW_SIZE - undoButton.getWidth() - resetButton.getWidth() - 4;
 		// Color preview box

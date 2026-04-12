@@ -59,7 +59,7 @@ public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key, K
 		boolean hovered,
 		float delta
 	) {
-		renderLabel(guiGraphics, x, y, entryWidth);
+		renderLabel(guiGraphics, x, y);
 		undoButton.setX(x + entryWidth - undoButton.getWidth());
 		resetButton.setX(undoButton.getX() - resetButton.getWidth() - 2);
 		bindButton.setX(resetButton.getX() - bindButton.getWidth() - 3);

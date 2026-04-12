@@ -29,7 +29,7 @@ public final class BooleanValueConfigEntry<C> extends ValueConfigEntry<C, Boolea
 	}
 	@Override
 	public void render(
-		@NotNull GuiGraphics guiGraphics,
+		@NotNull GuiGraphics graphics,
 		int index,
 		int y,
 		int x,
@@ -40,21 +40,15 @@ public final class BooleanValueConfigEntry<C> extends ValueConfigEntry<C, Boolea
 		boolean hovered,
 		float delta
 	) {
-		renderLabel(guiGraphics, x, y, entryWidth);
-		if (tab.getMinecraft().font.isBidirectional()) {
-			undoButton.setX(x);
-			resetButton.setX(x + undoButton.getWidth() + 2);
-			valueButton.setX(x + undoButton.getWidth() + 2 + resetButton.getWidth() + 2);
-		} else {
-			undoButton.setX(x + entryWidth - undoButton.getWidth());
-			resetButton.setX(undoButton.getX() - resetButton.getWidth() - 2);
-			valueButton.setX(resetButton.getX() - valueButton.getWidth() - 2);
-		}
+		renderLabel(graphics, x, y);
+		undoButton.setX(x + entryWidth - undoButton.getWidth());
+		resetButton.setX(undoButton.getX() - resetButton.getWidth() - 2);
+		valueButton.setX(resetButton.getX() - valueButton.getWidth() - 2);
 		valueButton.setY(y);
 		resetButton.setY(y);
 		undoButton.setY(y);
-		valueButton.render(guiGraphics, mouseX, mouseY, delta);
-		resetButton.render(guiGraphics, mouseX, mouseY, delta);
-		undoButton.render(guiGraphics, mouseX, mouseY, delta);
+		valueButton.render(graphics, mouseX, mouseY, delta);
+		resetButton.render(graphics, mouseX, mouseY, delta);
+		undoButton.render(graphics, mouseX, mouseY, delta);
 	}
 }

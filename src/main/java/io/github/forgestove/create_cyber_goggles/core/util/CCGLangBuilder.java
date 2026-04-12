@@ -62,7 +62,7 @@ public class CCGLangBuilder {
 	}
 	public CCGLangBuilder add(Component component) {
 		if (component instanceof MutableComponent mutableComponent) return add(mutableComponent);
-		else return add(component.copy());
+		return add(component.copy());
 	}
 	public CCGLangBuilder style(ChatFormatting format) {
 		if (component != null) component = component.withStyle(format);

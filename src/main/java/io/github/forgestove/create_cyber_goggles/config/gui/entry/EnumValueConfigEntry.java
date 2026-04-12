@@ -80,18 +80,12 @@ public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum<?>, 
 		boolean hovered,
 		float delta
 	) {
-		renderLabel(guiGraphics, x, y, entryWidth);
+		renderLabel(guiGraphics, x, y);
 		dropdownWidth = 160 - resetButton.getWidth() - 2 - undoButton.getWidth() - 2;
 		dropdownButton.setWidth(dropdownWidth);
-		if (tab.getMinecraft().font.isBidirectional()) {
-			undoButton.setX(x);
-			resetButton.setX(x + undoButton.getWidth() + 2);
-			dropdownButton.setX(x + undoButton.getWidth() + 2 + resetButton.getWidth() + 2);
-		} else {
-			undoButton.setX(x + entryWidth - undoButton.getWidth());
-			resetButton.setX(undoButton.getX() - resetButton.getWidth() - 2);
-			dropdownButton.setX(resetButton.getX() - dropdownButton.getWidth() - 2);
-		}
+		undoButton.setX(x + entryWidth - undoButton.getWidth());
+		resetButton.setX(undoButton.getX() - resetButton.getWidth() - 2);
+		dropdownButton.setX(resetButton.getX() - dropdownButton.getWidth() - 2);
 		undoButton.setY(y);
 		resetButton.setY(y);
 		dropdownButton.setY(y);

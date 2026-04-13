@@ -33,6 +33,7 @@ public final class ConfigCategoryTab<C> implements Tab {
 		(tab, node) -> new KeybindValueConfigEntry<>(tab, cast(node))
 	);
 	private final ConfigScreen<C> screen;
+	private final String modId;
 	private final CategoryConfigNode<C> category;
 	private final C config;
 	private final Component title;
@@ -41,8 +42,9 @@ public final class ConfigCategoryTab<C> implements Tab {
 	private final Component titleErrorChanged;
 	private final ConfigEntryList list;
 	@Nullable private TabButton tabButton;
-	public ConfigCategoryTab(ConfigScreen<C> screen, CategoryConfigNode<C> category, C config) {
+	public ConfigCategoryTab(ConfigScreen<C> screen, CategoryConfigNode<C> category, C config, String modId) {
 		this.screen = screen;
+		this.modId = modId;
 		this.category = category;
 		this.config = config;
 		title = category.getTitle();
@@ -84,7 +86,8 @@ public final class ConfigCategoryTab<C> implements Tab {
 	@SuppressWarnings("unchecked")
 	private <T, V> ConfigEntry createValueEntry(ValueConfigNode<C, T, V> valueNode) {
 		var type = valueNode.getType();
-		if (Enum.class.isAssignableFrom(type)) return new EnumValueConfigEntry<>(this, (ValueConfigNode<C, Enum<?>, Enum<?>>) valueNode);
+		if (Enum.class.isAssignableFrom(type))
+			return new EnumValueConfigEntry<>(this, (ValueConfigNode<C, Enum<?>, Enum<?>>) valueNode, modId);
 		var factory = (ConfigEntryFactory<C>) ENTRY_FACTORIES.get(type);
 		if (factory != null) return factory.create(this, valueNode);
 		return new TextConfigEntry(this, Translation.UNSUPPORTED_TYPE.copy().append(type.getSimpleName()).withStyle(ChatFormatting.RED));

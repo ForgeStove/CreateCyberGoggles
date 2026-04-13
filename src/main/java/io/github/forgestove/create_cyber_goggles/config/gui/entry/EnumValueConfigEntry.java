@@ -1,5 +1,4 @@
 package io.github.forgestove.create_cyber_goggles.config.gui.entry;
-import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.config.gui.ConfigCategoryTab;
 import io.github.forgestove.create_cyber_goggles.config.gui.widget.EnumDropdownOverlayWidget;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode;
@@ -9,10 +8,12 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum<?>, Enum<?>> {
 	private final Button dropdownButton;
+	private final String modId;
 	private final String enumClassName;
 	private final EnumDropdownOverlayWidget dropdownOverlay;
-	public EnumValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Enum<?>, Enum<?>> valueNode) {
+	public EnumValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Enum<?>, Enum<?>> valueNode, String modId) {
 		super(tab, valueNode);
+		this.modId = modId;
 		var enumValues = valueNode.getValueType().getEnumConstants();
 		enumClassName = valueNode.getValueType().getSimpleName();
 		dropdownButton = Button.builder(getDisplayComponent(getValue()), this::toggleDropdown).size(WIDTH, HEIGHT).build();
@@ -20,7 +21,7 @@ public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum<?>, 
 		children.add(dropdownButton);
 	}
 	private Component getDisplayComponent(Enum<?> value) {
-		return Component.translatable(CCG.ID + ".config.enum." + enumClassName + "." + value.name());
+		return Component.translatable(modId + ".config.enum." + enumClassName + "." + value.name());
 	}
 	private void toggleDropdown(Button button) {
 		var wasExpanded = dropdownOverlay.expanded;

@@ -18,6 +18,7 @@ public final class ConfigScreen<C> extends Screen {
 	/** Cache for last selected tab index per config screen type */
 	private static final Map<String, Integer> lastSelectedTabCache = new HashMap<>();
 	private final RootConfigNode<C> root;
+	private final String modId;
 	private final C config;
 	private final Consumer<C> onSave;
 	private final Screen previous;
@@ -29,9 +30,10 @@ public final class ConfigScreen<C> extends Screen {
 	private List<ConfigCategoryTab<C>> tabs;
 	private Button quitButton;
 	private Button saveAndQuitButton;
-	public ConfigScreen(Screen previous, RootConfigNode<C> root, C config, Consumer<C> onSave) {
+	public ConfigScreen(Screen previous, RootConfigNode<C> root, C config, Consumer<C> onSave, String modId) {
 		super(root.getTitle());
 		this.root = root;
+		this.modId = modId;
 		this.config = config;
 		this.onSave = onSave;
 		this.previous = previous;
@@ -48,11 +50,11 @@ public final class ConfigScreen<C> extends Screen {
 		var tabNavigationBarBuilder = TabNavigationBar.builder(tabManager, width);
 		tabs = new ArrayList<>();
 		for (var category : root.getCategories()) {
-			var tab = new ConfigCategoryTab<>(this, category, config);
+			var tab = new ConfigCategoryTab<>(this, category, config, modId);
 			tabNavigationBarBuilder.addTabs(tab);
 			tabs.add(tab);
 		}
-		var keybindTab = new ConfigCategoryTab<>(this, keybindCategory, config);
+		var keybindTab = new ConfigCategoryTab<>(this, keybindCategory, config, modId);
 		tabNavigationBarBuilder.addTabs(keybindTab);
 		tabs.add(keybindTab);
 		tabNavigationBar = tabNavigationBarBuilder.build();

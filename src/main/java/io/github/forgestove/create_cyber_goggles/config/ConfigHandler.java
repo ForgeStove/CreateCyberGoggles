@@ -15,6 +15,7 @@ public final class ConfigHandler<T> {
 	private final Class<T> configClass;
 	private final ConfigSerializer<T> serializer;
 	private final Logger logger;
+	private final String id;
 	private final RootConfigNode<T> configTree;
 	private final T activeConfig;
 	private final T savedConfig;
@@ -22,6 +23,7 @@ public final class ConfigHandler<T> {
 		configClass = builder.configClass;
 		serializer = builder.serializerBuilder.build();
 		logger = builder.logger;
+		id = builder.id;
 		configTree = RootConfigNode.create(newInstance(), builder.id);
 		savedConfig = load();
 		activeConfig = newInstance();
@@ -60,7 +62,7 @@ public final class ConfigHandler<T> {
 	public Screen createConfigScreen(Screen parent) {
 		// Regenerate config file with translations now that I18n is loaded
 		regenerateConfigFile();
-		return new ConfigScreen<>(parent, configTree, savedConfig, this::save);
+		return new ConfigScreen<>(parent, configTree, savedConfig, this::save, id);
 	}
 	private T newInstance() {
 		try {

@@ -72,6 +72,8 @@
 	"create_cyber_goggles.config.option.misc.removeNetheriteFirstPerson.tooltip": "Remove netherite backtank first person rendering effect",
 	"create_cyber_goggles.config.option.misc.removeRequestLimit": "Remove Request Limit",
 	"create_cyber_goggles.config.option.misc.removeRequestLimit.tooltip": "Remove request quantity limit for factory panels and redstone requesters, optimize fast scrolling",
+	"create_cyber_goggles.config.option.misc.removeTrainDamage": "Remove Train Damage",
+	"create_cyber_goggles.config.option.misc.removeTrainDamage.tooltip": "Prevent train collisions from dealing damage to players",
 	"create_cyber_goggles.config.option.misc.showScrapContent": "Show Scrap Content",
 	"create_cyber_goggles.config.option.misc.showScrapContent.tooltip": "Show specific contents of random scrap in sequenced assembly",
 	"create_cyber_goggles.config.option.misc.stockRequestQuickActions": "Stock Request Quick Actions",

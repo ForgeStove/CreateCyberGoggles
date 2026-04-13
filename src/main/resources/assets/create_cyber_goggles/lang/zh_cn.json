@@ -72,6 +72,8 @@
 	"create_cyber_goggles.config.option.misc.removeNetheriteFirstPerson.tooltip": "移除下界合金背罐的第一人称渲染效果",
 	"create_cyber_goggles.config.option.misc.removeRequestLimit": "移除请求限制",
 	"create_cyber_goggles.config.option.misc.removeRequestLimit.tooltip": "移除工厂仪表和红石请求器的请求数量限制并优化快速滚动",
+	"create_cyber_goggles.config.option.misc.removeTrainDamage": "移除列车伤害",
+	"create_cyber_goggles.config.option.misc.removeTrainDamage.tooltip": "阻止列车碰撞对玩家造成伤害",
 	"create_cyber_goggles.config.option.misc.showScrapContent": "显示废料内容",
 	"create_cyber_goggles.config.option.misc.showScrapContent.tooltip": "显示序列组装中随机废料的具体内容",
 	"create_cyber_goggles.config.option.misc.stockRequestQuickActions": "仓储请求快捷操作",

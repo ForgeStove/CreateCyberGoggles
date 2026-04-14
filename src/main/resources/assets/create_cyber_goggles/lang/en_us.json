@@ -52,6 +52,8 @@
 	"create_cyber_goggles.config.option.goggles.preciseNumber.tooltip": "Display more precise numerical values",
 	"create_cyber_goggles.config.option.misc.allowDivingBoot": "Allow Diving Boots",
 	"create_cyber_goggles.config.option.misc.allowDivingBoot.tooltip": "Diving boots functionality, disable to make them act like normal boots",
+	"create_cyber_goggles.config.option.misc.enableNegativeInfThrottle": "Enable Negative Infinity Throttle",
+	"create_cyber_goggles.config.option.misc.enableNegativeInfThrottle.tooltip": "Allow train throttle to scroll past the normal minimum limit",
 	"create_cyber_goggles.config.option.misc.fixSchematicName": "Fix Schematic Name",
 	"create_cyber_goggles.config.option.misc.fixSchematicName.tooltip": "Allow non-ASCII characters when saving schematics",
 	"create_cyber_goggles.config.option.misc.forcedBackend": "Force Flywheel Backend",

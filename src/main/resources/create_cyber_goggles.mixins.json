@@ -47,6 +47,7 @@
 		"misc.SequencedAssemblyCategoryMixin",
 		"misc.SimpleBackendMixin",
 		"misc.SuperGlueSelectionHandlerMixin",
+		"misc.TrainHUDMixin",
 		"provider.ArmBlockEntityMixin",
 		"provider.BacktankBlockEntityMixin",
 		"provider.BasinBlockEntityMixin",

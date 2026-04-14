@@ -52,6 +52,8 @@
 	"create_cyber_goggles.config.option.goggles.preciseNumber.tooltip": "显示更加精确的数值信息",
 	"create_cyber_goggles.config.option.misc.allowDivingBoot": "允许潜水靴",
 	"create_cyber_goggles.config.option.misc.allowDivingBoot.tooltip": "潜水靴的功能，禁用以使它们像普通的靴子一样",
+	"create_cyber_goggles.config.option.misc.enableNegativeInfThrottle": "启用负无穷油门",
+	"create_cyber_goggles.config.option.misc.enableNegativeInfThrottle.tooltip": "允许列车油门滚动突破正常最低限制",
 	"create_cyber_goggles.config.option.misc.fixSchematicName": "修复蓝图名称",
 	"create_cyber_goggles.config.option.misc.fixSchematicName.tooltip": "保存蓝图时可以使用非 ASCII 字符",
 	"create_cyber_goggles.config.option.misc.forcedBackend": "强制飞轮优化",

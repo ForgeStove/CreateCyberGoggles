@@ -97,6 +97,7 @@ public final class CCGConfig {
 		public boolean allowDivingBoot = true;
 		public boolean fixSchematicName = true;
 		public boolean removeTrainDamage = false;
+		public boolean enableNegativeInfThrottle = false;
 		public boolean forcedBackend = false;
 		public boolean nbtFix = false;
 		@RequiresRestart public boolean showScrapContent = true;

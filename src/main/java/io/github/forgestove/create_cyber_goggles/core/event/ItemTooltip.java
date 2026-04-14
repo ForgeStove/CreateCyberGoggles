@@ -23,6 +23,7 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public final class ItemTooltip {
 	public static final List<TooltipOverlayRenderer> OVERLAY_RENDERERS = List.of(
 		new ClipboardRenderer(),
+		new MapTooltipRenderer(),
 		new ExtraItemRenderer(),
 		new ContainerRenderer()
 	);

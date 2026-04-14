@@ -218,6 +218,7 @@
 	"create_cyber_goggles.tooltip.pullRange": "Pull range",
 	"create_cyber_goggles.tooltip.pulse": "Pulse Progress:",
 	"create_cyber_goggles.tooltip.pushRange": "Push range",
+	"create_cyber_goggles.tooltip.sequenced_assembly.scroll_cycle": "Scroll to cycle shown output",
 	"create_cyber_goggles.tooltip.windState": "Wind State:",
 	"key.categories.create_cyber_goggles": "Create: Cyber Goggles"
 }

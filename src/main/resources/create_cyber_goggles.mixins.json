@@ -32,7 +32,6 @@
 		"misc.ClientSchematicLoaderMixin",
 		"misc.ContraptionColliderMixin",
 		"misc.ContraptionHandlerClientMixin",
-		"misc.CreateJEIMixin",
 		"misc.DivingBootsItemMixin",
 		"misc.EditBoxMixin",
 		"misc.FactoryPanelScreenMixin",

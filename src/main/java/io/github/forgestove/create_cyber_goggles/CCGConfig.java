@@ -100,6 +100,6 @@ public final class CCGConfig {
 		public boolean enableNegativeInfThrottle = false;
 		public boolean forcedBackend = false;
 		public boolean nbtFix = false;
-		@RequiresRestart public boolean showScrapContent = true;
+		public boolean showScrapContent = true;
 	}
 }

@@ -218,6 +218,7 @@
 	"create_cyber_goggles.tooltip.pullRange": "吸引距离",
 	"create_cyber_goggles.tooltip.pulse": "脉冲进度：",
 	"create_cyber_goggles.tooltip.pushRange": "推动距离",
+	"create_cyber_goggles.tooltip.sequenced_assembly.scroll_cycle": "滚动鼠标滚轮切换当前显示产物",
 	"create_cyber_goggles.tooltip.windState": "风力状态：",
 	"key.categories.create_cyber_goggles": "机械动力：赛博护目镜"
 }

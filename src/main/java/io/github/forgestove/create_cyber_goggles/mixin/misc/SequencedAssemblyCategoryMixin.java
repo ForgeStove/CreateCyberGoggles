@@ -1,48 +1,108 @@
 package io.github.forgestove.create_cyber_goggles.mixin.misc;
-import com.simibubi.create.compat.jei.category.SequencedAssemblyCategory;
+import com.simibubi.create.compat.jei.category.*;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.utility.CreateLang;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
-import mezz.jei.api.gui.drawable.IDrawable;
-import mezz.jei.api.recipe.*;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
+import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
+import mezz.jei.api.recipe.IFocusGroup;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.*;
+import net.minecraft.world.item.Item.TooltipContext;
+import net.minecraft.world.item.TooltipFlag.Default;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
-@Mixin(SequencedAssemblyCategory.class)
-public abstract class SequencedAssemblyCategoryMixin {
-	@Inject(method = "setRecipe*", at = @At("TAIL"))
-	public void setRecipe(IRecipeLayoutBuilder builder, SequencedAssemblyRecipe recipe, IFocusGroup focuses, CallbackInfo ci) {
-		if (!CCG.config.misc.showScrapContent) return;
-		var size = 8;
-		for (var i = 1; i < recipe.resultPool.size(); i++) {
-			var out = recipe.resultPool.get(i);
-			builder.addSlot(RecipeIngredientRole.OUTPUT, (i - 1) % size * 19 + 15, (i - 1) / size * 19 + 120).setBackground(
-				new IDrawable() {
-					public int getWidth() {return AllGuiTextures.JEI_CHANCE_SLOT.getWidth();}
-					public int getHeight() {return AllGuiTextures.JEI_CHANCE_SLOT.getHeight();}
-					public void draw(@NotNull GuiGraphics gui, int xOffset, int yOffset) {
-						AllGuiTextures.JEI_CHANCE_SLOT.render(gui, xOffset, yOffset);
-					}
-				}, -1, -1
-			).addItemStack(out.getStack()).addRichTooltipCallback((iRecipeSlotView, iTooltipBuilder) -> {
-				float totalWeight = 0;
-				for (var output : recipe.resultPool) totalWeight += output.getChance();
-				iTooltipBuilder.add(chanceComponent(out.getChance() / totalWeight));
-			});
-		}
+
+import java.util.*;
+
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
+import static io.github.forgestove.create_cyber_goggles.core.util.SequencedAssemblyUtil.*;
+@Mixin(value = SequencedAssemblyCategory.class, remap = false)
+public abstract class SequencedAssemblyCategoryMixin extends CreateRecipeCategory<SequencedAssemblyRecipe> {
+	protected SequencedAssemblyCategoryMixin(Info<SequencedAssemblyRecipe> info) {
+		super(info);
 	}
 	@Shadow
 	protected abstract MutableComponent chanceComponent(float chance);
-	@Inject(method = "chanceComponent", at = @At("HEAD"), cancellable = true)
-	public void chanceComponent(float chance, CallbackInfoReturnable<MutableComponent> cir) {
-		if (!CCG.config.goggles.preciseNumber) return;
-		if (chance * 100 == (int) (chance * 100)) return;
-		cir.setReturnValue(CreateLang.translateDirect("recipe.processing.chance", chance * 100).withStyle(ChatFormatting.GOLD));
+	@Override
+	public void createRecipeExtras(
+		@NotNull IRecipeExtrasBuilder builder,
+		@NotNull RecipeHolder<SequencedAssemblyRecipe> holder,
+		@NotNull IFocusGroup focuses
+	) {
+		if (!CCG.config.misc.showScrapContent) return;
+		var recipe = holder.value();
+		if (!shouldEnable(recipe)) return;
+		builder.addInputHandler(createInputHandler(recipe));
+	}
+	@Inject(method = "draw*", at = @At("TAIL"))
+	public void draw(
+		SequencedAssemblyRecipe recipe,
+		IRecipeSlotsView iRecipeSlotsView,
+		GuiGraphics gui,
+		double mouseX,
+		double mouseY,
+		CallbackInfo ci
+	) {
+		if (!CCG.config.misc.showScrapContent || recipe.getOutputChance() == 1) return;
+		var junkCount = getJunkCount(recipe);
+		if (junkCount <= 0) return;
+		var state = getState(recipe);
+		state[0] = Math.floorMod((int) state[0], junkCount);
+		if (mc.level == null) return;
+		var now = System.currentTimeMillis();
+		if (state[1] == 0) state[1] = now;
+		var hoveringJunk = isOverJunkSlot(mouseX, mouseY);
+		if (!hoveringJunk && now - state[1] >= AUTO_ROTATE_INTERVAL_MS) {
+			state[0] = ((int) state[0] + 1) % junkCount;
+			state[1] = now;
+		}
+		var selected = recipe.resultPool.get((int) state[0] + 1).getStack();
+		// Redraw slot background first so Create's default '?' marker is covered.
+		AllGuiTextures.JEI_CHANCE_SLOT.render(gui, JUNK_X, JUNK_Y);
+		gui.renderItem(selected, JUNK_X + 1, JUNK_Y + 1);
+	}
+	@Inject(method = "getTooltipStrings*", at = @At("HEAD"), cancellable = true)
+	public void getTooltipStrings(
+		SequencedAssemblyRecipe recipe,
+		IRecipeSlotsView iRecipeSlotsView,
+		double mouseX,
+		double mouseY,
+		CallbackInfoReturnable<List<Component>> cir
+	) {
+		if (!CCG.config.misc.showScrapContent || recipe.getOutputChance() == 1 || !isOverJunkSlot(mouseX, mouseY)) return;
+		var junkCount = getJunkCount(recipe);
+		if (junkCount <= 0) return;
+		var state = getState(recipe);
+		state[0] = Math.floorMod((int) state[0], junkCount);
+		float totalWeight = 0;
+		for (var i = 1; i < recipe.resultPool.size(); i++) totalWeight += recipe.resultPool.get(i).getChance();
+		List<Component> tooltip = new ArrayList<>();
+		tooltip.add(CreateLang.translateDirect("recipe.assembly.junk"));
+		tooltip.add(chanceComponent(1 - recipe.getOutputChance()));
+		CCGLang.translate(ChatFormatting.DARK_GRAY, "tooltip.sequenced_assembly.scroll_cycle").addTo(tooltip);
+		for (var i = 0; i < junkCount; i++) {
+			var out = recipe.resultPool.get(i + 1);
+			var line = Component.literal(i == (int) state[0] ? "> " : "  ")
+				.append(out.getStack().getHoverName().copy().withStyle(i == (int) state[0] ? ChatFormatting.GREEN : ChatFormatting.GRAY));
+			if (totalWeight > 0) {
+				line.append(Component.literal(" "));
+				line.append(chanceComponent(out.getChance() / totalWeight));
+			}
+			tooltip.add(line);
+		}
+		var selected = recipe.resultPool.get((int) state[0] + 1).getStack();
+		tooltip.addAll(selected.getTooltipLines(
+			TooltipContext.EMPTY,
+			mc.player,
+			mc.options.advancedItemTooltips ? Default.ADVANCED : Default.NORMAL
+		));
+		cir.setReturnValue(tooltip);
 	}
 }

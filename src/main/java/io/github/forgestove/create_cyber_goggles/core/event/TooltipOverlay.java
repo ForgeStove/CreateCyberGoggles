@@ -75,8 +75,12 @@ public class TooltipOverlay {
 		var components = buildTooltipComponents(tooltipLines, width - x - 16, true);
 		var itemEntryComponent = new ItemEntryTooltipComponent(itemStack);
 		components.set(0, ClientTooltipComponent.create(itemEntryComponent));
-		var tooltipWidth = components.stream().mapToInt(c -> c.getWidth(mc.font)).max().orElse(0);
-		var tooltipHeight = components.stream().mapToInt(ClientTooltipComponent::getHeight).sum();
+		var tooltipWidth = 0;
+		var tooltipHeight = 0;
+		for (var component : components) {
+			tooltipWidth = Math.max(tooltipWidth, component.getWidth(mc.font));
+			tooltipHeight += component.getHeight();
+		}
 		if (GoggleOverlayRenderer.hoverTicks != 0) y -= tooltipHeight + 10;
 		x = Mth.clamp(x, 0, width - tooltipWidth);
 		y = Mth.clamp(y, 16, height - tooltipHeight - 100);

@@ -3,6 +3,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.simibubi.create.AllSpecialTextures;
 import com.simibubi.create.content.kinetics.mechanicalArm.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import net.createmod.catnip.data.Couple;
 import net.minecraft.core.*;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
@@ -15,12 +16,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
-@Mixin(value = ArmInteractionPointHandler.class, remap = false)
+@Mixin(ArmInteractionPointHandler.class)
 public class ArmInteractionPointHandlerMixin {
 	@Shadow static List<ArmInteractionPoint> currentSelection;
 	@Shadow static ItemStack currentItem;
 	@Unique private static long ccg$rangeCacheKey = Long.MIN_VALUE;
-	@Unique private static Set<BlockPos> ccg$cachedMergedRange = Set.of();
+	@Unique private static Couple<List<BlockPos>> ccg$cachedRangeHints = Couple.create(ArrayList::new);
 	@WrapOperation(
 		method = "flushSettings", at = @At(
 		value = "INVOKE", target = "Lnet/minecraft/core/BlockPos;closerThan(Lnet/minecraft/core/Vec3i;D)Z"
@@ -61,42 +62,68 @@ public class ArmInteractionPointHandlerMixin {
 			var target = Vec3.atCenterOf(point.getPos());
 			var close = removeLimit || point.getPos().closerThan(pos, ArmBlockEntity.getRange());
 			if (!close) allClose = false;
-			outliner.showLine("MechanicalArmPlacementPreview_" + i, source, target).lineWidth(1 / 8f).colored(close ? 0x9ede73 : 0xff7171);
+			outliner.showLine("MechanicalArmPlacementPreview" + i, source, target).lineWidth(1 / 8f).colored(close ? 0x9ede73 : 0xff7171);
 		}
-		outliner.showAABB("MechanicalArmPos", getBounds(pos)).lineWidth(1 / 16f).colored(allClose ? 0x9ede73 : 0xff7171);
+		if (mc.level.getBlockState(pos).canBeReplaced())
+			outliner.showAABB("MechanicalArmPos", getBounds(pos)).lineWidth(1 / 16f).colored(allClose ? 0x9ede73 : 0xff7171);
 		if (removeLimit) return;
-		var mergedRange = ccg$getMergedRange();
-		if (!mergedRange.isEmpty()) outliner.showCluster("MechanicalArmConnectableRange", mergedRange)
-			.lineWidth(1 / 64f)
-			.withFaceTextures(AllSpecialTextures.HIGHLIGHT_CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
-			.colored(0x9ede73);
+		var hints = ccg$getRangeHints(pos.getY() - 1);
+		if (hints == null) return;
+		outliner.showCluster("MechanicalArmConnectableRange", hints.getFirst())
+			.withFaceTexture(AllSpecialTextures.THIN_CHECKERED)
+			.colored(0x9ede73)
+			.lineWidth(0);
+		outliner.showCluster("MechanicalArmNonConnectableRange", hints.getSecond())
+			.withFaceTexture(AllSpecialTextures.THIN_CHECKERED)
+			.colored(0xff7171)
+			.lineWidth(0);
 	}
 	@Unique
-	private static Set<BlockPos> ccg$getMergedRange() {
-		long key = ArmBlockEntity.getRange();
+	private static Couple<List<BlockPos>> ccg$getRangeHints(int yLevel) {
+		var key = ArmBlockEntity.getRange() * 31L + yLevel;
 		for (var point : currentSelection) {
 			if (point == null || !point.isValid()) continue;
 			key = key * 31L + point.getPos().asLong();
 		}
-		if (key == ccg$rangeCacheKey) return ccg$cachedMergedRange;
+		if (key == ccg$rangeCacheKey) return ccg$cachedRangeHints;
 		var range = ArmBlockEntity.getRange();
-		Set<BlockPos> intersection = null;
+		var minX = Integer.MAX_VALUE;
+		var maxX = Integer.MIN_VALUE;
+		var minZ = Integer.MAX_VALUE;
+		var maxZ = Integer.MIN_VALUE;
+		var hasValidPoint = false;
 		for (var point : currentSelection) {
 			if (point == null || !point.isValid()) continue;
+			hasValidPoint = true;
 			var center = point.getPos();
-			Set<BlockPos> currentSphere = new HashSet<>();
-			for (var dx = -range; dx <= range; dx++)
-				for (var dy = -range; dy <= range; dy++)
-					for (var dz = -range; dz <= range; dz++) {
-						var candidate = center.offset(dx, dy, dz);
-						if (!center.closerThan(candidate, range)) continue;
-						currentSphere.add(candidate);
+			minX = Math.min(minX, center.getX() - range);
+			maxX = Math.max(maxX, center.getX() + range);
+			minZ = Math.min(minZ, center.getZ() - range);
+			maxZ = Math.max(maxZ, center.getZ() + range);
+		}
+		Couple<List<BlockPos>> hints = Couple.create(ArrayList::new);
+		if (hasValidPoint) {
+			var rangeSq = range * range;
+			for (var x = minX; x <= maxX; x++)
+				for (var z = minZ; z <= maxZ; z++) {
+					var candidate = new BlockPos(x, yLevel, z);
+					var connectable = true;
+					for (var point : currentSelection) {
+						if (point == null || !point.isValid()) continue;
+						var center = point.getPos();
+						var dx = x - center.getX();
+						var dy = yLevel - center.getY();
+						var dz = z - center.getZ();
+						if (dx * dx + dy * dy + dz * dz >= rangeSq) {
+							connectable = false;
+							break;
+						}
 					}
-			if (intersection == null) intersection = currentSphere;
-			else intersection.retainAll(currentSphere);
+					hints.get(connectable).add(candidate);
+				}
 		}
 		ccg$rangeCacheKey = key;
-		ccg$cachedMergedRange = intersection == null ? Set.of() : intersection;
-		return ccg$cachedMergedRange;
+		ccg$cachedRangeHints = hints;
+		return ccg$cachedRangeHints;
 	}
 }

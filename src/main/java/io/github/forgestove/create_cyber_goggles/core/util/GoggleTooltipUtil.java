@@ -312,4 +312,3 @@ public final class GoggleTooltipUtil {
 		return true;
 	}
 }
-

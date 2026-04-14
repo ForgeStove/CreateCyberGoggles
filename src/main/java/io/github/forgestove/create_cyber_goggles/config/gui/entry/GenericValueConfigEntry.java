@@ -103,4 +103,3 @@ public abstract class GenericValueConfigEntry<C, T> extends ValueConfigEntry<C, 
 		renderGui(gui, y, x, width, mouseX, mouseY, partialTick, undoButton, resetButton, inputField);
 	}
 }
-

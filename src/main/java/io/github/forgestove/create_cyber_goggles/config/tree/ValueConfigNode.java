@@ -177,4 +177,3 @@ public final class ValueConfigNode<C, T, V> implements ConfigNode<C> {
 		}
 	}
 }
-

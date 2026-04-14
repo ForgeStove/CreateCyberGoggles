@@ -106,4 +106,3 @@ public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum<?>, 
 		return super.mouseScrolled(mouseX, mouseY, horizontal, vertical);
 	}
 }
-

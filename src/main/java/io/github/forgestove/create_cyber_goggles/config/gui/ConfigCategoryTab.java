@@ -139,4 +139,3 @@ public final class ConfigCategoryTab<C> implements Tab {
 		@Nullable ConfigEntry create(ConfigCategoryTab<C> tab, ValueConfigNode<C, ?, ?> node);
 	}
 }
-

@@ -13,7 +13,7 @@ public final class MapTooltipRenderer implements TooltipOverlayRenderer {
 	private static final int MAP_SIZE = 128;
 	private static final int PREVIEW_SIZE = 64;
 	private static final int PANEL_SIZE = PREVIEW_SIZE + PADDING * 2;
-	private static final int SAMPLE_STEP = MAP_SIZE / PREVIEW_SIZE;
+	private static final float PREVIEW_SCALE = (float) PREVIEW_SIZE / MAP_SIZE;
 	private static final int CHECK_INTERVAL_TICKS = 12;
 	private static final ResourceLocation MAP_BACKGROUND = getMCRes("textures/map/map_background_checkerboard.png");
 	private static final ResourceLocation MAP_PREVIEW_TEXTURE = getCCGRes("dynamic/map_tooltip_preview");
@@ -24,34 +24,6 @@ public final class MapTooltipRenderer implements TooltipOverlayRenderer {
 	private int lastMapId = Integer.MIN_VALUE;
 	private long lastUploadTick = Long.MIN_VALUE;
 	private DynamicTexture previewTexture;
-	private static int blendOpaqueAbgr(int c0, int c1, int c2, int c3) {
-		int a = 0, r = 0, g = 0, b = 0, count = 0;
-		count = accumulate(c0, count);
-		a += c0 >>> 24 & 0xFF;
-		r += c0 & 0xFF;
-		g += c0 >>> 8 & 0xFF;
-		b += c0 >>> 16 & 0xFF;
-		count = accumulate(c1, count);
-		a += c1 >>> 24 & 0xFF;
-		r += c1 & 0xFF;
-		g += c1 >>> 8 & 0xFF;
-		b += c1 >>> 16 & 0xFF;
-		count = accumulate(c2, count);
-		a += c2 >>> 24 & 0xFF;
-		r += c2 & 0xFF;
-		g += c2 >>> 8 & 0xFF;
-		b += c2 >>> 16 & 0xFF;
-		count = accumulate(c3, count);
-		a += c3 >>> 24 & 0xFF;
-		r += c3 & 0xFF;
-		g += c3 >>> 8 & 0xFF;
-		b += c3 >>> 16 & 0xFF;
-		if (count == 0) return 0;
-		return a / count << 24 | b / count << 16 | g / count << 8 | r / count;
-	}
-	private static int accumulate(int color, int count) {
-		return color >>> 24 == 0 ? count : count + 1;
-	}
 	@Override
 	public boolean supports(ItemStack stack) {
 		return CCG.config.tooltip.map && stack.is(Items.FILLED_MAP);
@@ -88,31 +60,28 @@ public final class MapTooltipRenderer implements TooltipOverlayRenderer {
 		pose.pushPose();
 		pose.translate(x, y, 600F);
 		gui.blit(MAP_BACKGROUND, 0, 0, 0, 0, PANEL_SIZE, PANEL_SIZE, PANEL_SIZE, PANEL_SIZE);
-		gui.blit(MAP_PREVIEW_TEXTURE, PADDING, PADDING, 0, 0, PREVIEW_SIZE, PREVIEW_SIZE, PREVIEW_SIZE, PREVIEW_SIZE);
+		pose.pushPose();
+		pose.translate(PADDING, PADDING, 0);
+		pose.scale(PREVIEW_SCALE, PREVIEW_SCALE, 1F);
+		gui.blit(MAP_PREVIEW_TEXTURE, 0, 0, 0, 0, MAP_SIZE, MAP_SIZE, MAP_SIZE, MAP_SIZE);
+		pose.popPose();
 		pose.popPose();
 	}
 	private void ensureTexture() {
 		if (previewTexture != null) return;
-		previewTexture = new DynamicTexture(PREVIEW_SIZE, PREVIEW_SIZE, true);
+		previewTexture = new DynamicTexture(MAP_SIZE, MAP_SIZE, true);
+		previewTexture.setFilter(false, false);
 		mc.getTextureManager().register(MAP_PREVIEW_TEXTURE, previewTexture);
 	}
 	private void uploadPreview(byte[] colors) {
 		if (previewTexture == null) return;
 		var image = previewTexture.getPixels();
 		if (image == null) return;
-		for (var py = 0; py < PREVIEW_SIZE; py++) {
-			var mapY = py * SAMPLE_STEP;
-			var mapY1 = mapY + 1;
-			var row0 = mapY * MAP_SIZE;
-			var row1 = mapY1 * MAP_SIZE;
-			for (var px = 0; px < PREVIEW_SIZE; px++) {
-				var mapX = px * SAMPLE_STEP;
-				var mapX1 = mapX + 1;
-				var c0 = PACKED_TO_ABGR[Byte.toUnsignedInt(colors[mapX + row0])];
-				var c1 = PACKED_TO_ABGR[Byte.toUnsignedInt(colors[mapX1 + row0])];
-				var c2 = PACKED_TO_ABGR[Byte.toUnsignedInt(colors[mapX + row1])];
-				var c3 = PACKED_TO_ABGR[Byte.toUnsignedInt(colors[mapX1 + row1])];
-				image.setPixelRGBA(px, py, blendOpaqueAbgr(c0, c1, c2, c3));
+		for (var py = 0; py < MAP_SIZE; py++) {
+			var row = py * MAP_SIZE;
+			for (var px = 0; px < MAP_SIZE; px++) {
+				var packed = Byte.toUnsignedInt(colors[px + row]);
+				image.setPixelRGBA(px, py, PACKED_TO_ABGR[packed]);
 			}
 		}
 		previewTexture.upload();

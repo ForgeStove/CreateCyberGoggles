@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
-@Mixin(value = PackagePortTargetSelectionHandler.class, remap = false)
+@Mixin(PackagePortTargetSelectionHandler.class)
 public abstract class PackagePortTargetSelectionHandlerMixin {
 	@Shadow public static PackagePortTarget activePackageTarget;
 	@Shadow public static Vec3 exactPositionOfTarget;

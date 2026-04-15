@@ -23,7 +23,7 @@ import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 import static io.github.forgestove.create_cyber_goggles.core.util.SequencedAssemblyUtil.*;
-@Mixin(value = SequencedAssemblyCategory.class, remap = false)
+@Mixin(SequencedAssemblyCategory.class)
 public abstract class SequencedAssemblyCategoryMixin extends CreateRecipeCategory<SequencedAssemblyRecipe> {
 	protected SequencedAssemblyCategoryMixin(Info<SequencedAssemblyRecipe> info) {
 		super(info);

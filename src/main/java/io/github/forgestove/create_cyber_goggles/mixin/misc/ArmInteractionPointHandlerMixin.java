@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
-@Mixin(ArmInteractionPointHandler.class)
+@Mixin(value = ArmInteractionPointHandler.class, remap = false)
 public class ArmInteractionPointHandlerMixin {
 	@Shadow static List<ArmInteractionPoint> currentSelection;
 	@Shadow static ItemStack currentItem;
@@ -65,7 +65,9 @@ public class ArmInteractionPointHandlerMixin {
 			outliner.showLine("MechanicalArmPlacementPreview" + i, source, target).lineWidth(1 / 8f).colored(close ? 0x9ede73 : 0xff7171);
 		}
 		if (mc.level.getBlockState(pos).canBeReplaced())
-			outliner.showAABB("MechanicalArmPos", getBounds(pos)).lineWidth(1 / 16f).colored(allClose ? 0x9ede73 : 0xff7171);
+			outliner.chaseAABB("MechanicalArmPos", new AABB(pos).contract(0, 1, 0).deflate(0.125, 0, 0.125))
+				.lineWidth(1 / 16f)
+				.colored(allClose ? 0x9ede73 : 0xff7171);
 		if (removeLimit) return;
 		var hints = ccg$getRangeHints(pos.getY() - 1);
 		if (hints == null) return;

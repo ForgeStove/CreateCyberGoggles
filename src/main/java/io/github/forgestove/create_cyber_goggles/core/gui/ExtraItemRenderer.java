@@ -74,7 +74,7 @@ public final class ExtraItemRenderer implements TooltipOverlayRenderer {
 			}
 			items.add(consolidated.copyWithCount(totalCount));
 		}
-		if (items.isEmpty()) return null;
+		if (items.isEmpty() || items.stream().allMatch(ItemStack::isEmpty)) return null;
 		return new OverlayData(items, 4, zeroCountSlots);
 	}
 	private static ItemStack readToolboxFilter(ToolboxInventory inventory, int compartment) {

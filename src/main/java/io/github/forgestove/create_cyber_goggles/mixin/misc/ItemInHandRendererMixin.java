@@ -42,7 +42,9 @@ public abstract class ItemInHandRendererMixin {
 		if (!(stack.getItem() instanceof ClipboardBlockItem)) return;
 		var mainHand = hand == InteractionHand.MAIN_HAND;
 		var arm = mainHand ? player.getMainArm() : player.getMainArm().getOpposite();
+		poseStack.pushPose();
 		renderOneHandedMap(poseStack, buffer, combinedLight, equippedProgress, arm, swingProgress, stack);
+		poseStack.popPose();
 		ci.cancel();
 	}
 	@Inject(method = "renderMap", at = @At("HEAD"), cancellable = true)
@@ -50,6 +52,8 @@ public abstract class ItemInHandRendererMixin {
 		if (!CCG.config.tooltip.clipboard) return;
 		if (!(stack.getItem() instanceof ClipboardBlockItem)) return;
 		ci.cancel();
+		poseStack.pushPose();
 		ClipboardRenderer.renderClipboardPage(poseStack.last().pose(), buffer, packedLight, stack);
+		poseStack.popPose();
 	}
 }

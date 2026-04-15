@@ -16,15 +16,15 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public final class ClipboardRenderer implements TooltipOverlayRenderer {
 	private static final float SCALE = 0.5F;
 	public static void renderClipboardPage(Matrix4f matrix, MultiBufferSource buffer, int light, ItemStack stack) {
-		var local = new Matrix4f(matrix).rotate(Axis.YP.rotationDegrees(180F))
+		matrix.rotate(Axis.YP.rotationDegrees(180F))
 			.rotate(Axis.ZP.rotationDegrees(180F))
 			.translate(-0.25F, -0.3F, 0F)
 			.scale(0.01F * 0.4F * SCALE);
-		renderGuiTexure(AllGuiTextures.CLIPBOARD, local, buffer, light, 0, 0);
-		renderText(local, buffer, light, stack);
+		renderGuiTexure(AllGuiTextures.CLIPBOARD, matrix, buffer, light, 0, 0);
+		renderText(matrix, buffer, light, stack);
 	}
 	private static void renderGuiTexure(AllGuiTextures texture, Matrix4f matrix, MultiBufferSource buffer, int light, int x, int y) {
-		var local = new Matrix4f(matrix).translate(x, y, 0F);
+		matrix.translate(x, y, 0F);
 		var startX = texture.getStartX();
 		var startY = texture.getStartY();
 		var width = texture.getWidth();
@@ -34,10 +34,10 @@ public final class ClipboardRenderer implements TooltipOverlayRenderer {
 		var minV = startY / 256F;
 		var maxU = (startX + width) / 256F;
 		var maxV = (startY + height) / 256F;
-		vertex.addVertex(local, 0F, height, 0F).setColor(-1).setUv(minU, maxV).setLight(light);
-		vertex.addVertex(local, width, height, 0F).setColor(-1).setUv(maxU, maxV).setLight(light);
-		vertex.addVertex(local, width, 0F, 0F).setColor(-1).setUv(maxU, minV).setLight(light);
-		vertex.addVertex(local, 0F, 0F, 0F).setColor(-1).setUv(minU, minV).setLight(light);
+		vertex.addVertex(matrix, 0F, height, 0F).setColor(-1).setUv(minU, maxV).setLight(light);
+		vertex.addVertex(matrix, width, height, 0F).setColor(-1).setUv(maxU, maxV).setLight(light);
+		vertex.addVertex(matrix, width, 0F, 0F).setColor(-1).setUv(maxU, minV).setLight(light);
+		vertex.addVertex(matrix, 0F, 0F, 0F).setColor(-1).setUv(minU, minV).setLight(light);
 	}
 	private static void renderText(Matrix4f matrix, MultiBufferSource buffer, int light, ItemStack stack) {
 		var font = mc.font;

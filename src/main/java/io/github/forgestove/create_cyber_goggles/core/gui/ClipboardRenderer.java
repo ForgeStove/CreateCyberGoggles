@@ -1,4 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.gui;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.content.equipment.clipboard.*;
@@ -10,26 +12,38 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
-import org.joml.Matrix4f;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public final class ClipboardRenderer implements TooltipOverlayRenderer {
 	private static final float SCALE = 0.5F;
-	public static void renderClipboardPage(Matrix4f matrix, MultiBufferSource buffer, int light, ItemStack stack) {
+	public static void renderClipboardPage(PoseStack pose, MultiBufferSource buffer, int light, ItemStack stack) {
+		pose.pushPose();
+		var matrix = pose.last().pose();
 		matrix.rotate(Axis.YP.rotationDegrees(180F))
 			.rotate(Axis.ZP.rotationDegrees(180F))
 			.translate(-0.25F, -0.3F, 0F)
 			.scale(0.01F * 0.4F * SCALE);
-		renderGuiTexure(AllGuiTextures.CLIPBOARD, matrix, buffer, light, 0, 0);
-		renderText(matrix, buffer, light, stack);
+		renderGuiTexure(AllGuiTextures.CLIPBOARD, pose, buffer, light, 0, 0, RenderType.text(AllGuiTextures.CLIPBOARD.getLocation()));
+		renderText(pose, buffer, light, stack);
+		pose.popPose();
 	}
-	private static void renderGuiTexure(AllGuiTextures texture, Matrix4f matrix, MultiBufferSource buffer, int light, int x, int y) {
-		matrix.translate(x, y, 0F);
+	private static void renderGuiTexure(
+		AllGuiTextures texture,
+		PoseStack pose,
+		MultiBufferSource buffer,
+		int light,
+		int x,
+		int y,
+		RenderType renderType
+	) {
+		pose.pushPose();
+		pose.translate(x, y, 0F);
+		var matrix = pose.last().pose();
 		var startX = texture.getStartX();
 		var startY = texture.getStartY();
 		var width = texture.getWidth();
 		var height = texture.getHeight();
-		var vertex = buffer.getBuffer(RenderType.text(texture.getLocation()));
+		var vertex = buffer.getBuffer(renderType);
 		var minU = startX / 256F;
 		var minV = startY / 256F;
 		var maxU = (startX + width) / 256F;
@@ -38,8 +52,9 @@ public final class ClipboardRenderer implements TooltipOverlayRenderer {
 		vertex.addVertex(matrix, width, height, 0F).setColor(-1).setUv(maxU, maxV).setLight(light);
 		vertex.addVertex(matrix, width, 0F, 0F).setColor(-1).setUv(maxU, minV).setLight(light);
 		vertex.addVertex(matrix, 0F, 0F, 0F).setColor(-1).setUv(minU, minV).setLight(light);
+		pose.popPose();
 	}
-	private static void renderText(Matrix4f matrix, MultiBufferSource buffer, int light, ItemStack stack) {
+	private static void renderText(PoseStack pose, MultiBufferSource buffer, int light, ItemStack stack) {
 		var font = mc.font;
 		var mode = DisplayMode.POLYGON_OFFSET;
 		// 读取剪贴板内容
@@ -50,6 +65,7 @@ public final class ClipboardRenderer implements TooltipOverlayRenderer {
 		var entries = pages.get(currentPage);
 		if (entries.isEmpty()) return;
 		// 渲染剪贴板内容
+		var matrix = pose.last().pose();
 		int x = 45, y = 50;
 		for (var entry : entries) {
 			var text = entry.text.getString();
@@ -59,8 +75,7 @@ public final class ClipboardRenderer implements TooltipOverlayRenderer {
 			var checked = entry.checked;
 			if (address) {
 				var texture = checked ? AllGuiTextures.CLIPBOARD_ADDRESS_INACTIVE : AllGuiTextures.CLIPBOARD_ADDRESS;
-				matrix.translate(0F, 0F, -1F);
-				renderGuiTexure(texture, matrix, buffer, light, x - 1, y);
+				renderGuiTexure(texture, pose, buffer, light, x - 1, y, RenderType.textPolygonOffset(texture.getLocation()));
 			} else {
 				font.drawInBatch("□", x, y, checked ? 0x668D7F6B : 0xFF8D7F6B, false, matrix, buffer, mode, 0, light);
 				if (checked) font.drawInBatch("✔", x, y - 1, 0x31B25D, false, matrix, buffer, mode, 0, light);
@@ -128,6 +143,7 @@ public final class ClipboardRenderer implements TooltipOverlayRenderer {
 			if (text.isBlank()) continue;
 			var checked = entry.checked;
 			if (address) {
+				RenderSystem.enableBlend();
 				var texture = checked ? AllGuiTextures.CLIPBOARD_ADDRESS_INACTIVE : AllGuiTextures.CLIPBOARD_ADDRESS;
 				texture.render(gui, x1 - 1, y1 + 1);
 			} else {

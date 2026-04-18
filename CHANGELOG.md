@@ -1,15 +1,1 @@
-- Add a configuration that removes train damage
-- Add a configuration that enables negative infinity throttle
-- Add map tooltip rendering
-- Fix poseStack rendering misalignment issue for ClipboardRenderer and ItemInHandRendererMixin
-- Optimize clipboard rendering logic
-- Optimize the layout of configuration UI components
-- Optimize the color picker interface layout
-- Optimize the key binding configuration and add conflict detection and status display logic
-- Optimize the display of sequence assembly
-- Optimize TooltipOverlay
-- Optimize the ArmInteractionPointHandler
-- Optimize the ExtraItemRenderer
-- Optimize MapTooltipRenderer
-- Optimize the ArmInteractionPointHandlerMixin to support more accurate mechanical arm position previews
-- Optimize the PackagePortTargetSelectionHandlerMixin to support more precise placement range hints
+- Fix clipboard renderer

@@ -45,20 +45,30 @@ repositories {
 	mavenCentral()
 	maven("https://maven.createmod.net") // Create, Ponder, Flywheel
 	maven("https://mvn.devos.one/snapshots") // Registrate
+	maven("https://maven.ryanhcode.dev/releases") // Aeronautics
 	maven("https://maven.blamejared.com") // JEI
-	maven("https://jitpack.io") // Jitpack
 	maven("https://api.modrinth.com/maven") { content { includeGroup("maven.modrinth") } } // Modrinth
 }
 dependencies {
+	//region Create
 	implementation("com.simibubi.create:create-${p("mcVersion")}:${p("createVersion")}:slim") { isTransitive = false }
 	implementation("dev.engine-room.flywheel:flywheel-${p("loader")}-${p("mcVersion")}:${p("flywheelVersion")}")
 	implementation("net.createmod.ponder:ponder-${p("loader")}:${p("ponderVersion")}+mc${p("mcVersion")}") { isTransitive = false }
 	implementation("com.tterrag.registrate:Registrate:${p("registrateVersion")}")
-	implementation("mezz.jei:jei-${p("mcVersion")}-${p("loader")}:${p("jeiVersion")}")
-	runtimeOnly("com.github.Snownee:Jade:${p("loader")}-${p("jadeVersion")}")
+	//endregion
+	//region Aeronautics
+	implementation("dev.simulated_team.simulated:simulated-${p("loader")}-${p("mcVersion")}:${p("simulatedVersion")}") { isTransitive = false }
+	implementation("dev.ryanhcode.offroad:offroad-${p("loader")}-${p("mcVersion")}:${p("simulatedVersion")}") { isTransitive = false }
+	implementation("dev.eriksonn.aeronautics:aeronautics-${p("loader")}-${p("mcVersion")}:${p("simulatedVersion")}") { isTransitive = false }
+	implementation("dev.ryanhcode.sable:sable-${p("loader")}-${p("mcVersion")}:${p("sableVersion")}") { isTransitive = false }
+	//endregion
+	//region Enchantment Industry
 	compileOnly("maven.modrinth:create-enchantment-industry:${p("ceiVersion")}")
 	compileOnly("maven.modrinth:create-dragons-plus:${p("dragonPlusVersion")}")
-	add("additionalRuntimeClasspath", "dev.vfyjxf:mixin-hotswap-agent:1.1")
+	//endregion
+	implementation("mezz.jei:jei-${p("mcVersion")}-${p("loader")}:${p("jeiVersion")}")
+	runtimeOnly("maven.modrinth:jade:${p("jadeVersion")}+${p("loader")}")
+	add("additionalRuntimeClasspath", "dev.vfyjxf:mixin-hotswap-agent:+")
 }
 publishMods {
 	file.set(tasks.jar.get().archiveFile)
@@ -72,6 +82,7 @@ publishMods {
 		projectId.set("TlQAWQCY")
 		minecraftVersions.add(p("mcVersion"))
 		requires("create")
+		optional("create-aeronautics")
 	}
 	curseforge {
 		accessToken.set(providers.environmentVariable("CURSEFORGE_TOKEN"))

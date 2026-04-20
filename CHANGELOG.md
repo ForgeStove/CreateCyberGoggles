@@ -1,1 +1,1 @@
-- Add usePhysicsStaff hotkey for Create Aeronautics
+- Fix compact for Create JEI Compact

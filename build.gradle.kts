@@ -48,7 +48,6 @@ repositories {
 	maven("https://maven.ryanhcode.dev/releases") // Aeronautics
 	maven("https://maven.blamejared.com") // JEI
 	maven("https://api.modrinth.com/maven") { content { includeGroup("maven.modrinth") } } // Modrinth
-	maven("https://cursemaven.com") { content { includeGroup("curse.maven") } } // Modrinth
 }
 dependencies {
 	//region Create
@@ -72,8 +71,6 @@ dependencies {
 	implementation("mezz.jei:jei-${p("mcVersion")}-${p("loader")}:${p("jeiVersion")}")
 	runtimeOnly("maven.modrinth:jade:${p("jadeVersion")}+${p("loader")}")
 	add("additionalRuntimeClasspath", "dev.vfyjxf:mixin-hotswap-agent:+")
-
-	runtimeOnly("curse.maven:createjeicompat-1422344:7431839")
 }
 publishMods {
 	file.set(tasks.jar.get().archiveFile)

@@ -57,10 +57,12 @@ dependencies {
 	implementation("com.tterrag.registrate:Registrate:${p("registrateVersion")}")
 	//endregion
 	//region Aeronautics
-	implementation("dev.simulated_team.simulated:simulated-${p("loader")}-${p("mcVersion")}:${p("simulatedVersion")}") { isTransitive = false }
-	implementation("dev.ryanhcode.offroad:offroad-${p("loader")}-${p("mcVersion")}:${p("simulatedVersion")}") { isTransitive = false }
-	implementation("dev.eriksonn.aeronautics:aeronautics-${p("loader")}-${p("mcVersion")}:${p("simulatedVersion")}") { isTransitive = false }
+	implementation("dev.simulated_team.simulated:simulated-${p("loader")}-${p("mcVersion")}:${p("areoVersion")}") { isTransitive = false }
+	implementation("dev.ryanhcode.offroad:offroad-${p("loader")}-${p("mcVersion")}:${p("areoVersion")}") { isTransitive = false }
+	implementation("dev.eriksonn.aeronautics:aeronautics-${p("loader")}-${p("mcVersion")}:${p("areoVersion")}") { isTransitive = false }
 	implementation("dev.ryanhcode.sable:sable-${p("loader")}-${p("mcVersion")}:${p("sableVersion")}") { isTransitive = false }
+	implementation("dev.ryanhcode.sable-companion:sable-companion-common-${p("mcVersion")}:${p("sableCompanionVersion")}")
+	implementation("maven.modrinth:veil:${p("veilVersion")}")
 	//endregion
 	//region Enchantment Industry
 	compileOnly("maven.modrinth:create-enchantment-industry:${p("ceiVersion")}")

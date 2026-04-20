@@ -78,6 +78,7 @@
 		"provider.SchematicannonBlockEntityMixin",
 		"provider.TableClothBlockEntityMixin",
 		"provider.ToolboxBlockEntityMixin",
+		"simulated.PhysicsStaffItemMixin",
 		"wrench.ChassisRangeDisplayMixin",
 		"wrench.RadialWrenchHandlerMixin",
 		"wrench.RadialWrenchMenuMixin",

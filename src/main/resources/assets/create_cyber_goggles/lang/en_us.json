@@ -183,6 +183,7 @@
 	"create_cyber_goggles.key.toggleDiving": "Toggle Diving Boot On/Off",
 	"create_cyber_goggles.key.toggleGoggle": "Toggle Goggle On/Off",
 	"create_cyber_goggles.key.toggleItemOverlay": "Toggle Item To Display",
+	"create_cyber_goggles.key.usePhysicsStaff": "Use Physics Staff",
 	"create_cyber_goggles.key.useSchematic": "Use Schematic",
 	"create_cyber_goggles.message.disabled": "Disabled",
 	"create_cyber_goggles.message.divingBoot": "Diving Boot",

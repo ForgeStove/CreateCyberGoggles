@@ -183,6 +183,7 @@
 	"create_cyber_goggles.key.toggleDiving": "切换潜水靴开关",
 	"create_cyber_goggles.key.toggleGoggle": "切换护目镜开关",
 	"create_cyber_goggles.key.toggleItemOverlay": "切换要显示的物品",
+	"create_cyber_goggles.key.usePhysicsStaff": "使用物理法杖",
 	"create_cyber_goggles.key.useSchematic": "使用蓝图",
 	"create_cyber_goggles.message.disabled": "已禁用",
 	"create_cyber_goggles.message.divingBoot": "潜水靴",

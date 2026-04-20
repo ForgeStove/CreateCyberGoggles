@@ -24,6 +24,7 @@ public enum CCGKey {
 	toggleDiving,
 	toggleGoggle,
 	toggleItemOverlay(Type.KEYSYM, KEY_LCONTROL),
+	usePhysicsStaff,
 	useSchematic;
 	public final Lazy<KeyMapping> keyMapping;
 	CCGKey() {

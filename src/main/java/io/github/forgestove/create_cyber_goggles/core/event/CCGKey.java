@@ -18,6 +18,7 @@ public enum CCGKey {
 	openConfig,
 	openStock,
 	previewFilter,
+	showHoneyGlue,
 	showStress(Type.KEYSYM, KEY_TAB),
 	showSuperGlue,
 	stockRequestSelectAll(Type.KEYSYM, KEY_LALT),

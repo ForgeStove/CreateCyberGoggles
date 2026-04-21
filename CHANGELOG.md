@@ -1,1 +1,4 @@
-- Fix compact for Create JEI Compact
+- Add aeronautics configuration classification
+- Add alwaysShowMass config
+- Add correctionSublevel hotkey to return the physical structure to the center
+- Add a hotkey to display honey glue

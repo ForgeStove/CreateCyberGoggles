@@ -9,6 +9,7 @@ public final class CCGConfig {
 	@Category public final Outliner outliner = new Outliner();
 	@Category public final ChainConveyor chainConveyor = new ChainConveyor();
 	@Category public final Wrench wrench = new Wrench();
+	@Category public final Aeronautics aeronautics = new Aeronautics();
 	@Category public final Misc misc = new Misc();
 	public static class Goggles {
 		public boolean enhancedInfo = true;
@@ -85,6 +86,9 @@ public final class CCGConfig {
 		public boolean leftClickFastDismantle = true;
 		public boolean removeCooldown = true;
 		public boolean enchancedRotationMenu = false;
+	}
+	public static class Aeronautics {
+		public boolean alwaysShowMass = true;
 	}
 	public static class Misc {
 		public boolean removeMechanicalArmLimit = false;

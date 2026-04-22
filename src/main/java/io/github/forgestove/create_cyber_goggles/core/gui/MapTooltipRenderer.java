@@ -1,5 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.gui;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.api.TooltipOverlayRenderer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.core.component.DataComponents;

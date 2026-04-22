@@ -5,6 +5,7 @@ import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import com.simibubi.create.content.equipment.wrench.WrenchItem;
 import com.simibubi.create.foundation.utility.CreateLang;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.api.TooltipOverlayRenderer;
 import io.github.forgestove.create_cyber_goggles.core.gui.*;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.ChatFormatting;
@@ -22,10 +23,14 @@ import java.util.*;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public final class ItemTooltip {
 	public static final List<TooltipOverlayRenderer> OVERLAY_RENDERERS = List.of(
+		new ContainerRenderer(),
+		new PackageItemRenderer(),
+		new ToolboxRenderer(),
+		new EnderChestRenderer(),
 		new ClipboardRenderer(),
 		new MapTooltipRenderer(),
-		new ExtraItemRenderer(),
-		new ContainerRenderer()
+		new LinkedControllerRenderer(),
+		new RedstoneRequesterRenderer()
 	);
 	private static final int OVERLAY_GAP = 6;
 	public static void itemTooltip(@NotNull ItemTooltipEvent event) {

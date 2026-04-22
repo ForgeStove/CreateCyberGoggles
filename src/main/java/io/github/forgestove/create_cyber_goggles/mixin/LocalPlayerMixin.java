@@ -16,11 +16,8 @@ public abstract class LocalPlayerMixin extends AbstractClientPlayer implements S
 	@Override
 	public @NotNull ItemStack getItemBySlot(@NotNull EquipmentSlot slot) {
 		if (slot != EquipmentSlot.MAINHAND) return super.getItemBySlot(slot);
-		var stack = LocalItemUtil.getItemStack();
+		var stack = LocalItemUtil.getItemStack(this, slot);
 		if (stack != null) return stack;
-		if (!CCGMods.SIMULATED.isLoaded()) return super.getItemBySlot(slot);
-		var simulatedStack = LocalItemUtil.getSimulatedStack();
-		if (simulatedStack != null) return simulatedStack;
 		return super.getItemBySlot(slot);
 	}
 }

@@ -6,7 +6,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.*;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 @Mixin(LocalPlayer.class)
 public abstract class LocalPlayerMixin extends AbstractClientPlayer implements Self<LocalPlayer> {
@@ -16,7 +16,10 @@ public abstract class LocalPlayerMixin extends AbstractClientPlayer implements S
 	@Override
 	public @NotNull ItemStack getItemBySlot(@NotNull EquipmentSlot slot) {
 		if (slot != EquipmentSlot.MAINHAND) return super.getItemBySlot(slot);
-		var stack = LocalItemUtil.getItemStack(this, slot);
+		var stack = LocalItemUtil.getCreate();
+		if (stack != null) return stack;
+		if (!CCGMods.SIMULATED.isLoaded()) return super.getItemBySlot(slot);
+		stack = LocalItemUtil.getSimulated();
 		if (stack != null) return stack;
 		return super.getItemBySlot(slot);
 	}

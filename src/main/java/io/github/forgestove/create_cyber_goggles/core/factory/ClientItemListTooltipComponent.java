@@ -8,7 +8,7 @@ import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactori
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-public class ClientItemListTooltipComponent implements ClientTooltipComponent {
+public final class ClientItemListTooltipComponent implements ClientTooltipComponent {
 	private final List<ItemStack> items;
 	private final int maxColumns;
 	private final int columns;

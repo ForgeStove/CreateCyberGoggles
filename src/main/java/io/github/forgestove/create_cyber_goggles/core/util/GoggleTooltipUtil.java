@@ -205,26 +205,26 @@ public final class GoggleTooltipUtil {
 		CreateLang.translate("gui.goggles.basin_contents").forGoggles(tooltip);
 		if (!inputItems.isEmpty()) {
 			CCGLang.translate(GRAY, "tooltip.inputItems").forGoggles(tooltip, 1);
-			inputItems.forEach(stack -> CCGLang.item(stack, CCGLang.itemWithoutCount(stack).component()).forGoggles(tooltip, 1));
+			inputItems.forEach(stack -> CCGLang.itemEntry(stack, CCGLang.item(stack).component()).forGoggles(tooltip, 1));
 		}
 		if (!inputFluids.isEmpty()) {
 			CCGLang.translate(GRAY, "tooltip.inputFluids").forGoggles(tooltip, 1);
 			for (var i = 0; i < inputFluids.size(); i++) {
 				var fluidStack = inputFluids.get(i);
 				var capacityMb = i < inputCapacities.size() ? inputCapacities.get(i) : Math.max(1000, fluidStack.getAmount());
-				CCGLang.fluid(fluidStack, capacityMb).forGoggles(tooltip, 1);
+				CCGLang.fluidEntry(fluidStack, capacityMb).forGoggles(tooltip, 1);
 			}
 		}
 		if (!outputItems.isEmpty()) {
 			CCGLang.translate(GRAY, "tooltip.outputItems").forGoggles(tooltip, 1);
-			outputItems.forEach(stack -> CCGLang.item(stack, CCGLang.itemWithoutCount(stack).component()).forGoggles(tooltip, 1));
+			outputItems.forEach(stack -> CCGLang.itemEntry(stack, CCGLang.item(stack).component()).forGoggles(tooltip, 1));
 		}
 		if (!outputFluids.isEmpty()) {
 			CCGLang.translate(GRAY, "tooltip.outputFluids").forGoggles(tooltip, 1);
 			for (var i = 0; i < outputFluids.size(); i++) {
 				var fluidStack = outputFluids.get(i);
 				var capacityMb = i < outputCapacities.size() ? outputCapacities.get(i) : Math.max(1000, fluidStack.getAmount());
-				CCGLang.fluid(fluidStack, capacityMb).forGoggles(tooltip, 1);
+				CCGLang.fluidEntry(fluidStack, capacityMb).forGoggles(tooltip, 1);
 			}
 		}
 		return true;
@@ -253,22 +253,22 @@ public final class GoggleTooltipUtil {
 			holder -> holder.value().getRollableResults().forEach(result -> {
 				var stack = result.getStack();
 				var chance = result.getChance();
-				var label = CCGLang.itemWithoutCount(stack)
+				var label = CCGLang.item(stack)
 					.add(CCGLang.text(DARK_GRAY, " x").add(CCGLang.number(chance * 100).style(AQUA)).text(DARK_GRAY, "%"))
 					.component();
-				CCGLang.item(stack.copyWithCount(inputCount * stack.getCount()), label).forGoggles(tooltip);
-			}), () -> CCGLang.itemWithoutCount(ItemStack.EMPTY).forGoggles(tooltip, 2)
+				CCGLang.itemEntry(stack.copyWithCount(inputCount * stack.getCount()), label).forGoggles(tooltip);
+			}), () -> CCGLang.item(ItemStack.EMPTY).forGoggles(tooltip, 2)
 		);
 		else cwcbe.findRecipe().ifPresentOrElse(
 			holder -> holder.value().getRollableResults().forEach(result -> {
 				var stack = result.getStack();
 				var chance = result.getChance();
-				var line = CCGLang.itemWithoutCount(stack)
+				var line = CCGLang.item(stack)
 					.text(DARK_GRAY, " x")
 					.add(CCGLang.number(inputCount * stack.getCount() * chance).style(GOLD))
 					.component();
-				CCGLang.item(stack.copyWithCount(1), line).forGoggles(tooltip);
-			}), () -> CCGLang.itemWithoutCount(ItemStack.EMPTY).forGoggles(tooltip, 2)
+				CCGLang.itemEntry(stack.copyWithCount(1), line).forGoggles(tooltip);
+			}), () -> CCGLang.item(ItemStack.EMPTY).forGoggles(tooltip, 2)
 		);
 		return true;
 	}
@@ -288,26 +288,26 @@ public final class GoggleTooltipUtil {
 			.forGoggles(tooltip);
 		CCGLang.translate("tooltip.expectedOutputs").style(GRAY).forGoggles(tooltip);
 		if (lastRecipe == null) {
-			CCGLang.itemWithoutCount(ItemStack.EMPTY).forGoggles(tooltip, 2);
+			CCGLang.item(ItemStack.EMPTY).forGoggles(tooltip, 2);
 			return true;
 		}
 		var inputCount = Math.max(1, mbe.inputInv.getStackInSlot(0).getCount());
 		if (mc.player == null || mc.player.isShiftKeyDown()) lastRecipe.getRollableResults().forEach(result -> {
 			var stack = result.getStack();
 			var chance = result.getChance();
-			var label = CCGLang.itemWithoutCount(stack)
+			var label = CCGLang.item(stack)
 				.add(CCGLang.text(DARK_GRAY, " x").add(CCGLang.number(chance * 100).style(AQUA)).text(DARK_GRAY, "%"))
 				.component();
-			CCGLang.item(stack.copyWithCount(inputCount * stack.getCount()), label).forGoggles(tooltip);
+			CCGLang.itemEntry(stack.copyWithCount(inputCount * stack.getCount()), label).forGoggles(tooltip);
 		});
 		else lastRecipe.getRollableResults().forEach(result -> {
 			var stack = result.getStack();
 			var chance = result.getChance();
-			var line = CCGLang.itemWithoutCount(stack)
+			var line = CCGLang.item(stack)
 				.text(DARK_GRAY, " x")
 				.add(CCGLang.number(inputCount * stack.getCount() * chance).style(GOLD))
 				.component();
-			CCGLang.item(stack.copyWithCount(1), line).forGoggles(tooltip);
+			CCGLang.itemEntry(stack.copyWithCount(1), line).forGoggles(tooltip);
 		});
 		return true;
 	}

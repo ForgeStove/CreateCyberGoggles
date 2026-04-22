@@ -112,7 +112,7 @@ public final class ItemTooltip {
 		for (var i = 0; i < entries.size(); i++) {
 			var fluid = entries.get(i);
 			var capacity = i < capacities.size() ? capacities.get(i) : Math.max(1, fluid.getAmount());
-			CCGLang.fluid(fluid, capacity).addTo(1, tooltip);
+			CCGLang.fluidEntry(fluid, capacity).addTo(1, tooltip);
 		}
 	}
 	public static void renderTooltipPre(@NotNull Pre event) {

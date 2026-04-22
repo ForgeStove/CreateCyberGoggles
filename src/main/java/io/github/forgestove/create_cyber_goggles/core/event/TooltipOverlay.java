@@ -73,7 +73,7 @@ public class TooltipOverlay {
 		if (overlay.tooltipFlagType == null) overlay.tooltipFlagType = TooltipFlagType.Default;
 		var tooltipLines = itemStack.getTooltipLines(TooltipContext.of(mc.level), mc.player, overlay.tooltipFlagType.getFlag());
 		var components = buildTooltipComponents(tooltipLines, width - x - 16, true);
-		var itemEntryComponent = new ItemEntryTooltipComponent(itemStack);
+		var itemEntryComponent = new ItemEntryTooltipComponent(itemStack, 0, itemStack.getHoverName());
 		components.set(0, ClientTooltipComponent.create(itemEntryComponent));
 		var tooltipWidth = 0;
 		var tooltipHeight = 0;

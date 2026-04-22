@@ -61,11 +61,13 @@ public class CCGLang {
 	public static @NotNull CCGLangBuilder seconds() {
 		return builder().add(CreateLang.translate("generic.unit.seconds").component());
 	}
-	public static @NotNull CCGLangBuilder itemWithoutCount(@NotNull ItemStack stack) {
+	public static @NotNull CCGLangBuilder item(@NotNull ItemStack stack) {
 		return builder().add(stack.getHoverName().copy().setStyle(stack.getDisplayName().getStyle()));
 	}
-	public static @NotNull CCGLangBuilder item(@NotNull ItemStack stack) {
-		return itemWithoutCount(stack).text(GRAY, " x%d".formatted(stack.getCount()));
+	public static @NotNull CCGLangBuilder itemEntry(@NotNull ItemStack stack, @NotNull Component label) {
+		var marker = Component.empty();
+		TooltipComponentUtil.ITEM_ENTRY_MAP.put(marker, new ItemEntryTooltipComponent(stack.copy(), 0, label.copy()));
+		return builder().add(marker);
 	}
 	public static @NotNull CCGLangBuilder itemList(@NotNull List<ItemStack> items, int maxColumns) {
 		var marker = Component.empty();
@@ -73,12 +75,7 @@ public class CCGLang {
 		TooltipComponentUtil.ITEM_LIST_MAP.put(marker, new ItemListTooltipComponent(copied, 0, maxColumns));
 		return builder().add(marker);
 	}
-	public static @NotNull CCGLangBuilder item(@NotNull ItemStack stack, @NotNull Component label) {
-		var marker = Component.empty();
-		TooltipComponentUtil.ITEM_ENTRY_MAP.put(marker, new ItemEntryTooltipComponent(stack.copy(), 0, label.copy()));
-		return builder().add(marker);
-	}
-	public static @NotNull CCGLangBuilder fluid(@NotNull FluidStack fluid, int capacityMb) {
+	public static @NotNull CCGLangBuilder fluidEntry(@NotNull FluidStack fluid, int capacityMb) {
 		var marker = Component.empty();
 		TooltipComponentUtil.FLUID_ENTRY_MAP.put(marker, new FluidEntryTooltipComponent(fluid.copy(), 0, Math.max(1, capacityMb)));
 		return builder().add(marker);

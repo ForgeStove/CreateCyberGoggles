@@ -28,7 +28,7 @@ public interface IHaveGoggleInformationMixin {
 		for (var i = 0; i < handler.getTanks(); i++) {
 			var fluidStack = handler.getFluidInTank(i);
 			if (fluidStack.isEmpty()) continue;
-			CCGLang.fluid(fluidStack, handler.getTankCapacity(i)).forGoggles(tooltip);
+			CCGLang.fluidEntry(fluidStack, handler.getTankCapacity(i)).forGoggles(tooltip);
 			isEmpty = false;
 		}
 		if (handler.getTanks() > 1) {
@@ -37,7 +37,7 @@ public interface IHaveGoggleInformationMixin {
 			return;
 		}
 		if (isEmpty) for (var i = 0; i < handler.getTanks(); i++)
-			CCGLang.fluid(FluidStack.EMPTY, handler.getTankCapacity(i)).forGoggles(tooltip);
+			CCGLang.fluidEntry(FluidStack.EMPTY, handler.getTankCapacity(i)).forGoggles(tooltip);
 		cir.setReturnValue(true);
 	}
 }

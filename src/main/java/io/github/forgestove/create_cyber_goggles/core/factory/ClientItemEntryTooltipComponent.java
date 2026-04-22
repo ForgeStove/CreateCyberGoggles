@@ -11,7 +11,15 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
-public record ClientItemEntryTooltipComponent(ItemStack stack, int indent, Component label) implements ClientTooltipComponent {
+public final class ClientItemEntryTooltipComponent implements ClientTooltipComponent {
+	private final ItemStack stack;
+	private final int indent;
+	private final Component label;
+	public ClientItemEntryTooltipComponent(ItemStack stack, int indent, Component label) {
+		this.stack = stack;
+		this.indent = indent;
+		this.label = label.copy().withStyle(stack.getDisplayName().getStyle());
+	}
 	public static void register(@NotNull RegisterClientTooltipComponentFactoriesEvent event) {
 		event.register(
 			ItemEntryTooltipComponent.class,
@@ -46,9 +54,5 @@ public record ClientItemEntryTooltipComponent(ItemStack stack, int indent, Compo
 	private int indentPixels(@NotNull Font font) {
 		return indent * font.width(" ");
 	}
-	public record ItemEntryTooltipComponent(ItemStack stack, int indent, Component label) implements TooltipComponent {
-		public ItemEntryTooltipComponent(ItemStack stack) {
-			this(stack, 0, stack.getHoverName());
-		}
-	}
+	public record ItemEntryTooltipComponent(ItemStack stack, int indent, Component label) implements TooltipComponent {}
 }

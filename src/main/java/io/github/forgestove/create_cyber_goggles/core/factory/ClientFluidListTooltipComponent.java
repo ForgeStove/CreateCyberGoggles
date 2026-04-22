@@ -13,7 +13,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-public class ClientFluidListTooltipComponent implements ClientTooltipComponent {
+public final class ClientFluidListTooltipComponent implements ClientTooltipComponent {
 	private final List<FluidStack> fluids;
 	private final int maxColumns;
 	private final int columns;

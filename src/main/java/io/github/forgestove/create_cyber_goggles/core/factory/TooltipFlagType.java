@@ -3,7 +3,6 @@ import net.minecraft.world.item.TooltipFlag.Default;
 import org.jetbrains.annotations.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
-@SuppressWarnings("unused")
 public enum TooltipFlagType {
 	Default,
 	Normal(false),

@@ -4,7 +4,6 @@ import com.simibubi.create.content.logistics.filter.ListFilterItem;
 import com.simibubi.create.foundation.utility.CreateLang;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.api.Self;
-import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -26,19 +25,6 @@ public abstract class ListFilterItemMixin implements Self<ListFilterItem> {
 		var respectNBT = filter.getOrDefault(AllDataComponents.FILTER_ITEMS_RESPECT_NBT, false);
 		list.add(CreateLang.translateDirect(respectNBT ? "gui.filter.respect_data" : "gui.filter.ignore_data")
 			.withStyle(ChatFormatting.GOLD));
-		var added = false;
-		var items = new ArrayList<ItemStack>();
-		var filterItems = thiz().getFilterItemHandler(filter);
-		for (var i = 0; i < filterItems.getSlots(); i++) {
-			var stack = filterItems.getStackInSlot(i);
-			items.add(stack);
-			if (!stack.isEmpty()) added = true;
-		}
-		if (!added) {
-			cir.setReturnValue(Collections.emptyList());
-			return;
-		}
-		CCGLang.itemList(items, 9).addTo(list.size(), list);
 		cir.setReturnValue(list);
 	}
 }

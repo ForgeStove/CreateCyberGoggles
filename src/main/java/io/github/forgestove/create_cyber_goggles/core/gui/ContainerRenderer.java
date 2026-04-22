@@ -13,8 +13,9 @@ public class ContainerRenderer extends AbstractItemGridRenderer {
 		if (item instanceof BlockItem blockItem && blockItem.getBlock() instanceof ShulkerBoxBlock) return true;
 		return item == Items.CHEST || item == Items.TRAPPED_CHEST || item == Items.BARREL || item == Items.CHEST_MINECART;
 	}
-	private static int resolveSlots(ItemStack stack, int storedSlots) {
-		return isVanilla27Container(stack) ? 27 : storedSlots;
+	private static boolean isVanilla9Container(ItemStack stack) {
+		var item = stack.getItem();
+		return item == Items.DISPENSER || item == Items.DROPPER || item == Items.HOPPER;
 	}
 	@Override
 	public boolean supports(ItemStack stack) {
@@ -31,10 +32,11 @@ public class ContainerRenderer extends AbstractItemGridRenderer {
 		if (container == null) return null;
 		var storedSlots = container.getSlots();
 		if (storedSlots <= 0) return null;
-		var slots = resolveSlots(stack, storedSlots);
+		var slots = isVanilla27Container(stack) ? 27 : storedSlots;
 		List<ItemStack> items = new ArrayList<>();
 		for (var i = 0; i < slots; i++) items.add(i < storedSlots ? container.getStackInSlot(i) : ItemStack.EMPTY);
-		return new OverlayData(items, Math.min(slots, COLUMNS));
+		var columns = Math.min(slots, COLUMNS);
+		if (isVanilla9Container(stack)) columns = 3;
+		return new OverlayData(items, columns);
 	}
 }
-

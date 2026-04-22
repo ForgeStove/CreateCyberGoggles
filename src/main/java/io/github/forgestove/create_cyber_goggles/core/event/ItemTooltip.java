@@ -26,6 +26,7 @@ public final class ItemTooltip {
 		new ContainerRenderer(),
 		new PackageItemRenderer(),
 		new ToolboxRenderer(),
+		new ListFilterRenderer(),
 		new EnderChestRenderer(),
 		new ClipboardRenderer(),
 		new MapTooltipRenderer(),

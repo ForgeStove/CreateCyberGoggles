@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.mixin;
+package io.github.forgestove.create_cyber_goggles.mixin.misc;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.simibubi.create.content.logistics.BigItemStack;
@@ -40,7 +40,7 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 		method = "containerTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;closeContainer()V")
 	)
 	public boolean containerTick(Player instance) {
-		return self().getMenu().containerId != -1;
+		return thiz().getMenu().containerId != -1;
 	}
 	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
 	private void ccg$mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {

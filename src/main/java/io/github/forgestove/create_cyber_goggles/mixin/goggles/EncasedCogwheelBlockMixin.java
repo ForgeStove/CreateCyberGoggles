@@ -10,10 +10,10 @@ public abstract class EncasedCogwheelBlockMixin extends RotatedPillarKineticBloc
 	}
 	@Override
 	public float getParticleTargetRadius() {
-		return self().isLargeCog() ? 1.2f : super.getParticleTargetRadius();
+		return thiz().isLargeCog() ? 1.2f : super.getParticleTargetRadius();
 	}
 	@Override
 	public float getParticleInitialRadius() {
-		return self().isLargeCog() ? 1f : super.getParticleTargetRadius();
+		return thiz().isLargeCog() ? 1f : super.getParticleTargetRadius();
 	}
 }

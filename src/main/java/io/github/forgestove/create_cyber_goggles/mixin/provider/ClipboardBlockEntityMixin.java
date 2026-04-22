@@ -9,7 +9,7 @@ public abstract class ClipboardBlockEntityMixin implements ItemRenderable, Self<
 	@Override
 	public ItemStack ccg$getItemStack() {
 		if (!CCG.config.tooltip.clipboard) return null;
-		var thiz = self();
+		var thiz = thiz();
 		var state = thiz.getBlockState();
 		var level = thiz.getLevel();
 		if (level == null) return null;

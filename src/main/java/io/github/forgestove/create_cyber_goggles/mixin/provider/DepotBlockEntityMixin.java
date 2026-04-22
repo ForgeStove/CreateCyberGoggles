@@ -19,6 +19,6 @@ public abstract class DepotBlockEntityMixin implements IHaveGoggleInformation, I
 	@Override
 	public ItemStack ccg$getItemStack() {
 		if (!CCG.config.tooltip.depot) return null;
-		return self().getHeldItem();
+		return thiz().getHeldItem();
 	}
 }

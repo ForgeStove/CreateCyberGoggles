@@ -9,7 +9,7 @@ public abstract class ToolboxBlockEntityMixin implements ItemRenderable, Self<To
 	@Override
 	public ItemStack ccg$getItemStack() {
 		if (!CCG.config.tooltip.toolbox) return null;
-		var thiz = self();
+		var thiz = thiz();
 		var state = thiz.getBlockState();
 		var level = thiz.getLevel();
 		if (level == null) return null;

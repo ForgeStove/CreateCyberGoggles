@@ -49,7 +49,7 @@ public abstract class ClientSchematicLoaderMixin implements Self<ClientSchematic
 	private void refreshFromSelectedFolderOnly(CallbackInfo ci) {
 		if (!CCG.config.misc.recursiveSchematicScan) return;
 		FilesHelper.createFolderIfMissing(CreatePaths.SCHEMATICS_DIR);
-		var availableSchematics = self().getAvailableSchematics();
+		var availableSchematics = thiz().getAvailableSchematics();
 		availableSchematics.clear();
 		var folder = SchematicFolderUtil.getSelectedDirectory();
 		try (var paths = Files.list(folder)) {

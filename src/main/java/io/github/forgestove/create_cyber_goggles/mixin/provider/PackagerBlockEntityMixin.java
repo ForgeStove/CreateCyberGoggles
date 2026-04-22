@@ -7,6 +7,6 @@ import org.spongepowered.asm.mixin.Mixin;
 public abstract class PackagerBlockEntityMixin implements ItemRenderable, Self<PackagerBlockEntity> {
 	@Override
 	public ItemStack ccg$getItemStack() {
-		return self().heldBox;
+		return thiz().heldBox;
 	}
 }

@@ -9,6 +9,6 @@ public abstract class EnderChestBlockEntityMixin implements ItemRenderable, Self
 	@Override
 	public ItemStack ccg$getItemStack() {
 		if (!CCG.config.tooltip.container) return null;
-		return new ItemStack(self().getBlockState().getBlock());
+		return new ItemStack(thiz().getBlockState().getBlock());
 	}
 }

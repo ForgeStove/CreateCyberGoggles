@@ -44,7 +44,7 @@ public abstract class BasinBlockEntityMixin implements IHaveGoggleInformation, S
 	}
 	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), cancellable = true)
 	public void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> cir) {
-		var basin = self();
+		var basin = thiz();
 		var inputItems = ccg$collectItems(basin.getInputInventory());
 		var outputItems = ccg$collectItems(basin.getOutputInventory());
 		var inputCapacities = new ArrayList<Integer>();

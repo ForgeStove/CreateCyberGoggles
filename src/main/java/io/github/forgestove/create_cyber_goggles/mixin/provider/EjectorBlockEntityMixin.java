@@ -24,7 +24,7 @@ public abstract class EjectorBlockEntityMixin implements ItemRenderable, Outline
 	}
 	@Override
 	public void ccg$render() {
-		var ebe = self();
+		var ebe = thiz();
 		var targetPos = ebe.getTargetPosition();
 		var blockPos = ebe.getBlockPos();
 		outliner.showAABB("EjectorTargetBox" + this, getBounds(targetPos)).lineWidth(1 / 16f).colored(CCG.config.outliner.outColor);

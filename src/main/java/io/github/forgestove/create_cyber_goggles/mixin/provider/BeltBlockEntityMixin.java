@@ -27,9 +27,9 @@ public abstract class BeltBlockEntityMixin extends KineticBlockEntity
 	@Inject(method = "tick", at = @At("TAIL"))
 	private void tick(CallbackInfo ci) {
 		if (level == null || !level.isClientSide) return;
-		if (self().index != 0) return;
+		if (thiz().index != 0) return;
 		var currentTotalItems = 0;
-		for (var tis : self().getInventory().getTransportedItems())
+		for (var tis : thiz().getInventory().getTransportedItems())
 			if (tis != null && tis.stack != null) currentTotalItems += tis.stack.getCount();
 		var itemsPassed = Math.max(0, ccg$lastTotalItems - currentTotalItems);
 		ccg$lastTotalItems = currentTotalItems;
@@ -41,15 +41,15 @@ public abstract class BeltBlockEntityMixin extends KineticBlockEntity
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		var sup = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
 		if (!CCG.config.goggles.enhancedInfo || getSpeed() == 0) return sup;
-		var controllerBE = self().getControllerBE();
+		var controllerBE = thiz().getControllerBE();
 		if (controllerBE != null) GoggleTooltipUtil.beltThroughput(tooltip, ((BeltBlockEntityMixin) (Object) controllerBE).ccg$rate);
 		return sup;
 	}
 	@Override
 	public ItemStack ccg$getItemStack() {
-		var inventory = self().getInventory();
+		var inventory = thiz().getInventory();
 		if (inventory == null) return null;
-		var stackAtOffset = inventory.getStackAtOffset(self().index);
+		var stackAtOffset = inventory.getStackAtOffset(thiz().index);
 		return stackAtOffset == null ? null : stackAtOffset.stack;
 	}
 }

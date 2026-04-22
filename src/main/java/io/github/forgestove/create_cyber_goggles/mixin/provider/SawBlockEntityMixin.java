@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Mixin;
 public abstract class SawBlockEntityMixin implements ItemRenderable, Self<SawBlockEntity> {
 	@Override
 	public ItemStack ccg$getItemStack() {
-		var thiz = self();
+		var thiz = thiz();
 		var inventory = thiz.inventory;
 		for (var i = 0; i < inventory.getSlots(); i++) {
 			var stackInSlot = inventory.getStackInSlot(i);

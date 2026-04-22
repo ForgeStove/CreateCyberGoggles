@@ -4,9 +4,8 @@
 	"package": "io.github.forgestove.create_cyber_goggles.mixin",
 	"client": [
 		"AbstractFilterScreenMixin",
-		"SchematicAndQuillHandlerMixin",
 		"ShulkerBoxBlockMixin",
-		"StockKeeperRequestScreenMixin",
+		"misc.StockKeeperRequestScreenMixin",
 		"accessor.RotationPropagatorAccessor",
 		"chainConveyor.CardboardArmorHandlerMixin",
 		"chainConveyor.ChainConveyorConnectionHandlerMixin",
@@ -79,15 +78,12 @@
 		"provider.TableClothBlockEntityMixin",
 		"provider.ToolboxBlockEntityMixin",
 		"simulated.BlockPropertiesTooltipMixin",
+		"LocalPlayerMixin",
 		"simulated.PhysicsStaffClientHandlerMixin",
-		"simulated.PhysicsStaffItemMixin",
 		"wrench.ChassisRangeDisplayMixin",
 		"wrench.RadialWrenchHandlerMixin",
 		"wrench.RadialWrenchMenuMixin",
 		"wrench.ScrollValueRendererMixin",
 		"wrench.ValueSettingsInputHandlerMixin"
-	],
-	"mixins": [
-		"simulated.HoneyGlueClientHandlerMixin"
 	]
 }

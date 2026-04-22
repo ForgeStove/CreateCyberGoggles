@@ -11,6 +11,6 @@ public abstract class AbstractFilterScreenMixin implements Self<AbstractFilterSc
 		method = "containerTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;closeContainer()V")
 	)
 	public boolean containerTick(Player instance) {
-		return self().getMenu().containerId != -1;
+		return thiz().getMenu().containerId != -1;
 	}
 }

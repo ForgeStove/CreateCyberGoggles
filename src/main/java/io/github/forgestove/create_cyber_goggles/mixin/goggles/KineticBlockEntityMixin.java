@@ -16,7 +16,7 @@ public abstract class KineticBlockEntityMixin implements Self<KineticBlockEntity
 	public void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> cir) {
 		var goggles = CCG.config.goggles;
 		if (!goggles.enhancedInfo) return;
-		var kbe = self();
+		var kbe = thiz();
 		var speed = kbe.getTheoreticalSpeed();
 		var hide = !goggles.hideStaticKineticInfo || speed != 0;
 		cir.setReturnValue(hide);

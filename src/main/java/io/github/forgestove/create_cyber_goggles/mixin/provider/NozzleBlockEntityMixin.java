@@ -22,7 +22,7 @@ public abstract class NozzleBlockEntityMixin implements IHaveGoggleInformation, 
 	}
 	@Override
 	public void ccg$render() {
-		var center = self().getBlockPos().getCenter();
+		var center = thiz().getBlockPos().getCenter();
 		var color = Outliner.getColor(pushing);
 		var range = this.range / 2F;
 		outliner.chaseAABB("NozzleAirBox" + this, new AABB(center, center).inflate(range))

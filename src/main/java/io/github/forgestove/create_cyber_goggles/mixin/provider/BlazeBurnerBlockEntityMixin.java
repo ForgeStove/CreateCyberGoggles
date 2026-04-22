@@ -23,7 +23,7 @@ public abstract class BlazeBurnerBlockEntityMixin implements IHaveGoggleInformat
 	@Inject(method = "tick", at = @At("HEAD"))
 	public void tick(CallbackInfo ci) {
 		if (!CCG.config.goggles.enhancedInfo) return;
-		var level = self().getLevel();
+		var level = thiz().getLevel();
 		if (level == null || !level.isClientSide) return;
 		if (isCreative) return;
 		if (remainingBurnTime > 0) remainingBurnTime--;

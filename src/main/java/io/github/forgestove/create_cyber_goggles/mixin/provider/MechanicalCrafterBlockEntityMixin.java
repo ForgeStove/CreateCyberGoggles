@@ -7,6 +7,6 @@ import org.spongepowered.asm.mixin.Mixin;
 public abstract class MechanicalCrafterBlockEntityMixin implements ItemRenderable, Self<MechanicalCrafterBlockEntity> {
 	@Override
 	public ItemStack ccg$getItemStack() {
-		return self().getInventory().getItem(0);
+		return thiz().getInventory().getItem(0);
 	}
 }

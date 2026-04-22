@@ -9,7 +9,7 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.outlin
 public abstract class PackagePortBlockEntityMixin implements OutlineRenderable, Self<PackagePortBlockEntity> {
 	@Override
 	public void ccg$render() {
-		var ppbe = self();
+		var ppbe = thiz();
 		var target = ppbe.target;
 		if (target == null) return;
 		var pos = ppbe.getBlockPos();

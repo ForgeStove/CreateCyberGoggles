@@ -9,6 +9,6 @@ public abstract class PlacardBlockEntityMixin implements ItemRenderable, Self<Pl
 	@Override
 	public ItemStack ccg$getItemStack() {
 		if (!CCG.config.tooltip.packageEntity) return null;
-		return self().getHeldItem();
+		return thiz().getHeldItem();
 	}
 }

@@ -9,6 +9,6 @@ public abstract class ItemEntityMixin implements ItemRenderable, Self<ItemEntity
 	@Override
 	public ItemStack ccg$getItemStack() {
 		if (!CCG.config.tooltip.itemEntity) return null;
-		return self().getItem();
+		return thiz().getItem();
 	}
 }

@@ -18,11 +18,11 @@ public abstract class SchematicannonBlockEntityMixin
 	implements IHaveGoggleInformation, ItemRenderable, OutlineRenderable, Self<SchematicannonBlockEntity> {
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		return GoggleTooltipUtil.cannon(tooltip, self());
+		return GoggleTooltipUtil.cannon(tooltip, thiz());
 	}
 	@Override
 	public ItemStack ccg$getItemStack() {
-		var sbe = self();
+		var sbe = thiz();
 		if (sbe.state == State.STOPPED) return null;
 		if (sbe.missingItem != null) return sbe.missingItem;
 		if (sbe.flyingBlocks.isEmpty()) return null;
@@ -30,7 +30,7 @@ public abstract class SchematicannonBlockEntityMixin
 	}
 	@Override
 	public void ccg$render() {
-		var currentTarget = self().printer.getCurrentTarget();
+		var currentTarget = thiz().printer.getCurrentTarget();
 		if (currentTarget == null) return;
 		outliner.chaseAABB("SchematiCannonTargetBox" + this, getBounds(currentTarget))
 			.withFaceTextures(AllSpecialTextures.HIGHLIGHT_CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)

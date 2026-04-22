@@ -7,6 +7,6 @@ import org.spongepowered.asm.mixin.Mixin;
 public abstract class ChuteBlockEntityMixin implements ItemRenderable, Self<ChuteBlockEntity> {
 	@Override
 	public ItemStack ccg$getItemStack() {
-		return self().getItem();
+		return thiz().getItem();
 	}
 }

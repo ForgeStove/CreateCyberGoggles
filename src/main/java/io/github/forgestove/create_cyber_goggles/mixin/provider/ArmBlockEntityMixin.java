@@ -30,7 +30,7 @@ public abstract class ArmBlockEntityMixin implements ItemRenderable, OutlineRend
 				.withFaceTextures(AllSpecialTextures.HIGHLIGHT_CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
 				.lineWidth(1 / 16f)
 				.colored(point.getMode().getColor());
-			outliner.showLine("ArmIOLine" + point, self().getBlockPos().getCenter(), point.getPos().getCenter())
+			outliner.showLine("ArmIOLine" + point, thiz().getBlockPos().getCenter(), point.getPos().getCenter())
 				.lineWidth(1 / 8f)
 				.colored(point.getMode().getColor());
 		}

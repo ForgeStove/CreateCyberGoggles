@@ -28,7 +28,7 @@ public abstract class ListFilterItemMixin implements Self<ListFilterItem> {
 			.withStyle(ChatFormatting.GOLD));
 		var added = false;
 		var items = new ArrayList<ItemStack>();
-		var filterItems = self().getFilterItemHandler(filter);
+		var filterItems = thiz().getFilterItemHandler(filter);
 		for (var i = 0; i < filterItems.getSlots(); i++) {
 			var stack = filterItems.getStackInSlot(i);
 			items.add(stack);

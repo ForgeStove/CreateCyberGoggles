@@ -24,14 +24,14 @@ public abstract class EncasedFanBlockEntityMixin extends KineticBlockEntity
 	}
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		var airCurrent = self().getAirCurrent();
+		var airCurrent = thiz().getAirCurrent();
 		var thiz = GoggleTooltipUtil.fan(tooltip, airCurrent.pushing, airCurrent.maxDistance);
 		var sup = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
 		return thiz || sup;
 	}
 	@Override
 	public void ccg$render() {
-		var airCurrent = self().getAirCurrent();
+		var airCurrent = thiz().getAirCurrent();
 		var color = Outliner.getColor(airCurrent.pushing);
 		var bounds = airCurrent.bounds;
 		outliner.showAABB("FanAirBox" + this, bounds)

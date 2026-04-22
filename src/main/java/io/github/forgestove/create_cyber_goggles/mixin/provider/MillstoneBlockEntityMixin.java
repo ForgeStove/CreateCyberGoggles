@@ -25,14 +25,14 @@ public abstract class MillstoneBlockEntityMixin extends KineticBlockEntity
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		var sup = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
 		if (level == null) return sup;
-		Optional<RecipeHolder<MillingRecipe>> recipe = AllRecipeTypes.MILLING.find(new RecipeWrapper(self().inputInv), level);
+		Optional<RecipeHolder<MillingRecipe>> recipe = AllRecipeTypes.MILLING.find(new RecipeWrapper(thiz().inputInv), level);
 		if (recipe.isEmpty()) return sup;
-		var thiz = GoggleTooltipUtil.millstone(tooltip, self(), recipe.get().value());
+		var thiz = GoggleTooltipUtil.millstone(tooltip, thiz(), recipe.get().value());
 		return thiz || sup;
 	}
 	@Override
 	public ItemStack ccg$getItemStack() {
-		var thiz = self();
+		var thiz = thiz();
 		var input = thiz.inputInv.getStackInSlot(0);
 		if (!input.isEmpty()) return input;
 		var inventory = thiz.outputInv;

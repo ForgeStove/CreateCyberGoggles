@@ -7,6 +7,6 @@ import org.spongepowered.asm.mixin.Mixin;
 public abstract class ItemDrainBlockEntityMixin implements ItemRenderable, Self<ItemDrainBlockEntity> {
 	@Override
 	public ItemStack ccg$getItemStack() {
-		return self().getHeldItemStack();
+		return thiz().getHeldItemStack();
 	}
 }

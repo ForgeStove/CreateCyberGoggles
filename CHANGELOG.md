@@ -1,4 +1,4 @@
-- Add aeronautics configuration classification
-- Add alwaysShowMass config
-- Add correctionSublevel hotkey to return the physical structure to the center
-- Add a hotkey to display honey glue
+- Refactor the item tooltip overlay rendering architecture
+- Refactor fake item logic
+- Optimize OverlayPanelRenderer to OverlayPanelUtil
+- Adjust the ItemTooltip renderer registration order

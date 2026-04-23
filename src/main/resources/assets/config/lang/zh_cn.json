@@ -1,6 +1,6 @@
 {
 	"config.ui.cannot_save": "错误！",
-	"config.ui.color_picker": "\uD83C\uDFA8",
+	"config.ui.color_picker": "🎨",
 	"config.ui.color_picker.tooltip": "选择颜色",
 	"config.ui.ignore_restart": "忽略并继续",
 	"config.ui.keybinds": "快捷键",

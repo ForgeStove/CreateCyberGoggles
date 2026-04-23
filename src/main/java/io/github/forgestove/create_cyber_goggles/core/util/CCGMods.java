@@ -12,7 +12,8 @@ import java.util.Optional;
 import java.util.function.Supplier;
 @SuppressWarnings("unused")
 public enum CCGMods {
-	SIMULATED;
+	SIMULATED,
+	OBSCURE_TOOLTIPS;
 	private final String id;
 	CCGMods() {
 		id = Lang.asId(name());

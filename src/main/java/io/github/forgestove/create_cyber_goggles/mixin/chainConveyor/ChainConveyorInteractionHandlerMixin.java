@@ -4,17 +4,15 @@ import com.simibubi.create.*;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.kinetics.chainConveyor.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.*;
-import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import static com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorInteractionHandler.*;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 @Mixin(ChainConveyorInteractionHandler.class)
 public abstract class ChainConveyorInteractionHandlerMixin {
-	@Shadow public static BlockPos selectedConnection, selectedLift;
-	@Shadow public static float selectedChainPosition;
 	@Inject(method = "isActive", at = @At("HEAD"), cancellable = true)
 	private static void isActive(CallbackInfoReturnable<Boolean> cir) {
 		if (!CCG.config.chainConveyor.alwaysAllowRiding) return;

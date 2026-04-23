@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.mixin.goggles;
+package io.github.forgestove.create_cyber_goggles.mixin.tooltip;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.simibubi.create.content.logistics.filter.AttributeFilterItem;
 import io.github.forgestove.create_cyber_goggles.CCG;

@@ -187,7 +187,7 @@ public final class GoggleTooltipUtil {
 		var stacks = new ArrayList<ItemStack>();
 		bigStacks.forEach(bigStack -> stacks.add(bigStack.stack.copyWithCount(bigStack.count)));
 		CCGLang.translate("tooltip.content").forGoggles(tooltip);
-		CCGLang.itemList(stacks, 9).forGoggles(tooltip);
+		CCGLang.itemList(stacks, 3).forGoggles(tooltip);
 		return true;
 	}
 	public static boolean basin(

@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.mixin;
+package io.github.forgestove.create_cyber_goggles.mixin.tooltip;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import io.github.forgestove.create_cyber_goggles.CCG;

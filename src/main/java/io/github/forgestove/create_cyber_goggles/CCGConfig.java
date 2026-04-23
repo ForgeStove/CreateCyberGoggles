@@ -41,6 +41,7 @@ public final class CCGConfig {
 		public boolean itemEntity = true;
 		public boolean deployer = true;
 		public boolean depot = true;
+		public boolean tableCloth = true;
 		public boolean redstoneRequester = true;
 		public boolean crushingController = true;
 		public boolean millstone = true;

@@ -12,7 +12,6 @@ public final class LinkedControllerRenderer extends AbstractItemGridRenderer {
 	}
 	@Override
 	public @Nullable OverlayData buildItemGrid(ItemStack stack) {
-		if (!supports(stack)) return null;
 		var frequencyItems = LinkedControllerItem.getFrequencyItems(stack);
 		var items = new ArrayList<ItemStack>(12);
 		var hasAnyItem = false;

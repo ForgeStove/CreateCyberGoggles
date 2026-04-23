@@ -1,6 +1,6 @@
-package io.github.forgestove.create_cyber_goggles.mixin.goggles;
+package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.simibubi.create.AllSpecialTextures;
-import com.simibubi.create.content.logistics.packagePort.*;
+import com.simibubi.create.content.logistics.packagePort.PackagePortTargetSelectionHandler;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.createmod.catnip.data.Couple;
@@ -18,8 +18,6 @@ import java.util.*;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 @Mixin(PackagePortTargetSelectionHandler.class)
 public abstract class PackagePortTargetSelectionHandlerMixin {
-	@Shadow public static PackagePortTarget activePackageTarget;
-	@Shadow public static Vec3 exactPositionOfTarget;
 	@Unique private static long ccg$rangeCacheKey = Long.MIN_VALUE;
 	@Unique private static Couple<List<BlockPos>> ccg$cachedRangeHints = Couple.create(ArrayList::new);
 	@Inject(method = "animateConnection", at = @At("HEAD"), cancellable = true)
@@ -31,11 +29,13 @@ public abstract class PackagePortTargetSelectionHandlerMixin {
 	@Inject(method = "tick", at = @At("TAIL"))
 	private static void ccg$renderPlacementRangeHints(CallbackInfo ci) {
 		if (!CCG.config.outliner.betterLine) return;
-		if (mc.level == null || activePackageTarget == null || exactPositionOfTarget == null) return;
+		if (mc.level == null
+			|| PackagePortTargetSelectionHandler.activePackageTarget == null
+			|| PackagePortTargetSelectionHandler.exactPositionOfTarget == null) return;
 		if (!(mc.hitResult instanceof BlockHitResult blockHit) || blockHit.getType() == Type.MISS) return;
 		var pos = blockHit.getBlockPos();
 		if (!mc.level.getBlockState(pos).canBeReplaced()) pos = pos.relative(blockHit.getDirection());
-		var hints = ccg$getRangeHints(exactPositionOfTarget, pos.getY());
+		var hints = ccg$getRangeHints(PackagePortTargetSelectionHandler.exactPositionOfTarget, pos.getY());
 		if (hints == null) return;
 		outliner.showCluster("PackagePortConnectableRange", hints.getFirst())
 			.withFaceTexture(AllSpecialTextures.THIN_CHECKERED)

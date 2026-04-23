@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.mixin.goggles;
+package io.github.forgestove.create_cyber_goggles.mixin.tooltip;
 import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.content.logistics.filter.ListFilterItem;
 import com.simibubi.create.foundation.utility.CreateLang;

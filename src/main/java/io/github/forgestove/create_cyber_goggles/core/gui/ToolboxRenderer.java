@@ -27,7 +27,6 @@ public final class ToolboxRenderer extends AbstractItemGridRenderer {
 	}
 	@Override
 	public @Nullable OverlayData buildItemGrid(ItemStack stack) {
-		if (!supports(stack)) return null;
 		var inventory = stack.getComponents().get(AllDataComponents.TOOLBOX_INVENTORY);
 		if (inventory == null) return null;
 		var compartments = 8;

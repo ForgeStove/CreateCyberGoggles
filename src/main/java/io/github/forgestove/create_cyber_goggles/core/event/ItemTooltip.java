@@ -31,6 +31,7 @@ public final class ItemTooltip {
 		new ClipboardRenderer(),
 		new MapTooltipRenderer(),
 		new LinkedControllerRenderer(),
+		new TableClothRenderer(),
 		new RedstoneRequesterRenderer()
 	);
 	private static final int OVERLAY_GAP = 6;

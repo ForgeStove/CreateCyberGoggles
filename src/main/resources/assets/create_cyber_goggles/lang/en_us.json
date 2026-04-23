@@ -153,6 +153,8 @@
 	"create_cyber_goggles.config.option.tooltip.packageItem.tooltip": "Show package item content",
 	"create_cyber_goggles.config.option.tooltip.redstoneRequester": "Redstone Requester",
 	"create_cyber_goggles.config.option.tooltip.redstoneRequester.tooltip": "Show redstone requester content",
+	"create_cyber_goggles.config.option.tooltip.tableCloth": "Table Cloth",
+	"create_cyber_goggles.config.option.tooltip.tableCloth.tooltip": "Show table cloth content",
 	"create_cyber_goggles.config.option.tooltip.toolbox": "Toolbox",
 	"create_cyber_goggles.config.option.tooltip.toolbox.tooltip": "Show toolbox content",
 	"create_cyber_goggles.config.option.tooltip.wrench": "Wrench",

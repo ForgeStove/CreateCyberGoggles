@@ -70,29 +70,31 @@ public abstract class AbstractItemGridRenderer implements TooltipOverlayRenderer
 	public abstract @Nullable OverlayData buildItemGrid(ItemStack stack);
 	@Override
 	public int width(ItemStack stack) {
-		if (!supports(stack)) return 0;
-		var data = buildItemGrid(stack);
-		if (data == null || data.items() == null) return 0;
+		var data = getData(stack);
+		if (data == null) return 0;
 		return resolveColumns(data) * SlotUtil.SIZE + PAD * 2;
 	}
 	@Override
 	public int height(ItemStack stack) {
-		if (!supports(stack)) return 0;
-		var data = buildItemGrid(stack);
-		if (data == null || data.items() == null) return 0;
+		var data = getData(stack);
+		if (data == null) return 0;
 		var columns = resolveColumns(data);
 		var rows = Math.max(1, Mth.ceil((float) data.items().size() / columns));
 		return rows * SlotUtil.SIZE + PAD * 2;
 	}
+	private @Nullable OverlayData getData(ItemStack stack) {
+		var data = buildItemGrid(stack);
+		if (data == null || data.items().isEmpty()) return null;
+		return data;
+	}
 	@Override
 	public void render(GuiGraphics gui, ItemStack stack, int x, int y) {
-		var data = buildItemGrid(stack);
+		var data = getData(stack);
 		if (data == null) return;
 		var color = NativeImageUtil.getColor(stack);
 		var r = color.getRed() / 255F;
 		var g = color.getGreen() / 255F;
 		var b = color.getBlue() / 255F;
-		if (data.items == null) return;
 		var cols = resolveColumns(data);
 		renderItemGrid(gui, data.items, cols, x, y, r, g, b, data.zeroCountSlots);
 	}

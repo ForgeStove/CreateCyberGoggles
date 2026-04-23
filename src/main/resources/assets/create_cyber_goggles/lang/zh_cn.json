@@ -153,6 +153,8 @@
 	"create_cyber_goggles.config.option.tooltip.packageItem.tooltip": "显示包裹物品内容",
 	"create_cyber_goggles.config.option.tooltip.redstoneRequester": "红石请求器",
 	"create_cyber_goggles.config.option.tooltip.redstoneRequester.tooltip": "显示红石请求器内容",
+	"create_cyber_goggles.config.option.tooltip.tableCloth": "桌面/桌布",
+	"create_cyber_goggles.config.option.tooltip.tableCloth.tooltip": "显示桌面/桌布内容",
 	"create_cyber_goggles.config.option.tooltip.toolbox": "工具箱",
 	"create_cyber_goggles.config.option.tooltip.toolbox.tooltip": "显示工具箱内容",
 	"create_cyber_goggles.config.option.tooltip.wrench": "扳手",

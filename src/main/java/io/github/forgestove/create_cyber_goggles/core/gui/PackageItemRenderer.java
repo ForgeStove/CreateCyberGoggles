@@ -12,7 +12,6 @@ public final class PackageItemRenderer extends AbstractItemGridRenderer {
     }
     @Override
     public @Nullable OverlayData buildItemGrid(ItemStack stack) {
-        if (!supports(stack)) return null;
         var contents = PackageItem.getContents(stack);
         List<ItemStack> items = new ArrayList<>();
         for (var i = 0; i < contents.getSlots(); i++) {

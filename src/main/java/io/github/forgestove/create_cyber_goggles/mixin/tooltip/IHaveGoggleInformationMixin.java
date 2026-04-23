@@ -1,6 +1,7 @@
-package io.github.forgestove.create_cyber_goggles.mixin.goggles;
+package io.github.forgestove.create_cyber_goggles.mixin.tooltip;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.utility.CreateLang;
+import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -19,6 +20,7 @@ public interface IHaveGoggleInformationMixin {
 		IFluidHandler handler,
 		CallbackInfoReturnable<Boolean> cir
 	) {
+		if (!CCG.config.tooltip.fluidContainer) return;
 		if (handler == null || handler.getTanks() == 0) {
 			cir.setReturnValue(false);
 			return;

@@ -1,1 +1,3 @@
-- Fix crash of AugerShaftBlockEntity tooltip display
+- Fix PackagePort’s outline rendering misalignment
+- Add tablecloth item content display
+- Optimize some content display

@@ -1,1 +1,1 @@
-- Add support for Obscure Tooltips
+- Fix crash of AugerShaftBlockEntity tooltip display

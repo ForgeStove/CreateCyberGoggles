@@ -1,4 +1,1 @@
-- Refactor the item tooltip overlay rendering architecture
-- Refactor fake item logic
-- Optimize OverlayPanelRenderer to OverlayPanelUtil
-- Adjust the ItemTooltip renderer registration order
+- Add support for Obscure Tooltips

@@ -10,7 +10,6 @@ import net.minecraft.world.level.block.*;
 import org.spongepowered.asm.mixin.*;
 
 import java.util.List;
-@Debug(export = true)
 @Mixin(ShulkerBoxBlock.class)
 public abstract class ShulkerBoxBlockMixin extends BaseEntityBlock {
 	@Shadow @Final private static Component UNKNOWN_CONTENTS;

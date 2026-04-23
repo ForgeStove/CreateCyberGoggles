@@ -45,6 +45,11 @@ public abstract class GoggleOverlayRendererMixin {
 	) {
 		return CCG.config.goggles.canRenderOnValueBox ? Collections.emptyList() : original.call(instance);
 	}
+	@WrapOperation(method = "renderOverlay", at = @At(value = "INVOKE", target = "Ljava/util/List;remove(I)Ljava/lang/Object;"))
+	private static Object wrapRemove(List<Component> instance, int i, Operation<Component> original) {
+		if (instance.isEmpty()) return null;
+		return original.call(instance, i);
+	}
 	@WrapOperation(
 		method = "renderOverlay", at = @At(
 		value = "INVOKE",

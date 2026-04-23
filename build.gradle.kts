@@ -7,7 +7,7 @@ group = p("modGroupId")
 version = "${p("mcVersion")}-${p("modVersion")}-${p("loaderCap")}"
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(p("javaVersion")))
 tasks.jar { from("LICENSE") }
-var generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
+val generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
 	val values = properties.mapValues { it.value.toString() }
 	inputs.properties(values)
 	expand(values)
@@ -15,13 +15,10 @@ var generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
 	into("build/generated/sources/modMetadata")
 }
 sourceSets.main.get().resources.srcDir(generateMetadata)
-val mixinAgent = "mixinAgent"
-configurations {
-	create(mixinAgent) {
-		isCanBeConsumed = false
-		isCanBeResolved = true
-		defaultDependencies { add(dependencyFactory.create("dev.vfyjxf:mixin-hotswap-agent:1.1").setTransitive(false)) }
-	}
+configurations.create("mixinAgent") {
+	isCanBeConsumed = false
+	isCanBeResolved = true
+	defaultDependencies { add(dependencyFactory.create("dev.vfyjxf:mixin-hotswap-agent:1.1").setTransitive(false)) }
 }
 neoForge {
 	version = p("loaderVersion")
@@ -34,7 +31,7 @@ neoForge {
 		configureEach {
 			jvmArguments.addAll("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition")
 			systemProperty("terminal.jline", "true")
-			val files = configurations[mixinAgent].files
+			val files = configurations["mixinAgent"].files
 			if(files.isNotEmpty()) jvmArgument("-javaagent:${files.first().toPath()}")
 		}
 	}

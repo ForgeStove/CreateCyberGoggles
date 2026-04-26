@@ -1,3 +1,3 @@
-- Fix PackagePort’s outline rendering misalignment
-- Add tablecloth item content display
-- Optimize some content display
+- Add alwaysShowFriction config
+- Add liftLimitOfHandleRange config
+- Optimize pneumatic attribute prompt text

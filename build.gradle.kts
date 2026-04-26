@@ -43,7 +43,7 @@ repositories {
 	maven("https://maven.createmod.net") // Create, Ponder, Flywheel
 	maven("https://mvn.devos.one/snapshots") // Registrate
 	maven("https://maven.ryanhcode.dev/releases") // Aeronautics
-	maven("https://maven.blamejared.com") // JEI
+	maven("https://maven.blamejared.com") // JEI, Veil
 	maven("https://api.modrinth.com/maven") { content { includeGroup("maven.modrinth") } } // Modrinth
 }
 dependencies {
@@ -59,7 +59,7 @@ dependencies {
 	implementation("dev.eriksonn.aeronautics:aeronautics-${p("loader")}-${p("mcVersion")}:${p("areoVersion")}") { isTransitive = false }
 	implementation("dev.ryanhcode.sable:sable-${p("loader")}-${p("mcVersion")}:${p("sableVersion")}") { isTransitive = false }
 	implementation("dev.ryanhcode.sable-companion:sable-companion-common-${p("mcVersion")}:${p("sableCompanionVersion")}")
-	implementation("maven.modrinth:veil:${p("veilVersion")}")
+	implementation("foundry.veil:veil-${p("loader")}-${p("mcVersion")}:${p("veilVersion")}")
 	//endregion
 	//region Enchantment Industry
 	compileOnly("maven.modrinth:create-enchantment-industry:${p("ceiVersion")}")

@@ -90,6 +90,8 @@ public final class CCGConfig {
 	}
 	public static class Aeronautics {
 		public boolean alwaysShowMass = true;
+		public boolean alwaysShowFriction = false;
+		public boolean liftLimitOfHandleRange = true;
 	}
 	public static class Misc {
 		public boolean removeMechanicalArmLimit = false;

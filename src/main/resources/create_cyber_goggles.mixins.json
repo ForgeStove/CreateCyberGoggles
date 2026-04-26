@@ -74,6 +74,7 @@
 		"provider.TableClothBlockEntityMixin",
 		"provider.ToolboxBlockEntityMixin",
 		"simulated.BlockPropertiesTooltipMixin",
+		"simulated.ClientHandleHandlerMixin",
 		"simulated.PhysicsStaffClientHandlerMixin",
 		"tooltip.AttributeFilterItemMixin",
 		"tooltip.IHaveGoggleInformationMixin",

@@ -15,6 +15,7 @@ public abstract class PackagePortBlockEntityMixin implements OutlineRenderable, 
 		if (target == null) return;
 		var pos = ppbe.getBlockPos();
 		var be = target.be(ppbe.getLevel(), pos);
+		if (be == null) return;
 		var bePos = be.getBlockPos();
 		var source = Vec3.atBottomCenterOf(pos);
 		var exactTarget = target.getExactTargetLocation(ppbe, ppbe.getLevel(), pos);

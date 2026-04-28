@@ -1,3 +1,1 @@
-- Add alwaysShowFriction config
-- Add liftLimitOfHandleRange config
-- Optimize pneumatic attribute prompt text
+- Fix the NulPointerException when be is null in PackagePortBlockEntityMixin [#39](https://github.com/ForgeStove/CreateCyberGoggles/issues/39)

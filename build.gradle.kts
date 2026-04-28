@@ -18,7 +18,7 @@ sourceSets.main.get().resources.srcDir(generateMetadata)
 configurations.create("mixinAgent") {
 	isCanBeConsumed = false
 	isCanBeResolved = true
-	defaultDependencies { add(dependencyFactory.create("dev.vfyjxf:mixin-hotswap-agent:1.1").setTransitive(false)) }
+	defaultDependencies { add(dependencyFactory.create("dev.vfyjxf:mixin-hotswap-agent:+").setTransitive(false)) }
 }
 neoForge {
 	version = p("loaderVersion")

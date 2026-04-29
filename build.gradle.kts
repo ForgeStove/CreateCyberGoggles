@@ -6,6 +6,7 @@ base.archivesName.set(p("modName"))
 group = p("modGroupId")
 version = "${p("mcVersion")}-${p("modVersion")}-${p("loaderCap")}"
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(p("javaVersion")))
+java.withSourcesJar()
 tasks.jar { from("LICENSE") }
 val generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
 	val values = properties.mapValues { it.value.toString() }

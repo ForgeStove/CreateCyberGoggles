@@ -19,7 +19,7 @@ sourceSets.main.get().resources.srcDir(generateMetadata)
 configurations.create("mixinAgent") {
 	isCanBeConsumed = false
 	isCanBeResolved = true
-	defaultDependencies { add(dependencyFactory.create("dev.vfyjxf:mixin-hotswap-agent:+").setTransitive(false)) }
+	defaultDependencies { add(dependencyFactory.create("dev.vfyjxf:mixin-hotswap-agent:${p("mixinAgentVersion")}").setTransitive(false)) }
 }
 neoForge {
 	version = p("loaderVersion")
@@ -68,7 +68,7 @@ dependencies {
 	//endregion
 	implementation("mezz.jei:jei-${p("mcVersion")}-${p("loader")}:${p("jeiVersion")}")
 	runtimeOnly("maven.modrinth:jade:${p("jadeVersion")}+${p("loader")}")
-	add("additionalRuntimeClasspath", "dev.vfyjxf:mixin-hotswap-agent:+")
+	add("additionalRuntimeClasspath", "dev.vfyjxf:mixin-hotswap-agent:${p("mixinAgentVersion")}")
 }
 publishMods {
 	file.set(tasks.jar.get().archiveFile)

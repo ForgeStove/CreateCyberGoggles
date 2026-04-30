@@ -31,7 +31,7 @@ public class Outliner {
 	public static int getColor(boolean pushing) {
 		return pushing ? CCG.config.outliner.outColor : CCG.config.outliner.inColor;
 	}
-	public static double getOffset(int i, int numberOfFlowBoxes) {
+	public static double getOffsetScale(int i, int numberOfFlowBoxes) {
 		return (System.currentTimeMillis() + i * (3000D / numberOfFlowBoxes)) % 3000 / 3000.0;
 	}
 	@Contract(pure = true)

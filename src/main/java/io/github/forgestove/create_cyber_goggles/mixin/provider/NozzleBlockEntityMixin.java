@@ -31,13 +31,13 @@ public abstract class NozzleBlockEntityMixin implements IHaveGoggleInformation, 
 			.colored(color);
 		var numberOfFlowBoxes = Outliner.getNumberOfFlowBoxes(this.range);
 		for (var i = 0; i < numberOfFlowBoxes; i++) {
-			var offset = Outliner.getOffset(i, numberOfFlowBoxes);
+			var offsetScale = Outliner.getOffsetScale(i, numberOfFlowBoxes);
 			var id = "NozzleAirFlowBox" + this + i;
-			if (offset > 0.98) {
+			if (offsetScale > 0.98) {
 				outliner.remove(id);
 				continue;
 			}
-			var radius = pushing ? offset * range : (1 - offset) * range;
+			var radius = (pushing ? offsetScale : 1 - offsetScale) * range;
 			var flowBound = new AABB(center, center).inflate(radius);
 			outliner.chaseAABB(id, flowBound)
 				.withFaceTextures(AllSpecialTextures.CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)

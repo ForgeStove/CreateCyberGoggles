@@ -39,33 +39,32 @@ public abstract class EncasedFanBlockEntityMixin extends KineticBlockEntity
 			.lineWidth(1 / 16f)
 			.colored(color);
 		var numberOfFlowBoxes = Outliner.getNumberOfFlowBoxes(airCurrent.maxDistance);
+		var useMinSide = airCurrent.pushing == airCurrent.direction.getAxisDirection().getStep() > 0;
+		var axis = airCurrent.direction.getAxis();
+		var axisMin = switch (axis) {
+			case X -> bounds.minX;
+			case Y -> bounds.minY;
+			case Z -> bounds.minZ;
+		};
+		var axisMax = switch (axis) {
+			case X -> bounds.maxX;
+			case Y -> bounds.maxY;
+			case Z -> bounds.maxZ;
+		};
 		for (var i = 0; i < numberOfFlowBoxes; i++) {
-			var offset = Outliner.getOffset(i, numberOfFlowBoxes);
-			var offsetDistance = airCurrent.maxDistance * offset;
-			var axis = airCurrent.direction.getAxis();
-			var min = switch (axis) {
-				case X -> bounds.minX;
-				case Y -> bounds.minY;
-				case Z -> bounds.minZ;
-			};
-			var max = switch (axis) {
-				case X -> bounds.maxX;
-				case Y -> bounds.maxY;
-				case Z -> bounds.maxZ;
-			};
-			var pos = airCurrent.pushing == airCurrent.direction.getAxisDirection().getStep() > 0
-				? min + offsetDistance
-				: max - offsetDistance;
+			var offsetScale = Outliner.getOffsetScale(i, numberOfFlowBoxes);
+			var id = "FanAirFlowBox" + this + i;
+			if (offsetScale > 0.98) {
+				outliner.remove(id);
+				continue;
+			}
+			var offsetDistance = airCurrent.maxDistance * offsetScale;
+			var pos = useMinSide ? axisMin + offsetDistance : axisMax - offsetDistance;
 			var flowBound = switch (axis) {
 				case X -> new AABB(pos, bounds.minY, bounds.minZ, pos, bounds.maxY, bounds.maxZ);
 				case Y -> new AABB(bounds.minX, pos, bounds.minZ, bounds.maxX, pos, bounds.maxZ);
 				case Z -> new AABB(bounds.minX, bounds.minY, pos, bounds.maxX, bounds.maxY, pos);
 			};
-			var id = "FanAirFlowBox" + this + i;
-			if (offset > 0.98) {
-				outliner.remove(id);
-				continue;
-			}
 			outliner.chaseAABB(id, flowBound)
 				.withFaceTextures(AllSpecialTextures.CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
 				.lineWidth(1 / 16f)

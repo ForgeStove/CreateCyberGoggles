@@ -20,7 +20,7 @@ public abstract class LangNumberFormatMixin {
 			return;
 		}
 		var format = NumberFormat.getNumberInstance();
-		format.setMaximumFractionDigits(Integer.MAX_VALUE);
+		format.setMaximumFractionDigits(CCG.config.goggles.maxFractionDigits);
 		cir.setReturnValue(format.format(d));
 	}
 }

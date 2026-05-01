@@ -71,6 +71,7 @@
 		"provider.RedstoneRequesterBlockEntityMixin",
 		"provider.SawBlockEntityMixin",
 		"provider.SchematicannonBlockEntityMixin",
+		"provider.SpringBlockEntityMixin",
 		"provider.TableClothBlockEntityMixin",
 		"provider.ToolboxBlockEntityMixin",
 		"simulated.BlockPropertiesTooltipMixin",

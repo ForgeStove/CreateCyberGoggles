@@ -1,8 +1,8 @@
 package io.github.forgestove.create_cyber_goggles.core.util;
+import com.simibubi.create.foundation.utility.CreateLang;
 import joptsimple.internal.Strings;
-import net.createmod.catnip.theme.Color;
+import net.createmod.catnip.lang.LangNumberFormat;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.*;
@@ -12,7 +12,11 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
+import java.awt.Color;
 import java.util.List;
+
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
+import static net.minecraft.ChatFormatting.*;
 @SuppressWarnings("unused")
 public class CCGLangBuilder {
 	public static final float DEFAULT_SPACE_WIDTH = 4.0F;
@@ -28,7 +32,7 @@ public class CCGLangBuilder {
 	}
 	public static Object[] resolveBuilders(Object[] args) {
 		for (var i = 0; i < args.length; i++)
-			if (args[i] instanceof CCGLangBuilder cb) args[i] = cb.component();
+			if (args[i] instanceof CCGLangBuilder builder) args[i] = builder.component();
 		return args;
 	}
 	public CCGLangBuilder space() {
@@ -37,26 +41,84 @@ public class CCGLangBuilder {
 	public CCGLangBuilder newLine() {
 		return text("\n");
 	}
-	public CCGLangBuilder translate(String langKey, Object... args) {
-		var args1 = resolveBuilders(args);
-		return add(Component.translatable(namespace + "." + langKey, args1));
+	public CCGLangBuilder seconds() {
+		return add(CreateLang.translate("generic.unit.seconds").component());
 	}
-	public CCGLangBuilder translate(ChatFormatting format, String langKey, Object... args) {
-		return translate(langKey, args).style(format);
+	public CCGLangBuilder seconds(ChatFormatting format) {
+		return add(CreateLang.translate("generic.unit.seconds").style(format).component());
+	}
+	public CCGLangBuilder translate(String langKey) {
+		return add(Component.translatable(namespace + "." + langKey));
+	}
+	public CCGLangBuilder translate(String langKey, ChatFormatting format) {
+		return add(Component.translatable(namespace + "." + langKey).withStyle(format));
+	}
+	public CCGLangBuilder translate(String langKey, Object... args) {
+		return add(Component.translatable(namespace + "." + langKey, resolveBuilders(args)));
+	}
+	public CCGLangBuilder translate(String langKey, ChatFormatting format, Object... args) {
+		return add(Component.translatable(namespace + "." + langKey, resolveBuilders(args)).withStyle(format));
 	}
 	public CCGLangBuilder text(String literalText) {
 		return add(Component.literal(literalText));
 	}
-	public CCGLangBuilder text(ChatFormatting format, String literalText) {
+	public CCGLangBuilder text(String literalText, ChatFormatting format) {
 		return add(Component.literal(literalText).withStyle(format));
 	}
-	public CCGLangBuilder text(int color, String literalText) {
-		return add(Component.literal(literalText).withStyle(s -> s.withColor(color)));
+	public CCGLangBuilder text(String literalText, int color) {
+		return add(Component.literal(literalText).withStyle(style -> style.withColor(color)));
 	}
-	public CCGLangBuilder add(CCGLangBuilder otherBuilder) {
-		return add(otherBuilder.component());
+	public CCGLangBuilder number(double number) {
+		return text(LangNumberFormat.format(number));
+	}
+	public CCGLangBuilder number(double number, int color) {
+		return text(LangNumberFormat.format(number), color);
+	}
+	public CCGLangBuilder number(double number, ChatFormatting format) {
+		return text(LangNumberFormat.format(number), format);
+	}
+	public CCGLangBuilder number(float number) {
+		return text(LangNumberFormat.format(number));
+	}
+	public CCGLangBuilder number(float number, int color) {
+		return text(LangNumberFormat.format(number), color);
+	}
+	public CCGLangBuilder number(float number, ChatFormatting format) {
+		return text(LangNumberFormat.format(number), format);
+	}
+	public CCGLangBuilder number(int number) {
+		return text(String.valueOf(number));
+	}
+	public CCGLangBuilder number(int number, int color) {
+		return text(String.valueOf(number), color);
+	}
+	public CCGLangBuilder number(int number, ChatFormatting format) {
+		return text(String.valueOf(number), format);
+	}
+	public CCGLangBuilder is(boolean is) {
+		return is ? translate("message.is", GREEN) : translate("message.not", RED);
+	}
+	public CCGLangBuilder enabled(boolean enabled) {
+		return enabled ? translate("message.enabled", GREEN) : translate("message.disabled", RED);
+	}
+	public CCGLangBuilder progress(float progress, int totalBars) {
+		var filledBars = (int) (Mth.clamp(progress, 0, 1) * totalBars);
+		return text("|".repeat(filledBars), GREEN).text("|".repeat(totalBars - filledBars), GRAY);
+	}
+	public CCGLangBuilder fraction(int current, int total) {
+		return number(current, Color.HSBtoRGB((float) current / total * 0.33F, 1, 1)).text(" / ", GRAY).number(total, DARK_GRAY);
+	}
+	public CCGLangBuilder fraction(float current, float total) {
+		return number(current, Color.HSBtoRGB(current / total * 0.33F, 1, 1)).text(" / ", GRAY).number(total, DARK_GRAY);
+	}
+	public CCGLangBuilder fraction(double current, double total) {
+		return number(current, Color.HSBtoRGB((float) (current / total * 0.33), 1, 1)).text(" / ", GRAY).number(total, DARK_GRAY);
+	}
+	public CCGLangBuilder add(CCGLangBuilder builder) {
+		return add(builder.component());
 	}
 	public CCGLangBuilder add(MutableComponent customComponent) {
+		if (customComponent.getStyle().isEmpty()) customComponent.withStyle(WHITE);
 		component = component == null ? customComponent : component.append(customComponent);
 		return this;
 	}
@@ -64,8 +126,8 @@ public class CCGLangBuilder {
 		if (component instanceof MutableComponent mutableComponent) return add(mutableComponent);
 		return add(component.copy());
 	}
-	public CCGLangBuilder style(ChatFormatting format) {
-		if (component != null) component = component.withStyle(format);
+	public CCGLangBuilder style(ChatFormatting... formats) {
+		if (component != null) component = component.withStyle(formats);
 		return this;
 	}
 	public CCGLangBuilder color(int color) {
@@ -107,16 +169,10 @@ public class CCGLangBuilder {
 		forGoggles(index, tooltip, 0);
 	}
 	public void forGoggles(List<? super MutableComponent> tooltip, int indents) {
-		tooltip.add(new CCGLangBuilder(namespace).text(Strings.repeat(' ', getIndents(Minecraft.getInstance().font, 4 + indents)))
-			.add(this)
-			.component());
+		tooltip.add(new CCGLangBuilder(namespace).text(Strings.repeat(' ', getIndents(mc.font, 4 + indents))).add(this).component());
 	}
 	public void forGoggles(int index, List<? super MutableComponent> tooltip, int indents) {
-		tooltip.add(
-			index,
-			new CCGLangBuilder(namespace).text(Strings.repeat(' ', getIndents(Minecraft.getInstance().font, 4 + indents)))
-				.add(this)
-				.component()
-		);
+		tooltip.add(index,
+			new CCGLangBuilder(namespace).text(Strings.repeat(' ', getIndents(mc.font, 4 + indents))).add(this).component());
 	}
 }

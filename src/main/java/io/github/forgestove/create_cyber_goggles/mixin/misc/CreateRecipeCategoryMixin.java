@@ -54,7 +54,7 @@ public abstract class CreateRecipeCategoryMixin<T extends Recipe<?>> implements 
 		List<Component> tooltip = new ArrayList<>();
 		tooltip.add(CreateLang.translateDirect("recipe.assembly.junk"));
 		tooltip.add(ccg$chanceComponent(1 - recipe.getOutputChance()));
-		CCGLang.translate(ChatFormatting.DARK_GRAY, "tooltip.sequenced_assembly.scroll_cycle").addTo(tooltip);
+		CCGLang.translate("tooltip.sequenced_assembly.scroll_cycle", ChatFormatting.DARK_GRAY).addTo(tooltip);
 		for (var i = 0; i < junkCount; i++) {
 			var out = recipe.resultPool.get(i + 1);
 			var line = Component.literal(i == (int) state[0] ? "> " : "  ")

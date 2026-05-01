@@ -215,7 +215,7 @@ public final class CCGUtil {
 		var newEnabled = !enabled;
 		setter.accept(newEnabled);
 		if (mc.player == null) return;
-		CCGLang.translate(messageKey).space().add(CCGLang.enabled(newEnabled)).sendStatus(mc.player);
+		CCGLang.translate(messageKey).space().enabled(newEnabled).sendStatus(mc.player);
 	}
 	/** 向服务器发送玩家动作指令 */
 	public static void sendAction(Action action) {

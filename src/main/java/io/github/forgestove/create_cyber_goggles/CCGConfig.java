@@ -20,7 +20,7 @@ public final class CCGConfig {
 		public boolean canRenderOnValueBox = false;
 		public boolean dedupTooltipLines = true;
 		public boolean preciseNumber = true;
-		public int maxFractionDigits = 2;
+		@IntRange(min = 0) public int maxFractionDigits = 2;
 	}
 	public static class Tooltip {
 		public boolean extraItemTooltip = true;
@@ -74,7 +74,7 @@ public final class CCGConfig {
 		public boolean rainbowDebug = false;
 	}
 	public static class ChainConveyor {
-		public boolean alwaysAllowRiding = false;
+		public boolean alwaysAllowRidingChain = false;
 		public boolean preventFalling = false;
 		public boolean enhancedConnection = true;
 		public boolean cardBoardedYourself = false;
@@ -93,6 +93,7 @@ public final class CCGConfig {
 		public boolean alwaysShowMass = true;
 		public boolean alwaysShowFriction = false;
 		public boolean liftLimitOfHandleRange = true;
+		public boolean alwaysAllowRidingRope = true;
 	}
 	public static class Misc {
 		public boolean removeMechanicalArmLimit = false;

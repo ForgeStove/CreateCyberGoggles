@@ -3,6 +3,7 @@ import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import dev.simulated_team.simulated.content.blocks.spring.*;
 import dev.simulated_team.simulated.content.items.spring.SpringItemHandler;
+import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.api.Self;
 import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.createmod.catnip.animation.LerpedFloat;
@@ -23,6 +24,7 @@ public abstract class SpringBlockEntityMixin extends SmartBlockEntity implements
 	}
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+		if (!CCG.config.goggles.enhancedInfo) return false;
 		CCGLang.translate("tooltip.spring").forGoggles(tooltip);
 		CCGLang.translate("tooltip.size", ChatFormatting.GRAY)
 			.translate("tooltip.size." + getBlockState().getValue(SpringBlock.SIZE).getSerializedName())
@@ -31,9 +33,7 @@ public abstract class SpringBlockEntityMixin extends SmartBlockEntity implements
 		CCGLang.translate("tooltip.spring.desiredLength", ChatFormatting.GRAY)
 			.fraction(desiredLength, SpringItemHandler.MAX_LENGTH)
 			.forGoggles(tooltip);
-		CCGLang.translate("tooltip.spring.currentLength", ChatFormatting.GRAY)
-			.number(renderLength.getValue())
-			.forGoggles(tooltip);
+		CCGLang.translate("tooltip.spring.currentLength", ChatFormatting.GRAY).number(renderLength.getValue()).forGoggles(tooltip);
 		return true;
 	}
 }

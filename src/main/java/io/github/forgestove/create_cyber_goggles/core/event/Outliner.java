@@ -18,7 +18,11 @@ public class Outliner {
 		var be = getBlockEntity();
 		if (be instanceof OutlineRenderable) cachedBE.put(be, CCG.config.outliner.delayRenderDuration);
 		if (cachedBE.isEmpty()) return;
-		cachedBE.entrySet().removeIf(Outliner::render);
+		try {
+			cachedBE.entrySet().removeIf(Outliner::render);
+		} catch (Throwable throwable) {
+			CCG.LOGGER.error(throwable.getMessage(), throwable);
+		}
 	}
 	private static boolean render(@NotNull Entry<BlockEntity, Integer> entry) {
 		var nextDelay = entry.getValue() - 1;

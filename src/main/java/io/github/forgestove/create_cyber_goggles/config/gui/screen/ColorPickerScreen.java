@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.config.gui;
+package io.github.forgestove.create_cyber_goggles.config.gui.screen;
 import com.mojang.blaze3d.platform.InputConstants;
 import io.github.forgestove.create_cyber_goggles.config.Translation;
 import io.github.forgestove.create_cyber_goggles.config.gui.entry.ConfigEntry;

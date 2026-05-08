@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.config;
-import io.github.forgestove.create_cyber_goggles.config.gui.ConfigScreen;
+import io.github.forgestove.create_cyber_goggles.config.gui.screen.ConfigScreen;
 import io.github.forgestove.create_cyber_goggles.config.tree.RootConfigNode;
 import net.minecraft.client.gui.screens.Screen;
 import org.slf4j.Logger;

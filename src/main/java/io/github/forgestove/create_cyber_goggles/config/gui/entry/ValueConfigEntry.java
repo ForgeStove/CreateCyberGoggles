@@ -15,18 +15,18 @@ import java.util.*;
 public abstract class ValueConfigEntry<C, T, V> extends ConfigEntry {
 	public final Button resetButton;
 	public final Button undoButton;
-	protected final ConfigCategoryTab<C> tab;
-	protected final List<AbstractWidget> children = new ArrayList<>();
-	protected final ValueConfigNode<C, T, V> valueNode;
-	private final Component label;
-	private final Component labelChanged;
-	private final Component labelError;
-	private final Component labelErrorChanged;
-	@Nullable private final List<FormattedCharSequence> tooltip;
-	private List<FormattedCharSequence> tooltipWithError;
-	@Nullable private Component validationError;
-	private boolean hasChanged;
-	protected ValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, T, V> valueNode) {
+	public final ConfigCategoryTab<C> tab;
+	public final List<AbstractWidget> children = new ArrayList<>();
+	public final ValueConfigNode<C, T, V> valueNode;
+	public final Component label;
+	public final Component labelChanged;
+	public final Component labelError;
+	public final Component labelErrorChanged;
+	@Nullable public final List<FormattedCharSequence> tooltip;
+	public List<FormattedCharSequence> tooltipWithError;
+	@Nullable public Component validationError;
+	public boolean hasChanged;
+	public ValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, T, V> valueNode) {
 		this.tab = tab;
 		label = valueNode.getTitle().copy().withStyle(ChatFormatting.WHITE);
 		labelChanged = label.copy().withStyle(ChatFormatting.ITALIC, ChatFormatting.YELLOW);
@@ -87,7 +87,7 @@ public abstract class ValueConfigEntry<C, T, V> extends ConfigEntry {
 	public List<FormattedCharSequence> getTooltip() {
 		return hasError() ? tooltipWithError : tooltip;
 	}
-	private List<FormattedCharSequence> getTooltipWithError() {
+	public List<FormattedCharSequence> getTooltipWithError() {
 		if (!hasError()) return tooltip;
 		List<FormattedCharSequence> errorTooltip = new ArrayList<>();
 		if (tooltip != null) errorTooltip.addAll(tooltip);
@@ -95,13 +95,13 @@ public abstract class ValueConfigEntry<C, T, V> extends ConfigEntry {
 		errorTooltip.add(validationError.copy().withStyle(ChatFormatting.RED).getVisualOrderText());
 		return errorTooltip;
 	}
-	protected void renderLabel(GuiGraphics gui, int x, int y) {
+	public void renderLabel(GuiGraphics gui, int x, int y) {
 		Component l;
 		if (hasError()) l = hasChanged ? labelErrorChanged : labelError;
 		else l = hasChanged ? labelChanged : label;
 		gui.drawString(tab.getMinecraft().font, l.getVisualOrderText(), x, y + 5, -1, false);
 	}
-	protected void layoutRightToLeft(int x, int y, int entryWidth, AbstractWidget... widgets) {
+	public void layoutRightToLeft(int x, int y, int entryWidth, AbstractWidget... widgets) {
 		var right = x + entryWidth;
 		for (var widget : widgets) {
 			right -= widget.getWidth();
@@ -110,10 +110,10 @@ public abstract class ValueConfigEntry<C, T, V> extends ConfigEntry {
 			right -= GAP;
 		}
 	}
-	protected void renderWidgets(GuiGraphics gui, int mouseX, int mouseY, float delta, Renderable... widgets) {
+	public void renderWidgets(GuiGraphics gui, int mouseX, int mouseY, float delta, Renderable... widgets) {
 		for (var widget : widgets) widget.render(gui, mouseX, mouseY, delta);
 	}
-	protected void renderGui(
+	public void renderGui(
 		@NotNull GuiGraphics gui,
 		int y,
 		int x,

@@ -71,8 +71,7 @@ public final class ColorPickerScreen extends Screen {
 			buttonY,
 			SIZE,
 			SIZE,
-			this::colorFromHSB,
-			hasAlpha
+			this::colorFromHSB
 		);
 		addRenderableWidget(previewWidget);
 	}

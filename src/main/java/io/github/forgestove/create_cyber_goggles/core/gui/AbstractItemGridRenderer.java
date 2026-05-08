@@ -2,17 +2,15 @@ package io.github.forgestove.create_cyber_goggles.core.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.forgestove.create_cyber_goggles.core.api.TooltipOverlayRenderer;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.capabilities.Capabilities.FluidHandler;
 import org.jetbrains.annotations.*;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.math.*;
 import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
@@ -22,8 +20,10 @@ public abstract class AbstractItemGridRenderer implements TooltipOverlayRenderer
 	private static final int LIGHT = 0xFFFFFFFF;
 	private static final int DARK = 0xFF555555;
 	private static final int DARKER = 0xFF373737;
-	private static final ResourceLocation CFL_COMPRESSED_TANK_ID =
-		ResourceLocation.fromNamespaceAndPath("fluidlogistics", "compressed_storage_tank");
+	private static final ResourceLocation CFL_COMPRESSED_TANK_ID = ResourceLocation.fromNamespaceAndPath(
+		"fluidlogistics",
+		"compressed_storage_tank"
+	);
 	public static int resolveColumns(OverlayData data) {
 		return Mth.clamp(data.columns(), 1, Math.max(1, data.items().size()));
 	}
@@ -66,17 +66,15 @@ public abstract class AbstractItemGridRenderer implements TooltipOverlayRenderer
 	}
 	public static int getCFLTankAmount(ItemStack stack) {
 		if (!isCFLCompressedTank(stack)) return 0;
-		var handler = stack.getCapability(Capabilities.FluidHandler.ITEM);
+		var handler = stack.getCapability(FluidHandler.ITEM);
 		if (handler == null) return 0;
-		FluidStack fluid = handler.getFluidInTank(0);
+		var fluid = handler.getFluidInTank(0);
 		return fluid.isEmpty() ? 0 : fluid.getAmount();
 	}
 	public static @NotNull String formatFluidAmount(int amountMb) {
 		if (amountMb % 1000 == 0) return amountMb / 1000 + "B";
-		return BigDecimal.valueOf(amountMb)
-			.divide(BigDecimal.valueOf(1000), 1, RoundingMode.DOWN)
-			.stripTrailingZeros()
-			.toPlainString() + "B";
+		return BigDecimal.valueOf(amountMb).divide(BigDecimal.valueOf(1000), 1, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
+			+ "B";
 	}
 	public static void renderPanel(GuiGraphics gui, int width, int height, float r, float g, float b) {
 		RenderSystem.setShaderColor(r, g, b, 1F);

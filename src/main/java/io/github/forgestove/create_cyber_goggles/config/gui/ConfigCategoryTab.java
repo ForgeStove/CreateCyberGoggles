@@ -110,7 +110,7 @@ public final class ConfigCategoryTab<C> implements Tab {
 		if (tabButton == null) return;
 		Component newTitle;
 		var hasChanged = !category.isActiveValue(config);
-		var hasError = category.validate(config) != null || list.hasEntryError();
+		var hasError = category.validate(config) != null || hasEntryError();
 		if (hasError) newTitle = hasChanged ? titleErrorChanged : titleError;
 		else newTitle = hasChanged ? titleChanged : title;
 		tabButton.setMessage(newTitle);

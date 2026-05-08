@@ -16,11 +16,10 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 	private static final float ANIMATION_SPEED = 0.4f;
 	private final ConfigCategoryTab<?> tab;
 	@Nullable private EnumValueConfigEntry<?> expandedDropdown;
-	// Highlight animation state
+	// 高亮动画状态
 	private float highlightY;
 	private float highlightTargetY;
 	private float highlightAlpha;
-	private int highlightHeight;
 	@Nullable private ConfigEntry lastHoveredEntry;
 	public ConfigEntryList(
 		ConfigCategoryTab<?> tab,
@@ -37,26 +36,23 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 	}
 	@Override
 	public void renderWidget(@NotNull GuiGraphics gui, int mouseX, int mouseY, float delta) {
-		// Track which dropdown is expanded
+		// 追踪下拉菜单被展开
 		expandedDropdown = null;
 		for (var entry : children()) {
 			if (!(entry instanceof EnumValueConfigEntry<?> enumEntry) || !enumEntry.isExpanded()) continue;
 			expandedDropdown = enumEntry;
 			break;
 		}
-		// Render dropdown overlay on top of everything (outside scissor)
+		// 渲染下拉覆盖在所有物体上（外部剪刀）
 		var showTooltip = expandedDropdown == null;
 		if (expandedDropdown != null) {
 			expandedDropdown.renderDropdownOverlay(gui, mouseX, mouseY);
-			// Don't show tooltips when mouse is over the dropdown
+			// 鼠标悬停在下拉菜单上时，不要显示提示
 			showTooltip = !expandedDropdown.isMouseOverDropdown(mouseX, mouseY);
 		}
-		if (showTooltip) {
-			renderHighlight(gui);
-			updateHighlightAnimation(delta);
-		}
+		if (showTooltip) renderHighlight(gui, delta);
 		super.renderWidget(gui, mouseX, mouseY, delta);
-		// Tooltips
+		// 渲染提示
 		if (!showTooltip) return;
 		var entry = getHovered();
 		if (entry == null) return;
@@ -72,52 +68,49 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		}
 		if (entry.getTooltip() != null) tab.getScreen().setTooltipForNextRenderPass(entry.getTooltip());
 	}
-	private void updateHighlightAnimation(float delta) {
+	private void renderHighlight(@NotNull GuiGraphics gui, float delta) {
+		if (highlightAlpha <= 0.01f || highlightY < 0) return;
+		var alpha = (int) (highlightAlpha * 48); // Max alpha 48 (0x30)
+		var color = alpha << 24 | 0xFFFFFF;
+		var left = getX();
+		var right = getX() + getWidth();
+		var offset = -1; // 向上移动高亮
+		var top = (int) highlightY + offset;
+		var bottom = top + itemHeight;
+		// 剪辑到可见区域
+		var visibleTop = getY();
+		var visibleBottom = getY() + getHeight();
+		if (top < visibleTop) top = visibleTop;
+		if (bottom > visibleBottom) bottom = visibleBottom;
+		if (top < bottom) gui.fill(left, top, right, bottom, color);
 		var hoveredEntry = getHovered();
 		if (hoveredEntry != null) {
 			var index = children().indexOf(hoveredEntry);
 			if (index >= 0) {
 				var entryTop = getRowTop(index);
 				highlightTargetY = entryTop;
-				highlightHeight = itemHeight;
-				// Fade in
+				// 淡入
 				highlightAlpha = Mth.lerp(ANIMATION_SPEED * delta, highlightAlpha, 0.95F);
-				// Initialize position if first hover
+				// 如果第一次悬停，初始化位置
 				if (highlightY < 0 || lastHoveredEntry == null) highlightY = entryTop;
 			}
 			lastHoveredEntry = hoveredEntry;
-		} else highlightAlpha = Mth.lerp(ANIMATION_SPEED * delta, highlightAlpha, 0.0f); // Fade out
-		// Smooth position transition with snap to target
+		} else highlightAlpha = Mth.lerp(ANIMATION_SPEED * delta, highlightAlpha, 0.0f); // 淡出
+		// 带吸附到目标的平滑位置转换
 		if (!(highlightTargetY >= 0) || !(highlightY >= 0)) return;
 		highlightY = Mth.lerp(ANIMATION_SPEED * delta * 2, highlightY, highlightTargetY);
-		// Snap to target when close enough
+		// 靠近时再快速锁定目标
 		if (Math.abs(highlightY - highlightTargetY) < 1.0f) highlightY = highlightTargetY;
-	}
-	private void renderHighlight(@NotNull GuiGraphics gui) {
-		if (highlightAlpha <= 0.01f || highlightY < 0) return;
-		var alpha = (int) (highlightAlpha * 48); // Max alpha 48 (0x30)
-		var color = alpha << 24 | 0xFFFFFF;
-		var left = getX();
-		var right = getX() + getWidth();
-		var offset = -1; // Move highlight up
-		var top = (int) highlightY + offset;
-		var bottom = top + highlightHeight;
-		// Clip to visible area
-		var visibleTop = getY();
-		var visibleBottom = getY() + getHeight();
-		if (top < visibleTop) top = visibleTop;
-		if (bottom > visibleBottom) bottom = visibleBottom;
-		if (top < bottom) gui.fill(left, top, right, bottom, color);
 	}
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		// First check if expanded dropdown should handle the click
+		// 首先检查展开下拉菜单是否能控制点击声
 		if (expandedDropdown != null) {
 			if (expandedDropdown.isMouseOverDropdown(mouseX, mouseY)) return expandedDropdown.handleDropdownClick(mouseX, mouseY);
-			// Click outside dropdown closes it
+			// 点击外部下拉菜单关闭它
 			expandedDropdown.closeDropdown();
 			expandedDropdown = null;
-			// Don't process further if we just closed a dropdown
+			// 如果我们刚关闭下拉菜单，请不要继续处理
 			return true;
 		}
 		return super.mouseClicked(mouseX, mouseY, button);
@@ -134,7 +127,7 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 	}
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
-		// First check if expanded dropdown should handle the scroll
+		// 首先检查展开下拉菜单是否能支持滚动
 		if (expandedDropdown != null && expandedDropdown.handleDropdownScroll(mouseX, mouseY, vertical)) return true;
 		return super.mouseScrolled(mouseX, mouseY, horizontal, vertical);
 	}
@@ -160,8 +153,7 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 			var key = mapping.getKey();
 			if (key.equals(InputConstants.UNKNOWN)) continue;
 			registeredKeyCount.merge(key, 1, Integer::sum);
-			registeredKeyUsages.computeIfAbsent(key, k -> new ArrayList<>())
-				.add(Component.translatable(mapping.getName()));
+			registeredKeyUsages.computeIfAbsent(key, k -> new ArrayList<>()).add(Component.translatable(mapping.getName()));
 		}
 		for (var keyEntry : keyEntries) {
 			var key = keyEntry.getBoundKey();
@@ -187,7 +179,8 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		children().forEach(ConfigEntry::refresh);
 	}
 	public boolean hasEntryError() {
-		return children().stream().anyMatch(ConfigEntry::hasError);
+		for (var configEntry : children()) if (configEntry.hasError()) return true;
+		return false;
 	}
 	public boolean handleKeyCapture(int keyCode) {
 		for (var entry : children())

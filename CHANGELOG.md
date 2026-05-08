@@ -1,7 +1,2 @@
-- Optimized chain conveyor config, renamed allowed riding options
-- Add alwaysAllowRidingRope config
-- Add SpringBlockEntity tooltips
-- Add maxFractionDigits config
-- Optimize EncasedFanBlockEntityMixin and Outliner to increase direction checking and exception handling
-- Optimize LangNumberFormatMixin to avoid performing formatting logic on the server side
-- Optimize the airflow range calculation logic of EncasedFanBlockEntityMixin and NozzleBlockEntityMixin
+- Optimize config ui
+- Add Create: Fluid Logistic compatibility

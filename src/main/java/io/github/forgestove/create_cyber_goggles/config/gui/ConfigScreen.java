@@ -3,19 +3,17 @@ import com.mojang.blaze3d.platform.InputConstants.Key;
 import io.github.forgestove.create_cyber_goggles.config.Translation;
 import io.github.forgestove.create_cyber_goggles.config.tree.*;
 import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.tabs.*;
 import net.minecraft.client.gui.layouts.*;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.*;
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Consumer;
 public final class ConfigScreen<C> extends Screen {
-	/** Cache for last selected tab index per config screen type */
+	/** 按配置屏幕类型缓存最后选择的标签索引 */
 	private static final Map<String, Integer> lastSelectedTabCache = new HashMap<>();
 	private final RootConfigNode<C> root;
 	private final String modId;
@@ -149,9 +147,6 @@ public final class ConfigScreen<C> extends Screen {
 			Translation.QUIT_GAME,
 			Translation.IGNORE_RESTART_LABEL
 		) : previous);
-	}
-	public @NotNull Minecraft getMinecraft() {
-		return Objects.requireNonNull(minecraft);
 	}
 	public int getHeaderHeight() {
 		return layout.getHeaderHeight();

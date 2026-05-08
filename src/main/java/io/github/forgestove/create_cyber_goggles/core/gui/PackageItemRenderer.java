@@ -17,7 +17,8 @@ public final class PackageItemRenderer extends AbstractItemGridRenderer {
         for (var i = 0; i < contents.getSlots(); i++) {
             var itemstack = contents.getStackInSlot(i);
             if (itemstack.isEmpty()) continue;
-            items.add(itemstack);
+            int amount = getCFLTankAmount(itemstack);
+            items.add(amount > 0 ? itemstack.copyWithCount(amount) : itemstack);
         }
         return items.isEmpty() ? null : new OverlayData(items, 3);
     }

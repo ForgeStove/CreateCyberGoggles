@@ -92,7 +92,8 @@ public final class CCGConfig {
 	public static class Aeronautics {
 		public boolean alwaysShowMass = true;
 		public boolean alwaysShowFriction = false;
-		public boolean liftLimitOfHandleRange = true;
+		public boolean liftLimitOfHandleRange = false;
+		public boolean customHandleMoveSublevelKey = false;
 		public boolean alwaysAllowRidingRope = true;
 	}
 	public static class Misc {

@@ -14,6 +14,7 @@ public enum CCGKey {
 	clickPenetrate(Type.KEYSYM, KEY_LCONTROL),
 	clipboardPageScroll(Type.KEYSYM, KEY_LCONTROL),
 	correctionSublevel(Type.KEYSYM, KEY_LCONTROL),
+	handleMoveSublevel(Type.KEYSYM, KEY_LCONTROL),
 	interactOpposite(Type.KEYSYM, KEY_TAB),
 	openConfig,
 	openStock,

@@ -1,2 +1,2 @@
-- Optimize config ui
-- Add Create: Fluid Logistic compatibility
+- Add customHandleMoveSublevelKey config
+- Add handleMoveSublevel hotkey

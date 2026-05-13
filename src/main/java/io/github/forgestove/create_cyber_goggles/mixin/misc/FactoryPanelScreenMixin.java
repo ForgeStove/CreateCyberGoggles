@@ -25,7 +25,7 @@ public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen {
 	public void init(CallbackInfo ci) {
 		if (!CCG.config.goggles.betterFactoryGauge) return;
 		if (!restocker) return;
-		relocateButton.setY(relocateButton.getY() + 12);
+		relocateButton.setPosition(relocateButton.getX() - 23, relocateButton.getY() - 54);
 		addRenderableWidget(relocateButton);
 	}
 }

@@ -1,2 +1,1 @@
-- Add customHandleMoveSublevelKey config
-- Add handleMoveSublevel hotkey
+- Add betterFactoryGauge config

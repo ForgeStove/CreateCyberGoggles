@@ -45,6 +45,8 @@
 	"create_cyber_goggles.config.option.gameMode.enableInSpectator.tooltip": "Always enable goggles in Spectator mode",
 	"create_cyber_goggles.config.option.gameMode.enableInSurvival": "Enable in Survival",
 	"create_cyber_goggles.config.option.gameMode.enableInSurvival.tooltip": "Always enable goggles in Survival mode",
+	"create_cyber_goggles.config.option.goggles.betterFactoryGauge": "Better Factory Gauge",
+	"create_cyber_goggles.config.option.goggles.betterFactoryGauge.tooltip": "Allows any way to connect and move factory gauges",
 	"create_cyber_goggles.config.option.goggles.betterStoreInfo": "Better Store Info",
 	"create_cyber_goggles.config.option.goggles.betterStoreInfo.tooltip": "Optimize table cloth store info display and interaction logic",
 	"create_cyber_goggles.config.option.goggles.canRenderOnValueBox": "Render with Value Box",

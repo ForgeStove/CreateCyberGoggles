@@ -45,6 +45,8 @@
 	"create_cyber_goggles.config.option.gameMode.enableInSpectator.tooltip": "在旁观模式下始终启用护目镜",
 	"create_cyber_goggles.config.option.gameMode.enableInSurvival": "生存模式启用",
 	"create_cyber_goggles.config.option.gameMode.enableInSurvival.tooltip": "在生存模式下始终启用护目镜",
+	"create_cyber_goggles.config.option.goggles.betterFactoryGauge": "更好的工厂仪表",
+	"create_cyber_goggles.config.option.goggles.betterFactoryGauge.tooltip": "始终允许任何方式的连接和移动工厂仪表",
 	"create_cyber_goggles.config.option.goggles.betterStoreInfo": "更好的商店信息",
 	"create_cyber_goggles.config.option.goggles.betterStoreInfo.tooltip": "优化桌布商店信息显示以及操作逻辑",
 	"create_cyber_goggles.config.option.goggles.canRenderOnValueBox": "允许值框出现时渲染",

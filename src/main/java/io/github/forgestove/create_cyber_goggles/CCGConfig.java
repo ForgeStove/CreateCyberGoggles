@@ -15,6 +15,7 @@ public final class CCGConfig {
 		public boolean enhancedInfo = true;
 		public boolean hideStaticKineticInfo = false;
 		public boolean betterStoreInfo = true;
+		public boolean betterFactoryGauge = true;
 		public boolean enableKineticEffect = true;
 		public boolean disableScreenGoggles = true;
 		public boolean canRenderOnValueBox = false;

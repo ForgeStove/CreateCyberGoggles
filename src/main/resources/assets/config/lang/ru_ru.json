@@ -1,0 +1,22 @@
+{
+	"config.ui.cannot_save": "Ошибка!",
+	"config.ui.color_picker": "🎨",
+	"config.ui.color_picker.tooltip": "Выбор цвета",
+	"config.ui.ignore_restart": "Пропустить и продолжить",
+	"config.ui.keybinds": "Настройка клавиш",
+	"config.ui.quit.confirm": "Подтвердить",
+	"config.ui.quit.confirm.title": "Отменить изменения?",
+	"config.ui.quit.confirm.warning": "У вас есть несохраненные изменения. Вы уверены, что хотите их отменить?",
+	"config.ui.quit.unsaved": "Отменить изменения",
+	"config.ui.reset": "↺",
+	"config.ui.reset.tooltip": "Сбросить",
+	"config.ui.restart_required": "Для применения изменений необходим перезапуск игры.",
+	"config.ui.restart_required.title": "Необходим перезапуск",
+	"config.ui.save": "Сохранить",
+	"config.ui.undo": "↩",
+	"config.ui.undo.tooltip": "Отменить",
+	"config.ui.unsupported_type": "Неподдерживаемый тип конфигурации: ",
+	"config.ui.validator.max": "Значение не может быть больше: ",
+	"config.ui.validator.min": "Значение не может быть меньше: ",
+	"config.ui.validator.multiple_errors": "Имеется несколько ошибок"
+}

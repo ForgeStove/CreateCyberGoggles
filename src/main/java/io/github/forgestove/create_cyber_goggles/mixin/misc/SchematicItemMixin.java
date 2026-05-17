@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 
 import java.io.InputStream;
 import java.nio.file.*;
-@Mixin(SchematicItem.class)
+@Mixin(value = SchematicItem.class, remap = false)
 public abstract class SchematicItemMixin {
 	@WrapOperation(
 		method = "loadSchematic", at = @At(
@@ -18,11 +18,11 @@ public abstract class SchematicItemMixin {
 	)
 	private static InputStream openInputWithFallback(Path path, OpenOption[] options, Operation<InputStream> original) {
 		if (Files.exists(path)) return original.call(path, options);
-		if (path.startsWith(CreatePaths.SCHEMATICS_DIR)) {
-			var uploadName = path.getFileName().toString();
-			var fallback = SchematicFolderUtil.resolveLocalSchematicByFileName(uploadName);
-			if (fallback != null && Files.exists(fallback)) return original.call(fallback, options);
-		}
+		if (!path.startsWith(CreatePaths.SCHEMATICS_DIR)) return original.call(path, options);
+		var uploadName = path.getFileName().toString();
+		var fallback = SchematicFolderUtil.denormalizeUploadName(uploadName);
+		if (fallback == null) return original.call(path, options);
+		if (Files.exists(fallback)) return original.call(fallback, options);
 		return original.call(path, options);
 	}
 }

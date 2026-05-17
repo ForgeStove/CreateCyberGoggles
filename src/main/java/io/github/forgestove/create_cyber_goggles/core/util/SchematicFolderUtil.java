@@ -1,7 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.util;
-import com.simibubi.create.Create;
 import com.simibubi.create.foundation.utility.CreatePaths;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.*;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -73,22 +72,14 @@ public final class SchematicFolderUtil {
 		if (!uploadName.endsWith(".nbt")) return uploadName + ".nbt";
 		return uploadName;
 	}
-	public static Path resolveLocalSchematicByFileName(String fileName) {
-		try (var paths = Files.walk(CreatePaths.SCHEMATICS_DIR)) {
-			var matches = paths.filter(Files::isRegularFile).filter(p -> p.getFileName().toString().equalsIgnoreCase(fileName)).toList();
-			if (matches.isEmpty()) return null;
-			if (matches.size() == 1) return matches.getFirst();
-			Create.LOGGER.warn("Ambiguous local schematics for {}: {} candidates, using most recently modified", fileName, matches.size());
-			return matches.stream().max(Comparator.comparingLong(SchematicFolderUtil::getLastModified)).orElse(matches.getFirst());
-		} catch (IOException ignored) {
-			return null;
-		}
-	}
-	public static long getLastModified(Path path) {
-		try {
-			return Files.getLastModifiedTime(path).toMillis();
-		} catch (IOException ignored) {
-			return Long.MIN_VALUE;
-		}
+	public static @Nullable Path denormalizeUploadName(String uploadName) {
+		var normalized = uploadName == null ? "" : uploadName.replace('\\', '/').trim();
+		if (normalized.isEmpty()) return null;
+		var underscore = normalized.indexOf('_');
+		if (underscore < 0) return null;
+		var dir = normalized.substring(0, underscore);
+		var file = normalized.substring(underscore + 1);
+		if (file.isEmpty()) return null;
+		return Path.of(CreatePaths.SCHEMATICS_DIR.toString(), dir, file);
 	}
 }

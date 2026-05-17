@@ -1,1 +1,1 @@
-- Add betterFactoryGauge config
+- Fix incorrect parse path when previewing Blueprints [#46](https://github.com/ForgeStove/CreateCyberGoggles/issues/46)

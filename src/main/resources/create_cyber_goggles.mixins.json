@@ -60,6 +60,7 @@
 		"provider.EjectorBlockEntityMixin",
 		"provider.EncasedFanBlockEntityMixin",
 		"provider.EnderChestBlockEntityMixin",
+		"provider.FactoryPanelBlockEntityMixin",
 		"provider.ItemDrainBlockEntityMixin",
 		"provider.ItemEntityMixin",
 		"provider.MechanicalCrafterBlockEntityMixin",

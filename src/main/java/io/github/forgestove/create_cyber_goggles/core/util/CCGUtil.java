@@ -226,4 +226,16 @@ public final class CCGUtil {
 	public static void sendToServer(CustomPacketPayload packet) {
 		CatnipServices.NETWORK.sendToServer(packet);
 	}
+	public static int blendColors(int c1, int c2) {
+		var r1 = c1 >> 16 & 0xFF;
+		var g1 = c1 >> 8 & 0xFF;
+		var b1 = c1 & 0xFF;
+		var r2 = c2 >> 16 & 0xFF;
+		var g2 = c2 >> 8 & 0xFF;
+		var b2 = c2 & 0xFF;
+		var r = (r1 + r2) / 2;
+		var g = (g1 + g2) / 2;
+		var b = (b1 + b2) / 2;
+		return r << 16 | g << 8 | b;
+	}
 }

@@ -19,20 +19,19 @@ public abstract class ArmBlockEntityMixin implements ItemRenderable, OutlineRend
 	}
 	@Override
 	public void ccg$render() {
-		var allPoints = new ArrayList<ArmInteractionPoint>();
-		allPoints.addAll(inputs);
-		allPoints.addAll(outputs);
-		for (var point : allPoints) {
-			if (!point.isValid()) continue;
-			var level = point.getLevel();
-			var pos = point.getPos();
-			outliner.showAABB("ArmIOBox" + point, level.getBlockState(pos).getShape(level, pos).bounds().move(pos))
-				.withFaceTextures(AllSpecialTextures.HIGHLIGHT_CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
-				.lineWidth(1 / 16f)
-				.colored(point.getMode().getColor());
-			outliner.showLine("ArmIOLine" + point, thiz().getBlockPos().getCenter(), point.getPos().getCenter())
-				.lineWidth(1 / 8f)
-				.colored(point.getMode().getColor());
-		}
+		Set.of(inputs, outputs).forEach(points -> {
+			for (var point : points) {
+				if (!point.isValid()) continue;
+				var level = point.getLevel();
+				var pos = point.getPos();
+				outliner.showAABB("ArmIOBox" + point, level.getBlockState(pos).getShape(level, pos).bounds().move(pos))
+					.withFaceTextures(AllSpecialTextures.HIGHLIGHT_CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
+					.lineWidth(1 / 16f)
+					.colored(point.getMode().getColor());
+				outliner.showLine("ArmIOLine" + point, thiz().getBlockPos().getCenter(), point.getPos().getCenter())
+					.lineWidth(1 / 8f)
+					.colored(point.getMode().getColor());
+			}
+		});
 	}
 }

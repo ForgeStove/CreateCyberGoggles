@@ -17,12 +17,12 @@ public abstract class FactoryPanelBlockEntityMixin implements OutlineRenderable,
 		if (level == null) return;
 		var panels = thiz.panels;
 		if (panels == null || panels.isEmpty()) return;
-		var hashMap = new Object2IntOpenHashMap<AABB>();
 		var hitResult = getBlockHitResult();
 		if (hitResult == null) return;
 		var panelSlot = FactoryPanelBlock.getTargetedSlot(thiz.getBlockPos(), thiz.getBlockState(), hitResult.getLocation());
 		var behaviour = panels.get(panelSlot);
 		if (behaviour == null || !behaviour.isActive()) return;
+		var hashMap = new Object2IntOpenHashMap<AABB>();
 		for (var targetedBy : behaviour.targetedBy.values()) {
 			var panelPosition = targetedBy.from;
 			var pos = panelPosition.pos();

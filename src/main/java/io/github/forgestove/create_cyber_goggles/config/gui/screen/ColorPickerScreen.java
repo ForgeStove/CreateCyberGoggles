@@ -66,13 +66,7 @@ public final class ColorPickerScreen extends Screen {
 			.build());
 		hexInput = createHexInput(buttonY);
 		addRenderableWidget(hexInput);
-		var previewWidget = new ColorPreviewWidget(
-			hexInput.getX() + hexInput.getWidth() + 4,
-			buttonY,
-			SIZE,
-			SIZE,
-			this::colorFromHSB
-		);
+		var previewWidget = new ColorPreviewWidget(hexInput.getX() + hexInput.getWidth() + 4, buttonY, SIZE, SIZE, this::colorFromHSB);
 		addRenderableWidget(previewWidget);
 	}
 	private void layoutPicker() {

@@ -9,12 +9,11 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(ContraptionCollider.class)
 public abstract class ContraptionColliderMixin {
 	@WrapWithCondition(
-		method = "handleDamageFromTrain",
-		at = @At(
-			value = "INVOKE",
-			target = "Lnet/createmod/catnip/platform/services/NetworkHelper;sendToServer"
-				+ "(Lnet/minecraft/network/protocol/common/custom/CustomPacketPayload;)V"
-		)
+		method = "handleDamageFromTrain", at = @At(
+		value = "INVOKE",
+		target = "Lnet/createmod/catnip/platform/services/NetworkHelper;sendToServer"
+			+ "(Lnet/minecraft/network/protocol/common/custom/CustomPacketPayload;)V"
+	)
 	)
 	private static boolean handleDamageFromTrain(NetworkHelper instance, CustomPacketPayload customPacketPayload) {
 		return !CCG.config.misc.removeTrainDamage;

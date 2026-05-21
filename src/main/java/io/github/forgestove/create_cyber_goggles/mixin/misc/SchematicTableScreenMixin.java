@@ -20,7 +20,9 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 	@Shadow private IconButton folderButton;
 	@Shadow private IconButton refreshButton;
 	@Shadow private Label schematicsLabel;
-	@Shadow @Final private Component availableSchematicsTitle;
+	@Shadow
+	@Final
+	private Component availableSchematicsTitle;
 	@Unique private SelectionScrollInput ccg$folderArea;
 	@Unique private Label ccg$folderLabel;
 	@Unique private IconButton ccg$folderPickerButton;

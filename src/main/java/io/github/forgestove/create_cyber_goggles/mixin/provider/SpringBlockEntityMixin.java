@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.*;
 
 import java.util.List;
-@Mixin(value = SpringBlockEntity.class, remap = false)
+@Mixin(SpringBlockEntity.class)
 public abstract class SpringBlockEntityMixin extends SmartBlockEntity implements IHaveGoggleInformation, Self<SpringBlockEntity> {
 	@Shadow protected double desiredLength;
 	@Shadow protected LerpedFloat renderLength;

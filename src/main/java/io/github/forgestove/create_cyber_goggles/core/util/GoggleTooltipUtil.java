@@ -120,8 +120,7 @@ public final class GoggleTooltipUtil {
 					.withStyle(GRAY))
 				.forGoggles(tooltip);
 			if (shotsLeftWithItems != shotsLeft) CreateLang.builder()
-				.add(CreateLang.translateDirect(
-					"gui.schematicannon.shotsRemainingWithBackup",
+				.add(CreateLang.translateDirect("gui.schematicannon.shotsRemainingWithBackup",
 					CCGLang.number(shotsLeftWithItems, BLUE).component()
 				).withStyle(GRAY))
 				.forGoggles(tooltip);

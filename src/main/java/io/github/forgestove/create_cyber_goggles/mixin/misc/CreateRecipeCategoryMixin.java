@@ -24,7 +24,7 @@ import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 import static io.github.forgestove.create_cyber_goggles.core.util.SequencedAssemblyUtil.*;
-@Mixin(value = CreateRecipeCategory.class, remap = false)
+@Mixin(CreateRecipeCategory.class)
 public abstract class CreateRecipeCategoryMixin<T extends Recipe<?>> implements IRecipeCategory<RecipeHolder<T>> {
 	@Unique
 	protected MutableComponent ccg$chanceComponent(float chance) {

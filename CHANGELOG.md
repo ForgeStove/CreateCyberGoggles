@@ -1,1 +1,3 @@
-- Add outliner support for factory panel
+- Add DecoratedPotBlockEntityMixin and PortableEngineBlockEntityMixin to support item rendering
+- Fix duplicate element for ArmBlockEntityMixin
+- Refactor FactoryPanelBlockEntityMixin to optimize the initialization position of the hashMap

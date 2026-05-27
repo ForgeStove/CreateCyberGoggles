@@ -5,7 +5,7 @@ import io.github.forgestove.create_cyber_goggles.core.api.*;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.*;
 
-import java.util.*;
+import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.outliner;
 @Mixin(ArmBlockEntity.class)
@@ -19,18 +19,18 @@ public abstract class ArmBlockEntityMixin implements ItemRenderable, OutlineRend
 	}
 	@Override
 	public void ccg$render() {
-		Set.of(inputs, outputs).forEach(points -> {
+		List.of(inputs, outputs).forEach(points -> {
+			var center = thiz().getBlockPos().getCenter();
 			for (var point : points) {
 				if (!point.isValid()) continue;
 				var level = point.getLevel();
 				var pos = point.getPos();
+				var color = point.getMode().getColor();
 				outliner.showAABB("ArmIOBox" + point, level.getBlockState(pos).getShape(level, pos).bounds().move(pos))
-					.withFaceTextures(AllSpecialTextures.HIGHLIGHT_CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
+					.withFaceTextures(AllSpecialTextures.CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
 					.lineWidth(1 / 16f)
-					.colored(point.getMode().getColor());
-				outliner.showLine("ArmIOLine" + point, thiz().getBlockPos().getCenter(), point.getPos().getCenter())
-					.lineWidth(1 / 8f)
-					.colored(point.getMode().getColor());
+					.colored(color);
+				outliner.showLine("ArmIOLine" + point, center, point.getPos().getCenter()).lineWidth(1 / 8f).colored(color);
 			}
 		});
 	}

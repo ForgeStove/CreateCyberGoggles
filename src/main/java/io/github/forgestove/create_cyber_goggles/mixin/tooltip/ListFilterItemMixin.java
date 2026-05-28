@@ -1,6 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.mixin.tooltip;
 import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.content.logistics.filter.ListFilterItem;
+import com.simibubi.create.foundation.mixin.accessor.ItemStackHandlerAccessor;
 import com.simibubi.create.foundation.utility.CreateLang;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.api.Self;
@@ -17,6 +18,14 @@ public abstract class ListFilterItemMixin implements Self<ListFilterItem> {
 	@Inject(method = "makeSummary", at = @At("HEAD"), cancellable = true)
 	private void makeSummary(ItemStack filter, CallbackInfoReturnable<List<Component>> cir) {
 		if (!CCG.config.tooltip.listFilter) return;
+		var filterItems = thiz().getFilterItemHandler(filter);
+		var accessor = (ItemStackHandlerAccessor) filterItems;
+		var stacks = accessor.create$getStacks();
+		var allEmpty = stacks.stream().allMatch(ItemStack::isEmpty);
+		if (allEmpty) {
+			cir.setReturnValue(Collections.emptyList());
+			return;
+		}
 		var blacklist = filter.getOrDefault(AllDataComponents.FILTER_ITEMS_BLACKLIST, false);
 		List<Component> list = new ArrayList<>();
 		list.add((

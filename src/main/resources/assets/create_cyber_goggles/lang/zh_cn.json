@@ -77,6 +77,8 @@
 	"create_cyber_goggles.config.option.misc.infEditBoxLength.tooltip": "无限编辑框长度（实际上是 2^31 -1）",
 	"create_cyber_goggles.config.option.misc.nbtFix": "NBT 修复",
 	"create_cyber_goggles.config.option.misc.nbtFix.tooltip": "修复 NBT 过长而导致的崩溃，可能导致卡顿",
+	"create_cyber_goggles.config.option.misc.preventAutoCloseFilter": "阻止自动关闭过滤器",
+	"create_cyber_goggles.config.option.misc.preventAutoCloseFilter.tooltip": "阻止过滤器界面自动关闭",
 	"create_cyber_goggles.config.option.misc.preventSelectionDiscard": "防止选区丢弃",
 	"create_cyber_goggles.config.option.misc.preventSelectionDiscard.tooltip": "防止在切换物品时丢弃选区",
 	"create_cyber_goggles.config.option.misc.recursiveSchematicScan": "递归扫描蓝图",

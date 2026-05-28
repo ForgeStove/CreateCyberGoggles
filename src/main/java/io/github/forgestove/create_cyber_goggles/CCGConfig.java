@@ -103,6 +103,7 @@ public final class CCGConfig {
 		public boolean stockRequestQuickActions = true;
 		public boolean recursiveSchematicScan = true;
 		public boolean preventSelectionDiscard = true;
+		public boolean preventAutoCloseFilter = false;
 		public boolean infEditBoxLength = false;
 		public boolean removeCardboardOverlay = true;
 		public boolean removeNetheriteFirstPerson = false;

@@ -39,7 +39,7 @@ public abstract class FactoryPanelBlockEntityMixin implements OutlineRenderable,
 			var color = entry.getIntValue();
 			var box = entry.getKey();
 			outliner.showAABB("FactoryPanelIOBox" + box.getCenter(), box)
-				.withFaceTextures(AllSpecialTextures.HIGHLIGHT_CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
+				.withFaceTextures(AllSpecialTextures.CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
 				.lineWidth(1 / 16f)
 				.colored(color);
 		});

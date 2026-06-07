@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.config.gui.entry;
 import io.github.forgestove.create_cyber_goggles.config.Translation;
-import io.github.forgestove.create_cyber_goggles.config.gui.ConfigCategoryTab;
+import io.github.forgestove.create_cyber_goggles.config.gui.*;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -19,9 +19,6 @@ public abstract class ValueConfigEntry<C, T, V> extends ConfigEntry {
 	public final List<AbstractWidget> children = new ArrayList<>();
 	public final ValueConfigNode<C, T, V> valueNode;
 	public final Component label;
-	public final Component labelChanged;
-	public final Component labelError;
-	public final Component labelErrorChanged;
 	@Nullable public final List<FormattedCharSequence> tooltip;
 	public List<FormattedCharSequence> tooltipWithError;
 	@Nullable public Component validationError;
@@ -29,9 +26,6 @@ public abstract class ValueConfigEntry<C, T, V> extends ConfigEntry {
 	public ValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, T, V> valueNode) {
 		this.tab = tab;
 		label = valueNode.getTitle().copy().withStyle(ChatFormatting.WHITE);
-		labelChanged = label.copy().withStyle(ChatFormatting.ITALIC, ChatFormatting.YELLOW);
-		labelError = label.copy().withStyle(ChatFormatting.RED);
-		labelErrorChanged = label.copy().withStyle(ChatFormatting.ITALIC, ChatFormatting.RED);
 		var font = tab.getMinecraft().font;
 		tooltip = valueNode.getTooltip() == null ? null : font.split(valueNode.getTooltip(), 350);
 		tooltipWithError = getTooltipWithError();
@@ -91,14 +85,11 @@ public abstract class ValueConfigEntry<C, T, V> extends ConfigEntry {
 		if (!hasError()) return tooltip;
 		List<FormattedCharSequence> errorTooltip = new ArrayList<>();
 		if (tooltip != null) errorTooltip.addAll(tooltip);
-		assert validationError != null;
-		errorTooltip.add(validationError.copy().withStyle(ChatFormatting.RED).getVisualOrderText());
+		if (validationError != null) errorTooltip.add(validationError.copy().withStyle(ChatFormatting.RED).getVisualOrderText());
 		return errorTooltip;
 	}
 	public void renderLabel(GuiGraphics gui, int x, int y) {
-		Component l;
-		if (hasError()) l = hasChanged ? labelErrorChanged : labelError;
-		else l = hasChanged ? labelChanged : label;
+		var l = GuiUtil.styleAsState(label, hasError(), hasChanged);
 		gui.drawString(tab.getMinecraft().font, l.getVisualOrderText(), x, y + 5, -1, false);
 	}
 	public void layoutRightToLeft(int x, int y, int entryWidth, AbstractWidget... widgets) {

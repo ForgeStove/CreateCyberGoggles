@@ -4,10 +4,8 @@ import io.github.forgestove.create_cyber_goggles.config.Translation;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.*;
 
-import java.util.Objects;
 import java.util.function.UnaryOperator;
 public final class CategoryConfigNode<C> implements ConfigNode<C> {
-	private String name;
 	private Component title;
 	private Component tooltip;
 	private ImmutableList<ConfigNode<C>> children;
@@ -77,10 +75,6 @@ public final class CategoryConfigNode<C> implements ConfigNode<C> {
 			node = new CategoryConfigNode<>();
 			childrenBuilder = ImmutableList.builder();
 		}
-		public Builder<C> name(String name) {
-			node.name = name;
-			return this;
-		}
 		public Builder<C> title(Component title) {
 			node.title = title;
 			return this;
@@ -99,8 +93,6 @@ public final class CategoryConfigNode<C> implements ConfigNode<C> {
 		}
 		public CategoryConfigNode<C> build() {
 			var n = node;
-			Objects.requireNonNull(n.name);
-			Objects.requireNonNull(n.title);
 			n.children = childrenBuilder.build();
 			node = null;
 			childrenBuilder = null;

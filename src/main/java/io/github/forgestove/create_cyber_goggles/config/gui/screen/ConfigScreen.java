@@ -192,7 +192,7 @@ public final class ConfigScreen<C> extends Screen {
 			modMappings.add(allMapping);
 		}
 		if (modMappings.isEmpty()) return null;
-		var builder = CategoryConfigNode.<C>builder().name("keybinds").title(Translation.KEYBINDS_LABEL);
+		var builder = CategoryConfigNode.<C>builder().title(Translation.KEYBINDS_LABEL);
 		modMappings.forEach(mapping -> builder.<Key, Key>value(value -> value.type(Key.class)
 			.valueType(Key.class)
 			.name(mapping.getName())

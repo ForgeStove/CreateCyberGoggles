@@ -38,9 +38,6 @@ public final class ConfigCategoryTab<C> implements Tab {
 	private final CategoryConfigNode<C> category;
 	private final C config;
 	private final Component title;
-	private final Component titleChanged;
-	private final Component titleError;
-	private final Component titleErrorChanged;
 	private final ConfigEntryList list;
 	@Nullable private TabButton tabButton;
 	public ConfigCategoryTab(ConfigScreen<C> screen, CategoryConfigNode<C> category, C config, String modId) {
@@ -49,9 +46,6 @@ public final class ConfigCategoryTab<C> implements Tab {
 		this.category = category;
 		this.config = config;
 		title = category.getTitle();
-		titleChanged = title.copy().withStyle(ChatFormatting.ITALIC, ChatFormatting.YELLOW);
-		titleError = title.copy().withStyle(ChatFormatting.RED);
-		titleErrorChanged = title.copy().withStyle(ChatFormatting.ITALIC, ChatFormatting.RED);
 		List<ConfigEntry> entries = new ArrayList<>();
 		category.getChildren().forEach(node -> {
 			if (node instanceof ValueConfigNode<C, ?, ?> valueNode) entries.add(createValueEntry(valueNode));
@@ -109,12 +103,9 @@ public final class ConfigCategoryTab<C> implements Tab {
 	}
 	public void refresh() {
 		if (tabButton == null) return;
-		Component newTitle;
 		var hasChanged = !category.isActiveValue(config);
 		var hasError = category.validate(config) != null || hasEntryError();
-		if (hasError) newTitle = hasChanged ? titleErrorChanged : titleError;
-		else newTitle = hasChanged ? titleChanged : title;
-		tabButton.setMessage(newTitle);
+		tabButton.setMessage(GuiUtil.styleAsState(title, hasError, hasChanged));
 		list.refreshEntries();
 	}
 	public boolean hasEntryError() {

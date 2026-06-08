@@ -13,6 +13,7 @@ import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
+import java.awt.Rectangle;
 import java.util.function.IntConsumer;
 import java.util.regex.Pattern;
 public final class ColorPickerScreen extends Screen {
@@ -47,8 +48,14 @@ public final class ColorPickerScreen extends Screen {
 		this.onColorSelected = onColorSelected;
 		updateHSBFromColor(initialColor);
 	}
-	private static boolean inside(double mouseX, double mouseY, int x, int y, int w) {
-		return mouseX >= x && mouseX < x + w && mouseY >= y && mouseY < y + PICKER_SIZE;
+	private Rectangle getSBArea() {
+		return new Rectangle(svX, svY, PICKER_SIZE, PICKER_SIZE);
+	}
+	private Rectangle getHueBarArea() {
+		return new Rectangle(getHueBarX(), svY, BAR_WIDTH, PICKER_SIZE);
+	}
+	private Rectangle getAlphaBarArea() {
+		return new Rectangle(getAlphaBarX(), svY, BAR_WIDTH, PICKER_SIZE);
 	}
 	@Override
 	protected void init() {
@@ -210,20 +217,20 @@ public final class ColorPickerScreen extends Screen {
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		if (button != 0) return super.mouseClicked(mouseX, mouseY, button);
-		if (inside(mouseX, mouseY, svX, svY, PICKER_SIZE)) {
+		if (getSBArea().contains(mouseX, mouseY)) {
 			setFocused(null);
 			draggingSV = true;
 			updateFromMouse((int) mouseX, (int) mouseY);
 			return true;
 		}
-		var hueBarX = getHueBarX();
-		if (inside(mouseX, mouseY, hueBarX, svY, BAR_WIDTH)) {
+		var hueBarArea = getHueBarArea();
+		if (hueBarArea.contains(mouseX, mouseY)) {
 			setFocused(null);
 			draggingHue = true;
 			updateFromMouse((int) mouseX, (int) mouseY);
 			return true;
 		}
-		if (hasAlpha && inside(mouseX, mouseY, getAlphaBarX(), svY, BAR_WIDTH)) {
+		if (hasAlpha && getAlphaBarArea().contains(mouseX, mouseY)) {
 			setFocused(null);
 			draggingAlpha = true;
 			updateFromMouse((int) mouseX, (int) mouseY);
@@ -260,15 +267,14 @@ public final class ColorPickerScreen extends Screen {
 	}
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-		var hueStep = 0.005f;
-		var alphaStep = 1;
-		var hueBarX = getHueBarX();
-		if (inside(mouseX, mouseY, hueBarX, svY, BAR_WIDTH)) {
+		if (getHueBarArea().contains(mouseX, mouseY)) {
+			var hueStep = 0.005f;
 			hue = Mth.clamp(hue - (float) scrollY * hueStep, 0f, 1f);
 			updateHexInput();
 			return true;
 		}
-		if (hasAlpha && inside(mouseX, mouseY, getAlphaBarX(), svY, BAR_WIDTH)) {
+		if (hasAlpha && getAlphaBarArea().contains(mouseX, mouseY)) {
+			var alphaStep = 1;
 			alpha = Mth.clamp(alpha + (int) (scrollY * alphaStep), 0, 255);
 			updateHexInput();
 			return true;

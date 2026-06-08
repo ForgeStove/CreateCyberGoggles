@@ -97,13 +97,6 @@ public final class ValueConfigNode<C, V> implements ConfigNode<C> {
 	}
 	public interface ValueValidator<V> {
 		@Nullable Component validate(V value);
-		default ValueValidator<V> and(ValueValidator<V> next) {
-			Objects.requireNonNull(next);
-			return value -> {
-				var error = validate(value);
-				return error != null ? error : next.validate(value);
-			};
-		}
 	}
 	public static class Builder<C, V> {
 		private ValueConfigNode<C, V> node;
@@ -156,8 +149,7 @@ public final class ValueConfigNode<C, V> implements ConfigNode<C> {
 		}
 		public ValueConfigNode<C, V> build() {
 			var n = node;
-			for (var value : List.of(n.name, n.valueType, n.title, n.valueReader, n.valueWriter, n.category))
-				Objects.requireNonNull(value);
+			List.of(n.name, n.valueType, n.title, n.valueReader, n.valueWriter, n.category).forEach(Objects::requireNonNull);
 			node = null;
 			return n;
 		}

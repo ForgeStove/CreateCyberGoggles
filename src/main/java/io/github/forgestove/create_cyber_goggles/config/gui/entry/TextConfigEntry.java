@@ -27,8 +27,8 @@ public final class TextConfigEntry extends ConfigEntry {
 		int index,
 		int y,
 		int x,
-		int entryWidth,
-		int entryHeight,
+		int width,
+		int height,
 		int mouseX,
 		int mouseY,
 		boolean hovered,
@@ -36,7 +36,7 @@ public final class TextConfigEntry extends ConfigEntry {
 	) {
 		textWidget.setX(x);
 		textWidget.setY(y + 5);
-		textWidget.setMaxWidth(entryWidth);
+		textWidget.setMaxWidth(width);
 		textWidget.renderWidget(gui, mouseX, mouseY, delta);
 	}
 	@NotNull

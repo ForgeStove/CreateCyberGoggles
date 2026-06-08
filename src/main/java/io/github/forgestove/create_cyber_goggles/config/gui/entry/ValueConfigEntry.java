@@ -33,12 +33,12 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 		resetButton = Button.builder(Translation.RESET_LABEL, b -> resetToDefault())
 			.size(Math.max(font.width(Translation.RESET_LABEL) + 6, SIZE), SIZE)
 			.build();
-		resetButton.active = !node.isDefaultValue(this.tab.getConfig());
-		children.add(resetButton);
 		undoButton = Button.builder(Translation.UNDO_LABEL, b -> resetToActive())
 			.size(Math.max(font.width(Translation.UNDO_LABEL) + 6, SIZE), SIZE)
 			.build();
+		resetButton.active = !node.isDefaultValue(this.tab.getConfig());
 		undoButton.active = !node.isActiveValue(this.tab.getConfig());
+		children.add(resetButton);
 		children.add(undoButton);
 	}
 	public void resetToDefault() {
@@ -83,7 +83,7 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 	}
 	public List<FormattedCharSequence> getTooltipWithError() {
 		if (!hasError()) return tooltip;
-		List<FormattedCharSequence> errorTooltip = new ArrayList<>();
+		var errorTooltip = new ArrayList<FormattedCharSequence>();
 		if (tooltip != null) errorTooltip.addAll(tooltip);
 		if (validationError != null) errorTooltip.add(validationError.copy().withStyle(ChatFormatting.RED).getVisualOrderText());
 		return errorTooltip;
@@ -101,10 +101,9 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 		var label = GuiUtil.styleAsState(this.label, hasError(), hasChanged);
 		gui.drawString(tab.getMinecraft().font, label.getVisualOrderText(), x, y + 5, -1, false);
 		var right = x + width;
-		for (var widget1 : widgets) {
-			right -= widget1.getWidth();
-			widget1.setX(right);
-			widget1.setY(y);
+		for (var widget : widgets) {
+			right -= widget.getWidth();
+			widget.setPosition(right, y);
 			right -= GAP;
 		}
 		for (var widget : widgets) widget.render(gui, mouseX, mouseY, delta);

@@ -17,27 +17,42 @@ import java.awt.*;
 import java.util.function.IntConsumer;
 import java.util.regex.Pattern;
 public final class ColorPickerScreen extends Screen {
+	/** 颜色选择区域的边长 */
 	private static final int PICKER_SIZE = 128;
+	/** 色相/透明度滑条宽度 */
 	private static final int BAR_WIDTH = 16;
+	/** 面板内边距 */
 	private static final int PADDING = ConfigEntry.GAP * 4;
+	/** 基础控件尺寸 */
 	private static final int SIZE = ConfigEntry.SIZE;
+	/** 确认/取消按钮宽度 */
 	private static final int BUTTON_WIDTH = SIZE * 2;
 	private static final Pattern HEX_PATTERN = Pattern.compile("[0-9A-Fa-f]*");
 	private final Screen parent;
 	private final boolean hasAlpha;
+	/** 颜色确认后的回调 */
 	private final IntConsumer onColorSelected;
+	/** 面板左上角坐标 */
+	private final Point pickerPos = new Point();
+	/** 饱和度/亮度选择区坐标 */
+	private final Point svPos = new Point();
+	/** 色相 */
 	private float hue;
+	/** 饱和度 */
 	private float saturation = 1f;
+	/** 亮度 */
 	private float brightness = 1f;
+	/** 透明度 */
 	private int alpha = 255;
+	/** 当前拖拽模式 */
 	private DragMode dragMode = DragMode.NONE;
-	private int pickerX;
-	private int pickerY;
-	private int svX;
-	private int svY;
+	/** 饱和度/亮度方块缓存 */
 	private int[] sbPixels;
+	/** 缓存时对应的色相值 */
 	private float cachedHue = -1f;
+	/** 十六进制颜色输入框 */
 	private EditBox hexInput;
+	/** 防止输入框与颜色状态互相递归更新 */
 	private boolean updatingFromInput;
 	public ColorPickerScreen(Screen parent, int initialColor, boolean hasAlpha, IntConsumer onColorSelected) {
 		super(Translation.COLOR_PICKER_TOOLTIP);
@@ -47,30 +62,29 @@ public final class ColorPickerScreen extends Screen {
 		updateHSBFromColor(initialColor);
 	}
 	private Rectangle getSBArea() {
-		return new Rectangle(svX, svY, PICKER_SIZE, PICKER_SIZE);
+		return new Rectangle(svPos.x, svPos.y, PICKER_SIZE, PICKER_SIZE);
 	}
 	private Rectangle getHueBarArea() {
-		return new Rectangle(getHueBarX(), svY, BAR_WIDTH, PICKER_SIZE);
+		return new Rectangle(getHueBarX(), svPos.y, BAR_WIDTH, PICKER_SIZE);
 	}
 	private Rectangle getAlphaBarArea() {
-		return new Rectangle(getAlphaBarX(), svY, BAR_WIDTH, PICKER_SIZE);
+		return new Rectangle(getAlphaBarX(), svPos.y, BAR_WIDTH, PICKER_SIZE);
 	}
 	@Override
 	protected void init() {
 		layoutPicker();
 		if (minecraft == null) return;
-		var buttonY = svY + PICKER_SIZE + PADDING;
-		addRenderableWidget(Button.builder(
-			Component.translatable("gui.ok"), b -> {
+		var buttonY = svPos.y + PICKER_SIZE + PADDING;
+		var okButton = Button.builder(
+			Component.translatable("gui.ok"), button -> {
 				onColorSelected.accept(colorFromHSB());
 				minecraft.setScreen(parent);
 			}
-		).bounds(svX, buttonY, BUTTON_WIDTH, SIZE).build());
-		addRenderableWidget(Button.builder(Component.translatable("gui.cancel"), b -> minecraft.setScreen(parent))
-			.bounds(svX + BUTTON_WIDTH + 2, buttonY, BUTTON_WIDTH, SIZE)
-			.build());
+		).bounds(svPos.x, buttonY, BUTTON_WIDTH, SIZE).build();
+		var cancelButton = Button.builder(Component.translatable("gui.cancel"), button -> minecraft.setScreen(parent))
+			.bounds(svPos.x + BUTTON_WIDTH + 2, buttonY, BUTTON_WIDTH, SIZE)
+			.build();
 		hexInput = createHexInput(buttonY);
-		addRenderableWidget(hexInput);
 		var previewWidget = new ColorPreviewWidget(
 			hexInput.getX() + hexInput.getWidth() + 4,
 			buttonY,
@@ -79,18 +93,19 @@ public final class ColorPickerScreen extends Screen {
 			hasAlpha,
 			this::colorFromHSB
 		);
+		addRenderableWidget(okButton);
+		addRenderableWidget(cancelButton);
+		addRenderableWidget(hexInput);
 		addRenderableWidget(previewWidget);
 	}
 	private void layoutPicker() {
 		var totalWidth = PICKER_SIZE + PADDING + BAR_WIDTH + (hasAlpha ? PADDING + BAR_WIDTH : 0);
 		var totalHeight = PICKER_SIZE + PADDING + 24;
-		pickerX = (width - totalWidth) / 2 - PADDING;
-		pickerY = (height - totalHeight) / 2 - PADDING - 10;
-		svX = pickerX + PADDING;
-		svY = pickerY + PADDING + 16;
+		pickerPos.move((width - totalWidth) / 2 - PADDING, (height - totalHeight) / 2 - PADDING - 10);
+		svPos.move(pickerPos.x + PADDING, pickerPos.y + PADDING + 16);
 	}
 	private EditBox createHexInput(int buttonY) {
-		var hexInputX = svX + BUTTON_WIDTH * 2 + 6;
+		var hexInputX = svPos.x + BUTTON_WIDTH * 2 + 6;
 		var hexInputWidth = hasAlpha ? 70 : 55;
 		var input = new EditBox(font, hexInputX, buttonY, hexInputWidth, SIZE, Component.literal("Hex"));
 		input.setMaxLength(hasAlpha ? 8 : 6);
@@ -115,12 +130,11 @@ public final class ColorPickerScreen extends Screen {
 		return hasAlpha ? String.format("%08X", color) : String.format("%06X", color & 0xFFFFFF);
 	}
 	private void onHexInputChange(String value) {
-		if (updatingFromInput) return;
+		if (updatingFromInput || value.isEmpty()) return;
 		try {
-			var color = (int) Long.parseLong(value, 16);
+			var color = Integer.parseUnsignedInt(value, 16);
 			updatingFromInput = true;
 			updateHSBFromColor(hasAlpha ? color : 0xFF000000 | color);
-			updatingFromInput = false;
 		} catch (NumberFormatException ignored) {
 		}
 	}
@@ -136,14 +150,14 @@ public final class ColorPickerScreen extends Screen {
 		renderBlurredBackground(delta);
 		var totalWidth = PICKER_SIZE + PADDING + BAR_WIDTH + (hasAlpha ? PADDING + BAR_WIDTH : 0) + PADDING * 2 + 8;
 		var totalHeight = PICKER_SIZE + PADDING * 2 + 16 + 28;
-		gui.fill(pickerX - 4, pickerY - 4, pickerX + totalWidth + 4, pickerY + totalHeight + 4, 0xF0101010);
-		gui.renderOutline(pickerX - 4, pickerY - 4, totalWidth + 8, totalHeight + 8, 0xFF404040);
-		gui.drawString(font, title, svX, pickerY + PADDING, 0xFFFFFF);
+		gui.fill(pickerPos.x - 4, pickerPos.y - 4, pickerPos.x + totalWidth + 4, pickerPos.y + totalHeight + 4, 0xF0101010);
+		gui.renderOutline(pickerPos.x - 4, pickerPos.y - 4, totalWidth + 8, totalHeight + 8, 0xFF404040);
+		gui.drawString(font, title, svPos.x, pickerPos.y + PADDING, 0xFFFFFF);
 		if (cachedHue != hue) rebuildSBCache();
-		renderSBSquare(gui, svX, svY);
+		renderSBSquare(gui, svPos.x, svPos.y);
 		var hueBarX = getHueBarX();
-		renderHueBar(gui, hueBarX, svY);
-		if (hasAlpha) renderAlphaBar(gui, getAlphaBarX(), svY);
+		renderHueBar(gui, hueBarX, svPos.y);
+		if (hasAlpha) renderAlphaBar(gui, getAlphaBarX(), svPos.y);
 		renderSelectors(gui, hueBarX);
 		// Keep widget rendering order controlled in this screen.
 		for (var child : children()) if (child instanceof AbstractWidget widget) widget.render(gui, mouseX, mouseY, delta);
@@ -160,19 +174,18 @@ public final class ColorPickerScreen extends Screen {
 		cachedHue = hue;
 	}
 	private void renderSelectors(GuiGraphics gui, int hueBarX) {
-		var sbSelectorX = svX + (int) (saturation * (PICKER_SIZE - 1));
-		var sbSelectorY = svY + (int) ((1f - brightness) * (PICKER_SIZE - 1));
+		var sbSelectorX = svPos.x + (int) (saturation * (PICKER_SIZE - 1));
+		var sbSelectorY = svPos.y + (int) ((1f - brightness) * (PICKER_SIZE - 1));
 		gui.renderOutline(sbSelectorX - 4, sbSelectorY - 4, 9, 9, 0xFFFFFFFF);
 		gui.renderOutline(sbSelectorX - 3, sbSelectorY - 3, 7, 7, 0xFF000000);
-		var hueSelectorY = svY + (int) (hue * (PICKER_SIZE - 1));
+		var hueSelectorY = svPos.y + (int) (hue * (PICKER_SIZE - 1));
 		renderHorizontalArrow(gui, hueBarX, hueSelectorY);
-		if (hasAlpha) {
-			var alphaSelectorY = svY + (int) ((1f - alpha / 255f) * (PICKER_SIZE - 1));
-			renderHorizontalArrow(gui, getAlphaBarX(), alphaSelectorY);
-		}
+		if (!hasAlpha) return;
+		var alphaSelectorY = svPos.y + (int) ((1f - alpha / 255f) * (PICKER_SIZE - 1));
+		renderHorizontalArrow(gui, getAlphaBarX(), alphaSelectorY);
 	}
 	private int getHueBarX() {
-		return svX + PICKER_SIZE + PADDING;
+		return svPos.x + PICKER_SIZE + PADDING;
 	}
 	private int getAlphaBarX() {
 		return getHueBarX() + BAR_WIDTH + PADDING;
@@ -253,10 +266,10 @@ public final class ColorPickerScreen extends Screen {
 	}
 	private void updateFromMouse(int mouseX, int mouseY) {
 		if (dragMode == DragMode.SV) {
-			saturation = Mth.clamp((float) (mouseX - svX) / (PICKER_SIZE - 1), 0f, 1f);
-			brightness = Mth.clamp(1f - (float) (mouseY - svY) / (PICKER_SIZE - 1), 0f, 1f);
-		} else if (dragMode == DragMode.HUE) hue = Mth.clamp((float) (mouseY - svY) / (PICKER_SIZE - 1), 0f, 1f);
-		else if (dragMode == DragMode.ALPHA) alpha = 255 - Mth.clamp((mouseY - svY) * 255 / (PICKER_SIZE - 1), 0, 255);
+			saturation = Mth.clamp((float) (mouseX - svPos.x) / (PICKER_SIZE - 1), 0f, 1f);
+			brightness = Mth.clamp(1f - (float) (mouseY - svPos.y) / (PICKER_SIZE - 1), 0f, 1f);
+		} else if (dragMode == DragMode.HUE) hue = Mth.clamp((float) (mouseY - svPos.y) / (PICKER_SIZE - 1), 0f, 1f);
+		else if (dragMode == DragMode.ALPHA) alpha = 255 - Mth.clamp((mouseY - svPos.y) * 255 / (PICKER_SIZE - 1), 0, 255);
 		updateHexInput();
 	}
 	@Override
@@ -309,9 +322,13 @@ public final class ColorPickerScreen extends Screen {
 		super.resize(minecraft, width, height);
 	}
 	public enum DragMode {
+		/** 未拖拽 */
 		NONE,
+		/** 饱和度 / 亮度区域 */
 		SV,
+		/** 色相滑条 */
 		HUE,
+		/** 透明度滑条 */
 		ALPHA
 	}
 }

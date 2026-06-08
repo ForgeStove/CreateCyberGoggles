@@ -101,39 +101,26 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 			CategoryConfigNode.Builder<C> categoryBuilder
 		) {
 			var defaultValue = FieldAccess.getFieldValue(valueField, defaultCategory);
-			addSingleValueField(defaultValue.getClass(), defaultValue, categoryField, valueField, categoryBuilder);
-		}
-		private <T> void addSingleValueField(
-			Class<? extends T> type,
-			T defaultValue,
-			Field categoryField,
-			Field valueField,
-			CategoryConfigNode.Builder<C> categoryBuilder
-		) {
+			var type = defaultValue.getClass();
 			var valueName = valueField.getName();
-			var titleKey = id + ".config.option." + categoryField.getName() + "." + valueName;
-			categoryBuilder.<T, T>value(valueBuilder -> {
-				valueBuilder.type(type)
-					.valueType(type)
-					.name(valueName)
-					.title(Component.translatable(titleKey))
-					.tooltip(Component.translatable(titleKey + ".tooltip"))
-					.defaultValue(defaultValue)
-					.valueReader(makeValueReader(type, categoryField, valueField))
-					.valueWriter(makeValueWriter(type, categoryField, valueField))
-					.requiresRestart(valueField.isAnnotationPresent(RequiresRestart.class));
-				var colorAnnotation = valueField.getAnnotation(ColorValue.class);
-				if (colorAnnotation != null) valueBuilder.colorValue(true, colorAnnotation.hasAlpha());
-				FieldValidators.apply(valueBuilder, type, valueField);
-				return valueBuilder;
-			});
+			var titleKey = "%s.config.option.%s.%s".formatted(id, categoryField.getName(), valueName);
+			categoryBuilder.value(valueBuilder -> valueBuilder.valueType(type)
+				.name(valueName)
+				.title(Component.translatable(titleKey))
+				.tooltip(Component.translatable(titleKey + ".tooltip"))
+				.defaultValue(defaultValue)
+				.colorValue(valueField.getAnnotation(ColorValue.class))
+				.valueReader(makeValueReader(type, categoryField, valueField))
+				.valueWriter(makeValueWriter(type, categoryField, valueField))
+				.requiresRestart(valueField.isAnnotationPresent(RequiresRestart.class))
+				.validator(FieldValidators.validatorFor(type, valueField)));
 		}
-		private <T> ValueReader<C, T> makeValueReader(Class<? extends T> type, Field categoryField, Field valueField) {
+		private <V> ValueReader<C, V> makeValueReader(Class<? extends V> type, Field categoryField, Field valueField) {
 			var categoryHandle = FieldAccess.varHandle(categoryField);
 			var valueHandle = FieldAccess.varHandle(valueField);
 			return config -> type.cast(FieldAccess.readField(valueHandle, categoryHandle.get(config), valueField));
 		}
-		private <T> ValueWriter<C, T> makeValueWriter(Class<? extends T> type, Field categoryField, Field valueField) {
+		private <V> ValueWriter<C, V> makeValueWriter(Class<? extends V> type, Field categoryField, Field valueField) {
 			var categoryHandle = FieldAccess.varHandle(categoryField);
 			var valueHandle = FieldAccess.varHandle(valueField);
 			return (config, value) -> FieldAccess.writeField(valueHandle, categoryHandle.get(config), type.cast(value), valueField);

@@ -9,17 +9,17 @@ import java.util.function.*;
 /**
  * Generic configuration handler that manages config loading, saving, and GUI creation.
  *
- * @param <T> Configuration class type
+ * @param <C> Configuration class type
  */
-public final class ConfigHandler<T> {
-	private final Class<T> configClass;
-	private final ConfigSerializer<T> serializer;
+public final class ConfigHandler<C> {
+	private final Class<C> configClass;
+	private final ConfigSerializer<C> serializer;
 	private final Logger logger;
 	private final String id;
-	private final RootConfigNode<T> configTree;
-	private final T activeConfig;
-	private final T savedConfig;
-	private ConfigHandler(Builder<T> builder) {
+	private final RootConfigNode<C> configTree;
+	private final C activeConfig;
+	private final C savedConfig;
+	private ConfigHandler(Builder<C> builder) {
 		configClass = builder.configClass;
 		serializer = builder.serializerBuilder.build();
 		logger = builder.logger;
@@ -29,13 +29,13 @@ public final class ConfigHandler<T> {
 		activeConfig = newInstance();
 		configTree.copy(savedConfig, activeConfig);
 	}
-	public static <T> Builder<T> builder(Class<T> configClass) {
+	public static <C> Builder<C> builder(Class<C> configClass) {
 		return new Builder<>(configClass);
 	}
-	public T getConfig() {
+	public C getConfig() {
 		return activeConfig;
 	}
-	public void save(T config) {
+	public void save(C config) {
 		configTree.copy(config, savedConfig);
 		configTree.copy(config, activeConfig);
 		try {
@@ -51,7 +51,7 @@ public final class ConfigHandler<T> {
 	public void regenerateConfigFile() {
 		save(savedConfig);
 	}
-	public T load() {
+	public C load() {
 		try {
 			return serializer.deserialize();
 		} catch (SerializationException e) {
@@ -64,43 +64,43 @@ public final class ConfigHandler<T> {
 		regenerateConfigFile();
 		return new ConfigScreen<>(parent, configTree, savedConfig, this::save, id);
 	}
-	private T newInstance() {
+	private C newInstance() {
 		try {
 			return configClass.getDeclaredConstructor().newInstance();
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to create config instance", e);
 		}
 	}
-	public static final class Builder<T> {
-		private final Class<T> configClass;
-		private final ConfigSerializer.Builder<T> serializerBuilder;
+	public static final class Builder<C> {
+		private final Class<C> configClass;
+		private final ConfigSerializer.Builder<C> serializerBuilder;
 		private String id;
 		private Logger logger;
-		private Builder(Class<T> configClass) {
+		private Builder(Class<C> configClass) {
 			this.configClass = configClass;
 			serializerBuilder = ConfigSerializer.builder(configClass);
 		}
-		public Builder<T> id(String id) {
+		public Builder<C> id(String id) {
 			this.id = id;
 			return this;
 		}
-		public Builder<T> path(Supplier<Path> configPath) {
+		public Builder<C> path(Supplier<Path> configPath) {
 			serializerBuilder.path(configPath);
 			return this;
 		}
-		public Builder<T> translationPrefix(String prefix) {
+		public Builder<C> translationPrefix(String prefix) {
 			serializerBuilder.translationPrefix(prefix);
 			return this;
 		}
-		public Builder<T> translator(Function<String, String> translator) {
+		public Builder<C> translator(Function<String, String> translator) {
 			serializerBuilder.translator(translator);
 			return this;
 		}
-		public Builder<T> logger(Logger logger) {
+		public Builder<C> logger(Logger logger) {
 			this.logger = logger;
 			return this;
 		}
-		public ConfigHandler<T> build() {
+		public ConfigHandler<C> build() {
 			if (id == null || id.isBlank()) throw new IllegalStateException("id must be provided before building ConfigHandler");
 			return new ConfigHandler<>(this);
 		}

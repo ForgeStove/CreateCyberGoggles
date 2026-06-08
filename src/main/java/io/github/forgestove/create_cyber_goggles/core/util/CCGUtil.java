@@ -79,9 +79,9 @@ public final class CCGUtil {
 		if (mc.level == null) return null;
 		var camera = mc.getCameraEntity();
 		if (camera == null) return null;
-		var partialTick = getRealtimeDeltaTicks();
-		var start = camera.getEyePosition(partialTick);
-		var view = camera.getViewVector(partialTick);
+		var delta = getRealtimeDeltaTicks();
+		var start = camera.getEyePosition(delta);
+		var view = camera.getViewVector(delta);
 		if (mc.player == null) return null;
 		var reach = mc.player.entityInteractionRange();
 		if (hitResult != null && hitResult.getType() != Type.MISS) reach = Math.min(reach, start.distanceTo(hitResult.getLocation()));

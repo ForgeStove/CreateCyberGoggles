@@ -9,25 +9,25 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.function.*;
 /**
- * Generic TOML configuration serializer with localized comment support.
+ * 通用的TOML配置序列化工具，支持本地化注释。
  *
- * @param <T> Configuration class type
+ * @param <C> 配置类类型
  */
-public final class ConfigSerializer<T> {
-	private final Class<T> configClass;
+public final class ConfigSerializer<C> {
+	private final Class<C> configClass;
 	private final Supplier<Path> configPath;
 	private final String translationPrefix;
 	private final Function<String, String> translator;
-	private ConfigSerializer(Builder<T> builder) {
+	private ConfigSerializer(Builder<C> builder) {
 		configClass = builder.configClass;
 		configPath = builder.configPath;
 		translationPrefix = builder.translationPrefix;
 		translator = builder.translator;
 	}
-	public static <T> Builder<T> builder(Class<T> configClass) {
+	public static <C> Builder<C> builder(Class<C> configClass) {
 		return new Builder<>(configClass);
 	}
-	public void serialize(T config) throws SerializationException {
+	public void serialize(C config) throws SerializationException {
 		try (var fileConfig = CommentedFileConfig.builder(configPath.get()).writingMode(WritingMode.REPLACE).build()) {
 			var categories = getCategoryFields();
 			for (var categoryField : categories) {
@@ -41,7 +41,7 @@ public final class ConfigSerializer<T> {
 			throw new SerializationException(e);
 		}
 	}
-	public T deserialize() throws SerializationException {
+	public C deserialize() throws SerializationException {
 		if (!configPath.get().toFile().exists()) return newInstance();
 		try (var fileConfig = CommentedFileConfig.builder(configPath.get()).build()) {
 			fileConfig.load();
@@ -61,7 +61,7 @@ public final class ConfigSerializer<T> {
 			.sorted(Comparator.comparingInt(f -> f.getAnnotation(Category.class).value()))
 			.toArray(Field[]::new);
 	}
-	private T newInstance() throws SerializationException {
+	private C newInstance() throws SerializationException {
 		try {
 			return configClass.getDeclaredConstructor().newInstance();
 		} catch (ReflectiveOperationException e) {
@@ -98,8 +98,9 @@ public final class ConfigSerializer<T> {
 		if (translator == null || translationPrefix == null) return null;
 		return translator.apply(translationPrefix + "." + key);
 	}
-	@SuppressWarnings({"unchecked", "rawtypes"})
-	private void readCategory(CommentedConfig config, String categoryName, Object category) throws IllegalAccessException {
+	@SuppressWarnings({"unchecked"})
+	private <T extends Enum<T>> void readCategory(CommentedConfig config, String categoryName, Object category) throws
+		IllegalAccessException {
 		CommentedConfig subConfig = config.get(categoryName);
 		if (subConfig == null) return;
 		for (var field : category.getClass().getDeclaredFields()) {
@@ -111,16 +112,16 @@ public final class ConfigSerializer<T> {
 			else if (type == int.class || type == Integer.class) {
 				if (value instanceof Number n) field.setInt(category, n.intValue());
 			} else if (type.isEnum()) try {
-				field.set(category, Enum.valueOf((Class<? extends Enum>) type, (String) value));
+				field.set(category, Enum.valueOf((Class<T>) type, (String) value));
 			} catch (IllegalArgumentException ignored) {}
 		}
 	}
-	public static final class Builder<T> {
-		private final Class<T> configClass;
+	public static final class Builder<C> {
+		private final Class<C> configClass;
 		private Supplier<Path> configPath;
 		private String translationPrefix;
 		private Function<String, String> translator;
-		private Builder(Class<T> configClass) {
+		private Builder(Class<C> configClass) {
 			this.configClass = configClass;
 		}
 		public void path(Supplier<Path> configPath) {
@@ -132,7 +133,7 @@ public final class ConfigSerializer<T> {
 		public void translator(Function<String, String> translator) {
 			this.translator = translator;
 		}
-		public ConfigSerializer<T> build() {
+		public ConfigSerializer<C> build() {
 			return new ConfigSerializer<>(this);
 		}
 	}

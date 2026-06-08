@@ -9,16 +9,16 @@ import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.*;
-public abstract class GenericValueConfigEntry<C, T> extends ValueConfigEntry<C, T, T> {
+public abstract class GenericValueConfigEntry<C, V> extends ValueConfigEntry<C, V> {
 	private final EditBox inputField;
-	private final Function<String, T> parser;
+	private final Function<String, V> parser;
 	private final Predicate<String> validator;
 	private boolean hasParseError = false;
 	private boolean updatingFromCode = false;
 	public GenericValueConfigEntry(
 		ConfigCategoryTab<C> tab,
-		ValueConfigNode<C, T, T> valueNode,
-		Function<String, T> parser,
+		ValueConfigNode<C, V> valueNode,
+		Function<String, V> parser,
 		Predicate<String> validator
 	) {
 		super(tab, valueNode);
@@ -98,8 +98,8 @@ public abstract class GenericValueConfigEntry<C, T> extends ValueConfigEntry<C, 
 		int mouseX,
 		int mouseY,
 		boolean hovering,
-		float partialTick
+		float delta
 	) {
-		renderGui(gui, y, x, width, mouseX, mouseY, partialTick, undoButton, resetButton, inputField);
+		renderGui(gui, y, x, width, mouseX, mouseY, delta, undoButton, resetButton, inputField);
 	}
 }

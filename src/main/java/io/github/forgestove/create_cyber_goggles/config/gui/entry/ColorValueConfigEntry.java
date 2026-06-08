@@ -12,17 +12,17 @@ import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Pattern;
-public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer, Integer> {
+public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer> {
 	public static final Pattern HEX_PATTERN = Pattern.compile("[0-9A-Fa-f]*");
 	public final EditBox inputField;
 	public final Button pickerButton;
 	public final ColorPreviewWidget previewWidget;
 	public final boolean hasAlpha;
-	public ColorValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Integer, Integer> valueNode, boolean hasAlpha) {
-		super(tab, valueNode);
-		this.hasAlpha = hasAlpha;
-		inputField = new EditBox(tab.getMinecraft().font, 0, 0, WIDTH - 44, HEIGHT, this.valueNode.getTitle());
-		inputField.setMaxLength(hasAlpha ? 8 : 6);
+	public ColorValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Integer> node) {
+		super(tab, node);
+		hasAlpha = node.colorHasAlpha();
+		inputField = new EditBox(tab.getMinecraft().font, 0, 0, WIDTH - 44, HEIGHT, valueNode.getTitle());
+		inputField.setMaxLength(node.colorHasAlpha() ? 8 : 6);
 		inputField.setValue(formatColor(getValue()));
 		inputField.setFilter(s -> HEX_PATTERN.matcher(s).matches());
 		inputField.setResponder(this::onInputChange);
@@ -73,8 +73,8 @@ public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer,
 		int mouseX,
 		int mouseY,
 		boolean hovering,
-		float partialTick
+		float delta
 	) {
-		renderGui(gui, y, x, width, mouseX, mouseY, partialTick, undoButton, resetButton, previewWidget, pickerButton, inputField);
+		renderGui(gui, y, x, width, mouseX, mouseY, delta, undoButton, resetButton, previewWidget, pickerButton, inputField);
 	}
 }

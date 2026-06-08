@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 public final class Config {
 	private static final Map<String, ConfigHandler<?>> HANDLERS = new ConcurrentHashMap<>();
 	private static final Map<String, Class<?>> CONFIG_TYPES = new ConcurrentHashMap<>();
-	public static <T> T getConfig(Class<T> configClass, String id, Logger logger) {
+	public static <C> C getConfig(Class<C> configClass, String id, Logger logger) {
 		var handler = initializeIfNeeded(configClass, id, logger);
 		var config = handler.getConfig();
 		if (configClass.isInstance(config)) return configClass.cast(config);
@@ -30,16 +30,14 @@ public final class Config {
 		if (handler != null) return handler.createConfigScreen(parent);
 		throw new IllegalStateException("Config handler for id '" + id + "' is not initialized. Call getConfig(...) first.");
 	}
-	private static <T> ConfigHandler<?> initializeIfNeeded(Class<T> configClass, String id, Logger logger) {
+	private static <C> ConfigHandler<?> initializeIfNeeded(Class<C> configClass, String id, Logger logger) {
 		CONFIG_TYPES.compute(
 			id, (key, existingClass) -> {
 				if (existingClass == null || existingClass.equals(configClass)) return configClass;
-				throw new IllegalStateException("Config for id '"
-					+ id
-					+ "' is already initialized with "
-					+ existingClass.getName()
-					+ ", cannot reinitialize with "
-					+ configClass.getName());
+				throw new IllegalStateException("Config for id '%s' is already initialized with %s, cannot reinitialize with %s".formatted(id,
+					existingClass.getName(),
+					configClass.getName()
+				));
 			}
 		);
 		return HANDLERS.computeIfAbsent(

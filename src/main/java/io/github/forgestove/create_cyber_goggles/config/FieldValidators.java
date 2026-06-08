@@ -1,6 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.config;
 import io.github.forgestove.create_cyber_goggles.config.annotation.*;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode.*;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -9,58 +10,50 @@ import java.util.function.*;
 public final class FieldValidators {
 	private static final Map<Class<?>, ValidatorFactory<?>> VALIDATOR_FACTORIES = Map.of(
 		Integer.class,
-		(ValidatorFactory<Integer>) (builder, valueField) -> applyRangeValidator(
-			builder,
+		(ValidatorFactory<Integer>) valueField -> createRangeValidator(
 			valueField,
 			IntRange.class,
 			r -> makeRangeValidator(v -> v < r.min(), v -> v > r.max(), r.min(), r.max())
 		),
 		Long.class,
-		(ValidatorFactory<Long>) (builder, valueField) -> applyRangeValidator(
-			builder,
+		(ValidatorFactory<Long>) valueField -> createRangeValidator(
 			valueField,
 			LongRange.class,
 			r -> makeRangeValidator(v -> v < r.min(), v -> v > r.max(), r.min(), r.max())
 		),
 		Float.class,
-		(ValidatorFactory<Float>) (builder, valueField) -> applyRangeValidator(
-			builder,
+		(ValidatorFactory<Float>) valueField -> createRangeValidator(
 			valueField,
 			FloatRange.class,
 			r -> makeRangeValidator(v -> v < r.min(), v -> v > r.max(), r.min(), r.max())
 		),
 		Double.class,
-		(ValidatorFactory<Double>) (builder, valueField) -> applyRangeValidator(
-			builder,
+		(ValidatorFactory<Double>) valueField -> createRangeValidator(
 			valueField,
 			DoubleRange.class,
 			r -> makeRangeValidator(v -> v < r.min(), v -> v > r.max(), r.min(), r.max())
 		),
 		String.class,
-		(ValidatorFactory<String>) (builder, valueField) -> applyRangeValidator(
-			builder,
+		(ValidatorFactory<String>) valueField -> createRangeValidator(
 			valueField,
 			StringLength.class,
 			r -> makeRangeValidator(v -> v.length() < r.min(), v -> v.length() > r.max(), r.min(), r.max())
 		)
 	);
 	@SuppressWarnings("unchecked")
-	public static <T> void apply(Builder<?, T, T> builder, Class<? extends T> type, Field valueField) {
-		var factory = (ValidatorFactory<T>) VALIDATOR_FACTORIES.get(type);
-		if (factory == null) return;
-		factory.apply(builder, valueField);
+	public static <V> @Nullable ValueValidator<V> validatorFor(Class<? extends V> type, Field valueField) {
+		var factory = (ValidatorFactory<V>) VALIDATOR_FACTORIES.get(type);
+		return factory == null ? null : factory.create(valueField);
 	}
-	private static <T, A extends Annotation> void applyRangeValidator(
-		Builder<?, T, T> builder,
+	private static <V, A extends Annotation> @Nullable ValueValidator<V> createRangeValidator(
 		Field valueField,
 		Class<A> annotationType,
-		Function<A, ValueValidator<T>> validatorFactory
+		Function<A, ValueValidator<V>> validatorFactory
 	) {
 		var annotation = valueField.getAnnotation(annotationType);
-		if (annotation == null) return;
-		builder.validator(validatorFactory.apply(annotation));
+		return annotation == null ? null : validatorFactory.apply(annotation);
 	}
-	private static <T> ValueValidator<T> makeRangeValidator(Predicate<T> belowMin, Predicate<T> aboveMax, Object min, Object max) {
+	private static <V> ValueValidator<V> makeRangeValidator(Predicate<V> belowMin, Predicate<V> aboveMax, Object min, Object max) {
 		return value -> {
 			if (belowMin.test(value)) return Translation.VALIDATOR_MIN.copy().append(String.valueOf(min));
 			if (aboveMax.test(value)) return Translation.VALIDATOR_MAX.copy().append(String.valueOf(max));
@@ -69,6 +62,6 @@ public final class FieldValidators {
 	}
 	@FunctionalInterface
 	private interface ValidatorFactory<T> {
-		void apply(Builder<?, T, T> builder, Field valueField);
+		ValueValidator<T> create(Field valueField);
 	}
 }

@@ -12,18 +12,18 @@ import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.*;
 
 import java.util.*;
-public abstract class ValueConfigEntry<C, T, V> extends ConfigEntry {
+public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 	public final Button resetButton;
 	public final Button undoButton;
 	public final ConfigCategoryTab<C> tab;
 	public final List<AbstractWidget> children = new ArrayList<>();
-	public final ValueConfigNode<C, T, V> valueNode;
+	public final ValueConfigNode<C, V> valueNode;
 	public final Component label;
 	@Nullable public final List<FormattedCharSequence> tooltip;
 	public List<FormattedCharSequence> tooltipWithError;
 	@Nullable public Component validationError;
 	public boolean hasChanged;
-	public ValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, T, V> valueNode) {
+	public ValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, V> valueNode) {
 		this.tab = tab;
 		label = valueNode.getTitle().copy().withStyle(ChatFormatting.WHITE);
 		var font = tab.getMinecraft().font;
@@ -88,22 +88,6 @@ public abstract class ValueConfigEntry<C, T, V> extends ConfigEntry {
 		if (validationError != null) errorTooltip.add(validationError.copy().withStyle(ChatFormatting.RED).getVisualOrderText());
 		return errorTooltip;
 	}
-	public void renderLabel(GuiGraphics gui, int x, int y) {
-		var l = GuiUtil.styleAsState(label, hasError(), hasChanged);
-		gui.drawString(tab.getMinecraft().font, l.getVisualOrderText(), x, y + 5, -1, false);
-	}
-	public void layoutRightToLeft(int x, int y, int entryWidth, AbstractWidget... widgets) {
-		var right = x + entryWidth;
-		for (var widget : widgets) {
-			right -= widget.getWidth();
-			widget.setX(right);
-			widget.setY(y);
-			right -= GAP;
-		}
-	}
-	public void renderWidgets(GuiGraphics gui, int mouseX, int mouseY, float delta, Renderable... widgets) {
-		for (var widget : widgets) widget.render(gui, mouseX, mouseY, delta);
-	}
 	public void renderGui(
 		@NotNull GuiGraphics gui,
 		int y,
@@ -111,11 +95,18 @@ public abstract class ValueConfigEntry<C, T, V> extends ConfigEntry {
 		int width,
 		int mouseX,
 		int mouseY,
-		float partialTick,
+		float delta,
 		AbstractWidget... widgets
 	) {
-		renderLabel(gui, x, y);
-		layoutRightToLeft(x, y, width, widgets);
-		renderWidgets(gui, mouseX, mouseY, partialTick, widgets);
+		var label = GuiUtil.styleAsState(this.label, hasError(), hasChanged);
+		gui.drawString(tab.getMinecraft().font, label.getVisualOrderText(), x, y + 5, -1, false);
+		var right = x + width;
+		for (var widget1 : widgets) {
+			right -= widget1.getWidth();
+			widget1.setX(right);
+			widget1.setY(y);
+			right -= GAP;
+		}
+		for (var widget : widgets) widget.render(gui, mouseX, mouseY, delta);
 	}
 }

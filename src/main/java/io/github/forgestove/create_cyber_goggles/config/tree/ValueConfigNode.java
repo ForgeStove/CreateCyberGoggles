@@ -1,30 +1,24 @@
 package io.github.forgestove.create_cyber_goggles.config.tree;
+import io.github.forgestove.create_cyber_goggles.config.annotation.ColorValue;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.*;
 
-import java.util.Objects;
-public final class ValueConfigNode<C, T, V> implements ConfigNode<C> {
+import java.util.*;
+public final class ValueConfigNode<C, V> implements ConfigNode<C> {
 	private String name;
 	private Component title;
 	private Component tooltip;
-	private Class<? extends T> type;
 	private Class<? extends V> valueType;
 	private boolean requiresRestart;
-	private boolean isColorValue;
-	private boolean colorHasAlpha;
+	@Nullable private ColorValue colorValue;
 	private ValueReader<C, V> valueReader;
 	private ValueWriter<C, V> valueWriter;
 	@Nullable private ValueValidator<V> validator;
 	private V defaultValue;
 	private V editingValue;
 	private CategoryConfigNode<C> category;
-	private ValueConfigNode() {
-	}
-	public static <C, T, V> Builder<C, T, V> builder() {
+	public static <C, V> Builder<C, V> builder() {
 		return new Builder<>();
-	}
-	public Class<? extends T> getType() {
-		return type;
 	}
 	@NotNull
 	public Class<? extends V> getValueType() {
@@ -80,10 +74,10 @@ public final class ValueConfigNode<C, T, V> implements ConfigNode<C> {
 		return requiresRestart && !isActiveValue(config);
 	}
 	public boolean isColorValue() {
-		return isColorValue;
+		return colorValue != null;
 	}
 	public boolean colorHasAlpha() {
-		return colorHasAlpha;
+		return isColorValue() && colorValue.hasAlpha();
 	}
 	@Override
 	public void copy(C from, C to) {
@@ -103,75 +97,68 @@ public final class ValueConfigNode<C, T, V> implements ConfigNode<C> {
 	}
 	public interface ValueValidator<V> {
 		@Nullable Component validate(V value);
-	}
-	@SuppressWarnings(
-		{
-			"UnusedReturnValue"
+		default ValueValidator<V> and(ValueValidator<V> next) {
+			Objects.requireNonNull(next);
+			return value -> {
+				var error = validate(value);
+				return error != null ? error : next.validate(value);
+			};
 		}
-	)
-	public static class Builder<C, T, V> {
-		private ValueConfigNode<C, T, V> node;
+	}
+	public static class Builder<C, V> {
+		private ValueConfigNode<C, V> node;
 		private Builder() {
 			node = new ValueConfigNode<>();
 		}
-		public Builder<C, T, V> type(Class<? extends T> type) {
-			node.type = type;
-			return this;
-		}
-		public Builder<C, T, V> valueType(Class<? extends V> valueType) {
+		public Builder<C, V> valueType(Class<? extends V> valueType) {
 			node.valueType = valueType;
 			return this;
 		}
-		public Builder<C, T, V> name(String name) {
+		public Builder<C, V> name(String name) {
 			node.name = name;
 			return this;
 		}
-		public Builder<C, T, V> title(Component title) {
+		public Builder<C, V> title(Component title) {
 			node.title = title;
 			return this;
 		}
-		public Builder<C, T, V> tooltip(Component tooltip) {
+		public Builder<C, V> tooltip(Component tooltip) {
 			node.tooltip = tooltip;
 			return this;
 		}
-		public Builder<C, T, V> defaultValue(V defaultValue) {
+		public Builder<C, V> defaultValue(V defaultValue) {
 			node.defaultValue = defaultValue;
 			return this;
 		}
-		public Builder<C, T, V> requiresRestart(boolean requiresRestart) {
+		public Builder<C, V> requiresRestart(boolean requiresRestart) {
 			node.requiresRestart = requiresRestart;
 			return this;
 		}
-		public Builder<C, T, V> colorValue(boolean isColorValue, boolean hasAlpha) {
-			node.isColorValue = isColorValue;
-			node.colorHasAlpha = hasAlpha;
+		public Builder<C, V> colorValue(ColorValue colorValue) {
+			node.colorValue = colorValue;
 			return this;
 		}
-		public Builder<C, T, V> valueReader(ValueReader<C, V> valueReader) {
+		public Builder<C, V> valueReader(ValueReader<C, V> valueReader) {
 			node.valueReader = valueReader;
 			return this;
 		}
-		public Builder<C, T, V> valueWriter(ValueWriter<C, V> valueWriter) {
+		public Builder<C, V> valueWriter(ValueWriter<C, V> valueWriter) {
 			node.valueWriter = valueWriter;
 			return this;
 		}
-		public Builder<C, T, V> validator(ValueValidator<V> validator) {
-			node.validator = validator;
+		public Builder<C, V> validator(ValueValidator<V> validator) {
+			if (validator == null) return this;
+			node.validator = node.validator == null ? validator : node.validator.and(validator);
 			return this;
 		}
-		public Builder<C, T, V> category(CategoryConfigNode<C> category) {
+		public Builder<C, V> category(CategoryConfigNode<C> category) {
 			node.category = category;
 			return this;
 		}
-		public ValueConfigNode<C, T, V> build() {
+		public ValueConfigNode<C, V> build() {
 			var n = node;
-			Objects.requireNonNull(n.name);
-			Objects.requireNonNull(n.type);
-			Objects.requireNonNull(n.valueType);
-			Objects.requireNonNull(n.title);
-			Objects.requireNonNull(n.valueReader);
-			Objects.requireNonNull(n.valueWriter);
-			Objects.requireNonNull(n.category);
+			for (var value : List.of(n.name, n.valueType, n.title, n.valueReader, n.valueWriter, n.category))
+				Objects.requireNonNull(value);
 			node = null;
 			return n;
 		}

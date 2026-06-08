@@ -10,12 +10,12 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key, Key> {
+public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key> {
 	private final Button bindButton;
 	private boolean capturing;
 	private KeybindState state = KeybindState.BOUND;
 	private List<Component> conflictUsages = List.of();
-	public KeybindValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Key, Key> valueNode) {
+	public KeybindValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Key> valueNode) {
 		super(tab, valueNode);
 		bindButton = Button.builder(
 			Component.empty(), b -> {
@@ -84,9 +84,9 @@ public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key, K
 		int mouseX,
 		int mouseY,
 		boolean hovering,
-		float partialTick
+		float delta
 	) {
-		renderGui(gui, y, x, width, mouseX, mouseY, partialTick, undoButton, resetButton, bindButton);
+		renderGui(gui, y, x, width, mouseX, mouseY, delta, undoButton, resetButton, bindButton);
 	}
 	public enum KeybindState {
 		UNBOUND(ChatFormatting.DARK_GRAY),

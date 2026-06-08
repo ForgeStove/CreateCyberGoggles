@@ -6,11 +6,11 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
-public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum<?>, Enum<?>> {
+public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum<?>> {
 	private final Button dropdownButton;
 	private final String modId;
 	private final String enumClassName;
-	public EnumValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Enum<?>, Enum<?>> valueNode, String modId) {
+	public EnumValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Enum<?>> valueNode, String modId) {
 		super(tab, valueNode);
 		this.modId = modId;
 		enumClassName = valueNode.getValueType().getSimpleName();
@@ -53,22 +53,13 @@ public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum<?>, 
 		int index,
 		int y,
 		int x,
-		int entryWidth,
-		int entryHeight,
+		int width,
+		int height,
 		int mouseX,
 		int mouseY,
 		boolean hovered,
 		float delta
 	) {
-		renderLabel(gui, x, y);
-		undoButton.setX(x + entryWidth - undoButton.getWidth());
-		resetButton.setX(undoButton.getX() - resetButton.getWidth() - GAP);
-		dropdownButton.setX(resetButton.getX() - dropdownButton.getWidth() - GAP);
-		undoButton.setY(y);
-		resetButton.setY(y);
-		dropdownButton.setY(y);
-		undoButton.render(gui, mouseX, mouseY, delta);
-		resetButton.render(gui, mouseX, mouseY, delta);
-		dropdownButton.render(gui, mouseX, mouseY, delta);
+		renderGui(gui, y, x, width, mouseX, mouseY, delta, undoButton, resetButton, dropdownButton);
 	}
 }

@@ -12,6 +12,7 @@ import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.*;
 
+import java.awt.Color;
 import java.util.*;
 import java.util.function.Consumer;
 public final class ConfigCategoryTab<C> implements Tab {
@@ -19,9 +20,7 @@ public final class ConfigCategoryTab<C> implements Tab {
 		Boolean.class,
 		(tab, node) -> new BooleanValueConfigEntry<>(tab, cast(node)),
 		Integer.class,
-		(tab, node) -> node.isColorValue()
-			? new ColorValueConfigEntry<>(tab, cast(node), node.colorHasAlpha())
-			: new IntegerValueConfigEntry<>(tab, cast(node)),
+		(tab, node) -> node.isColorValue() ? new ColorValueConfigEntry<>(tab, cast(node)) : new IntegerValueConfigEntry<>(tab, cast(node)),
 		Long.class,
 		(tab, node) -> new LongValueConfigEntry<>(tab, cast(node)),
 		Float.class,
@@ -30,6 +29,8 @@ public final class ConfigCategoryTab<C> implements Tab {
 		(tab, node) -> new DoubleValueConfigEntry<>(tab, cast(node)),
 		String.class,
 		(tab, node) -> new StringValueConfigEntry<>(tab, cast(node)),
+		Color.class,
+		(tab, node) -> new ColorValueConfigEntry<>(tab, cast(node)),
 		Key.class,
 		(tab, node) -> new KeybindValueConfigEntry<>(tab, cast(node))
 	);
@@ -48,7 +49,7 @@ public final class ConfigCategoryTab<C> implements Tab {
 		title = category.getTitle();
 		List<ConfigEntry> entries = new ArrayList<>();
 		category.getChildren().forEach(node -> {
-			if (node instanceof ValueConfigNode<C, ?, ?> valueNode) entries.add(createValueEntry(valueNode));
+			if (node instanceof ValueConfigNode<C, ?> valueNode) entries.add(createValueEntry(valueNode));
 			else if (node instanceof CategoryConfigNode<C> categoryNode) entries.addAll(createSubCategoryEntries(categoryNode));
 		});
 		list = new ConfigEntryList(
@@ -62,8 +63,8 @@ public final class ConfigCategoryTab<C> implements Tab {
 		);
 	}
 	@SuppressWarnings("unchecked")
-	private static <C, T, V> ValueConfigNode<C, T, V> cast(ValueConfigNode<C, ?, ?> node) {
-		return (ValueConfigNode<C, T, V>) node;
+	private static <C, V> ValueConfigNode<C, V> cast(ValueConfigNode<C, ?> node) {
+		return (ValueConfigNode<C, V>) node;
 	}
 	@NotNull
 	@Override
@@ -79,10 +80,9 @@ public final class ConfigCategoryTab<C> implements Tab {
 		list.setRectangle(screenRectangle.width(), screenRectangle.height(), screenRectangle.left(), screenRectangle.top());
 	}
 	@SuppressWarnings("unchecked")
-	private <T, V> ConfigEntry createValueEntry(ValueConfigNode<C, T, V> valueNode) {
-		var type = valueNode.getType();
-		if (Enum.class.isAssignableFrom(type))
-			return new EnumValueConfigEntry<>(this, (ValueConfigNode<C, Enum<?>, Enum<?>>) valueNode, modId);
+	private ConfigEntry createValueEntry(ValueConfigNode<C, ?> valueNode) {
+		var type = valueNode.getValueType();
+		if (Enum.class.isAssignableFrom(type)) return new EnumValueConfigEntry<>(this, (ValueConfigNode<C, Enum<?>>) valueNode, modId);
 		var factory = (ConfigEntryFactory<C>) ENTRY_FACTORIES.get(type);
 		if (factory != null) return factory.create(this, valueNode);
 		return new TextConfigEntry(this, Translation.UNSUPPORTED_TYPE.copy().append(type.getSimpleName()).withStyle(ChatFormatting.RED));
@@ -91,7 +91,7 @@ public final class ConfigCategoryTab<C> implements Tab {
 		var entries = new ArrayList<ConfigEntry>(categoryNode.getChildren().size() + 1);
 		entries.add(new CategoryTitleConfigEntry(this, categoryNode.getTitle()));
 		for (var node : categoryNode.getChildren())
-			if (node instanceof ValueConfigNode<C, ?, ?> valueNode) entries.add(createValueEntry(valueNode));
+			if (node instanceof ValueConfigNode<C, ?> valueNode) entries.add(createValueEntry(valueNode));
 		return entries;
 	}
 	@NotNull
@@ -128,6 +128,6 @@ public final class ConfigCategoryTab<C> implements Tab {
 	}
 	@FunctionalInterface
 	private interface ConfigEntryFactory<C> {
-		@Nullable ConfigEntry create(ConfigCategoryTab<C> tab, ValueConfigNode<C, ?, ?> node);
+		@Nullable ConfigEntry create(ConfigCategoryTab<C> tab, ValueConfigNode<C, ?> node);
 	}
 }

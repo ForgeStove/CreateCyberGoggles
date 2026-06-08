@@ -38,7 +38,7 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		super.renderWidget(gui, mouseX, mouseY, delta);
 		var entry = getHovered();
 		if (entry == null) return;
-		if (entry instanceof ValueConfigEntry<?, ?, ?> valueEntry) if (valueEntry.resetButton.isHovered()) {
+		if (entry instanceof ValueConfigEntry<?, ?> valueEntry) if (valueEntry.resetButton.isHovered()) {
 			tab.getScreen().setTooltipForNextRenderPass(Translation.RESET_TOOLTIP);
 			return;
 		} else if (valueEntry.undoButton.isHovered()) {

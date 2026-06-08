@@ -193,8 +193,7 @@ public final class ConfigScreen<C> extends Screen {
 		}
 		if (modMappings.isEmpty()) return null;
 		var builder = CategoryConfigNode.<C>builder().title(Translation.KEYBINDS_LABEL);
-		modMappings.forEach(mapping -> builder.<Key, Key>value(value -> value.type(Key.class)
-			.valueType(Key.class)
+		modMappings.forEach(mapping -> builder.<Key>value(value -> value.valueType(Key.class)
 			.name(mapping.getName())
 			.title(Component.translatable(mapping.getName()))
 			.defaultValue(mapping.getDefaultKey())

@@ -82,7 +82,7 @@ public final class CategoryConfigNode<C> implements ConfigNode<C> {
 			node.tooltip = tooltip;
 			return this;
 		}
-		public <T, V> Builder<C> value(UnaryOperator<ValueConfigNode.Builder<C, T, V>> valueBuilder) {
+		public <V> Builder<C> value(UnaryOperator<ValueConfigNode.Builder<C, V>> valueBuilder) {
 			childrenBuilder.add(valueBuilder.apply(ValueConfigNode.builder()).category(node).build());
 			return this;
 		}

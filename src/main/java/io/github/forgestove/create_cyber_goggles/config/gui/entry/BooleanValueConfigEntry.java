@@ -8,9 +8,9 @@ import net.minecraft.network.chat.CommonComponents;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
-public final class BooleanValueConfigEntry<C> extends ValueConfigEntry<C, Boolean, Boolean> {
+public final class BooleanValueConfigEntry<C> extends ValueConfigEntry<C, Boolean> {
 	private final CycleButton<Boolean> valueButton;
-	public BooleanValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Boolean, Boolean> valueNode) {
+	public BooleanValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Boolean> valueNode) {
 		super(tab, valueNode);
 		valueButton = CycleButton.booleanBuilder(
 				CommonComponents.GUI_YES.copy().withStyle(ChatFormatting.GREEN),
@@ -39,8 +39,8 @@ public final class BooleanValueConfigEntry<C> extends ValueConfigEntry<C, Boolea
 		int mouseX,
 		int mouseY,
 		boolean hovering,
-		float partialTick
+		float delta
 	) {
-		renderGui(gui, y, x, width, mouseX, mouseY, partialTick, undoButton, resetButton, valueButton);
+		renderGui(gui, y, x, width, mouseX, mouseY, delta, undoButton, resetButton, valueButton);
 	}
 }

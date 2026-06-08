@@ -6,14 +6,14 @@ import io.github.forgestove.create_cyber_goggles.config.gui.widget.ColorPreviewW
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.Color;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.function.IntConsumer;
 import java.util.regex.Pattern;
 public final class ColorPickerScreen extends Screen {
@@ -30,9 +30,7 @@ public final class ColorPickerScreen extends Screen {
 	private float saturation = 1f;
 	private float brightness = 1f;
 	private int alpha = 255;
-	private boolean draggingSV;
-	private boolean draggingHue;
-	private boolean draggingAlpha;
+	private DragMode dragMode = DragMode.NONE;
 	private int pickerX;
 	private int pickerY;
 	private int svX;
@@ -219,20 +217,20 @@ public final class ColorPickerScreen extends Screen {
 		if (button != 0) return super.mouseClicked(mouseX, mouseY, button);
 		if (getSBArea().contains(mouseX, mouseY)) {
 			setFocused(null);
-			draggingSV = true;
+			dragMode = DragMode.SV;
 			updateFromMouse((int) mouseX, (int) mouseY);
 			return true;
 		}
 		var hueBarArea = getHueBarArea();
 		if (hueBarArea.contains(mouseX, mouseY)) {
 			setFocused(null);
-			draggingHue = true;
+			dragMode = DragMode.HUE;
 			updateFromMouse((int) mouseX, (int) mouseY);
 			return true;
 		}
 		if (hasAlpha && getAlphaBarArea().contains(mouseX, mouseY)) {
 			setFocused(null);
-			draggingAlpha = true;
+			dragMode = DragMode.ALPHA;
 			updateFromMouse((int) mouseX, (int) mouseY);
 			return true;
 		}
@@ -242,7 +240,7 @@ public final class ColorPickerScreen extends Screen {
 	}
 	@Override
 	public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-		if (button == 0 && (draggingSV || draggingHue || draggingAlpha)) {
+		if (button == 0 && dragMode != DragMode.NONE) {
 			updateFromMouse((int) mouseX, (int) mouseY);
 			return true;
 		}
@@ -250,19 +248,15 @@ public final class ColorPickerScreen extends Screen {
 	}
 	@Override
 	public boolean mouseReleased(double mouseX, double mouseY, int button) {
-		if (button == 0) {
-			draggingSV = false;
-			draggingHue = false;
-			draggingAlpha = false;
-		}
+		if (button == 0) dragMode = DragMode.NONE;
 		return super.mouseReleased(mouseX, mouseY, button);
 	}
 	private void updateFromMouse(int mouseX, int mouseY) {
-		if (draggingSV) {
+		if (dragMode == DragMode.SV) {
 			saturation = Mth.clamp((float) (mouseX - svX) / (PICKER_SIZE - 1), 0f, 1f);
 			brightness = Mth.clamp(1f - (float) (mouseY - svY) / (PICKER_SIZE - 1), 0f, 1f);
-		} else if (draggingHue) hue = Mth.clamp((float) (mouseY - svY) / (PICKER_SIZE - 1), 0f, 1f);
-		else if (draggingAlpha) alpha = 255 - Mth.clamp((mouseY - svY) * 255 / (PICKER_SIZE - 1), 0, 255);
+		} else if (dragMode == DragMode.HUE) hue = Mth.clamp((float) (mouseY - svY) / (PICKER_SIZE - 1), 0f, 1f);
+		else if (dragMode == DragMode.ALPHA) alpha = 255 - Mth.clamp((mouseY - svY) * 255 / (PICKER_SIZE - 1), 0, 255);
 		updateHexInput();
 	}
 	@Override
@@ -313,5 +307,11 @@ public final class ColorPickerScreen extends Screen {
 	public void resize(@NotNull Minecraft minecraft, int width, int height) {
 		if (parent != null) parent.resize(minecraft, width, height);
 		super.resize(minecraft, width, height);
+	}
+	public enum DragMode {
+		NONE,
+		SV,
+		HUE,
+		ALPHA
 	}
 }

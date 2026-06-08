@@ -204,22 +204,27 @@ public final class ColorPickerScreen extends Screen {
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		if (button != 0) return super.mouseClicked(mouseX, mouseY, button);
 		if (inside(mouseX, mouseY, svX, svY, PICKER_SIZE)) {
+			setFocused(null);
 			draggingSV = true;
 			updateFromMouse((int) mouseX, (int) mouseY);
 			return true;
 		}
 		var hueBarX = getHueBarX();
 		if (inside(mouseX, mouseY, hueBarX, svY, BAR_WIDTH)) {
+			setFocused(null);
 			draggingHue = true;
 			updateFromMouse((int) mouseX, (int) mouseY);
 			return true;
 		}
 		if (hasAlpha && inside(mouseX, mouseY, getAlphaBarX(), svY, BAR_WIDTH)) {
+			setFocused(null);
 			draggingAlpha = true;
 			updateFromMouse((int) mouseX, (int) mouseY);
 			return true;
 		}
-		return super.mouseClicked(mouseX, mouseY, button);
+		var handled = super.mouseClicked(mouseX, mouseY, button);
+		if (!handled) setFocused(null);
+		return handled;
 	}
 	@Override
 	public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {

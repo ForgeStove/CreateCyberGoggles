@@ -10,15 +10,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 public final class BooleanValueConfigEntry<C> extends ValueConfigEntry<C, Boolean> {
 	private final CycleButton<Boolean> valueButton;
-	public BooleanValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Boolean> valueNode) {
-		super(tab, valueNode);
+	public BooleanValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Boolean> node) {
+		super(tab, node);
 		valueButton = CycleButton.booleanBuilder(
 				CommonComponents.GUI_YES.copy().withStyle(ChatFormatting.GREEN),
 				CommonComponents.GUI_NO.copy().withStyle(ChatFormatting.RED)
 			)
 			.withInitialValue(getValue())
 			.displayOnlyValue()
-			.create(0, 0, WIDTH, HEIGHT, valueNode.getTitle(), (b, value) -> setValue(value));
+			.create(0, 0, WIDTH, HEIGHT, node.getTitle(), (b, value) -> setValue(value));
 		children.add(valueButton);
 	}
 	@Override

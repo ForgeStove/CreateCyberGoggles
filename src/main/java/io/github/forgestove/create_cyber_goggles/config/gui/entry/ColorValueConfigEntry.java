@@ -20,9 +20,10 @@ public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer>
 	public final boolean hasAlpha;
 	public ColorValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Integer> node) {
 		super(tab, node);
-		hasAlpha = node.colorHasAlpha();
+		var hasAlpha = node.colorHasAlpha();
+		this.hasAlpha = hasAlpha;
 		inputField = new EditBox(tab.getMinecraft().font, 0, 0, WIDTH - 44, HEIGHT, valueNode.getTitle());
-		inputField.setMaxLength(node.colorHasAlpha() ? 8 : 6);
+		inputField.setMaxLength(hasAlpha ? 8 : 6);
 		inputField.setValue(formatColor(getValue()));
 		inputField.setFilter(s -> HEX_PATTERN.matcher(s).matches());
 		inputField.setResponder(this::onInputChange);

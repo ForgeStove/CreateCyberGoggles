@@ -61,7 +61,7 @@ public final class FieldValidators {
 		};
 	}
 	@FunctionalInterface
-	private interface ValidatorFactory<T> {
-		ValueValidator<T> create(Field valueField);
+	private interface ValidatorFactory<V> {
+		ValueValidator<V> create(Field valueField);
 	}
 }

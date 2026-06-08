@@ -10,10 +10,10 @@ public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum<?>> 
 	private final Button dropdownButton;
 	private final String modId;
 	private final String enumClassName;
-	public EnumValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Enum<?>> valueNode, String modId) {
-		super(tab, valueNode);
+	public EnumValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Enum<?>> node, String modId) {
+		super(tab, node);
 		this.modId = modId;
-		enumClassName = valueNode.getValueType().getSimpleName();
+		enumClassName = node.getValueType().getSimpleName();
 		dropdownButton = Button.builder(getDisplayComponent(getValue()), this::openDropdown).size(WIDTH, HEIGHT).build();
 		children.add(dropdownButton);
 	}

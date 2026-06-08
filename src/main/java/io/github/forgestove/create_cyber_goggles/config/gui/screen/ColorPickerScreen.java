@@ -278,6 +278,7 @@ public final class ColorPickerScreen extends Screen {
 		var home = hasAlpha && InputConstants.isKeyDown(window, InputConstants.KEY_HOME);
 		var end = hasAlpha && InputConstants.isKeyDown(window, InputConstants.KEY_END);
 		var handled = up || down || left || right || pageUp || pageDown || home || end;
+		if (hexInput != null && hexInput.isFocused() && handled) return super.keyPressed(keyCode, scanCode, modifiers);
 		if (!handled) return super.keyPressed(keyCode, scanCode, modifiers);
 		if (up) brightness = Mth.clamp(brightness + step, 0f, 1f);
 		if (down) brightness = Mth.clamp(brightness - step, 0f, 1f);

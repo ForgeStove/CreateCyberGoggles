@@ -23,22 +23,22 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 	public List<FormattedCharSequence> tooltipWithError;
 	@Nullable public Component validationError;
 	public boolean hasChanged;
-	public ValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, V> valueNode) {
+	public ValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, V> node) {
 		this.tab = tab;
-		label = valueNode.getTitle().copy().withStyle(ChatFormatting.WHITE);
+		label = node.getTitle().copy().withStyle(ChatFormatting.WHITE);
 		var font = tab.getMinecraft().font;
-		tooltip = valueNode.getTooltip() == null ? null : font.split(valueNode.getTooltip(), 350);
+		tooltip = node.getTooltip() == null ? null : font.split(node.getTooltip(), 350);
 		tooltipWithError = getTooltipWithError();
-		this.valueNode = valueNode;
+		valueNode = node;
 		resetButton = Button.builder(Translation.RESET_LABEL, b -> resetToDefault())
 			.size(Math.max(font.width(Translation.RESET_LABEL) + 6, SIZE), SIZE)
 			.build();
-		resetButton.active = !valueNode.isDefaultValue(this.tab.getConfig());
+		resetButton.active = !node.isDefaultValue(this.tab.getConfig());
 		children.add(resetButton);
 		undoButton = Button.builder(Translation.UNDO_LABEL, b -> resetToActive())
 			.size(Math.max(font.width(Translation.UNDO_LABEL) + 6, SIZE), SIZE)
 			.build();
-		undoButton.active = !valueNode.isActiveValue(this.tab.getConfig());
+		undoButton.active = !node.isActiveValue(this.tab.getConfig());
 		children.add(undoButton);
 	}
 	public void resetToDefault() {

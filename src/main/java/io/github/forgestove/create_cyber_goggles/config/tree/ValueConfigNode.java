@@ -57,7 +57,7 @@ public final class ValueConfigNode<C, V> implements ConfigNode<C> {
 		return Objects.equals(getActiveValue(config), getEditingValue(config));
 	}
 	@Override
-	public Component validate(C config) {
+	public @Nullable Component validate(C config) {
 		return validator == null ? null : validator.validate(getEditingValue(config));
 	}
 	@NotNull
@@ -147,8 +147,7 @@ public final class ValueConfigNode<C, V> implements ConfigNode<C> {
 			return this;
 		}
 		public Builder<C, V> validator(ValueValidator<V> validator) {
-			if (validator == null) return this;
-			node.validator = node.validator == null ? validator : node.validator.and(validator);
+			node.validator = validator;
 			return this;
 		}
 		public Builder<C, V> category(CategoryConfigNode<C> category) {

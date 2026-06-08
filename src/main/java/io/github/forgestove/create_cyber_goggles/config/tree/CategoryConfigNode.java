@@ -49,10 +49,9 @@ public final class CategoryConfigNode<C> implements ConfigNode<C> {
 		Component error = null;
 		for (var node : children) {
 			var result = node.validate(config);
-			if (result != null) {
-				if (error != null) return Translation.MULTIPLE_ERRORS;
-				error = result;
-			}
+			if (result == null) continue;
+			if (error == null) error = result;
+			else return Translation.MULTIPLE_ERRORS;
 		}
 		return error;
 	}

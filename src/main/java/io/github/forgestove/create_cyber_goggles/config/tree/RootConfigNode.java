@@ -1,16 +1,14 @@
 package io.github.forgestove.create_cyber_goggles.config.tree;
 import com.google.common.collect.ImmutableList;
-import io.github.forgestove.create_cyber_goggles.config.Translation;
+import io.github.forgestove.create_cyber_goggles.config.*;
 import io.github.forgestove.create_cyber_goggles.config.annotation.*;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode.*;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.*;
 
-import java.lang.invoke.*;
-import java.lang.reflect.*;
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.function.Predicate;
 public final class RootConfigNode<C> implements ConfigNode<C> {
 	private final ImmutableList<CategoryConfigNode<C>> categories;
 	private RootConfigNode(ImmutableList<CategoryConfigNode<C>> categories) {
@@ -19,13 +17,11 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 	public static <C> RootConfigNode<C> create(C defaultConfig, String modId) {
 		return new Builder<>(defaultConfig, modId).build();
 	}
-	@NotNull
-	public Component getTitle() {
+	public @NotNull Component getTitle() {
 		return Component.empty();
 	}
-	@Nullable
 	@Override
-	public Component getTooltip() {
+	public @Nullable Component getTooltip() {
 		return null;
 	}
 	@Override
@@ -48,9 +44,8 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 	public boolean isActiveValue(C config) {
 		return categories.stream().allMatch(node -> node.isActiveValue(config));
 	}
-	@Nullable
 	@Override
-	public Component validate(C config) {
+	public @Nullable Component validate(C config) {
 		Component error = null;
 		for (var node : categories) {
 			var result = node.validate(config);
@@ -73,65 +68,11 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 		categories.forEach(node -> node.writeEditingToConfig(config));
 	}
 	private static class Builder<C> {
-		private static final Map<Class<?>, ValidatorFactory<?>> VALIDATOR_FACTORIES = Map.of(
-			Integer.class, (ValidatorFactory<Integer>) (b, f) -> {
-				var range = f.getAnnotation(IntRange.class);
-				if (range != null) b.validator(makeRangeValidator(
-					(Integer v) -> v < range.min(),
-					(Integer v) -> v > range.max(),
-					range.min(),
-					range.max()
-				));
-			}, Long.class, (ValidatorFactory<Long>) (b, f) -> {
-				var range = f.getAnnotation(LongRange.class);
-				if (range != null)
-					b.validator(makeRangeValidator((Long v) -> v < range.min(), (Long v) -> v > range.max(), range.min(), range.max()));
-			}, Float.class, (ValidatorFactory<Float>) (b, f) -> {
-				var range = f.getAnnotation(FloatRange.class);
-				if (range != null)
-					b.validator(makeRangeValidator((Float v) -> v < range.min(), (Float v) -> v > range.max(), range.min(), range.max()));
-			}, Double.class, (ValidatorFactory<Double>) (b, f) -> {
-				var range = f.getAnnotation(DoubleRange.class);
-				if (range != null)
-					b.validator(makeRangeValidator((Double v) -> v < range.min(), (Double v) -> v > range.max(), range.min(),
-						range.max()));
-			}, String.class, (ValidatorFactory<String>) (b, f) -> {
-				var strLen = f.getAnnotation(StringLength.class);
-				if (strLen != null) b.validator(makeRangeValidator(
-					(String v) -> v.length() < strLen.min(),
-					(String v) -> v.length() > strLen.max(),
-					strLen.min(),
-					strLen.max()
-				));
-			}
-		);
 		private final String id;
-		private Object defaultConfig;
+		private C defaultConfig;
 		private Builder(C defaultConfig, String id) {
 			this.defaultConfig = defaultConfig;
 			this.id = id;
-		}
-		private static <T> ValueValidator<T> makeRangeValidator(Predicate<T> belowMin, Predicate<T> aboveMax, Object min, Object max) {
-			return value -> {
-				if (belowMin.test(value)) return Translation.VALIDATOR_MIN.copy().append(String.valueOf(min));
-				if (aboveMax.test(value)) return Translation.VALIDATOR_MAX.copy().append(String.valueOf(max));
-				return null;
-			};
-		}
-		private static VarHandle varHandle(Field field) {
-			try {
-				return MethodHandles.privateLookupIn(field.getDeclaringClass(), MethodHandles.lookup()).unreflectVarHandle(field);
-			} catch (IllegalAccessException e) {
-				throw new IllegalArgumentException("Cannot access field: " + field.getName(), e);
-			}
-		}
-		private static Object getFieldValue(Field field, Object target) {
-			try {
-				field.setAccessible(true);
-				return field.get(target);
-			} catch (IllegalAccessException | InaccessibleObjectException | SecurityException e) {
-				throw new IllegalArgumentException("Failed to access field: " + field.getName(), e);
-			}
 		}
 		@NotNull
 		public RootConfigNode<C> build() {
@@ -146,7 +87,7 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 			return new RootConfigNode<>(categories);
 		}
 		private CategoryConfigNode<C> createCategoryNode(Field categoryField) {
-			var defaultCategory = getFieldValue(categoryField, defaultConfig);
+			var defaultCategory = FieldAccess.getFieldValue(categoryField, defaultConfig);
 			var categoryBuilder = CategoryConfigNode.<C>builder()
 				.title(Component.translatable(id + ".config.category." + categoryField.getName()));
 			for (var valueField : categoryField.getType().getDeclaredFields())
@@ -159,10 +100,9 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 			Field valueField,
 			CategoryConfigNode.Builder<C> categoryBuilder
 		) {
-			var defaultValue = getFieldValue(valueField, defaultCategory);
+			var defaultValue = FieldAccess.getFieldValue(valueField, defaultCategory);
 			addSingleValueField(defaultValue.getClass(), defaultValue, categoryField, valueField, categoryBuilder);
 		}
-		@SuppressWarnings("unchecked")
 		private <T> void addSingleValueField(
 			Class<? extends T> type,
 			T defaultValue,
@@ -184,36 +124,19 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 					.requiresRestart(valueField.isAnnotationPresent(RequiresRestart.class));
 				var colorAnnotation = valueField.getAnnotation(ColorValue.class);
 				if (colorAnnotation != null) valueBuilder.colorValue(true, colorAnnotation.hasAlpha());
-				var factory = (ValidatorFactory<T>) VALIDATOR_FACTORIES.get(type);
-				if (factory != null) factory.apply(valueBuilder, valueField);
+				FieldValidators.apply(valueBuilder, type, valueField);
 				return valueBuilder;
 			});
 		}
 		private <T> ValueReader<C, T> makeValueReader(Class<? extends T> type, Field categoryField, Field valueField) {
-			var catHandle = varHandle(categoryField);
-			var valHandle = varHandle(valueField);
-			return config -> {
-				try {
-					return type.cast(valHandle.get(catHandle.get(config)));
-				} catch (ClassCastException e) {
-					throw new IllegalArgumentException("Failed to read " + valueField.getName(), e);
-				}
-			};
+			var categoryHandle = FieldAccess.varHandle(categoryField);
+			var valueHandle = FieldAccess.varHandle(valueField);
+			return config -> type.cast(FieldAccess.readField(valueHandle, categoryHandle.get(config), valueField));
 		}
 		private <T> ValueWriter<C, T> makeValueWriter(Class<? extends T> type, Field categoryField, Field valueField) {
-			var catHandle = varHandle(categoryField);
-			var valHandle = varHandle(valueField);
-			return (config, value) -> {
-				try {
-					valHandle.set(catHandle.get(config), type.cast(value));
-				} catch (ClassCastException e) {
-					throw new IllegalArgumentException("Failed to write " + valueField.getName(), e);
-				}
-			};
-		}
-		@FunctionalInterface
-		private interface ValidatorFactory<T> {
-			void apply(ValueConfigNode.Builder<?, T, T> builder, Field valueField);
+			var categoryHandle = FieldAccess.varHandle(categoryField);
+			var valueHandle = FieldAccess.varHandle(valueField);
+			return (config, value) -> FieldAccess.writeField(valueHandle, categoryHandle.get(config), type.cast(value), valueField);
 		}
 	}
 }

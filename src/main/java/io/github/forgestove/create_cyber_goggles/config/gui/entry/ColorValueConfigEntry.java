@@ -35,14 +35,20 @@ public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer,
 	private String formatColor(int color) {
 		return String.format(hasAlpha ? "%08X" : "%06X", color);
 	}
+	private void onInputChange(String value) {
+		var maxLength = hasAlpha ? 8 : 6;
+		if (value.length() != maxLength) return;
+		try {
+			setValue(Integer.parseUnsignedInt(value, 16));
+		} catch (NumberFormatException ignored) {}
+	}
+	private void accept(int newColor) {
+		setValue(newColor);
+		inputField.setValue(formatColor(newColor));
+	}
 	private void openColorPicker() {
 		var mc = tab.getMinecraft();
-		var screen = new ColorPickerScreen(
-			mc.screen, getValue(), hasAlpha, newColor -> {
-			setValue(newColor);
-			inputField.setValue(formatColor(newColor));
-		}
-		);
+		var screen = new ColorPickerScreen(mc.screen, getValue(), hasAlpha, this::accept);
 		mc.setScreen(screen);
 	}
 	@Override
@@ -51,19 +57,10 @@ public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer,
 		var isValid = valueNode.validate(tab.getConfig()) == null && inputField.getValue().length() == maxLength;
 		if (isValid) {
 			var valueStr = formatColor(getValue());
-			// 不要在用编辑时覆盖文本
 			if (!inputField.isFocused() && !inputField.getValue().equalsIgnoreCase(valueStr)) inputField.setValue(valueStr);
 			inputField.setFormatter((s, i) -> FormattedCharSequence.forward(s, Style.EMPTY));
 		} else inputField.setFormatter((s, i) -> FormattedCharSequence.forward(s, Style.EMPTY.withColor(ChatFormatting.RED)));
 		super.refresh();
-	}
-	private void onInputChange(String value) {
-		// 仅当输入达到所需长度时，才应用该值
-		var maxLength = hasAlpha ? 8 : 6;
-		if (value.length() != maxLength) return;
-		try {
-			setValue(Integer.parseUnsignedInt(value, 16));
-		} catch (NumberFormatException ignored) {}
 	}
 	@Override
 	public void render(

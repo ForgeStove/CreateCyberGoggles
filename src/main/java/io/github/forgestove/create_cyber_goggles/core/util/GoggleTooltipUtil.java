@@ -166,7 +166,7 @@ public final class GoggleTooltipUtil {
 		}
 		if (!stackAdded) return false;
 		CCGLang.translate("tooltip.content").forGoggles(tooltip);
-		CCGLang.itemList(stacks, 8).forGoggles(tooltip);
+		stacks.forEach(stack -> CCGLang.itemEntry(stack, CCGLang.item(stack).component()).forGoggles(tooltip, 1));
 		return true;
 	}
 	public static boolean redstoneRequester(List<Component> tooltip, List<BigItemStack> bigStacks) {

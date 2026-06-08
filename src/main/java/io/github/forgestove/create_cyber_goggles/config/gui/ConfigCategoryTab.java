@@ -35,15 +35,13 @@ public final class ConfigCategoryTab<C> implements Tab {
 		(tab, node) -> new KeybindValueConfigEntry<>(tab, cast(node))
 	);
 	private final ConfigScreen<C> screen;
-	private final String modId;
 	private final CategoryConfigNode<C> category;
 	private final C config;
 	private final Component title;
 	private final ConfigEntryList list;
 	@Nullable private TabButton tabButton;
-	public ConfigCategoryTab(ConfigScreen<C> screen, CategoryConfigNode<C> category, C config, String modId) {
+	public ConfigCategoryTab(ConfigScreen<C> screen, CategoryConfigNode<C> category, C config) {
 		this.screen = screen;
-		this.modId = modId;
 		this.category = category;
 		this.config = config;
 		title = category.getTitle();
@@ -55,9 +53,9 @@ public final class ConfigCategoryTab<C> implements Tab {
 		list = new ConfigEntryList(
 			this,
 			getMinecraft(),
-			this.screen.width,
-			this.screen.height - this.screen.getHeaderHeight() - this.screen.getFooterHeight(),
-			this.screen.getHeaderHeight(),
+			screen.width,
+			screen.height - screen.getHeaderHeight() - screen.getFooterHeight(),
+			screen.getHeaderHeight(),
 			22,
 			entries
 		);
@@ -82,7 +80,8 @@ public final class ConfigCategoryTab<C> implements Tab {
 	@SuppressWarnings("unchecked")
 	private ConfigEntry createValueEntry(ValueConfigNode<C, ?> valueNode) {
 		var type = valueNode.getValueType();
-		if (Enum.class.isAssignableFrom(type)) return new EnumValueConfigEntry<>(this, (ValueConfigNode<C, Enum<?>>) valueNode, modId);
+		if (Enum.class.isAssignableFrom(type))
+			return new EnumValueConfigEntry<>(this, (ValueConfigNode<C, Enum<?>>) valueNode, screen.modId);
 		var factory = (ConfigEntryFactory<C>) ENTRY_FACTORIES.get(type);
 		if (factory != null) return factory.create(this, valueNode);
 		return new TextConfigEntry(this, Translation.UNSUPPORTED_TYPE.copy().append(type.getSimpleName()).withStyle(ChatFormatting.RED));

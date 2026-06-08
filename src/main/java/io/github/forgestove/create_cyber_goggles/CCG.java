@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 public final class CCG {
 	public static final String ID = "create_cyber_goggles";
 	public static final Logger LOGGER = LogUtils.getLogger();
-	public static final CCGConfig config = Config.getConfig(CCGConfig.class, ID, LOGGER);
+	public static final CCGConfig config = Config.getConfig(CCGConfig.class, LOGGER);
 	public CCG(@NotNull ModContainer container) {
 		Config.initConfigScreen(container, ID);
 		var mod = container.getEventBus();

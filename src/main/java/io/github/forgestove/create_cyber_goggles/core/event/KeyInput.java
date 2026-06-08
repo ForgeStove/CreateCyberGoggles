@@ -52,7 +52,7 @@ public class KeyInput {
 	private static void openConfigScreen() {
 		if (!CCGKey.openConfig.isDown()) return;
 		if (isInGUI()) return;
-		mc.setScreen(Config.createConfigScreen(CCG.ID, mc.screen));
+		mc.setScreen(Config.createConfigScreen(CCG.ID));
 	}
 	private static void openStockScreen() {
 		if (!CCGKey.openStock.isDown()) return;

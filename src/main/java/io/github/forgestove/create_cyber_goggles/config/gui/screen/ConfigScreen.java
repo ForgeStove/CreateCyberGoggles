@@ -13,11 +13,13 @@ import net.minecraft.network.chat.Component;
 
 import java.util.*;
 import java.util.function.Consumer;
+
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public final class ConfigScreen<C> extends Screen {
 	/** 按配置屏幕类型缓存最后选择的标签索引 */
 	private static final Map<String, Integer> lastSelectedTabCache = new HashMap<>();
+	public final String modId;
 	private final RootConfigNode<C> root;
-	private final String modId;
 	private final C config;
 	private final Consumer<C> onSave;
 	private final Screen previous;
@@ -29,13 +31,13 @@ public final class ConfigScreen<C> extends Screen {
 	private List<ConfigCategoryTab<C>> tabs;
 	private Button quitButton;
 	private Button saveAndQuitButton;
-	public ConfigScreen(Screen previous, RootConfigNode<C> root, C config, Consumer<C> onSave, String modId) {
+	public ConfigScreen(RootConfigNode<C> root, C config, Consumer<C> onSave, String modId) {
 		super(root.getTitle());
 		this.root = root;
 		this.modId = modId;
 		this.config = config;
 		this.onSave = onSave;
-		this.previous = previous;
+		previous = mc.screen;
 		layout = new HeaderAndFooterLayout(this, 33, 33);
 		tabManager = new TabManager(this::addRenderableWidget, this::removeWidget);
 		tabs = List.of();
@@ -48,7 +50,7 @@ public final class ConfigScreen<C> extends Screen {
 		var tabNavigationBarBuilder = TabNavigationBar.builder(tabManager, width);
 		tabs = new ArrayList<>();
 		for (var category : root.getCategories()) {
-			var tab = new ConfigCategoryTab<>(this, category, config, modId);
+			var tab = new ConfigCategoryTab<>(this, category, config);
 			tabNavigationBarBuilder.addTabs(tab);
 			tabs.add(tab);
 		}
@@ -56,7 +58,7 @@ public final class ConfigScreen<C> extends Screen {
 		if (keybindCat != null) {
 			keybindCat.resetToActive(config);
 			keybindCategory = keybindCat;
-			var keybindTab = new ConfigCategoryTab<>(this, keybindCategory, config, modId);
+			var keybindTab = new ConfigCategoryTab<>(this, keybindCategory, config);
 			tabNavigationBarBuilder.addTabs(keybindTab);
 			tabs.add(keybindTab);
 		} else keybindCategory = null;

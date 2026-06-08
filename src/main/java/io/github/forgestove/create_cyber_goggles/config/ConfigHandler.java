@@ -1,4 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.config;
+import io.github.forgestove.create_cyber_goggles.config.annotation.ConfigClass;
 import io.github.forgestove.create_cyber_goggles.config.gui.screen.ConfigScreen;
 import io.github.forgestove.create_cyber_goggles.config.tree.RootConfigNode;
 import net.minecraft.client.gui.screens.Screen;
@@ -23,8 +24,8 @@ public final class ConfigHandler<C> {
 		configClass = builder.configClass;
 		serializer = builder.serializerBuilder.build();
 		logger = builder.logger;
-		id = builder.id;
-		configTree = RootConfigNode.create(newInstance(), builder.id);
+		id = configClass.getAnnotation(ConfigClass.class).value();
+		configTree = RootConfigNode.create(newInstance(), id);
 		savedConfig = load();
 		activeConfig = newInstance();
 		configTree.copy(savedConfig, activeConfig);
@@ -45,8 +46,7 @@ public final class ConfigHandler<C> {
 		}
 	}
 	/**
-	 * Regenerates the config file with proper translations.
-	 * Call this after I18n is fully loaded (e.g., when player joins world or opens config screen).
+	 * 重新生成配置文件并进行翻译。在I18n完全加载后（比如玩家加入世界或打开配置界面时）调用它。
 	 */
 	public void regenerateConfigFile() {
 		save(savedConfig);
@@ -59,10 +59,10 @@ public final class ConfigHandler<C> {
 			return newInstance();
 		}
 	}
-	public Screen createConfigScreen(Screen parent) {
+	public Screen createConfigScreen() {
 		// Regenerate config file with translations now that I18n is loaded
 		regenerateConfigFile();
-		return new ConfigScreen<>(parent, configTree, savedConfig, this::save, id);
+		return new ConfigScreen<>(configTree, savedConfig, this::save, id);
 	}
 	private C newInstance() {
 		try {
@@ -74,15 +74,10 @@ public final class ConfigHandler<C> {
 	public static final class Builder<C> {
 		private final Class<C> configClass;
 		private final ConfigSerializer.Builder<C> serializerBuilder;
-		private String id;
 		private Logger logger;
 		private Builder(Class<C> configClass) {
 			this.configClass = configClass;
 			serializerBuilder = ConfigSerializer.builder(configClass);
-		}
-		public Builder<C> id(String id) {
-			this.id = id;
-			return this;
 		}
 		public Builder<C> path(Supplier<Path> configPath) {
 			serializerBuilder.path(configPath);
@@ -101,7 +96,6 @@ public final class ConfigHandler<C> {
 			return this;
 		}
 		public ConfigHandler<C> build() {
-			if (id == null || id.isBlank()) throw new IllegalStateException("id must be provided before building ConfigHandler");
 			return new ConfigHandler<>(this);
 		}
 	}

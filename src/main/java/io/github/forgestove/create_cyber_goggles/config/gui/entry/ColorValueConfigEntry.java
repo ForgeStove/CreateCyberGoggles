@@ -20,24 +20,26 @@ public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer>
 	public final boolean hasAlpha;
 	public ColorValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Integer> node) {
 		super(tab, node);
-		var hasAlpha = node.colorHasAlpha();
-		this.hasAlpha = hasAlpha;
+		hasAlpha = node.colorHasAlpha();
 		inputField = new EditBox(tab.getMinecraft().font, 0, 0, WIDTH - 44, HEIGHT, valueNode.getTitle());
-		inputField.setMaxLength(hasAlpha ? 8 : 6);
+		inputField.setMaxLength(getMaxLength());
 		inputField.setValue(formatColor(getValue()));
 		inputField.setFilter(s -> HEX_PATTERN.matcher(s).matches());
 		inputField.setResponder(this::onInputChange);
 		pickerButton = Button.builder(Translation.COLOR_PICKER_LABEL, b -> openColorPicker()).size(SIZE, SIZE).build();
-		previewWidget = new ColorPreviewWidget(0, 0, SIZE, SIZE, this::getValue);
+		previewWidget = new ColorPreviewWidget(0, 0, SIZE, SIZE, hasAlpha, this::getValue);
 		children.add(inputField);
 		children.add(pickerButton);
 		children.add(previewWidget);
+	}
+	private int getMaxLength() {
+		return hasAlpha ? 8 : 6;
 	}
 	private String formatColor(int color) {
 		return String.format(hasAlpha ? "%08X" : "%06X", color);
 	}
 	private void onInputChange(String value) {
-		var maxLength = hasAlpha ? 8 : 6;
+		var maxLength = getMaxLength();
 		if (value.length() != maxLength) return;
 		try {
 			setValue(Integer.parseUnsignedInt(value, 16));
@@ -54,7 +56,7 @@ public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer>
 	}
 	@Override
 	public void refresh() {
-		var maxLength = hasAlpha ? 8 : 6;
+		var maxLength = getMaxLength();
 		var isValid = valueNode.validate(tab.getConfig()) == null && inputField.getValue().length() == maxLength;
 		if (isValid) {
 			var valueStr = formatColor(getValue());

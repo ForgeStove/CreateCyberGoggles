@@ -25,6 +25,7 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 	) {
 		super(minecraft, width, height, headerHeight, itemHeight);
 		this.tab = tab;
+		this.headerHeight = -3;
 		entries.forEach(this::addEntry);
 	}
 	@Override
@@ -56,6 +57,17 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 	@Override
 	public int getRowWidth() {
 		return width * 4 / 5;
+	}
+	@Override
+	protected void renderListItems(@NotNull GuiGraphics gui, int mouseX, int mouseY, float delta) {
+		var left = getRowLeft();
+		var width = getRowWidth();
+		var count = getItemCount();
+		for (var i = 0; i < count; i++) {
+			var top = getRowTop(i);
+			var bottom = getRowBottom(i);
+			if (bottom >= getY() && top <= getBottom()) renderItem(gui, mouseX, mouseY, delta, i, left, top, width, itemHeight);
+		}
 	}
 	public void refreshEntries() {
 		var keyEntries = new ArrayList<KeybindValueConfigEntry<?>>();

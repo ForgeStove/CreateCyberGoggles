@@ -52,15 +52,10 @@ public final class ConfigCategoryTab<C> implements Tab {
 			if (node instanceof ValueConfigNode<C, ?> valueNode) entries.add(createValueEntry(valueNode));
 			else if (node instanceof CategoryConfigNode<C> categoryNode) entries.addAll(createSubCategoryEntries(categoryNode));
 		});
-		list = new ConfigEntryList(
-			this,
-			getMinecraft(),
-			screen.width,
-			screen.height - screen.getHeaderHeight() - screen.getFooterHeight(),
-			screen.getHeaderHeight(),
-			22,
-			entries
-		);
+		var contentHeight = screen.height - screen.getHeaderHeight() - screen.getFooterHeight();
+		var totalEntryHeight = entries.size() * 22;
+		var listHeight = totalEntryHeight <= contentHeight ? totalEntryHeight - 2 : contentHeight;
+		list = new ConfigEntryList(this, getMinecraft(), screen.width, listHeight, screen.getHeaderHeight(), 22, entries);
 	}
 	@SuppressWarnings("unchecked")
 	private static <C, V> ValueConfigNode<C, V> cast(ValueConfigNode<C, ?> node) {

@@ -16,7 +16,7 @@ public class Outliner {
 		if (!CCG.config.outliner.renderAnalogBox) return;
 		if (mc.isPaused() || isInGUI()) return;
 		var be = getBlockEntity();
-		if (be instanceof OutlineRenderable) cachedBE.put(be, CCG.config.outliner.delayRenderDuration);
+		if (be instanceof OutlineRenderable or) cachedBE.put(be, or.ccg$getRenderDelay());
 		if (cachedBE.isEmpty()) return;
 		try {
 			cachedBE.entrySet().removeIf(Outliner::render);

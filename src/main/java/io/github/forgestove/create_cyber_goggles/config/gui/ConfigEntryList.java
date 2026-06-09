@@ -19,6 +19,10 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 	private float highlightTargetY;
 	private float highlightAlpha;
 	@Nullable private ConfigEntry lastHoveredEntry;
+	// 平滑滚动状态
+	private double targetScrollAmount;
+	private double currentScrollAmount;
+	private boolean smoothScrollInitialized;
 	public ConfigEntryList(
 		ConfigCategoryTab<?> tab,
 		Minecraft minecraft,
@@ -34,6 +38,7 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 	}
 	@Override
 	public void renderWidget(@NotNull GuiGraphics gui, int mouseX, int mouseY, float delta) {
+		updateSmoothScroll(delta);
 		renderHighlight(gui, delta);
 		super.renderWidget(gui, mouseX, mouseY, delta);
 		var entry = getHovered();
@@ -83,6 +88,43 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		highlightY = Mth.lerp(v * delta * 2, highlightY, highlightTargetY);
 		// 靠近时再快速锁定目标
 		if (Math.abs(highlightY - highlightTargetY) < 1.0f) highlightY = highlightTargetY;
+	}
+	private void updateSmoothScroll(float delta) {
+		// 初始化目标和当前滚动值（第一次调用时）
+		if (!smoothScrollInitialized) {
+			currentScrollAmount = getScrollAmount();
+			targetScrollAmount = currentScrollAmount;
+			smoothScrollInitialized = true;
+		}
+		// 平滑插值到目标值
+		currentScrollAmount = Mth.lerp(delta, currentScrollAmount, targetScrollAmount);
+		setScrollAmount(currentScrollAmount);
+		// 当接近目标时快速锁定
+		if (Math.abs(currentScrollAmount - targetScrollAmount) < 0.5f) {
+			currentScrollAmount = targetScrollAmount;
+			setScrollAmount(targetScrollAmount);
+		}
+	}
+	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
+		// 初始化当前滚动值（如果还没有）
+		if (!smoothScrollInitialized) {
+			currentScrollAmount = getScrollAmount();
+			targetScrollAmount = currentScrollAmount;
+			smoothScrollInitialized = true;
+		}
+		// 设置目标滚动值而不是直接改变
+		targetScrollAmount = Mth.clamp(targetScrollAmount - vertical * itemHeight, 0, getMaxScroll());
+		return true;
+	}
+	@Override
+	public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+		// 委托父类处理拖拽滚动（内部调用 setScrollAmount）
+		var result = super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+		// 同步拖拽后的滚动位置，防止 updateSmoothScroll 在下帧覆盖掉
+		currentScrollAmount = getScrollAmount();
+		targetScrollAmount = currentScrollAmount;
+		return result;
 	}
 	@Override
 	public int getRowWidth() {

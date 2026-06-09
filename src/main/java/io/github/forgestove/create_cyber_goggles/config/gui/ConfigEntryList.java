@@ -8,21 +8,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEntry> {
 	private final ConfigCategoryTab<?> tab;
-	// 高亮动画状态
-	private float highlightY;
-	private float highlightTargetY;
-	private float highlightAlpha;
-	@Nullable private ConfigEntry lastHoveredEntry;
-	// 平滑滚动状态
-	private double targetScroll;
-	private double currentScroll;
-	private boolean smoothScroll;
+	private final SmoothScrool smoothScroll = new SmoothScrool(this::setScrollAmount, this::getScrollAmount, this::getMaxScroll);
+	private final Highlight highlight = new Highlight(() -> children().indexOf(getHovered()), this::getRowTop);
 	public ConfigEntryList(
 		ConfigCategoryTab<?> tab,
 		Minecraft minecraft,
@@ -38,8 +30,8 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 	}
 	@Override
 	public void renderWidget(@NotNull GuiGraphics gui, int mouseX, int mouseY, float delta) {
-		updateSmoothScroll(delta);
-		renderHighlight(gui, delta);
+		smoothScroll.tick(delta);
+		highlight.tick(gui, getX(), getY(), getWidth(), getHeight(), itemHeight, delta);
 		super.renderWidget(gui, mouseX, mouseY, delta);
 		var entry = getHovered();
 		if (entry == null) return;
@@ -55,75 +47,21 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		}
 		if (entry.getTooltip() != null) tab.getScreen().setTooltipForNextRenderPass(entry.getTooltip());
 	}
-	private void renderHighlight(@NotNull GuiGraphics gui, float delta) {
-		var alpha = (int) (highlightAlpha * 48); // Max alpha 48 (0x30)
-		var color = alpha << 24 | 0xFFFFFF;
-		var left = getX();
-		var right = getX() + getWidth();
-		var offset = -1; // 向上移动高亮
-		var top = (int) highlightY + offset;
-		var bottom = top + itemHeight;
-		// 剪辑到可见区域
-		var visibleTop = getY();
-		var visibleBottom = getY() + getHeight();
-		if (top < visibleTop) top = visibleTop;
-		if (bottom > visibleBottom) bottom = visibleBottom;
-		if (top < bottom) gui.fill(left, top, right, bottom, color);
-		var v = 0.5f;
-		var hoveredEntry = getHovered();
-		if (hoveredEntry != null) {
-			var index = children().indexOf(hoveredEntry);
-			if (index >= 0) {
-				var entryTop = getRowTop(index);
-				highlightTargetY = entryTop;
-				// 淡入
-				highlightAlpha = Mth.lerp(v * delta, highlightAlpha, 0.95F);
-				// 如果第一次悬停，初始化位置
-				if (highlightY < 0 || lastHoveredEntry == null) highlightY = entryTop;
-			}
-			lastHoveredEntry = hoveredEntry;
-		} else highlightAlpha = Mth.lerp(v * delta, highlightAlpha, 0.0f); // 淡出
-		// 带吸附到目标的平滑位置转换
-		if (!(highlightTargetY >= 0) || !(highlightY >= 0)) return;
-		highlightY = Mth.lerp(v * delta * 2, highlightY, highlightTargetY);
-		// 靠近时再快速锁定目标
-		if (Math.abs(highlightY - highlightTargetY) < 1.0f) highlightY = highlightTargetY;
-	}
-	private void updateSmoothScroll(float delta) {
-		// 初始化目标和当前滚动值（第一次调用时）
-		if (!smoothScroll) {
-			currentScroll = getScrollAmount();
-			targetScroll = currentScroll;
-			smoothScroll = true;
-		}
-		// 线性插值到目标值
-		currentScroll = Mth.lerp(delta, currentScroll, targetScroll);
-		setScrollAmount(currentScroll);
-	}
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
-		// 初始化当前滚动值（如果还没有）
-		if (!smoothScroll) {
-			currentScroll = getScrollAmount();
-			targetScroll = currentScroll;
-			smoothScroll = true;
-		}
-		// 设置目标滚动值而不是直接改变
-		targetScroll = Mth.clamp(targetScroll - vertical * itemHeight, 0, getMaxScroll());
+		smoothScroll.onMouseScroll(vertical, itemHeight);
 		return true;
 	}
 	@Override
 	public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-		// 委托父类处理拖拽滚动（内部调用 setScrollAmount）
 		var result = super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
-		// 同步拖拽后的滚动位置，防止 updateSmoothScroll 在下帧覆盖掉
-		currentScroll = getScrollAmount();
-		targetScroll = currentScroll;
+		// 同步拖拽后的滚动位置，防止 smoothScroll 在下帧覆盖掉
+		smoothScroll.sync();
 		return result;
 	}
 	@Override
 	public int getRowWidth() {
-		return width - 80;
+		return width * 4 / 5;
 	}
 	public void refreshEntries() {
 		var keyEntries = new ArrayList<KeybindValueConfigEntry<?>>();

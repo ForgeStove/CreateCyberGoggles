@@ -10,8 +10,8 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.Map.Entry;
 public final class RootConfigNode<C> implements ConfigNode<C> {
-	private final ImmutableList<CategoryConfigNode<C>> categories;
 	public final String modId;
+	private final ImmutableList<CategoryConfigNode<C>> categories;
 	private RootConfigNode(ImmutableList<CategoryConfigNode<C>> categories, String modId) {
 		this.categories = categories;
 		this.modId = modId;
@@ -81,6 +81,7 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 			var configClass = defaultConfig.getClass();
 			var categories = Arrays.stream(configClass.getFields())
 				.filter(field -> field.isAnnotationPresent(Category.class))
+				.filter(ConfigCondition::evaluate)
 				.map(field -> Map.entry(field.getAnnotation(Category.class).value(), field))
 				.sorted(Comparator.comparingInt(Entry::getKey))
 				.map(pair -> createCategoryNode(pair.getValue()))
@@ -102,6 +103,7 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 			Field valueField,
 			CategoryConfigNode.Builder<C> categoryBuilder
 		) {
+			if (!ConfigCondition.evaluate(valueField)) return;
 			var defaultValue = FieldAccess.getFieldValue(valueField, defaultCategory);
 			var type = defaultValue.getClass();
 			var valueName = valueField.getName();

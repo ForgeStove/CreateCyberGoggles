@@ -1,8 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.config.gui.entry;
 import io.github.forgestove.create_cyber_goggles.config.Translation;
 import io.github.forgestove.create_cyber_goggles.config.gui.*;
-import io.github.forgestove.create_cyber_goggles.config.gui.screen.ColorPickerScreen;
-import io.github.forgestove.create_cyber_goggles.config.gui.widget.ColorPreviewWidget;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;

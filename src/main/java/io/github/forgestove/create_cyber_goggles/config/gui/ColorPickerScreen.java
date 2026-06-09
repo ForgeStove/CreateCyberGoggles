@@ -1,9 +1,7 @@
-package io.github.forgestove.create_cyber_goggles.config.gui.screen;
+package io.github.forgestove.create_cyber_goggles.config.gui;
 import com.mojang.blaze3d.platform.InputConstants;
 import io.github.forgestove.create_cyber_goggles.config.Translation;
-import io.github.forgestove.create_cyber_goggles.config.gui.ConfigEditBox;
 import io.github.forgestove.create_cyber_goggles.config.gui.entry.ConfigEntry;
-import io.github.forgestove.create_cyber_goggles.config.gui.widget.ColorPreviewWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;

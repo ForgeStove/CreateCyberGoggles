@@ -3,6 +3,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import io.github.forgestove.create_cyber_goggles.config.gui.entry.*;
 import io.github.forgestove.create_cyber_goggles.config.gui.entry.KeybindValueConfigEntry.KeybindState;
+import io.github.forgestove.create_cyber_goggles.config.gui.util.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;

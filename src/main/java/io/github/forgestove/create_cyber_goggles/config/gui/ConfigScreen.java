@@ -1,7 +1,6 @@
-package io.github.forgestove.create_cyber_goggles.config.gui.screen;
+package io.github.forgestove.create_cyber_goggles.config.gui;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import io.github.forgestove.create_cyber_goggles.config.Translation;
-import io.github.forgestove.create_cyber_goggles.config.gui.ConfigCategoryTab;
 import io.github.forgestove.create_cyber_goggles.config.tree.*;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.components.*;

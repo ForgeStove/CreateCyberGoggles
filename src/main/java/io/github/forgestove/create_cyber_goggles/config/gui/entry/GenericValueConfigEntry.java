@@ -1,6 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.config.gui.entry;
-import io.github.forgestove.create_cyber_goggles.config.gui.ConfigCategoryTab;
-import io.github.forgestove.create_cyber_goggles.config.gui.ConfigEditBox;
+import io.github.forgestove.create_cyber_goggles.config.gui.*;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;

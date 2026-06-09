@@ -1,6 +1,6 @@
-package io.github.forgestove.create_cyber_goggles.config.gui.screen;
-import io.github.forgestove.create_cyber_goggles.config.gui.SmoothScrool;
+package io.github.forgestove.create_cyber_goggles.config.gui;
 import io.github.forgestove.create_cyber_goggles.config.gui.entry.ConfigEntry;
+import io.github.forgestove.create_cyber_goggles.config.gui.util.SmoothScrool;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;

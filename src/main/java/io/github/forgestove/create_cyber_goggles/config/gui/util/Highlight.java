@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.config.gui;
+package io.github.forgestove.create_cyber_goggles.config.gui.util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
 

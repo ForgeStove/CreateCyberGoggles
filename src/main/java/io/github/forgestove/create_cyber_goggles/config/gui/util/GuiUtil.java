@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.config.gui;
+package io.github.forgestove.create_cyber_goggles.config.gui.util;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 public class GuiUtil {

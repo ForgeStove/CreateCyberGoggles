@@ -1,6 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.config.gui.screen;
 import com.mojang.blaze3d.platform.InputConstants;
 import io.github.forgestove.create_cyber_goggles.config.Translation;
+import io.github.forgestove.create_cyber_goggles.config.gui.ConfigEditBox;
 import io.github.forgestove.create_cyber_goggles.config.gui.entry.ConfigEntry;
 import io.github.forgestove.create_cyber_goggles.config.gui.widget.ColorPreviewWidget;
 import net.minecraft.client.Minecraft;
@@ -51,7 +52,7 @@ public final class ColorPickerScreen extends Screen {
 	/** 缓存时对应的色相值 */
 	private float cachedHue = -1f;
 	/** 十六进制颜色输入框 */
-	private EditBox hexInput;
+	private ConfigEditBox hexInput;
 	/** 防止输入框与颜色状态互相递归更新 */
 	private boolean updatingFromInput;
 	public ColorPickerScreen(Screen parent, int initialColor, boolean hasAlpha, IntConsumer onColorSelected) {
@@ -104,10 +105,10 @@ public final class ColorPickerScreen extends Screen {
 		pickerPos.move((width - totalWidth) / 2 - PADDING, (height - totalHeight) / 2 - PADDING - 10);
 		svPos.move(pickerPos.x + PADDING, pickerPos.y + PADDING + 16);
 	}
-	private EditBox createHexInput(int buttonY) {
+	private ConfigEditBox createHexInput(int buttonY) {
 		var hexInputX = svPos.x + BUTTON_WIDTH * 2 + 6;
 		var hexInputWidth = hasAlpha ? 70 : 55;
-		var input = new EditBox(font, hexInputX, buttonY, hexInputWidth, SIZE, Component.literal("Hex"));
+		var input = new ConfigEditBox(font, hexInputX, buttonY, hexInputWidth, SIZE, Component.literal("Hex"));
 		input.setMaxLength(hasAlpha ? 8 : 6);
 		input.setValue(formatHexColor());
 		input.setFilter(s -> HEX_PATTERN.matcher(s).matches());

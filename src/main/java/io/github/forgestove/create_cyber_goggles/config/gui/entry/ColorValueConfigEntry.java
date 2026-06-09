@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.config.gui.entry;
 import io.github.forgestove.create_cyber_goggles.config.Translation;
-import io.github.forgestove.create_cyber_goggles.config.gui.ConfigCategoryTab;
+import io.github.forgestove.create_cyber_goggles.config.gui.*;
 import io.github.forgestove.create_cyber_goggles.config.gui.screen.ColorPickerScreen;
 import io.github.forgestove.create_cyber_goggles.config.gui.widget.ColorPreviewWidget;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.regex.Pattern;
 public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer> {
 	public static final Pattern HEX_PATTERN = Pattern.compile("[0-9A-Fa-f]*");
-	public final EditBox inputField;
+	public final ConfigEditBox inputField;
 	public final Button pickerButton;
 	public final ColorPreviewWidget previewWidget;
 	public final boolean hasAlpha;
@@ -22,7 +22,7 @@ public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer>
 		super(tab, node);
 		hasAlpha = node.colorHasAlpha();
 		previewWidget = new ColorPreviewWidget(0, 0, SIZE, SIZE, hasAlpha, this::getValue);
-		inputField = new EditBox(tab.getMinecraft().font, 0, 0, WIDTH - 44, HEIGHT, valueNode.getTitle());
+		inputField = new ConfigEditBox(tab.getMinecraft().font, 0, 0, WIDTH - 44, HEIGHT, valueNode.getTitle());
 		inputField.setMaxLength(getMaxLength());
 		inputField.setValue(formatColor(getValue()));
 		inputField.setFilter(s -> HEX_PATTERN.matcher(s).matches());

@@ -11,16 +11,13 @@ import java.awt.Rectangle;
 import java.util.Arrays;
 import java.util.function.*;
 public final class EnumDropdownScreen extends Screen {
-	private static final int GAP = ConfigEntry.GAP;
-	private static final int HEIGHT = ConfigEntry.HEIGHT;
-	private static final int SCROLLBAR_WIDTH = HEIGHT / 4;
+	private static final int GAP = ConfigEntry.GAP, HEIGHT = ConfigEntry.HEIGHT, SCROLLBAR_WIDTH = HEIGHT / 4;
 	private final Enum<?>[] values;
 	private final Supplier<Enum<?>> selectedSupplier;
 	private final Consumer<Enum<?>> onSelect;
 	private final Function<Enum<?>, Component> displayMapper;
 	private final Screen parentScreen;
-	private final int dropdownX, dropdownY, dropdownWidth;
-	private final int maxVisibleOptions;
+	private final int dropdownX, dropdownY, dropdownWidth, maxVisibleOptions;
 	private int scrollOffset;
 	private boolean draggingScrollbar;
 	public EnumDropdownScreen(

@@ -1,16 +1,16 @@
 package io.github.forgestove.create_cyber_goggles.config.gui.entry;
 import io.github.forgestove.create_cyber_goggles.config.gui.ConfigCategoryTab;
+import io.github.forgestove.create_cyber_goggles.config.gui.ConfigEditBox;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.*;
 public abstract class GenericValueConfigEntry<C, V> extends ValueConfigEntry<C, V> {
-	private final EditBox inputField;
+	private final ConfigEditBox inputField;
 	private final Function<String, V> parser;
 	private final Predicate<String> validator;
 	private boolean hasParseError = false;
@@ -24,7 +24,7 @@ public abstract class GenericValueConfigEntry<C, V> extends ValueConfigEntry<C, 
 		super(tab, valueNode);
 		this.parser = parser;
 		this.validator = validator;
-		inputField = new EditBox(this.tab.getMinecraft().font, 0, 0, WIDTH, HEIGHT, this.valueNode.getTitle());
+		inputField = new ConfigEditBox(this.tab.getMinecraft().font, 0, 0, WIDTH, HEIGHT, this.valueNode.getTitle());
 		inputField.setValue(getValue().toString());
 		inputField.setFilter(validator);
 		inputField.setResponder(this::onInputChange);

@@ -20,7 +20,7 @@ public final class ColorPreviewWidget extends AbstractWidget {
 		var color = colorSupplier.getAsInt();
 		if (!hasAlpha) color |= 0xFF000000;
 		gui.fill(getX(), getY(), getX() + width, getY() + height, color);
-		gui.renderOutline(getX(), getY(), width, height, 0xFF000000);
+		gui.renderOutline(getX(), getY(), width, height, 0xFFA0A0A0);
 	}
 	@Override
 	protected void updateWidgetNarration(@NotNull NarrationElementOutput narration) {

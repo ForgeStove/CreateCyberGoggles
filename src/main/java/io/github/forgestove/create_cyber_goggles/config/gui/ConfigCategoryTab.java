@@ -107,14 +107,14 @@ public final class ConfigCategoryTab<C> implements Tab {
 		tabButton.setMessage(GuiUtil.styleAsState(title, hasError, hasChanged));
 		list.refreshEntries();
 	}
-	public boolean hasEntryError() {
-		return list.hasEntryError();
-	}
 	public C getConfig() {
 		return config;
 	}
 	public void setTabButton(@Nullable TabButton tabButton) {
 		this.tabButton = tabButton;
+	}
+	public boolean hasEntryError() {
+		return list.hasEntryError();
 	}
 	public boolean handleKeyCapture(int keyCode) {
 		return list.handleKeyCapture(keyCode);

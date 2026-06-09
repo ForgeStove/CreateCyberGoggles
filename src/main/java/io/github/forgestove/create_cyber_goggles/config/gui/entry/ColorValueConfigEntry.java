@@ -21,6 +21,7 @@ public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer>
 	public ColorValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Integer> node) {
 		super(tab, node);
 		hasAlpha = node.colorHasAlpha();
+		previewWidget = new ColorPreviewWidget(0, 0, SIZE, SIZE, hasAlpha, this::getValue);
 		inputField = new EditBox(tab.getMinecraft().font, 0, 0, WIDTH - 44, HEIGHT, valueNode.getTitle());
 		inputField.setMaxLength(getMaxLength());
 		inputField.setValue(formatColor(getValue()));
@@ -30,10 +31,9 @@ public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer>
 			.size(SIZE, SIZE)
 			.tooltip(Tooltip.create(Translation.COLOR_PICKER_TOOLTIP))
 			.build();
-		previewWidget = new ColorPreviewWidget(0, 0, SIZE, SIZE, hasAlpha, this::getValue);
+		children.add(previewWidget);
 		children.add(inputField);
 		children.add(pickerButton);
-		children.add(previewWidget);
 	}
 	private int getMaxLength() {
 		return hasAlpha ? 8 : 6;
@@ -81,6 +81,6 @@ public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer>
 		boolean hovering,
 		float delta
 	) {
-		renderGui(gui, y, x, width, mouseX, mouseY, delta, undoButton, resetButton, previewWidget, pickerButton, inputField);
+		renderGui(gui, y, x, width, mouseX, mouseY, delta, undoButton, resetButton, pickerButton, inputField, previewWidget);
 	}
 }

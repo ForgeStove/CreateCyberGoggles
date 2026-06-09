@@ -93,6 +93,7 @@ publishMods {
 		minecraftVersions.add(p("mcVersion"))
 		client.set(true)
 		requires("create")
+		optional("create-aeronautics")
 	}
 }
 fun p(key: String) = property(key).toString()

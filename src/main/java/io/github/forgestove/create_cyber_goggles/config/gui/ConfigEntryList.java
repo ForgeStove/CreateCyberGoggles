@@ -1,7 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.config.gui;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.InputConstants.Key;
-import io.github.forgestove.create_cyber_goggles.config.Translation;
 import io.github.forgestove.create_cyber_goggles.config.gui.entry.*;
 import io.github.forgestove.create_cyber_goggles.config.gui.entry.KeybindValueConfigEntry.KeybindState;
 import net.minecraft.client.Minecraft;
@@ -31,18 +30,13 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 	@Override
 	public void renderWidget(@NotNull GuiGraphics gui, int mouseX, int mouseY, float delta) {
 		smoothScroll.tick(delta);
-		highlight.tick(gui, getX(), getY(), getWidth(), getHeight(), itemHeight, delta);
+		highlight.tick(gui, getX(), getY(), width, height, itemHeight, delta);
 		super.renderWidget(gui, mouseX, mouseY, delta);
 		var entry = getHovered();
 		if (entry == null) return;
-		if (entry instanceof ValueConfigEntry<?, ?> valueEntry) if (valueEntry.resetButton.isHovered()) {
-			tab.getScreen().setTooltipForNextRenderPass(Translation.RESET_TOOLTIP);
-			return;
-		} else if (valueEntry.undoButton.isHovered()) {
-			tab.getScreen().setTooltipForNextRenderPass(Translation.UNDO_TOOLTIP);
-			return;
-		} else if (valueEntry instanceof ColorValueConfigEntry<?> colorEntry && colorEntry.pickerButton.isHovered()) {
-			tab.getScreen().setTooltipForNextRenderPass(Translation.COLOR_PICKER_TOOLTIP);
+		var widgetTooltip = entry.getHoveredWidgetTooltip(mouseX, mouseY);
+		if (widgetTooltip != null) {
+			tab.getScreen().setTooltipForNextRenderPass(widgetTooltip.toCharSequence(minecraft));
 			return;
 		}
 		if (entry.getTooltip() != null) tab.getScreen().setTooltipForNextRenderPass(entry.getTooltip());
@@ -83,18 +77,18 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 			registeredKeyCount.merge(key, 1, Integer::sum);
 			registeredKeyUsages.computeIfAbsent(key, k -> new ArrayList<>()).add(Component.translatable(mapping.getName()));
 		}
-		for (var keyEntry : keyEntries) {
+		keyEntries.forEach(keyEntry -> {
 			var key = keyEntry.getBoundKey();
 			if (key.equals(InputConstants.UNKNOWN)) {
 				keyEntry.setKeybindState(KeybindState.UNBOUND);
 				keyEntry.setConflictUsages(List.of());
-				continue;
+				return;
 			}
 			var hasConflict = localKeyCount.getOrDefault(key, 0) > 1 || registeredKeyCount.getOrDefault(key, 0) > 1;
 			keyEntry.setKeybindState(hasConflict ? KeybindState.CONFLICT : KeybindState.BOUND);
 			if (!hasConflict) {
 				keyEntry.setConflictUsages(List.of());
-				continue;
+				return;
 			}
 			var usages = new ArrayList<Component>();
 			for (var localEntry : localKeyEntries.getOrDefault(key, List.of())) {
@@ -103,7 +97,7 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 			}
 			usages.addAll(registeredKeyUsages.getOrDefault(key, List.of()));
 			keyEntry.setConflictUsages(usages);
-		}
+		});
 		children().forEach(ConfigEntry::refresh);
 	}
 	public boolean hasEntryError() {

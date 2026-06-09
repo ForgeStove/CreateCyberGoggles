@@ -26,7 +26,10 @@ public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer>
 		inputField.setValue(formatColor(getValue()));
 		inputField.setFilter(s -> HEX_PATTERN.matcher(s).matches());
 		inputField.setResponder(this::onInputChange);
-		pickerButton = Button.builder(Translation.COLOR_PICKER_LABEL, b -> openColorPicker()).size(SIZE, SIZE).build();
+		pickerButton = Button.builder(Translation.COLOR_PICKER_LABEL, b -> openColorPicker())
+			.size(SIZE, SIZE)
+			.tooltip(Tooltip.create(Translation.COLOR_PICKER_TOOLTIP))
+			.build();
 		previewWidget = new ColorPreviewWidget(0, 0, SIZE, SIZE, hasAlpha, this::getValue);
 		children.add(inputField);
 		children.add(pickerButton);

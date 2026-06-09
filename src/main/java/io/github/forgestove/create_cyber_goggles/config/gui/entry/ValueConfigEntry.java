@@ -32,9 +32,11 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 		valueNode = node;
 		resetButton = Button.builder(Translation.RESET_LABEL, b -> resetToDefault())
 			.size(Math.max(font.width(Translation.RESET_LABEL) + 6, SIZE), SIZE)
+			.tooltip(Tooltip.create(Translation.RESET_TOOLTIP))
 			.build();
 		undoButton = Button.builder(Translation.UNDO_LABEL, b -> resetToActive())
 			.size(Math.max(font.width(Translation.UNDO_LABEL) + 6, SIZE), SIZE)
+			.tooltip(Tooltip.create(Translation.UNDO_TOOLTIP))
 			.build();
 		resetButton.active = !node.isDefaultValue(this.tab.getConfig());
 		undoButton.active = !node.isActiveValue(this.tab.getConfig());

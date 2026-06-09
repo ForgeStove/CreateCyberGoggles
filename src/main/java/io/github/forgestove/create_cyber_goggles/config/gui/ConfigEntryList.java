@@ -27,12 +27,12 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		ConfigCategoryTab<?> tab,
 		Minecraft minecraft,
 		int width,
-		int contentHeight,
+		int height,
 		int headerHeight,
-		int itemSpacing,
+		int itemHeight,
 		@NotNull Iterable<ConfigEntry> entries
 	) {
-		super(minecraft, width, contentHeight, headerHeight, itemSpacing);
+		super(minecraft, width, height, headerHeight, itemHeight);
 		this.tab = tab;
 		entries.forEach(this::addEntry);
 	}

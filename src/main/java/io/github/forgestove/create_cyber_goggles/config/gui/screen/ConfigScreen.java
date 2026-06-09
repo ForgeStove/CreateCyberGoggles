@@ -18,8 +18,7 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public final class ConfigScreen<C> extends Screen {
 	/** 按配置屏幕类型缓存最后选择的标签索引 */
 	private static final Map<String, Integer> lastSelectedTabCache = new HashMap<>();
-	public final String modId;
-	private final RootConfigNode<C> root;
+	public final RootConfigNode<C> root;
 	private final C config;
 	private final Consumer<C> onSave;
 	private final Screen previous;
@@ -31,10 +30,9 @@ public final class ConfigScreen<C> extends Screen {
 	private List<ConfigCategoryTab<C>> tabs;
 	private Button quitButton;
 	private Button saveAndQuitButton;
-	public ConfigScreen(RootConfigNode<C> root, C config, Consumer<C> onSave, String modId) {
+	public ConfigScreen(RootConfigNode<C> root, C config, Consumer<C> onSave) {
 		super(root.getTitle());
 		this.root = root;
-		this.modId = modId;
 		this.config = config;
 		this.onSave = onSave;
 		previous = mc.screen;
@@ -190,7 +188,7 @@ public final class ConfigScreen<C> extends Screen {
 		var allMappings = getMinecraft().options.keyMappings;
 		var modMappings = new ArrayList<KeyMapping>();
 		for (var allMapping : allMappings) {
-			if (!allMapping.getCategory().equals("key.categories." + modId)) continue;
+			if (!allMapping.getCategory().equals("key.categories." + root.modId)) continue;
 			modMappings.add(allMapping);
 		}
 		if (modMappings.isEmpty()) return null;

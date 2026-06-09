@@ -81,7 +81,7 @@ public final class ConfigCategoryTab<C> implements Tab {
 	private ConfigEntry createValueEntry(ValueConfigNode<C, ?> valueNode) {
 		var type = valueNode.getValueType();
 		if (Enum.class.isAssignableFrom(type))
-			return new EnumValueConfigEntry<>(this, (ValueConfigNode<C, Enum<?>>) valueNode, screen.modId);
+			return new EnumValueConfigEntry<>(this, (ValueConfigNode<C, Enum<?>>) valueNode, screen.root.modId);
 		var factory = (ConfigEntryFactory<C>) ENTRY_FACTORIES.get(type);
 		if (factory != null) return factory.create(this, valueNode);
 		return new TextConfigEntry(this, Translation.UNSUPPORTED_TYPE.copy().append(type.getSimpleName()).withStyle(ChatFormatting.RED));

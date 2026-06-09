@@ -11,8 +11,10 @@ import java.util.*;
 import java.util.Map.Entry;
 public final class RootConfigNode<C> implements ConfigNode<C> {
 	private final ImmutableList<CategoryConfigNode<C>> categories;
-	private RootConfigNode(ImmutableList<CategoryConfigNode<C>> categories) {
+	public final String modId;
+	private RootConfigNode(ImmutableList<CategoryConfigNode<C>> categories, String modId) {
 		this.categories = categories;
+		this.modId = modId;
 	}
 	public static <C> RootConfigNode<C> create(C defaultConfig, String modId) {
 		return new Builder<>(defaultConfig, modId).build();
@@ -68,11 +70,11 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 		categories.forEach(node -> node.writeEditingToConfig(config));
 	}
 	private static class Builder<C> {
-		private final String id;
+		private final String modId;
 		private C defaultConfig;
-		private Builder(C defaultConfig, String id) {
+		private Builder(C defaultConfig, String modId) {
 			this.defaultConfig = defaultConfig;
-			this.id = id;
+			this.modId = modId;
 		}
 		@NotNull
 		public RootConfigNode<C> build() {
@@ -84,12 +86,12 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 				.map(pair -> createCategoryNode(pair.getValue()))
 				.collect(ImmutableList.toImmutableList());
 			defaultConfig = null;
-			return new RootConfigNode<>(categories);
+			return new RootConfigNode<>(categories, modId);
 		}
 		private CategoryConfigNode<C> createCategoryNode(Field categoryField) {
 			var defaultCategory = FieldAccess.getFieldValue(categoryField, defaultConfig);
 			var categoryBuilder = CategoryConfigNode.<C>builder()
-				.title(Component.translatable(id + ".config.category." + categoryField.getName()));
+				.title(Component.translatable(modId + ".config.category." + categoryField.getName()));
 			for (var valueField : categoryField.getType().getDeclaredFields())
 				addValueNode(defaultCategory, categoryField, valueField, categoryBuilder);
 			return categoryBuilder.build();
@@ -103,7 +105,7 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 			var defaultValue = FieldAccess.getFieldValue(valueField, defaultCategory);
 			var type = defaultValue.getClass();
 			var valueName = valueField.getName();
-			var titleKey = "%s.config.option.%s.%s".formatted(id, categoryField.getName(), valueName);
+			var titleKey = "%s.config.option.%s.%s".formatted(modId, categoryField.getName(), valueName);
 			categoryBuilder.value(valueBuilder -> valueBuilder.valueType(type)
 				.name(valueName)
 				.title(Component.translatable(titleKey))

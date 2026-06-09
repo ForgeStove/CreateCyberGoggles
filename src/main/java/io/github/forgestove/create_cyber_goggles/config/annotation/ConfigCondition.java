@@ -1,6 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.config.annotation;
 import net.neoforged.fml.loading.LoadingModList;
-import org.slf4j.*;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -12,7 +11,6 @@ import java.util.Arrays;
  */
 @FunctionalInterface
 public interface ConfigCondition {
-	Logger LOGGER = LoggerFactory.getLogger(ConfigCondition.class);
 	/**
 	 * Evaluate a {@link Condition} annotation. Returns {@code true} if all
 	 * conditions (both {@code value} and {@code condition}) are satisfied.
@@ -24,7 +22,7 @@ public interface ConfigCondition {
 	}
 	/**
 	 * Check whether a field carries a {@link Condition} annotation and, if so,
-	 * evaluate it. Fields without {@code @Condition} always pass.
+	 * evaluate it. Fields without {@link Condition} always pass.
 	 */
 	static boolean evaluate(Field field) {
 		var condition = field.getAnnotation(Condition.class);
@@ -37,8 +35,7 @@ public interface ConfigCondition {
 		try {
 			return conditionClass.getDeclaredConstructor().newInstance().test();
 		} catch (Exception e) {
-			LOGGER.warn("Failed to evaluate config condition '{}'", conditionClass.getSimpleName(), e);
-			return false;
+			throw new RuntimeException("Failed to evaluate config condition '%s'".formatted(conditionClass.getSimpleName()), e);
 		}
 	}
 	/**

@@ -110,7 +110,7 @@ public final class EnumDropdownScreen extends Screen {
 	}
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		if (!isInsidePanel(mouseX, mouseY)) {
+		if (isOutsidePanel(mouseX, mouseY)) {
 			getMinecraft().setScreen(parentScreen);
 			playClickSound();
 			return true;
@@ -148,7 +148,7 @@ public final class EnumDropdownScreen extends Screen {
 	}
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
-		if (!isInsidePanel(mouseX, mouseY)) return super.mouseScrolled(mouseX, mouseY, horizontal, vertical);
+		if (isOutsidePanel(mouseX, mouseY)) return super.mouseScrolled(mouseX, mouseY, horizontal, vertical);
 		smoothScrool.onMouseScroll(vertical, 1);
 		return true;
 	}
@@ -158,12 +158,12 @@ public final class EnumDropdownScreen extends Screen {
 	private void playClickSound() {
 		getMinecraft().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 	}
-	private boolean isInsidePanel(double mouseX, double mouseY) {
+	private boolean isOutsidePanel(double mouseX, double mouseY) {
 		var panelX = dropdownButton.getX() - GAP;
 		var panelY = dropdownY() - GAP;
 		var panelW = dropdownButton.getWidth() + GAP;
 		var panelH = maxVisibleOptions * HEIGHT + GAP * 2;
-		return mouseX >= panelX && mouseX <= panelX + panelW && mouseY >= panelY && mouseY <= panelY + panelH;
+		return !(mouseX >= panelX) || !(mouseX <= panelX + panelW) || !(mouseY >= panelY) || !(mouseY <= panelY + panelH);
 	}
 	private int getMaxScrollOffset() {
 		return Math.max(0, values.length - maxVisibleOptions);

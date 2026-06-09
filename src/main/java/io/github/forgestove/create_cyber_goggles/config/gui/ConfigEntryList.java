@@ -20,9 +20,9 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 	private float highlightAlpha;
 	@Nullable private ConfigEntry lastHoveredEntry;
 	// 平滑滚动状态
-	private double targetScrollAmount;
-	private double currentScrollAmount;
-	private boolean smoothScrollInitialized;
+	private double targetScroll;
+	private double currentScroll;
+	private boolean smoothScroll;
 	public ConfigEntryList(
 		ConfigCategoryTab<?> tab,
 		Minecraft minecraft,
@@ -91,30 +91,25 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 	}
 	private void updateSmoothScroll(float delta) {
 		// 初始化目标和当前滚动值（第一次调用时）
-		if (!smoothScrollInitialized) {
-			currentScrollAmount = getScrollAmount();
-			targetScrollAmount = currentScrollAmount;
-			smoothScrollInitialized = true;
+		if (!smoothScroll) {
+			currentScroll = getScrollAmount();
+			targetScroll = currentScroll;
+			smoothScroll = true;
 		}
-		// 平滑插值到目标值
-		currentScrollAmount = Mth.lerp(delta, currentScrollAmount, targetScrollAmount);
-		setScrollAmount(currentScrollAmount);
-		// 当接近目标时快速锁定
-		if (Math.abs(currentScrollAmount - targetScrollAmount) < 0.5f) {
-			currentScrollAmount = targetScrollAmount;
-			setScrollAmount(targetScrollAmount);
-		}
+		// 线性插值到目标值
+		currentScroll = Mth.lerp(delta, currentScroll, targetScroll);
+		setScrollAmount(currentScroll);
 	}
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
 		// 初始化当前滚动值（如果还没有）
-		if (!smoothScrollInitialized) {
-			currentScrollAmount = getScrollAmount();
-			targetScrollAmount = currentScrollAmount;
-			smoothScrollInitialized = true;
+		if (!smoothScroll) {
+			currentScroll = getScrollAmount();
+			targetScroll = currentScroll;
+			smoothScroll = true;
 		}
 		// 设置目标滚动值而不是直接改变
-		targetScrollAmount = Mth.clamp(targetScrollAmount - vertical * itemHeight, 0, getMaxScroll());
+		targetScroll = Mth.clamp(targetScroll - vertical * itemHeight, 0, getMaxScroll());
 		return true;
 	}
 	@Override
@@ -122,8 +117,8 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		// 委托父类处理拖拽滚动（内部调用 setScrollAmount）
 		var result = super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
 		// 同步拖拽后的滚动位置，防止 updateSmoothScroll 在下帧覆盖掉
-		currentScrollAmount = getScrollAmount();
-		targetScrollAmount = currentScrollAmount;
+		currentScroll = getScrollAmount();
+		targetScroll = currentScroll;
 		return result;
 	}
 	@Override

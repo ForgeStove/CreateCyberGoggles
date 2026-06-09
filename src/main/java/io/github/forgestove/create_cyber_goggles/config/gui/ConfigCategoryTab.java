@@ -16,7 +16,14 @@ import java.awt.Color;
 import java.util.*;
 import java.util.function.Consumer;
 public final class ConfigCategoryTab<C> implements Tab {
-	private static final Map<Class<?>, ConfigEntryFactory<?>> ENTRY_FACTORIES = Map.of(
+	private final ConfigScreen<C> screen;
+	private final CategoryConfigNode<C> category;
+	private final C config;
+	private final Component title;
+	private final ConfigEntryList list;
+	private final Map<Class<?>, EntryFactory<C>> entryFactories = Map.of(
+		Enum.class,
+		(tab, node) -> new EnumValueConfigEntry<>(tab, cast(node)),
 		Boolean.class,
 		(tab, node) -> new BooleanValueConfigEntry<>(tab, cast(node)),
 		Integer.class,
@@ -34,11 +41,6 @@ public final class ConfigCategoryTab<C> implements Tab {
 		Key.class,
 		(tab, node) -> new KeybindValueConfigEntry<>(tab, cast(node))
 	);
-	private final ConfigScreen<C> screen;
-	private final CategoryConfigNode<C> category;
-	private final C config;
-	private final Component title;
-	private final ConfigEntryList list;
 	@Nullable private TabButton tabButton;
 	public ConfigCategoryTab(ConfigScreen<C> screen, CategoryConfigNode<C> category, C config) {
 		this.screen = screen;
@@ -77,13 +79,10 @@ public final class ConfigCategoryTab<C> implements Tab {
 	public void doLayout(ScreenRectangle screenRectangle) {
 		list.setRectangle(screenRectangle.width(), screenRectangle.height(), screenRectangle.left(), screenRectangle.top());
 	}
-	@SuppressWarnings("unchecked")
 	private ConfigEntry createValueEntry(ValueConfigNode<C, ?> valueNode) {
 		var type = valueNode.getValueType();
-		if (Enum.class.isAssignableFrom(type))
-			return new EnumValueConfigEntry<>(this, (ValueConfigNode<C, Enum<?>>) valueNode, screen.root.modId);
-		var factory = (ConfigEntryFactory<C>) ENTRY_FACTORIES.get(type);
-		if (factory != null) return factory.create(this, valueNode);
+		for (var entry : entryFactories.entrySet())
+			if (entry.getKey().isAssignableFrom(type)) return entry.getValue().create(this, valueNode);
 		return new TextConfigEntry(this, Translation.UNSUPPORTED_TYPE.copy().append(type.getSimpleName()).withStyle(ChatFormatting.RED));
 	}
 	private List<ConfigEntry> createSubCategoryEntries(CategoryConfigNode<C> categoryNode) {
@@ -126,7 +125,7 @@ public final class ConfigCategoryTab<C> implements Tab {
 		return list.isCapturingKeybind();
 	}
 	@FunctionalInterface
-	private interface ConfigEntryFactory<C> {
-		@Nullable ConfigEntry create(ConfigCategoryTab<C> tab, ValueConfigNode<C, ?> node);
+	private interface EntryFactory<C> {
+		ConfigEntry create(ConfigCategoryTab<C> tab, ValueConfigNode<C, ?> node);
 	}
 }

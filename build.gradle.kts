@@ -91,6 +91,7 @@ publishMods {
 		accessToken.set(providers.environmentVariable("CURSEFORGE_TOKEN"))
 		projectId.set("1233804")
 		minecraftVersions.add(p("mcVersion"))
+		client.set(true)
 		requires("create")
 	}
 }

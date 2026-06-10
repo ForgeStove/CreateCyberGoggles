@@ -9,8 +9,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 @Mixin(PoweredShaftTooltipBehaviour.class)
-public abstract class PoweredShaftBlockEntityMixin extends GeneratingKineticTooltipBehaviour<PoweredShaftBlockEntity> {
-	public PoweredShaftBlockEntityMixin(PoweredShaftBlockEntity be) {
+public abstract class PoweredShaftTooltipBehaviourMixin extends GeneratingKineticTooltipBehaviour<PoweredShaftBlockEntity> {
+	public PoweredShaftTooltipBehaviourMixin(PoweredShaftBlockEntity be) {
 		super(be);
 	}
 	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), cancellable = true)

@@ -6,7 +6,6 @@ import net.minecraft.world.level.block.ShulkerBoxBlock;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.stream.Collectors;
 public class ContainerRenderer extends AbstractItemGridRenderer {
 	private static final int COLUMNS = 9;
 	private static boolean isVanilla27Container(ItemStack stack) {
@@ -29,9 +28,9 @@ public class ContainerRenderer extends AbstractItemGridRenderer {
 	public @Nullable OverlayData buildItemGrid(ItemStack stack) {
 		var container = stack.getComponents().get(DataComponents.CONTAINER);
 		if (container == null) return null;
-		var allItems = container.stream().collect(Collectors.toList());
+		var allItems = container.stream().toList();
 		var storedSlots = allItems.size();
-		if (storedSlots <= 0) return null;
+		if (storedSlots == 0) return null;
 		var slots = isVanilla27Container(stack) ? 27 : storedSlots;
 		List<ItemStack> items = new ArrayList<>();
 		for (var i = 0; i < slots; i++) items.add(i < storedSlots ? allItems.get(i) : ItemStack.EMPTY);

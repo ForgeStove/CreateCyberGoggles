@@ -4,6 +4,7 @@ import com.zurrtum.create.client.foundation.item.TooltipHelper;
 import com.zurrtum.create.content.kinetics.deployer.DeployerBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
@@ -25,7 +26,8 @@ public abstract class DeployerBlockEntityMixin extends KineticTooltipBehaviour<D
 		}
 		super.addToTooltip(tooltip, isPlayerSneaking);
 		TooltipHelper.addHint(tooltip, "hint.full_deployer");
-		overflowItems.forEach(itemStack -> CCGLang.item(itemStack).forGoggles(tooltip));
+		CCGLang.translate("tooltip.content").style(ChatFormatting.GRAY).forGoggles(tooltip);
+		CCGLang.itemList(overflowItems, 9).forGoggles(tooltip.size(), tooltip);
 		cir.setReturnValue(true);
 	}
 	@Inject(

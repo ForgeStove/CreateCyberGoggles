@@ -7,14 +7,13 @@ import io.github.forgestove.create_cyber_goggles.mixin.accessor.BrassDiodeBlockE
 import net.minecraft.network.chat.Component;
 
 import java.util.List;
-public class BrassDiodeBlockEntityTooltipBehavior extends TooltipBehaviour<BrassDiodeBlockEntity> implements IHaveGoggleInformation {
-	public BrassDiodeBlockEntityTooltipBehavior(BrassDiodeBlockEntity be) {
+public class BrassDiodeTooltipBehavior extends TooltipBehaviour<BrassDiodeBlockEntity> implements IHaveGoggleInformation {
+	public BrassDiodeTooltipBehavior(BrassDiodeBlockEntity be) {
 		super(be);
 	}
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		var accessor = (BrassDiodeBlockEntityAccessor) blockEntity;
-		GoggleTooltipUtil.pulse(tooltip, blockEntity.state, accessor.getMaxState().getValue());
-		return true;
+		return GoggleTooltipUtil.pulse(tooltip, blockEntity.state, accessor.getMaxState().getValue());
 	}
 }

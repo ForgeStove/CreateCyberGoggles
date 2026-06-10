@@ -1,15 +1,11 @@
 package io.github.forgestove.create_cyber_goggles.core.factory;
+import com.zurrtum.create.client.AllFluidConfigs;
 import com.zurrtum.create.infrastructure.fluids.FluidStack;
 import io.github.forgestove.create_cyber_goggles.core.util.SlotUtil;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import net.minecraft.world.level.material.Fluid;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -38,20 +34,13 @@ public final class ClientFluidListTooltipComponent implements ClientTooltipCompo
 	private static void renderFluid(@NotNull GuiGraphics gui, @NotNull FluidStack stack, int x, int y, int width, int height) {
 		if (stack.isEmpty()) return;
 		var fluid = stack.getFluid();
-		var fluidKey = BuiltInRegistries.FLUID.getKey(fluid);
-		var stillLocation = Identifier.fromNamespaceAndPath(fluidKey.getNamespace(), "block/" + fluidKey.getPath() + "_still");
-		var sprite = Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(TextureAtlas.LOCATION_BLOCKS).getSprite(stillLocation);
-		var tint = getFluidTint(fluid);
-		for (var dx = 0; dx < width; dx += 16) {
-			var sliceWidth = Math.min(16, width - dx);
-			if (sliceWidth <= 0) break;
-			gui.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x + dx, y, sliceWidth, height, tint);
-		}
-	}
-	private static int getFluidTint(Fluid fluid) {
-		var defaultState = fluid.defaultFluidState();
-		var mapColor = defaultState.createLegacyBlock().getBlock().defaultMapColor();
-		return mapColor.col | 0xFF000000;
+		var config = AllFluidConfigs.get(fluid);
+		if (config == null) return;
+		var sprite = config.still().get();
+		var tint = config.tint().apply(stack.getComponentChanges()) | 0xFF000000;
+		for (var dx = 0; dx < width; dx += 16)
+			for (var dy = 0; dy < height; dy += 16)
+				gui.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x + dx, y + dy, 16, 16, tint);
 	}
 	@Override
 	public int getHeight(@NotNull Font font) {

@@ -60,6 +60,7 @@ public final class MapTooltipRenderer implements TooltipOverlayRenderer {
 		var pose = gui.pose();
 		pose.pushMatrix();
 		pose.translate(x, y);
+		gui.blit(MAP_BACKGROUND, 0, 0, 0, 0, PANEL_SIZE, PANEL_SIZE, PANEL_SIZE, PANEL_SIZE);
 		pose.pushMatrix();
 		pose.translate(PADDING, PADDING);
 		pose.scale(PREVIEW_SCALE, PREVIEW_SCALE);

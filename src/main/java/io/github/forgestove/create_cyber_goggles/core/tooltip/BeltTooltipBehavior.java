@@ -6,8 +6,8 @@ import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.network.chat.Component;
 
 import java.util.List;
-public class BeltBlockEntityTooltipBehavior<T extends BeltBlockEntity> extends KineticTooltipBehaviour<T> {
-	public BeltBlockEntityTooltipBehavior(T be) {
+public class BeltTooltipBehavior<T extends BeltBlockEntity> extends KineticTooltipBehaviour<T> {
+	public BeltTooltipBehavior(T be) {
 		super(be);
 	}
 	@Override

@@ -6,20 +6,28 @@ import com.zurrtum.create.client.foundation.utility.CreateLang;
 import com.zurrtum.create.content.equipment.armor.*;
 import com.zurrtum.create.content.kinetics.base.*;
 import com.zurrtum.create.content.kinetics.base.IRotate.StressImpact;
+import com.zurrtum.create.content.kinetics.crusher.CrushingWheelControllerBlockEntity;
+import com.zurrtum.create.content.kinetics.millstone.*;
+import com.zurrtum.create.content.logistics.BigItemStack;
+import com.zurrtum.create.content.logistics.depot.DepotItemHandler;
 import com.zurrtum.create.content.processing.burner.BlazeBurnerBlockEntity;
 import com.zurrtum.create.content.processing.burner.BlazeBurnerBlockEntity.FuelType;
 import com.zurrtum.create.content.schematics.cannon.SchematicannonBlockEntity;
 import com.zurrtum.create.content.schematics.cannon.SchematicannonBlockEntity.State;
+import com.zurrtum.create.infrastructure.config.AllConfigs;
+import com.zurrtum.create.infrastructure.fluids.FluidStack;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.event.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.*;
 
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 import static net.minecraft.ChatFormatting.*;
-public class GoggleTooltipUtil {
+public final class GoggleTooltipUtil {
 	public static void kinetic(List<Component> tooltip, @NotNull KineticBlockEntity kbe, float stress, float capacity) {
 		var speed = kbe.getTheoreticalSpeed();
 		if (StressImpact.isEnabled()) {
@@ -89,10 +97,10 @@ public class GoggleTooltipUtil {
 			default -> DARK_PURPLE;
 		};
 		CCGLang.translate("tooltip.burnerState").forGoggles(tooltip);
-		CCGLang.translate("tooltip.leftTime", format)
-			.add(CCGLang.text(isCreative ? "∞" : String.valueOf(remainingBurnTime / 20), format))
-			.add(CCGLang.text(" / %d ".formatted(BlazeBurnerBlockEntity.INSERTION_THRESHOLD)))
-			.add(CCGLang.seconds())
+		CCGLang.translate("tooltip.leftTime", GRAY)
+			.text(isCreative ? "∞" : String.valueOf(remainingBurnTime / 20), format)
+			.text(" / %d ".formatted(BlazeBurnerBlockEntity.INSERTION_THRESHOLD))
+			.seconds()
 			.forGoggles(tooltip);
 		return true;
 	}
@@ -108,13 +116,15 @@ public class GoggleTooltipUtil {
 		} else {
 			var fillPercent = (int) (shotsLeft / (float) sbe.getShotsPerGunpowder() * 100);
 			CreateLang.translate("gui.schematicannon.gunpowderLevel", fillPercent).forGoggles(tooltip);
-			CreateLang.translate("gui.schematicannon.shotsRemaining", CCGLang.number(shotsLeft).style(BLUE))
-				.style(GRAY)
+			CreateLang.builder()
+				.add(CreateLang.translateDirect("gui.schematicannon.shotsRemaining", CCGLang.number(shotsLeft, BLUE).component())
+					.withStyle(GRAY))
 				.forGoggles(tooltip);
-			if (shotsLeftWithItems != shotsLeft)
-				CreateLang.translate("gui.schematicannon.shotsRemainingWithBackup", CCGLang.number(shotsLeftWithItems).style(BLUE))
-					.style(GRAY)
-					.forGoggles(tooltip);
+			if (shotsLeftWithItems != shotsLeft) CreateLang.builder()
+				.add(CreateLang.translateDirect("gui.schematicannon.shotsRemainingWithBackup",
+					CCGLang.number(shotsLeftWithItems, BLUE).component()
+				).withStyle(GRAY))
+				.forGoggles(tooltip);
 		}
 		if (!sbe.state.equals(State.RUNNING)) return true;
 		CCGLang.translate("tooltip.printProgress").forGoggles(tooltip);
@@ -124,30 +134,151 @@ public class GoggleTooltipUtil {
 	}
 	public static boolean backtank(List<Component> tooltip, BacktankBlockEntity bbe, int capacityEnchantLevel, int leftTick) {
 		if (!CCG.config.goggles.enhancedInfo) return false;
-		CCGLang.translate("gui.goggles.fluid_container").forGoggles(tooltip);
-		CCGLang.translate("gui.goggles.fluid_container.capacity")
+		CreateLang.translate("gui.goggles.fluid_container").forGoggles(tooltip);
+		CreateLang.translate("gui.goggles.fluid_container.capacity")
 			.style(GRAY)
-			.add(CCGLang.fraction(bbe.airLevel, BacktankUtil.maxAir(capacityEnchantLevel)))
+			.add(CCGLang.fraction(bbe.airLevel, BacktankUtil.maxAir(capacityEnchantLevel)).component())
 			.forGoggles(tooltip);
 		if (bbe.getSpeed() == 0 || leftTick == 0) return false;
-		CCGLang.translate("tooltip.leftTime")
-			.style(GRAY)
-			.add(CCGLang.number(leftTick / 20).style(GOLD))
-			.space()
-			.add(CCGLang.seconds().style(GRAY))
-			.forGoggles(tooltip);
+		CCGLang.translate("tooltip.leftTime", GRAY).number(leftTick / 20, GOLD).space().seconds(GRAY).forGoggles(tooltip);
 		return true;
 	}
 	public static void beltThroughput(List<Component> tooltip, double itemsPerSecond) {
 		if (itemsPerSecond < 0.1) return;
-		CCGLang.translate("tooltip.beltThroughput").style(GRAY).forGoggles(tooltip);
-		CCGLang.text(String.format("%.2f", itemsPerSecond))
-			.style(GOLD)
-			.add(CCGLang.text(" / ").style(DARK_GRAY).add(CCGLang.seconds().style(DARK_GRAY)))
-			.forGoggles(tooltip, 1);
+		CCGLang.translate("tooltip.beltThroughput", GRAY).forGoggles(tooltip);
+		CCGLang.text(String.format("%.2f", itemsPerSecond), GOLD).text(" / ", DARK_GRAY).seconds(DARK_GRAY).forGoggles(tooltip, 1);
 	}
-	public static void pulse(List<Component> tooltip, int state, int maxState) {
+	public static boolean pulse(List<Component> tooltip, int state, int maxState) {
+		if (!CCG.config.goggles.enhancedInfo) return false;
 		CCGLang.translate("tooltip.pulse").forGoggles(tooltip);
 		CCGLang.fraction(state, maxState).forGoggles(tooltip);
+		return true;
+	}
+	public static boolean depot(List<Component> tooltip, DepotItemHandler itemHandler) {
+		if (!CCG.config.tooltip.depot) return false;
+		if (itemHandler == null) return false;
+		var stacks = new ArrayList<ItemStack>();
+		var stackAdded = false;
+		for (var i = 1; i < itemHandler.getContainerSize(); i++) {
+			var stack = itemHandler.getItem(i);
+			if (stack.isEmpty()) continue;
+			stacks.add(stack);
+			stackAdded = true;
+		}
+		if (!stackAdded) return false;
+		CCGLang.translate("tooltip.content").forGoggles(tooltip);
+		stacks.forEach(stack -> CCGLang.itemEntry(stack, CCGLang.item(stack).component()).forGoggles(tooltip, 1));
+		return true;
+	}
+	public static boolean redstoneRequester(List<Component> tooltip, List<BigItemStack> bigStacks) {
+		if (!CCG.config.tooltip.redstoneRequester) return false;
+		if (bigStacks.isEmpty()) return false;
+		var stacks = new ArrayList<ItemStack>();
+		bigStacks.forEach(bigStack -> stacks.add(bigStack.stack.copyWithCount(bigStack.count)));
+		CCGLang.translate("tooltip.content").forGoggles(tooltip);
+		CCGLang.itemList(stacks, 3).forGoggles(tooltip);
+		return true;
+	}
+	public static boolean basin(
+		List<Component> tooltip,
+		@NotNull List<ItemStack> inputItems,
+		List<ItemStack> outputItems,
+		@NotNull List<FluidStack> inputFluids,
+		List<FluidStack> outputFluids,
+		List<Integer> inputCapacities,
+		List<Integer> outputCapacities
+	) {
+		var hasItems = !inputItems.isEmpty() || !outputItems.isEmpty();
+		var hasFluids = !inputFluids.isEmpty() || !outputFluids.isEmpty();
+		if (!hasItems && !hasFluids) return false;
+		CreateLang.translate("gui.goggles.basin_contents").forGoggles(tooltip);
+		if (!inputItems.isEmpty()) {
+			CCGLang.translate("tooltip.inputItems", GRAY).forGoggles(tooltip, 1);
+			inputItems.forEach(stack -> CCGLang.itemEntry(stack, CCGLang.item(stack).component()).forGoggles(tooltip, 1));
+		}
+		if (!inputFluids.isEmpty()) {
+			CCGLang.translate("tooltip.inputFluids", GRAY).forGoggles(tooltip, 1);
+			for (var i = 0; i < inputFluids.size(); i++) {
+				var fluidStack = inputFluids.get(i);
+				var capacityMb = i < inputCapacities.size() ? inputCapacities.get(i) : Math.max(1000, fluidStack.getAmount());
+				CCGLang.fluidEntry(fluidStack, capacityMb).forGoggles(tooltip, 1);
+			}
+		}
+		if (!outputItems.isEmpty()) {
+			CCGLang.translate("tooltip.outputItems", GRAY).forGoggles(tooltip, 1);
+			outputItems.forEach(stack -> CCGLang.itemEntry(stack, CCGLang.item(stack).component()).forGoggles(tooltip, 1));
+		}
+		if (!outputFluids.isEmpty()) {
+			CCGLang.translate("tooltip.outputFluids", GRAY).forGoggles(tooltip, 1);
+			for (var i = 0; i < outputFluids.size(); i++) {
+				var fluidStack = outputFluids.get(i);
+				var capacityMb = i < outputCapacities.size() ? outputCapacities.get(i) : Math.max(1000, fluidStack.getAmount());
+				CCGLang.fluidEntry(fluidStack, capacityMb).forGoggles(tooltip, 1);
+			}
+		}
+		return true;
+	}
+	public static boolean crushingController(List<Component> tooltip, CrushingWheelControllerBlockEntity cwcbe) {
+		if (!CCG.config.tooltip.crushingController) return false;
+		CCGLang.translate("tooltip.crushingController")
+			.fraction(cwcbe.crushingspeed * 50, AllConfigs.server().kinetics.maxRotationSpeed.get())
+			.forGoggles(tooltip);
+		var inputCount = cwcbe.inventory.getItem(0).getCount();
+		var processingSpeed = Mth.clamp(
+			cwcbe.crushingspeed * 4 / (
+				!cwcbe.inventory.appliedRecipe ? (float) Math.log(inputCount) / (float) Math.log(2) : 1
+			), .25f, 20
+		);
+		var leftTick = (int) (cwcbe.inventory.remainingTime / processingSpeed);
+		if (leftTick == 0) return false;
+		CCGLang.translate("tooltip.leftTime", GRAY).number(leftTick / 20, GOLD).space().seconds(GRAY).forGoggles(tooltip);
+		CCGLang.translate("tooltip.expectedOutputs", GRAY).forGoggles(tooltip);
+		var recipe = cwcbe.findRecipe();
+		if (recipe == null) {
+			CCGLang.item(ItemStack.EMPTY).forGoggles(tooltip, 2);
+			return true;
+		}
+		if (mc.player == null || mc.player.isShiftKeyDown()) recipe.results().forEach(result -> {
+			var stack = result.create();
+			var chance = result.chance();
+			var label = CCGLang.item(stack).text(" x", DARK_GRAY).number(chance * 100).style(AQUA).text("%", DARK_GRAY).component();
+			CCGLang.itemEntry(stack.copyWithCount(inputCount * stack.getCount()), label).forGoggles(tooltip);
+		});
+		else recipe.results().forEach(result -> {
+			var stack = result.create();
+			var chance = result.chance();
+			var line = CCGLang.item(stack).text(" x", DARK_GRAY).number(inputCount * stack.getCount() * chance, GOLD).component();
+			CCGLang.itemEntry(stack.copyWithCount(1), line).forGoggles(tooltip);
+		});
+		return true;
+	}
+	public static boolean millstone(List<Component> tooltip, MillstoneBlockEntity mbe, MillingRecipe lastRecipe) {
+		if (!CCG.config.tooltip.millstone) return false;
+		CCGLang.translate("tooltip.crushingController")
+			.add(CCGLang.fraction(mbe.getProcessingSpeed() * 16, AllConfigs.server().kinetics.maxRotationSpeed.get()))
+			.forGoggles(tooltip);
+		var processingSpeed = Math.max(1, mbe.getProcessingSpeed());
+		var leftTick = (int) Math.ceil(mbe.timer / (double) processingSpeed);
+		if (leftTick == 0) return false;
+		CCGLang.translate("tooltip.leftTime", GRAY).number(leftTick / 20, GOLD).space().seconds(GRAY).forGoggles(tooltip);
+		CCGLang.translate("tooltip.expectedOutputs", GRAY).forGoggles(tooltip);
+		if (lastRecipe == null) {
+			CCGLang.item(ItemStack.EMPTY).forGoggles(tooltip, 2);
+			return true;
+		}
+		var inputCount = Math.max(1, mbe.capability.getItem(0).getCount());
+		if (mc.player == null || mc.player.isShiftKeyDown()) lastRecipe.results().forEach(result -> {
+			var stack = result.create();
+			var chance = result.chance();
+			var label = CCGLang.item(stack).text(" x", DARK_GRAY).number(chance * 100, AQUA).text("%", DARK_GRAY).component();
+			CCGLang.itemEntry(stack.copyWithCount(inputCount * stack.getCount()), label).forGoggles(tooltip);
+		});
+		else lastRecipe.results().forEach(result -> {
+			var stack = result.create();
+			var chance = result.chance();
+			var line = CCGLang.item(stack).text(" x", DARK_GRAY).number(inputCount * stack.getCount() * chance, GOLD).component();
+			CCGLang.itemEntry(stack.copyWithCount(1), line).forGoggles(tooltip);
+		});
+		return true;
 	}
 }

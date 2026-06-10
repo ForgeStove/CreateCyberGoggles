@@ -16,9 +16,13 @@ public class Outliner {
 		if (!CCG.config.outliner.renderAnalogBox) return;
 		if (mc.isPaused() || isInGUI()) return;
 		var be = getBlockEntity();
-		if (be instanceof OutlineRenderable) cachedBE.put(be, CCG.config.outliner.delayRenderDuration);
+		if (be instanceof OutlineRenderable or) cachedBE.put(be, or.ccg$getRenderDelay());
 		if (cachedBE.isEmpty()) return;
-		cachedBE.entrySet().removeIf(Outliner::render);
+		try {
+			cachedBE.entrySet().removeIf(Outliner::render);
+		} catch (Throwable throwable) {
+			CCG.LOGGER.error(throwable.getMessage(), throwable);
+		}
 	}
 	private static boolean render(@NotNull Entry<BlockEntity, Integer> entry) {
 		var nextDelay = entry.getValue() - 1;
@@ -31,7 +35,7 @@ public class Outliner {
 	public static int getColor(boolean pushing) {
 		return pushing ? CCG.config.outliner.outColor : CCG.config.outliner.inColor;
 	}
-	public static double getOffset(int i, int numberOfFlowBoxes) {
+	public static double getOffsetScale(int i, int numberOfFlowBoxes) {
 		return (System.currentTimeMillis() + i * (3000D / numberOfFlowBoxes)) % 3000 / 3000.0;
 	}
 	@Contract(pure = true)

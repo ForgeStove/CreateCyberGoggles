@@ -1,14 +1,14 @@
 package io.github.forgestove.create_cyber_goggles.mixin.provider;
-import com.zurrtum.create.content.logistics.box.PackageEntity;
+import com.zurrtum.create.content.decoration.placard.PlacardBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.api.*;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
-@Mixin(PackageEntity.class)
-public abstract class PackageEntityMixin implements ItemRenderable, Self<PackageEntity> {
+@Mixin(PlacardBlockEntity.class)
+public abstract class PlacardBlockEntityMixin implements ItemRenderable, Self<PlacardBlockEntity> {
 	@Override
 	public ItemStack ccg$getItemStack() {
 		if (!CCG.config.tooltip.packageEntity) return null;
-		return thiz().getBox();
+		return thiz().getHeldItem();
 	}
 }

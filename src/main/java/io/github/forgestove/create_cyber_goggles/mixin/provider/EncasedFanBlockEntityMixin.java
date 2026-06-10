@@ -40,7 +40,7 @@ public abstract class EncasedFanBlockEntityMixin extends KineticBlockEntity
 			.colored(color);
 		var numberOfFlowBoxes = Outliner.getNumberOfFlowBoxes(airCurrent.maxDistance);
 		for (var i = 0; i < numberOfFlowBoxes; i++) {
-			var offset = Outliner.getOffset(i, numberOfFlowBoxes);
+			var offset = Outliner.getOffsetScale(i, numberOfFlowBoxes);
 			var offsetDistance = airCurrent.maxDistance * offset;
 			var axis = airCurrent.direction.getAxis();
 			var min = switch (axis) {

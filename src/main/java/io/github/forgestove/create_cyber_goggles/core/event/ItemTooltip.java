@@ -1,14 +1,19 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
-import com.zurrtum.create.*;
 import com.zurrtum.create.client.foundation.utility.CreateLang;
 import com.zurrtum.create.content.equipment.armor.*;
 import com.zurrtum.create.content.equipment.goggles.GogglesItem;
-import com.zurrtum.create.content.equipment.toolbox.ToolboxInventory;
 import com.zurrtum.create.content.equipment.wrench.WrenchItem;
+import com.zurrtum.create.foundation.fluid.FluidHelper;
+import com.zurrtum.create.infrastructure.fluids.FluidStack;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.api.TooltipOverlayRenderer;
+import io.github.forgestove.create_cyber_goggles.core.gui.*;
 import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.*;
+import net.minecraft.client.gui.screens.inventory.tooltip.*;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.*;
 import org.jetbrains.annotations.NotNull;
@@ -16,21 +21,36 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
-public class ItemTooltip {
+public final class ItemTooltip {
+	public static final List<TooltipOverlayRenderer> OVERLAY_RENDERERS = List.of(
+		new ContainerRenderer(),
+		new PackageItemRenderer(),
+		new ToolboxRenderer(),
+		new ListFilterRenderer(),
+		new EnderChestRenderer(),
+		new ClipboardRenderer(),
+		new MapTooltipRenderer(),
+		new LinkedControllerRenderer(),
+		new TableClothRenderer(),
+		new RedstoneRequesterRenderer()
+	);
+	private static final int OVERLAY_GAP = 6;
 	public static void itemTooltip(ItemStack stack, TooltipContext ignoredContext, TooltipFlag ignoredFlag, List<Component> tooltip) {
 		if (!CCG.config.tooltip.extraItemTooltip) return;
 		goggles(stack, tooltip);
 		backtank(stack, tooltip);
 		divingBoots(stack, tooltip);
 		wrench(stack, tooltip);
-		toolbox(stack, tooltip);
+		fluidContainer(stack, tooltip);
 	}
 	private static void goggles(@NotNull ItemStack stack, List<Component> tooltip) {
+		if (!CCG.config.tooltip.goggles) return;
 		if (!(stack.getItem() instanceof GogglesItem)) return;
 		var component = CCGLang.enabled(GogglesItem.isWearingGoggles(mc.player)).component();
 		tooltip.add(1, component);
 	}
 	private static void backtank(@NotNull ItemStack stack, List<Component> tooltip) {
+		if (!CCG.config.tooltip.backtank) return;
 		if (!(stack.getItem() instanceof BacktankItem)) return;
 		var component = CreateLang.translate("gui.goggles.fluid_container.capacity")
 			.style(ChatFormatting.GRAY)
@@ -39,42 +59,74 @@ public class ItemTooltip {
 		tooltip.add(1, component);
 	}
 	private static void divingBoots(@NotNull ItemStack stack, List<Component> tooltip) {
+		if (!CCG.config.tooltip.divingBoots) return;
 		if (!(stack.getItem() instanceof DivingBootsItem)) return;
 		var component = CCGLang.enabled(CCG.config.misc.allowDivingBoot).component();
 		tooltip.add(1, component);
 	}
 	private static void wrench(@NotNull ItemStack stack, List<Component> tooltip) {
+		if (!CCG.config.tooltip.wrench) return;
 		if (!(stack.getItem() instanceof WrenchItem)) return;
-		var component = CCGLang.builder()
-			.translate("option.wrench.leftClickFastDismantle")
+		var component = CCGLang.translate("config.option.wrench.leftClickFastDismantle")
 			.space()
-			.add(CCGLang.enabled(CCG.config.wrench.leftClickFastDismantle))
+			.enabled(CCG.config.wrench.leftClickFastDismantle)
 			.component();
 		tooltip.add(1, component);
 	}
-	private static void toolbox(@NotNull ItemStack stack, List<Component> tooltip) {
-		if (!stack.is(AllItemTags.TOOLBOXES)) return;
-		var inventory = stack.getComponents().get(AllDataComponents.TOOLBOX_INVENTORY);
-		if (inventory == null) return;
-		var compartments = 8;
-		var stacksPerCompartment = ToolboxInventory.STACKS_PER_COMPARTMENT;
-		List<Component> list = new ArrayList<>();
-		for (var compartment = 0; compartment < compartments; compartment++) {
-			var baseIndex = compartment * stacksPerCompartment;
-			var consolidated = ItemStack.EMPTY;
-			var totalCount = 0;
-			for (var offset = 0; offset < stacksPerCompartment; offset++) {
-				var slotIndex = baseIndex + offset;
-				if (slotIndex >= inventory.getContainerSize()) break;
-				var slot = inventory.getItem(slotIndex);
-				if (slot.isEmpty()) continue;
-				if (consolidated.isEmpty()) {
-					consolidated = slot.copyWithCount(1);
-					totalCount = slot.getCount();
-				} else if (ItemStack.isSameItemSameComponents(consolidated, slot)) totalCount += slot.getCount();
+	private static void fluidContainer(@NotNull ItemStack stack, List<Component> tooltip) {
+		if (!CCG.config.tooltip.fluidContainer) return;
+		try (var inventory = FluidHelper.getFluidInventory(stack)) {
+			if (inventory == null || inventory.isEmpty()) return;
+			var entries = new ArrayList<FluidStack>();
+			var capacities = new ArrayList<Integer>();
+			for (var i = 0; i < inventory.size(); i++) {
+				var fluid = inventory.getStack(i);
+				if (fluid.isEmpty()) continue;
+				entries.add(fluid.copy());
+				capacities.add(inventory.getMaxAmount(fluid));
 			}
-			if (!consolidated.isEmpty()) CCGLang.item(consolidated.copyWithCount(totalCount)).addTo(list);
+			if (entries.isEmpty()) {
+				entries.add(FluidStack.EMPTY);
+				capacities.add(inventory.getMaxAmount(FluidStack.EMPTY));
+			}
+			for (var i = 0; i < entries.size(); i++) {
+				var fluid = entries.get(i);
+				var capacity = i < capacities.size() ? capacities.get(i) : Math.max(1, fluid.getAmount());
+				CCGLang.fluidEntry(fluid, capacity).addTo(1, tooltip);
+			}
 		}
-		tooltip.addAll(1, list);
+	}
+	public static void renderTooltipOverlay(
+		ItemStack stack,
+		GuiGraphics graphics,
+		Font font,
+		List<ClientTooltipComponent> components,
+		int mouseX,
+		int mouseY,
+		ClientTooltipPositioner positioner
+	) {
+		if (!CCG.config.tooltip.extraItemTooltip) return;
+		if (stack.isEmpty()) return;
+		TooltipOverlayRenderer renderer = null;
+		for (var overlayRenderer : OVERLAY_RENDERERS) {
+			if (!overlayRenderer.supports(stack)) continue;
+			renderer = overlayRenderer;
+			break;
+		}
+		if (renderer == null) return;
+		if (!renderer.canRender(stack)) return;
+		if (components.isEmpty()) return;
+		int tooltipWidth = 0, tooltipHeight = 0;
+		for (var component : components) {
+			tooltipWidth = Math.max(tooltipWidth, component.getWidth(font));
+			tooltipHeight += component.getHeight(font);
+		}
+		var overlayWidth = renderer.width(stack);
+		var overlayHeight = renderer.height(stack);
+		var pos = positioner.positionTooltip(graphics.guiWidth(), graphics.guiHeight(), mouseX, mouseY, tooltipWidth, tooltipHeight);
+		var overlayX = Mth.clamp(pos.x(), 0, Math.max(0, graphics.guiWidth() - overlayWidth));
+		var overlayY = pos.y() - overlayHeight - OVERLAY_GAP;
+		if (overlayY < 0) overlayY = 0;
+		renderer.render(graphics, stack, overlayX - 4, overlayY);
 	}
 }

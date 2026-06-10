@@ -1,5 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.zurrtum.create.content.kinetics.deployer.DeployerBlockEntity;
+import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.api.*;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -7,6 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 public abstract class DeployerBlockEntityMixin implements ItemRenderable, Self<DeployerBlockEntity> {
 	@Override
 	public ItemStack ccg$getItemStack() {
+		if (!CCG.config.tooltip.deployer) return null;
 		return thiz().heldItem;
 	}
 }

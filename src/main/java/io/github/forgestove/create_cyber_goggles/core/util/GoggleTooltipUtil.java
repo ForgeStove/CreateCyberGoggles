@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.core.util;
-import com.zurrtum.create.AllBlocks;
+import com.zurrtum.create.*;
 import com.zurrtum.create.client.foundation.blockEntity.behaviour.tooltip.*;
 import com.zurrtum.create.client.foundation.item.TooltipHelper;
 import com.zurrtum.create.client.foundation.utility.CreateLang;
@@ -21,6 +21,7 @@ import io.github.forgestove.create_cyber_goggles.core.event.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -252,8 +253,16 @@ public final class GoggleTooltipUtil {
 		});
 		return true;
 	}
-	public static boolean millstone(List<Component> tooltip, MillstoneBlockEntity mbe, MillingRecipe lastRecipe) {
+	public static boolean millstone(List<Component> tooltip, MillstoneBlockEntity mbe) {
 		if (!CCG.config.tooltip.millstone) return false;
+		var level = mbe.getLevel();
+		if (level == null) return false;
+		var capabilityItem = mbe.capability.getItem(0);
+		if (capabilityItem.isEmpty()) return false;
+		var input = new SingleRecipeInput(capabilityItem);
+		var recipe = level.recipeAccess().getSynchronizedRecipes().getFirstMatch(AllRecipeTypes.MILLING, input, level);
+		if (recipe.isEmpty()) return false;
+		var lastRecipe = recipe.get().value();
 		CCGLang.translate("tooltip.crushingController")
 			.add(CCGLang.fraction(mbe.getProcessingSpeed() * 16, AllConfigs.server().kinetics.maxRotationSpeed.get()))
 			.forGoggles(tooltip);
@@ -262,10 +271,6 @@ public final class GoggleTooltipUtil {
 		if (leftTick == 0) return false;
 		CCGLang.translate("tooltip.leftTime", GRAY).number(leftTick / 20, GOLD).space().seconds(GRAY).forGoggles(tooltip);
 		CCGLang.translate("tooltip.expectedOutputs", GRAY).forGoggles(tooltip);
-		if (lastRecipe == null) {
-			CCGLang.item(ItemStack.EMPTY).forGoggles(tooltip, 2);
-			return true;
-		}
 		var inputCount = Math.max(1, mbe.capability.getItem(0).getCount());
 		if (mc.player == null || mc.player.isShiftKeyDown()) lastRecipe.results().forEach(result -> {
 			var stack = result.create();

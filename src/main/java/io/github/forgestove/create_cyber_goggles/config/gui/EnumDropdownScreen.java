@@ -149,6 +149,12 @@ public final class EnumDropdownScreen extends Screen {
 		draggingScrollbar = false;
 		return super.mouseReleased(event);
 	}
+	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
+		if (isOutsidePanel(mouseX, mouseY)) return super.mouseScrolled(mouseX, mouseY, horizontal, vertical);
+		smoothScrool.onMouseScroll(vertical, 1);
+		return true;
+	}
 	private int dropdownY() {
 		return dropdownButton.getY() + dropdownButton.getHeight();
 	}

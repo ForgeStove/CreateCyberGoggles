@@ -1,4 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.mixin.misc;
+import io.github.forgestove.create_cyber_goggles.core.api.Self;
 import io.github.forgestove.create_cyber_goggles.core.event.ItemTooltip;
 import io.github.forgestove.create_cyber_goggles.core.factory.*;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientFluidEntryTooltipComponent.FluidEntryTooltipComponent;
@@ -16,12 +17,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.*;
 @Mixin(GuiGraphics.class)
-public class GuiGraphicsMixin {
-	@Unique private static ItemStack ccg$tooltipStack = ItemStack.EMPTY;
-	@Unique private static int ccg$tooltipMouseX;
-	@Unique private static int ccg$tooltipMouseY;
+public class GuiGraphicsMixin implements Self<GuiGraphics> {
+	@Unique private static ItemStack tooltipStack = ItemStack.EMPTY;
+	@Unique private static int tooltipMouseX, tooltipMouseY;
 	@Unique
-	private static boolean ccg$hasAnyMarker(List<Component> components) {
+	private static boolean hasAnyMarker(List<Component> components) {
 		for (var component : components)
 			if (TooltipComponentUtil.hasIcon(component)) return true;
 		return false;
@@ -29,17 +29,17 @@ public class GuiGraphicsMixin {
 	@Inject(
 		method = "setTooltipForNextFrame(Lnet/minecraft/client/gui/Font;Lnet/minecraft/world/item/ItemStack;II)V", at = @At("HEAD")
 	)
-	private void ccg$captureTooltipStack(Font font, ItemStack stack, int x, int y, CallbackInfo ci) {
-		ccg$tooltipStack = stack;
-		ccg$tooltipMouseX = x;
-		ccg$tooltipMouseY = y;
+	private void captureTooltipStack(Font font, ItemStack stack, int x, int y, CallbackInfo ci) {
+		tooltipStack = stack;
+		tooltipMouseX = x;
+		tooltipMouseY = y;
 	}
 	@Inject(
 		method = "renderTooltip(Lnet/minecraft/client/gui/Font;Ljava/util/List;"
 			+ "IILnet/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipPositioner;Lnet/minecraft/resources/Identifier;)V",
 		at = @At("TAIL")
 	)
-	private void ccg$renderTooltipOverlay(
+	private void renderTooltipOverlay(
 		Font font,
 		List<ClientTooltipComponent> components,
 		int x,
@@ -49,22 +49,22 @@ public class GuiGraphicsMixin {
 		CallbackInfo ci
 	) {
 		ItemTooltip.renderTooltipOverlay(
-			ccg$tooltipStack,
-			(GuiGraphics) (Object) this,
+			tooltipStack,
+			thiz(),
 			font,
 			components,
-			ccg$tooltipMouseX,
-			ccg$tooltipMouseY,
+			tooltipMouseX,
+			tooltipMouseY,
 			positioner
 		);
-		ccg$tooltipStack = ItemStack.EMPTY;
+		tooltipStack = ItemStack.EMPTY;
 	}
 	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 	@Inject(
 		method = "setTooltipForNextFrame(Lnet/minecraft/client/gui/Font;Ljava/util/List;"
 			+ "Ljava/util/Optional;IILnet/minecraft/resources/Identifier;)V", at = @At("HEAD"), cancellable = true
 	)
-	private void ccg$handleVanillaTooltipMarkers(
+	private void handleVanillaTooltipMarkers(
 		Font font,
 		List<Component> components,
 		Optional<TooltipComponent> tooltipImage,
@@ -73,7 +73,7 @@ public class GuiGraphicsMixin {
 		Identifier background,
 		CallbackInfo ci
 	) {
-		if (!ccg$hasAnyMarker(components)) return;
+		if (!hasAnyMarker(components)) return;
 		var parsed = new ArrayList<>();
 		var fluidEntries = new ArrayList<FluidEntryTooltipComponent>();
 		for (var component : components) {

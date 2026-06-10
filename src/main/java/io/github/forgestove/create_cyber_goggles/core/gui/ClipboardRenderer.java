@@ -105,15 +105,7 @@ public final class ClipboardRenderer implements TooltipOverlayRenderer {
 			var checked = entry.checked;
 			if (address) {
 				var texture = checked ? AllGuiTextures.CLIPBOARD_ADDRESS_INACTIVE : AllGuiTextures.CLIPBOARD_ADDRESS;
-				renderGuiTexure(
-					texture,
-					pose,
-					nodeCollector,
-					light,
-					x - 1,
-					y,
-					RenderTypes.text(texture.getLocation())
-				);
+				renderGuiTexure(texture, pose, nodeCollector, light, x - 1, y, RenderTypes.text(texture.getLocation()));
 			} else {
 				var boxColor = checked ? 0x668D7F6B : 0xFF8D7F6B;
 				nodeCollector.submitText(pose, x, y, FormattedCharSequence.forward("□", Style.EMPTY), false, mode, light, boxColor, 0, 0);

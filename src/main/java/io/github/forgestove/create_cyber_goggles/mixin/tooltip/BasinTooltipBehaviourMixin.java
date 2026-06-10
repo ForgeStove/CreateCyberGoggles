@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.mixin.provider;
+package io.github.forgestove.create_cyber_goggles.mixin.tooltip;
 import com.zurrtum.create.client.api.goggles.IHaveGoggleInformation;
 import com.zurrtum.create.client.foundation.blockEntity.behaviour.tooltip.*;
 import com.zurrtum.create.content.processing.basin.BasinBlockEntity;

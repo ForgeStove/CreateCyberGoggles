@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.mixin.goggles;
+package io.github.forgestove.create_cyber_goggles.mixin.tooltip;
 import com.zurrtum.create.client.foundation.blockEntity.behaviour.tooltip.*;
 import com.zurrtum.create.content.kinetics.base.KineticBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;

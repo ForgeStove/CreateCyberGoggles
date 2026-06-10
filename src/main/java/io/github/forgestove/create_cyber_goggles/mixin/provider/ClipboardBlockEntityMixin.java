@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.mixin.provider;
-import com.zurrtum.create.content.equipment.clipboard.*;
+import com.zurrtum.create.content.equipment.clipboard.ClipboardBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.api.*;
 import net.minecraft.world.item.ItemStack;

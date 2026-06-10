@@ -1,7 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.factory;
-import org.jetbrains.annotations.*;
-
 import com.zurrtum.create.catnip.theme.Color;
+import org.jetbrains.annotations.*;
 public enum TooltipTheme {
 	Default,
 	Vanilla(0xF0100010, 0x505000FF, 0x5028007F),

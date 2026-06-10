@@ -98,7 +98,7 @@ public final class ItemTooltip {
 	}
 	public static void renderTooltipOverlay(
 		ItemStack stack,
-		GuiGraphics graphics,
+		GuiGraphics gui,
 		Font font,
 		List<ClientTooltipComponent> components,
 		int mouseX,
@@ -123,10 +123,10 @@ public final class ItemTooltip {
 		}
 		var overlayWidth = renderer.width(stack);
 		var overlayHeight = renderer.height(stack);
-		var pos = positioner.positionTooltip(graphics.guiWidth(), graphics.guiHeight(), mouseX, mouseY, tooltipWidth, tooltipHeight);
-		var overlayX = Mth.clamp(pos.x(), 0, Math.max(0, graphics.guiWidth() - overlayWidth));
+		var pos = positioner.positionTooltip(gui.guiWidth(), gui.guiHeight(), mouseX, mouseY, tooltipWidth, tooltipHeight);
+		var overlayX = Mth.clamp(pos.x(), 0, Math.max(0, gui.guiWidth() - overlayWidth));
 		var overlayY = pos.y() - overlayHeight - OVERLAY_GAP;
 		if (overlayY < 0) overlayY = 0;
-		renderer.render(graphics, stack, overlayX - 4, overlayY);
+		renderer.render(gui, stack, overlayX - 4, overlayY);
 	}
 }

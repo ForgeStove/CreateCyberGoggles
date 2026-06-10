@@ -7,8 +7,7 @@ import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.network.chat.Component;
 
 import java.util.List;
-public class BacktankTooltipBehavior<T extends BacktankBlockEntity> extends KineticTooltipBehaviour<T>
-	implements IHaveGoggleInformation {
+public class BacktankTooltipBehavior<T extends BacktankBlockEntity> extends KineticTooltipBehaviour<T> implements IHaveGoggleInformation {
 	public BacktankTooltipBehavior(T be) {
 		super(be);
 	}

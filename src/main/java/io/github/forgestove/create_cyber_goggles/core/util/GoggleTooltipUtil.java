@@ -7,14 +7,14 @@ import com.zurrtum.create.content.equipment.armor.*;
 import com.zurrtum.create.content.kinetics.base.*;
 import com.zurrtum.create.content.kinetics.base.IRotate.StressImpact;
 import com.zurrtum.create.content.kinetics.crusher.CrushingWheelControllerBlockEntity;
-import com.zurrtum.create.content.kinetics.millstone.*;
-import com.zurrtum.create.foundation.recipe.CreateSingleStackRollableRecipe;
+import com.zurrtum.create.content.kinetics.millstone.MillstoneBlockEntity;
 import com.zurrtum.create.content.logistics.BigItemStack;
 import com.zurrtum.create.content.logistics.depot.DepotItemHandler;
 import com.zurrtum.create.content.processing.burner.BlazeBurnerBlockEntity;
 import com.zurrtum.create.content.processing.burner.BlazeBurnerBlockEntity.FuelType;
 import com.zurrtum.create.content.schematics.cannon.SchematicannonBlockEntity;
 import com.zurrtum.create.content.schematics.cannon.SchematicannonBlockEntity.State;
+import com.zurrtum.create.foundation.recipe.CreateSingleStackRollableRecipe;
 import com.zurrtum.create.infrastructure.config.AllConfigs;
 import com.zurrtum.create.infrastructure.fluids.FluidStack;
 import io.github.forgestove.create_cyber_goggles.CCG;
@@ -243,7 +243,8 @@ public final class GoggleTooltipUtil {
 		var input = new SingleRecipeInput(cwcbe.inventory.getItem(0));
 		var recipes = level.recipeAccess().getSynchronizedRecipes();
 		CreateSingleStackRollableRecipe recipe = recipes.getFirstMatch(AllRecipeTypes.CRUSHING, input, level)
-			.map(RecipeHolder::value).orElse(null);
+			.map(RecipeHolder::value)
+			.orElse(null);
 		if (recipe == null) recipe = recipes.getFirstMatch(AllRecipeTypes.MILLING, input, level).map(RecipeHolder::value).orElse(null);
 		if (recipe == null) {
 			CCGLang.item(ItemStack.EMPTY).forGoggles(tooltip, 2);

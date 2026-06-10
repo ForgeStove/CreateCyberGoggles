@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.mixin.goggles;
 import com.zurrtum.create.client.foundation.blockEntity.behaviour.tooltip.*;
-import com.zurrtum.create.content.kinetics.base.*;
+import com.zurrtum.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.GoggleTooltipUtil;
 import net.minecraft.network.chat.Component;
@@ -10,8 +10,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 @Mixin(GeneratingKineticTooltipBehaviour.class)
-public abstract class GeneratingKineticBlockEntityMixin<T extends KineticBlockEntity> extends KineticTooltipBehaviour<T> {
-	public GeneratingKineticBlockEntityMixin(T be) {
+public abstract class GeneratingKineticBlockEntityMixin extends KineticTooltipBehaviour<GeneratingKineticBlockEntity> {
+	public GeneratingKineticBlockEntityMixin(GeneratingKineticBlockEntity be) {
 		super(be);
 	}
 	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), cancellable = true)
@@ -23,7 +23,7 @@ public abstract class GeneratingKineticBlockEntityMixin<T extends KineticBlockEn
 			cir.setReturnValue(false);
 			return;
 		}
-		GoggleTooltipUtil.generatingKinetic(tooltip, (GeneratingKineticBlockEntity) blockEntity);
+		GoggleTooltipUtil.generatingKinetic(tooltip, blockEntity);
 		cir.setReturnValue(super.addToGoggleTooltip(tooltip, isPlayerSneaking));
 	}
 }

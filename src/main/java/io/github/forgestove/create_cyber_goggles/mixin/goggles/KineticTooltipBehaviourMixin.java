@@ -12,8 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 @Mixin(KineticTooltipBehaviour.class)
-public abstract class KineticTooltipBehaviourMixin<T extends KineticBlockEntity> extends TooltipBehaviour<T> {
-	public KineticTooltipBehaviourMixin(T be) {
+public abstract class KineticTooltipBehaviourMixin extends TooltipBehaviour<KineticBlockEntity> {
+	public KineticTooltipBehaviourMixin(KineticBlockEntity be) {
 		super(be);
 	}
 	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), cancellable = true)

@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles;
 import com.terraformersmc.modmenu.api.*;
 import io.github.forgestove.create_cyber_goggles.config.Config;
 import io.github.forgestove.create_cyber_goggles.config.annotation.*;
-import io.github.forgestove.create_cyber_goggles.core.util.TooltipFlagType;
+import io.github.forgestove.create_cyber_goggles.core.factory.TooltipFlagType;
 import net.fabricmc.api.*;
 @ConfigClass(CCG.ID)
 public class CCGConfig implements ModMenuApi {
@@ -12,6 +12,7 @@ public class CCGConfig implements ModMenuApi {
 	@Category public final Outliner outliner = new Outliner();
 	@Category public final ChainConveyor chainConveyor = new ChainConveyor();
 	@Category public final Wrench wrench = new Wrench();
+	@Category public final Tooltip tooltip = new Tooltip();
 	@Category public final Misc misc = new Misc();
 	@Override
 	@Environment(EnvType.CLIENT)
@@ -64,6 +65,18 @@ public class CCGConfig implements ModMenuApi {
 		public boolean leftClickFastDismantle = true;
 		public boolean removeCooldown = true;
 		public boolean enchancedRotationMenu = false;
+	}
+	public static class Tooltip {
+		public boolean clipboard = true;
+		public boolean container = true;
+		public boolean enderChest = true;
+		public boolean linkedController = true;
+		public boolean listFilter = true;
+		public boolean map = true;
+		public boolean packageItem = true;
+		public boolean redstoneRequester = true;
+		public boolean tableCloth = true;
+		public boolean toolbox = true;
 	}
 	public static class Misc {
 		public boolean removeMechanicalArmLimit = false;

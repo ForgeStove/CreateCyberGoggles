@@ -89,8 +89,8 @@ public class GoggleTooltipUtil {
 			default -> DARK_PURPLE;
 		};
 		CCGLang.translate("tooltip.burnerState").forGoggles(tooltip);
-		CCGLang.translate(GRAY, "tooltip.leftTime")
-			.add(CCGLang.text(format, isCreative ? "∞" : String.valueOf(remainingBurnTime / 20)))
+		CCGLang.translate("tooltip.leftTime", format)
+			.add(CCGLang.text(isCreative ? "∞" : String.valueOf(remainingBurnTime / 20), format))
 			.add(CCGLang.text(" / %d ".formatted(BlazeBurnerBlockEntity.INSERTION_THRESHOLD)))
 			.add(CCGLang.seconds())
 			.forGoggles(tooltip);
@@ -108,9 +108,9 @@ public class GoggleTooltipUtil {
 		} else {
 			var fillPercent = (int) (shotsLeft / (float) sbe.getShotsPerGunpowder() * 100);
 			CreateLang.translate("gui.schematicannon.gunpowderLevel", fillPercent).forGoggles(tooltip);
-			CreateLang.translate("gui.schematicannon.shotsRemaining", CCGLang.number(BLUE, shotsLeft)).style(GRAY).forGoggles(tooltip);
+			CreateLang.translate("gui.schematicannon.shotsRemaining", CCGLang.number(shotsLeft).style(BLUE)).style(GRAY).forGoggles(tooltip);
 			if (shotsLeftWithItems != shotsLeft)
-				CreateLang.translate("gui.schematicannon.shotsRemainingWithBackup", CCGLang.number(BLUE, shotsLeftWithItems))
+				CreateLang.translate("gui.schematicannon.shotsRemainingWithBackup", CCGLang.number(shotsLeftWithItems).style(BLUE))
 					.style(GRAY)
 					.forGoggles(tooltip);
 		}
@@ -122,15 +122,15 @@ public class GoggleTooltipUtil {
 	}
 	public static boolean backtank(List<Component> tooltip, BacktankBlockEntity bbe, int capacityEnchantLevel, int leftTick) {
 		if (!CCG.config.goggles.enhancedInfo) return false;
-		CreateLang.translate("gui.goggles.fluid_container").forGoggles(tooltip);
-		CreateLang.translate("gui.goggles.fluid_container.capacity")
+		CCGLang.translate("gui.goggles.fluid_container").forGoggles(tooltip);
+		CCGLang.translate("gui.goggles.fluid_container.capacity")
 			.style(GRAY)
 			.add(CCGLang.fraction(bbe.airLevel, BacktankUtil.maxAir(capacityEnchantLevel)))
 			.forGoggles(tooltip);
 		if (bbe.getSpeed() == 0 || leftTick == 0) return false;
 		CCGLang.translate("tooltip.leftTime")
 			.style(GRAY)
-			.add(CCGLang.number(GOLD, leftTick / 20))
+			.add(CCGLang.number(leftTick / 20).style(GOLD))
 			.space()
 			.add(CCGLang.seconds().style(GRAY))
 			.forGoggles(tooltip);

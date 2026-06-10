@@ -1,0 +1,26 @@
+package io.github.forgestove.create_cyber_goggles.core.gui;
+import com.zurrtum.create.AllDataComponents;
+import com.zurrtum.create.content.logistics.box.PackageItem;
+import io.github.forgestove.create_cyber_goggles.CCG;
+import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
+public final class PackageItemRenderer extends AbstractItemGridRenderer {
+	@Override
+	public boolean supports(ItemStack stack) {
+		return CCG.config.tooltip.packageItem && stack.getItem() instanceof PackageItem && stack.has(AllDataComponents.PACKAGE_CONTENTS);
+	}
+	@Override
+	public @Nullable OverlayData buildItemGrid(ItemStack stack) {
+		var contents = PackageItem.getContents(stack);
+		List<ItemStack> items = new ArrayList<>();
+		for (var i = 0; i < contents.getContainerSize(); i++) {
+			var itemstack = contents.getItem(i);
+			if (itemstack.isEmpty()) continue;
+			var amount = getCFLTankAmount(itemstack);
+			items.add(amount > 0 ? itemstack.copyWithCount(amount) : itemstack);
+		}
+		return items.isEmpty() ? null : new OverlayData(items, 3);
+	}
+}

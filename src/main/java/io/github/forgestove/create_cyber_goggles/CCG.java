@@ -30,5 +30,6 @@ public class CCG implements ClientModInitializer {
 		HudRenderCallback.EVENT.register(TipOverlay::renderOverlay);
 		UseBlockCallback.EVENT.register(PlayerInteract::rightClick);
 		ItemTooltipCallback.EVENT.register(ItemTooltip::itemTooltip);
+		// Custom tooltip components are handled via ClientTooltipComponentMixin
 	}
 }

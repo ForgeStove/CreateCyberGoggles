@@ -10,21 +10,28 @@ import org.jetbrains.annotations.NotNull;
 import static com.mojang.blaze3d.platform.InputConstants.*;
 import static io.github.forgestove.create_cyber_goggles.CCG.ID;
 public enum CCGKey {
-	clickPenetrate(KEY_LCONTROL),
-	interactOpposite(KEY_TAB),
+	clickPenetrate(Type.KEYSYM, KEY_LCONTROL),
+	clipboardPageScroll(Type.KEYSYM, KEY_LCONTROL),
+	interactOpposite(Type.KEYSYM, KEY_TAB),
 	openConfig,
 	openStock,
 	previewFilter,
-	showStress(KEY_TAB),
+	showStress(Type.KEYSYM, KEY_TAB),
+	showSuperGlue,
+	stockRequestSelectAll(Type.KEYSYM, KEY_LALT),
+	stockRequestSetter(Type.MOUSE, MOUSE_BUTTON_MIDDLE),
 	toggleDiving,
 	toggleGoggle,
-	toggleItemOverlay(KEY_LCONTROL),
+	toggleItemOverlay(Type.KEYSYM, KEY_LCONTROL),
 	useSchematic;
 	public final KeyMapping keyMapping;
 	private boolean wasDown = false;
 	private long pressStartTime;
 	CCGKey() {
 		this(UNKNOWN.getValue());
+	}
+	CCGKey(@NotNull Type type, int key) {
+		this(type.getOrCreate(key).getValue());
 	}
 	CCGKey(int key) {
 		keyMapping = new KeyMapping(ID + ".key." + name(), key, CCG.CATEGORY);

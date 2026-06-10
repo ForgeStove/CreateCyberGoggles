@@ -34,7 +34,7 @@ public class ItemTooltip {
 		if (!(stack.getItem() instanceof BacktankItem)) return;
 		var component = CreateLang.translate("gui.goggles.fluid_container.capacity")
 			.style(ChatFormatting.GRAY)
-			.add(CCGLang.fraction(BacktankUtil.getAir(stack), BacktankUtil.maxAir(stack)))
+			.add(CCGLang.fraction(BacktankUtil.getAir(stack), BacktankUtil.maxAir(stack)).component())
 			.component();
 		tooltip.add(1, component);
 	}
@@ -45,7 +45,7 @@ public class ItemTooltip {
 	}
 	private static void wrench(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!(stack.getItem() instanceof WrenchItem)) return;
-		var component = CCGLang.configBuilder()
+		var component = CCGLang.builder()
 			.translate("option.wrench.leftClickFastDismantle")
 			.space()
 			.add(CCGLang.enabled(CCG.config.wrench.leftClickFastDismantle))

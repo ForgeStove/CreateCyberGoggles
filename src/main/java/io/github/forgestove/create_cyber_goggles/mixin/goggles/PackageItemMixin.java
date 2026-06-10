@@ -37,7 +37,7 @@ public abstract class PackageItemMixin extends Item {
 		for (var i = 0; i < contents.getContainerSize(); i++) {
 			var itemstack = contents.getItem(i);
 			if (itemstack.isEmpty()) continue;
-			CCGLang.item(itemstack).addTo(tooltipComponents);
+			tooltipComponents.accept(CCGLang.item(itemstack).component());
 		}
 	}
 }

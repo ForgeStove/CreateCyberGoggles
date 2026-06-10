@@ -10,6 +10,7 @@ import net.minecraft.client.input.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.*;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.awt.*;
 import java.util.function.IntConsumer;
@@ -142,8 +143,12 @@ public final class ColorPickerScreen extends Screen {
 		updatingFromInput = false;
 	}
 	@Override
+	public void renderBackground(@NonNull GuiGraphics gui, int mouseX, int mouseY, float delta) {
+		if (parent != null) parent.render(gui, 0, 0, delta);
+		super.renderBackground(gui, mouseX, mouseY, delta);
+	}
+	@Override
 	public void render(@NotNull GuiGraphics gui, int mouseX, int mouseY, float delta) {
-		renderBlurredBackground(gui);
 		var totalWidth = PICKER_SIZE + PADDING + BAR_WIDTH + (hasAlpha ? PADDING + BAR_WIDTH : 0) + PADDING * 2 + 8;
 		var totalHeight = PICKER_SIZE + PADDING * 2 + 16 + 28;
 		gui.fill(pickerPos.x - 4, pickerPos.y - 4, pickerPos.x + totalWidth + 4, pickerPos.y + totalHeight + 4, 0xF0101010);

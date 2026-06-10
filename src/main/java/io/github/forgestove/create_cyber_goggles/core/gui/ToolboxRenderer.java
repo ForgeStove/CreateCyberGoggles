@@ -1,14 +1,11 @@
 package io.github.forgestove.create_cyber_goggles.core.gui;
-import com.zurrtum.create.AllDataComponents;
-import com.zurrtum.create.AllItemTags;
+import com.zurrtum.create.*;
 import com.zurrtum.create.content.equipment.toolbox.ToolboxInventory;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public final class ToolboxRenderer extends AbstractItemGridRenderer {
 	public static ItemStack readToolboxFilter(ToolboxInventory inventory, int compartment) {
 		if (compartment < 0 || compartment >= inventory.filters.size()) return ItemStack.EMPTY;

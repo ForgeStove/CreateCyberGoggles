@@ -25,9 +25,11 @@ public final class RedstoneRequesterRenderer extends AbstractItemGridRenderer {
 		var encodedRequestTag = beData.copyTag().getCompoundOrEmpty("EncodedRequest");
 		// In Fabric Create Fly, use the codec directly
 		var encodedRequest = PackageOrderWithCrafts.CODEC.parse(
-			mc.level.registryAccess()
-				.createSerializationContext(NbtOps.INSTANCE), encodedRequestTag
-		).resultOrPartial(error -> {}).orElse(PackageOrderWithCrafts.empty());
+				mc.level.registryAccess().createSerializationContext(NbtOps.INSTANCE),
+				encodedRequestTag
+			)
+			.resultOrPartial(error -> {})
+			.orElse(PackageOrderWithCrafts.empty());
 		if (encodedRequest.isEmpty()) return null;
 		var items = new ArrayList<ItemStack>();
 		encodedRequest.stacks().forEach(bigStack -> items.add(bigStack.stack.copyWithCount(bigStack.count)));

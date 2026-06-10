@@ -1,10 +1,9 @@
 package io.github.forgestove.create_cyber_goggles.core.util;
 import com.zurrtum.create.client.foundation.utility.CreateLang;
-import joptsimple.internal.Strings;
 import com.zurrtum.create.infrastructure.fluids.FluidStack;
+import joptsimple.internal.Strings;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.*;
 import net.minecraft.util.Mth;
@@ -34,6 +33,14 @@ public class CCGLangBuilder {
 		for (var i = 0; i < args.length; i++)
 			if (args[i] instanceof CCGLangBuilder builder) args[i] = builder.component();
 		return args;
+	}
+	private static String formatNumber(double number) {
+		if (number == (long) number) return String.valueOf((long) number);
+		return new DecimalFormat("#.##").format(number);
+	}
+	private static String formatNumber(float number) {
+		if (number == (long) number) return String.valueOf((long) number);
+		return new DecimalFormat("#.##").format(number);
 	}
 	public CCGLangBuilder space() {
 		return text(" ");
@@ -127,7 +134,7 @@ public class CCGLangBuilder {
 		return add(component.copy());
 	}
 	public CCGLangBuilder style(ChatFormatting... formats) {
-		if (component != null) component = component.withStyle(formats);
+		if (component != null) component.withStyle(formats);
 		return this;
 	}
 	public CCGLangBuilder color(int color) {
@@ -139,7 +146,7 @@ public class CCGLangBuilder {
 	}
 	public CCGLangBuilder fluidName(FluidStack stack) {
 		var fluidKey = BuiltInRegistries.FLUID.getKey(stack.getFluid());
-			return add(Component.translatable(fluidKey.toLanguageKey("fluid")));
+		return add(Component.translatable(fluidKey.toLanguageKey("fluid")));
 	}
 	public MutableComponent component() {
 		if (component == null) throw new IllegalStateException("Component is null");
@@ -175,13 +182,5 @@ public class CCGLangBuilder {
 	public void forGoggles(int index, List<? super MutableComponent> tooltip, int indents) {
 		tooltip.add(index,
 			new CCGLangBuilder(namespace).text(Strings.repeat(' ', getIndents(mc.font, 4 + indents))).add(this).component());
-	}
-	private static String formatNumber(double number) {
-		if (number == (long) number) return String.valueOf((long) number);
-		return new DecimalFormat("#.##").format(number);
-	}
-	private static String formatNumber(float number) {
-		if (number == (long) number) return String.valueOf((long) number);
-		return new DecimalFormat("#.##").format(number);
 	}
 }

@@ -2,63 +2,64 @@ package io.github.forgestove.create_cyber_goggles.core.gui;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.zurrtum.create.AllDataComponents;
-import com.zurrtum.create.content.equipment.clipboard.*;
-import com.zurrtum.create.infrastructure.component.ClipboardContent;
-import com.zurrtum.create.infrastructure.component.ClipboardEntry;
 import com.zurrtum.create.client.foundation.gui.AllGuiTextures;
+import com.zurrtum.create.content.equipment.clipboard.ClipboardBlockItem;
+import com.zurrtum.create.infrastructure.component.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.api.TooltipOverlayRenderer;
 import net.minecraft.client.gui.Font.DisplayMode;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.rendertype.*;
+import net.minecraft.network.chat.*;
+import net.minecraft.util.*;
 import net.minecraft.world.item.ItemStack;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public final class ClipboardRenderer implements TooltipOverlayRenderer {
 	private static final float SCALE = 0.5F;
-	public static void renderClipboardPage(PoseStack pose, MultiBufferSource buffer, int light, ItemStack stack) {
+	public static void renderClipboardPage(PoseStack pose, SubmitNodeCollector nodeCollector, int light, ItemStack stack) {
 		pose.pushPose();
 		var matrix = pose.last().pose();
 		matrix.rotate(Axis.YP.rotationDegrees(180F))
 			.rotate(Axis.ZP.rotationDegrees(180F))
 			.translate(-0.25F, -0.3F, 0F)
 			.scale(0.01F * 0.4F * SCALE);
-		renderGuiTexure(AllGuiTextures.CLIPBOARD, pose, buffer, light, 0, 0, RenderTypes.itemEntityTranslucentCull(AllGuiTextures.CLIPBOARD.getLocation()));
-		renderText(pose, buffer, light, stack);
+		renderGuiTexure(
+			AllGuiTextures.CLIPBOARD,
+			pose,
+			nodeCollector,
+			light,
+			RenderTypes.itemEntityTranslucentCull(AllGuiTextures.CLIPBOARD.getLocation())
+		);
+		renderText(pose, nodeCollector, light, stack);
 		pose.popPose();
 	}
 	private static void renderGuiTexure(
 		AllGuiTextures texture,
 		PoseStack pose,
-		MultiBufferSource buffer,
+		SubmitNodeCollector nodeCollector,
 		int light,
-		int x,
-		int y,
 		RenderType renderType
 	) {
-		pose.pushPose();
-		pose.translate(x, y, 0F);
-		var matrix = pose.last().pose();
 		var startX = texture.getStartX();
 		var startY = texture.getStartY();
 		var width = texture.getWidth();
 		var height = texture.getHeight();
-		var vertex = buffer.getBuffer(renderType);
 		var minU = startX / 256F;
 		var minV = startY / 256F;
 		var maxU = (startX + width) / 256F;
 		var maxV = (startY + height) / 256F;
-		vertex.addVertex(matrix, 0F, height, 0F).setColor(-1).setUv(minU, maxV).setLight(light);
-		vertex.addVertex(matrix, width, height, 0F).setColor(-1).setUv(maxU, maxV).setLight(light);
-		vertex.addVertex(matrix, width, 0F, 0F).setColor(-1).setUv(maxU, minV).setLight(light);
-		vertex.addVertex(matrix, 0F, 0F, 0F).setColor(-1).setUv(minU, minV).setLight(light);
-		pose.popPose();
+		nodeCollector.submitCustomGeometry(
+			pose, renderType, (poseMatrix, vertexConsumer) -> {
+				vertexConsumer.addVertex(poseMatrix, 0F, height, 0F).setColor(-1).setUv(minU, maxV).setLight(light);
+				vertexConsumer.addVertex(poseMatrix, width, height, 0F).setColor(-1).setUv(maxU, maxV).setLight(light);
+				vertexConsumer.addVertex(poseMatrix, width, 0F, 0F).setColor(-1).setUv(maxU, minV).setLight(light);
+				vertexConsumer.addVertex(poseMatrix, 0F, 0F, 0F).setColor(-1).setUv(minU, minV).setLight(light);
+			}
+		);
 	}
-	private static void renderText(PoseStack pose, MultiBufferSource buffer, int light, ItemStack stack) {
+	private static void renderText(PoseStack pose, SubmitNodeCollector nodeCollector, int light, ItemStack stack) {
 		var font = mc.font;
 		var mode = DisplayMode.POLYGON_OFFSET;
 		var content = stack.getOrDefault(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY);
@@ -67,7 +68,6 @@ public final class ClipboardRenderer implements TooltipOverlayRenderer {
 		var currentPage = Mth.clamp(content.previouslyOpenedPage(), 0, pages.size() - 1);
 		var entries = pages.get(currentPage);
 		if (entries.isEmpty()) return;
-		var matrix = pose.last().pose();
 		int x = 45, y = 50;
 		for (var entry : entries) {
 			var text = entry.text.getString();
@@ -77,14 +77,26 @@ public final class ClipboardRenderer implements TooltipOverlayRenderer {
 			var checked = entry.checked;
 			if (address) {
 				var texture = checked ? AllGuiTextures.CLIPBOARD_ADDRESS_INACTIVE : AllGuiTextures.CLIPBOARD_ADDRESS;
-				renderGuiTexure(texture, pose, buffer, light, x - 1, y, RenderTypes.itemEntityTranslucentCull(texture.getLocation()));
+				renderGuiTexure(texture, pose, nodeCollector, light, RenderTypes.itemEntityTranslucentCull(texture.getLocation()));
 			} else {
-				font.drawInBatch("□", x, y, checked ? 0x668D7F6B : 0xFF8D7F6B, false, matrix, buffer, mode, 0, light);
-				if (checked) font.drawInBatch("✔", x, y - 1, 0x31B25D, false, matrix, buffer, mode, 0, light);
+				var boxColor = checked ? 0x668D7F6B : 0xFF8D7F6B;
+				nodeCollector.submitText(pose, x, y, FormattedCharSequence.forward("□", Style.EMPTY), false, mode, light, boxColor, 0, 0);
+				if (checked) nodeCollector.submitText(
+					pose,
+					x,
+					y - 1,
+					FormattedCharSequence.forward("✔", Style.EMPTY),
+					false,
+					mode,
+					light,
+					0x31B25D,
+					0,
+					0
+				);
 			}
 			for (var sequence : font.split(Component.literal(text), 150)) {
 				var textColor = checked ? address ? 0x668D7F6B : 0x31B25D : 0x311A00;
-				font.drawInBatch(sequence, x + 13, y, textColor, false, matrix, buffer, mode, 0, light);
+				nodeCollector.submitText(pose, x + 13, y, sequence, false, mode, light, textColor, 0, 0);
 				y += 9;
 			}
 			y += 3;
@@ -98,7 +110,18 @@ public final class ClipboardRenderer implements TooltipOverlayRenderer {
 			var leftPart = indicator.substring(0, slashIndex);
 			indicatorX = slashCenterX - font.width(leftPart) - font.width("/") / 2F;
 		} else indicatorX = slashCenterX - font.width(indicator) / 2F;
-		font.drawInBatch(indicator, indicatorX, 235, 0x311A00, false, matrix, buffer, mode, 0, light);
+		nodeCollector.submitText(
+			pose,
+			indicatorX,
+			235,
+			FormattedCharSequence.forward(indicator, Style.EMPTY),
+			false,
+			mode,
+			light,
+			0x311A00,
+			0,
+			0
+		);
 	}
 	@Override
 	public boolean supports(ItemStack stack) {

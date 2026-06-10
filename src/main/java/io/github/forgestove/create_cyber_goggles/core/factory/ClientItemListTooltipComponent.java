@@ -1,10 +1,9 @@
 package io.github.forgestove.create_cyber_goggles.core.factory;
-import net.minecraft.client.renderer.RenderPipelines;
 import io.github.forgestove.create_cyber_goggles.core.gui.AbstractItemGridRenderer;
 import io.github.forgestove.create_cyber_goggles.core.util.SlotUtil;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;

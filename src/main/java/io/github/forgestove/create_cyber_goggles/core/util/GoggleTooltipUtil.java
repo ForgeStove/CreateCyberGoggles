@@ -108,7 +108,9 @@ public class GoggleTooltipUtil {
 		} else {
 			var fillPercent = (int) (shotsLeft / (float) sbe.getShotsPerGunpowder() * 100);
 			CreateLang.translate("gui.schematicannon.gunpowderLevel", fillPercent).forGoggles(tooltip);
-			CreateLang.translate("gui.schematicannon.shotsRemaining", CCGLang.number(shotsLeft).style(BLUE)).style(GRAY).forGoggles(tooltip);
+			CreateLang.translate("gui.schematicannon.shotsRemaining", CCGLang.number(shotsLeft).style(BLUE))
+				.style(GRAY)
+				.forGoggles(tooltip);
 			if (shotsLeftWithItems != shotsLeft)
 				CreateLang.translate("gui.schematicannon.shotsRemainingWithBackup", CCGLang.number(shotsLeftWithItems).style(BLUE))
 					.style(GRAY)

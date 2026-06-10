@@ -2,10 +2,7 @@ package io.github.forgestove.create_cyber_goggles.core.gui;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.input.CharacterEvent;
-import net.minecraft.client.input.KeyEvent;
-import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.client.input.MouseButtonInfo;
+import net.minecraft.client.input.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
@@ -45,8 +42,10 @@ public final class StockRequestAmountOverlay {
 	}
 	public ClickResult mouseClicked(double mouseX, double mouseY, int button, int modifiers, int popupX, int popupY) {
 		if (!open) return ClickResult.NONE;
-		if (amountInput != null && amountInput.mouseClicked(new MouseButtonEvent(mouseX, mouseY, new MouseButtonInfo(button, modifiers)), false))
-			return ClickResult.CONSUMED;
+		if (amountInput != null && amountInput.mouseClicked(
+			new MouseButtonEvent(mouseX, mouseY, new MouseButtonInfo(button, modifiers)),
+			false
+		)) return ClickResult.CONSUMED;
 		if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 			if (isOnConfirm(mouseX, mouseY, popupX, popupY)) return ClickResult.APPLY;
 			if (isOnCancel(mouseX, mouseY, popupX, popupY)) return ClickResult.CLOSE;
@@ -54,7 +53,7 @@ public final class StockRequestAmountOverlay {
 		if (!isInside(mouseX, mouseY, popupX, popupY)) return ClickResult.CLOSE;
 		return ClickResult.CONSUMED;
 	}
-	public void charTyped(char codePoint, int modifiers) {
+	public void charTyped(int codePoint, int modifiers) {
 		if (!open) return;
 		if (amountInput != null) amountInput.charTyped(new CharacterEvent(codePoint, modifiers));
 	}

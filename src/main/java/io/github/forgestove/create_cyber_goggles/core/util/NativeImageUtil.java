@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public class NativeImageUtil {
 	private static final int BASE = 0xC6C6C6;
 	private static final float MIN_LUMA = 78F;
@@ -78,11 +78,11 @@ public class NativeImageUtil {
 		for (var y = 0; y < image.getHeight(); y += stepY)
 			for (var x = 0; x < image.getWidth(); x += stepX) {
 				var pixel = image.getPixel(x, y);
-				var alpha = (pixel >> 24) & 0xFF;
+				var alpha = pixel >> 24 & 0xFF;
 				if (alpha < 16) continue;
 				// getPixel returns ARGB format
-				totalR += (pixel >> 16) & 0xFF;
-				totalG += (pixel >> 8) & 0xFF;
+				totalR += pixel >> 16 & 0xFF;
+				totalG += pixel >> 8 & 0xFF;
 				totalB += pixel & 0xFF;
 				samples++;
 			}

@@ -1,8 +1,9 @@
 package io.github.forgestove.create_cyber_goggles.core.gui;
-import net.minecraft.client.renderer.RenderPipelines;
 import io.github.forgestove.create_cyber_goggles.core.api.TooltipOverlayRenderer;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
@@ -14,11 +15,8 @@ import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public abstract class AbstractItemGridRenderer implements TooltipOverlayRenderer {
-	private static final Identifier CFL_COMPRESSED_TANK_ID = Identifier.fromNamespaceAndPath(
-		"fluidlogistics",
-		"compressed_storage_tank"
-	);
 	public static final int PAD = 4;
+	private static final Identifier CFL_COMPRESSED_TANK_ID = Identifier.fromNamespaceAndPath("fluidlogistics", "compressed_storage_tank");
 	public static int resolveColumns(OverlayData data) {
 		return Mth.clamp(data.columns(), 1, Math.max(1, data.items().size()));
 	}
@@ -61,7 +59,7 @@ public abstract class AbstractItemGridRenderer implements TooltipOverlayRenderer
 	}
 	public static int getCFLTankAmount(ItemStack stack) {
 		if (!isCFLCompressedTank(stack)) return 0;
-		var container = stack.get(net.minecraft.core.component.DataComponents.CONTAINER);
+		var container = stack.get(DataComponents.CONTAINER);
 		if (container != null) {
 			var nonEmpty = container.nonEmptyItems().iterator();
 			if (nonEmpty.hasNext()) return nonEmpty.next().getCount();
@@ -74,7 +72,7 @@ public abstract class AbstractItemGridRenderer implements TooltipOverlayRenderer
 			+ "B";
 	}
 	public static void renderPanel(GuiGraphics gui, int width, int height, float r, float g, float b) {
-		var color = ((int) (r * 255) & 0xFF) << 16 | ((int) (g * 255) & 0xFF) << 8 | ((int) (b * 255) & 0xFF) | 0xFF000000;
+		var color = ((int) (r * 255) & 0xFF) << 16 | ((int) (g * 255) & 0xFF) << 8 | (int) (b * 255) & 0xFF | 0xFF000000;
 		gui.fill(0, 0, width, height, color & 0xFFC6C6C6);
 		gui.fill(0, 0, width, 2, 0xFFFFFFFF);
 		gui.fill(0, 0, 2, height, 0xFFFFFFFF);
@@ -84,7 +82,7 @@ public abstract class AbstractItemGridRenderer implements TooltipOverlayRenderer
 		gui.fill(width - 1, 1, width, height - 1, 0xFF373737);
 	}
 	public static void renderTintedSlot(GuiGraphics gui, int x, int y, float r, float g, float b) {
-		var slotColor = ((int) (r * 255) & 0xFF) << 16 | ((int) (g * 255) & 0xFF) << 8 | ((int) (b * 255) & 0xFF) | 0xFF000000;
+		var slotColor = ((int) (r * 255) & 0xFF) << 16 | ((int) (g * 255) & 0xFF) << 8 | (int) (b * 255) & 0xFF | 0xFF000000;
 		gui.blitSprite(RenderPipelines.GUI_TEXTURED, SlotUtil.SLOT, x, y, SlotUtil.SIZE, SlotUtil.SIZE, slotColor);
 	}
 	public abstract boolean supports(ItemStack stack);

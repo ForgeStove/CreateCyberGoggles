@@ -1,7 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.factory;
 import io.github.forgestove.create_cyber_goggles.core.util.SlotUtil;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;

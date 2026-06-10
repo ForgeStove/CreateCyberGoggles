@@ -11,10 +11,9 @@ public class AbstractContainerScreenMixin {
 	@Shadow protected Slot hoveredSlot;
 	@Inject(method = "renderTooltip(Lnet/minecraft/client/gui/GuiGraphics;II)V", at = @At("HEAD"))
 	private void ccg$captureContainerTooltipStack(GuiGraphics guiGraphics, int x, int y, CallbackInfo ci) {
-		if (hoveredSlot != null && hoveredSlot.hasItem()) {
-			ItemTooltip.capturedStack = hoveredSlot.getItem();
-			ItemTooltip.capturedMouseX = x;
-			ItemTooltip.capturedMouseY = y;
-		}
+		if (hoveredSlot == null || !hoveredSlot.hasItem()) return;
+		ItemTooltip.capturedStack = hoveredSlot.getItem();
+		ItemTooltip.capturedMouseX = x;
+		ItemTooltip.capturedMouseY = y;
 	}
 }

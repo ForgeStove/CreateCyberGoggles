@@ -79,6 +79,7 @@ public class TooltipOverlay {
 		x = Mth.clamp(x, 0, width - tooltipWidth);
 		y = Mth.clamp(y, 16, height - tooltipHeight - 100);
 		renderTooltip(gui, components, x, y, tooltipWidth, tooltipHeight, back.getRGB(), top.getRGB(), bot.getRGB());
+		ItemTooltip.renderTooltipOverlay(itemStack, gui, mc.font, components, x, y, DefaultTooltipPositioner.INSTANCE);
 		pose.popMatrix();
 	}
 	public static @NotNull Theme getTheme() {

@@ -16,6 +16,10 @@ import java.util.*;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public abstract class AbstractItemGridRenderer implements TooltipOverlayRenderer {
 	public static final int PAD = 4;
+	private static final int BG = 0xFFC6C6C6;
+	private static final int LIGHT = 0xFFFFFFFF;
+	private static final int DARK = 0xFF555555;
+	private static final int DARKER = 0xFF373737;
 	private static final Identifier CFL_COMPRESSED_TANK_ID = Identifier.fromNamespaceAndPath("fluidlogistics", "compressed_storage_tank");
 	public static int resolveColumns(OverlayData data) {
 		return Mth.clamp(data.columns(), 1, Math.max(1, data.items().size()));
@@ -72,14 +76,20 @@ public abstract class AbstractItemGridRenderer implements TooltipOverlayRenderer
 			+ "B";
 	}
 	public static void renderPanel(GuiGraphics gui, int width, int height, float r, float g, float b) {
-		var color = ((int) (r * 255) & 0xFF) << 16 | ((int) (g * 255) & 0xFF) << 8 | (int) (b * 255) & 0xFF | 0xFF000000;
-		gui.fill(0, 0, width, height, color & 0xFFC6C6C6);
-		gui.fill(0, 0, width, 2, 0xFFFFFFFF);
-		gui.fill(0, 0, 2, height, 0xFFFFFFFF);
-		gui.fill(0, height - 2, width, height, 0xFF555555);
-		gui.fill(width - 2, 0, width, height, 0xFF555555);
-		gui.fill(1, height - 1, width - 1, height, 0xFF373737);
-		gui.fill(width - 1, 1, width, height - 1, 0xFF373737);
+		gui.fill(0, 0, width, height, tintColor(BG, r, g, b));
+		gui.fill(0, 0, width, 2, tintColor(LIGHT, r, g, b));
+		gui.fill(0, 0, 2, height, tintColor(LIGHT, r, g, b));
+		gui.fill(0, height - 2, width, height, tintColor(DARK, r, g, b));
+		gui.fill(width - 2, 0, width, height, tintColor(DARK, r, g, b));
+		gui.fill(1, height - 1, width - 1, height, tintColor(DARKER, r, g, b));
+		gui.fill(width - 1, 1, width, height - 1, tintColor(DARKER, r, g, b));
+	}
+	private static int tintColor(int argb, float r, float g, float b) {
+		var a = argb >>> 24;
+		var red = (int) ((argb >> 16 & 0xFF) * r);
+		var green = (int) ((argb >> 8 & 0xFF) * g);
+		var blue = (int) ((argb & 0xFF) * b);
+		return a << 24 | (red & 0xFF) << 16 | (green & 0xFF) << 8 | blue & 0xFF;
 	}
 	public static void renderTintedSlot(GuiGraphics gui, int x, int y, float r, float g, float b) {
 		var slotColor = ((int) (r * 255) & 0xFF) << 16 | ((int) (g * 255) & 0xFF) << 8 | (int) (b * 255) & 0xFF | 0xFF000000;

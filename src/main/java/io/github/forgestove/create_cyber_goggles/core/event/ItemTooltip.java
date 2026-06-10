@@ -35,6 +35,9 @@ public final class ItemTooltip {
 		new RedstoneRequesterRenderer()
 	);
 	private static final int OVERLAY_GAP = 6;
+	/** Shared capture: set by mixins before deferred tooltip render */
+	public static ItemStack capturedStack = ItemStack.EMPTY;
+	public static int capturedMouseX, capturedMouseY;
 	public static void itemTooltip(ItemStack stack, TooltipContext ignoredContext, TooltipFlag ignoredFlag, List<Component> tooltip) {
 		if (!CCG.config.tooltip.extraItemTooltip) return;
 		goggles(stack, tooltip);

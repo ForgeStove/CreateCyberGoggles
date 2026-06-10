@@ -18,8 +18,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.*;
 @Mixin(GuiGraphics.class)
 public class GuiGraphicsMixin implements Self<GuiGraphics> {
-	@Unique private static ItemStack tooltipStack = ItemStack.EMPTY;
-	@Unique private static int tooltipMouseX, tooltipMouseY;
 	@Unique
 	private static boolean hasAnyMarker(List<Component> components) {
 		for (var component : components)
@@ -30,9 +28,9 @@ public class GuiGraphicsMixin implements Self<GuiGraphics> {
 		method = "setTooltipForNextFrame(Lnet/minecraft/client/gui/Font;Lnet/minecraft/world/item/ItemStack;II)V", at = @At("HEAD")
 	)
 	private void captureTooltipStack(Font font, ItemStack stack, int x, int y, CallbackInfo ci) {
-		tooltipStack = stack;
-		tooltipMouseX = x;
-		tooltipMouseY = y;
+		ItemTooltip.capturedStack = stack;
+		ItemTooltip.capturedMouseX = x;
+		ItemTooltip.capturedMouseY = y;
 	}
 	@Inject(
 		method = "renderTooltip(Lnet/minecraft/client/gui/Font;Ljava/util/List;"
@@ -49,15 +47,15 @@ public class GuiGraphicsMixin implements Self<GuiGraphics> {
 		CallbackInfo ci
 	) {
 		ItemTooltip.renderTooltipOverlay(
-			tooltipStack,
+			ItemTooltip.capturedStack,
 			thiz(),
 			font,
 			components,
-			tooltipMouseX,
-			tooltipMouseY,
+			ItemTooltip.capturedMouseX,
+			ItemTooltip.capturedMouseY,
 			positioner
 		);
-		tooltipStack = ItemStack.EMPTY;
+		ItemTooltip.capturedStack = ItemStack.EMPTY;
 	}
 	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 	@Inject(

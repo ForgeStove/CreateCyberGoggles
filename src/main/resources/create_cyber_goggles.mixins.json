@@ -32,6 +32,7 @@
 		"goggles.ListFilterItemMixin",
 		"goggles.PackageItemMixin",
 		"goggles.PackagePortTargetSelectionHandlerMixin",
+		"misc.AbstractContainerScreenMixin",
 		"misc.ArmInteractionPointHandlerMixin",
 		"misc.CardboardArmorStealthOverlayMixin",
 		"misc.ClientSchematicLoaderMixin",

@@ -4,7 +4,6 @@ import com.zurrtum.create.client.foundation.blockEntity.behaviour.tooltip.*;
 import com.zurrtum.create.content.processing.basin.BasinBlockEntity;
 import com.zurrtum.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
 import com.zurrtum.create.infrastructure.fluids.FluidStack;
-import io.github.forgestove.create_cyber_goggles.core.api.Self;
 import io.github.forgestove.create_cyber_goggles.core.util.GoggleTooltipUtil;
 import io.github.forgestove.create_cyber_goggles.mixin.accessor.BasinBlockEntityAccessor;
 import net.minecraft.network.chat.Component;
@@ -16,8 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.*;
 @Mixin(BasinTooltipBehaviour.class)
-public abstract class BasinTooltipBehaviourMixin extends TooltipBehaviour<BasinBlockEntity>
-	implements IHaveGoggleInformation, Self<BasinBlockEntity> {
+public abstract class BasinTooltipBehaviourMixin extends TooltipBehaviour<BasinBlockEntity> implements IHaveGoggleInformation {
 	public BasinTooltipBehaviourMixin(BasinBlockEntity be) {
 		super(be);
 	}
@@ -37,19 +35,18 @@ public abstract class BasinTooltipBehaviourMixin extends TooltipBehaviour<BasinB
 	}
 	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), cancellable = true)
 	public void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> cir) {
-		var basin = thiz();
 		var inputItems = new ArrayList<ItemStack>();
 		var outputItems = new ArrayList<ItemStack>();
-		if (basin.itemCapability != null) for (var i = 0; i < basin.itemCapability.getContainerSize(); i++) {
-			var stack = basin.itemCapability.getItem(i);
+		if (blockEntity.itemCapability != null) for (var i = 0; i < blockEntity.itemCapability.getContainerSize(); i++) {
+			var stack = blockEntity.itemCapability.getItem(i);
 			if (stack.isEmpty()) continue;
 			if (i < 9) inputItems.add(stack);
 			else outputItems.add(stack);
 		}
 		var inputCapacities = new ArrayList<Integer>();
 		var outputCapacities = new ArrayList<Integer>();
-		var inputFluids = ccg$collectFluids(basin.inputTank, inputCapacities);
-		var outputFluids = ccg$collectFluids(((BasinBlockEntityAccessor) basin).getOutputTank(), outputCapacities);
+		var inputFluids = ccg$collectFluids(blockEntity.inputTank, inputCapacities);
+		var outputFluids = ccg$collectFluids(((BasinBlockEntityAccessor) blockEntity).getOutputTank(), outputCapacities);
 		cir.setReturnValue(GoggleTooltipUtil.basin(
 			tooltip,
 			inputItems,

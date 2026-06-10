@@ -5,6 +5,7 @@ import com.zurrtum.create.client.foundation.blockEntity.behaviour.filtering.Filt
 import com.zurrtum.create.content.equipment.armor.CardboardArmorItem;
 import com.zurrtum.create.foundation.blockEntity.SmartBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.api.ItemRenderable;
 import io.github.forgestove.create_cyber_goggles.mixin.accessor.AbstractContainerScreenAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
@@ -70,7 +71,38 @@ public class CCGUtil {
 	/** @return 当前的{@link EntityHitResult}，如果不是实体命中则返回 {@code null} */
 	@Contract(pure = true)
 	public static @Nullable EntityHitResult getEntityHitResult() {
-		return getCurrentHitResult() instanceof EntityHitResult result ? result : null;
+		var hitResult = getCurrentHitResult();
+		if (hitResult instanceof EntityHitResult result && result.getType() != Type.MISS) return result;
+		return raycastEntityHitResult(hitResult);
+	}
+	private static @Nullable EntityHitResult raycastEntityHitResult(@Nullable HitResult hitResult) {
+		if (mc.level == null) return null;
+		var camera = mc.getCameraEntity();
+		if (camera == null) return null;
+		var delta = getRealtimeDeltaTicks();
+		var start = camera.getEyePosition(delta);
+		var view = camera.getViewVector(delta);
+		if (mc.player == null) return null;
+		var reach = mc.player.entityInteractionRange();
+		if (hitResult != null && hitResult.getType() != Type.MISS) reach = Math.min(reach, start.distanceTo(hitResult.getLocation()));
+		var end = start.add(view.scale(reach));
+		var searchBox = camera.getBoundingBox().expandTowards(view.scale(reach)).inflate(1.0D);
+		EntityHitResult selectedHitResult = null;
+		var minDistanceSqr = reach * reach;
+		for (var entity : mc.level.getEntities(camera, searchBox, CCGUtil::canOverlayPickEntity)) {
+			var bounds = entity.getBoundingBox().inflate(entity.getPickRadius());
+			var hitPos = bounds.clip(start, end);
+			if (hitPos.isEmpty()) continue;
+			var distanceSqr = start.distanceToSqr(hitPos.get());
+			if (distanceSqr >= minDistanceSqr) continue;
+			selectedHitResult = new EntityHitResult(entity, hitPos.get());
+			minDistanceSqr = distanceSqr;
+		}
+		return selectedHitResult;
+	}
+	private static boolean canOverlayPickEntity(@NotNull Entity entity) {
+		if (!entity.isAlive() || entity.isSpectator()) return false;
+		return entity instanceof ItemRenderable || entity.isPickable();
 	}
 	/** @return 当前选中的{@link BlockEntity}实例，如果没有选中或类型不匹配则返回{@code null} */
 	public static @Nullable BlockEntity getBlockEntity() {

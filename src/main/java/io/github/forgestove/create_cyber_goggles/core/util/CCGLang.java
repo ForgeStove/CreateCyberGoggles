@@ -11,7 +11,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.*;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 @SuppressWarnings("unused")
 public class CCGLang {
 	@Contract(value = " -> new", pure = true)
@@ -94,13 +95,18 @@ public class CCGLang {
 	}
 	public static @NotNull CCGLangBuilder fluidEntry(@NotNull FluidStack fluid, int capacityMb) {
 		var marker = Component.empty();
-		TooltipComponentUtil.FLUID_ENTRY_MAP.put(marker, new FluidEntryTooltipComponent(fluid.copy(), 0, Math.max(1, capacityMb)));
+		TooltipComponentUtil.FLUID_ENTRY_MAP.put(
+			marker,
+			new FluidEntryTooltipComponent(fluid.copyWithAmount(fluid.getAmount() / 81), 0, Math.max(1, capacityMb / 81))
+		);
 		return builder().add(marker);
 	}
 	@SuppressWarnings("unused")
 	public static @NotNull CCGLangBuilder fluidList(@NotNull List<FluidStack> fluids, int maxColumns) {
 		var marker = Component.empty();
-		var copied = fluids.stream().map(FluidStack::copy).toList();
+		var copied = fluids.stream()
+			.map(fluid -> fluid.copyWithAmount(fluid.getAmount() / 81))
+			.collect(Collectors.toCollection(ArrayList::new));
 		TooltipComponentUtil.FLUID_LIST_MAP.put(marker, new FluidListTooltipComponent(copied, 0, maxColumns));
 		return builder().add(marker);
 	}

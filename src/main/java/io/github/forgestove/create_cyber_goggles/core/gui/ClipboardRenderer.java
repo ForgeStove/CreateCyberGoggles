@@ -11,6 +11,7 @@ import net.minecraft.client.gui.Font.DisplayMode;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.*;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.*;
 import net.minecraft.util.*;
 import net.minecraft.world.item.ItemStack;
@@ -20,17 +21,19 @@ public final class ClipboardRenderer implements TooltipOverlayRenderer {
 	private static final float SCALE = 0.5F;
 	public static void renderClipboardPage(PoseStack pose, SubmitNodeCollector nodeCollector, int light, ItemStack stack) {
 		pose.pushPose();
-		var matrix = pose.last().pose();
-		matrix.rotate(Axis.YP.rotationDegrees(180F))
-			.rotate(Axis.ZP.rotationDegrees(180F))
-			.translate(-0.25F, -0.3F, 0F)
-			.scale(0.01F * 0.4F * SCALE);
+		pose.mulPose(Axis.YP.rotationDegrees(180F));
+		pose.mulPose(Axis.ZP.rotationDegrees(180F));
+		pose.translate(-0.25F, -0.3F, 0F);
+		var scale = 0.01F * 0.4F * SCALE;
+		pose.scale(scale, scale, scale);
 		renderGuiTexure(
 			AllGuiTextures.CLIPBOARD,
 			pose,
 			nodeCollector,
 			light,
-			RenderTypes.itemEntityTranslucentCull(AllGuiTextures.CLIPBOARD.getLocation())
+			0,
+			0,
+			RenderTypes.text(AllGuiTextures.CLIPBOARD.getLocation())
 		);
 		renderText(pose, nodeCollector, light, stack);
 		pose.popPose();
@@ -40,8 +43,12 @@ public final class ClipboardRenderer implements TooltipOverlayRenderer {
 		PoseStack pose,
 		SubmitNodeCollector nodeCollector,
 		int light,
+		int x,
+		int y,
 		RenderType renderType
 	) {
+		pose.pushPose();
+		pose.translate(x, y, 0F);
 		var startX = texture.getStartX();
 		var startY = texture.getStartY();
 		var width = texture.getWidth();
@@ -52,12 +59,33 @@ public final class ClipboardRenderer implements TooltipOverlayRenderer {
 		var maxV = (startY + height) / 256F;
 		nodeCollector.submitCustomGeometry(
 			pose, renderType, (poseMatrix, vertexConsumer) -> {
-				vertexConsumer.addVertex(poseMatrix, 0F, height, 0F).setColor(-1).setUv(minU, maxV).setLight(light);
-				vertexConsumer.addVertex(poseMatrix, width, height, 0F).setColor(-1).setUv(maxU, maxV).setLight(light);
-				vertexConsumer.addVertex(poseMatrix, width, 0F, 0F).setColor(-1).setUv(maxU, minV).setLight(light);
-				vertexConsumer.addVertex(poseMatrix, 0F, 0F, 0F).setColor(-1).setUv(minU, minV).setLight(light);
+				vertexConsumer.addVertex(poseMatrix, 0F, height, 0F)
+					.setColor(-1)
+					.setUv(minU, maxV)
+					.setOverlay(OverlayTexture.NO_OVERLAY)
+					.setLight(light)
+					.setNormal(poseMatrix, 0F, 0F, 1F);
+				vertexConsumer.addVertex(poseMatrix, width, height, 0F)
+					.setColor(-1)
+					.setUv(maxU, maxV)
+					.setOverlay(OverlayTexture.NO_OVERLAY)
+					.setLight(light)
+					.setNormal(poseMatrix, 0F, 0F, 1F);
+				vertexConsumer.addVertex(poseMatrix, width, 0F, 0F)
+					.setColor(-1)
+					.setUv(maxU, minV)
+					.setOverlay(OverlayTexture.NO_OVERLAY)
+					.setLight(light)
+					.setNormal(poseMatrix, 0F, 0F, 1F);
+				vertexConsumer.addVertex(poseMatrix, 0F, 0F, 0F)
+					.setColor(-1)
+					.setUv(minU, minV)
+					.setOverlay(OverlayTexture.NO_OVERLAY)
+					.setLight(light)
+					.setNormal(poseMatrix, 0F, 0F, 1F);
 			}
 		);
+		pose.popPose();
 	}
 	private static void renderText(PoseStack pose, SubmitNodeCollector nodeCollector, int light, ItemStack stack) {
 		var font = mc.font;
@@ -77,7 +105,15 @@ public final class ClipboardRenderer implements TooltipOverlayRenderer {
 			var checked = entry.checked;
 			if (address) {
 				var texture = checked ? AllGuiTextures.CLIPBOARD_ADDRESS_INACTIVE : AllGuiTextures.CLIPBOARD_ADDRESS;
-				renderGuiTexure(texture, pose, nodeCollector, light, RenderTypes.itemEntityTranslucentCull(texture.getLocation()));
+				renderGuiTexure(
+					texture,
+					pose,
+					nodeCollector,
+					light,
+					x - 1,
+					y,
+					RenderTypes.text(texture.getLocation())
+				);
 			} else {
 				var boxColor = checked ? 0x668D7F6B : 0xFF8D7F6B;
 				nodeCollector.submitText(pose, x, y, FormattedCharSequence.forward("□", Style.EMPTY), false, mode, light, boxColor, 0, 0);

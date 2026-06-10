@@ -4,7 +4,6 @@ import com.zurrtum.create.infrastructure.fluids.FluidStack;
 import joptsimple.internal.Strings;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.*;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -145,8 +144,7 @@ public class CCGLangBuilder {
 		return color(color.getRGB());
 	}
 	public CCGLangBuilder fluidName(FluidStack stack) {
-		var fluidKey = BuiltInRegistries.FLUID.getKey(stack.getFluid());
-		return add(Component.translatable(fluidKey.toLanguageKey("fluid")));
+		return add(stack.getName());
 	}
 	public MutableComponent component() {
 		if (component == null) throw new IllegalStateException("Component is null");

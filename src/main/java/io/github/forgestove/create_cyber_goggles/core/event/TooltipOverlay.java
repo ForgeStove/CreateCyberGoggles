@@ -13,14 +13,13 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.*;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.util.Mth;
+import net.minecraft.util.*;
 import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class TooltipOverlay {
@@ -174,22 +173,25 @@ public class TooltipOverlay {
 		var pose = gui.pose();
 		pose.pushMatrix();
 		renderTooltipBackground(gui, tooltipX, tooltipY, tooltipWidth, tooltipHeight, back, top, bot);
-		int i = 0, textY = tooltipY + TooltipRenderUtil.PADDING_TOP;
-		var textX = tooltipX + TooltipRenderUtil.PADDING_LEFT;
+		int i = 0, textY = tooltipY;
 		var font = mc.font;
 		for (var component : components) {
-			component.renderText(gui, font, textX, textY);
-			component.renderImage(font, textX, textY, tooltipWidth, tooltipHeight, gui);
+			component.renderText(gui, font, tooltipX, textY);
+			component.renderImage(font, tooltipX, textY, tooltipWidth, tooltipHeight, gui);
 			textY += component.getHeight(font) + (i == 0 ? 2 : 0);
 			i++;
 		}
 		pose.popMatrix();
 	}
-	private static void renderTooltipBackground(GuiGraphics gui, int x, int y, int width, int height, int back, int top, int bot) {
-		gui.fill(x, y, x + width, y + height, back);
-		gui.fill(x, y, x + 1, y + height, top);
-		gui.fill(x + width - 1, y, x + width, y + height, bot);
-		gui.fill(x, y, x + width, y + 1, top);
-		gui.fill(x, y + height - 1, x + width, y + height, bot);
+	public static void renderTooltipBackground(@NonNull GuiGraphics gui, int x, int y, int width, int height, int back, int top, int bot) {
+		gui.fillGradient(x - 3, y - 4, x + width + 3, y - 3, back, back);
+		gui.fillGradient(x - 3, y + height + 3, x + width + 3, y + height + 4, back, back);
+		gui.fillGradient(x - 3, y - 3, x + width + 3, y + height + 3, back, back);
+		gui.fillGradient(x - 4, y - 3, x - 3, y + height + 3, back, back);
+		gui.fillGradient(x + width + 3, y - 3, x + width + 4, y + height + 3, back, back);
+		gui.fillGradient(x - 3, y - 3 + 1, x - 3 + 1, y + height + 3 - 1, top, bot);
+		gui.fillGradient(x + width + 2, y - 3 + 1, x + width + 3, y + height + 3 - 1, top, bot);
+		gui.fillGradient(x - 3, y - 3, x + width + 3, y - 3 + 1, top, top);
+		gui.fillGradient(x - 3, y + height + 2, x + width + 3, y + height + 3, bot, bot);
 	}
 }

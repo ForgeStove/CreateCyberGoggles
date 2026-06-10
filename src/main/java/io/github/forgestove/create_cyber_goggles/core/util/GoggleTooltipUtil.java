@@ -8,6 +8,7 @@ import com.zurrtum.create.content.kinetics.base.*;
 import com.zurrtum.create.content.kinetics.base.IRotate.StressImpact;
 import com.zurrtum.create.content.kinetics.crusher.CrushingWheelControllerBlockEntity;
 import com.zurrtum.create.content.kinetics.millstone.*;
+import com.zurrtum.create.foundation.recipe.CreateSingleStackRollableRecipe;
 import com.zurrtum.create.content.logistics.BigItemStack;
 import com.zurrtum.create.content.logistics.depot.DepotItemHandler;
 import com.zurrtum.create.content.processing.burner.BlazeBurnerBlockEntity;
@@ -21,7 +22,7 @@ import io.github.forgestove.create_cyber_goggles.core.event.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.SingleRecipeInput;
+import net.minecraft.world.item.crafting.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -234,7 +235,16 @@ public final class GoggleTooltipUtil {
 		if (leftTick == 0) return false;
 		CCGLang.translate("tooltip.leftTime", GRAY).number(leftTick / 20, GOLD).space().seconds(GRAY).forGoggles(tooltip);
 		CCGLang.translate("tooltip.expectedOutputs", GRAY).forGoggles(tooltip);
-		var recipe = cwcbe.findRecipe();
+		var level = cwcbe.getLevel();
+		if (level == null) {
+			CCGLang.item(ItemStack.EMPTY).forGoggles(tooltip, 2);
+			return true;
+		}
+		var input = new SingleRecipeInput(cwcbe.inventory.getItem(0));
+		var recipes = level.recipeAccess().getSynchronizedRecipes();
+		CreateSingleStackRollableRecipe recipe = recipes.getFirstMatch(AllRecipeTypes.CRUSHING, input, level)
+			.map(RecipeHolder::value).orElse(null);
+		if (recipe == null) recipe = recipes.getFirstMatch(AllRecipeTypes.MILLING, input, level).map(RecipeHolder::value).orElse(null);
 		if (recipe == null) {
 			CCGLang.item(ItemStack.EMPTY).forGoggles(tooltip, 2);
 			return true;

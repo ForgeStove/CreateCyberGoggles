@@ -21,10 +21,7 @@ configurations.configureEach { resolutionStrategy.force("net.fabricmc:fabric-loa
 loom {
 	enableTransitiveAccessWideners = true
 	runs {
-		configureEach {
-			generateRunConfig.set(false)
-			jvmArguments.addAll("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition")
-		}
+		configureEach { jvmArguments.addAll("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition") }
 		remove(getByName("server"))
 	}
 }

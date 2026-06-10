@@ -3,12 +3,14 @@ import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.mixin.accessor.KeyMappingAccessor;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.*;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import static com.mojang.blaze3d.platform.InputConstants.*;
 import static io.github.forgestove.create_cyber_goggles.CCG.ID;
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
+import static org.lwjgl.glfw.GLFW.*;
 public enum CCGKey {
 	clickPenetrate(Type.KEYSYM, KEY_LCONTROL),
 	clipboardPageScroll(Type.KEYSYM, KEY_LCONTROL),
@@ -45,7 +47,10 @@ public enum CCGKey {
 	}
 	public boolean isDown() {
 		var key = getKey();
-		var isDown = key != UNKNOWN && isKeyDown(Minecraft.getInstance().getWindow(), key.getValue());
+		var isDown = key != UNKNOWN && switch (key.getType()) {
+			case MOUSE -> glfwGetMouseButton(mc.getWindow().handle(), key.getValue()) == GLFW_PRESS;
+			case KEYSYM, SCANCODE -> isKeyDown(mc.getWindow(), key.getValue());
+		};
 		var currentTime = System.currentTimeMillis();
 		if (isDown && !wasDown) {
 			wasDown = true;

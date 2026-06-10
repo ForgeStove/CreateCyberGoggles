@@ -11,6 +11,7 @@
 		"accessor.AbstractContainerScreenAccessor",
 		"accessor.BasinBlockEntityAccessor",
 		"accessor.BrassDiodeBlockEntityAccessor",
+		"accessor.GuiGraphicsAccessor",
 		"accessor.KeyMappingAccessor",
 		"accessor.KineticBlockEntityAccessor",
 		"accessor.NozzleBlockEntityAccessor",

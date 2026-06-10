@@ -7,7 +7,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
@@ -68,11 +67,7 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 			.copy()
 			.append(" ")
 			.append(Component.literal(formatFluidAmount(capacityMb)));
-		var fluidKey = BuiltInRegistries.FLUID.getKey(fluid.getFluid());
-		var label = Component.translatable(fluidKey.toLanguageKey("fluid"))
-			.copy()
-			.append(" ")
-			.append(Component.literal(formatFluidAmount(fluid.getAmount())));
+		var label = fluid.getName().copy().append(" ").append(Component.literal(formatFluidAmount(fluid.getAmount())));
 		if (showCapacity) return label.append(Component.literal(" / ").withStyle(ChatFormatting.GRAY))
 			.append(Component.literal(formatFluidAmount(capacityMb)).withStyle(ChatFormatting.GRAY));
 		return label;

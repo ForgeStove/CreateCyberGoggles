@@ -1,19 +1,31 @@
 package io.github.forgestove.create_cyber_goggles.mixin.misc;
 import io.github.forgestove.create_cyber_goggles.core.event.ItemTooltip;
+import io.github.forgestove.create_cyber_goggles.core.factory.*;
+import io.github.forgestove.create_cyber_goggles.core.factory.ClientFluidEntryTooltipComponent.FluidEntryTooltipComponent;
+import io.github.forgestove.create_cyber_goggles.core.util.TooltipComponentUtil;
+import io.github.forgestove.create_cyber_goggles.mixin.accessor.GuiGraphicsAccessor;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.inventory.tooltip.*;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.List;
+import java.util.*;
 @Mixin(GuiGraphics.class)
 public class GuiGraphicsMixin {
 	@Unique private static ItemStack ccg$tooltipStack = ItemStack.EMPTY;
 	@Unique private static int ccg$tooltipMouseX;
 	@Unique private static int ccg$tooltipMouseY;
+	@Unique
+	private static boolean ccg$hasAnyMarker(List<Component> components) {
+		for (var component : components)
+			if (TooltipComponentUtil.hasIcon(component)) return true;
+		return false;
+	}
 	@Inject(
 		method = "setTooltipForNextFrame(Lnet/minecraft/client/gui/Font;Lnet/minecraft/world/item/ItemStack;II)V", at = @At("HEAD")
 	)
@@ -46,5 +58,69 @@ public class GuiGraphicsMixin {
 			positioner
 		);
 		ccg$tooltipStack = ItemStack.EMPTY;
+	}
+	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+	@Inject(
+		method = "setTooltipForNextFrame(Lnet/minecraft/client/gui/Font;Ljava/util/List;"
+			+ "Ljava/util/Optional;IILnet/minecraft/resources/Identifier;)V", at = @At("HEAD"), cancellable = true
+	)
+	private void ccg$handleVanillaTooltipMarkers(
+		Font font,
+		List<Component> components,
+		Optional<TooltipComponent> tooltipImage,
+		int x,
+		int y,
+		Identifier background,
+		CallbackInfo ci
+	) {
+		if (!ccg$hasAnyMarker(components)) return;
+		var parsed = new ArrayList<>();
+		var fluidEntries = new ArrayList<FluidEntryTooltipComponent>();
+		for (var component : components) {
+			var item = TooltipComponentUtil.removeItemEntry(component);
+			if (item != null) {
+				parsed.add(new ClientItemEntryTooltipComponent(item.stack(), item.indent(), item.label()));
+				continue;
+			}
+			var fluid = TooltipComponentUtil.removeFluidEntry(component);
+			if (fluid != null) {
+				parsed.add(fluid);
+				fluidEntries.add(fluid);
+				continue;
+			}
+			var itemList = TooltipComponentUtil.removeItemList(component);
+			if (itemList != null) {
+				parsed.add(new ClientItemListTooltipComponent(itemList.items(), itemList.indent(), itemList.maxColumns()));
+				continue;
+			}
+			var fluidList = TooltipComponentUtil.removeFluidList(component);
+			if (fluidList != null) {
+				parsed.add(new ClientFluidListTooltipComponent(fluidList.fluids(), fluidList.indent(), fluidList.maxColumns()));
+				continue;
+			}
+			parsed.add(ClientTooltipComponent.create(component.getVisualOrderText()));
+		}
+		var sharedFluidWidth = 0;
+		for (var fluidEntry : fluidEntries) {
+			var preferred = ClientFluidEntryTooltipComponent.preferredBarWidth(font, fluidEntry.fluid(), fluidEntry.capacityMb());
+			if (preferred > sharedFluidWidth) sharedFluidWidth = preferred;
+		}
+		var clientComponents = new ArrayList<ClientTooltipComponent>();
+		for (var value : parsed)
+			if (value instanceof ClientTooltipComponent ctc) clientComponents.add(ctc);
+			else if (value instanceof FluidEntryTooltipComponent(
+				var fluid, var indent, var capacityMb
+			)) clientComponents.add(new ClientFluidEntryTooltipComponent(fluid, indent, capacityMb, sharedFluidWidth));
+		tooltipImage.ifPresent(tc -> clientComponents.add(ClientTooltipComponent.create(tc)));
+		((GuiGraphicsAccessor) this).ccg$setTooltipForNextFrameInternal(
+			font,
+			clientComponents,
+			x,
+			y,
+			DefaultTooltipPositioner.INSTANCE,
+			background,
+			false
+		);
+		ci.cancel();
 	}
 }

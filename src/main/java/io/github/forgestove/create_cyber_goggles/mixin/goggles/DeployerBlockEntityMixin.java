@@ -17,7 +17,7 @@ public abstract class DeployerBlockEntityMixin extends KineticTooltipBehaviour<D
 	}
 	@Inject(method = "addToTooltip", at = @At("HEAD"), cancellable = true)
 	public void addToTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> cir) {
-		if (!CCG.CONFIG.goggles.enhancedInfo) return;
+		if (!CCG.config.goggles.enhancedInfo) return;
 		var overflowItems = blockEntity.overflowItems;
 		if (overflowItems.isEmpty()) {
 			cir.setReturnValue(false);
@@ -34,7 +34,7 @@ public abstract class DeployerBlockEntityMixin extends KineticTooltipBehaviour<D
 		cancellable = true
 	)
 	public void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> cir) {
-		if (!CCG.CONFIG.goggles.enhancedInfo) return;
+		if (!CCG.config.goggles.enhancedInfo) return;
 		super.addToGoggleTooltip(tooltip, isPlayerSneaking);
 		cir.setReturnValue(true);
 	}

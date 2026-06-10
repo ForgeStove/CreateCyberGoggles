@@ -2,26 +2,27 @@ package io.github.forgestove.create_cyber_goggles.core.event;
 import com.zurrtum.create.client.content.equipment.goggles.GoggleOverlayRenderer;
 import com.zurrtum.create.client.infrastructure.config.AllConfigs;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.ItemRenderable;
+import io.github.forgestove.create_cyber_goggles.core.api.ItemRenderable;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item.TooltipContext;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag.Default;
 import org.jetbrains.annotations.NotNull;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class TooltipOverlay {
 	public static int hoverTicks;
 	public static void renderOverlay(GuiGraphics graphics, DeltaTracker ignoredDeltaTracker) {
-		if (!CCG.CONFIG.overlay.renderItemOverlay || !CCG.CONFIG.gameMode.enableGoggles) return;
+		if (!CCG.config.overlay.renderItemOverlay || !CCG.config.gameMode.enableGoggles) return;
 		if (mc.isPaused() || isInGUI() || mc.options.hideGui) {
 			hoverTicks = 0;
 			return;
 		}
-		if (!CCG.CONFIG.goggles.canRenderOnValueBox && hasActivedValueBox()) return;
+		if (!CCG.config.goggles.canRenderOnValueBox && hasActivedValueBox()) return;
 		var itemStack = toRenderItemStack();
 		if (itemStack.isEmpty()) hoverTicks = 0;
 		else renderItemStack(graphics, itemStack);
@@ -44,10 +45,10 @@ public class TooltipOverlay {
 	public static void renderItemStack(GuiGraphics guiGraphics, ItemStack itemStack) {
 		if (itemStack == null || itemStack.isEmpty()) return;
 		var font = mc.font;
-		var overlay = CCG.CONFIG.overlay;
+		var overlay = CCG.config.overlay;
 		var flag = overlay.tooltipFlagType != null
 			? overlay.tooltipFlagType.getFlag()
-			: new TooltipFlag.Default(mc.options.advancedItemTooltips, false);
+			: new Default(mc.options.advancedItemTooltips, false);
 		var tooltip = itemStack.getTooltipLines(TooltipContext.of(mc.level), mc.player, flag);
 		var cfg = AllConfigs.client();
 		var fade = Mth.clamp((getRealtimeDeltaTicks() + hoverTicks++) / 24F, 0, 1);

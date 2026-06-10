@@ -1,7 +1,8 @@
 package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.zurrtum.create.content.kinetics.belt.BeltBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.*;
+import io.github.forgestove.create_cyber_goggles.core.api.*;
+import io.github.forgestove.create_cyber_goggles.core.util.Rate;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
@@ -15,7 +16,7 @@ public abstract class BeltBlockEntityMixin implements ItemRenderable, Rate, Self
 	@Unique public int ccg$lastTotalItems;
 	@Inject(method = "tick", at = @At("TAIL"))
 	private void tick(CallbackInfo ci) {
-		var bbe = self();
+		var bbe = thiz();
 		var level = bbe.getLevel();
 		if (level == null || !level.isClientSide()) return;
 		if (bbe.index != 0) return;
@@ -30,15 +31,15 @@ public abstract class BeltBlockEntityMixin implements ItemRenderable, Rate, Self
 	}
 	@Override
 	public double ccg$getRate() {
-		var controllerBE = self().getControllerBE();
-		if (!CCG.CONFIG.goggles.enhancedInfo || self().getSpeed() == 0) return 0;
+		var controllerBE = thiz().getControllerBE();
+		if (!CCG.config.goggles.enhancedInfo || thiz().getSpeed() == 0) return 0;
 		return ((BeltBlockEntityMixin) (Object) controllerBE).ccg$rate;
 	}
 	@Override
 	public ItemStack ccg$getItemStack() {
-		var inventory = self().getInventory();
+		var inventory = thiz().getInventory();
 		if (inventory == null) return null;
-		var stackAtOffset = inventory.getStackAtOffset(self().index);
+		var stackAtOffset = inventory.getStackAtOffset(thiz().index);
 		return stackAtOffset == null ? null : stackAtOffset.stack;
 	}
 }

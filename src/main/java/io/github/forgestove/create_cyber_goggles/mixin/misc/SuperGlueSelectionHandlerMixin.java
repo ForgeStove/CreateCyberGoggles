@@ -15,6 +15,6 @@ public abstract class SuperGlueSelectionHandlerMixin {
 	)
 	)
 	private static boolean tick(SuperGlueSelectionHandler instance, LocalPlayer player) {
-		return !CCG.CONFIG.misc.preventSelectionDiscard;
+		return !CCG.config.misc.preventSelectionDiscard;
 	}
 }

@@ -14,7 +14,7 @@ public class NozzleTooltipBehavior extends TooltipBehaviour<NozzleBlockEntity> i
 	}
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		if (!CCG.CONFIG.goggles.enhancedInfo) return false;
+		if (!CCG.config.goggles.enhancedInfo) return false;
 		var accessor = (NozzleBlockEntityAccessor) blockEntity;
 		return GoggleTooltipUtil.fan(tooltip, accessor.getPushing(), accessor.getRange());
 	}

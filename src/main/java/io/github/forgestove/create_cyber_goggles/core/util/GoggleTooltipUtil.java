@@ -71,7 +71,7 @@ public class GoggleTooltipUtil {
 		}
 	}
 	public static boolean fan(List<Component> tooltip, boolean pushing, float range) {
-		if (!CCG.CONFIG.goggles.enhancedInfo || range == 0) return false;
+		if (!CCG.config.goggles.enhancedInfo || range == 0) return false;
 		CCGLang.translate("tooltip.windState").forGoggles(tooltip);
 		CCGLang.number(range)
 			.space()
@@ -81,7 +81,7 @@ public class GoggleTooltipUtil {
 		return true;
 	}
 	public static boolean burner(List<Component> tooltip, int remainingBurnTime, boolean isCreative, FuelType activeFuel) {
-		if (!CCG.CONFIG.goggles.enhancedInfo) return false;
+		if (!CCG.config.goggles.enhancedInfo) return false;
 		if (remainingBurnTime == 0 && !isCreative) return false;
 		var format = switch (activeFuel) {
 			case SPECIAL -> AQUA;
@@ -97,7 +97,7 @@ public class GoggleTooltipUtil {
 		return true;
 	}
 	public static boolean cannon(List<Component> tooltip, @NotNull SchematicannonBlockEntity sbe) {
-		if (!CCG.CONFIG.goggles.enhancedInfo) return false;
+		if (!CCG.config.goggles.enhancedInfo) return false;
 		CCGLang.translate("tooltip.cannonState").forGoggles(tooltip);
 		CreateLang.translate("schematicannon.status." + sbe.statusMsg).style(GOLD).forGoggles(tooltip);
 		var shotsLeft = sbe.remainingFuel;
@@ -121,7 +121,7 @@ public class GoggleTooltipUtil {
 		return true;
 	}
 	public static boolean backtank(List<Component> tooltip, BacktankBlockEntity bbe, int capacityEnchantLevel, int leftTick) {
-		if (!CCG.CONFIG.goggles.enhancedInfo) return false;
+		if (!CCG.config.goggles.enhancedInfo) return false;
 		CreateLang.translate("gui.goggles.fluid_container").forGoggles(tooltip);
 		CreateLang.translate("gui.goggles.fluid_container.capacity")
 			.style(GRAY)

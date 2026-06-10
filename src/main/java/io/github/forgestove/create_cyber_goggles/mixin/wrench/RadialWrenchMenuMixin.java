@@ -25,7 +25,7 @@ public abstract class RadialWrenchMenuMixin {
 	}
 	@Inject(method = "tryCreateFor", at = @At("HEAD"), cancellable = true)
 	private static void tryCreateFor(BlockState state, BlockPos pos, Level level, CallbackInfoReturnable<Optional<RadialWrenchMenu>> cir) {
-		if (!CCG.CONFIG.wrench.enchancedRotationMenu) return;
+		if (!CCG.config.wrench.enchancedRotationMenu) return;
 		var isCreative = mc.player != null && mc.player.isCreative();
 		if (!isCreative && BLOCK_BLACKLIST.contains(BuiltInRegistries.BLOCK.getKey(state.getBlock()))) {
 			cir.setReturnValue(Optional.empty());

@@ -8,6 +8,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class CardboardArmorStealthOverlayMixin {
 	@Inject(method = "clientTick", at = @At("HEAD"), cancellable = true)
 	private static void clientTick(CallbackInfo ci) {
-		if (CCG.CONFIG.misc.removeCardboardOverlay) ci.cancel();
+		if (CCG.config.misc.removeCardboardOverlay) ci.cancel();
 	}
 }

@@ -3,6 +3,7 @@ import com.zurrtum.create.client.catnip.gui.element.GuiGameElement;
 import com.zurrtum.create.client.content.equipment.blueprint.BlueprintOverlayRenderer;
 import com.zurrtum.create.client.foundation.gui.AllGuiTextures;
 import com.zurrtum.create.content.logistics.tableCloth.TableClothBlockEntity;
+import io.github.forgestove.create_cyber_goggles.core.api.Index;
 import io.github.forgestove.create_cyber_goggles.core.event.KeyInput;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;

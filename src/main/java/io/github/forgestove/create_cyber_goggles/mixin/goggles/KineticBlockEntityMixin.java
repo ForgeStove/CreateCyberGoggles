@@ -18,7 +18,7 @@ public abstract class KineticBlockEntityMixin<T extends KineticBlockEntity> exte
 	}
 	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), cancellable = true)
 	public void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> returnable) {
-		var goggles = CCG.CONFIG.goggles;
+		var goggles = CCG.config.goggles;
 		if (!goggles.enhancedInfo) return;
 		var hide = !goggles.hideStaticKineticInfo || !Mth.equal(blockEntity.getTheoreticalSpeed(), 0);
 		returnable.setReturnValue(hide);

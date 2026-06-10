@@ -13,7 +13,7 @@ public class BlazeBurnerTooltipBehavior extends TooltipBehaviour<BlazeBurnerBloc
 	}
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		if (!CCG.CONFIG.goggles.enhancedInfo) return false;
+		if (!CCG.config.goggles.enhancedInfo) return false;
 		return GoggleTooltipUtil.burner(tooltip, blockEntity.getRemainingBurnTime(), blockEntity.isCreative, blockEntity.getActiveFuel());
 	}
 }

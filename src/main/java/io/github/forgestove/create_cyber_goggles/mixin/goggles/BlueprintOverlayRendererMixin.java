@@ -23,7 +23,7 @@ public abstract class BlueprintOverlayRendererMixin {
 		@Local(name = "x") int x,
 		@Local(name = "y") int y
 	) {
-		if (!CCG.CONFIG.goggles.betterStoreInfo) return;
+		if (!CCG.config.goggles.betterStoreInfo) return;
 		ci.cancel();
 		TableClothUtil.clothStoreOverlay(graphics, x, y, results);
 	}
@@ -35,7 +35,7 @@ public abstract class BlueprintOverlayRendererMixin {
 	)
 	)
 	private static void resetTCBE(Minecraft mc, GuiGraphics graphics, CallbackInfo ci) {
-		if (!CCG.CONFIG.goggles.betterStoreInfo) return;
+		if (!CCG.config.goggles.betterStoreInfo) return;
 		TableClothUtil.tableOverlay(graphics);
 	}
 }

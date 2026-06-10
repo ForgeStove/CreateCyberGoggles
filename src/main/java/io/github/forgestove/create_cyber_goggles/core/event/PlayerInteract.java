@@ -51,7 +51,7 @@ public class PlayerInteract {
 	}
 	private static void wrench(Minecraft mc) {
 		if (dismantleDelay < 10) dismantleDelay++;
-		if (!CCG.CONFIG.wrench.leftClickFastDismantle) return;
+		if (!CCG.config.wrench.leftClickFastDismantle) return;
 		if (mc == null || mc.player == null || mc.level == null) return;
 		if (!mc.options.keyAttack.isDown()) return;
 		if (mc.gameMode == null || mc.player.isCreative()) return;
@@ -73,7 +73,7 @@ public class PlayerInteract {
 		lastDismantleTime = System.currentTimeMillis();
 	}
 	private static void encasedCogWheel() {
-		if (!CCG.CONFIG.wrench.betterEncasedCogwheel) return;
+		if (!CCG.config.wrench.betterEncasedCogwheel) return;
 		var ecb = getBlock(EncasedCogwheelBlock.class);
 		if (ecb == null) return;
 		var bhr = getBlockHitResult();
@@ -82,7 +82,7 @@ public class PlayerInteract {
 		showCommonTip("message.openState");
 	}
 	private static void encasedCogWheel(InteractionHand hand, BlockHitResult hitResult) {
-		if (!CCG.CONFIG.wrench.betterEncasedCogwheel) return;
+		if (!CCG.config.wrench.betterEncasedCogwheel) return;
 		var pos = hitResult.getBlockPos();
 		if (mc.level == null) return;
 		var state = mc.level.getBlockState(pos);
@@ -101,12 +101,12 @@ public class PlayerInteract {
 		mc.player.swing(mc.player.getUsedItemHand());
 	}
 	private static void enacesdPipe() {
-		if (!CCG.CONFIG.wrench.betterEncasedPipe) return;
+		if (!CCG.config.wrench.betterEncasedPipe) return;
 		if (getBlock(EncasedPipeBlock.class) == null) return;
 		showCommonTip("message.openState");
 	}
 	private static void enacesdPipe(InteractionHand hand, BlockHitResult hitResult) {
-		if (!CCG.CONFIG.wrench.betterEncasedPipe) return;
+		if (!CCG.config.wrench.betterEncasedPipe) return;
 		var pos = hitResult.getBlockPos();
 		if (mc.level == null) return;
 		var state = mc.level.getBlockState(pos);
@@ -119,7 +119,7 @@ public class PlayerInteract {
 		mc.player.swing(mc.player.getUsedItemHand());
 	}
 	private static void chassis() {
-		if (!CCG.CONFIG.wrench.betterChassis) return;
+		if (!CCG.config.wrench.betterChassis) return;
 		if (mc.level == null) return;
 		var acb = getBlock(AbstractChassisBlock.class);
 		if (acb == null) return;
@@ -128,7 +128,7 @@ public class PlayerInteract {
 		showCommonTip("message.glueState");
 	}
 	private static void chassis(InteractionHand hand, BlockHitResult hitResult) {
-		if (!CCG.CONFIG.wrench.betterChassis) return;
+		if (!CCG.config.wrench.betterChassis) return;
 		if (hasActivedValueBox()) return;
 		var pos = hitResult.getBlockPos();
 		if (mc.level == null) return;
@@ -164,7 +164,7 @@ public class PlayerInteract {
 		mc.player.swing(mc.player.getUsedItemHand());
 	}
 	public static void tableCloth() {
-		if (!CCG.CONFIG.goggles.betterStoreInfo) return;
+		if (!CCG.config.goggles.betterStoreInfo) return;
 		if (mc.player == null) return;
 		var currentTick = mc.player.tickCount;
 		if (currentTick == lastTick) return;

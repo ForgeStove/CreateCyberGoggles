@@ -11,7 +11,7 @@ public abstract class GogglesItemMixin {
 	@Inject(method = "isWearingGoggles", at = @At("HEAD"), cancellable = true)
 	private static void isWearingGoggles(CallbackInfoReturnable<Boolean> cir) {
 		if (mc.gameMode == null) return;
-		var mode = CCG.CONFIG.gameMode;
+		var mode = CCG.config.gameMode;
 		if (mode.enableGoggles && switch (mc.gameMode.getPlayerMode()) {
 			case SURVIVAL -> mode.enableInSurvival;
 			case CREATIVE -> mode.enableInCreative;

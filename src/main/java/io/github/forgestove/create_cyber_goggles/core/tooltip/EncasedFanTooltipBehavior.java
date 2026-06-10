@@ -13,7 +13,7 @@ public class EncasedFanTooltipBehavior<T extends EncasedFanBlockEntity> extends 
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		var sup = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
-		if (!CCG.CONFIG.goggles.enhancedInfo || blockEntity.getSpeed() == 0) return sup;
+		if (!CCG.config.goggles.enhancedInfo || blockEntity.getSpeed() == 0) return sup;
 		var airCurrent = blockEntity.getAirCurrent();
 		if (airCurrent == null) return sup;
 		var thiz = GoggleTooltipUtil.fan(tooltip, airCurrent.pushing, airCurrent.maxDistance);

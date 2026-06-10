@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.zurrtum.create.content.logistics.packagePort.PackagePortBlockEntity;
 import com.zurrtum.create.foundation.blockEntity.SmartBlockEntity;
-import io.github.forgestove.create_cyber_goggles.core.util.*;
+import io.github.forgestove.create_cyber_goggles.core.api.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -17,7 +17,7 @@ public abstract class PackagePortBlockEntityMixin extends SmartBlockEntity imple
 	@Override
 	public void ccg$render() {
 		var pos = getBlockPos();
-		var target = self().target;
+		var target = thiz().target;
 		if (target == null) return;
 		var source = Vec3.atBottomCenterOf(pos);
 		var exactTarget = target.getExactTargetLocation((PackagePortBlockEntity) (Object) this, level, pos);

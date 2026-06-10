@@ -11,6 +11,6 @@ public abstract class ScrollValueRendererMixin {
 		method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/world/item/Item;)Z")
 	)
 	private static boolean tick(ItemStack instance, Item item, Operation<Boolean> original) {
-		return CCG.CONFIG.wrench.alwaysShowScrollValue || original.call(instance, item);
+		return CCG.config.wrench.alwaysShowScrollValue || original.call(instance, item);
 	}
 }

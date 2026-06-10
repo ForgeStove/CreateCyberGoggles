@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class NetheriteBacktankFirstPersonRendererMixin {
 	@Inject(method = "getHandTexture", at = @At("HEAD"), cancellable = true)
 	private static void getHandTexture(LocalPlayer player, CallbackInfoReturnable<Identifier> cir) {
-		if (!CCG.CONFIG.misc.removeNetheriteFirstPerson) return;
+		if (!CCG.config.misc.removeNetheriteFirstPerson) return;
 		cir.setReturnValue(null);
 	}
 }

@@ -8,6 +8,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class DivingBootsItemMixin {
 	@Inject(method = "isWornBy", at = @At("HEAD"), cancellable = true)
 	private static void isWornBy(CallbackInfoReturnable<Boolean> cir) {
-		if (!CCG.CONFIG.misc.allowDivingBoot) cir.setReturnValue(false);
+		if (!CCG.config.misc.allowDivingBoot) cir.setReturnValue(false);
 	}
 }

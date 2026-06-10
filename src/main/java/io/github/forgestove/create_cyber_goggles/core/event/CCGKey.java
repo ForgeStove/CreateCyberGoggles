@@ -44,8 +44,9 @@ public enum CCGKey {
 			wasDown = true;
 			pressStartTime = currentTime;
 			return true;
-		} else if (isDown) return currentTime - pressStartTime >= 500;
-		else wasDown = false;
+		}
+		if (isDown) return currentTime - pressStartTime >= 500;
+		wasDown = false;
 		return false;
 	}
 	public @NotNull Key getKey() {

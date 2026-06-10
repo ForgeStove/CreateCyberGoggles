@@ -14,7 +14,7 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.isInGa
 public abstract class GoggleOverlayRendererMixin {
 	@Inject(method = "renderOverlay", at = @At("HEAD"), cancellable = true)
 	private static void renderOverlay(CallbackInfo ci) {
-		if (!CCG.CONFIG.goggles.disableScreenGoggles || isInGame()) return;
+		if (!CCG.config.goggles.disableScreenGoggles || isInGame()) return;
 		ci.cancel();
 	}
 	@WrapOperation(
@@ -26,6 +26,6 @@ public abstract class GoggleOverlayRendererMixin {
 		Map<Object, OutlineEntry> instance,
 		Operation<Collection<OutlineEntry>> original
 	) {
-		return CCG.CONFIG.goggles.canRenderOnValueBox ? Collections.emptyList() : original.call(instance);
+		return CCG.config.goggles.canRenderOnValueBox ? Collections.emptyList() : original.call(instance);
 	}
 }

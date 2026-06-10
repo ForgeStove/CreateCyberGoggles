@@ -9,7 +9,7 @@ public abstract class SimpleBackendMixin {
 	@Inject(method = "isSupported", at = @At("HEAD"), cancellable = true)
 	public void isSupported(CallbackInfoReturnable<Boolean> cir) {
 		try {
-			if (CCG.CONFIG.misc.forcedBackend) cir.setReturnValue(true);
+			if (CCG.config.misc.forcedBackend) cir.setReturnValue(true);
 		} catch (Throwable ignored) {}
 	}
 }

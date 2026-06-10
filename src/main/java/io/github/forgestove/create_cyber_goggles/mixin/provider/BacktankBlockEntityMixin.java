@@ -3,7 +3,8 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.zurrtum.create.content.equipment.armor.BacktankBlockEntity;
 import com.zurrtum.create.content.kinetics.base.KineticBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.*;
+import io.github.forgestove.create_cyber_goggles.core.api.Self;
+import io.github.forgestove.create_cyber_goggles.core.util.BacktankBlockEntityAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -24,7 +25,7 @@ public abstract class BacktankBlockEntityMixin extends KineticBlockEntity
 	}
 	@Inject(method = "tick", at = @At(value = "RETURN", ordinal = 3))
 	public void tick(CallbackInfo ci, @Local(name = "max") int max) {
-		if (!CCG.CONFIG.goggles.enhancedInfo) return;
+		if (!CCG.config.goggles.enhancedInfo) return;
 		if (airLevel == max) return;
 		ccg$prevAirLevel = airLevel;
 		var abs = Math.abs(getSpeed());

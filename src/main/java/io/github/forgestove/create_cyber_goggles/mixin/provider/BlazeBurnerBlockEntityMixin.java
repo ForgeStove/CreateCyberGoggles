@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.zurrtum.create.content.processing.burner.BlazeBurnerBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.Self;
+import io.github.forgestove.create_cyber_goggles.core.api.Self;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -10,8 +10,8 @@ public abstract class BlazeBurnerBlockEntityMixin implements Self<BlazeBurnerBlo
 	@Shadow protected int remainingBurnTime;
 	@Inject(method = "tick", at = @At("HEAD"))
 	public void tick(CallbackInfo callbackInfo) {
-		if (!CCG.CONFIG.goggles.enhancedInfo) return;
-		var bbbe = self();
+		if (!CCG.config.goggles.enhancedInfo) return;
+		var bbbe = thiz();
 		var level = bbbe.getLevel();
 		if (level == null || !level.isClientSide()) return;
 		if (bbbe.isCreative) return;

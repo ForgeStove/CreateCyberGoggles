@@ -3,8 +3,9 @@ import com.zurrtum.create.client.AllSpecialTextures;
 import com.zurrtum.create.client.api.goggles.IHaveGoggleInformation;
 import com.zurrtum.create.content.kinetics.base.KineticBlockEntity;
 import com.zurrtum.create.content.kinetics.fan.EncasedFanBlockEntity;
+import io.github.forgestove.create_cyber_goggles.core.api.*;
 import io.github.forgestove.create_cyber_goggles.core.event.Outliner;
-import io.github.forgestove.create_cyber_goggles.core.util.*;
+import io.github.forgestove.create_cyber_goggles.core.util.GoggleTooltipUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -23,13 +24,13 @@ public abstract class EncasedFanBlockEntityMixin extends KineticBlockEntity
 	}
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		var airCurrent = self().getAirCurrent();
+		var airCurrent = thiz().getAirCurrent();
 		if (airCurrent == null) return false;
 		return GoggleTooltipUtil.fan(tooltip, airCurrent.pushing, airCurrent.maxDistance);
 	}
 	@Override
 	public void ccg$render() {
-		var airCurrent = self().getAirCurrent();
+		var airCurrent = thiz().getAirCurrent();
 		if (airCurrent == null) return;
 		var color = Outliner.getColor(airCurrent.pushing);
 		var bounds = airCurrent.bounds;

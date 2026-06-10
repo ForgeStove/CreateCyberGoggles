@@ -19,7 +19,7 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 	@Shadow public static float selectedChainPosition;
 	@Inject(method = "isActive", at = @At("HEAD"), cancellable = true)
 	private static void isActive(CallbackInfoReturnable<Boolean> returnable) {
-		if (!CCG.CONFIG.chainConveyor.alwaysAllowRiding) return;
+		if (!CCG.config.chainConveyor.alwaysAllowRiding) return;
 		if (mc.player == null) {
 			returnable.setReturnValue(false);
 			return;
@@ -33,11 +33,11 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 		method = "onUse", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/tags/TagKey;)Z")
 	)
 	private static boolean onUse(ItemStack instance, TagKey<Item> tag, Operation<Boolean> original) {
-		return !CCG.CONFIG.chainConveyor.alwaysAllowRiding && original.call(instance, tag);
+		return !CCG.config.chainConveyor.alwaysAllowRiding && original.call(instance, tag);
 	}
 	@Inject(method = "onUse", at = @At("TAIL"))
 	private static void injectTail(CallbackInfoReturnable<Boolean> returnable) {
-		if (!CCG.CONFIG.chainConveyor.alwaysAllowRiding) return;
+		if (!CCG.config.chainConveyor.alwaysAllowRiding) return;
 		if (mc.player == null) return;
 		if (!mc.player.isShiftKeyDown()) {
 			ChainConveyorRidingHandler.embark(mc, selectedLift, selectedChainPosition, selectedConnection);

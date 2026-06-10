@@ -12,7 +12,7 @@ public class BeltBlockEntityTooltipBehavior<T extends BeltBlockEntity> extends K
 	}
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		if (!CCG.CONFIG.goggles.enhancedInfo) return false;
+		if (!CCG.config.goggles.enhancedInfo) return false;
 		if (!(blockEntity instanceof Rate rate)) return false;
 		var sup = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
 		GoggleTooltipUtil.beltThroughput(tooltip, rate.ccg$getRate());

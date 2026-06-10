@@ -6,9 +6,9 @@ import com.zurrtum.create.client.content.logistics.stockTicker.StockKeeperReques
 import com.zurrtum.create.content.logistics.filter.*;
 import com.zurrtum.create.content.logistics.stockTicker.*;
 import com.zurrtum.create.content.logistics.tableCloth.TableClothBlockEntity;
-import io.github.forgestove.create_cyber_goggles.*;
+import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.config.Config;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
-import me.shedaniel.autoconfig.AutoConfigClient;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -35,23 +35,23 @@ public class KeyInput {
 	private static void toggleGoggle() {
 		toggleConfig(
 			CCGKey.toggleGoggle.isDown(),
-			CCG.CONFIG.gameMode.enableGoggles,
-			val -> CCG.CONFIG.gameMode.enableGoggles = val,
+			CCG.config.gameMode.enableGoggles,
+			val -> CCG.config.gameMode.enableGoggles = val,
 			"message.goggle"
 		);
 	}
 	private static void toggleDiving() {
 		toggleConfig(
 			CCGKey.toggleDiving.isDown(),
-			CCG.CONFIG.misc.allowDivingBoot,
-			val -> CCG.CONFIG.misc.allowDivingBoot = val,
+			CCG.config.misc.allowDivingBoot,
+			val -> CCG.config.misc.allowDivingBoot = val,
 			"message.divingBoot"
 		);
 	}
 	private static void openConfigScreen() {
 		if (!CCGKey.openConfig.isDown()) return;
 		if (isInGUI()) return;
-		mc.setScreen(AutoConfigClient.getConfigScreen(CCGConfig.class, null).get());
+		mc.setScreen(Config.createConfigScreen(CCG.ID));
 	}
 	private static void openStockScreen() {
 		if (!CCGKey.openStock.isDown()) return;
@@ -83,7 +83,7 @@ public class KeyInput {
 		playSound(SoundEvents.BOOK_PAGE_TURN, 1.0f, 1.0f);
 	}
 	private static boolean clothStore(double scrollDelta) {
-		if (!CCG.CONFIG.goggles.betterStoreInfo) return false;
+		if (!CCG.config.goggles.betterStoreInfo) return false;
 		if (!CCGKey.toggleItemOverlay.keyMapping.isDown()) return false;
 		var tcbe = getBlockEntity(TableClothBlockEntity.class);
 		if (tcbe == null) return false;

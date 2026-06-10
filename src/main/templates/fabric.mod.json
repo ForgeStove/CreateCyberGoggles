@@ -30,7 +30,6 @@
 		"fabricloader": "*",
 		"minecraft": "*",
 		"create": "*",
-		"cloth-config": "*",
 		"modmenu": "*"
 	},
 	"suggests": {

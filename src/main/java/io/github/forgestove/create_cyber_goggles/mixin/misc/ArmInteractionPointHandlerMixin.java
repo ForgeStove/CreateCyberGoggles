@@ -13,6 +13,6 @@ public class ArmInteractionPointHandlerMixin {
 	)
 	)
 	private static boolean flushSettings(BlockPos instance, Vec3i vector, double distance, Operation<Boolean> original) {
-		return CCG.CONFIG.misc.removeMechanicalArmLimit || original.call(instance, vector, distance);
+		return CCG.config.misc.removeMechanicalArmLimit || original.call(instance, vector, distance);
 	}
 }

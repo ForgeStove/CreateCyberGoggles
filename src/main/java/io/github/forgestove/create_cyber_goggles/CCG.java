@@ -1,8 +1,7 @@
 package io.github.forgestove.create_cyber_goggles;
 import com.mojang.logging.LogUtils;
+import io.github.forgestove.create_cyber_goggles.config.Config;
 import io.github.forgestove.create_cyber_goggles.core.event.*;
-import me.shedaniel.autoconfig.AutoConfig;
-import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
@@ -14,9 +13,9 @@ import org.slf4j.Logger;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.getCCGRes;
 public class CCG implements ClientModInitializer {
 	public static final String ID = "create_cyber_goggles";
-	public static final CCGConfig CONFIG = AutoConfig.register(CCGConfig.class, Toml4jConfigSerializer::new).getConfig();
-	public static final Category CATEGORY = Category.register(getCCGRes("main"));
 	public static final Logger LOGGER = LogUtils.getLogger();
+	public static final Category CATEGORY = Category.register(getCCGRes("main"));
+	public static final CCGConfig config = Config.getConfig(CCGConfig.class, LOGGER);
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onInitializeClient() {

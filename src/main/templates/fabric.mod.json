@@ -19,7 +19,7 @@
 			"io.github.forgestove.create_cyber_goggles.CCG"
 		],
 		"modmenu": [
-			"io.github.forgestove.create_cyber_goggles.CCGConfig"
+			"io.github.forgestove.create_cyber_goggles.CCGModMenu"
 		]
 	},
 	"mixins": [
@@ -29,10 +29,10 @@
 		"fabric": "*",
 		"fabricloader": "*",
 		"minecraft": "*",
-		"create": "*",
-		"modmenu": "*"
+		"create": "*"
 	},
 	"suggests": {
+		"modmenu": "*",
 		"jei": "*"
 	}
 }

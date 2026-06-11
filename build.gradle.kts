@@ -19,10 +19,7 @@ val generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
 sourceSets.main.get().resources.srcDir(generateMetadata)
 loom {
 	enableTransitiveAccessWideners = true
-	runs {
-		configureEach { jvmArguments.addAll("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition") }
-		remove(getByName("server"))
-	}
+	runs.configureEach { jvmArguments.addAll("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition") }
 }
 repositories {
 	mavenLocal()

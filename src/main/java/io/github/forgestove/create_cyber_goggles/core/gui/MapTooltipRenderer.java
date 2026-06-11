@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.core.gui;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.api.TooltipOverlayRenderer;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
@@ -43,7 +43,7 @@ public final class MapTooltipRenderer implements TooltipOverlayRenderer {
 		return PANEL_SIZE;
 	}
 	@Override
-	public void render(GuiGraphics gui, ItemStack stack, int x, int y) {
+	public void render(GuiGraphicsExtractor gui, ItemStack stack, int x, int y) {
 		if (mc.level == null) return;
 		var mapData = MapItem.getSavedData(stack, mc.level);
 		if (mapData == null) return;
@@ -76,7 +76,6 @@ public final class MapTooltipRenderer implements TooltipOverlayRenderer {
 	private void uploadPreview(byte[] colors) {
 		if (previewTexture == null) return;
 		var image = previewTexture.getPixels();
-		if (image == null) return;
 		for (var py = 0; py < MAP_SIZE; py++) {
 			var row = py * MAP_SIZE;
 			for (var px = 0; px < MAP_SIZE; px++) {

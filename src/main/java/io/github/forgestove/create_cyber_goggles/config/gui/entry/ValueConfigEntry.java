@@ -4,7 +4,7 @@ import io.github.forgestove.create_cyber_goggles.config.gui.ConfigCategoryTab;
 import io.github.forgestove.create_cyber_goggles.config.gui.util.GuiUtil;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
@@ -31,11 +31,11 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 		var font = tab.getMinecraft().font;
 		tooltip = valueNode.getTooltip() == null ? null : font.split(valueNode.getTooltip(), 350);
 		tooltipWithError = getTooltipWithError();
-		resetButton = Button.builder(Translation.RESET_LABEL, b -> resetToDefault())
+		resetButton = Button.builder(Translation.RESET_LABEL, _ -> resetToDefault())
 			.size(Math.max(font.width(Translation.RESET_LABEL) + 6, SIZE), SIZE)
 			.tooltip(Tooltip.create(Translation.RESET_TOOLTIP))
 			.build();
-		undoButton = Button.builder(Translation.UNDO_LABEL, b -> resetToActive())
+		undoButton = Button.builder(Translation.UNDO_LABEL, _ -> resetToActive())
 			.size(Math.max(font.width(Translation.UNDO_LABEL) + 6, SIZE), SIZE)
 			.tooltip(Tooltip.create(Translation.UNDO_TOOLTIP))
 			.build();
@@ -92,7 +92,7 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 		return errorTooltip;
 	}
 	public void renderGui(
-		@NotNull GuiGraphics gui,
+		@NotNull GuiGraphicsExtractor gui,
 		int y,
 		int x,
 		int width,
@@ -102,13 +102,13 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 		AbstractWidget... widgets
 	) {
 		var label = GuiUtil.styleAsState(this.label, hasError(), hasChanged);
-		gui.drawString(tab.getMinecraft().font, label.getVisualOrderText(), x, y + 5, -1, false);
+		gui.text(tab.getMinecraft().font, label.getVisualOrderText(), x, y + 5, -1, false);
 		var right = x + width;
 		for (var widget : widgets) {
 			right -= widget.getWidth();
 			widget.setPosition(right, y);
 			right -= GAP;
 		}
-		for (var widget : widgets) widget.render(gui, mouseX, mouseY, delta);
+		for (var widget : widgets) widget.extractRenderState(gui, mouseX, mouseY, delta);
 	}
 }

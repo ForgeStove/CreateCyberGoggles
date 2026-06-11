@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.config.gui.entry;
 import io.github.forgestove.create_cyber_goggles.config.gui.ConfigCategoryTab;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.*;
 import net.minecraft.network.chat.Component;
@@ -32,8 +32,8 @@ public final class CategoryTitleConfigEntry extends ConfigEntry {
 		});
 	}
 	@Override
-	public void renderContent(GuiGraphics gui, int mouseX, int mouseY, boolean hovered, float delta) {
-		gui.drawCenteredString(minecraft.font, label, getX() + getWidth() / 2, getY() + 5, -1);
+	public void extractContent(GuiGraphicsExtractor gui, int mouseX, int mouseY, boolean hovered, float delta) {
+		gui.centeredText(minecraft.font, label, getX() + getWidth() / 2, getY() + 5, -1);
 	}
 	@NotNull
 	@Override

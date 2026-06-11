@@ -6,10 +6,9 @@ import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.event.TooltipOverlay;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientItemEntryTooltipComponent;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
-import net.minecraft.client.*;
 import net.minecraft.client.gui.*;
 import net.minecraft.network.chat.Component;
-import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -34,20 +33,21 @@ public abstract class GoggleOverlayRendererMixin {
 	) {
 		return CCG.config.goggles.canRenderOnValueBox ? Collections.emptyList() : original.call(instance);
 	}
-	@WrapOperation(method = "renderOverlay", at = @At(value = "INVOKE", target = "Ljava/util/List;remove(I)Ljava/lang/Object;"))
-	private static Object wrapRemove(List<Component> instance, int i, Operation<Component> original) {
+	@WrapOperation(method = "renderOverlay", at = @At(value = "INVOKE", target = "Ljava/util/List;removeLast()Ljava/lang/Object;"))
+	private static Object wrapRemove(List<Component> instance, Operation<?> original) {
 		if (instance.isEmpty()) return null;
-		return original.call(instance, i);
+		return original.call(instance);
 	}
 	@WrapOperation(
 		method = "renderOverlay", at = @At(
 		value = "INVOKE",
-		target = "Lcom/zurrtum/create/client/foundation/gui/RemovedGuiUtils;drawHoveringText(Lnet/minecraft/client/gui/GuiGraphics;"
-			+ "Ljava/util/List;IIIIIIIILnet/minecraft/client/gui/Font;)V"
+		target =
+			"Lcom/zurrtum/create/client/foundation/gui/RemovedGuiUtils;drawHoveringText(Lnet/minecraft/client/gui/GuiGraphicsExtractor;"
+				+ "Ljava/util/List;IIIIIIIILnet/minecraft/client/gui/Font;)V"
 	)
 	)
 	private static void wrapTooltipRender(
-		GuiGraphics gui,
+		GuiGraphicsExtractor gui,
 		List<Component> tooltip,
 		int x,
 		int y,

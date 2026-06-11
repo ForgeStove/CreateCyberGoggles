@@ -4,6 +4,7 @@ import com.zurrtum.create.client.foundation.blockEntity.behaviour.tooltip.Kineti
 import com.zurrtum.create.content.kinetics.millstone.MillstoneBlockEntity;
 import io.github.forgestove.create_cyber_goggles.core.util.GoggleTooltipUtil;
 import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 public class MillstoneTooltipBehavior extends KineticTooltipBehaviour<MillstoneBlockEntity> implements IHaveGoggleInformation {
@@ -11,7 +12,7 @@ public class MillstoneTooltipBehavior extends KineticTooltipBehaviour<MillstoneB
 		super(be);
 	}
 	@Override
-	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+	public boolean addToGoggleTooltip(@NonNull List<Component> tooltip, boolean isPlayerSneaking) {
 		var sup = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
 		var thiz = GoggleTooltipUtil.millstone(tooltip, blockEntity);
 		return thiz || sup;

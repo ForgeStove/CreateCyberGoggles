@@ -49,6 +49,7 @@ public final class ItemTooltip {
 	private static void goggles(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!CCG.config.tooltip.goggles) return;
 		if (!(stack.getItem() instanceof GogglesItem)) return;
+		if (mc.player == null) return;
 		var component = CCGLang.enabled(GogglesItem.isWearingGoggles(mc.player)).component();
 		tooltip.add(1, component);
 	}
@@ -101,7 +102,7 @@ public final class ItemTooltip {
 	}
 	public static void renderTooltipOverlay(
 		ItemStack stack,
-		GuiGraphics gui,
+		GuiGraphicsExtractor gui,
 		Font font,
 		List<ClientTooltipComponent> components,
 		int mouseX,

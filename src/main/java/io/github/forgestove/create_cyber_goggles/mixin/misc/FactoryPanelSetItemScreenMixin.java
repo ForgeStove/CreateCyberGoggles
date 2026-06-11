@@ -16,7 +16,7 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 @Mixin(FactoryPanelSetItemScreen.class)
 public abstract class FactoryPanelSetItemScreenMixin extends AbstractSimiContainerScreen<FactoryPanelSetItemMenu> {
 	public FactoryPanelSetItemScreenMixin(FactoryPanelSetItemMenu container, Inventory inv, Component title) {
-		super(container, inv, title);
+		super(container, inv, title, 0, 0);
 	}
 	@Inject(method = "init", at = @At("TAIL"))
 	public void init(CallbackInfo ci) {

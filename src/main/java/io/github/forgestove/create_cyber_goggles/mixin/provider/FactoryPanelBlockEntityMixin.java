@@ -21,7 +21,7 @@ public abstract class FactoryPanelBlockEntityMixin implements OutlineRenderable,
 		var level = thiz.getLevel();
 		if (level == null) return;
 		var panels = thiz.panels;
-		if (panels == null || panels.isEmpty()) return;
+		if (panels.isEmpty()) return;
 		var hitResult = getBlockHitResult();
 		if (hitResult == null) return;
 		var panelSlot = FactoryPanelBlock.getTargetedSlot(thiz.getBlockPos(), thiz.getBlockState(), hitResult.getLocation());
@@ -38,7 +38,7 @@ public abstract class FactoryPanelBlockEntityMixin implements OutlineRenderable,
 			var pos = panelPosition.pos();
 			var box = FactoryPanelConnectionHandler.getBB(level.getBlockState(pos), panelPosition);
 			var newColor = CCG.config.outliner.outColor;
-			hashMap.compute(box, (k, old) -> old == null ? newColor : blendColors(old, newColor));
+			hashMap.compute(box, (_, old) -> old == null ? newColor : blendColors(old, newColor));
 		}
 		hashMap.object2IntEntrySet().forEach(entry -> {
 			var color = entry.getIntValue();

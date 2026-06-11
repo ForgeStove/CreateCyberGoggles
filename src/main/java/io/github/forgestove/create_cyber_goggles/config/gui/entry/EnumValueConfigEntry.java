@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.config.gui.entry;
 import io.github.forgestove.create_cyber_goggles.config.gui.*;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +41,7 @@ public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum<?>> 
 		dropdownButton.setMessage(getDisplayComponent(getValue()));
 	}
 	@Override
-	public void renderContent(@NotNull GuiGraphics gui, int mouseX, int mouseY, boolean hovered, float delta) {
+	public void extractContent(@NotNull GuiGraphicsExtractor gui, int mouseX, int mouseY, boolean hovered, float delta) {
 		renderGui(gui, getY(), getX(), getWidth(), mouseX, mouseY, delta, undoButton, resetButton, dropdownButton);
 	}
 }

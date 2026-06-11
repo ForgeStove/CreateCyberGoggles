@@ -1,5 +1,5 @@
 plugins {
-	id("fabric-loom") version "1.17.7"
+	id("net.fabricmc.fabric-loom") version "1.17.8"
 	id("me.modmuss50.mod-publish-plugin") version "+"
 }
 base.archivesName.set(p("modName"))
@@ -17,7 +17,6 @@ val generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
 	into("build/generated/sources/modMetadata")
 }
 sourceSets.main.get().resources.srcDir(generateMetadata)
-configurations.configureEach { resolutionStrategy.force("net.fabricmc:fabric-loader:${p("fabricLoaderVersion")}") }
 loom {
 	enableTransitiveAccessWideners = true
 	runs {
@@ -34,19 +33,17 @@ repositories {
 }
 dependencies {
 	minecraft("com.mojang:minecraft:${p("mcVersion")}")
-	@Suppress("UnstableApiUsage") mappings(loom.layered {
-		officialMojangMappings { nameSyntheticMembers = false }
-		parchment("org.parchmentmc.data:parchment-${p("mcVersion")}:${p("parchmentVersion")}@zip")
-	})
-	modImplementation("net.fabricmc:fabric-loader:${p("fabricLoaderVersion")}")
-	modImplementation("net.fabricmc.fabric-api:fabric-api:${p("fabricApiVersion")}+${p("mcVersion")}")
-	modImplementation("maven.modrinth:create-fly:${p("mcVersion")}-${p("createVersion")}")
-	modImplementation("com.terraformersmc:modmenu:${p("modmenuVersion")}")
-	modImplementation("com.electronwill.night-config:core:${p("nightConfigVersion")}")
+	implementation("net.fabricmc:fabric-loader:${p("fabricLoaderVersion")}")
+	implementation("net.fabricmc.fabric-api:fabric-api:${p("fabricApiVersion")}+${p("mcVersion")}")
+	implementation("maven.modrinth:create-fly:${p("mcVersion")}-${p("createVersion")}")
+	implementation("com.terraformersmc:modmenu:${p("modmenuVersion")}")
+	implementation("com.electronwill.night-config:core:${p("nightConfigVersion")}")
+	implementation("com.electronwill.night-config:toml:${p("nightConfigVersion")}")
 	include("com.electronwill.night-config:core:${p("nightConfigVersion")}")
+	include("com.electronwill.night-config:toml:${p("nightConfigVersion")}")
 }
 publishMods {
-	file.set(tasks.remapJar.get().archiveFile)
+	file.set(tasks.jar.get().archiveFile)
 	changelog.set(file("CHANGELOG.md").readText())
 	type.set(STABLE)
 	version.set(project.version.toString())

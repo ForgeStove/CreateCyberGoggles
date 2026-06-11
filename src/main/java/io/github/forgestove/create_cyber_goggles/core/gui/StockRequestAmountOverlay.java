@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.core.gui;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.config.gui.ConfigEditBox;
 import net.minecraft.client.gui.*;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.input.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -15,7 +15,7 @@ public final class StockRequestAmountOverlay {
 	private static final int BUTTON_HEIGHT = 14;
 	private static final String PREFIX = CCG.ID + ".screen.stockKeeperRequest.popup.";
 	private boolean open;
-	private EditBox amountInput;
+	private ConfigEditBox amountInput;
 	private ItemStack stack = ItemStack.EMPTY;
 	private int max = 1;
 	public boolean isOpen() {
@@ -53,9 +53,9 @@ public final class StockRequestAmountOverlay {
 		if (!isInside(mouseX, mouseY, popupX, popupY)) return ClickResult.CLOSE;
 		return ClickResult.CONSUMED;
 	}
-	public void charTyped(int codePoint, int modifiers) {
+	public void charTyped(int codePoint) {
 		if (!open) return;
-		if (amountInput != null) amountInput.charTyped(new CharacterEvent(codePoint, modifiers));
+		if (amountInput != null) amountInput.charTyped(new CharacterEvent(codePoint));
 	}
 	public KeyResult keyPressed(int keyCode, int scanCode, int modifiers) {
 		if (!open) return KeyResult.NONE;
@@ -72,7 +72,7 @@ public final class StockRequestAmountOverlay {
 		}
 		return 0;
 	}
-	public void render(GuiGraphics gui, Font font, int mouseX, int mouseY, float partialTicks, int popupX, int popupY) {
+	public void render(GuiGraphicsExtractor gui, Font font, int mouseX, int mouseY, float partialTicks, int popupX, int popupY) {
 		if (!open) return;
 		relayout(font, popupX, popupY);
 		var confirmX = popupX + 6;
@@ -81,23 +81,23 @@ public final class StockRequestAmountOverlay {
 		var buttonW = POPUP_WIDTH / 2 - 7;
 		gui.fill(popupX - 3, popupY - 3, popupX + POPUP_WIDTH + 3, popupY + POPUP_HEIGHT + 3, 0xB0101010);
 		gui.fill(popupX, popupY, popupX + POPUP_WIDTH, popupY + POPUP_HEIGHT, 0xE02D2D2D);
-		gui.renderOutline(popupX, popupY, POPUP_WIDTH, POPUP_HEIGHT, 0xFF666666);
-		gui.drawString(font, Component.translatable(PREFIX + "title"), popupX + POPUP_PADDING, popupY + 6, 0xFFFFFFFF, false);
+		gui.outline(popupX, popupY, POPUP_WIDTH, POPUP_HEIGHT, 0xFF666666);
+		gui.text(font, Component.translatable(PREFIX + "title"), popupX + POPUP_PADDING, popupY + 6, 0xFFFFFFFF, false);
 		Component maxText;
 		maxText = max == Integer.MAX_VALUE ? Component.translatable(PREFIX + "infinite") : Component.literal(Integer.toString(max));
-		gui.drawString(font, Component.translatable(PREFIX + "max", maxText), popupX + POPUP_PADDING, popupY + 20, 0xFFC8C8C8, false);
-		gui.drawString(font, Component.translatable(PREFIX + "amount"), popupX + POPUP_PADDING, popupY + 34, 0xFFD8D8D8, false);
-		if (amountInput != null) amountInput.render(gui, mouseX, mouseY, partialTicks);
+		gui.text(font, Component.translatable(PREFIX + "max", maxText), popupX + POPUP_PADDING, popupY + 20, 0xFFC8C8C8, false);
+		gui.text(font, Component.translatable(PREFIX + "amount"), popupX + POPUP_PADDING, popupY + 34, 0xFFD8D8D8, false);
+		if (amountInput != null) amountInput.extractWidgetRenderState(gui, mouseX, mouseY, partialTicks);
 		var confirmColor = isOnConfirm(mouseX, mouseY, popupX, popupY) ? 0xFF4A7A4A : 0xFF3A5F3A;
 		var cancelColor = isOnCancel(mouseX, mouseY, popupX, popupY) ? 0xFF7A4A4A : 0xFF5F3A3A;
 		gui.fill(confirmX, buttonY, confirmX + buttonW, buttonY + BUTTON_HEIGHT, confirmColor);
 		gui.fill(cancelX, buttonY, cancelX + buttonW, buttonY + BUTTON_HEIGHT, cancelColor);
-		gui.drawCenteredString(font, Component.translatable(PREFIX + "confirm"), confirmX + buttonW / 2, buttonY + 3, 0xFFFFFFFF);
-		gui.drawCenteredString(font, Component.translatable(PREFIX + "cancel"), cancelX + buttonW / 2, buttonY + 3, 0xFFFFFFFF);
+		gui.centeredText(font, Component.translatable(PREFIX + "confirm"), confirmX + buttonW / 2, buttonY + 3, 0xFFFFFFFF);
+		gui.centeredText(font, Component.translatable(PREFIX + "cancel"), cancelX + buttonW / 2, buttonY + 3, 0xFFFFFFFF);
 	}
 	private void ensureInput(Font font, int popupX, int popupY) {
 		if (amountInput == null) {
-			amountInput = new EditBox(font, 0, 0, POPUP_WIDTH - 16, 12, Component.translatable(PREFIX + "amount"));
+			amountInput = new ConfigEditBox(font, 0, 0, POPUP_WIDTH - 16, 12, Component.translatable(PREFIX + "amount"));
 			amountInput.setMaxLength(9);
 			amountInput.setFilter(value -> value.chars().allMatch(Character::isDigit));
 		}

@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.config.gui;
 import com.mojang.blaze3d.platform.InputConstants;
 import io.github.forgestove.create_cyber_goggles.config.Translation;
 import io.github.forgestove.create_cyber_goggles.config.gui.entry.ConfigEntry;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -74,12 +74,12 @@ public final class ColorPickerScreen extends Screen {
 		layoutPicker();
 		var buttonY = svPos.y + PICKER_SIZE + PADDING;
 		var okButton = Button.builder(
-			Component.translatable("gui.ok"), button -> {
+			Component.translatable("gui.ok"), _ -> {
 				onColorSelected.accept(colorFromHSB());
 				minecraft.setScreen(parent);
 			}
 		).bounds(svPos.x, buttonY, BUTTON_WIDTH, SIZE).build();
-		var cancelButton = Button.builder(Component.translatable("gui.cancel"), button -> minecraft.setScreen(parent))
+		var cancelButton = Button.builder(Component.translatable("gui.cancel"), _ -> minecraft.setScreen(parent))
 			.bounds(svPos.x + BUTTON_WIDTH + 2, buttonY, BUTTON_WIDTH, SIZE)
 			.build();
 		hexInput = createHexInput(buttonY);
@@ -106,9 +106,9 @@ public final class ColorPickerScreen extends Screen {
 		var hexInputX = svPos.x + BUTTON_WIDTH * 2 + 6;
 		var hexInputWidth = hasAlpha ? 70 : 55;
 		var input = new ConfigEditBox(font, hexInputX, buttonY, hexInputWidth, SIZE, Component.literal("Hex"));
+		input.setFilter(text -> HEX_PATTERN.matcher(text).matches());
 		input.setMaxLength(hasAlpha ? 8 : 6);
 		input.setValue(formatHexColor());
-		input.setFilter(s -> HEX_PATTERN.matcher(s).matches());
 		input.setResponder(this::onHexInputChange);
 		return input;
 	}
@@ -143,17 +143,17 @@ public final class ColorPickerScreen extends Screen {
 		updatingFromInput = false;
 	}
 	@Override
-	public void renderBackground(@NonNull GuiGraphics gui, int mouseX, int mouseY, float delta) {
-		if (parent != null) parent.render(gui, 0, 0, delta);
-		super.renderBackground(gui, mouseX, mouseY, delta);
+	public void extractBackground(@NonNull GuiGraphicsExtractor gui, int mouseX, int mouseY, float delta) {
+		if (parent != null) parent.extractRenderState(gui, 0, 0, delta);
+		super.extractBackground(gui, mouseX, mouseY, delta);
 	}
 	@Override
-	public void render(@NotNull GuiGraphics gui, int mouseX, int mouseY, float delta) {
+	public void extractRenderState(GuiGraphicsExtractor gui, int mouseX, int mouseY, float delta) {
 		var totalWidth = PICKER_SIZE + PADDING + BAR_WIDTH + (hasAlpha ? PADDING + BAR_WIDTH : 0) + PADDING * 2 + 8;
 		var totalHeight = PICKER_SIZE + PADDING * 2 + 16 + 28;
 		gui.fill(pickerPos.x - 4, pickerPos.y - 4, pickerPos.x + totalWidth + 4, pickerPos.y + totalHeight + 4, 0xF0101010);
-		gui.renderOutline(pickerPos.x - 4, pickerPos.y - 4, totalWidth + 8, totalHeight + 8, 0xFF404040);
-		gui.drawString(font, title, svPos.x, pickerPos.y + PADDING, 0xFFFFFFFF);
+		gui.outline(pickerPos.x - 4, pickerPos.y - 4, totalWidth + 8, totalHeight + 8, 0xFF404040);
+		gui.text(font, title, svPos.x, pickerPos.y + PADDING, 0xFFFFFFFF);
 		if (cachedHue != hue) rebuildSBCache();
 		renderSBSquare(gui, svPos.x, svPos.y);
 		var hueBarX = getHueBarX();
@@ -161,7 +161,7 @@ public final class ColorPickerScreen extends Screen {
 		if (hasAlpha) renderAlphaBar(gui, getAlphaBarX(), svPos.y);
 		renderSelectors(gui, hueBarX);
 		// Keep widget rendering order controlled in this screen.
-		for (var child : children()) if (child instanceof AbstractWidget widget) widget.render(gui, mouseX, mouseY, delta);
+		for (var child : children()) if (child instanceof AbstractWidget widget) widget.extractRenderState(gui, mouseX, mouseY, delta);
 	}
 	private void rebuildSBCache() {
 		if (sbPixels == null) sbPixels = new int[PICKER_SIZE * PICKER_SIZE];
@@ -174,11 +174,11 @@ public final class ColorPickerScreen extends Screen {
 		}
 		cachedHue = hue;
 	}
-	private void renderSelectors(GuiGraphics gui, int hueBarX) {
+	private void renderSelectors(GuiGraphicsExtractor gui, int hueBarX) {
 		var sbSelectorX = svPos.x + (int) (saturation * (PICKER_SIZE - 1));
 		var sbSelectorY = svPos.y + (int) ((1f - brightness) * (PICKER_SIZE - 1));
-		gui.renderOutline(sbSelectorX - 4, sbSelectorY - 4, 9, 9, 0xFFFFFFFF);
-		gui.renderOutline(sbSelectorX - 3, sbSelectorY - 3, 7, 7, 0xFF000000);
+		gui.outline(sbSelectorX - 4, sbSelectorY - 4, 9, 9, 0xFFFFFFFF);
+		gui.outline(sbSelectorX - 3, sbSelectorY - 3, 7, 7, 0xFF000000);
 		var hueSelectorY = svPos.y + (int) (hue * (PICKER_SIZE - 1));
 		renderHorizontalArrow(gui, hueBarX, hueSelectorY);
 		if (!hasAlpha) return;
@@ -191,13 +191,13 @@ public final class ColorPickerScreen extends Screen {
 	private int getAlphaBarX() {
 		return getHueBarX() + BAR_WIDTH + PADDING;
 	}
-	private void renderHorizontalArrow(GuiGraphics gui, int x, int y) {
+	private void renderHorizontalArrow(GuiGraphicsExtractor gui, int x, int y) {
 		gui.fill(x - 3, y - 1, x, y + 2, 0xFFFFFFFF);
 		gui.fill(x - 2, y, x, y + 1, 0xFF000000);
 		gui.fill(x + BAR_WIDTH, y - 1, x + BAR_WIDTH + 3, y + 2, 0xFFFFFFFF);
 		gui.fill(x + BAR_WIDTH, y, x + BAR_WIDTH + 2, y + 1, 0xFF000000);
 	}
-	private void renderSBSquare(GuiGraphics gui, int x, int y) {
+	private void renderSBSquare(GuiGraphicsExtractor gui, int x, int y) {
 		var blockSize = 4;
 		for (var by = 0; by < PICKER_SIZE; by += blockSize)
 			for (var bx = 0; bx < PICKER_SIZE; bx += blockSize) {
@@ -206,25 +206,25 @@ public final class ColorPickerScreen extends Screen {
 				var endY = Math.min(by + blockSize, PICKER_SIZE);
 				gui.fill(x + bx, y + by, x + endX, y + endY, color);
 			}
-		gui.renderOutline(x, y, PICKER_SIZE, PICKER_SIZE, 0xFF000000);
+		gui.outline(x, y, PICKER_SIZE, PICKER_SIZE, 0xFF000000);
 	}
-	private void renderHueBar(GuiGraphics gui, int x, int y) {
+	private void renderHueBar(GuiGraphicsExtractor gui, int x, int y) {
 		var step = 4;
 		for (var dy = 0; dy < PICKER_SIZE; dy += step) {
 			var h = (float) dy / (PICKER_SIZE - 1);
 			var color = 0xFF000000 | Color.HSBtoRGB(h, 1f, 1f) & 0xFFFFFF;
 			gui.fill(x, y + dy, x + BAR_WIDTH, y + Math.min(dy + step, PICKER_SIZE), color);
 		}
-		gui.renderOutline(x, y, BAR_WIDTH, PICKER_SIZE, 0xFF000000);
+		gui.outline(x, y, BAR_WIDTH, PICKER_SIZE, 0xFF000000);
 	}
-	private void renderAlphaBar(GuiGraphics gui, int x, int y) {
+	private void renderAlphaBar(GuiGraphicsExtractor gui, int x, int y) {
 		var baseColor = colorFromHSB() & 0xFFFFFF;
 		var step = 4;
 		for (var dy = 0; dy < PICKER_SIZE; dy += step) {
 			var a = 255 - dy * 255 / (PICKER_SIZE - 1);
 			gui.fill(x, y + dy, x + BAR_WIDTH, y + Math.min(dy + step, PICKER_SIZE), a << 24 | baseColor);
 		}
-		gui.renderOutline(x, y, BAR_WIDTH, PICKER_SIZE, 0xFF000000);
+		gui.outline(x, y, BAR_WIDTH, PICKER_SIZE, 0xFF000000);
 	}
 	@Override
 	public boolean mouseClicked(@NotNull MouseButtonEvent event, boolean bl) {

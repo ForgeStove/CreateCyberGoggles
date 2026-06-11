@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 import java.util.List;
-@Mixin(GuiGraphics.class)
+@Mixin(GuiGraphicsExtractor.class)
 public interface GuiGraphicsAccessor {
 	@Invoker("setTooltipForNextFrameInternal")
 	void ccg$setTooltipForNextFrameInternal(

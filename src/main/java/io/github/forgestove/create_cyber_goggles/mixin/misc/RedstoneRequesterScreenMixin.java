@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import java.util.List;
 @Mixin(RedstoneRequesterScreen.class)
 public abstract class RedstoneRequesterScreenMixin {
-	@Shadow private List<Integer> amounts;
+	@Final @Shadow private List<Integer> amounts;
 	@ModifyArg(
 		method = "mouseScrolled", at = @At(
 		value = "INVOKE", target = "Lnet/minecraft/util/Mth;clamp(III)I"

@@ -4,6 +4,7 @@ import com.zurrtum.create.content.redstone.diodes.BrassDiodeBlockEntity;
 import com.zurrtum.create.foundation.blockEntity.behaviour.scrollValue.ServerScrollValueBehaviour;
 import io.github.forgestove.create_cyber_goggles.core.util.GoggleTooltipUtil;
 import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.NonNull;
 import org.spongepowered.asm.mixin.*;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public abstract class BrassDiodeBlockEntityMixin implements IHaveGoggleInformati
 	@Shadow public int state;
 	@Shadow ServerScrollValueBehaviour maxState;
 	@Override
-	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+	public boolean addToGoggleTooltip(@NonNull List<Component> tooltip, boolean isPlayerSneaking) {
 		return GoggleTooltipUtil.pulse(tooltip, state, maxState.getValue());
 	}
 }

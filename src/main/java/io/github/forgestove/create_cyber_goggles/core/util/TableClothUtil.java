@@ -5,7 +5,7 @@ import com.zurrtum.create.client.foundation.gui.AllGuiTextures;
 import com.zurrtum.create.content.logistics.tableCloth.TableClothBlockEntity;
 import io.github.forgestove.create_cyber_goggles.core.api.Index;
 import io.github.forgestove.create_cyber_goggles.core.event.*;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.*;
 import org.jetbrains.annotations.*;
 
@@ -13,7 +13,7 @@ import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class TableClothUtil {
-	public static void clothStoreOverlay(GuiGraphics gui, int x, int y, @NotNull List<ItemStack> items) {
+	public static void clothStoreOverlay(GuiGraphicsExtractor gui, int x, int y, @NotNull List<ItemStack> items) {
 		var tcbe = getBlockEntity(TableClothBlockEntity.class);
 		if (tcbe == null) return;
 		if (items.isEmpty()) {
@@ -31,7 +31,7 @@ public class TableClothUtil {
 			resultX += 21;
 		}
 	}
-	public static void tableOverlay(@NotNull GuiGraphics gui) {
+	public static void tableOverlay(@NotNull GuiGraphicsExtractor gui) {
 		var tcbe = getBlockEntity(TableClothBlockEntity.class);
 		if (tcbe == null) return;
 		if (tcbe.isShop()) return;
@@ -53,8 +53,8 @@ public class TableClothUtil {
 		for (var i = 0; i < items.size(); i++) {
 			var item = items.get(i);
 			var itemX = x + 2 + i * 21;
-			gui.renderItem(item, itemX, y + 2);
-			gui.renderItemDecorations(mc.font, item, itemX, y + 2);
+			gui.item(item, itemX, y + 2);
+			gui.itemDecorations(mc.font, item, itemX, y + 2);
 		}
 	}
 	@Contract("_, null -> null")

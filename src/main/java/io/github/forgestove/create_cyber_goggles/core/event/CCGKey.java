@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.mixin.accessor.KeyMappingAccessor;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.network.chat.Component;
@@ -36,7 +36,7 @@ public enum CCGKey {
 		keyMapping = new KeyMapping(ID + ".key." + name(), type, key, CCG.CATEGORY);
 	}
 	public static void register() {
-		for (var key : values()) KeyBindingHelper.registerKeyBinding(key.keyMapping);
+		for (var key : values()) KeyMappingHelper.registerKeyMapping(key.keyMapping);
 	}
 	public static @NotNull Component getFancyName(@NotNull KeyMapping keyMapping) {
 		var key = ((KeyMappingAccessor) keyMapping).getKey();

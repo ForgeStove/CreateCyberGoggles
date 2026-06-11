@@ -26,7 +26,7 @@
 		"create_cyber_goggles.mixins.json"
 	],
 	"depends": {
-		"fabric": "*",
+		"fabric-api": "*",
 		"fabricloader": "*",
 		"minecraft": "*",
 		"create": "*"

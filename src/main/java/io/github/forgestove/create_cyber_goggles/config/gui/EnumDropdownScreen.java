@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.config.gui;
 import io.github.forgestove.create_cyber_goggles.config.gui.entry.ConfigEntry;
 import io.github.forgestove.create_cyber_goggles.config.gui.util.SmoothScrool;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -64,13 +64,13 @@ public final class EnumDropdownScreen extends Screen {
 		update(height);
 	}
 	@Override
-	public void render(@NotNull GuiGraphics gui, int mouseX, int mouseY, float delta) {
+	public void extractRenderState(@NotNull GuiGraphicsExtractor gui, int mouseX, int mouseY, float delta) {
 		smoothScrool.tick(delta);
 		var pose = gui.pose();
 		pose.pushMatrix();
 		pose.translate(0.0f, 0.0f);
 		// 将父屏幕绘制为背景
-		parentScreen.render(gui, 0, 0, delta);
+		parentScreen.extractRenderState(gui, 0, 0, delta);
 		pose.popMatrix();
 		var dropdownX = dropdownButton.getX();
 		var dropdownY = dropdownY();
@@ -92,7 +92,7 @@ public final class EnumDropdownScreen extends Screen {
 			if (isSelected) gui.fill(dropdownX + GAP, y + GAP, dropdownX + dropdownWidth - GAP, y + HEIGHT + GAP, 0xFF3366BB);
 			else if (isHovered) gui.fill(dropdownX + GAP, y + GAP, dropdownX + dropdownWidth - GAP, y + HEIGHT + GAP, 0xFF404040);
 			var color = isSelected ? 0xFFFFFFFF : isHovered ? 0xFFFFFF00 : 0xFFE0E0E0;
-			gui.drawString(font, displayMapper.apply(values[optionIndex]), dropdownX + HEIGHT / 4, y + HEIGHT / 4 + GAP, color, false);
+			gui.text(font, displayMapper.apply(values[optionIndex]), dropdownX + HEIGHT / 4, y + HEIGHT / 4 + GAP, color, false);
 		}
 		gui.disableScissor();
 		// 如果需要则绘制滚动条

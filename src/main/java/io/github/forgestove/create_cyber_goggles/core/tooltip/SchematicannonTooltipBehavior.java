@@ -5,6 +5,7 @@ import com.zurrtum.create.content.schematics.cannon.SchematicannonBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.GoggleTooltipUtil;
 import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 public class SchematicannonTooltipBehavior extends TooltipBehaviour<SchematicannonBlockEntity> implements IHaveGoggleInformation {
@@ -12,7 +13,7 @@ public class SchematicannonTooltipBehavior extends TooltipBehaviour<Schematicann
 		super(be);
 	}
 	@Override
-	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+	public boolean addToGoggleTooltip(@NonNull List<Component> tooltip, boolean isPlayerSneaking) {
 		if (!CCG.config.goggles.enhancedInfo) return false;
 		return GoggleTooltipUtil.cannon(tooltip, blockEntity);
 	}

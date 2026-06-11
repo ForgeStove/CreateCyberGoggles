@@ -31,7 +31,7 @@ public final class ClientItemListTooltipComponent implements ClientTooltipCompon
 		return columns * SlotUtil.SIZE + indentPixels(font);
 	}
 	@Override
-	public void renderImage(@NotNull Font font, int x, int y, int width, int height, @NotNull GuiGraphics gui) {
+	public void extractImage(@NotNull Font font, int x, int y, int width, int height, @NotNull GuiGraphicsExtractor gui) {
 		for (var i = 0; i < items.size(); i++) {
 			var col = i % maxColumns;
 			var row = i / maxColumns;
@@ -40,12 +40,12 @@ public final class ClientItemListTooltipComponent implements ClientTooltipCompon
 			renderSlot(gui, font, items.get(i), slotX, slotY);
 		}
 	}
-	private void renderSlot(GuiGraphics gui, Font font, ItemStack stack, int x, int y) {
+	private void renderSlot(GuiGraphicsExtractor gui, Font font, ItemStack stack, int x, int y) {
 		gui.blitSprite(RenderPipelines.GUI_TEXTURED, SlotUtil.SLOT, x, y, SlotUtil.SIZE, SlotUtil.SIZE);
-		gui.renderItem(stack, x + 1, y + 1);
+		gui.item(stack, x + 1, y + 1);
 		if (AbstractItemGridRenderer.isCFLCompressedTank(stack) && stack.getCount() > 1)
-			gui.renderItemDecorations(font, stack, x + 1, y + 1, AbstractItemGridRenderer.formatFluidAmount(stack.getCount()));
-		else gui.renderItemDecorations(font, stack, x + 1, y + 1);
+			gui.itemDecorations(font, stack, x + 1, y + 1, AbstractItemGridRenderer.formatFluidAmount(stack.getCount()));
+		else gui.itemDecorations(font, stack, x + 1, y + 1);
 	}
 	private int indentPixels(@NotNull Font font) {
 		return indent * font.width(" ");

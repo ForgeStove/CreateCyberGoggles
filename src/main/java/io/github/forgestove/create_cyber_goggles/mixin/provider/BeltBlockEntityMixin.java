@@ -20,9 +20,10 @@ public abstract class BeltBlockEntityMixin implements ItemRenderable, Rate, Self
 		var level = bbe.getLevel();
 		if (level == null || !level.isClientSide()) return;
 		if (bbe.index != 0) return;
-		var currentTotalItems = 0;
-		for (var tis : bbe.getInventory().getTransportedItems())
-			if (tis != null && tis.stack != null) currentTotalItems += tis.stack.getCount();
+		int currentTotalItems;
+		var inventory = bbe.getInventory();
+		if (inventory == null) return;
+		currentTotalItems = inventory.getTransportedItems().stream().mapToInt(tis -> tis.stack.getCount()).sum();
 		var itemsPassed = Math.max(0, ccg$lastTotalItems - currentTotalItems);
 		ccg$lastTotalItems = currentTotalItems;
 		ccg$itemHistory.addLast(itemsPassed);
@@ -32,6 +33,7 @@ public abstract class BeltBlockEntityMixin implements ItemRenderable, Rate, Self
 	@Override
 	public double ccg$getRate() {
 		var controllerBE = thiz().getControllerBE();
+		if (controllerBE == null) return 0;
 		if (!CCG.config.goggles.enhancedInfo || thiz().getSpeed() == 0) return 0;
 		return ((BeltBlockEntityMixin) (Object) controllerBE).ccg$rate;
 	}

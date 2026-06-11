@@ -10,7 +10,7 @@ import io.github.forgestove.create_cyber_goggles.core.factory.ClientFluidEntryTo
 import io.github.forgestove.create_cyber_goggles.core.factory.TooltipTheme.Theme;
 import io.github.forgestove.create_cyber_goggles.core.util.TooltipComponentUtil;
 import net.minecraft.client.DeltaTracker;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.*;
@@ -25,7 +25,7 @@ import java.util.*;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class TooltipOverlay {
 	public static int hoverTicks;
-	public static void renderOverlay(GuiGraphics gui, DeltaTracker ignoredDeltaTracker) {
+	public static void renderOverlay(GuiGraphicsExtractor gui, DeltaTracker ignoredDeltaTracker) {
 		if (!CCG.config.overlay.renderItemOverlay || !CCG.config.gameMode.enableGoggles) return;
 		if (mc.isPaused() || isInGUI() || mc.options.hideGui) {
 			hoverTicks = 0;
@@ -45,7 +45,7 @@ public class TooltipOverlay {
 		}
 		return ItemStack.EMPTY;
 	}
-	public static void renderItemStack(@NotNull GuiGraphics gui, @NotNull ItemStack itemStack) {
+	public static void renderItemStack(@NotNull GuiGraphicsExtractor gui, @NotNull ItemStack itemStack) {
 		var pose = gui.pose();
 		pose.pushMatrix();
 		var overlay = CCG.config.overlay;
@@ -156,7 +156,7 @@ public class TooltipOverlay {
 	}
 	@Nullable
 	public static Vector2ic renderTooltip(
-		GuiGraphics gui,
+		GuiGraphicsExtractor gui,
 		@NotNull List<ClientTooltipComponent> components,
 		int x,
 		int y,
@@ -179,8 +179,8 @@ public class TooltipOverlay {
 		int i = 0, textY = tooltipY;
 		var font = mc.font;
 		for (var component : components) {
-			component.renderText(gui, font, tooltipX, textY);
-			component.renderImage(font, tooltipX, textY, tooltipWidth, tooltipHeight, gui);
+			component.extractText(gui, font, tooltipX, textY);
+			component.extractImage(font, tooltipX, textY, tooltipWidth, tooltipHeight, gui);
 			textY += component.getHeight(font) + (i == 0 ? 2 : 0);
 			i++;
 		}
@@ -189,7 +189,7 @@ public class TooltipOverlay {
 	}
 	public static void renderTooltipOverlay(
 		ItemStack itemStack,
-		GuiGraphics gui,
+		GuiGraphicsExtractor gui,
 		List<ClientTooltipComponent> components,
 		Vector2ic tooltipPos
 	) {
@@ -210,7 +210,7 @@ public class TooltipOverlay {
 		if (overlayY < 16) overlayY = 16;
 		renderer.render(gui, itemStack, overlayX - 4, overlayY);
 	}
-	public static void renderTooltipBackground(@NonNull GuiGraphics gui, int x, int y, int width, int height, int back, int top, int bot) {
+	public static void renderTooltipBackground(@NonNull GuiGraphicsExtractor gui, int x, int y, int width, int height, int back, int top, int bot) {
 		gui.fillGradient(x - 3, y - 4, x + width + 3, y - 3, back, back);
 		gui.fillGradient(x - 3, y + height + 3, x + width + 3, y + height + 4, back, back);
 		gui.fillGradient(x - 3, y - 3, x + width + 3, y + height + 3, back, back);

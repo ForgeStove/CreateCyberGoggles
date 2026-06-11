@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(AbstractFilterScreen.class)
 public abstract class AbstractFilterScreenMixin<F extends AbstractFilterMenu> extends AbstractSimiContainerScreen<F> {
 	public AbstractFilterScreenMixin(F container, Inventory inv, Component title) {
-		super(container, inv, title);
+		super(container, inv, title, 0, 0);
 	}
 	@WrapWithCondition(
 		method = "containerTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;closeContainer()V")

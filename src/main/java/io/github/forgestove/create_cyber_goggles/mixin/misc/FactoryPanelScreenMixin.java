@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(FactoryPanelScreen.class)
 public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen {
-	@Shadow private boolean restocker;
+	@Final @Shadow private boolean restocker;
 	@Shadow private IconButton relocateButton;
 	@ModifyConstant(method = "mouseScrolled", constant = @Constant(intValue = 64))
 	public int modifyMaxScrollAmount(int original) {

@@ -41,6 +41,7 @@ public class KineticParticle {
 		float particleSpeed
 	) {
 		var hasRendered = false;
+		if (mc.level == null) return false;
 		for (var direction : Direction.values()) {
 			if (!kb.hasShaftTowards(mc.level, kbe.getBlockPos(), state, direction)) continue;
 			var axis = direction.getAxis();

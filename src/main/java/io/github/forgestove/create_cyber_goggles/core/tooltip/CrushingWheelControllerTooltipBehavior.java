@@ -4,6 +4,7 @@ import com.zurrtum.create.client.foundation.blockEntity.behaviour.tooltip.Toolti
 import com.zurrtum.create.content.kinetics.crusher.CrushingWheelControllerBlockEntity;
 import io.github.forgestove.create_cyber_goggles.core.util.GoggleTooltipUtil;
 import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 public class CrushingWheelControllerTooltipBehavior extends TooltipBehaviour<CrushingWheelControllerBlockEntity>
@@ -12,7 +13,7 @@ public class CrushingWheelControllerTooltipBehavior extends TooltipBehaviour<Cru
 		super(be);
 	}
 	@Override
-	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+	public boolean addToGoggleTooltip(@NonNull List<Component> tooltip, boolean isPlayerSneaking) {
 		return GoggleTooltipUtil.crushingController(tooltip, blockEntity);
 	}
 }

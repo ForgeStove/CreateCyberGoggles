@@ -6,6 +6,6 @@ public class CCGModMenu implements ModMenuApi {
 	@Override
 	@Environment(EnvType.CLIENT)
 	public ConfigScreenFactory<?> getModConfigScreenFactory() {
-		return screen -> Config.createConfigScreen(CCG.ID);
+		return _ -> Config.createConfigScreen(CCG.ID);
 	}
 }

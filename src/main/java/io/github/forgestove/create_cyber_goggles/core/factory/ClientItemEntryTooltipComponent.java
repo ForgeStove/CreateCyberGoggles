@@ -26,21 +26,21 @@ public final class ClientItemEntryTooltipComponent implements ClientTooltipCompo
 		return indentPixels(font) + SlotUtil.SIZE_SLIM + font.width(label);
 	}
 	@Override
-	public void renderImage(@NotNull Font font, int x, int y, int width, int height, @NotNull GuiGraphics gui) {
+	public void extractImage(@NotNull Font font, int x, int y, int width, int height, @NotNull GuiGraphicsExtractor gui) {
 		var pose = gui.pose();
 		pose.pushMatrix();
 		var slotX = x + indentPixels(font);
 		pose.translate(slotX, y);
 		pose.scale(0.75F, 0.75F);
-		gui.renderItem(stack, 0, 0);
-		gui.renderItemDecorations(font, stack, 0, 0);
+		gui.item(stack, 0, 0);
+		gui.itemDecorations(font, stack, 0, 0);
 		pose.popMatrix();
 	}
 	@Override
-	public void renderText(@NotNull GuiGraphics gui, @NotNull Font font, int x, int y) {
+	public void extractText(@NotNull GuiGraphicsExtractor gui, @NotNull Font font, int x, int y) {
 		var textX = x + indentPixels(font) + SlotUtil.SIZE_SLIM;
 		var textY = y + Mth.floor((SlotUtil.SIZE_SLIM - font.lineHeight) / 2F);
-		gui.drawString(font, label, textX, textY, -1, true);
+		gui.text(font, label, textX, textY, -1, true);
 	}
 	private int indentPixels(@NotNull Font font) {
 		return indent * font.width(" ");

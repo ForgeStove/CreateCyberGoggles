@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.config.gui.util;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.util.Mth;
 
 import java.util.function.*;
@@ -14,7 +14,7 @@ public class Highlight {
 		this.indexSupplier = indexSupplier;
 		this.rowTopGetter = rowTopGetter;
 	}
-	public void tick(GuiGraphics gui, int listX, int listY, int width, int height, int itemHeight, float delta) {
+	public void tick(GuiGraphicsExtractor gui, int listX, int listY, int width, int height, int itemHeight, float delta) {
 		var alphaInt = (int) (alpha * 48); // Max alpha 48 (0x30)
 		var color = alphaInt << 24 | 0xFFFFFF;
 		var top = (int) y - 1;

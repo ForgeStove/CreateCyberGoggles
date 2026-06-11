@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.config.gui.entry;
 import io.github.forgestove.create_cyber_goggles.config.gui.ConfigCategoryTab;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.MultiLineTextWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
@@ -22,11 +22,11 @@ public final class TextConfigEntry extends ConfigEntry {
 		return textWidgetAsList;
 	}
 	@Override
-	public void renderContent(@NotNull GuiGraphics gui, int mouseX, int mouseY, boolean hovered, float delta) {
+	public void extractContent(@NotNull GuiGraphicsExtractor gui, int mouseX, int mouseY, boolean hovered, float delta) {
 		textWidget.setX(getX());
 		textWidget.setY(getY() + 5);
 		textWidget.setMaxWidth(getWidth());
-		textWidget.renderWidget(gui, mouseX, mouseY, delta);
+		textWidget.extractWidgetRenderState(gui, mouseX, mouseY, delta);
 	}
 	@NotNull
 	@Override

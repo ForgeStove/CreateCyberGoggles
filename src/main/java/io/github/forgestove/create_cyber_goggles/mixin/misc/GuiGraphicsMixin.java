@@ -16,8 +16,8 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.*;
-@Mixin(GuiGraphics.class)
-public class GuiGraphicsMixin implements Self<GuiGraphics> {
+@Mixin(GuiGraphicsExtractor.class)
+public class GuiGraphicsMixin implements Self<GuiGraphicsExtractor> {
 	@Unique
 	private static boolean hasAnyMarker(List<Component> components) {
 		for (var component : components)
@@ -32,11 +32,7 @@ public class GuiGraphicsMixin implements Self<GuiGraphics> {
 		ItemTooltip.capturedMouseX = x;
 		ItemTooltip.capturedMouseY = y;
 	}
-	@Inject(
-		method = "renderTooltip(Lnet/minecraft/client/gui/Font;Ljava/util/List;"
-			+ "IILnet/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipPositioner;Lnet/minecraft/resources/Identifier;)V",
-		at = @At("TAIL")
-	)
+	@Inject(method = "tooltip", at = @At("TAIL"))
 	private void renderTooltipOverlay(
 		Font font,
 		List<ClientTooltipComponent> components,

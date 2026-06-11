@@ -27,7 +27,7 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 	@Unique private IconButton ccg$folderPickerButton;
 	@Unique private List<String> ccg$folders = List.of();
 	protected SchematicTableScreenMixin(SchematicTableMenu container, Inventory inv, Component title) {
-		super(container, inv, title);
+		super(container, inv, title, 0, 0);
 	}
 	@Inject(method = "init", at = @At("RETURN"))
 	private void initFolderSelector(CallbackInfo ci) {

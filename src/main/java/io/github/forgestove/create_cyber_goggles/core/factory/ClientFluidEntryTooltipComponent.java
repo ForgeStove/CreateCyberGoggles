@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.level.material.FlowingFluid;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int capacityMb, int sharedBarWidth)
@@ -17,7 +18,7 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 	private static final int H_PADDING = 4;
 	private static final int BORDER_COLOR = 0xFF777777;
 	public static void renderFluidBar(
-		@NotNull GuiGraphics gui,
+		@NotNull GuiGraphicsExtractor gui,
 		@NotNull FluidStack stack,
 		int capacityMb,
 		int x,
@@ -38,17 +39,20 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 		var fillWidth = Mth.clamp(Mth.floor(innerW * fillRatio), 1, innerW);
 		renderFluid(gui, stack, innerX, innerY, fillWidth, innerH);
 	}
-	private static void renderFluid(@NotNull GuiGraphics gui, @NotNull FluidStack stack, int x, int y, int width, int height) {
+	private static void renderFluid(@NotNull GuiGraphicsExtractor gui, @NotNull FluidStack stack, int x, int y, int width, int height) {
 		if (stack.isEmpty()) return;
 		var fluid = stack.getFluid();
-		var config = AllFluidConfigs.get(fluid);
-		if (config == null) return;
-		var sprite = config.still().get();
-		var tint = config.tint().apply(stack.getComponentChanges()) | 0xFF000000;
+		var tintSource = AllFluidConfigs.TINT.get(fluid);
+		if (tintSource == null) return;
+		var tint = tintSource.get(fluid, stack.getComponentChanges()) | 0xFF000000;
+		if (!(fluid instanceof FlowingFluid flowingFluid)) return;
+		var model = AllFluidConfigs.MODEL.get(flowingFluid);
+		if (model == null) return;
+		var spriteId = model.stillMaterial().sprite();
 		gui.enableScissor(x, y, x + width, y + height);
 		for (var dx = 0; dx < width; dx += 16)
 			for (var dy = 0; dy < height; dy += 16)
-				gui.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x + dx, y + dy, 16, 16, tint);
+				gui.blitSprite(RenderPipelines.GUI_TEXTURED, spriteId, x + dx, y + dy, 16, 16, tint);
 		gui.disableScissor();
 	}
 	public static @NotNull String formatFluidAmount(int amountMb) {
@@ -89,14 +93,14 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 		return indentPixels(font) + barWidth(font);
 	}
 	@Override
-	public void renderImage(@NotNull Font font, int x, int y, int width, int height, @NotNull GuiGraphics gui) {
+	public void extractImage(@NotNull Font font, int x, int y, int width, int height, @NotNull GuiGraphicsExtractor gui) {
 		var label = buildLabel();
 		var barX = x + indentPixels(font);
 		var barWidth = barWidth(font);
 		renderFluidBar(gui, fluid, capacityMb, barX, y, barWidth, SlotUtil.SIZE_SLIM);
 		var textX = barX + H_PADDING;
 		var textY = y + Mth.floor((SlotUtil.SIZE_SLIM - font.lineHeight) / 2F) + 1;
-		gui.drawString(font, label, textX, textY, 0xFFFFFFFF, true);
+		gui.text(font, label, textX, textY, 0xFFFFFFFF, true);
 	}
 	private int barWidth(@NotNull Font font) {
 		var preferred = preferredBarWidth(font, fluid, capacityMb);

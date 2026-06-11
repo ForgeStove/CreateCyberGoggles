@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.core.gui;
 import io.github.forgestove.create_cyber_goggles.core.api.TooltipOverlayRenderer;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -25,7 +25,7 @@ public abstract class AbstractItemGridRenderer implements TooltipOverlayRenderer
 		return Mth.clamp(data.columns(), 1, Math.max(1, data.items().size()));
 	}
 	public static void renderItemGrid(
-		GuiGraphics gui,
+		GuiGraphicsExtractor gui,
 		@NotNull List<ItemStack> items,
 		int columns,
 		int x,
@@ -49,11 +49,11 @@ public abstract class AbstractItemGridRenderer implements TooltipOverlayRenderer
 			var slotY = PAD + row * SlotUtil.SIZE;
 			renderTintedSlot(gui, slotX, slotY, r, g, b);
 			var item = items.get(i);
-			gui.renderItem(item, slotX + 1, slotY + 1);
-			if (zeroCountSlots.contains(i)) gui.renderItemDecorations(mc.font, item, slotX + 1, slotY + 1, "0");
+			gui.item(item, slotX + 1, slotY + 1);
+			if (zeroCountSlots.contains(i)) gui.itemDecorations(mc.font, item, slotX + 1, slotY + 1, "0");
 			else if (isCFLCompressedTank(item) && item.getCount() > 1)
-				gui.renderItemDecorations(mc.font, item, slotX + 1, slotY + 1, formatFluidAmount(item.getCount()));
-			else gui.renderItemDecorations(mc.font, item, slotX + 1, slotY + 1);
+				gui.itemDecorations(mc.font, item, slotX + 1, slotY + 1, formatFluidAmount(item.getCount()));
+			else gui.itemDecorations(mc.font, item, slotX + 1, slotY + 1);
 		}
 		pose.popMatrix();
 	}
@@ -66,7 +66,7 @@ public abstract class AbstractItemGridRenderer implements TooltipOverlayRenderer
 		var container = stack.get(DataComponents.CONTAINER);
 		if (container != null) {
 			var nonEmpty = container.nonEmptyItems().iterator();
-			if (nonEmpty.hasNext()) return nonEmpty.next().getCount();
+			if (nonEmpty.hasNext()) return nonEmpty.next().count();
 		}
 		return 0;
 	}
@@ -75,7 +75,7 @@ public abstract class AbstractItemGridRenderer implements TooltipOverlayRenderer
 		return BigDecimal.valueOf(amountMb).divide(BigDecimal.valueOf(1000), 1, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
 			+ "B";
 	}
-	public static void renderPanel(GuiGraphics gui, int width, int height, float r, float g, float b) {
+	public static void renderPanel(GuiGraphicsExtractor gui, int width, int height, float r, float g, float b) {
 		gui.fill(0, 0, width, height, tintColor(BG, r, g, b));
 		gui.fill(0, 0, width, 2, tintColor(LIGHT, r, g, b));
 		gui.fill(0, 0, 2, height, tintColor(LIGHT, r, g, b));
@@ -91,7 +91,7 @@ public abstract class AbstractItemGridRenderer implements TooltipOverlayRenderer
 		var blue = (int) ((argb & 0xFF) * b);
 		return a << 24 | (red & 0xFF) << 16 | (green & 0xFF) << 8 | blue & 0xFF;
 	}
-	public static void renderTintedSlot(GuiGraphics gui, int x, int y, float r, float g, float b) {
+	public static void renderTintedSlot(GuiGraphicsExtractor gui, int x, int y, float r, float g, float b) {
 		var slotColor = ((int) (r * 255) & 0xFF) << 16 | ((int) (g * 255) & 0xFF) << 8 | (int) (b * 255) & 0xFF | 0xFF000000;
 		gui.blitSprite(RenderPipelines.GUI_TEXTURED, SlotUtil.SLOT, x, y, SlotUtil.SIZE, SlotUtil.SIZE, slotColor);
 	}
@@ -117,7 +117,7 @@ public abstract class AbstractItemGridRenderer implements TooltipOverlayRenderer
 		return data;
 	}
 	@Override
-	public void render(GuiGraphics gui, ItemStack stack, int x, int y) {
+	public void render(GuiGraphicsExtractor gui, ItemStack stack, int x, int y) {
 		var data = getData(stack);
 		if (data == null) return;
 		var color = NativeImageUtil.getColor(stack);

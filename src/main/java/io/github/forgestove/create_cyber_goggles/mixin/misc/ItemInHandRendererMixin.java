@@ -16,12 +16,12 @@ public abstract class ItemInHandRendererMixin {
 	@Shadow
 	protected abstract void renderOneHandedMap(
 		PoseStack poseStack,
-		SubmitNodeCollector nodeCollector,
-		int packedLight,
-		float equippedProgress,
+		SubmitNodeCollector submitNodeCollector,
+		int lightCoords,
+		float inverseArmHeight,
 		HumanoidArm arm,
-		float swingProgress,
-		ItemStack stack
+		float attackValue,
+		ItemStack map
 	);
 	@Inject(method = "renderArmWithItem", at = @At("HEAD"), cancellable = true)
 	private void renderClipboardLikeMap(

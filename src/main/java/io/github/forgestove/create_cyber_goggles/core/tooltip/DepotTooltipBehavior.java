@@ -5,6 +5,7 @@ import com.zurrtum.create.content.logistics.depot.DepotBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.GoggleTooltipUtil;
 import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 public class DepotTooltipBehavior extends TooltipBehaviour<DepotBlockEntity> implements IHaveGoggleInformation {
@@ -12,7 +13,7 @@ public class DepotTooltipBehavior extends TooltipBehaviour<DepotBlockEntity> imp
 		super(be);
 	}
 	@Override
-	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+	public boolean addToGoggleTooltip(@NonNull List<Component> tooltip, boolean isPlayerSneaking) {
 		if (!CCG.config.tooltip.depot) return false;
 		return GoggleTooltipUtil.depot(tooltip, blockEntity.depotBehaviour.itemHandler);
 	}

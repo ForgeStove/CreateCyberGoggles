@@ -24,7 +24,6 @@ public abstract class BasinTooltipBehaviourMixin extends TooltipBehaviour<BasinB
 		var fluids = new ArrayList<FluidStack>();
 		if (tankBehaviour == null) return fluids;
 		var handler = tankBehaviour.getCapability();
-		if (handler == null) return fluids;
 		for (var i = 0; i < handler.size(); i++) {
 			var fluid = handler.getStack(i);
 			if (fluid.isEmpty()) continue;
@@ -37,7 +36,7 @@ public abstract class BasinTooltipBehaviourMixin extends TooltipBehaviour<BasinB
 	public void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> cir) {
 		var inputItems = new ArrayList<ItemStack>();
 		var outputItems = new ArrayList<ItemStack>();
-		if (blockEntity.itemCapability != null) for (var i = 0; i < blockEntity.itemCapability.getContainerSize(); i++) {
+		for (var i = 0; i < blockEntity.itemCapability.getContainerSize(); i++) {
 			var stack = blockEntity.itemCapability.getItem(i);
 			if (stack.isEmpty()) continue;
 			if (i < 9) inputItems.add(stack);

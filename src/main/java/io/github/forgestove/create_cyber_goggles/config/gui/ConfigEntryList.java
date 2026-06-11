@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.config.gui;
 import io.github.forgestove.create_cyber_goggles.config.gui.entry.ConfigEntry;
 import io.github.forgestove.create_cyber_goggles.config.gui.util.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.input.MouseButtonEvent;
 import org.jetbrains.annotations.NotNull;
@@ -22,10 +22,10 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		entries.forEach(this::addEntry);
 	}
 	@Override
-	public void renderWidget(@NotNull GuiGraphics gui, int mouseX, int mouseY, float delta) {
+	public void extractWidgetRenderState(@NotNull GuiGraphicsExtractor gui, int mouseX, int mouseY, float delta) {
 		smoothScrool.tick(delta);
 		highlight.tick(gui, getX(), getY(), width, height, defaultEntryHeight, delta);
-		super.renderWidget(gui, mouseX, mouseY, delta);
+		super.extractWidgetRenderState(gui, mouseX, mouseY, delta);
 		var entry = getHovered();
 		if (entry == null) return;
 		var widgetTooltip = entry.getHoveredWidgetTooltip(mouseX, mouseY);

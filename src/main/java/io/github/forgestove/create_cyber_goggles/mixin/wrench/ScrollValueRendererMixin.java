@@ -8,9 +8,9 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(ScrollValueRenderer.class)
 public abstract class ScrollValueRendererMixin {
 	@WrapOperation(
-		method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/world/item/Item;)Z")
+		method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Ljava/lang/Object;)Z")
 	)
-	private static boolean tick(ItemStack instance, Item item, Operation<Boolean> original) {
-		return CCG.config.wrench.alwaysShowScrollValue || original.call(instance, item);
+	private static boolean tick(ItemStack instance, Object object, Operation<Boolean> original) {
+		return CCG.config.wrench.alwaysShowScrollValue || original.call(instance, object);
 	}
 }

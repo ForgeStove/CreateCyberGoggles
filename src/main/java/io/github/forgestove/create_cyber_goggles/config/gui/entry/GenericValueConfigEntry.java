@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.config.gui.entry;
 import io.github.forgestove.create_cyber_goggles.config.gui.*;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +23,6 @@ public abstract class GenericValueConfigEntry<C, V> extends ValueConfigEntry<C, 
 		this.validator = validator;
 		inputField = new ConfigEditBox(this.tab.getMinecraft().font, 0, 0, WIDTH, HEIGHT, this.valueNode.getTitle());
 		inputField.setValue(getValue().toString());
-		inputField.setFilter(validator);
 		inputField.setResponder(this::onInputChange);
 		children.add(inputField);
 	}
@@ -85,7 +84,7 @@ public abstract class GenericValueConfigEntry<C, V> extends ValueConfigEntry<C, 
 		return hasParseError || super.hasError();
 	}
 	@Override
-	public void renderContent(@NotNull GuiGraphics gui, int mouseX, int mouseY, boolean hovered, float delta) {
+	public void extractContent(@NotNull GuiGraphicsExtractor gui, int mouseX, int mouseY, boolean hovered, float delta) {
 		renderGui(gui, getY(), getX(), getWidth(), mouseX, mouseY, delta, undoButton, resetButton, inputField);
 	}
 }

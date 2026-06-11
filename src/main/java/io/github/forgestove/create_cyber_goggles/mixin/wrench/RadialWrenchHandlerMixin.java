@@ -22,10 +22,10 @@ public abstract class RadialWrenchHandlerMixin {
 	}
 	@WrapOperation(
 		method = "onKeyInput",
-		at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/world/item/Item;)Z")
+		at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Ljava/lang/Object;)Z")
 	)
-	private static boolean wrapMainHandItem(ItemStack instance, Item item, Operation<Boolean> original) {
-		return CCG.config.wrench.alwaysAllowRotating || original.call(instance, item);
+	private static boolean wrapMainHandItem(ItemStack instance, Object object, Operation<Boolean> original) {
+		return CCG.config.wrench.alwaysAllowRotating || original.call(instance, object);
 	}
 	@Inject(method = "onKeyInput", at = @At("HEAD"))
 	private static void clientTick(CallbackInfo ci) {

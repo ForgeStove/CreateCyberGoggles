@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.config.gui.entry;
 import io.github.forgestove.create_cyber_goggles.config.Translation;
 import io.github.forgestove.create_cyber_goggles.config.gui.*;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,11 +18,11 @@ public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer>
 		hasAlpha = node.colorHasAlpha();
 		previewWidget = new ColorPreviewWidget(0, 0, SIZE, SIZE, hasAlpha, this::getValue);
 		inputField = new ConfigEditBox(tab.getMinecraft().font, 0, 0, WIDTH - 44, HEIGHT, valueNode.getTitle());
+		inputField.setFilter(text -> HEX_PATTERN.matcher(text).matches());
 		inputField.setMaxLength(getMaxLength());
 		inputField.setValue(formatColor(getValue()));
-		inputField.setFilter(s -> HEX_PATTERN.matcher(s).matches());
 		inputField.setResponder(this::onInputChange);
-		pickerButton = Button.builder(Translation.COLOR_PICKER_LABEL, b -> openColorPicker())
+		pickerButton = Button.builder(Translation.COLOR_PICKER_LABEL, _ -> openColorPicker())
 			.size(SIZE, SIZE)
 			.tooltip(Tooltip.create(Translation.COLOR_PICKER_TOOLTIP))
 			.build();
@@ -64,7 +64,7 @@ public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer>
 		super.refresh();
 	}
 	@Override
-	public void renderContent(@NotNull GuiGraphics gui, int mouseX, int mouseY, boolean hovered, float delta) {
+	public void extractContent(@NotNull GuiGraphicsExtractor gui, int mouseX, int mouseY, boolean hovered, float delta) {
 		renderGui(gui, getY(), getX(), getWidth(), mouseX, mouseY, delta, undoButton, resetButton, pickerButton, inputField,
 			previewWidget);
 	}

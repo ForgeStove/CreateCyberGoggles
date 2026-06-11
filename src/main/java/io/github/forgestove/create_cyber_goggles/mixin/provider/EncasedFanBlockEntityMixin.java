@@ -11,6 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import org.jspecify.annotations.NonNull;
 import org.spongepowered.asm.mixin.Mixin;
 
 import java.util.List;
@@ -23,15 +24,13 @@ public abstract class EncasedFanBlockEntityMixin extends KineticBlockEntity
 		super(typeIn, pos, state);
 	}
 	@Override
-	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+	public boolean addToGoggleTooltip(@NonNull List<Component> tooltip, boolean isPlayerSneaking) {
 		var airCurrent = thiz().getAirCurrent();
-		if (airCurrent == null) return false;
 		return GoggleTooltipUtil.fan(tooltip, airCurrent.pushing, airCurrent.maxDistance);
 	}
 	@Override
 	public void ccg$render() {
 		var airCurrent = thiz().getAirCurrent();
-		if (airCurrent == null) return;
 		var color = Outliner.getColor(airCurrent.pushing);
 		var bounds = airCurrent.bounds;
 		outliner.showAABB("FanAirBox" + this, bounds)

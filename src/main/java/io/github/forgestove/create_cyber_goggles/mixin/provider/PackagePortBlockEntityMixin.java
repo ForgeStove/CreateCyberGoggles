@@ -21,11 +21,12 @@ public abstract class PackagePortBlockEntityMixin extends SmartBlockEntity imple
 		var target = ppbe.target;
 		if (target == null) return;
 		var pos = ppbe.getBlockPos();
-		var be = target.be(ppbe.getLevel(), pos);
+		if (level == null) return;
+		var be = target.be(level, pos);
 		if (be == null) return;
 		var bePos = be.getBlockPos();
 		var source = Vec3.atBottomCenterOf(pos);
-		var exactTarget = target.getExactTargetLocation(ppbe, ppbe.getLevel(), pos);
+		var exactTarget = target.getExactTargetLocation(ppbe, level, pos);
 		if (exactTarget == Vec3.ZERO) return;
 		if (be instanceof ChainConveyorBlockEntity && exactTarget.closerThan(bePos.getCenter(), 1))
 			exactTarget = exactTarget.add(0, -0.25, 0);

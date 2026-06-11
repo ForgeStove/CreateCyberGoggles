@@ -28,7 +28,7 @@ public class ContainerRenderer extends AbstractItemGridRenderer {
 	public @Nullable OverlayData buildItemGrid(ItemStack stack) {
 		var container = stack.getComponents().get(DataComponents.CONTAINER);
 		if (container == null) return null;
-		var allItems = container.stream().toList();
+		var allItems = container.nonEmptyItemCopyStream().toList();
 		var storedSlots = allItems.size();
 		if (storedSlots == 0) return null;
 		var slots = isVanilla27Container(stack) ? 27 : storedSlots;

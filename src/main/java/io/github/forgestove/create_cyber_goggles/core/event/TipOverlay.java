@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
 import com.zurrtum.create.catnip.theme.Color;
 import net.minecraft.client.*;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.MutableComponent;
 
 import java.util.List;
@@ -11,7 +11,7 @@ public class TipOverlay {
 	public static List<MutableComponent> lastTip;
 	public static int hoverTicks;
 	public static int deltaX, deltaY;
-	public static void renderOverlay(GuiGraphics graphics, DeltaTracker ignoredDeltaTracker) {
+	public static void renderOverlay(GuiGraphicsExtractor graphics, DeltaTracker ignoredDeltaTracker) {
 		if (mc.options.hideGui) return;
 		if (hoverTicks == 0 || lastTip == null) return;
 		var x = graphics.guiWidth() / 2 + deltaX;
@@ -21,7 +21,7 @@ public class TipOverlay {
 		var titleColor = new Color(0xFBDC7D).setAlpha(alpha);
 		var i = 0;
 		for (var component : lastTip) {
-			graphics.drawString(mc.font, component, x - mc.font.width(component) / 2, y + i * 12, (i == 0 ? titleColor : color).getRGB());
+			graphics.text(mc.font, component, x - mc.font.width(component) / 2, y + i * 12, (i == 0 ? titleColor : color).getRGB());
 			i++;
 		}
 	}

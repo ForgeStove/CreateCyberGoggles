@@ -53,8 +53,8 @@ public final class ConfigScreen<C> extends Screen {
 		initTabs(tabNavigationBar);
 		addRenderableWidget(tabNavigationBar);
 		var footerLayout = layout.addToFooter(LinearLayout.horizontal().spacing(8));
-		quitButton = footerLayout.addChild(Button.builder(getQuitLabel(), b -> onClose()).width(200).build());
-		saveAndQuitButton = footerLayout.addChild(Button.builder(getSaveLabel(), b -> saveAndQuit()).width(200).build());
+		quitButton = footerLayout.addChild(Button.builder(getQuitLabel(), _ -> onClose()).width(200).build());
+		saveAndQuitButton = footerLayout.addChild(Button.builder(getSaveLabel(), _ -> saveAndQuit()).width(200).build());
 		saveAndQuitButton.active = !isActiveValue() && validate() == null;
 		layout.visitWidgets(abstractWidget -> {
 			abstractWidget.setTabOrderGroup(1);
@@ -77,7 +77,7 @@ public final class ConfigScreen<C> extends Screen {
 	protected void repositionElements() {
 		refresh();
 		if (tabNavigationBar == null) return;
-		tabNavigationBar.setWidth(width);
+		tabNavigationBar.updateWidth(width);
 		tabNavigationBar.arrangeElements();
 		var i = tabNavigationBar.getRectangle().bottom();
 		var screenRectangle = new ScreenRectangle(0, i, width, height - layout.getFooterHeight() - i);

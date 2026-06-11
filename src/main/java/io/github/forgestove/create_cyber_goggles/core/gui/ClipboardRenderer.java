@@ -8,7 +8,7 @@ import com.zurrtum.create.infrastructure.component.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.api.TooltipOverlayRenderer;
 import net.minecraft.client.gui.Font.DisplayMode;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.*;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -35,7 +35,7 @@ public final class ClipboardRenderer implements TooltipOverlayRenderer {
 			0,
 			RenderTypes.text(AllGuiTextures.CLIPBOARD.getLocation())
 		);
-		renderText(pose, nodeCollector, light, stack);
+		extractText(pose, nodeCollector, light, stack);
 		pose.popPose();
 	}
 	private static void renderGuiTexure(
@@ -87,7 +87,7 @@ public final class ClipboardRenderer implements TooltipOverlayRenderer {
 		);
 		pose.popPose();
 	}
-	private static void renderText(PoseStack pose, SubmitNodeCollector nodeCollector, int light, ItemStack stack) {
+	private static void extractText(PoseStack pose, SubmitNodeCollector nodeCollector, int light, ItemStack stack) {
 		var font = mc.font;
 		var mode = DisplayMode.POLYGON_OFFSET;
 		var content = stack.getOrDefault(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY);
@@ -172,7 +172,7 @@ public final class ClipboardRenderer implements TooltipOverlayRenderer {
 		return Mth.ceil(AllGuiTextures.CLIPBOARD.getHeight() * SCALE);
 	}
 	@Override
-	public void render(GuiGraphics gui, ItemStack stack, int x, int y) {
+	public void render(GuiGraphicsExtractor gui, ItemStack stack, int x, int y) {
 		var content = stack.getOrDefault(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY);
 		var pages = ClipboardEntry.readAll(content);
 		if (pages.isEmpty()) return;
@@ -196,12 +196,12 @@ public final class ClipboardRenderer implements TooltipOverlayRenderer {
 				var texture = checked ? AllGuiTextures.CLIPBOARD_ADDRESS_INACTIVE : AllGuiTextures.CLIPBOARD_ADDRESS;
 				texture.render(gui, x1 - 1, y1 + 1);
 			} else {
-				gui.drawString(font, "□", x1, y1 + 1, checked ? 0x668D7F6B : 0xFF8D7F6B, false);
-				if (checked) gui.drawString(font, "✔", x1, y1, 0xFF31B25D, false);
+				gui.text(font, "□", x1, y1 + 1, checked ? 0x668D7F6B : 0xFF8D7F6B, false);
+				if (checked) gui.text(font, "✔", x1, y1, 0xFF31B25D, false);
 			}
 			var color = checked ? address ? 0x668D7F6B : 0xFF31B25D : 0xFF311A00;
 			for (var sequence : font.split(Component.literal(text), 150)) {
-				gui.drawString(font, sequence, x1 + 13, y1, color, false);
+				gui.text(font, sequence, x1 + 13, y1, color, false);
 				y1 += 9;
 			}
 			y1 += 3;
@@ -215,7 +215,7 @@ public final class ClipboardRenderer implements TooltipOverlayRenderer {
 			var leftPart = indicator.substring(0, slashIndex);
 			indicatorX = (int) (slashCenterX - font.width(leftPart) - font.width("/") / 2F);
 		} else indicatorX = (int) (slashCenterX - font.width(indicator) / 2F);
-		gui.drawString(font, pageIndicator, indicatorX, 235, 0xFF311A00, false);
+		gui.text(font, pageIndicator, indicatorX, 235, 0xFF311A00, false);
 		pose.popMatrix();
 	}
 }

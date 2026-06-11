@@ -13,7 +13,7 @@ public class ListFilterRenderer extends AbstractItemGridRenderer {
 	public @Nullable OverlayData buildItemGrid(ItemStack stack) {
 		var contents = stack.getOrDefault(AllDataComponents.FILTER_ITEMS, ItemContainerContents.EMPTY);
 		var stacks = new ArrayList<ItemStack>();
-		for (var itemStack : contents.nonEmptyItems()) stacks.add(itemStack);
+		for (var itemStack : contents.nonEmptyItems()) stacks.add(itemStack.create());
 		return stacks.isEmpty() ? null : new OverlayData(stacks, 9);
 	}
 }

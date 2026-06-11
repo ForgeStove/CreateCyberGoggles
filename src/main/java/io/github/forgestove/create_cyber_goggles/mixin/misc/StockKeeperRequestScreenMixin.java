@@ -10,7 +10,7 @@ import io.github.forgestove.create_cyber_goggles.core.api.Self;
 import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
 import io.github.forgestove.create_cyber_goggles.core.gui.StockRequestAmountOverlay;
 import io.github.forgestove.create_cyber_goggles.core.gui.StockRequestAmountOverlay.*;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.*;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -30,8 +30,6 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 	@Shadow @Final int colWidth;
 	@Shadow int itemsX;
 	@Shadow int itemsY;
-	@Shadow int windowWidth;
-	@Shadow int windowHeight;
 	@Shadow StockTickerBlockEntity blockEntity;
 	@Shadow @Final Couple<Integer> noneHovered;
 	@Shadow
@@ -53,9 +51,9 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 		var mouseX = event.x();
 		var mouseY = event.y();
 		var button = event.button();
-		var modifiers = event.modifiers();
+		// modifiers removed in 26.1.2
 		if (ccg$popup.isOpen()) {
-			var result = ccg$popup.mouseClicked(mouseX, mouseY, button, modifiers, ccg$popupX(), ccg$popupY());
+			var result = ccg$popup.mouseClicked(mouseX, mouseY, button, 0, ccg$popupX(), ccg$popupY());
 			if (result == ClickResult.APPLY) ccg$applyPopupAmount();
 			if (result == ClickResult.CLOSE) ccg$popup.close();
 			cir.setReturnValue(true);
@@ -81,8 +79,8 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 		if (!CCG.config.misc.stockRequestQuickActions) return;
 		if (!ccg$popup.isOpen()) return;
 		var codePoint = event.codepoint();
-		var modifiers = event.modifiers();
-		ccg$popup.charTyped(codePoint, modifiers);
+		// modifiers removed in 26.1.2
+		ccg$popup.charTyped(codePoint);
 		cir.setReturnValue(true);
 	}
 	@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
@@ -91,14 +89,14 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 		if (!ccg$popup.isOpen()) return;
 		var keyCode = event.key();
 		var scanCode = event.scancode();
-		var modifiers = event.modifiers();
-		var result = ccg$popup.keyPressed(keyCode, scanCode, modifiers);
+		// modifiers removed in 26.1.2
+		var result = ccg$popup.keyPressed(keyCode, scanCode, 0);
 		if (result == KeyResult.APPLY) ccg$applyPopupAmount();
 		if (result == KeyResult.CLOSE) ccg$popup.close();
 		cir.setReturnValue(true);
 	}
 	@Inject(method = "renderForeground", at = @At("TAIL"))
-	private void ccg$renderPopup(GuiGraphics gui, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
+	private void ccg$renderPopup(GuiGraphicsExtractor gui, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
 		if (!CCG.config.misc.stockRequestQuickActions) {
 			if (ccg$popup.isOpen()) ccg$popup.close();
 			return;
@@ -178,12 +176,14 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 	}
 	@Unique
 	private int ccg$popupX() {
+		var windowWidth = mc.getWindow().getWidth();
 		var guiLeft = itemsX - (windowWidth - cols * colWidth) / 2 - 1;
 		return guiLeft + (windowWidth - 120) / 2;
 	}
 	@Unique
 	private int ccg$popupY() {
 		var guiTop = itemsY - 33;
+		var windowHeight = mc.getWindow().getHeight();
 		return guiTop + (windowHeight - 82) / 2;
 	}
 }

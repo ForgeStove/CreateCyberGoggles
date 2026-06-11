@@ -6,6 +6,7 @@ import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.level.material.FlowingFluid;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public final class ClientFluidListTooltipComponent implements ClientTooltipCompo
 		columns = Math.min(fluids.size(), maxColumns);
 		rows = (fluids.size() + maxColumns - 1) / maxColumns;
 	}
-	public static void renderFluidBar(@NotNull GuiGraphics gui, @NotNull FluidStack stack, int x, int y, int width, int height) {
+	public static void renderFluidBar(@NotNull GuiGraphicsExtractor gui, @NotNull FluidStack stack, int x, int y, int width, int height) {
 		gui.blitSprite(RenderPipelines.GUI_TEXTURED, SlotUtil.SLOT, x, y, SlotUtil.SIZE, SlotUtil.SIZE + 2);
 		if (stack.isEmpty()) return;
 		var innerX = x + 1;
@@ -31,16 +32,19 @@ public final class ClientFluidListTooltipComponent implements ClientTooltipCompo
 		var innerH = Math.max(0, height - 2);
 		renderFluid(gui, stack, innerX, innerY, innerW, innerH);
 	}
-	private static void renderFluid(@NotNull GuiGraphics gui, @NotNull FluidStack stack, int x, int y, int width, int height) {
+	private static void renderFluid(@NotNull GuiGraphicsExtractor gui, @NotNull FluidStack stack, int x, int y, int width, int height) {
 		if (stack.isEmpty()) return;
 		var fluid = stack.getFluid();
-		var config = AllFluidConfigs.get(fluid);
-		if (config == null) return;
-		var sprite = config.still().get();
-		var tint = config.tint().apply(stack.getComponentChanges()) | 0xFF000000;
+		var tintSource = AllFluidConfigs.TINT.get(fluid);
+		if (tintSource == null) return;
+		var tint = tintSource.get(fluid, stack.getComponentChanges()) | 0xFF000000;
+		if (!(fluid instanceof FlowingFluid flowingFluid)) return;
+		var model = AllFluidConfigs.MODEL.get(flowingFluid);
+		if (model == null) return;
+		var spriteId = model.stillMaterial().sprite();
 		for (var dx = 0; dx < width; dx += 16)
 			for (var dy = 0; dy < height; dy += 16)
-				gui.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x + dx, y + dy, 16, 16, tint);
+				gui.blitSprite(RenderPipelines.GUI_TEXTURED, spriteId, x + dx, y + dy, 16, 16, tint);
 	}
 	@Override
 	public int getHeight(@NotNull Font font) {
@@ -51,7 +55,7 @@ public final class ClientFluidListTooltipComponent implements ClientTooltipCompo
 		return columns * SlotUtil.SIZE + indentPixels(font);
 	}
 	@Override
-	public void renderImage(@NotNull Font font, int x, int y, int width, int height, @NotNull GuiGraphics gui) {
+	public void extractImage(@NotNull Font font, int x, int y, int width, int height, @NotNull GuiGraphicsExtractor gui) {
 		for (var i = 0; i < fluids.size(); i++) {
 			var col = i % maxColumns;
 			var row = i / maxColumns;

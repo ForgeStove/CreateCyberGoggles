@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.config.gui;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
@@ -16,11 +16,11 @@ public final class ColorPreviewWidget extends AbstractWidget {
 		active = false;
 	}
 	@Override
-	protected void renderWidget(@NotNull GuiGraphics gui, int mouseX, int mouseY, float delta) {
+	protected void extractWidgetRenderState(@NotNull GuiGraphicsExtractor gui, int mouseX, int mouseY, float delta) {
 		var color = colorSupplier.getAsInt();
 		if (!hasAlpha) color |= 0xFF000000;
 		gui.fill(getX(), getY(), getX() + width, getY() + height, color);
-		gui.renderOutline(getX(), getY(), width, height, 0xFFA0A0A0);
+		gui.outline(getX(), getY(), width, height, 0xFFA0A0A0);
 	}
 	@Override
 	protected void updateWidgetNarration(@NotNull NarrationElementOutput narration) {

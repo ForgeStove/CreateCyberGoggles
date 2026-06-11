@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.core.api;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.ItemStack;
 public interface TooltipOverlayRenderer {
 	boolean supports(ItemStack stack);
@@ -8,5 +8,5 @@ public interface TooltipOverlayRenderer {
 	}
 	int width(ItemStack stack);
 	int height(ItemStack stack);
-	void render(GuiGraphics gui, ItemStack stack, int x, int y);
+	void render(GuiGraphicsExtractor gui, ItemStack stack, int x, int y);
 }

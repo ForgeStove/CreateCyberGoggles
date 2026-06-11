@@ -29,9 +29,7 @@ public abstract class PackagePortTargetSelectionHandlerMixin {
 	@Inject(method = "tick", at = @At("TAIL"))
 	private static void ccg$renderPlacementRangeHints(CallbackInfo ci) {
 		if (!CCG.config.outliner.betterLine) return;
-		if (mc.level == null
-			|| PackagePortTargetSelectionHandler.activePackageTarget == null
-			|| PackagePortTargetSelectionHandler.exactPositionOfTarget == null) return;
+		if (mc.level == null || PackagePortTargetSelectionHandler.activePackageTarget == null) return;
 		if (!(mc.hitResult instanceof BlockHitResult blockHit) || blockHit.getType() == Type.MISS) return;
 		var pos = blockHit.getBlockPos();
 		if (!mc.level.getBlockState(pos).canBeReplaced()) pos = pos.relative(blockHit.getDirection());

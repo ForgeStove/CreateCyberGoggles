@@ -91,7 +91,7 @@ public class PlayerInteract {
 			|| mc.player == null
 			|| hasItemInHand()) return;
 		var clickedFace = hitResult.getDirection();
-		if (CCGKey.interactOpposite.isDown()) clickedFace = clickedFace.getOpposite();
+		if (CCGKey.interactOpposite.keyMapping.isDown()) clickedFace = clickedFace.getOpposite();
 		var axis = state.getValue(RotatedPillarBlock.AXIS);
 		if (clickedFace.getAxis() != axis) return;
 		var booleanProperty = clickedFace.getAxisDirection() == AxisDirection.POSITIVE
@@ -113,7 +113,7 @@ public class PlayerInteract {
 		if (!(state.getBlock() instanceof EncasedPipeBlock) || hand != InteractionHand.MAIN_HAND || mc.player == null || hasItemInHand())
 			return;
 		var clickedFace = hitResult.getDirection();
-		if (CCGKey.interactOpposite.isDown()) clickedFace = clickedFace.getOpposite();
+		if (CCGKey.interactOpposite.keyMapping.isDown()) clickedFace = clickedFace.getOpposite();
 		var booleanProperty = EncasedPipeBlock.FACING_TO_PROPERTY_MAP.get(clickedFace);
 		sendToServer(new RadialWrenchMenuSubmitPacket(pos, state.cycle(booleanProperty)));
 		mc.player.swing(mc.player.getUsedItemHand());
@@ -139,7 +139,7 @@ public class PlayerInteract {
 		if (mc.player.isShiftKeyDown()) return;
 		if (hasItemInHand()) return;
 		var clickedFace = hitResult.getDirection();
-		if (CCGKey.interactOpposite.isDown()) {
+		if (CCGKey.interactOpposite.keyMapping.isDown()) {
 			clickedFace = clickedFace.getOpposite();
 			var axisProp = RotatedPillarBlock.AXIS;
 			var baseAxis = state.hasProperty(axisProp) ? state.getValue(axisProp) : null;

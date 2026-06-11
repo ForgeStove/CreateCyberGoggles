@@ -88,7 +88,7 @@ public class KeyInput {
 	}
 	private static boolean clothStore(double scrollDelta) {
 		if (!CCG.config.goggles.betterStoreInfo) return false;
-		if (!CCGKey.toggleItemOverlay.isDown()) return false;
+		if (!CCGKey.toggleItemOverlay.keyMapping.isDown()) return false;
 		var tcbe = getBlockEntity(TableClothBlockEntity.class);
 		if (tcbe == null) return false;
 		if (TableClothUtil.getItems(tcbe).size() <= 1) return false;
@@ -97,7 +97,7 @@ public class KeyInput {
 		return true;
 	}
 	private static boolean tryScrollClipboardPage(double scrollDelta) {
-		if (!CCGKey.clipboardPageScroll.isDown()) return false;
+		if (!CCGKey.clipboardPageScroll.keyMapping.isDown()) return false;
 		if (mc.player == null || mc.screen != null) return false;
 		var stack = mc.player.getMainHandItem();
 		if (!(stack.getItem() instanceof ClipboardBlockItem)) {

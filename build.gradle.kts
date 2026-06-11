@@ -42,8 +42,8 @@ dependencies {
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${p("fabricApiVersion")}+${p("mcVersion")}")
 	modImplementation("maven.modrinth:create-fly:${p("mcVersion")}-${p("createVersion")}")
 	modImplementation("com.terraformersmc:modmenu:${p("modmenuVersion")}")
-	implementation("com.electronwill.night-config:toml:${p("nightConfigVersion")}")
-	include("com.electronwill.night-config:toml:${p("nightConfigVersion")}")
+	modImplementation("com.electronwill.night-config:core:${p("nightConfigVersion")}")
+	include("com.electronwill.night-config:core:${p("nightConfigVersion")}")
 }
 publishMods {
 	file.set(tasks.remapJar.get().archiveFile)

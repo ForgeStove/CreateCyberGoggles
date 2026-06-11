@@ -51,9 +51,9 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 		var mouseX = event.x();
 		var mouseY = event.y();
 		var button = event.button();
-		// modifiers removed in 26.1.2
+		var modifiers = event.modifiers();
 		if (ccg$popup.isOpen()) {
-			var result = ccg$popup.mouseClicked(mouseX, mouseY, button, 0, ccg$popupX(), ccg$popupY());
+			var result = ccg$popup.mouseClicked(mouseX, mouseY, button, modifiers, ccg$popupX(), ccg$popupY());
 			if (result == ClickResult.APPLY) ccg$applyPopupAmount();
 			if (result == ClickResult.CLOSE) ccg$popup.close();
 			cir.setReturnValue(true);
@@ -176,14 +176,14 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 	}
 	@Unique
 	private int ccg$popupX() {
-		var windowWidth = mc.getWindow().getWidth();
-		var guiLeft = itemsX - (windowWidth - cols * colWidth) / 2 - 1;
-		return guiLeft + (windowWidth - 120) / 2;
+		var guiWidth = mc.getWindow().getGuiScaledWidth();
+		var guiLeft = itemsX - (guiWidth - cols * colWidth) / 2 - 1;
+		return guiLeft + (guiWidth - 120) / 2;
 	}
 	@Unique
 	private int ccg$popupY() {
+		var guiHeight = mc.getWindow().getGuiScaledHeight();
 		var guiTop = itemsY - 33;
-		var windowHeight = mc.getWindow().getHeight();
-		return guiTop + (windowHeight - 82) / 2;
+		return guiTop + (guiHeight - 82) / 2;
 	}
 }

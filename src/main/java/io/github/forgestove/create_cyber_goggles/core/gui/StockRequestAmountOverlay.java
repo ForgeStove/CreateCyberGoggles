@@ -36,10 +36,6 @@ public final class StockRequestAmountOverlay {
 		open = false;
 		stack = ItemStack.EMPTY;
 	}
-	public void relayout(Font font, int popupX, int popupY) {
-		if (!open) return;
-		ensureInput(font, popupX, popupY);
-	}
 	public ClickResult mouseClicked(double mouseX, double mouseY, int button, int modifiers, int popupX, int popupY) {
 		if (!open) return ClickResult.NONE;
 		if (amountInput != null && amountInput.mouseClicked(
@@ -74,7 +70,7 @@ public final class StockRequestAmountOverlay {
 	}
 	public void render(GuiGraphicsExtractor gui, Font font, int mouseX, int mouseY, float partialTicks, int popupX, int popupY) {
 		if (!open) return;
-		relayout(font, popupX, popupY);
+		ensureInput(font, popupX, popupY);
 		var confirmX = popupX + 6;
 		var cancelX = popupX + POPUP_WIDTH / 2 + 1;
 		var buttonY = popupY + POPUP_HEIGHT - BUTTON_HEIGHT - BUTTON_BOTTOM;
@@ -87,7 +83,7 @@ public final class StockRequestAmountOverlay {
 		maxText = max == Integer.MAX_VALUE ? Component.translatable(PREFIX + "infinite") : Component.literal(Integer.toString(max));
 		gui.text(font, Component.translatable(PREFIX + "max", maxText), popupX + POPUP_PADDING, popupY + 20, 0xFFC8C8C8, false);
 		gui.text(font, Component.translatable(PREFIX + "amount"), popupX + POPUP_PADDING, popupY + 34, 0xFFD8D8D8, false);
-		if (amountInput != null) amountInput.extractWidgetRenderState(gui, mouseX, mouseY, partialTicks);
+		if (amountInput != null) amountInput.extractRenderState(gui, mouseX, mouseY, partialTicks);
 		var confirmColor = isOnConfirm(mouseX, mouseY, popupX, popupY) ? 0xFF4A7A4A : 0xFF3A5F3A;
 		var cancelColor = isOnCancel(mouseX, mouseY, popupX, popupY) ? 0xFF7A4A4A : 0xFF5F3A3A;
 		gui.fill(confirmX, buttonY, confirmX + buttonW, buttonY + BUTTON_HEIGHT, confirmColor);

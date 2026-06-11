@@ -48,6 +48,7 @@ dependencies {
 }
 publishMods {
 	file.set(tasks.remapJar.get().archiveFile)
+	additionalFiles.from(tasks.named<Jar>("sourcesJar"))
 	changelog.set(file("CHANGELOG.md").readText())
 	type.set(STABLE)
 	version.set(project.version.toString())

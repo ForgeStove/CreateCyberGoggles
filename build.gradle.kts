@@ -17,7 +17,6 @@ val generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
 	into("build/generated/sources/modMetadata")
 }
 sourceSets.main.get().resources.srcDir(generateMetadata)
-configurations.configureEach { resolutionStrategy.force("net.fabricmc:fabric-loader:${p("fabricLoaderVersion")}") }
 loom {
 	enableTransitiveAccessWideners = true
 	runs {
@@ -43,7 +42,9 @@ dependencies {
 	modImplementation("maven.modrinth:create-fly:${p("mcVersion")}-${p("createVersion")}")
 	modImplementation("com.terraformersmc:modmenu:${p("modmenuVersion")}")
 	modImplementation("com.electronwill.night-config:core:${p("nightConfigVersion")}")
+	modImplementation("com.electronwill.night-config:toml:${p("nightConfigVersion")}")
 	include("com.electronwill.night-config:core:${p("nightConfigVersion")}")
+	include("com.electronwill.night-config:toml:${p("nightConfigVersion")}")
 }
 publishMods {
 	file.set(tasks.remapJar.get().archiveFile)

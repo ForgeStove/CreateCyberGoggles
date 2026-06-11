@@ -48,6 +48,7 @@ dependencies {
 publishMods {
 	file.set(tasks.remapJar.get().archiveFile)
 	changelog.set(file("CHANGELOG.md").readText())
+	type.set(STABLE)
 	version.set(project.version.toString())
 	displayName.set("[${p("loaderCap")}] ${p("modVersion")} for Create ${p("mcVersion")}-${p("createMinVersion")}")
 	modLoaders.addAll(p("loaderCap"), p("loaderOtherCap"))

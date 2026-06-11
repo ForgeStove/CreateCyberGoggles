@@ -2,6 +2,8 @@ package io.github.forgestove.create_cyber_goggles.core.factory;
 import com.zurrtum.create.client.AllFluidConfigs;
 import com.zurrtum.create.infrastructure.fluids.FluidStack;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
+import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
@@ -10,7 +12,6 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import net.minecraft.world.level.material.FlowingFluid;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int capacityMb, int sharedBarWidth)
@@ -42,17 +43,19 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 	private static void renderFluid(@NotNull GuiGraphicsExtractor gui, @NotNull FluidStack stack, int x, int y, int width, int height) {
 		if (stack.isEmpty()) return;
 		var fluid = stack.getFluid();
+		var changes = stack.getComponentChanges();
 		var tintSource = AllFluidConfigs.TINT.get(fluid);
-		if (tintSource == null) return;
-		var tint = tintSource.get(fluid, stack.getComponentChanges()) | 0xFF000000;
-		if (!(fluid instanceof FlowingFluid flowingFluid)) return;
-		var model = AllFluidConfigs.MODEL.get(flowingFluid);
-		if (model == null) return;
-		var spriteId = model.stillMaterial().sprite();
+		int tint;
+		if (tintSource != null) tint = tintSource.get(fluid, changes) | 0xFF000000;
+		else if (AllFluidConfigs.HAS_RENDER) tint = FluidVariantRendering.getColor(FluidVariant.of(fluid, changes)) | 0xFF000000;
+		else return;
+		var fluidState = fluid.defaultFluidState();
+		var modelSet = Minecraft.getInstance().getModelManager().getFluidStateModelSet();
+		var sprite = modelSet.get(fluidState).stillMaterial().sprite();
 		gui.enableScissor(x, y, x + width, y + height);
 		for (var dx = 0; dx < width; dx += 16)
 			for (var dy = 0; dy < height; dy += 16)
-				gui.blitSprite(RenderPipelines.GUI_TEXTURED, spriteId, x + dx, y + dy, 16, 16, tint);
+				gui.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x + dx, y + dy, 16, 16, tint);
 		gui.disableScissor();
 	}
 	public static @NotNull String formatFluidAmount(int amountMb) {

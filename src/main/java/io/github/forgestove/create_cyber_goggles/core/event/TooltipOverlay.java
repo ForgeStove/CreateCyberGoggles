@@ -210,7 +210,16 @@ public class TooltipOverlay {
 		if (overlayY < 16) overlayY = 16;
 		renderer.render(gui, itemStack, overlayX - 4, overlayY);
 	}
-	public static void renderTooltipBackground(@NonNull GuiGraphicsExtractor gui, int x, int y, int width, int height, int back, int top, int bot) {
+	public static void renderTooltipBackground(
+		@NonNull GuiGraphicsExtractor gui,
+		int x,
+		int y,
+		int width,
+		int height,
+		int back,
+		int top,
+		int bot
+	) {
 		gui.fillGradient(x - 3, y - 4, x + width + 3, y - 3, back, back);
 		gui.fillGradient(x - 3, y + height + 3, x + width + 3, y + height + 4, back, back);
 		gui.fillGradient(x - 3, y - 3, x + width + 3, y + height + 3, back, back);

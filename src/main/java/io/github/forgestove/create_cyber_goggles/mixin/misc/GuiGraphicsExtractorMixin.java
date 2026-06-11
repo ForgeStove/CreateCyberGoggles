@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.*;
 @Mixin(GuiGraphicsExtractor.class)
-public class GuiGraphicsMixin implements Self<GuiGraphicsExtractor> {
+public class GuiGraphicsExtractorMixin implements Self<GuiGraphicsExtractor> {
 	@Unique
 	private static boolean hasAnyMarker(List<Component> components) {
 		for (var component : components)

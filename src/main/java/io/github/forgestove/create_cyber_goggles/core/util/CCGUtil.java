@@ -159,6 +159,8 @@ public class CCGUtil {
 		var sbe = getBlockEntity(SmartBlockEntity.class);
 		if (sbe == null || result == null) return null;
 		var behaviour = sbe.getBehaviour(FilteringBehaviour.TYPE);
+		//noinspection ConstantValue
+		if (behaviour == null)  return null;
 		return behaviour.getFilter(result.getDirection());
 	}
 	/** @return 该位置方块的{@link AABB}包围盒，若无法获取则返回{@link Shapes#block()}的包围盒 */

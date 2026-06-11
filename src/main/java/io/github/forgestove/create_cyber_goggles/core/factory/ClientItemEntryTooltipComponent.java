@@ -16,7 +16,7 @@ public final class ClientItemEntryTooltipComponent implements ClientTooltipCompo
 		this.indent = indent;
 		this.label = label.copy().withStyle(stack.getDisplayName().getStyle());
 	}
-	public ItemStack stack() { return stack; }
+	public ItemStack stack() {return stack;}
 	@Override
 	public int getHeight(@NotNull Font font) {
 		return SlotUtil.SIZE_SLIM;

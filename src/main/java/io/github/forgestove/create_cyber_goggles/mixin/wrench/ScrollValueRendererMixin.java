@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.mixin.wrench;
 import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.zurrtum.create.client.foundation.blockEntity.behaviour.scrollValue.ScrollValueRenderer;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 @Mixin(ScrollValueRenderer.class)

@@ -28,7 +28,7 @@ public final class RedstoneRequesterRenderer extends AbstractItemGridRenderer {
 				mc.level.registryAccess().createSerializationContext(NbtOps.INSTANCE),
 				encodedRequestTag
 			)
-			.resultOrPartial(error -> {})
+			.resultOrPartial(_ -> {})
 			.orElse(PackageOrderWithCrafts.empty());
 		if (encodedRequest.isEmpty()) return null;
 		var items = new ArrayList<ItemStack>();

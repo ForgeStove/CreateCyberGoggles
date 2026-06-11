@@ -3,7 +3,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.zurrtum.create.client.content.contraptions.wrench.RadialWrenchHandler;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -21,8 +21,7 @@ public abstract class RadialWrenchHandlerMixin {
 		return CCG.config.wrench.alwaysAllowRotating ? null : original.call(instance);
 	}
 	@WrapOperation(
-		method = "onKeyInput",
-		at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Ljava/lang/Object;)Z")
+		method = "onKeyInput", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Ljava/lang/Object;)Z")
 	)
 	private static boolean wrapMainHandItem(ItemStack instance, Object object, Operation<Boolean> original) {
 		return CCG.config.wrench.alwaysAllowRotating || original.call(instance, object);

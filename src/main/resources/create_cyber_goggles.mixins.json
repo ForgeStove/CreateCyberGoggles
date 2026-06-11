@@ -43,7 +43,7 @@
 		"misc.FactoryPanelScreenMixin",
 		"misc.FactoryPanelSetItemScreenMixin",
 		"misc.FilesHelperMixin",
-		"misc.GuiGraphicsMixin",
+		"misc.GuiGraphicsExtractorMixin",
 		"misc.ItemInHandRendererMixin",
 		"misc.NbtAccounterMixin",
 		"misc.NetheriteBacktankFirstPersonRendererMixin",

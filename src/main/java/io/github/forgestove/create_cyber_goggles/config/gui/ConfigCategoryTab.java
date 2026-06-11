@@ -1,5 +1,4 @@
 package io.github.forgestove.create_cyber_goggles.config.gui;
-import com.mojang.blaze3d.platform.InputConstants.Key;
 import io.github.forgestove.create_cyber_goggles.config.Translation;
 import io.github.forgestove.create_cyber_goggles.config.gui.entry.*;
 import io.github.forgestove.create_cyber_goggles.config.gui.util.GuiUtil;
@@ -38,9 +37,7 @@ public final class ConfigCategoryTab<C> implements Tab {
 		String.class,
 		(tab, node) -> new StringValueConfigEntry<>(tab, cast(node)),
 		Color.class,
-		(tab, node) -> new ColorValueConfigEntry<>(tab, cast(node)),
-		Key.class,
-		(tab, node) -> new KeybindValueConfigEntry<>(tab, cast(node))
+		(tab, node) -> new ColorValueConfigEntry<>(tab, cast(node))
 	);
 	@Nullable private TabButton tabButton;
 	public ConfigCategoryTab(ConfigScreen<C> screen, CategoryConfigNode<C> category, C config) {
@@ -56,7 +53,7 @@ public final class ConfigCategoryTab<C> implements Tab {
 		var contentHeight = screen.height - screen.getHeaderHeight() - screen.getFooterHeight();
 		var totalEntryHeight = entries.size() * 22;
 		var listHeight = totalEntryHeight <= contentHeight ? totalEntryHeight - 2 : contentHeight;
-		list = new ConfigEntryList(this, getMinecraft(), screen.width, listHeight, screen.getHeaderHeight(), 22, entries);
+		list = new ConfigEntryList(getMinecraft(), screen.width, listHeight, screen.getHeaderHeight(), 22, entries);
 	}
 	@SuppressWarnings("unchecked")
 	private static <C, V> ValueConfigNode<C, V> cast(ValueConfigNode<C, ?> node) {
@@ -114,15 +111,6 @@ public final class ConfigCategoryTab<C> implements Tab {
 	}
 	public boolean hasEntryError() {
 		return list.hasEntryError();
-	}
-	public boolean handleKeyCapture(int keyCode) {
-		return list.handleKeyCapture(keyCode);
-	}
-	public boolean handleMouseCapture(int button) {
-		return list.handleMouseCapture(button);
-	}
-	public boolean isCapturingKeybind() {
-		return list.isCapturingKeybind();
 	}
 	@FunctionalInterface
 	private interface EntryFactory<C> {

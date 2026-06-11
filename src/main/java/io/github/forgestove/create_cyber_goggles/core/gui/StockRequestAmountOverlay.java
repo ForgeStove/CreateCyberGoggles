@@ -82,18 +82,18 @@ public final class StockRequestAmountOverlay {
 		gui.fill(popupX - 3, popupY - 3, popupX + POPUP_WIDTH + 3, popupY + POPUP_HEIGHT + 3, 0xB0101010);
 		gui.fill(popupX, popupY, popupX + POPUP_WIDTH, popupY + POPUP_HEIGHT, 0xE02D2D2D);
 		gui.renderOutline(popupX, popupY, POPUP_WIDTH, POPUP_HEIGHT, 0xFF666666);
-		gui.drawString(font, Component.translatable(PREFIX + "title"), popupX + POPUP_PADDING, popupY + 6, 0xFFFFFF, false);
+		gui.drawString(font, Component.translatable(PREFIX + "title"), popupX + POPUP_PADDING, popupY + 6, 0xFFFFFFFF, false);
 		Component maxText;
 		maxText = max == Integer.MAX_VALUE ? Component.translatable(PREFIX + "infinite") : Component.literal(Integer.toString(max));
-		gui.drawString(font, Component.translatable(PREFIX + "max", maxText), popupX + POPUP_PADDING, popupY + 20, 0xC8C8C8, false);
-		gui.drawString(font, Component.translatable(PREFIX + "amount"), popupX + POPUP_PADDING, popupY + 34, 0xD8D8D8, false);
+		gui.drawString(font, Component.translatable(PREFIX + "max", maxText), popupX + POPUP_PADDING, popupY + 20, 0xFFC8C8C8, false);
+		gui.drawString(font, Component.translatable(PREFIX + "amount"), popupX + POPUP_PADDING, popupY + 34, 0xFFD8D8D8, false);
 		if (amountInput != null) amountInput.render(gui, mouseX, mouseY, partialTicks);
 		var confirmColor = isOnConfirm(mouseX, mouseY, popupX, popupY) ? 0xFF4A7A4A : 0xFF3A5F3A;
 		var cancelColor = isOnCancel(mouseX, mouseY, popupX, popupY) ? 0xFF7A4A4A : 0xFF5F3A3A;
 		gui.fill(confirmX, buttonY, confirmX + buttonW, buttonY + BUTTON_HEIGHT, confirmColor);
 		gui.fill(cancelX, buttonY, cancelX + buttonW, buttonY + BUTTON_HEIGHT, cancelColor);
-		gui.drawCenteredString(font, Component.translatable(PREFIX + "confirm"), confirmX + buttonW / 2, buttonY + 3, 0xFFFFFF);
-		gui.drawCenteredString(font, Component.translatable(PREFIX + "cancel"), cancelX + buttonW / 2, buttonY + 3, 0xFFFFFF);
+		gui.drawCenteredString(font, Component.translatable(PREFIX + "confirm"), confirmX + buttonW / 2, buttonY + 3, 0xFFFFFFFF);
+		gui.drawCenteredString(font, Component.translatable(PREFIX + "cancel"), cancelX + buttonW / 2, buttonY + 3, 0xFFFFFFFF);
 	}
 	private void ensureInput(Font font, int popupX, int popupY) {
 		if (amountInput == null) {

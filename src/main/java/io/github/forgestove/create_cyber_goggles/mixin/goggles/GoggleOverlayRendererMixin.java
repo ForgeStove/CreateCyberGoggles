@@ -4,10 +4,12 @@ import com.zurrtum.create.client.catnip.outliner.Outliner.OutlineEntry;
 import com.zurrtum.create.client.content.equipment.goggles.GoggleOverlayRenderer;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.event.TooltipOverlay;
+import io.github.forgestove.create_cyber_goggles.core.factory.ClientItemEntryTooltipComponent;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
+import net.minecraft.client.*;
 import net.minecraft.client.gui.*;
 import net.minecraft.network.chat.Component;
-import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -75,6 +77,12 @@ public abstract class GoggleOverlayRendererMixin {
 		var tooltipHeight = components.stream().mapToInt(component -> component.getHeight(mc.font)).sum() + (
 			components.size() > 1 ? 2 : 0
 		);
-		TooltipOverlay.renderTooltip(gui, components, x, y, tooltipWidth, tooltipHeight, back, top, bot);
+		var tooltipPos = TooltipOverlay.renderTooltip(gui, components, x, y, tooltipWidth, tooltipHeight, back, top, bot);
+		if (tooltipPos == null) return;
+		for (var component : components) {
+			if (!(component instanceof ClientItemEntryTooltipComponent entry)) continue;
+			TooltipOverlay.renderTooltipOverlay(entry.stack(), gui, components, tooltipPos);
+			break;
+		}
 	}
 }

@@ -1,9 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.config.gui;
-import com.mojang.blaze3d.platform.InputConstants.Key;
 import io.github.forgestove.create_cyber_goggles.config.Translation;
-import io.github.forgestove.create_cyber_goggles.config.tree.*;
-import io.github.forgestove.create_cyber_goggles.mixin.accessor.KeyMappingAccessor;
-import net.minecraft.client.KeyMapping;
+import io.github.forgestove.create_cyber_goggles.config.tree.RootConfigNode;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.tabs.*;
 import net.minecraft.client.gui.layouts.*;
@@ -11,6 +8,7 @@ import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.*;
 import net.minecraft.client.input.*;
 import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -26,7 +24,6 @@ public final class ConfigScreen<C> extends Screen {
 	private final HeaderAndFooterLayout layout;
 	private final TabManager tabManager;
 	private final String cacheKey;
-	private CategoryConfigNode<C> keybindCategory;
 	private TabNavigationBar tabNavigationBar;
 	private List<ConfigCategoryTab<C>> tabs;
 	private Button quitButton;
@@ -41,7 +38,6 @@ public final class ConfigScreen<C> extends Screen {
 		tabManager = new TabManager(this::addRenderableWidget, this::removeWidget);
 		tabs = List.of();
 		cacheKey = root.getTitle().getString();
-		keybindCategory = null;
 	}
 	@Override
 	protected void init() {
@@ -53,14 +49,6 @@ public final class ConfigScreen<C> extends Screen {
 			tabNavigationBarBuilder.addTabs(tab);
 			tabs.add(tab);
 		}
-		var keybindCat = buildKeybindCategory();
-		if (keybindCat != null) {
-			keybindCat.resetToActive(config);
-			keybindCategory = keybindCat;
-			var keybindTab = new ConfigCategoryTab<>(this, keybindCategory, config);
-			tabNavigationBarBuilder.addTabs(keybindTab);
-			tabs.add(keybindTab);
-		} else keybindCategory = null;
 		tabNavigationBar = tabNavigationBarBuilder.build();
 		initTabs(tabNavigationBar);
 		addRenderableWidget(tabNavigationBar);
@@ -98,10 +86,7 @@ public final class ConfigScreen<C> extends Screen {
 		layout.arrangeElements();
 	}
 	@Override
-	public boolean keyPressed(KeyEvent keyEvent) {
-		var keyCode = keyEvent.key();
-		var currentTab = tabManager.getCurrentTab();
-		if (currentTab instanceof ConfigCategoryTab<?> categoryTab && categoryTab.handleKeyCapture(keyCode)) return true;
+	public boolean keyPressed(@NonNull KeyEvent keyEvent) {
 		if (tabNavigationBar.keyPressed(keyEvent)) {
 			cacheCurrentTabIndex();
 			return true;
@@ -111,9 +96,6 @@ public final class ConfigScreen<C> extends Screen {
 	@Override
 	public boolean mouseClicked(MouseButtonEvent event, boolean bl) {
 		ConfigEditBox.clearFocusIfNotHovered(event.x(), event.y());
-		var currentTab = tabManager.getCurrentTab();
-		if (currentTab instanceof ConfigCategoryTab<?> categoryTab && categoryTab.isCapturingKeybind() && categoryTab.handleMouseCapture(
-			event.button())) return true;
 		var result = super.mouseClicked(event, bl);
 		cacheCurrentTabIndex();
 		return result;
@@ -142,7 +124,6 @@ public final class ConfigScreen<C> extends Screen {
 	public void saveAndQuit() {
 		var restartRequired = root.restartRequired(config);
 		root.writeEditingToConfig(config);
-		if (keybindCategory != null) keybindCategory.writeEditingToConfig(config);
 		minecraft.options.save();
 		onSave.accept(config);
 		minecraft.setScreen(restartRequired ? new ConfirmScreen(
@@ -170,13 +151,10 @@ public final class ConfigScreen<C> extends Screen {
 		saveAndQuitButton.setMessage(getSaveLabel(hasEntryError));
 	}
 	private boolean isActiveValue() {
-		return root.isActiveValue(config) && (keybindCategory == null || keybindCategory.isActiveValue(config));
+		return root.isActiveValue(config);
 	}
 	private Component validate() {
-		var rootError = root.validate(config);
-		if (rootError != null) return rootError;
-		if (keybindCategory != null) return keybindCategory.validate(config);
-		return null;
+		return root.validate(config);
 	}
 	private Component getQuitLabel() {
 		return isActiveValue() ? Translation.CANCEL_LABEL : Translation.QUIT_UNSAVED_LABEL;
@@ -186,23 +164,5 @@ public final class ConfigScreen<C> extends Screen {
 	}
 	private Component getSaveLabel() {
 		return getSaveLabel(false);
-	}
-	private CategoryConfigNode<C> buildKeybindCategory() {
-		var allMappings = minecraft.options.keyMappings;
-		var modMappings = new ArrayList<KeyMapping>();
-		for (var allMapping : allMappings) {
-			if (!allMapping.getCategory().label().getString().equals("key.categories." + root.modId)) continue;
-			modMappings.add(allMapping);
-		}
-		if (modMappings.isEmpty()) return null;
-		var builder = CategoryConfigNode.<C>builder().title(Translation.KEYBINDS_LABEL);
-		modMappings.forEach(mapping -> builder.<Key>value(value -> value.valueType(Key.class)
-			.name(mapping.getName())
-			.title(Component.translatable(mapping.getName()))
-			.defaultValue(mapping.getDefaultKey())
-			.valueReader(config -> ((KeyMappingAccessor) mapping).getKey())
-			.valueWriter((config, valueKey) -> mapping.setKey(valueKey))
-			.requiresRestart(false)));
-		return builder.build();
 	}
 }

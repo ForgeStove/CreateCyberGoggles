@@ -30,13 +30,10 @@ public enum CCGKey {
 	private boolean wasDown = false;
 	private long pressStartTime;
 	CCGKey() {
-		this(UNKNOWN.getValue());
+		keyMapping = new KeyMapping(ID + ".key." + name(), UNKNOWN.getValue(), CCG.CATEGORY);
 	}
 	CCGKey(@NotNull Type type, int key) {
-		this(type.getOrCreate(key).getValue());
-	}
-	CCGKey(int key) {
-		keyMapping = new KeyMapping(ID + ".key." + name(), key, CCG.CATEGORY);
+		keyMapping = new KeyMapping(ID + ".key." + name(), type, key, CCG.CATEGORY);
 	}
 	public static void register() {
 		for (var key : values()) KeyBindingHelper.registerKeyBinding(key.keyMapping);

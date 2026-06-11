@@ -257,5 +257,5 @@
 	"create_cyber_goggles.tooltip.spring.desiredLength": "Desired Length：",
 	"create_cyber_goggles.tooltip.spring.isController": "Is Controller：",
 	"create_cyber_goggles.tooltip.windState": "Wind State:",
-	"key.categories.create_cyber_goggles": "Create: Cyber Goggles"
+	"key.categories.create_cyber_goggles.main": "Create: Cyber Goggles"
 }

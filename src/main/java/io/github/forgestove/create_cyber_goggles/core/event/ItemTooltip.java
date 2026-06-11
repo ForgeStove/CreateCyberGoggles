@@ -129,7 +129,7 @@ public final class ItemTooltip {
 		var pos = positioner.positionTooltip(gui.guiWidth(), gui.guiHeight(), mouseX, mouseY, tooltipWidth, tooltipHeight);
 		var overlayX = Mth.clamp(pos.x(), 0, Math.max(0, gui.guiWidth() - overlayWidth));
 		var overlayY = pos.y() - overlayHeight - OVERLAY_GAP;
-		if (overlayY < 0) overlayY = 0;
+		if (overlayY < 16) overlayY = 16;
 		renderer.render(gui, stack, overlayX - 4, overlayY);
 	}
 }

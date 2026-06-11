@@ -153,7 +153,7 @@ public final class ColorPickerScreen extends Screen {
 		var totalHeight = PICKER_SIZE + PADDING * 2 + 16 + 28;
 		gui.fill(pickerPos.x - 4, pickerPos.y - 4, pickerPos.x + totalWidth + 4, pickerPos.y + totalHeight + 4, 0xF0101010);
 		gui.renderOutline(pickerPos.x - 4, pickerPos.y - 4, totalWidth + 8, totalHeight + 8, 0xFF404040);
-		gui.drawString(font, title, svPos.x, pickerPos.y + PADDING, 0xFFFFFF);
+		gui.drawString(font, title, svPos.x, pickerPos.y + PADDING, 0xFFFFFFFF);
 		if (cachedHue != hue) rebuildSBCache();
 		renderSBSquare(gui, svPos.x, svPos.y);
 		var hueBarX = getHueBarX();

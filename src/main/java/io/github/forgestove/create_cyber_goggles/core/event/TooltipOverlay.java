@@ -4,7 +4,7 @@ import com.zurrtum.create.client.catnip.gui.element.BoxElement;
 import com.zurrtum.create.client.content.equipment.goggles.GoggleOverlayRenderer;
 import com.zurrtum.create.client.infrastructure.config.AllConfigs;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.api.ItemRenderable;
+import io.github.forgestove.create_cyber_goggles.core.api.*;
 import io.github.forgestove.create_cyber_goggles.core.factory.*;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientFluidEntryTooltipComponent.FluidEntryTooltipComponent;
 import io.github.forgestove.create_cyber_goggles.core.factory.TooltipTheme.Theme;
@@ -16,7 +16,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.*;
 import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.*;
+import org.joml.Vector2ic;
 import org.jspecify.annotations.NonNull;
 
 import java.util.*;
@@ -78,8 +79,8 @@ public class TooltipOverlay {
 		if (GoggleOverlayRenderer.hoverTicks != 0) y -= tooltipHeight + 10;
 		x = Mth.clamp(x, 0, width - tooltipWidth);
 		y = Mth.clamp(y, 16, height - tooltipHeight - 100);
-		renderTooltip(gui, components, x, y, tooltipWidth, tooltipHeight, back.getRGB(), top.getRGB(), bot.getRGB());
-		ItemTooltip.renderTooltipOverlay(itemStack, gui, mc.font, components, x, y, DefaultTooltipPositioner.INSTANCE);
+		var tooltipPos = renderTooltip(gui, components, x, y, tooltipWidth, tooltipHeight, back.getRGB(), top.getRGB(), bot.getRGB());
+		if (tooltipPos != null) renderTooltipOverlay(itemStack, gui, components, tooltipPos);
 		pose.popMatrix();
 	}
 	public static @NotNull Theme getTheme() {
@@ -153,7 +154,8 @@ public class TooltipOverlay {
 		}
 		return components;
 	}
-	public static void renderTooltip(
+	@Nullable
+	public static Vector2ic renderTooltip(
 		GuiGraphics gui,
 		@NotNull List<ClientTooltipComponent> components,
 		int x,
@@ -164,7 +166,7 @@ public class TooltipOverlay {
 		int top,
 		int bot
 	) {
-		if (components.isEmpty()) return;
+		if (components.isEmpty()) return null;
 		var width = gui.guiWidth();
 		var height = gui.guiHeight();
 		var positioner = DefaultTooltipPositioner.INSTANCE;
@@ -183,6 +185,30 @@ public class TooltipOverlay {
 			i++;
 		}
 		pose.popMatrix();
+		return tooltipPos;
+	}
+	public static void renderTooltipOverlay(
+		ItemStack itemStack,
+		GuiGraphics gui,
+		List<ClientTooltipComponent> components,
+		Vector2ic tooltipPos
+	) {
+		if (!CCG.config.tooltip.extraItemTooltip) return;
+		if (itemStack.isEmpty()) return;
+		TooltipOverlayRenderer renderer = null;
+		for (var overlayRenderer : ItemTooltip.OVERLAY_RENDERERS) {
+			if (!overlayRenderer.supports(itemStack)) continue;
+			renderer = overlayRenderer;
+			break;
+		}
+		if (renderer == null || !renderer.canRender(itemStack)) return;
+		if (components.isEmpty()) return;
+		var overlayWidth = renderer.width(itemStack);
+		var overlayHeight = renderer.height(itemStack);
+		var overlayX = Mth.clamp(tooltipPos.x(), 0, Math.max(0, gui.guiWidth() - overlayWidth));
+		var overlayY = tooltipPos.y() - overlayHeight - 6;
+		if (overlayY < 16) overlayY = 16;
+		renderer.render(gui, itemStack, overlayX - 4, overlayY);
 	}
 	public static void renderTooltipBackground(@NonNull GuiGraphics gui, int x, int y, int width, int height, int back, int top, int bot) {
 		gui.fillGradient(x - 3, y - 4, x + width + 3, y - 3, back, back);

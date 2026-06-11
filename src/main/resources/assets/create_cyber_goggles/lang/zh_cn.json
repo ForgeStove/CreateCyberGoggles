@@ -257,5 +257,5 @@
 	"create_cyber_goggles.tooltip.spring.desiredLength": "期望长度：",
 	"create_cyber_goggles.tooltip.spring.isController": "控制器：",
 	"create_cyber_goggles.tooltip.windState": "风力状态：",
-	"key.categories.create_cyber_goggles": "机械动力：赛博护目镜"
+	"key.categories.create_cyber_goggles.main": "机械动力：赛博护目镜"
 }

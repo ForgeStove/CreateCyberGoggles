@@ -46,15 +46,7 @@ public class GuiGraphicsMixin implements Self<GuiGraphics> {
 		Identifier background,
 		CallbackInfo ci
 	) {
-		ItemTooltip.renderTooltipOverlay(
-			ItemTooltip.capturedStack,
-			thiz(),
-			font,
-			components,
-			ItemTooltip.capturedMouseX,
-			ItemTooltip.capturedMouseY,
-			positioner
-		);
+		ItemTooltip.renderTooltipOverlay(ItemTooltip.capturedStack, thiz(), font, components, x, y, positioner);
 		ItemTooltip.capturedStack = ItemStack.EMPTY;
 	}
 	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")

@@ -117,13 +117,13 @@ public final class ClipboardRenderer implements TooltipOverlayRenderer {
 					false,
 					mode,
 					light,
-					0x31B25D,
+					0xFF31B25D,
 					0,
 					0
 				);
 			}
 			for (var sequence : font.split(Component.literal(text), 150)) {
-				var textColor = checked ? address ? 0x668D7F6B : 0x31B25D : 0x311A00;
+				var textColor = checked ? address ? 0x668D7F6B : 0xFF31B25D : 0xFF311A00;
 				nodeCollector.submitText(pose, x + 13, y, sequence, false, mode, light, textColor, 0, 0);
 				y += 9;
 			}
@@ -146,7 +146,7 @@ public final class ClipboardRenderer implements TooltipOverlayRenderer {
 			false,
 			mode,
 			light,
-			0x311A00,
+			0xFF311A00,
 			0,
 			0
 		);
@@ -197,9 +197,9 @@ public final class ClipboardRenderer implements TooltipOverlayRenderer {
 				texture.render(gui, x1 - 1, y1 + 1);
 			} else {
 				gui.drawString(font, "□", x1, y1 + 1, checked ? 0x668D7F6B : 0xFF8D7F6B, false);
-				if (checked) gui.drawString(font, "✔", x1, y1, 0x31B25D, false);
+				if (checked) gui.drawString(font, "✔", x1, y1, 0xFF31B25D, false);
 			}
-			var color = checked ? address ? 0x668D7F6B : 0x31B25D : 0x311A00;
+			var color = checked ? address ? 0x668D7F6B : 0xFF31B25D : 0xFF311A00;
 			for (var sequence : font.split(Component.literal(text), 150)) {
 				gui.drawString(font, sequence, x1 + 13, y1, color, false);
 				y1 += 9;
@@ -215,7 +215,7 @@ public final class ClipboardRenderer implements TooltipOverlayRenderer {
 			var leftPart = indicator.substring(0, slashIndex);
 			indicatorX = (int) (slashCenterX - font.width(leftPart) - font.width("/") / 2F);
 		} else indicatorX = (int) (slashCenterX - font.width(indicator) / 2F);
-		gui.drawString(font, pageIndicator, indicatorX, 235, 0x311A00, false);
+		gui.drawString(font, pageIndicator, indicatorX, 235, 0xFF311A00, false);
 		pose.popMatrix();
 	}
 }

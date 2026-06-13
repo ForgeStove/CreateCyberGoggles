@@ -31,6 +31,7 @@ public class PlayerInteract {
 		enacesdPipe();
 		chassis();
 		tableCloth();
+		ItemSwapUtil.tick();
 	}
 	public static void leftClick(LeftClickBlock event) {
 		if (isServer()) return;

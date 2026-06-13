@@ -77,6 +77,8 @@
 	"create_cyber_goggles.config.option.misc.infEditBoxLength.tooltip": "Бесконечная длина поля ввода (2^31 - 1)",
 	"create_cyber_goggles.config.option.misc.nbtFix": "NBT фикс",
 	"create_cyber_goggles.config.option.misc.nbtFix.tooltip": "Фикс отображения NBT данных, который может вызвать проблемы с производительностью",
+	"create_cyber_goggles.config.option.misc.preventAutoCloseFilter": "Предотвратить закрытие фильтра",
+	"create_cyber_goggles.config.option.misc.preventAutoCloseFilter.tooltip": "Предотвращение автоматического закрытия экрана фильтра",
 	"create_cyber_goggles.config.option.misc.preventSelectionDiscard": "Предотвращать сброс выделения",
 	"create_cyber_goggles.config.option.misc.preventSelectionDiscard.tooltip": "Предотвратить сброс выделения при переключении предметов",
 	"create_cyber_goggles.config.option.misc.recursiveSchematicScan": "Рекурсивное сканирование схематик",

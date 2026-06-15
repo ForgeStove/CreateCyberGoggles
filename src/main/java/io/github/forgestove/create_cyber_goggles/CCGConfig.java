@@ -10,9 +10,7 @@ public final class CCGConfig {
 	@Category public final Outliner outliner = new Outliner();
 	@Category public final ChainConveyor chainConveyor = new ChainConveyor();
 	@Category public final Wrench wrench = new Wrench();
-	@Category
-	@Condition("simulated")
-	public final Aeronautics aeronautics = new Aeronautics();
+	@Category @Condition("simulated") public final Aeronautics aeronautics = new Aeronautics();
 	@Category public final Misc misc = new Misc();
 	public static class Goggles {
 		public boolean enhancedInfo = true;

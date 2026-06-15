@@ -24,20 +24,14 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 	@Unique private final StockRequestAmountOverlay ccg$popup = new StockRequestAmountOverlay();
 	@Shadow public List<BigItemStack> itemsToOrder;
 	@Shadow public List<List<BigItemStack>> displayedItems;
-	@Shadow
-	@Final
-	int cols;
-	@Shadow
-	@Final
-	int colWidth;
+	@Shadow @Final int cols;
+	@Shadow @Final int colWidth;
 	@Shadow int itemsX;
 	@Shadow int itemsY;
 	@Shadow int windowWidth;
 	@Shadow int windowHeight;
 	@Shadow StockTickerBlockEntity blockEntity;
-	@Shadow
-	@Final
-	Couple<Integer> noneHovered;
+	@Shadow @Final Couple<Integer> noneHovered;
 	@Shadow
 	protected abstract Couple<Integer> getHoveredSlot(int x, int y);
 	@Shadow

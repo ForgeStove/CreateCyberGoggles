@@ -1,3 +1,2 @@
-- Add preventAutoCloseFilter configuration
-- Optimize configuration system and configuration UI
-- Fix delayed rendering issues in FactoryPanel
+- Add a quick item swap feature
+- Fix compact for Create Aeronautics 1.3.0

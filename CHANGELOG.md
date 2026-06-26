@@ -1,2 +1,1 @@
-- Add a quick item swap feature
-- Fix compact for Create Aeronautics 1.3.0
+- Add onlyOnWithGoggles option

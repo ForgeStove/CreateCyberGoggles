@@ -9,8 +9,6 @@ public final class CategoryConfigNode<C> implements ConfigNode<C> {
 	private Component title;
 	private Component tooltip;
 	private ImmutableList<ConfigNode<C>> children;
-	private CategoryConfigNode() {
-	}
 	public static <C> Builder<C> builder() {
 		return new Builder<>();
 	}

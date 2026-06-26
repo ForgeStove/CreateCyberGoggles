@@ -20,7 +20,7 @@ import org.joml.Vector2ic;
 
 import java.util.*;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public final class ItemTooltip {
 	public static final List<TooltipOverlayRenderer> OVERLAY_RENDERERS = List.of(
 		new ContainerRenderer(),
@@ -37,6 +37,7 @@ public final class ItemTooltip {
 	private static final int OVERLAY_GAP = 6;
 	public static void itemTooltip(@NotNull ItemTooltipEvent event) {
 		if (!CCG.config.tooltip.extraItemTooltip) return;
+		if (shouldSuppressInfo()) return;
 		var stack = event.getItemStack();
 		var tooltip = event.getToolTip();
 		goggles(stack, tooltip);

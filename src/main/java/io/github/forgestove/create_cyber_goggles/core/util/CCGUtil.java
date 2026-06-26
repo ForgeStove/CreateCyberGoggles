@@ -1,6 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.core.util;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.equipment.armor.CardboardArmorItem;
+import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBox;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
@@ -175,6 +176,9 @@ public final class CCGUtil {
 			if (outline instanceof ValueBox valueBox && !valueBox.isPassive) return true;
 		}
 		return false;
+	}
+	public static boolean shouldSuppressInfo() {
+		return CCG.config.goggles.onlyOnWithGoggles && !GogglesItem.isWearingGoggles(mc.player);
 	}
 	/** 检测本地玩家是否穿着全套纸板盔甲并且不在飞行状态 */
 	public static boolean testForStealth() {

@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 import static net.minecraft.ChatFormatting.*;
 public final class GoggleTooltipUtil {
 	public static void kinetic(List<Component> tooltip, @NotNull KineticBlockEntity kbe, float stress, float capacity) {

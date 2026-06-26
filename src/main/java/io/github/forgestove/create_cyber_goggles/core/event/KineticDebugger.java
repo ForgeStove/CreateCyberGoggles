@@ -19,6 +19,7 @@ public class KineticDebugger {
 	public static List<KineticBlockEntity> cachedKBEPath;
 	public static void tick(Post ignoredEvent) {
 		if (!CCG.config.outliner.rainbowDebug) return;
+		if (shouldSuppressInfo()) return;
 		if (mc.isPaused() || isInGUI() || mc.level == null) return;
 		var kbe = getBlockEntity(KineticBlockEntity.class);
 		if (kbe == null) return;

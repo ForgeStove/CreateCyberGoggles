@@ -7,7 +7,7 @@ import io.github.forgestove.create_cyber_goggles.core.factory.*;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientFluidEntryTooltipComponent.FluidEntryTooltipComponent;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientItemEntryTooltipComponent.ItemEntryTooltipComponent;
 import io.github.forgestove.create_cyber_goggles.core.factory.TooltipTheme.Theme;
-import io.github.forgestove.create_cyber_goggles.core.util.TooltipComponentUtil;
+import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.client.DeltaTracker;
@@ -32,6 +32,7 @@ public class TooltipOverlay {
 	}
 	public static void renderOverlay(GuiGraphics gui, DeltaTracker deltaTracker) {
 		if (!CCG.config.overlay.renderItemOverlay || !CCG.config.gameMode.enableGoggles) return;
+		if (shouldSuppressInfo()) return;
 		if (mc.isPaused() || isInGUI() || mc.options.hideGui) {
 			hoverTicks = 0;
 			return;

@@ -14,6 +14,7 @@ public class Outliner {
 	public static final Map<BlockEntity, Integer> cachedBE = new Object2IntOpenHashMap<>();
 	public static void tick(Post ignoredEvent) {
 		if (!CCG.config.outliner.renderAnalogBox) return;
+		if (shouldSuppressInfo()) return;
 		if (mc.isPaused() || isInGUI()) return;
 		var be = getBlockEntity();
 		if (be instanceof OutlineRenderable or) cachedBE.put(be, or.ccg$getRenderDelay());

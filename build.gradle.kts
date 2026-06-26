@@ -10,7 +10,7 @@ java.withSourcesJar()
 tasks.jar { from("LICENSE") }
 val generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
 	description = "Generate this project metadata from templates."
-	val values = properties.mapValues { it.value.toString() }
+	val values = project.extra.properties.mapValues { it.value.toString() }
 	inputs.properties(values)
 	expand(values)
 	from("src/main/templates")

@@ -19,20 +19,20 @@ import org.spongepowered.asm.mixin.injection.callback.*;
 import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
-@Mixin(value = StockKeeperRequestScreen.class, remap = false)
+@Mixin(StockKeeperRequestScreen.class)
 public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperRequestScreen> {
 	@Unique private final StockRequestAmountOverlay ccg$popup = new StockRequestAmountOverlay();
-	@Shadow public List<BigItemStack> itemsToOrder;
-	@Shadow public List<List<BigItemStack>> displayedItems;
-	@Shadow @Final int cols;
-	@Shadow @Final int colWidth;
-	@Shadow int itemsX;
-	@Shadow int itemsY;
-	@Shadow int windowWidth;
-	@Shadow int windowHeight;
-	@Shadow StockTickerBlockEntity blockEntity;
-	@Shadow @Final Couple<Integer> noneHovered;
-	@Shadow
+	@Shadow(remap = false) public List<BigItemStack> itemsToOrder;
+	@Shadow(remap = false) public List<List<BigItemStack>> displayedItems;
+	@Shadow(remap = false) @Final int cols;
+	@Shadow(remap = false) @Final int colWidth;
+	@Shadow(remap = false) int itemsX;
+	@Shadow(remap = false) int itemsY;
+	@Shadow(remap = false) int windowWidth;
+	@Shadow(remap = false) int windowHeight;
+	@Shadow(remap = false) StockTickerBlockEntity blockEntity;
+	@Shadow(remap = false) @Final Couple<Integer> noneHovered;
+	@Shadow(remap = false)
 	protected abstract Couple<Integer> getHoveredSlot(int x, int y);
 	@Shadow
 	protected abstract BigItemStack getOrderForItem(ItemStack stack);

@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.isServer;
-@Mixin(value = ValueSettingsInputHandler.class, remap = false)
+@Mixin(ValueSettingsInputHandler.class)
 public abstract class ValueSettingsInputHandlerMixin {
 	@WrapOperation(
 		method = "onBlockActivated",
@@ -20,7 +20,7 @@ public abstract class ValueSettingsInputHandlerMixin {
 	@WrapOperation(
 		method = "onBlockActivated", at = @At(
 		value = "INVOKE", target = "Lcom/simibubi/create/foundation/blockEntity/behaviour/ValueSettingsBehaviour;onlyVisibleWithWrench()Z"
-	)
+	), remap = false
 	)
 	private static boolean tick(ValueSettingsBehaviour instance, Operation<Boolean> original) {
 		return isServer() ? original.call(instance) : CCG.config.wrench.alwaysShowScrollValue || original.call(instance);

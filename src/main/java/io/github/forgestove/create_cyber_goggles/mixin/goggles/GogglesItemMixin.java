@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
-@Mixin(value = GogglesItem.class, remap = false)
+@Mixin(GogglesItem.class)
 public abstract class GogglesItemMixin {
 	@Inject(method = "isWearingGoggles", at = @At("HEAD"), cancellable = true)
 	private static void isWearingGoggles(CallbackInfoReturnable<Boolean> cir) {

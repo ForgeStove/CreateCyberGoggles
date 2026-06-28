@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.*;
-@Mixin(value = ListFilterItem.class, remap = false)
+@Mixin(ListFilterItem.class)
 public abstract class ListFilterItemMixin implements Self<ListFilterItem> {
 	@Inject(method = "makeSummary", at = @At("HEAD"), cancellable = true)
 	private void makeSummary(ItemStack filter, CallbackInfoReturnable<List<Component>> cir) {

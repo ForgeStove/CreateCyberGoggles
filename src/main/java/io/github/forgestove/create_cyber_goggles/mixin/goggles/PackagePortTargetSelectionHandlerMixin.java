@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.outliner;
-@Mixin(value = PackagePortTargetSelectionHandler.class, remap = false)
+@Mixin(PackagePortTargetSelectionHandler.class)
 public abstract class PackagePortTargetSelectionHandlerMixin {
 	@Inject(method = "animateConnection", at = @At("HEAD"), cancellable = true)
 	private static void animateConnection(Minecraft mc, Vec3 source, Vec3 target, Color color, CallbackInfo ci) {

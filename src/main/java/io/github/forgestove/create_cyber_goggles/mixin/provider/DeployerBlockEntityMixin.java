@@ -4,7 +4,7 @@ import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.api.ItemRenderable;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.*;
-@Mixin(value = DeployerBlockEntity.class, remap = false)
+@Mixin(DeployerBlockEntity.class)
 public abstract class DeployerBlockEntityMixin implements ItemRenderable {
 	@Shadow protected ItemStack heldItem;
 	@Override

@@ -16,13 +16,13 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
-@Mixin(value = BacktankBlockEntity.class, remap = false)
+@Mixin(value = BacktankBlockEntity.class)
 public abstract class BacktankBlockEntityMixin extends KineticBlockEntity implements IHaveGoggleInformation, Self<BacktankBlockEntity> {
 	@Unique public int ccg$leftTick;
 	@Unique public int ccg$prevAirLevel;
-	@Shadow public int airLevel;
-	@Shadow public int airLevelTimer;
-	@Shadow private int capacityEnchantLevel;
+	@Shadow(remap = false) public int airLevel;
+	@Shadow(remap = false) public int airLevelTimer;
+	@Shadow(remap = false) private int capacityEnchantLevel;
 	public BacktankBlockEntityMixin(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
 		super(typeIn, pos, state);
 	}
@@ -32,7 +32,7 @@ public abstract class BacktankBlockEntityMixin extends KineticBlockEntity implem
 		var sup = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
 		return thiz || sup;
 	}
-	@Inject(method = "tick", at = @At(value = "RETURN", ordinal = 3))
+	@Inject(method = "tick", at = @At(value = "RETURN", ordinal = 3), remap = false)
 	public void tick(CallbackInfo ci, @Local(name = "max") int max) {
 		if (!CCG.config.goggles.enhancedInfo) return;
 		if (airLevel == max) return;

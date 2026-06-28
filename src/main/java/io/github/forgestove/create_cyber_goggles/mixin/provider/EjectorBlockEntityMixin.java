@@ -11,12 +11,12 @@ import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
-@Mixin(value = EjectorBlockEntity.class, remap = false)
+@Mixin(value = EjectorBlockEntity.class)
 public abstract class EjectorBlockEntityMixin implements ItemRenderable, OutlineRenderable, Self<EjectorBlockEntity> {
-	@Shadow DepotBehaviour depotBehaviour;
+	@Shadow(remap = false) DepotBehaviour depotBehaviour;
 	@Shadow
 	protected abstract Direction getFacing();
-	@Shadow
+	@Shadow(remap = false)
 	protected abstract boolean cannotLaunch();
 	@Override
 	public ItemStack ccg$getItemStack() {

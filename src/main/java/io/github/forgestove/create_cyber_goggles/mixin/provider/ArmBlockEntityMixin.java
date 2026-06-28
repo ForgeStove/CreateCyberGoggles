@@ -8,11 +8,11 @@ import org.spongepowered.asm.mixin.*;
 import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.outliner;
-@Mixin(value = ArmBlockEntity.class, remap = false)
+@Mixin(ArmBlockEntity.class)
 public abstract class ArmBlockEntityMixin implements ItemRenderable, OutlineRenderable, Self<ArmBlockEntity> {
 	@Shadow ItemStack heldItem;
-	@Shadow List<ArmInteractionPoint> inputs;
-	@Shadow List<ArmInteractionPoint> outputs;
+	@Shadow(remap = false) List<ArmInteractionPoint> inputs;
+	@Shadow(remap = false) List<ArmInteractionPoint> outputs;
 	@Override
 	public ItemStack ccg$getItemStack() {
 		return heldItem;

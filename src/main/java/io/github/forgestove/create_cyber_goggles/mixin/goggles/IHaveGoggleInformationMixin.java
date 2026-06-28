@@ -11,10 +11,10 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
-@Mixin(value = IHaveGoggleInformation.class, remap = false)
+@Mixin(IHaveGoggleInformation.class)
 public interface IHaveGoggleInformationMixin {
 	@SuppressWarnings("UnstableApiUsage")
-	@Inject(method = "containedFluidTooltip", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "containedFluidTooltip", at = @At("HEAD"), cancellable = true, remap = false)
 	private void containedFluidTooltip(
 		List<Component> tooltip,
 		boolean isPlayerSneaking,

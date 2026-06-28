@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.*;
-@Mixin(value = RedstoneRequesterBlock.class, remap = false)
+@Mixin(RedstoneRequesterBlock.class)
 public abstract class RedstoneRequesterBlockMixin {
 	@Inject(method = "appendRequesterTooltip", at = @At("HEAD"), cancellable = true)
 	private static void appendRequesterTooltip(ItemStack stack, List<Component> tooltip, CallbackInfo ci) {

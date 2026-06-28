@@ -15,13 +15,13 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
-@Mixin(value = DeployerBlockEntity.class, remap = false)
+@Mixin(DeployerBlockEntity.class)
 public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
-	@Shadow protected List<ItemStack> overflowItems;
+	@Shadow(remap = false) protected List<ItemStack> overflowItems;
 	public DeployerBlockEntityMixin(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
 		super(typeIn, pos, state);
 	}
-	@Inject(method = "addToTooltip", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "addToTooltip", at = @At("HEAD"), cancellable = true, remap = false)
 	public void addToTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> cir) {
 		if (!CCG.config.tooltip.deployer) return;
 		if (overflowItems.isEmpty()) {

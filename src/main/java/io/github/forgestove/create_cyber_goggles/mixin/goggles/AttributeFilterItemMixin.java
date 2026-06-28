@@ -4,7 +4,7 @@ import com.simibubi.create.content.logistics.filter.AttributeFilterItem;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-@Mixin(value = AttributeFilterItem.class, remap = false)
+@Mixin(AttributeFilterItem.class)
 public abstract class AttributeFilterItemMixin {
 	@ModifyExpressionValue(method = "makeSummary", at = @At(value = "CONSTANT", args = "intValue=3"))
 	private static int makeSummary(int original) {

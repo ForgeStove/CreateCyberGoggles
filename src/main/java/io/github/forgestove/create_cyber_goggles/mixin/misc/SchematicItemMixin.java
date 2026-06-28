@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 
 import java.io.InputStream;
 import java.nio.file.*;
-@Mixin(value = SchematicItem.class, remap = false)
+@Mixin(SchematicItem.class)
 public abstract class SchematicItemMixin {
 	@WrapOperation(
 		method = "loadSchematic", at = @At(

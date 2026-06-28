@@ -12,12 +12,12 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
-@Mixin(value = GeneratingKineticBlockEntity.class, remap = false)
+@Mixin(GeneratingKineticBlockEntity.class)
 public abstract class GeneratingKineticBlockEntityMixin extends KineticBlockEntity implements Self<GeneratingKineticBlockEntity> {
 	public GeneratingKineticBlockEntityMixin(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
 		super(typeIn, pos, state);
 	}
-	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), cancellable = true, remap = false)
 	public void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> cir) {
 		var goggles = CCG.config.goggles;
 		if (!goggles.enhancedInfo) return;

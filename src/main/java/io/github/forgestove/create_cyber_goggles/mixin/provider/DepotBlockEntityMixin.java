@@ -9,9 +9,9 @@ import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.*;
 
 import java.util.List;
-@Mixin(value = DepotBlockEntity.class, remap = false)
+@Mixin(DepotBlockEntity.class)
 public abstract class DepotBlockEntityMixin implements IHaveGoggleInformation, ItemRenderable, Self<DepotBlockEntity> {
-	@Shadow DepotBehaviour depotBehaviour;
+	@Shadow(remap = false) DepotBehaviour depotBehaviour;
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		return GoggleTooltipUtil.depot(tooltip, depotBehaviour.itemHandler);

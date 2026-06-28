@@ -6,7 +6,7 @@ import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-@Mixin(value = ChassisRangeDisplay.class, remap = false)
+@Mixin(ChassisRangeDisplay.class)
 public abstract class ChassisRangeDisplayMixin {
 	@WrapOperation(
 		method = "tick",

@@ -164,7 +164,6 @@ public class ItemTooltip {
 			capacities.add(capacityMb);
 		}
 		if (fluids.isEmpty()) return;
-		CCGLang.translate(ChatFormatting.GRAY, "tooltip.content").addTo(1, tooltip);
 		for (var i = 0; i < fluids.size(); i++) CCGLang.fluid(fluids.get(i), capacities.get(i)).addTo(1, tooltip);
 	}
 	private static long ccg$toMilliBuckets(long transferAmount) {

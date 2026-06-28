@@ -11,11 +11,11 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
-@Mixin(value = ChainConveyorInteractionHandler.class, remap = false)
+@Mixin(ChainConveyorInteractionHandler.class)
 public abstract class ChainConveyorInteractionHandlerMixin {
 	@Shadow public static BlockPos selectedConnection, selectedLift;
-	@Shadow public static float selectedChainPosition;
-	@Inject(method = "isActive", at = @At("HEAD"), cancellable = true)
+	@Shadow(remap = false) public static float selectedChainPosition;
+	@Inject(method = "isActive", at = @At("HEAD"), cancellable = true, remap = false)
 	private static void isActive(CallbackInfoReturnable<Boolean> cir) {
 		if (!CCG.config.chainConveyor.alwaysAllowRiding) return;
 		if (mc.player == null) {
@@ -34,7 +34,7 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 	private static boolean onUse(AllItemTags instance, ItemStack stack, Operation<Boolean> original) {
 		return !CCG.config.chainConveyor.alwaysAllowRiding && original.call(instance, stack);
 	}
-	@Inject(method = "onUse", at = @At("TAIL"))
+	@Inject(method = "onUse", at = @At("TAIL"), remap = false)
 	private static void injectTail(CallbackInfoReturnable<Boolean> cir) {
 		if (!CCG.config.chainConveyor.alwaysAllowRiding) return;
 		if (mc.player == null) return;

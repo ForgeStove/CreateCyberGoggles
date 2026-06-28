@@ -6,7 +6,7 @@ import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-@Mixin(value = ScrollValueRenderer.class, remap = false)
+@Mixin(ScrollValueRenderer.class)
 public abstract class ScrollValueRendererMixin {
 	@WrapOperation(
 		method = "tick",

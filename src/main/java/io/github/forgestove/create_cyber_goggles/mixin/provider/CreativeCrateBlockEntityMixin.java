@@ -4,9 +4,9 @@ import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringB
 import io.github.forgestove.create_cyber_goggles.core.api.ItemRenderable;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.*;
-@Mixin(value = CreativeCrateBlockEntity.class, remap = false)
+@Mixin(CreativeCrateBlockEntity.class)
 public abstract class CreativeCrateBlockEntityMixin implements ItemRenderable {
-	@Shadow FilteringBehaviour filtering;
+	@Shadow(remap = false) FilteringBehaviour filtering;
 	@Override
 	public ItemStack ccg$getItemStack() {
 		return filtering.getFilter();

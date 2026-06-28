@@ -4,9 +4,9 @@ import io.github.forgestove.create_cyber_goggles.CCG;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-@Mixin(value = CardboardArmorStealthOverlay.class, remap = false)
+@Mixin(CardboardArmorStealthOverlay.class)
 public abstract class CardboardArmorStealthOverlayMixin {
-	@Inject(method = "clientTick", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "clientTick", at = @At("HEAD"), cancellable = true, remap = false)
 	private static void renderHelmetOverlay(CallbackInfo ci) {
 		if (CCG.config.misc.removeCardboardOverlay) ci.cancel();
 	}

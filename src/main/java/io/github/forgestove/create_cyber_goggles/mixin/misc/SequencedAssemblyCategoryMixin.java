@@ -14,9 +14,9 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
-@Mixin(value = SequencedAssemblyCategory.class, remap = false)
+@Mixin(SequencedAssemblyCategory.class)
 public abstract class SequencedAssemblyCategoryMixin {
-	@Inject(method = "setRecipe*", at = @At("TAIL"))
+	@Inject(method = "setRecipe*", at = @At("TAIL"), remap = false)
 	public void setRecipe(IRecipeLayoutBuilder builder, SequencedAssemblyRecipe recipe, IFocusGroup focuses, CallbackInfo ci) {
 		if (!CCG.config.misc.showScrapContent) return;
 		var size = 8;

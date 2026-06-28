@@ -6,10 +6,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.*;
-import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.Mixin;
 
 import java.util.List;
-@Debug(export = true)
 @Mixin(ShulkerBoxBlock.class)
 public abstract class ShulkerBoxBlockMixin extends BaseEntityBlock {
 	protected ShulkerBoxBlockMixin(Properties properties) {

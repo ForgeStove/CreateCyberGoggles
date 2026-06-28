@@ -13,9 +13,9 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
-@Mixin(value = BlueprintOverlayRenderer.class, remap = false)
+@Mixin(BlueprintOverlayRenderer.class)
 public abstract class BlueprintOverlayRendererMixin {
-	@Shadow static List<ItemStack> results;
+	@Shadow(remap = false) static List<ItemStack> results;
 	@Inject(method = "renderOverlay", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z", ordinal = 1), cancellable = true)
 	private static void renderOverlay(
 		Gui gui,
@@ -35,7 +35,8 @@ public abstract class BlueprintOverlayRendererMixin {
 		method = "renderOverlay", at = @At(
 		value = "FIELD",
 		target = "Lcom/simibubi/create/content/equipment/blueprint/BlueprintOverlayRenderer;active:Z",
-		opcode = Opcodes.GETSTATIC
+		opcode = Opcodes.GETSTATIC,
+		remap = false
 	)
 	)
 	private static void resetTCBE(Gui gui, GuiGraphics graphics, float partialTicks, Window window, CallbackInfo ci) {

@@ -14,12 +14,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.nio.file.Paths;
 import java.util.List;
-@Mixin(value = SchematicTableScreen.class, remap = false)
+@Mixin(value = SchematicTableScreen.class)
 public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScreen<SchematicTableMenu> {
-	@Shadow private ScrollInput schematicsArea;
-	@Shadow private IconButton folderButton;
-	@Shadow private IconButton refreshButton;
-	@Shadow private Label schematicsLabel;
+	@Shadow(remap = false) private ScrollInput schematicsArea;
+	@Shadow(remap = false) private IconButton folderButton;
+	@Shadow(remap = false) private IconButton refreshButton;
+	@Shadow(remap = false) private Label schematicsLabel;
 	@Shadow @Final private Component availableSchematicsTitle;
 	@Unique private SelectionScrollInput ccg$folderArea;
 	@Unique private Label ccg$folderLabel;

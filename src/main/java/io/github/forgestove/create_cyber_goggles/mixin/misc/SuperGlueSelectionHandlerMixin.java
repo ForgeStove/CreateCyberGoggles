@@ -4,10 +4,9 @@ import com.simibubi.create.content.contraptions.glue.SuperGlueSelectionHandler;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
 import net.minecraft.world.item.ItemStack;
-import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-@Debug(export = true)
 @Mixin(value = SuperGlueSelectionHandler.class, remap = false)
 public abstract class SuperGlueSelectionHandlerMixin {
 	@WrapWithCondition(

@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.isInGame;
-@Mixin(value = GoggleOverlayRenderer.class, remap = false)
+@Mixin(GoggleOverlayRenderer.class)
 public abstract class GoggleOverlayRendererMixin {
 	@Inject(method = "renderOverlay", at = @At("HEAD"), cancellable = true)
 	private static void renderOverlay(CallbackInfo ci) {
@@ -28,7 +28,7 @@ public abstract class GoggleOverlayRendererMixin {
 		method = "renderOverlay", at = @At(
 		value = "INVOKE",
 		target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;getPlayerMode()Lnet/minecraft/world/level/GameType;"
-	), remap = true
+	)
 	)
 	private static GameType wrapGameMode(MultiPlayerGameMode instance, Operation<GameType> original) {
 		return CCG.config.gameMode.enableInSpectator ? null : original.call(instance);

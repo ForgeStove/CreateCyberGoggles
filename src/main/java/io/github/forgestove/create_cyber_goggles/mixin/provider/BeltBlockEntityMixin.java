@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.*;
-@Mixin(value = BeltBlockEntity.class, remap = false)
+@Mixin(BeltBlockEntity.class)
 public abstract class BeltBlockEntityMixin extends KineticBlockEntity
 	implements IHaveGoggleInformation, ItemRenderable, Self<BeltBlockEntity> {
 	@Unique public final Deque<Integer> ccg$itemHistory = new ArrayDeque<>();
@@ -25,7 +25,7 @@ public abstract class BeltBlockEntityMixin extends KineticBlockEntity
 	public BeltBlockEntityMixin(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
 		super(typeIn, pos, state);
 	}
-	@Inject(method = "tick", at = @At("TAIL"))
+	@Inject(method = "tick", at = @At("TAIL"), remap = false)
 	private void tick(CallbackInfo ci) {
 		if (level == null || !level.isClientSide) return;
 		if (thiz().index != 0) return;

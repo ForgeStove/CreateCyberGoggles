@@ -37,7 +37,14 @@ public abstract class GenericValueConfigEntry<C, V> extends ValueConfigEntry<C, 
 		var hasError = hasParseError || valueNode.validate(tab.getConfig()) != null;
 		if (!hasError) {
 			var valueStr = getValue().toString();
-			if (!isZero(inputField.getValue()) && !inputField.getValue().equals(valueStr)) {
+			if (!isZero(inputField.getValue())) try {
+				var parsed = parser.apply(inputField.getValue());
+				if (!parsed.equals(getValue())) {
+					updatingFromCode = true;
+					inputField.setValue(valueStr);
+					updatingFromCode = false;
+				}
+			} catch (Exception e) {
 				updatingFromCode = true;
 				inputField.setValue(valueStr);
 				updatingFromCode = false;

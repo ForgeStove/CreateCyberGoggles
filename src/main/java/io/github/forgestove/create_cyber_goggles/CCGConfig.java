@@ -12,6 +12,7 @@ public final class CCGConfig {
 	@Category public final Wrench wrench = new Wrench();
 	@Category @Condition("simulated") public final Aeronautics aeronautics = new Aeronautics();
 	@Category @Condition("simulated") public final ForceOverlay forceOverlay = new ForceOverlay();
+	@Category public final DraftingView draftingView = new DraftingView();
 	@Category public final Misc misc = new Misc();
 	public static class Goggles {
 		public boolean enhancedInfo = true;
@@ -119,6 +120,15 @@ public final class CCGConfig {
 		public boolean showLift = true;
 		public boolean showMagneticForce = true;
 	}
+	public static class DraftingView {
+		public boolean enabled = false;
+		@DoubleRange(min = 0, max = 1) public double paletteOffset = 0.25;
+		public boolean pixelate = true;
+		@DoubleRange(min = 1, max = 16) public double pixelScale = 4;
+		@ColorValue public int lineColor = 0x2E3032;
+		@ColorValue public int lineShadowColor = 0x696965;
+	}
+
 	public static class Misc {
 		public boolean removeMechanicalArmLimit = false;
 		public boolean removeRequestLimit = true;

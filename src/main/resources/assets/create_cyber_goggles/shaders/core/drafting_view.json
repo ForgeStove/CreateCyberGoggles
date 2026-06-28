@@ -1,0 +1,20 @@
+{
+	"blend": {"func": "add", "srcrgb": "one", "dstrgb": "zero"},
+	"vertex": "create_cyber_goggles:drafting_view",
+	"fragment": "create_cyber_goggles:drafting_view",
+	"attributes": ["Position"],
+	"samplers": [
+		{"name": "DiffuseSampler0"},
+		{"name": "DiffuseDepthSampler"},
+		{"name": "Palette"},
+		{"name": "Dither"}
+	],
+	"uniforms": [
+		{"name": "LineColor", "type": "float", "count": 4, "values": [0.0, 0.0, 0.0, 1.0]},
+		{"name": "LineShadowColor", "type": "float", "count": 4, "values": [0.0, 0.0, 0.0, 1.0]},
+		{"name": "PaletteOffset", "type": "float", "count": 1, "values": [0.0]},
+		{"name": "InSize", "type": "float", "count": 2, "values": [1.0, 1.0]},
+		{"name": "Pixelate", "type": "float", "count": 1, "values": [0.0]},
+		{"name": "PixelScale", "type": "float", "count": 1, "values": [1.0]}
+	]
+}

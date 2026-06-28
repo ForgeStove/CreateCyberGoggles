@@ -6,6 +6,8 @@ import io.github.forgestove.create_cyber_goggles.core.factory.*;
 import io.github.forgestove.create_cyber_goggles.core.overlay.ForceOverlayClient;
 import io.github.forgestove.create_cyber_goggles.core.overlay.ForceOverlayRenderer;
 import io.github.forgestove.create_cyber_goggles.core.overlay.ForceTooltipOverlay;
+import io.github.forgestove.create_cyber_goggles.core.overlay.drafting.DraftingShaders;
+import io.github.forgestove.create_cyber_goggles.core.overlay.drafting.DraftingViewHandler;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -29,6 +31,7 @@ public final class CCG {
 		mod.addListener(ClientFluidEntryTooltipComponent::register);
 		mod.addListener(ClientFluidListTooltipComponent::register);
 		mod.addListener(ForceTooltipOverlay::register);
+		mod.addListener(DraftingShaders::onRegisterShaders);
 		var game = NeoForge.EVENT_BUS;
 		game.addListener(KeyInput::key);
 		game.addListener(KeyInput::mouseScroll);
@@ -44,5 +47,6 @@ public final class CCG {
 		game.addListener(TipOverlay::tick);
 		game.addListener(ForceOverlayClient::tick);
 		game.addListener(ForceOverlayRenderer::onRenderStage);
+		game.addListener(DraftingViewHandler::applyIfEnabled);
 	}
 }

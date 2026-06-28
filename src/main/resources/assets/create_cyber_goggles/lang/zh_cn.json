@@ -297,5 +297,18 @@
 	"create_cyber_goggles.tooltip.spring.desiredLength": "期望长度：",
 	"create_cyber_goggles.tooltip.spring.isController": "控制器：",
 	"create_cyber_goggles.tooltip.windState": "风力状态：",
-	"key.categories.create_cyber_goggles": "机械动力：赛博护目镜"
+	"key.categories.create_cyber_goggles": "机械动力：赛博护目镜",
+	"create_cyber_goggles.config.category.draftingView": "图解视图",
+	"create_cyber_goggles.config.option.draftingView.enabled": "启用图解视图",
+	"create_cyber_goggles.config.option.draftingView.enabled.tooltip": "对整个画面应用蓝图/图解风格的后处理效果",
+	"create_cyber_goggles.config.option.draftingView.paletteOffset": "调色板偏移",
+	"create_cyber_goggles.config.option.draftingView.paletteOffset.tooltip": "调色板纹理的水平查找偏移（0..1）",
+	"create_cyber_goggles.config.option.draftingView.pixelate": "像素化",
+	"create_cyber_goggles.config.option.draftingView.pixelate.tooltip": "将画面粗化以获得蓝图效果",
+	"create_cyber_goggles.config.option.draftingView.pixelScale": "像素缩放",
+	"create_cyber_goggles.config.option.draftingView.pixelScale.tooltip": "每个虚拟像素覆盖的屏幕像素数（1=关闭，4=默认，越大越粗）",
+	"create_cyber_goggles.config.option.draftingView.lineColor": "线条颜色",
+	"create_cyber_goggles.config.option.draftingView.lineColor.tooltip": "边缘轮廓颜色",
+	"create_cyber_goggles.config.option.draftingView.lineShadowColor": "阴影线条颜色",
+	"create_cyber_goggles.config.option.draftingView.lineShadowColor.tooltip": "深度提示轮廓的阴影面颜色"
 }

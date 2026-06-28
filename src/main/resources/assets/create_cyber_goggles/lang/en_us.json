@@ -297,5 +297,18 @@
 	"create_cyber_goggles.tooltip.spring.desiredLength": "Desired Length：",
 	"create_cyber_goggles.tooltip.spring.isController": "Is Controller：",
 	"create_cyber_goggles.tooltip.windState": "Wind State:",
-	"key.categories.create_cyber_goggles": "Create: Cyber Goggles"
+	"key.categories.create_cyber_goggles": "Create: Cyber Goggles",
+	"create_cyber_goggles.config.category.draftingView": "Drafting View",
+	"create_cyber_goggles.config.option.draftingView.enabled": "Enable Drafting View",
+	"create_cyber_goggles.config.option.draftingView.enabled.tooltip": "Apply a blueprint/schematic post-processing effect to the entire screen",
+	"create_cyber_goggles.config.option.draftingView.paletteOffset": "Palette Offset",
+	"create_cyber_goggles.config.option.draftingView.paletteOffset.tooltip": "Horizontal lookup offset (0..1) into the palette texture",
+	"create_cyber_goggles.config.option.draftingView.pixelate": "Pixelate",
+	"create_cyber_goggles.config.option.draftingView.pixelate.tooltip": "Snap the screen to a coarser virtual grid for a blueprint look",
+	"create_cyber_goggles.config.option.draftingView.pixelScale": "Pixel Scale",
+	"create_cyber_goggles.config.option.draftingView.pixelScale.tooltip": "Each virtual pixel covers this many screen pixels (1=off, 4=default, higher=chunkier)",
+	"create_cyber_goggles.config.option.draftingView.lineColor": "Line Color",
+	"create_cyber_goggles.config.option.draftingView.lineColor.tooltip": "Edge outline colour",
+	"create_cyber_goggles.config.option.draftingView.lineShadowColor": "Line Shadow Color",
+	"create_cyber_goggles.config.option.draftingView.lineShadowColor.tooltip": "Shadow side colour for depth-cued outlines"
 }

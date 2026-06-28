@@ -1,0 +1,9 @@
+{
+	"blend": {"func": "add", "srcrgb": "one", "dstrgb": "zero"},
+	"vertex": "create_cyber_goggles:drafting_upscale",
+	"fragment": "create_cyber_goggles:drafting_upscale",
+	"attributes": ["Position"],
+	"samplers": [
+		{"name": "DiffuseSampler0"}
+	]
+}

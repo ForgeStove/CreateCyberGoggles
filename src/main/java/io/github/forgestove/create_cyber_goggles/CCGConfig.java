@@ -11,6 +11,7 @@ public final class CCGConfig {
 	@Category public final ChainConveyor chainConveyor = new ChainConveyor();
 	@Category public final Wrench wrench = new Wrench();
 	@Category @Condition("simulated") public final Aeronautics aeronautics = new Aeronautics();
+	@Category @Condition("simulated") public final ForceOverlay forceOverlay = new ForceOverlay();
 	@Category public final Misc misc = new Misc();
 	public static class Goggles {
 		public boolean enhancedInfo = true;
@@ -98,6 +99,25 @@ public final class CCGConfig {
 		public boolean liftLimitOfHandleRange = false;
 		public boolean customHandleMoveSublevelKey = false;
 		public boolean alwaysAllowRidingRope = true;
+	}
+	public static class ForceOverlay {
+		public boolean enabled = true;
+		public boolean forceTooltipEnabled = true;
+		public boolean renderCenterOfMass = true;
+		@DoubleRange(min = 0) public double clusterAngleRadians = 0.1;
+		@DoubleRange(min = 0, max = 1) public double smoothingFactor = 0.5;
+		@DoubleRange(min = 0, max = 1) public double gravityArrowFraction = 0.5;
+		@DoubleRange(min = 1) public double arrowSaturation = 3;
+		@DoubleRange(min = 0) public double minArrowLength = 0.1;
+		@IntRange(min = 1, max = 64) public int targetingChunks = 4;
+		@DoubleRange(min = 0) public double minOverlayPixelSize = 0;
+		public boolean showGravity = true;
+		public boolean showDrag = true;
+		public boolean showLevitation = true;
+		public boolean showBalloonLift = true;
+		public boolean showPropulsion = true;
+		public boolean showLift = true;
+		public boolean showMagneticForce = true;
 	}
 	public static class Misc {
 		public boolean removeMechanicalArmLimit = false;

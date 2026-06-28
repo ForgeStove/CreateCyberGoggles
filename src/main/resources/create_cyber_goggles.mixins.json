@@ -81,6 +81,7 @@
 		"provider.ToolboxBlockEntityMixin",
 		"simulated.BlockPropertiesTooltipMixin",
 		"simulated.ClientHandleHandlerMixin",
+		"simulated.DiagramDataPacketMixin",
 		"simulated.PhysicsStaffClientHandlerMixin",
 		"simulated.ZiplineClientManagerMixin",
 		"tooltip.AttributeFilterItemMixin",

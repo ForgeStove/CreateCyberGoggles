@@ -1,5 +1,5 @@
 plugins {
-	id("fabric-loom") version "1.10.5"
+	id("fabric-loom") version "1.17.12"
 	id("me.modmuss50.mod-publish-plugin") version "+"
 }
 base.archivesName.set(p("modName"))
@@ -17,15 +17,10 @@ val generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
 	into("build/generated/sources/modMetadata")
 }
 sourceSets.main.get().resources.srcDir(generateMetadata)
-configurations.configureEach { resolutionStrategy.force("net.fabricmc:fabric-loader:${p("fabricLoaderVersion")}") }
 loom {
 	enableTransitiveAccessWideners = true
-	runConfigs.configureEach { ideConfigGenerated(false) }
 	@Suppress("UnstableApiUsage") mixin.defaultRefmapName.set("${p("modId")}.refmap.json")
-	runs {
-		configureEach { vmArgs("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition") }
-		remove(getByName("server"))
-	}
+	runs.configureEach { jvmArguments.addAll("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition") }
 }
 repositories {
 	mavenLocal()

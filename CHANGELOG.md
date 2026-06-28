@@ -1,1 +1,3 @@
-- Add onlyOnWithGoggles option
+- Add diagram overlay
+- Add diagram shader
+- Fix config input

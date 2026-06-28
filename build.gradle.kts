@@ -6,9 +6,11 @@ base.archivesName.set(p("modName"))
 group = p("modGroupId")
 version = "${p("mcVersion")}-${p("modVersion")}-${p("loaderCap")}"
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(p("javaVersion")))
+java.withSourcesJar()
 tasks.jar { from("LICENSE") }
-var generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
-	val values = properties.mapValues { it.value.toString() }
+val generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
+	description = "Generate this project metadata from templates."
+	val values = project.extra.properties.mapValues { it.value.toString() }
 	inputs.properties(values)
 	expand(values)
 	from("src/main/templates")
@@ -53,6 +55,7 @@ dependencies {
 }
 publishMods {
 	file.set(tasks.remapJar.get().archiveFile)
+	additionalFiles.from(tasks.named<Jar>("sourcesJar").flatMap { it.archiveFile })
 	changelog.set(file("CHANGELOG.md").readText())
 	type.set(STABLE)
 	version.set(project.version.toString())
@@ -69,6 +72,7 @@ publishMods {
 		accessToken.set(providers.environmentVariable("CURSEFORGE_TOKEN"))
 		projectId.set("1233804")
 		minecraftVersions.add(p("mcVersion"))
+		client.set(true)
 		requires("create-fabric")
 		optional("modmenu")
 	}

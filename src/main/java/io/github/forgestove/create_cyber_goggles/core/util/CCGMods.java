@@ -10,7 +10,6 @@ import net.neoforged.fml.loading.LoadingModList;
 
 import java.util.Optional;
 import java.util.function.Supplier;
-@SuppressWarnings("unused")
 public enum CCGMods {
 	SIMULATED,
 	OBSCURE_TOOLTIPS;
@@ -19,7 +18,7 @@ public enum CCGMods {
 		id = Lang.asId(name());
 	}
 	/**
-	 * @return the mod id
+	 * @return 模组 id
 	 */
 	public String id() {
 		return id;
@@ -39,27 +38,28 @@ public enum CCGMods {
 		return RegisteredObjectsHelper.getKeyOrThrow(asItem).getNamespace().equals(id);
 	}
 	/**
-	 * @return a boolean of whether the mod is loaded or not based on mod id
+	 * @return 该模组是否已加载，基于模组 id 判断
 	 */
 	public boolean isLoaded() {
 		return LoadingModList.get().getModFileById(id) != null;
 	}
 	/**
-	 * Simple hook to run code if a mod is installed
+	 * 模组加载时执行代码并返回结果
 	 *
-	 * @param toRun will be run only if the mod is loaded
-	 * @return Optional.empty() if the mod is not loaded, otherwise an Optional of the return value of the given supplier
+	 * @param toRun 仅在模组已加载时执行
+	 * @return 模组未加载返回 {@code Optional.empty()}，否则返回 supplier 的值
 	 */
-	public <T> Optional<T> runIfInstalled(Supplier<Supplier<T>> toRun) {
-		if (isLoaded()) return Optional.of(toRun.get().get());
+	@SuppressWarnings("unused")
+	public <T> Optional<T> runIfInstalled(Supplier<T> toRun) {
+		if (isLoaded()) return Optional.of(toRun.get());
 		return Optional.empty();
 	}
 	/**
-	 * Simple hook to execute code if a mod is installed
+	 * 模组加载时执行代码（无返回值）
 	 *
-	 * @param toExecute will be executed only if the mod is loaded
+	 * @param toExecute 仅在模组已加载时执行
 	 */
-	public void executeIfInstalled(Supplier<Runnable> toExecute) {
-		if (isLoaded()) toExecute.get().run();
+	public void executeIfInstalled(Runnable toExecute) {
+		if (isLoaded()) toExecute.run();
 	}
 }

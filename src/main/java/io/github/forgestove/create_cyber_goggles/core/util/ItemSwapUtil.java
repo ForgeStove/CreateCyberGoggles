@@ -144,9 +144,10 @@ public class ItemSwapUtil {
 		var items = new LinkedHashMap<CCGKey, ItemStack>();
 		items.put(CCGKey.useSchematic, AllItems.SCHEMATIC_AND_QUILL.asStack());
 		items.put(CCGKey.showSuperGlue, AllItems.SUPER_GLUE.asStack());
-		if (!CCGMods.SIMULATED.isLoaded()) return items;
-		items.put(CCGKey.usePhysicsStaff, SimItems.PHYSICS_STAFF.asStack());
-		items.put(CCGKey.showHoneyGlue, SimItems.HONEY_GLUE.asStack());
+		CCGMods.SIMULATED.executeIfInstalled(() -> {
+			items.put(CCGKey.usePhysicsStaff, SimItems.PHYSICS_STAFF.asStack());
+			items.put(CCGKey.showHoneyGlue, SimItems.HONEY_GLUE.asStack());
+		});
 		return items;
 	}
 }

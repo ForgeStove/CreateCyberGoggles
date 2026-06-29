@@ -12,8 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 public final class CategoryCollapsibleConfigEntry extends ConfigEntry {
 	public static final int INDENT_PX = 10;
-	private static final String EXPANDED_PREFIX = "▼ ";
-	private static final String COLLAPSED_PREFIX = "▶ ";
+	private static final String EXPANDED_PREFIX = "- ";
+	private static final String COLLAPSED_PREFIX = "+ ";
 	private final Minecraft minecraft;
 	private final Component label;
 	private final Runnable onToggle;

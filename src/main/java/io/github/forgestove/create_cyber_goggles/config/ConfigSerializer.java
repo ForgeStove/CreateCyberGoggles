@@ -1,12 +1,12 @@
 package io.github.forgestove.create_cyber_goggles.config;
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
-import com.electronwill.nightconfig.core.io.WritingMode;
 import io.github.forgestove.create_cyber_goggles.config.annotation.*;
 
 import java.awt.Point;
+import java.io.BufferedWriter;
 import java.lang.reflect.Field;
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.util.*;
 import java.util.function.*;
 /**
@@ -29,15 +29,12 @@ public final class ConfigSerializer<C> {
 		return new Builder<>(configClass);
 	}
 	public void serialize(C config) throws SerializationException {
-		try (var fileConfig = CommentedFileConfig.builder(configPath.get()).writingMode(WritingMode.REPLACE).build()) {
-			var categories = getCategoryFields();
-			for (var categoryField : categories) {
+		var path = configPath.get();
+		try (var writer = Files.newBufferedWriter(path)) {
+			for (var categoryField : getCategoryFields()) {
 				categoryField.setAccessible(true);
-				var categoryName = categoryField.getName();
-				var categoryValue = categoryField.get(config);
-				writeCategory(fileConfig, categoryName, categoryValue, categoryName);
+				writeCategoryToml(writer, categoryField.get(config), categoryField.getName(), "");
 			}
-			fileConfig.save();
 		} catch (Exception e) {
 			throw new SerializationException(e);
 		}
@@ -97,31 +94,51 @@ public final class ConfigSerializer<C> {
 			throw new SerializationException(e);
 		}
 	}
-	private void writeCategory(CommentedConfig config, String categoryName, Object category, String pathPrefix) throws
-		IllegalAccessException {
-		var subConfig = config.createSubConfig();
-		var categoryComment = translate("category." + pathPrefix);
-		if (categoryComment != null) config.setComment(categoryName, " " + categoryComment);
-		for (var field : getOrderedFields(category.getClass())) {
+	private void writeCategoryToml(BufferedWriter writer, Object category, String pathPrefix, String indent) throws Exception {
+		var comment = translate("category." + pathPrefix);
+		if (comment != null) writer.write(indent + "# " + comment.trim() + "\n");
+		writer.write(indent + "[" + pathPrefix + "]\n");
+		var fields = getOrderedFields(category.getClass());
+		// First pass: simple values (non-Category, non-Point)
+		var tables = new ArrayList<Field>();
+		for (var field : fields) {
 			field.setAccessible(true);
-			var fieldName = field.getName();
+			if (field.isAnnotationPresent(Category.class) || field.getType() == Point.class) {
+				tables.add(field);
+				continue;
+			}
+			writeFieldComment(writer, indent, pathPrefix, field.getName());
 			var value = field.get(category);
-			if (field.isAnnotationPresent(Category.class)) writeCategory(subConfig, fieldName, value, pathPrefix + "." + fieldName);
+			if (field.isAnnotationPresent(ColorValue.class)) {
+				var hasAlpha = field.getAnnotation(ColorValue.class).hasAlpha();
+				var hex = hasAlpha ? String.format("0x%08X", (Integer) value) : String.format("0x%06X", (Integer) value);
+				writer.write(indent + "\t" + field.getName() + " = " + hex + "\n");
+			} else if (value instanceof Enum<?> e) writer.write(indent + "\t" + field.getName() + " = \"" + e.name() + "\"\n");
+			else if (value instanceof String s) writer.write(indent + "\t" + field.getName() + " = \"" + s + "\"\n");
+			else writer.write(indent + "\t" + field.getName() + " = " + value + "\n");
+		}
+		// Second pass: sub-tables (Category fields + Point fields)
+		for (var field : tables) {
+			field.setAccessible(true);
+			writeFieldComment(writer, indent, pathPrefix, field.getName());
+			var value = field.get(category);
+			if (field.isAnnotationPresent(Category.class))
+				writeCategoryToml(writer, value, pathPrefix + "." + field.getName(), indent + "\t");
 			else {
-				if (value instanceof Point p) {
-					var pointConfig = config.createSubConfig();
-					pointConfig.set("x", p.x);
-					pointConfig.set("y", p.y);
-					subConfig.set(fieldName, pointConfig);
-				} else if (field.isAnnotationPresent(ColorValue.class)) {
-					var hasAlpha = field.getAnnotation(ColorValue.class).hasAlpha();
-					subConfig.set(fieldName, new HexColorValue(hasAlpha, (Integer) value));
-				} else subConfig.set(fieldName, value instanceof Enum<?> e ? e.name() : value);
-				var comment = buildFieldComment(pathPrefix, fieldName);
-				if (!comment.isEmpty()) subConfig.setComment(fieldName, comment);
+				var p = (Point) value;
+				writer.write(indent + "\t[" + pathPrefix + "." + field.getName() + "]\n");
+				writer.write(indent + "\t\tx = " + p.x + "\n");
+				writer.write(indent + "\t\ty = " + p.y + "\n");
 			}
 		}
-		config.set(categoryName, subConfig);
+	}
+	private void writeFieldComment(BufferedWriter writer, String indent, String pathPrefix, String fieldName) throws Exception {
+		var comment = buildFieldComment(pathPrefix, fieldName);
+		if (comment.isEmpty()) return;
+		for (var line : comment.split("\n")) {
+			var trimmed = line.stripTrailing();
+			if (!trimmed.isEmpty()) writer.write(indent + "\t# " + trimmed + "\n");
+		}
 	}
 	private String buildFieldComment(String categorySnake, String fieldName) {
 		var optionKey = "option." + categorySnake + "." + fieldName;
@@ -201,25 +218,5 @@ public final class ConfigSerializer<C> {
 		public ConfigSerializer<C> build() {
 			return new ConfigSerializer<>(this);
 		}
-	}
-	public static class HexColorValue extends Number {
-		public final boolean hasAlpha;
-		public final int value;
-		public HexColorValue(boolean hasAlpha, int value) {
-			this.hasAlpha = hasAlpha;
-			this.value = value;
-		}
-		@Override
-		public String toString() {
-			return hasAlpha ? String.format("0x%08X", value) : String.format("0x%06X", value);
-		}
-		@Override
-		public int intValue() {return value;}
-		@Override
-		public long longValue() {return value;}
-		@Override
-		public float floatValue() {return value;}
-		@Override
-		public double doubleValue() {return value;}
 	}
 }

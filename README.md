@@ -428,6 +428,9 @@
 
 ## 致谢 / Credits
 
-> 本项目包含了源自 [Schematician](https://github.com/Alex-Guha/schematician) 的代码
-
-> This project includes code derived from [Schematician](https://github.com/Alex-Guha/schematician).
+> 本项目包含以下模组的代码：
+> 
+> This project includes code derived from the following mods:
+>
+> - [ShulkerBoxTooltip](https://github.com/MisterPeModder/ShulkerBoxTooltip)
+> - [Schematician](https://github.com/Alex-Guha/schematician)

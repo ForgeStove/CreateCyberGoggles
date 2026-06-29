@@ -1,3 +1,2 @@
-- Add diagram overlay
-- Add diagram shader
-- Fix config input
+- Refactor configuration serialization
+- Rearrange the configuration

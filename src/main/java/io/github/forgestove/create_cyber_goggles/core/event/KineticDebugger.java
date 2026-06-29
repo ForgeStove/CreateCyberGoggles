@@ -14,7 +14,7 @@ import java.awt.Color;
 import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
-public class KineticDebugger {
+public final class KineticDebugger {
 	public static BlockPos lastSource;
 	public static List<KineticBlockEntity> cachedKBEPath;
 	public static void tick(Post ignoredEvent) {

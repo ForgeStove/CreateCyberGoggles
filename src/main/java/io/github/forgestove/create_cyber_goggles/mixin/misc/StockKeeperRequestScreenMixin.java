@@ -6,8 +6,8 @@ import com.simibubi.create.content.logistics.stockTicker.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.api.Self;
 import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
-import io.github.forgestove.create_cyber_goggles.core.gui.StockRequestAmountOverlay;
-import io.github.forgestove.create_cyber_goggles.core.gui.StockRequestAmountOverlay.*;
+import io.github.forgestove.create_cyber_goggles.core.factory.StockRequestAmountOverlay;
+import io.github.forgestove.create_cyber_goggles.core.factory.StockRequestAmountOverlay.*;
 import net.createmod.catnip.data.Couple;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.player.Player;
@@ -24,12 +24,8 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 	@Unique private final StockRequestAmountOverlay ccg$popup = new StockRequestAmountOverlay();
 	@Shadow public List<BigItemStack> itemsToOrder;
 	@Shadow public List<List<BigItemStack>> displayedItems;
-	@Shadow @Final int cols;
-	@Shadow @Final int colWidth;
-	@Shadow int itemsX;
-	@Shadow int itemsY;
-	@Shadow int windowWidth;
-	@Shadow int windowHeight;
+	@Shadow @Final int cols, colWidth;
+	@Shadow int itemsX, itemsY, windowWidth, windowHeight;
 	@Shadow StockTickerBlockEntity blockEntity;
 	@Shadow @Final Couple<Integer> noneHovered;
 	@WrapWithCondition(

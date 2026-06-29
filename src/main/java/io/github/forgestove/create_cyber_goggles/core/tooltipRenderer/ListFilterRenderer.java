@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.core.gui;
+package io.github.forgestove.create_cyber_goggles.core.tooltipRenderer;
 import com.simibubi.create.*;
 import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.mixin.accessor.ItemStackHandlerAccessor;

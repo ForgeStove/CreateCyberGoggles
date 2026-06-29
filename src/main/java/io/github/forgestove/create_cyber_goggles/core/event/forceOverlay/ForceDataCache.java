@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.core.overlay;
+package io.github.forgestove.create_cyber_goggles.core.event.forceOverlay;
 import dev.ryanhcode.sable.api.physics.force.ForceGroup;
 import dev.ryanhcode.sable.api.physics.force.QueuedForceGroup.PointForce;
 import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramDataPacket;
@@ -6,11 +6,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 /**
- * Holds the latest force-diagram snapshot received from the server.
+ * 保存从服务器接收的最新力图快照。
  * <p>
- * The {@link DiagramDataPacket} does <em>not</em> carry the sublevel UUID, so
- * we store a single "latest" snapshot. Upstream code ({@link ForceOverlayClient})
- * pairs it with whichever target it has requested from.
+ * {@link DiagramDataPacket} 不携带子层级 UUID，因此我们只存储单个"最新"快照。
+ * 上游代码（{@link ForceOverlay}）将其与所请求的目标配对。
  */
 public final class ForceDataCache {
 	private static volatile Map<ForceGroup, List<PointForce>> latestForces;
@@ -18,13 +17,13 @@ public final class ForceDataCache {
 	private static volatile boolean dirty;
 	private ForceDataCache() {
 	}
-	/** Called by the mixin when a new packet arrives. */
+	/** 当新的数据包到达时由 mixin 调用。 */
 	public static void set(Map<ForceGroup, List<PointForce>> forces, double mass) {
 		latestForces = forces;
 		latestMass = mass;
 		dirty = true;
 	}
-	/** Atomically read and consume the "dirty" flag. */
+	/** 原子性地读取并消费"dirty"标记。 */
 	public static boolean consumeDirty() {
 		var d = dirty;
 		dirty = false;
@@ -37,7 +36,7 @@ public final class ForceDataCache {
 	public static double getLatestMass() {
 		return latestMass;
 	}
-	/** Reset all state (e.g. when the player stops targeting). */
+	/** 重置所有状态（例如当玩家停止瞄准时）。 */
 	public static void clear() {
 		latestForces = null;
 		latestMass = 0;

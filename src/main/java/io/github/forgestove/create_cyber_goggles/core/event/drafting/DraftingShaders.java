@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.core.overlay.drafting;
+package io.github.forgestove.create_cyber_goggles.core.event.drafting;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.neoforged.neoforge.client.event.RegisterShadersEvent;
@@ -8,8 +8,8 @@ import java.io.IOException;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.getCCGRes;
 /**
- * Holds the two shader instances used by the drafting-view effect.
- * Registered via {@link RegisterShadersEvent}.
+ * 持有绘图视图效果所使用的两个着色器实例。
+ * 通过 {@link RegisterShadersEvent} 注册。
  */
 public final class DraftingShaders {
 	private static @Nullable ShaderInstance draftingView;
@@ -22,8 +22,7 @@ public final class DraftingShaders {
 	public static ShaderInstance draftingUpscale() {
 		return draftingUpscale;
 	}
-	// ownership transferred to event registration
-	public static void onRegisterShaders(final RegisterShadersEvent event) {
+	public static void register(RegisterShadersEvent event) {
 		try {
 			event.registerShader(
 				new ShaderInstance(event.getResourceProvider(), getCCGRes("drafting_view"), DefaultVertexFormat.POSITION),
@@ -33,7 +32,7 @@ public final class DraftingShaders {
 				new ShaderInstance(event.getResourceProvider(), getCCGRes("drafting_upscale"), DefaultVertexFormat.POSITION),
 				loaded -> draftingUpscale = loaded
 			);
-		} catch (final IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException("Failed to register CreateCyberGoggles drafting-view shaders", e);
 		}
 	}

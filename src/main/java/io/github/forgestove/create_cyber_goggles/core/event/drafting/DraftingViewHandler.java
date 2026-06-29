@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.core.overlay.drafting;
+package io.github.forgestove.create_cyber_goggles.core.event.drafting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
@@ -11,20 +11,19 @@ import org.joml.Vector3f;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.getCCGRes;
 /**
- * Applies the drafting-view post-processing effect to the main render target.
+ * 对主渲染目标应用绘图视图后期处理效果。
  * <p>
- * The effect performs: edge detection via depth-buffer, palette-based color
- * quantization with dithering, optional pixelation, and an ink-on-paper look.
+ * 该效果执行：通过深度缓冲进行边缘检测、基于调色板的颜色量化与抖动、可选像素化，以及类似墨水在纸上的外观。
  */
 public final class DraftingViewHandler {
-	private static final ResourceLocation PALETTE_TEXTURE = getCCGRes("textures/effects/diagram_palette.png");
-	private static final ResourceLocation DITHER_TEXTURE = getCCGRes("textures/effects/dither.png");
+	private static final ResourceLocation PALETTE_TEXTURE = getCCGRes("textures/effects/diagram_palette.png"), DITHER_TEXTURE = getCCGRes(
+		"textures/effects/dither.png");
 	private static DraftingFramebuffer framebuffer;
 	/**
-	 * Applies the drafting-view effect after all block/entity geometry is done but
-	 * {@linkplain Stage#AFTER_PARTICLES before} Create renders schematic arrows
-	 * and other overlay elements so they stay crisp on top of the styled scene.
+	 * 在所有方块/实体几何体渲染完成后、Create 渲染示意图箭头及其他覆盖元素
+	 * {@linkplain Stage#AFTER_PARTICLES 之前}应用绘图视图效果，使它们在风格化场景上方保持清晰。
 	 */
+	@SuppressWarnings("resource")
 	public static void applyIfEnabled(RenderLevelStageEvent event) {
 		if (event.getStage() != Stage.AFTER_TRIPWIRE_BLOCKS) return;
 		if (!CCG.config.overlay.draftingView.draftingViewEnabled) return;
@@ -47,7 +46,7 @@ public final class DraftingViewHandler {
 		RenderSystem.disableBlend();
 		RenderSystem.disableDepthTest();
 		RenderSystem.depthMask(false);
-		// Pass 1: render main scene through drafting-view shader into off-screen buffer
+		// 第一遍：将主场景通过绘图视图着色器渲染到离屏缓冲
 		framebuffer.target.bindWrite(true);
 		view.setSampler("DiffuseSampler0", main.getColorTextureId());
 		view.setSampler("DiffuseDepthSampler", main.getDepthTextureId());
@@ -62,7 +61,7 @@ public final class DraftingViewHandler {
 		RenderSystem.setShader(() -> view);
 		drawFullscreenTriangle();
 		view.clear();
-		// Pass 2: copy off-screen buffer back to main render target (nearest-neighbor upscale)
+		// 第二遍：将离屏缓冲复制回主渲染目标（最近邻上采样）
 		main.bindWrite(true);
 		upscale.setSampler("DiffuseSampler0", framebuffer.target.getColorTextureId());
 		RenderSystem.setShader(() -> upscale);

@@ -19,7 +19,7 @@ import net.neoforged.neoforge.client.event.InputEvent.*;
 import java.util.Map;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
-public class KeyInput {
+public final class KeyInput {
 	public static StockTickerBlockEntity lastSTBE;
 	public static int scrollDeltaY;
 	public static void key(Key ignoredEvent) {

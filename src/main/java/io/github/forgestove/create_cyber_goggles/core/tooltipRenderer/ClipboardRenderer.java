@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.core.gui;
+package io.github.forgestove.create_cyber_goggles.core.tooltipRenderer;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -6,7 +6,7 @@ import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.content.equipment.clipboard.*;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.api.TooltipOverlayRenderer;
+import io.github.forgestove.create_cyber_goggles.core.api.TooltipRenderer;
 import net.minecraft.client.gui.Font.DisplayMode;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.*;
@@ -15,7 +15,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
-public final class ClipboardRenderer implements TooltipOverlayRenderer {
+public final class ClipboardRenderer implements TooltipRenderer {
 	private static final float SCALE = 0.5F;
 	public static void renderClipboardPage(PoseStack pose, MultiBufferSource buffer, int light, ItemStack stack) {
 		pose.pushPose();

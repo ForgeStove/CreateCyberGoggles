@@ -1,20 +1,19 @@
-package io.github.forgestove.create_cyber_goggles.core.overlay;
+package io.github.forgestove.create_cyber_goggles.core.event.forceOverlay;
 import dev.ryanhcode.sable.api.physics.force.QueuedForceGroup.PointForce;
 import org.joml.*;
 
 import java.lang.Math;
 import java.util.*;
 /**
- * Clusters {@link PointForce}s by angular similarity of their force vectors.
+ * 根据力向量的角度相似性对 {@link PointForce} 进行聚类。
  * <p>
- * Forces pointing in similar directions are grouped together, and their weighted-average
- * position is computed for arrow rendering.
+ * 指向相似方向的力被归为一组，并计算它们的加权平均位置用于箭头渲染。
  */
-public final class ForceClusterer {
+public class ForceClusterer {
 	/**
-	 * @param forces                individual point forces to cluster
-	 * @param angleThresholdRadians maximum angular variance within a cluster
-	 * @return list of clusters, each with a merged position and force vector
+	 * @param forces                需要聚类的单个点力
+	 * @param angleThresholdRadians 聚类内最大角度方差（弧度）
+	 * @return 聚类列表，每个聚类包含合并后的位置和力向量
 	 */
 	public static List<Cluster> cluster(List<PointForce> forces, double angleThresholdRadians) {
 		if (forces.isEmpty()) return List.of();
@@ -48,7 +47,7 @@ public final class ForceClusterer {
 			}
 			return false;
 		}
-		// First cluster: sum of absolute components as initial direction
+		// 第一个聚类：以绝对分量之和作为初始方向
 		var c = new Working();
 		for (var f : forces) c.force.add(Math.abs(f.force.x()), Math.abs(f.force.y()), Math.abs(f.force.z()));
 		if (c.force.lengthSquared() > 0) c.force.normalize();
@@ -94,7 +93,7 @@ public final class ForceClusterer {
 			var c = clusters.get(f.clusterIndex);
 			var lenSq = c.force.lengthSquared();
 			if (lenSq <= 0) continue;
-			// Weight position contribution by force projection onto cluster direction
+			// 根据力在聚类方向上的投影加权位置贡献
 			c.pos.fma(c.force.dot(f.force) / lenSq, f.pos);
 		}
 	}
@@ -105,7 +104,7 @@ public final class ForceClusterer {
 		var ab = a.dot(b);
 		return 2.0 * (1.0 - ab / Math.sqrt(a2 * b2));
 	}
-	/** A cluster of forces merged together. */
+	/** 合并在一起的力聚类。 */
 	public record Cluster(Vector3d pos, Vector3d force, int groupSize) {}
 	private static final class Working {
 		final Vector3d pos = new Vector3d();

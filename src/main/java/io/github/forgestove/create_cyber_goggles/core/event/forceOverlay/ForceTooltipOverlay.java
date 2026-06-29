@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.core.overlay;
+package io.github.forgestove.create_cyber_goggles.core.event.forceOverlay;
 import dev.ryanhcode.sable.api.physics.force.ForceGroups;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
@@ -14,8 +14,7 @@ import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.getCCGRes;
 /**
- * HUD tooltip showing the total mass and net force magnitudes for each
- * force group of the currently targeted sublevel.
+ * HUD 提示框，显示当前目标子层级的总质量和每个力组的净力大小。
  */
 public final class ForceTooltipOverlay {
 	public static void register(@NotNull RegisterGuiLayersEvent event) {
@@ -24,20 +23,20 @@ public final class ForceTooltipOverlay {
 	private static void render(GuiGraphics graphics, DeltaTracker deltaTracker) {
 		if (!CCG.config.aeronautics.forceOverlay.forceTooltipEnabled) return;
 		if (Minecraft.getInstance().options.hideGui) return;
-		if (!ForceOverlayClient.hasData()) return;
+		if (!ForceOverlay.hasData()) return;
 		var lines = buildLines();
 		if (lines.isEmpty()) return;
 		drawHud(graphics, Minecraft.getInstance().font, lines);
 	}
 	private static List<Component> buildLines() {
 		List<Component> lines = new ArrayList<>();
-		var mass = ForceOverlayClient.currentMass();
+		var mass = ForceOverlay.currentMass();
 		lines.add(labeledLine(
 			CCGLang.translate("hud.force_overlay.mass").component(),
 			0xCCCCCC,
 			CCGLang.translate("hud.force_overlay.mass_value", formatScalar(mass)).component()
 		));
-		var clusters = ForceOverlayClient.smoothedClusters();
+		var clusters = ForceOverlay.smoothedClusters();
 		if (clusters == null) return lines;
 		for (var entry : clusters.entrySet()) {
 			var group = ForceGroups.REGISTRY.get(entry.getKey());
@@ -65,14 +64,14 @@ public final class ForceTooltipOverlay {
 		var innerX1 = textX - 3;
 		var innerX2 = textX + maxLine + 3;
 		var innerY2 = 8 + textHeight + 3 + offsetY;
-		// Background
+		// 背景
 		var bgColor = 0xE0202020;
 		graphics.fill(innerX1, 4 + offsetY, innerX2, 5 + offsetY, bgColor);
 		graphics.fill(innerX1, innerY2, innerX2, innerY2 + 1, bgColor);
 		graphics.fill(innerX1, 5 + offsetY, innerX2, innerY2, bgColor);
 		graphics.fill(innerX1 - 1, 5 + offsetY, innerX1, innerY2, bgColor);
 		graphics.fill(innerX2, 5 + offsetY, innerX2 + 1, innerY2, bgColor);
-		// Border
+		// 边框
 		var borderColor = 0xE05A5A5A;
 		graphics.fill(innerX1, 5 + offsetY, innerX2, 6 + offsetY, borderColor);
 		graphics.fill(innerX1, innerY2 - 1, innerX2, innerY2, borderColor);

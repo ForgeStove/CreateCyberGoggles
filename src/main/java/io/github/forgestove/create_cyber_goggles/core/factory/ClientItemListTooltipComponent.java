@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.core.factory;
-import io.github.forgestove.create_cyber_goggles.core.gui.AbstractItemGridRenderer;
+import io.github.forgestove.create_cyber_goggles.core.tooltipRenderer.AbstractItemGridRenderer;
 import io.github.forgestove.create_cyber_goggles.core.util.SlotUtil;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;

@@ -75,6 +75,16 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 	public boolean hasEntryError() {
 		for (var configEntry : children()) if (configEntry.hasError()) return true;
 		return false;
+	}
+	public boolean handleKeyCapture(int keyCode) {
+		for (var entry : children())
+			if (entry instanceof KeybindValueConfigEntry<?> keybindEntry && keybindEntry.handleCaptureKey(keyCode)) return true;
+		return false;
+	}
+	public boolean handleMouseCapture(int button) {
+		for (var entry : children())
+			if (entry instanceof KeybindValueConfigEntry<?> keybindEntry && keybindEntry.handleCaptureMouse(button)) return true;
+		return false;
 	}	@Override
 	public void renderWidget(@NotNull GuiGraphics gui, int mouseX, int mouseY, float delta) {
 		smoothScroll.tick(delta);
@@ -89,20 +99,6 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		}
 		if (entry.getTooltip() != null) tab.getScreen().setTooltipForNextRenderPass(entry.getTooltip());
 	}
-	public boolean handleKeyCapture(int keyCode) {
-		for (var entry : children())
-			if (entry instanceof KeybindValueConfigEntry<?> keybindEntry && keybindEntry.handleCaptureKey(keyCode)) return true;
-		return false;
-	}
-	public boolean handleMouseCapture(int button) {
-		for (var entry : children())
-			if (entry instanceof KeybindValueConfigEntry<?> keybindEntry && keybindEntry.handleCaptureMouse(button)) return true;
-		return false;
-	}	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
-		smoothScroll.onMouseScroll(vertical, itemHeight);
-		return true;
-	}
 	public boolean isCapturingKeybind() {
 		for (var entry : children())
 			if (entry instanceof KeybindValueConfigEntry<?> keybindEntry && keybindEntry.isCapturing()) return true;
@@ -113,19 +109,24 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		newEntries.forEach(this::addEntry);
 		setScrollAmount(getScrollAmount());
 		smoothScroll.sync();
-	}	@Override
+	}
+
+	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
+		smoothScroll.onMouseScroll(vertical, itemHeight);
+		return true;
+	}
+	@Override
 	public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
 		var result = super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
 		// 同步拖拽后的滚动位置，防止 smoothScroll 在下帧覆盖掉
 		smoothScroll.sync();
 		return result;
 	}
-
 	@Override
 	public int getRowWidth() {
 		return width * 4 / 5;
 	}
-
 	@Override
 	protected void renderListItems(@NotNull GuiGraphics gui, int mouseX, int mouseY, float delta) {
 		var left = getRowLeft();
@@ -137,5 +138,4 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 			if (bottom >= getY() && top <= getBottom()) renderItem(gui, mouseX, mouseY, delta, i, left, top, width, itemHeight);
 		}
 	}
-
 }

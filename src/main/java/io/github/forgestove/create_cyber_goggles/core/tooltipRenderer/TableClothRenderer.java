@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.core.gui;
+package io.github.forgestove.create_cyber_goggles.core.tooltipRenderer;
 import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.content.logistics.tableCloth.TableClothBlockItem;
 import io.github.forgestove.create_cyber_goggles.CCG;

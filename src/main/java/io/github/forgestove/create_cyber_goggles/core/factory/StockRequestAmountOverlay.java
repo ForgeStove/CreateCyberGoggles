@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.core.gui;
+package io.github.forgestove.create_cyber_goggles.core.factory;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.components.EditBox;
@@ -7,11 +7,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 public final class StockRequestAmountOverlay {
-	private static final int POPUP_WIDTH = 120;
-	private static final int POPUP_HEIGHT = 82;
-	private static final int POPUP_PADDING = 8;
-	private static final int BUTTON_BOTTOM = 6;
-	private static final int BUTTON_HEIGHT = 14;
+	private static final int POPUP_WIDTH = 120, POPUP_HEIGHT = 82, POPUP_PADDING = 8, BUTTON_BOTTOM = 6, BUTTON_HEIGHT = 14;
 	private static final String PREFIX = CCG.ID + ".screen.stockKeeperRequest.popup.";
 	private boolean open;
 	private EditBox amountInput;

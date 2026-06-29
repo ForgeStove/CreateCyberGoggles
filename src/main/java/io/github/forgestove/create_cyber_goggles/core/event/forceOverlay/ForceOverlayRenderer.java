@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.core.overlay;
+package io.github.forgestove.create_cyber_goggles.core.event.forceOverlay;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.blaze3d.vertex.PoseStack.Pose;
@@ -17,24 +17,14 @@ import org.joml.*;
 import java.lang.Math;
 import java.util.*;
 /**
- * Renders force arrows and a center-of-mass marker in-world for the currently
- * targeted sublevel.
+ * 为当前目标子层级在世界中渲染力箭头和质心标记。
  */
 public final class ForceOverlayRenderer {
 	private static final ResourceLocation GRAVITY_KEY = ResourceLocation.fromNamespaceAndPath("sable", "gravity");
-	private static final double COM_HALF = 0.08;
-	private static final double TAIL_SPHERE_PER_BBOX = 0.005;
-	private static final double MAX_TAIL_SPHERE_RADIUS = 0.08;
-	private static final double CONE_LEN_PER_LENGTH = 0.1;
-	private static final double CONE_RADIUS_PER_LEN = 0.4;
-	private static final double SHAFT_RADIUS_PER_CONE = 0.35;
-	private static final double CONE_RADIUS_PER_TAIL = 1.5;
-	private static final double SHAFT_RADIUS_PER_TAIL = 1.0;
-	private ForceOverlayRenderer() {
-	}
+	private static final double COM_HALF = 0.08, TAIL_SPHERE_PER_BBOX = 0.005, MAX_TAIL_SPHERE_RADIUS = 0.08, CONE_LEN_PER_LENGTH = 0.1,
+		CONE_RADIUS_PER_LEN = 0.4, SHAFT_RADIUS_PER_CONE = 0.35, CONE_RADIUS_PER_TAIL = 1.5, SHAFT_RADIUS_PER_TAIL = 1.0;
 	/**
-	 * Registered to {@link RenderLevelStageEvent} at {@link Stage#AFTER_LEVEL}
-	 * .
+	 * 注册到 {@link RenderLevelStageEvent} 的 {@link Stage#AFTER_LEVEL} 阶段。
 	 */
 	public static void onRenderStage(RenderLevelStageEvent event) {
 		if (event.getStage() != Stage.AFTER_LEVEL) return;
@@ -46,7 +36,7 @@ public final class ForceOverlayRenderer {
 		var camera = event.getCamera();
 		Matrix4fc modelViewMatrix = event.getModelViewMatrix();
 		var bufferSource = mc.renderBuffers().bufferSource();
-		var targetId = ForceOverlayClient.currentTarget();
+		var targetId = ForceOverlay.currentTarget();
 		if (targetId == null) return;
 		SubLevelContainer container = SubLevelContainer.getContainer(level);
 		if (container == null) return;
@@ -62,26 +52,37 @@ public final class ForceOverlayRenderer {
 		RenderSystem.applyModelViewMatrix();
 		try {
 			var poseStack = new PoseStack();
-			// Translate to sublevel world position (camera-relative)
+			// 平移至子层级世界位置（相对于相机）
 			poseStack.translate(renderPos.x() - camPos.x, renderPos.y() - camPos.y, renderPos.z() - camPos.z);
-			// Apply sublevel rotation
+			// 应用子层级旋转
 			poseStack.mulPose(new Quaternionf(renderPose.orientation()));
 			var scale = overlayPixelScale(mc, renderPos, camPos);
-			var hasData = ForceOverlayClient.hasData();
-			// Render center-of-mass marker (always, even without data)
+			var hasData = ForceOverlay.hasData();
+			// 渲染质心标记（始终渲染，即使没有数据）
 			if (CCG.config.aeronautics.forceOverlay.renderCenterOfMass) {
-				var fillType = OverlayRenderTypes.overlayFill();
-				renderCenterOfMass(poseStack, bufferSource.getBuffer(fillType), hasData, scale);
+				var fillType = OverlayRenderTypes.OVERLAY_FILL;
+				var consumer = bufferSource.getBuffer(fillType);
+				float r, g, b;
+				if (hasData) {
+					r = 0.75f;
+					g = 0.75f;
+					b = 0.75f;
+				} else {
+					r = 1.0f;
+					g = 1.0f;
+					b = 1.0f;
+				}
+				quadCube(poseStack, consumer, COM_HALF * scale, r, g, b);
 				bufferSource.endBatch(fillType);
 			}
-			// Render force arrows
+			// 渲染力箭头
 			if (hasData) renderForces(poseStack, bufferSource, rotationPoint, clientSubLevel, scale);
 		} finally {
 			mvStack.popMatrix();
 			RenderSystem.applyModelViewMatrix();
 		}
 	}
-	// ---- Utilities ----
+	// ---- 工具方法 ----
 	private static double overlayPixelScale(Minecraft mc, Vector3dc renderPos, Vec3 camPos) {
 		var minPx = CCG.config.aeronautics.forceOverlay.minOverlayPixelSize;
 		if (minPx <= 0) return 1.0;
@@ -98,20 +99,20 @@ public final class ForceOverlayRenderer {
 		var nominalEdge = 0.16;
 		return Math.max(1.0, minWorldEdge / nominalEdge);
 	}
-	private static void renderCenterOfMass(PoseStack poseStack, VertexConsumer consumer, boolean haveSnapshot, double scale) {
-		float r, g, b;
-		if (haveSnapshot) {
-			r = 0.75f;
-			g = 0.75f;
-			b = 0.75f;
-		} else {
-			r = 1.0f;
-			g = 1.0f;
-			b = 1.0f;
-		}
-		quadCube(poseStack, consumer, COM_HALF * scale, r, g, b);
+	// ---- 图元渲染器 ----
+	private static void quadCube(PoseStack poseStack, VertexConsumer consumer, double half, float r, float g, float b) {
+		var pose = poseStack.last();
+		var n = (float) -half;
+		var p = (float) half;
+		// 立方体六个面的四边形
+		quad(pose, consumer, n, n, n, n, p, n, p, p, n, p, n, n, r, g, b);
+		quad(pose, consumer, p, n, p, p, p, p, p, p, n, p, n, n, r, g, b);
+		quad(pose, consumer, n, n, p, p, n, p, p, n, n, n, n, n, r, g, b);
+		quad(pose, consumer, n, p, n, p, p, n, p, p, p, n, p, p, r, g, b);
+		quad(pose, consumer, p, n, n, p, p, n, n, p, n, n, n, n, r, g, b);
+		quad(pose, consumer, n, n, p, n, p, p, p, p, p, p, n, p, r, g, b);
 	}
-	// ---- Force arrow rendering ----
+	// ---- 力箭头渲染 ----
 	private static void renderForces(
 		PoseStack poseStack,
 		BufferSource bufferSource,
@@ -123,7 +124,7 @@ public final class ForceOverlayRenderer {
 		var gravityFraction = config.gravityArrowFraction;
 		var saturation = config.arrowSaturation;
 		var minLen = config.minArrowLength;
-		var clusters = ForceOverlayClient.smoothedClusters();
+		var clusters = ForceOverlay.smoothedClusters();
 		if (clusters == null || clusters.isEmpty()) return;
 		var gravityClusters = clusters.get(GRAVITY_KEY);
 		if (gravityClusters == null || gravityClusters.isEmpty()) return;
@@ -138,18 +139,17 @@ public final class ForceOverlayRenderer {
 		var maxConeRadius = tailSphereRadius * CONE_RADIUS_PER_TAIL;
 		var maxShaftRadius = tailSphereRadius * SHAFT_RADIUS_PER_TAIL;
 		var maxShapeLength = maxConeRadius / 0.04;
-		// Build arrow draws
+		// 构建箭头绘制
 		List<ArrowDraw> arrows = new ArrayList<>();
-		for (var entry : clusters.entrySet()) {
-			var key = entry.getKey();
-			if (!shouldShowForceGroup(key)) continue;
+		clusters.forEach((key, value) -> {
+			if (!shouldShowForceGroup(key)) return;
 			var group = ForceGroups.REGISTRY.get(key);
-			if (group == null) continue;
+			if (group == null) return;
 			var color = group.color();
 			var r = (float) (color >> 16 & 0xFF) / 255.0f;
 			var g = (float) (color >> 8 & 0xFF) / 255.0f;
 			var b = (float) (color & 0xFF) / 255.0f;
-			for (var cluster : entry.getValue()) {
+			for (var cluster : value) {
 				var arrow = buildArrow(
 					cluster.pos(),
 					cluster.force(),
@@ -164,10 +164,10 @@ public final class ForceOverlayRenderer {
 				);
 				if (arrow != null) arrows.add(arrow);
 			}
-		}
+		});
 		if (arrows.isEmpty()) return;
-		// Render all arrows
-		var triType = OverlayRenderTypes.overlayTriangles();
+		// 渲染所有箭头
+		var triType = OverlayRenderTypes.OVERLAY_TRIANGLES;
 		var triConsumer = bufferSource.getBuffer(triType);
 		var pose = poseStack.last();
 		for (var a : arrows) {
@@ -184,23 +184,34 @@ public final class ForceOverlayRenderer {
 		}
 		bufferSource.endBatch(triType);
 	}
-	// ---- Primitive renderers ----
-	private static void quadCube(PoseStack poseStack, VertexConsumer consumer, double half, float r, float g, float b) {
-		var pose = poseStack.last();
-		var n = (float) -half;
-		var p = (float) half;
-		// 6 quads for the cube faces
-		quad(pose, consumer, n, n, n, n, p, n, p, p, n, p, n, n, r, g, b);
-		quad(pose, consumer, p, n, p, p, p, p, p, p, n, p, n, n, r, g, b);
-		quad(pose, consumer, n, n, p, p, n, p, p, n, n, n, n, n, r, g, b);
-		quad(pose, consumer, n, p, n, p, p, n, p, p, p, n, p, p, r, g, b);
-		quad(pose, consumer, p, n, n, p, p, n, n, p, n, n, n, n, r, g, b);
-		quad(pose, consumer, n, n, p, n, p, p, p, p, p, p, n, p, r, g, b);
+	private static void quad(
+		Pose pose,
+		VertexConsumer consumer,
+		float x1,
+		float y1,
+		float z1,
+		float x2,
+		float y2,
+		float z2,
+		float x3,
+		float y3,
+		float z3,
+		float x4,
+		float y4,
+		float z4,
+		float r,
+		float g,
+		float b
+	) {
+		consumer.addVertex(pose, x1, y1, z1).setColor(r, g, b, 1F);
+		consumer.addVertex(pose, x2, y2, z2).setColor(r, g, b, 1F);
+		consumer.addVertex(pose, x3, y3, z3).setColor(r, g, b, 1F);
+		consumer.addVertex(pose, x4, y4, z4).setColor(r, g, b, 1F);
 	}
 	private static boolean shouldShowForceGroup(ResourceLocation key) {
 		var namespace = key.getNamespace();
 		var path = key.getPath();
-		// Only filter sable force groups by config; unknown groups always show
+		// 仅根据配置过滤 sable 力组；未知组始终显示
 		if (!"sable".equals(namespace)) return true;
 		return switch (path) {
 			case "gravity" -> CCG.config.aeronautics.forceOverlay.showGravity;
@@ -229,18 +240,18 @@ public final class ForceOverlayRenderer {
 		var magnitude = forceVec.length();
 		if (magnitude < 1e-6) return null;
 		var ratio = magnitude / gravityMagnitude;
-		// Saturating mapping so huge forces don't produce infinitely long arrows
+		// 饱和映射，使巨大力量不会产生无限长的箭头
 		var visualRatio = ratio <= 1.0 ? ratio : saturation * ratio / (saturation + ratio - 1.0);
 		var length = Math.max(minLen, visualRatio * gravityArrowLen);
 		var dir = new Vector3d(forceVec).div(magnitude);
-		// Force point in local sublevel coordinates (relative to rotation point)
+		// 力点在局部子层级坐标中（相对于旋转点）
 		var bx = forcePoint.x() - rotationPoint.x();
 		var by = forcePoint.y() - rotationPoint.y();
 		var bz = forcePoint.z() - rotationPoint.z();
 		var tx = bx + dir.x * length;
 		var ty = by + dir.y * length;
 		var tz = bz + dir.z * length;
-		// Build perpendicular basis for cylinder/cone
+		// 构建圆柱体/圆锥体的垂直基向量
 		var ref = Math.abs(dir.y) < 0.9 ? new Vector3d(0, 1, 0) : new Vector3d(1, 0, 0);
 		var perp1 = new Vector3d(dir).cross(ref).normalize();
 		var perp2 = new Vector3d(dir).cross(perp1).normalize();
@@ -360,30 +371,6 @@ public final class ForceOverlayRenderer {
 				triangle(pose, consumer, cx + x00, cy + y0, cz + z00, cx + x11, cy + y1, cz + z11, cx + x01, cy + y0, cz + z01, r, g, b);
 			}
 		}
-	}
-	private static void quad(
-		Pose pose,
-		VertexConsumer consumer,
-		float x1,
-		float y1,
-		float z1,
-		float x2,
-		float y2,
-		float z2,
-		float x3,
-		float y3,
-		float z3,
-		float x4,
-		float y4,
-		float z4,
-		float r,
-		float g,
-		float b
-	) {
-		consumer.addVertex(pose, x1, y1, z1).setColor(r, g, b, 1F);
-		consumer.addVertex(pose, x2, y2, z2).setColor(r, g, b, 1F);
-		consumer.addVertex(pose, x3, y3, z3).setColor(r, g, b, 1F);
-		consumer.addVertex(pose, x4, y4, z4).setColor(r, g, b, 1F);
 	}
 	private static void triangle(
 		Pose pose,

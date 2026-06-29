@@ -1,6 +1,6 @@
-package io.github.forgestove.create_cyber_goggles.core.gui;
+package io.github.forgestove.create_cyber_goggles.core.tooltipRenderer;
 import com.mojang.blaze3d.systems.RenderSystem;
-import io.github.forgestove.create_cyber_goggles.core.api.TooltipOverlayRenderer;
+import io.github.forgestove.create_cyber_goggles.core.api.TooltipRenderer;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -14,12 +14,8 @@ import java.math.*;
 import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
-public abstract class AbstractItemGridRenderer implements TooltipOverlayRenderer {
-	public static final int PAD = 4;
-	private static final int BG = 0xFFC6C6C6;
-	private static final int LIGHT = 0xFFFFFFFF;
-	private static final int DARK = 0xFF555555;
-	private static final int DARKER = 0xFF373737;
+public abstract class AbstractItemGridRenderer implements TooltipRenderer {
+	public static final int PAD = 4, BG = 0xFFC6C6C6, LIGHT = 0xFFFFFFFF, DARK = 0xFF555555, DARKER = 0xFF373737;
 	private static final ResourceLocation CFL_COMPRESSED_TANK_ID = ResourceLocation.fromNamespaceAndPath(
 		"fluidlogistics",
 		"compressed_storage_tank"

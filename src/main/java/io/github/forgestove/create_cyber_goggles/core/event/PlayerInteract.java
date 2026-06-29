@@ -21,7 +21,7 @@ import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 import static net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.LeftClickBlock.Action.*;
-public class PlayerInteract {
+public final class PlayerInteract {
 	private static long lastDismantleTime, dismantleDelay = 10;
 	private static long lastTick;
 	private static boolean isShiftKeyDown;

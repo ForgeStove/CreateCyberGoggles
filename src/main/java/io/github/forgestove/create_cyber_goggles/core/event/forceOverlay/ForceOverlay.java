@@ -1,10 +1,10 @@
-package io.github.forgestove.create_cyber_goggles.core.overlay;
+package io.github.forgestove.create_cyber_goggles.core.event.forceOverlay;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.physics.force.*;
 import dev.ryanhcode.sable.api.physics.force.QueuedForceGroup.PointForce;
 import dev.simulated_team.simulated.network.packets.contraption_diagram.RequestDiagramDataPacket;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.overlay.ForceClusterer.Cluster;
+import io.github.forgestove.create_cyber_goggles.core.event.forceOverlay.ForceClusterer.Cluster;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -18,13 +18,12 @@ import org.joml.Vector3d;
 
 import java.util.*;
 /**
- * Client-side controller for the force overlay.
+ * 力覆盖层的客户端控制器。
  * <p>
- * On each tick it ray-casts to find the targeted sublevel, periodically
- * requests force data from the server via {@link RequestDiagramDataPacket},
- * and caches the received clusters for rendering.
+ * 每个游戏刻执行射线投射以找到目标子层级，定期通过 {@link RequestDiagramDataPacket}
+ * 从服务器请求力数据，并缓存接收到的聚类供渲染使用。
  */
-public final class ForceOverlayClient {
+public final class ForceOverlay {
 	private static final long HEARTBEAT_INTERVAL_TICKS = 10;
 	private static final long SNAPSHOT_TTL_TICKS = 30;
 	private static @Nullable UUID targetSubLevelId;
@@ -33,9 +32,7 @@ public final class ForceOverlayClient {
 	private static long lastHeartbeatTick = -10;
 	private static long localTick;
 	private static boolean hadData;
-	private ForceOverlayClient() {
-	}
-	/** Called every client tick via {@link Post}. */
+	/** 每客户端游戏刻通过 {@link Post} 调用。 */
 	public static void tick(Post ignoredEvent) {
 		localTick++;
 		var mc = Minecraft.getInstance();
@@ -50,7 +47,7 @@ public final class ForceOverlayClient {
 			clear();
 			return;
 		}
-		// Target changed → reset state
+		// 目标改变 → 重置状态
 		if (!newTarget.equals(targetSubLevelId)) {
 			targetSubLevelId = newTarget;
 			smoothedClusters = null;
@@ -58,12 +55,12 @@ public final class ForceOverlayClient {
 			hadData = false;
 			lastHeartbeatTick = localTick - HEARTBEAT_INTERVAL_TICKS; // force immediate request
 		}
-		// Heartbeat: request fresh data every 10 ticks
+		// 心跳：每 10 游戏刻请求一次新鲜数据
 		if (localTick - lastHeartbeatTick >= HEARTBEAT_INTERVAL_TICKS) {
 			PacketDistributor.sendToServer(new RequestDiagramDataPacket(newTarget));
 			lastHeartbeatTick = localTick;
 		}
-		// If new data arrived since last tick, re-cluster
+		// 如果自上一刻以来新数据到达，则重新聚类
 		if (ForceDataCache.consumeDirty()) {
 			var rawForces = ForceDataCache.getLatestForces();
 			if (rawForces != null) {
@@ -72,7 +69,7 @@ public final class ForceOverlayClient {
 				hadData = true;
 			}
 		}
-		// Expire old data if we haven't received a heartbeat response in time
+		// 如果未及时收到心跳响应，则使旧数据过期
 		if (hadData && localTick - lastHeartbeatTick > SNAPSHOT_TTL_TICKS) {
 			smoothedClusters = null;
 			hadData = false;
@@ -107,10 +104,10 @@ public final class ForceOverlayClient {
 			if (key == null) continue;
 			var forces = e.getValue();
 			if (forces.isEmpty()) continue;
-			// Always cluster — even single forces benefit from blended positions
+			// 始终进行聚类——即使是单个力也能从位置混合中受益
 			var rawClusters = ForceClusterer.cluster(forces, angleThreshold);
 			if (rawClusters.isEmpty()) continue;
-			// Blend with previous clusters (EMA)
+			// 与之前的聚类进行混合（指数移动平均）
 			List<Cluster> prev = smoothedClusters != null ? smoothedClusters.getOrDefault(key, List.of()) : List.of();
 			if (prev.isEmpty()) next.put(key, rawClusters);
 			else next.put(key, blendClusters(rawClusters, prev, alpha));
@@ -122,7 +119,7 @@ public final class ForceOverlayClient {
 		List<Cluster> out = new ArrayList<>(raw.size());
 		for (var n : raw) {
 			var bestIdx = -1;
-			var bestScore = 0.5; // minimum cosine similarity to match
+			var bestScore = 0.5; // 匹配的最小余弦相似度
 			for (var i = 0; i < prev.size(); i++) {
 				if (used[i]) continue;
 				var p = prev.get(i);
@@ -145,7 +142,7 @@ public final class ForceOverlayClient {
 		}
 		return out;
 	}
-	// ---- Public accessors for renderers ----
+	// ---- 渲染器的公共访问器 ----
 	@Nullable
 	public static UUID currentTarget() {
 		return targetSubLevelId;

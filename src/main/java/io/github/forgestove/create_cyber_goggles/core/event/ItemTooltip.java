@@ -5,8 +5,8 @@ import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import com.simibubi.create.content.equipment.wrench.WrenchItem;
 import com.simibubi.create.foundation.utility.CreateLang;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.api.TooltipOverlayRenderer;
-import io.github.forgestove.create_cyber_goggles.core.gui.*;
+import io.github.forgestove.create_cyber_goggles.core.api.TooltipRenderer;
+import io.github.forgestove.create_cyber_goggles.core.tooltipRenderer.*;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -22,7 +22,7 @@ import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public final class ItemTooltip {
-	public static final List<TooltipOverlayRenderer> OVERLAY_RENDERERS = List.of(
+	public static final List<TooltipRenderer> OVERLAY_RENDERERS = List.of(
 		new ContainerRenderer(),
 		new PackageItemRenderer(),
 		new ToolboxRenderer(),
@@ -125,7 +125,7 @@ public final class ItemTooltip {
 	public static void renderTooltipPre(@NotNull Pre event) {
 		if (!CCG.config.tooltip.extraItemTooltip) return;
 		var stack = event.getItemStack();
-		TooltipOverlayRenderer renderer = null;
+		TooltipRenderer renderer = null;
 		for (var overlayRenderer : OVERLAY_RENDERERS) {
 			if (!overlayRenderer.supports(stack)) continue;
 			renderer = overlayRenderer;

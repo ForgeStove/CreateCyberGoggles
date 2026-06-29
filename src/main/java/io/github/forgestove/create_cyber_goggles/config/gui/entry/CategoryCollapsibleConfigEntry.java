@@ -6,7 +6,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.*;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -71,11 +73,10 @@ public final class CategoryCollapsibleConfigEntry extends ConfigEntry {
 		}
 		@Override
 		public boolean mouseClicked(double mouseX, double mouseY, int button) {
-			if (button == 0) {
-				onToggle.run();
-				return true;
-			}
-			return false;
+			if (button != 0) return false;
+			minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+			onToggle.run();
+			return true;
 		}
 		@Override
 		protected boolean isValidClickButton(int button) {

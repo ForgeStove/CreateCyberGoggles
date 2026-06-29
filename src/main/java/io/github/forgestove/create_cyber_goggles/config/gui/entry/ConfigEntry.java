@@ -10,7 +10,16 @@ public abstract class ConfigEntry extends Entry<ConfigEntry> {
 	public static final int WIDTH = 100;
 	public static final int HEIGHT = 20;
 	public static final int GAP = 2;
+	private int indent;
 	/** 跳过 active 检查，确保禁用按钮也能显示 tooltip */
+	public int getIndent() {
+		return indent;
+	}
+
+	public void setIndent(int indent) {
+		this.indent = indent;
+	}
+
 	private static boolean isMouseOverWidget(AbstractWidget widget, int mouseX, int mouseY) {
 		return mouseX >= widget.getX()
 			&& mouseY >= widget.getY()

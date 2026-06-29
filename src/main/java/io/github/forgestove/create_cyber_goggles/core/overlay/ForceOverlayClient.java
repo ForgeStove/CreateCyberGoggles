@@ -41,7 +41,7 @@ public final class ForceOverlayClient {
 		var mc = Minecraft.getInstance();
 		var player = mc.player;
 		var level = mc.level;
-		if (player == null || level == null || !CCG.config.forceOverlay.enabled) {
+		if (player == null || level == null || !CCG.config.aeronautics.forceOverlay.forceOverlayEnabled) {
 			clear();
 			return;
 		}
@@ -81,8 +81,8 @@ public final class ForceOverlayClient {
 	private static void recomputeSmoothedClusters(
 		Map<ForceGroup, List<PointForce>> rawForces
 	) {
-		var angleThreshold = CCG.config.forceOverlay.clusterAngleRadians;
-		var alpha = CCG.config.forceOverlay.smoothingFactor;
+		var angleThreshold = CCG.config.aeronautics.forceOverlay.clusterAngleRadians;
+		var alpha = CCG.config.aeronautics.forceOverlay.smoothingFactor;
 		Map<ResourceLocation, List<Cluster>> next = new Object2ObjectOpenHashMap<>();
 		for (var e : rawForces.entrySet()) {
 			var key = ForceGroups.REGISTRY.getKey(e.getKey());
@@ -129,7 +129,7 @@ public final class ForceOverlayClient {
 	}
 	@Nullable
 	private static UUID raycastTargetSubLevel(LocalPlayer player) {
-		var chunks = CCG.config.forceOverlay.targetingChunks;
+		var chunks = CCG.config.aeronautics.forceOverlay.targetingChunks;
 		var maxDist = chunks * 16.0;
 		var hit = player.pick(maxDist, 1.0f, false);
 		if (hit.getType() != Type.BLOCK) return null;

@@ -6,6 +6,7 @@ import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode.*;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.*;
 
+import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.Map.Entry;
@@ -76,6 +77,11 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 			this.defaultConfig = defaultConfig;
 			this.modId = modId;
 		}
+		private static boolean evaluatePathCondition(List<Field> path) {
+			for (var field : path)
+				if (!ConfigCondition.evaluate(field)) return false;
+			return true;
+		}
 		@NotNull
 		public RootConfigNode<C> build() {
 			var configClass = defaultConfig.getClass();
@@ -94,40 +100,83 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 			var categoryBuilder = CategoryConfigNode.<C>builder()
 				.title(Component.translatable(modId + ".config.category." + categoryField.getName()));
 			for (var valueField : categoryField.getType().getDeclaredFields())
-				addValueNode(defaultCategory, categoryField, valueField, categoryBuilder);
+				if (valueField.isAnnotationPresent(Category.class)) {
+					if (!ConfigCondition.evaluate(valueField)) continue;
+					var subBuilder = createSubCategoryNode(List.of(categoryField), valueField);
+					categoryBuilder.category(b -> subBuilder);
+				} else addValueNode(defaultCategory, List.of(categoryField), valueField, categoryBuilder);
 			return categoryBuilder.build();
+		}
+		private CategoryConfigNode.Builder<C> createSubCategoryNode(List<Field> parentPath, Field subCategoryField) {
+			var path = new ArrayList<>(parentPath);
+			path.add(subCategoryField);
+			Object defaultParent = defaultConfig;
+			for (var field : parentPath) defaultParent = FieldAccess.getFieldValue(field, defaultParent);
+			var defaultSubCategory = FieldAccess.getFieldValue(subCategoryField, defaultParent);
+			var annotation = subCategoryField.getAnnotation(Category.class);
+			var pathKey = buildPathKey(path);
+			var builder = CategoryConfigNode.<C>builder()
+				.title(Component.translatable(modId + ".config.category." + pathKey))
+				.defaultExpanded(annotation.defaultExpanded());
+			for (var valueField : subCategoryField.getType().getDeclaredFields())
+				if (valueField.isAnnotationPresent(Category.class)) {
+					if (!ConfigCondition.evaluate(valueField)) continue;
+					if (!evaluatePathCondition(path)) continue;
+					var subBuilder = createSubCategoryNode(path, valueField);
+					builder.category(b -> subBuilder);
+				} else addValueNode(defaultSubCategory, path, valueField, builder);
+			return builder;
+		}
+		private String buildPathKey(List<Field> fields) {
+			if (fields.isEmpty()) return "";
+			var sb = new StringBuilder();
+			for (var f : fields) {
+				if (!sb.isEmpty()) sb.append('.');
+				sb.append(f.getName());
+			}
+			return sb.toString();
 		}
 		private void addValueNode(
 			Object defaultCategory,
-			Field categoryField,
+			List<Field> path,
 			Field valueField,
 			CategoryConfigNode.Builder<C> categoryBuilder
 		) {
 			if (!ConfigCondition.evaluate(valueField)) return;
+			if (!evaluatePathCondition(path)) return;
 			var defaultValue = FieldAccess.getFieldValue(valueField, defaultCategory);
 			var type = defaultValue.getClass();
 			var valueName = valueField.getName();
-			var titleKey = "%s.config.option.%s.%s".formatted(modId, categoryField.getName(), valueName);
+			var pathKey = buildPathKey(path);
+			var titleKey = "%s.config.option.%s.%s".formatted(modId, pathKey, valueName);
 			categoryBuilder.value(valueBuilder -> valueBuilder.valueType(type)
 				.name(valueName)
 				.title(Component.translatable(titleKey))
 				.tooltip(Component.translatable(titleKey + ".tooltip"))
 				.defaultValue(defaultValue)
 				.colorValue(valueField.getAnnotation(ColorValue.class))
-				.valueReader(makeValueReader(type, categoryField, valueField))
-				.valueWriter(makeValueWriter(type, categoryField, valueField))
+				.valueReader(makePathValueReader(type, path, valueField))
+				.valueWriter(makePathValueWriter(type, path, valueField))
 				.requiresRestart(valueField.isAnnotationPresent(RequiresRestart.class))
 				.validator(FieldValidators.validatorFor(type, valueField)));
 		}
-		private <V> ValueReader<C, V> makeValueReader(Class<? extends V> type, Field categoryField, Field valueField) {
-			var categoryHandle = FieldAccess.varHandle(categoryField);
+		private <V> ValueReader<C, V> makePathValueReader(Class<? extends V> type, List<Field> path, Field valueField) {
+			var pathHandles = path.stream().map(FieldAccess::varHandle).toArray(VarHandle[]::new);
 			var valueHandle = FieldAccess.varHandle(valueField);
-			return config -> type.cast(FieldAccess.readField(valueHandle, categoryHandle.get(config), valueField));
+			return config -> {
+				Object current = config;
+				for (var handle : pathHandles) current = handle.get(current);
+				return type.cast(FieldAccess.readField(valueHandle, current, valueField));
+			};
 		}
-		private <V> ValueWriter<C, V> makeValueWriter(Class<? extends V> type, Field categoryField, Field valueField) {
-			var categoryHandle = FieldAccess.varHandle(categoryField);
+		private <V> ValueWriter<C, V> makePathValueWriter(Class<? extends V> type, List<Field> path, Field valueField) {
+			var pathHandles = path.stream().map(FieldAccess::varHandle).toArray(VarHandle[]::new);
 			var valueHandle = FieldAccess.varHandle(valueField);
-			return (config, value) -> FieldAccess.writeField(valueHandle, categoryHandle.get(config), type.cast(value), valueField);
+			return (config, value) -> {
+				Object current = config;
+				for (var handle : pathHandles) current = handle.get(current);
+				FieldAccess.writeField(valueHandle, current, type.cast(value), valueField);
+			};
 		}
 	}
 }

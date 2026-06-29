@@ -38,7 +38,7 @@ public final class ForceOverlayRenderer {
 	 */
 	public static void onRenderStage(RenderLevelStageEvent event) {
 		if (event.getStage() != Stage.AFTER_LEVEL) return;
-		if (!CCG.config.forceOverlay.enabled) return;
+		if (!CCG.config.aeronautics.forceOverlay.forceOverlayEnabled) return;
 		var mc = Minecraft.getInstance();
 		var player = mc.player;
 		var level = mc.level;
@@ -69,7 +69,7 @@ public final class ForceOverlayRenderer {
 			var scale = overlayPixelScale(mc, renderPos, camPos);
 			var hasData = ForceOverlayClient.hasData();
 			// Render center-of-mass marker (always, even without data)
-			if (CCG.config.forceOverlay.renderCenterOfMass) {
+			if (CCG.config.aeronautics.forceOverlay.renderCenterOfMass) {
 				var fillType = OverlayRenderTypes.overlayFill();
 				renderCenterOfMass(poseStack, bufferSource.getBuffer(fillType), hasData, scale);
 				bufferSource.endBatch(fillType);
@@ -102,7 +102,7 @@ public final class ForceOverlayRenderer {
 		ClientSubLevel clientSubLevel,
 		double scale
 	) {
-		var config = CCG.config.forceOverlay;
+		var config = CCG.config.aeronautics.forceOverlay;
 		var gravityFraction = config.gravityArrowFraction;
 		var saturation = config.arrowSaturation;
 		var minLen = config.minArrowLength;
@@ -173,13 +173,13 @@ public final class ForceOverlayRenderer {
 		// Only filter sable force groups by config; unknown groups always show
 		if (!"sable".equals(namespace)) return true;
 		return switch (path) {
-			case "gravity" -> CCG.config.forceOverlay.showGravity;
-			case "drag" -> CCG.config.forceOverlay.showDrag;
-			case "levitation" -> CCG.config.forceOverlay.showLevitation;
-			case "balloon_lift" -> CCG.config.forceOverlay.showBalloonLift;
-			case "propulsion" -> CCG.config.forceOverlay.showPropulsion;
-			case "lift" -> CCG.config.forceOverlay.showLift;
-			case "magnetic_force" -> CCG.config.forceOverlay.showMagneticForce;
+			case "gravity" -> CCG.config.aeronautics.forceOverlay.showGravity;
+			case "drag" -> CCG.config.aeronautics.forceOverlay.showDrag;
+			case "levitation" -> CCG.config.aeronautics.forceOverlay.showLevitation;
+			case "balloon_lift" -> CCG.config.aeronautics.forceOverlay.showBalloonLift;
+			case "propulsion" -> CCG.config.aeronautics.forceOverlay.showPropulsion;
+			case "lift" -> CCG.config.aeronautics.forceOverlay.showLift;
+			case "magnetic_force" -> CCG.config.aeronautics.forceOverlay.showMagneticForce;
 			default -> true;
 		};
 	}
@@ -390,7 +390,7 @@ public final class ForceOverlayRenderer {
 	}
 	// ---- Utilities ----
 	private static double overlayPixelScale(Minecraft mc, Vector3dc renderPos, Vec3 camPos) {
-		var minPx = CCG.config.forceOverlay.minOverlayPixelSize;
+		var minPx = CCG.config.aeronautics.forceOverlay.minOverlayPixelSize;
 		if (minPx <= 0) return 1.0;
 		var viewportHeight = mc.getWindow().getHeight();
 		if (viewportHeight <= 0) return 1.0;

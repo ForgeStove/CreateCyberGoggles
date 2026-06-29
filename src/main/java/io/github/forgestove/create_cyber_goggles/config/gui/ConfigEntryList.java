@@ -132,4 +132,11 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 			if (entry instanceof KeybindValueConfigEntry<?> keybindEntry && keybindEntry.isCapturing()) return true;
 		return false;
 	}
+
+	public void replaceAllEntries(List<ConfigEntry> newEntries) {
+		children().clear();
+		newEntries.forEach(this::addEntry);
+		setScrollAmount(getScrollAmount());
+		smoothScroll.sync();
+	}
 }

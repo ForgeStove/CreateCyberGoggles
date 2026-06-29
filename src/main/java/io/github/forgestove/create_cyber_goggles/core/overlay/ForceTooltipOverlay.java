@@ -22,7 +22,7 @@ public final class ForceTooltipOverlay {
 		event.registerAbove(VanillaGuiLayers.HOTBAR, getCCGRes("force_tooltip"), ForceTooltipOverlay::render);
 	}
 	private static void render(GuiGraphics graphics, DeltaTracker deltaTracker) {
-		if (!CCG.config.forceOverlay.forceTooltipEnabled) return;
+		if (!CCG.config.aeronautics.forceOverlay.forceTooltipEnabled) return;
 		if (Minecraft.getInstance().options.hideGui) return;
 		if (!ForceOverlayClient.hasData()) return;
 		var lines = buildLines();

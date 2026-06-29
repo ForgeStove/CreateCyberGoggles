@@ -101,8 +101,9 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 		float delta,
 		AbstractWidget... widgets
 	) {
+		var indent = getIndent();
 		var label = GuiUtil.styleAsState(this.label, hasError(), hasChanged);
-		gui.drawString(tab.getMinecraft().font, label.getVisualOrderText(), x, y + 5, -1, false);
+		gui.drawString(tab.getMinecraft().font, label.getVisualOrderText(), x + indent, y + 5, -1, false);
 		var right = x + width;
 		for (var widget : widgets) {
 			right -= widget.getWidth();

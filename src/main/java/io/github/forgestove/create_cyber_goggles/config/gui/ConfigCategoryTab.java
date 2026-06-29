@@ -21,6 +21,7 @@ public final class ConfigCategoryTab<C> implements Tab {
 	private final C config;
 	private final Component title;
 	private final ConfigEntryList list;
+	private final Set<CategoryConfigNode<?>> expandedSubCategories = new HashSet<>();
 	private final Map<Class<?>, EntryFactory<C>> entryFactories = Map.of(
 		Enum.class,
 		(tab, node) -> new EnumValueConfigEntry<>(tab, cast(node)),
@@ -47,15 +48,10 @@ public final class ConfigCategoryTab<C> implements Tab {
 		this.category = category;
 		this.config = config;
 		title = category.getTitle();
-		List<ConfigEntry> entries = new ArrayList<>();
-		category.getChildren().forEach(node -> {
-			if (node instanceof ValueConfigNode<C, ?> valueNode) entries.add(createValueEntry(valueNode));
-			else if (node instanceof CategoryConfigNode<C> categoryNode) entries.addAll(createSubCategoryEntries(categoryNode));
-		});
+		collectDefaultExpanded(category);
 		var contentHeight = screen.height - screen.getHeaderHeight() - screen.getFooterHeight();
-		var totalEntryHeight = entries.size() * 22;
-		var listHeight = totalEntryHeight <= contentHeight ? totalEntryHeight - 2 : contentHeight;
-		list = new ConfigEntryList(this, getMinecraft(), screen.width, listHeight, screen.getHeaderHeight(), 22, entries);
+		list = new ConfigEntryList(this, getMinecraft(), screen.width, contentHeight, screen.getHeaderHeight(), 22, List.of());
+		list.replaceAllEntries(buildEntries(category, 0));
 	}
 	@SuppressWarnings("unchecked")
 	private static <C, V> ValueConfigNode<C, V> cast(ValueConfigNode<C, ?> node) {
@@ -80,12 +76,37 @@ public final class ConfigCategoryTab<C> implements Tab {
 			if (entry.getKey().isAssignableFrom(type)) return entry.getValue().create(this, valueNode);
 		return new TextConfigEntry(this, Translation.UNSUPPORTED_TYPE.copy().append(type.getSimpleName()).withStyle(ChatFormatting.RED));
 	}
-	private List<ConfigEntry> createSubCategoryEntries(CategoryConfigNode<C> categoryNode) {
-		var entries = new ArrayList<ConfigEntry>(categoryNode.getChildren().size() + 1);
-		entries.add(new CategoryTitleConfigEntry(this, categoryNode.getTitle()));
-		for (var node : categoryNode.getChildren())
-			if (node instanceof ValueConfigNode<C, ?> valueNode) entries.add(createValueEntry(valueNode));
+	private List<ConfigEntry> buildEntries(CategoryConfigNode<C> node, int depth) {
+		var entries = new ArrayList<ConfigEntry>();
+		for (var child : node.getChildren()) {
+			if (child instanceof ValueConfigNode<C, ?> valueNode) {
+				var entry = createValueEntry(valueNode);
+				entry.setIndent(depth * CategoryCollapsibleConfigEntry.INDENT_PX);
+				entries.add(entry);
+			} else if (child instanceof CategoryConfigNode<C> subNode) {
+				var expanded = expandedSubCategories.contains(subNode);
+				entries.add(new CategoryCollapsibleConfigEntry(this, subNode, expanded, depth, () -> {
+					if (expandedSubCategories.contains(subNode))
+						expandedSubCategories.remove(subNode);
+					else
+						expandedSubCategories.add(subNode);
+					rebuildEntries();
+				}));
+				if (expanded) entries.addAll(buildEntries(subNode, depth + 1));
+			}
+		}
 		return entries;
+	}
+	private void collectDefaultExpanded(CategoryConfigNode<C> node) {
+		for (var child : node.getChildren()) {
+			if (!(child instanceof CategoryConfigNode<C> subNode)) continue;
+			if (subNode.isDefaultExpanded()) expandedSubCategories.add(subNode);
+			collectDefaultExpanded(subNode);
+		}
+	}
+	private void rebuildEntries() {
+		list.replaceAllEntries(buildEntries(category, 0));
+		screen.refresh();
 	}
 	@NotNull
 	public Minecraft getMinecraft() {

@@ -34,7 +34,7 @@ public final class ConfigSerializer<C> {
 				categoryField.setAccessible(true);
 				var categoryName = categoryField.getName();
 				var categoryValue = categoryField.get(config);
-				writeCategory(fileConfig, categoryName, categoryValue);
+				writeCategory(fileConfig, categoryName, categoryValue, categoryName);
 			}
 			fileConfig.save();
 		} catch (Exception e) {
@@ -68,17 +68,22 @@ public final class ConfigSerializer<C> {
 			throw new SerializationException(e);
 		}
 	}
-	private void writeCategory(CommentedConfig config, String categoryName, Object category) throws IllegalAccessException {
+	private void writeCategory(CommentedConfig config, String categoryName, Object category, String pathPrefix) throws
+		IllegalAccessException {
 		var subConfig = config.createSubConfig();
-		var categoryComment = translate("category." + categoryName);
+		var categoryComment = translate("category." + pathPrefix);
 		if (categoryComment != null) config.setComment(categoryName, " " + categoryComment);
 		for (var field : category.getClass().getDeclaredFields()) {
 			field.setAccessible(true);
 			var fieldName = field.getName();
 			var value = field.get(category);
-			subConfig.set(fieldName, value instanceof Enum<?> e ? e.name() : value);
-			var comment = buildFieldComment(categoryName, fieldName);
-			if (!comment.isEmpty()) subConfig.setComment(fieldName, comment);
+			if (field.isAnnotationPresent(Category.class))
+				writeCategory(subConfig, fieldName, value, pathPrefix + "." + fieldName);
+			else {
+				subConfig.set(fieldName, value instanceof Enum<?> e ? e.name() : value);
+				var comment = buildFieldComment(pathPrefix, fieldName);
+				if (!comment.isEmpty()) subConfig.setComment(fieldName, comment);
+			}
 		}
 		config.set(categoryName, subConfig);
 	}
@@ -105,6 +110,10 @@ public final class ConfigSerializer<C> {
 		if (subConfig == null) return;
 		for (var field : category.getClass().getDeclaredFields()) {
 			field.setAccessible(true);
+			if (field.isAnnotationPresent(Category.class)) {
+				readCategory(subConfig, field.getName(), field.get(category));
+				continue;
+			}
 			var value = subConfig.get(field.getName());
 			if (value == null) continue;
 			var type = field.getType();

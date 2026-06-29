@@ -8,6 +8,7 @@ import java.util.function.UnaryOperator;
 public final class CategoryConfigNode<C> implements ConfigNode<C> {
 	private Component title;
 	private Component tooltip;
+	private boolean defaultExpanded;
 	private ImmutableList<ConfigNode<C>> children;
 	public static <C> Builder<C> builder() {
 		return new Builder<>();
@@ -20,6 +21,10 @@ public final class CategoryConfigNode<C> implements ConfigNode<C> {
 	@Override
 	public Component getTooltip() {
 		return tooltip;
+	}
+
+	public boolean isDefaultExpanded() {
+		return defaultExpanded;
 	}
 	@Override
 	public void resetToDefault() {
@@ -78,6 +83,10 @@ public final class CategoryConfigNode<C> implements ConfigNode<C> {
 		}
 		public Builder<C> tooltip(Component tooltip) {
 			node.tooltip = tooltip;
+			return this;
+		}
+		public Builder<C> defaultExpanded(boolean defaultExpanded) {
+			node.defaultExpanded = defaultExpanded;
 			return this;
 		}
 		public <V> Builder<C> value(UnaryOperator<ValueConfigNode.Builder<C, V>> valueBuilder) {

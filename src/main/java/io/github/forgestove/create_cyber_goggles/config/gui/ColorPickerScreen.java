@@ -142,6 +142,10 @@ public final class ColorPickerScreen extends Screen {
 		var alphaSelectorY = svPos.y + (int) ((1f - alpha / 255f) * (PICKER_SIZE - 1));
 		renderHorizontalArrow(gui, getAlphaBarX(), alphaSelectorY);
 	}
+	private int colorFromHSB() {
+		var rgb = Color.HSBtoRGB(hue, saturation, brightness) & 0xFFFFFF;
+		return hasAlpha ? alpha << 24 | rgb : rgb;
+	}
 	private void renderHorizontalArrow(GuiGraphics gui, int x, int y) {
 		gui.fill(x - 3, y - 1, x, y + 2, 0xFFFFFFFF);
 		gui.fill(x - 2, y, x, y + 1, 0xFF000000);
@@ -210,10 +214,6 @@ public final class ColorPickerScreen extends Screen {
 		pickerPos.move((width - totalWidth) / 2 - PADDING, (height - totalHeight) / 2 - PADDING - 10);
 		svPos.move(pickerPos.x + PADDING, pickerPos.y + PADDING + 16);
 	}
-	private int colorFromHSB() {
-		var rgb = Color.HSBtoRGB(hue, saturation, brightness) & 0xFFFFFF;
-		return hasAlpha ? alpha << 24 | rgb : rgb;
-	}
 	private ConfigEditBox createHexInput(int buttonY) {
 		var hexInputX = svPos.x + BUTTON_WIDTH * 2 + 6;
 		var hexInputWidth = hasAlpha ? 70 : 55;
@@ -223,10 +223,6 @@ public final class ColorPickerScreen extends Screen {
 		input.setFilter(s -> HEX_PATTERN.matcher(s).matches());
 		input.setResponder(this::onHexInputChange);
 		return input;
-	}
-	private String formatHexColor() {
-		var color = colorFromHSB();
-		return hasAlpha ? String.format("%08X", color) : String.format("%06X", color & 0xFFFFFF);
 	}
 	private void onHexInputChange(String value) {
 		if (updatingFromInput || value.isEmpty()) return;
@@ -241,6 +237,16 @@ public final class ColorPickerScreen extends Screen {
 	public void resize(@NotNull Minecraft minecraft, int width, int height) {
 		if (parent != null) parent.resize(minecraft, width, height);
 		super.resize(minecraft, width, height);
+	}
+	private void updateHexInput() {
+		if (hexInput == null || updatingFromInput) return;
+		updatingFromInput = true;
+		hexInput.setValue(formatHexColor());
+		updatingFromInput = false;
+	}
+	private String formatHexColor() {
+		var color = colorFromHSB();
+		return hasAlpha ? String.format("%08X", color) : String.format("%06X", color & 0xFFFFFF);
 	}
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
@@ -284,12 +290,6 @@ public final class ColorPickerScreen extends Screen {
 	}
 	private Rectangle getAlphaBarArea() {
 		return new Rectangle(getAlphaBarX(), svPos.y, BAR_WIDTH, PICKER_SIZE);
-	}
-	private void updateHexInput() {
-		if (hexInput == null || updatingFromInput) return;
-		updatingFromInput = true;
-		hexInput.setValue(formatHexColor());
-		updatingFromInput = false;
 	}
 	@Override
 	public boolean mouseReleased(double mouseX, double mouseY, int button) {

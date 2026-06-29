@@ -5,12 +5,12 @@ import io.github.forgestove.create_cyber_goggles.core.factory.*;
 import java.awt.Point;
 @ConfigClass(CCG.ID)
 public final class CCGConfig {
-	@Category @Order(0) public final Goggles goggles = new Goggles();
-	@Category @Order(1) public final Tooltip tooltip = new Tooltip();
-	@Category @Order(3) public final Overlay overlay = new Overlay();
-	@Category @Order(4) public final Outliner outliner = new Outliner();
-	@Category @Order(5) @Condition("simulated") public final Aeronautics aeronautics = new Aeronautics();
-	@Category @Order(6) public final Misc misc = new Misc();
+	@Category public final Goggles goggles = new Goggles();
+	@Category public final Tooltip tooltip = new Tooltip();
+	@Category public final Overlay overlay = new Overlay();
+	@Category public final Outliner outliner = new Outliner();
+	@Category @Condition("simulated") public final Aeronautics aeronautics = new Aeronautics();
+	@Category public final Misc misc = new Misc();
 	public static class Goggles {
 		@Category(false) public final GameMode gameMode = new GameMode();
 		public boolean enhancedInfo = true;

@@ -1,7 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.config.annotation;
-
 import java.lang.annotation.*;
-
 /**
  * Specifies the order of a field within its declaring class during serialization.
  * Fields are sorted by this value in ascending order.

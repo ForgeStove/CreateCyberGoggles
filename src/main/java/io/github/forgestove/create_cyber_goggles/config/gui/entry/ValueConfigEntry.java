@@ -44,6 +44,13 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 		children.add(resetButton);
 		children.add(undoButton);
 	}
+	public List<FormattedCharSequence> getTooltipWithError() {
+		if (!hasError()) return tooltip;
+		var errorTooltip = new ArrayList<FormattedCharSequence>();
+		if (tooltip != null) errorTooltip.addAll(tooltip);
+		if (validationError != null) errorTooltip.add(validationError.copy().withStyle(ChatFormatting.RED).getVisualOrderText());
+		return errorTooltip;
+	}
 	public void resetToDefault() {
 		valueNode.resetToDefault();
 		tab.getScreen().refresh();
@@ -59,17 +66,6 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 		valueNode.setEditingValue(value);
 		tab.getScreen().refresh();
 	}
-	public void refresh() {
-		resetButton.active = !valueNode.isDefaultValue(tab.getConfig());
-		undoButton.active = !valueNode.isActiveValue(tab.getConfig());
-		validationError = valueNode.validate(tab.getConfig());
-		hasChanged = !valueNode.isActiveValue(tab.getConfig());
-		tooltipWithError = getTooltipWithError();
-	}
-	@Override
-	public boolean hasError() {
-		return validationError != null;
-	}
 	@NotNull
 	@Override
 	public List<? extends GuiEventListener> children() {
@@ -84,12 +80,16 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 	public List<FormattedCharSequence> getTooltip() {
 		return hasError() ? tooltipWithError : tooltip;
 	}
-	public List<FormattedCharSequence> getTooltipWithError() {
-		if (!hasError()) return tooltip;
-		var errorTooltip = new ArrayList<FormattedCharSequence>();
-		if (tooltip != null) errorTooltip.addAll(tooltip);
-		if (validationError != null) errorTooltip.add(validationError.copy().withStyle(ChatFormatting.RED).getVisualOrderText());
-		return errorTooltip;
+	public void refresh() {
+		resetButton.active = !valueNode.isDefaultValue(tab.getConfig());
+		undoButton.active = !valueNode.isActiveValue(tab.getConfig());
+		validationError = valueNode.validate(tab.getConfig());
+		hasChanged = !valueNode.isActiveValue(tab.getConfig());
+		tooltipWithError = getTooltipWithError();
+	}
+	@Override
+	public boolean hasError() {
+		return validationError != null;
 	}
 	public void renderGui(
 		@NotNull GuiGraphics gui,

@@ -20,25 +20,6 @@ public class ItemSwapUtil {
 	private static int swappedOriginSlot = -1;
 	private static int swappedHandSlot = -1;
 	private static ItemStack preSwapMainHand = ItemStack.EMPTY;
-	private static Map<CCGKey, ItemStack> getHotkeyItems() {
-		var items = getDefaultItems();
-		var result = new LinkedHashMap<CCGKey, ItemStack>();
-		for (var entry : items.entrySet()) {
-			var key = entry.getKey();
-			var stack = entry.getValue();
-			if (key != null && !stack.isEmpty()) result.put(key, stack);
-		}
-		return result;
-	}
-	private static LinkedHashMap<CCGKey, ItemStack> getDefaultItems() {
-		var items = new LinkedHashMap<CCGKey, ItemStack>();
-		items.put(CCGKey.useSchematic, AllItems.SCHEMATIC_AND_QUILL.asStack());
-		items.put(CCGKey.showSuperGlue, AllItems.SUPER_GLUE.asStack());
-		if (!CCGMods.SIMULATED.isLoaded()) return items;
-		items.put(CCGKey.usePhysicsStaff, SimItems.PHYSICS_STAFF.asStack());
-		items.put(CCGKey.showHoneyGlue, SimItems.HONEY_GLUE.asStack());
-		return items;
-	}
 	public static void tick() {
 		var player = mc.player;
 		if (player == null) return;
@@ -57,6 +38,52 @@ public class ItemSwapUtil {
 			if (isSwapped) releaseSwap(inventory);
 			pressSwap(getHotkeyItems().get(pressedKey), player.isCreative(), inventory);
 		} else if (isSwapped && !anyHotkeyHeld) releaseSwap(inventory);
+	}
+	private static Map<CCGKey, ItemStack> getHotkeyItems() {
+		var items = getDefaultItems();
+		var result = new LinkedHashMap<CCGKey, ItemStack>();
+		for (var entry : items.entrySet()) {
+			var key = entry.getKey();
+			var stack = entry.getValue();
+			if (key != null && !stack.isEmpty()) result.put(key, stack);
+		}
+		return result;
+	}
+	private static void releaseSwap(Inventory inventory) {
+		if (swappedOriginSlot == HOTBAR_SELECT) {
+			// Hotbar select — restore via packet (fully synced)
+			inventory.selected = swappedHandSlot;
+			if (mc.player != null) mc.player.connection.send(new ServerboundSetCarriedItemPacket(swappedHandSlot));
+		} else if (swappedOriginSlot >= 0) {
+			// Inventory swap — swap back via container click packet (fully synced)
+			var player = mc.player;
+			if (player != null) {
+				var container = player.containerMenu;
+				var currentMainHand = inventory.getItem(swappedHandSlot);
+				var changedSlots = new Int2ObjectOpenHashMap<ItemStack>();
+				changedSlots.put(swappedOriginSlot, currentMainHand);
+				changedSlots.put(36 + swappedHandSlot, preSwapMainHand);
+				player.connection.send(new ServerboundContainerClickPacket(
+					container.containerId,
+					container.getStateId(),
+					swappedOriginSlot,
+					swappedHandSlot,
+					ClickType.SWAP,
+					ItemStack.EMPTY,
+					changedSlots
+				));
+			}
+			var currentMainHand = inventory.getItem(swappedHandSlot);
+			inventory.setItem(swappedHandSlot, preSwapMainHand);
+			inventory.setItem(swappedOriginSlot, currentMainHand);
+		} else // Local spawn — restore original item (client-side only)
+			if (swappedOriginSlot == LOCAL_SPAWN) inventory.setItem(swappedHandSlot, preSwapMainHand);
+			else if (mc.gameMode != null)
+				mc.gameMode.handleCreativeModeItemAdd(preSwapMainHand, 36 + swappedHandSlot); // Creative void — restore via packet
+		isSwapped = false;
+		swappedOriginSlot = -1;
+		swappedHandSlot = -1;
+		preSwapMainHand = ItemStack.EMPTY;
 	}
 	private static void pressSwap(ItemStack target, boolean isCreative, Inventory inventory) {
 		var handSlot = inventory.selected;
@@ -113,40 +140,13 @@ public class ItemSwapUtil {
 			isSwapped = true;
 		}
 	}
-	private static void releaseSwap(Inventory inventory) {
-		if (swappedOriginSlot == HOTBAR_SELECT) {
-			// Hotbar select — restore via packet (fully synced)
-			inventory.selected = swappedHandSlot;
-			if (mc.player != null) mc.player.connection.send(new ServerboundSetCarriedItemPacket(swappedHandSlot));
-		} else if (swappedOriginSlot >= 0) {
-			// Inventory swap — swap back via container click packet (fully synced)
-			var player = mc.player;
-			if (player != null) {
-				var container = player.containerMenu;
-				var currentMainHand = inventory.getItem(swappedHandSlot);
-				var changedSlots = new Int2ObjectOpenHashMap<ItemStack>();
-				changedSlots.put(swappedOriginSlot, currentMainHand);
-				changedSlots.put(36 + swappedHandSlot, preSwapMainHand);
-				player.connection.send(new ServerboundContainerClickPacket(
-					container.containerId,
-					container.getStateId(),
-					swappedOriginSlot,
-					swappedHandSlot,
-					ClickType.SWAP,
-					ItemStack.EMPTY,
-					changedSlots
-				));
-			}
-			var currentMainHand = inventory.getItem(swappedHandSlot);
-			inventory.setItem(swappedHandSlot, preSwapMainHand);
-			inventory.setItem(swappedOriginSlot, currentMainHand);
-		} else // Local spawn — restore original item (client-side only)
-			if (swappedOriginSlot == LOCAL_SPAWN) inventory.setItem(swappedHandSlot, preSwapMainHand);
-			else if (mc.gameMode != null)
-				mc.gameMode.handleCreativeModeItemAdd(preSwapMainHand, 36 + swappedHandSlot); // Creative void — restore via packet
-		isSwapped = false;
-		swappedOriginSlot = -1;
-		swappedHandSlot = -1;
-		preSwapMainHand = ItemStack.EMPTY;
+	private static LinkedHashMap<CCGKey, ItemStack> getDefaultItems() {
+		var items = new LinkedHashMap<CCGKey, ItemStack>();
+		items.put(CCGKey.useSchematic, AllItems.SCHEMATIC_AND_QUILL.asStack());
+		items.put(CCGKey.showSuperGlue, AllItems.SUPER_GLUE.asStack());
+		if (!CCGMods.SIMULATED.isLoaded()) return items;
+		items.put(CCGKey.usePhysicsStaff, SimItems.PHYSICS_STAFF.asStack());
+		items.put(CCGKey.showHoneyGlue, SimItems.HONEY_GLUE.asStack());
+		return items;
 	}
 }

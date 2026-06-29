@@ -29,8 +29,38 @@ public abstract class GenericValueConfigEntry<C, V> extends ValueConfigEntry<C, 
 		inputField.setResponder(this::onInputChange);
 		children.add(inputField);
 	}
-	public static boolean isZero(@NotNull String string) {
-		return string.isEmpty() || string.equals("-");
+	private void onInputChange(String value) {
+		if (updatingFromCode) return;
+		if (!validator.test(value)) {
+			hasParseError = true;
+			tab.getScreen().refresh();
+			return;
+		}
+		try {
+			setValue(parser.apply(value));
+			hasParseError = false;
+		} catch (Exception e) {
+			hasParseError = true;
+		}
+		tab.getScreen().refresh();
+	}
+	@Override
+	public void resetToDefault() {
+		hasParseError = false;
+		valueNode.resetToDefault();
+		updatingFromCode = true;
+		inputField.setValue(getValue().toString());
+		updatingFromCode = false;
+		tab.getScreen().refresh();
+	}
+	@Override
+	public void resetToActive() {
+		hasParseError = false;
+		valueNode.resetToActive(tab.getConfig());
+		updatingFromCode = true;
+		inputField.setValue(getValue().toString());
+		updatingFromCode = false;
+		tab.getScreen().refresh();
 	}
 	@Override
 	public void refresh() {
@@ -56,38 +86,8 @@ public abstract class GenericValueConfigEntry<C, V> extends ValueConfigEntry<C, 
 		resetButton.active = true;
 		undoButton.active = true;
 	}
-	@Override
-	public void resetToDefault() {
-		hasParseError = false;
-		valueNode.resetToDefault();
-		updatingFromCode = true;
-		inputField.setValue(getValue().toString());
-		updatingFromCode = false;
-		tab.getScreen().refresh();
-	}
-	@Override
-	public void resetToActive() {
-		hasParseError = false;
-		valueNode.resetToActive(tab.getConfig());
-		updatingFromCode = true;
-		inputField.setValue(getValue().toString());
-		updatingFromCode = false;
-		tab.getScreen().refresh();
-	}
-	private void onInputChange(String value) {
-		if (updatingFromCode) return;
-		if (!validator.test(value)) {
-			hasParseError = true;
-			tab.getScreen().refresh();
-			return;
-		}
-		try {
-			setValue(parser.apply(value));
-			hasParseError = false;
-		} catch (Exception e) {
-			hasParseError = true;
-		}
-		tab.getScreen().refresh();
+	public static boolean isZero(@NotNull String string) {
+		return string.isEmpty() || string.equals("-");
 	}
 	@Override
 	public boolean hasError() {

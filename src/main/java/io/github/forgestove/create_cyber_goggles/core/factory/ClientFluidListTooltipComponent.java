@@ -32,6 +32,24 @@ public final class ClientFluidListTooltipComponent implements ClientTooltipCompo
 			data -> new ClientFluidListTooltipComponent(data.fluids(), data.indent(), data.maxColumns())
 		);
 	}
+	@Override
+	public int getHeight() {
+		return Math.max(1, rows) * SlotUtil.SIZE + 4;
+	}
+	@Override
+	public int getWidth(@NotNull Font font) {
+		return columns * SlotUtil.SIZE + indentPixels(font);
+	}
+	@Override
+	public void renderImage(@NotNull Font font, int x, int y, @NotNull GuiGraphics gui) {
+		for (var i = 0; i < fluids.size(); i++) {
+			var col = i % maxColumns;
+			var row = i / maxColumns;
+			var slotX = x + col * SlotUtil.SIZE + indentPixels(font);
+			var slotY = y + row * SlotUtil.SIZE;
+			renderFluidBar(gui, fluids.get(i), slotX, slotY, SlotUtil.SIZE, SlotUtil.SIZE);
+		}
+	}
 	public static void renderFluidBar(@NotNull GuiGraphics gui, @NotNull FluidStack stack, int x, int y, int width, int height) {
 		gui.blitSprite(SlotUtil.SLOT, x, y, 0, SlotUtil.SIZE, SlotUtil.SIZE + 2);
 		if (stack.isEmpty()) return;
@@ -59,24 +77,6 @@ public final class ClientFluidListTooltipComponent implements ClientTooltipCompo
 			gui.blit(x + dx, y, 0, sliceWidth, height, sprite);
 		}
 		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-	}
-	@Override
-	public int getHeight() {
-		return Math.max(1, rows) * SlotUtil.SIZE + 4;
-	}
-	@Override
-	public int getWidth(@NotNull Font font) {
-		return columns * SlotUtil.SIZE + indentPixels(font);
-	}
-	@Override
-	public void renderImage(@NotNull Font font, int x, int y, @NotNull GuiGraphics gui) {
-		for (var i = 0; i < fluids.size(); i++) {
-			var col = i % maxColumns;
-			var row = i / maxColumns;
-			var slotX = x + col * SlotUtil.SIZE + indentPixels(font);
-			var slotY = y + row * SlotUtil.SIZE;
-			renderFluidBar(gui, fluids.get(i), slotX, slotY, SlotUtil.SIZE, SlotUtil.SIZE);
-		}
 	}
 	private int indentPixels(@NotNull Font font) {
 		return indent * font.width(" ");

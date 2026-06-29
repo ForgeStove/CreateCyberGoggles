@@ -9,8 +9,6 @@ public abstract class BlazeEnchanterBlockEntityMixin implements ItemRenderable {
 	@Unique public ItemStack ccg$cachedResult = ItemStack.EMPTY;
 	@Shadow protected EnchanterBehaviour enchanter;
 	@Shadow protected ItemStack heldItem;
-	@Shadow
-	public abstract boolean isActive();
 	@Override
 	public ItemStack ccg$getItemStack() {
 		if (ccg$cachedResult.isEmpty()) ccg$cachedResult = enchanter.getResult(heldItem.copy());
@@ -18,4 +16,6 @@ public abstract class BlazeEnchanterBlockEntityMixin implements ItemRenderable {
 		ccg$cachedResult = ItemStack.EMPTY;
 		return heldItem;
 	}
+	@Shadow
+	public abstract boolean isActive();
 }

@@ -19,18 +19,18 @@ public abstract class RadialWrenchHandlerMixin {
 	)
 	)
 	private static @Nullable GameType wrapPlayerMode(MultiPlayerGameMode instance, Operation<GameType> original) {
-		return CCG.config.wrench.alwaysAllowRotating ? null : original.call(instance);
+		return CCG.config.misc.wrench.alwaysAllowRotating ? null : original.call(instance);
 	}
 	@WrapOperation(
 		method = "onKeyInput",
 		at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getItem()Lnet/minecraft/world/item/Item;")
 	)
 	private static Item wrapMainHandItem(ItemStack instance, Operation<Item> original) {
-		return CCG.config.wrench.alwaysAllowRotating ? AllItems.WRENCH.get() : original.call(instance);
+		return CCG.config.misc.wrench.alwaysAllowRotating ? AllItems.WRENCH.get() : original.call(instance);
 	}
 	@Inject(method = "onKeyInput", at = @At("HEAD"))
 	private static void clientTick(CallbackInfo ci) {
-		if (!CCG.config.wrench.removeCooldown) return;
+		if (!CCG.config.misc.wrench.removeCooldown) return;
 		RadialWrenchHandler.COOLDOWN = 0;
 	}
 }

@@ -19,13 +19,9 @@ import static com.simibubi.create.content.contraptions.wrench.RadialWrenchMenu.B
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 @Mixin(RadialWrenchMenu.class)
 public abstract class RadialWrenchMenuMixin {
-	@Invoker("<init>")
-	static RadialWrenchMenu init(BlockState state, BlockPos pos, Level level, List<Entry<Property<?>, String>> properties) {
-		throw new AssertionError();
-	}
 	@Inject(method = "tryCreateFor", at = @At("HEAD"), cancellable = true)
 	private static void tryCreateFor(BlockState state, BlockPos pos, Level level, CallbackInfoReturnable<Optional<RadialWrenchMenu>> cir) {
-		if (!CCG.config.wrench.enchancedRotationMenu) return;
+		if (!CCG.config.misc.wrench.enchancedRotationMenu) return;
 		var isCreative = mc.player != null && mc.player.isCreative();
 		if (!isCreative && BLOCK_BLACKLIST.contains(RegisteredObjectsHelper.getKeyOrThrow(state.getBlock()))) {
 			cir.setReturnValue(Optional.empty());
@@ -41,5 +37,9 @@ public abstract class RadialWrenchMenuMixin {
 			return;
 		}
 		cir.setReturnValue(Optional.of(init(state, pos, level, properties)));
+	}
+	@Invoker("<init>")
+	static RadialWrenchMenu init(BlockState state, BlockPos pos, Level level, List<Entry<Property<?>, String>> properties) {
+		throw new AssertionError();
 	}
 }

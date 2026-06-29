@@ -41,6 +41,45 @@ public final class ConfigScreen<C> extends Screen {
 		cacheKey = root.getTitle().getString();
 		keybindCategory = null;
 	}
+	private void initTabs(TabNavigationBar bar) {
+		var i = 0;
+		for (var child : bar.children())
+			if (child instanceof TabButton tabButton) {
+				tabs.get(i).setTabButton(tabButton);
+				++i;
+			}
+	}
+	@Override
+	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+		var currentTab = tabManager.getCurrentTab();
+		if (currentTab instanceof ConfigCategoryTab<?> categoryTab && categoryTab.handleKeyCapture(keyCode)) return true;
+		if (tabNavigationBar.keyPressed(keyCode)) {
+			cacheCurrentTabIndex();
+			return true;
+		}
+		return super.keyPressed(keyCode, scanCode, modifiers);
+	}
+	private void cacheCurrentTabIndex() {
+		for (var i = 0; i < tabs.size(); i++) {
+			if (tabManager.getCurrentTab() != tabs.get(i)) continue;
+			lastSelectedTabCache.put(cacheKey, i);
+			break;
+		}
+	}
+	@Override
+	public void onClose() {
+		if (isActiveValue()) {
+			getMinecraft().setScreen(previous);
+			return;
+		}
+		getMinecraft().setScreen(new ConfirmScreen(
+			confirmed -> getMinecraft().setScreen(confirmed ? previous : this),
+			Translation.QUIT_CONFIRM_TITLE,
+			Translation.QUIT_CONFIRM_WARNING,
+			Translation.QUIT_CONFIRM_LABEL,
+			Translation.CANCEL_LABEL
+		));
+	}
 	@Override
 	protected void init() {
 		root.resetToActive(config);
@@ -75,14 +114,6 @@ public final class ConfigScreen<C> extends Screen {
 		tabNavigationBar.selectTab(cachedTabIndex, false);
 		repositionElements();
 	}
-	private void initTabs(TabNavigationBar bar) {
-		var i = 0;
-		for (var child : bar.children())
-			if (child instanceof TabButton tabButton) {
-				tabs.get(i).setTabButton(tabButton);
-				++i;
-			}
-	}
 	@Override
 	protected void repositionElements() {
 		refresh();
@@ -96,16 +127,6 @@ public final class ConfigScreen<C> extends Screen {
 		layout.arrangeElements();
 	}
 	@Override
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		var currentTab = tabManager.getCurrentTab();
-		if (currentTab instanceof ConfigCategoryTab<?> categoryTab && categoryTab.handleKeyCapture(keyCode)) return true;
-		if (tabNavigationBar.keyPressed(keyCode)) {
-			cacheCurrentTabIndex();
-			return true;
-		}
-		return super.keyPressed(keyCode, scanCode, modifiers);
-	}
-	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		var currentTab = tabManager.getCurrentTab();
 		if (currentTab instanceof ConfigCategoryTab<?> categoryTab && categoryTab.isCapturingKeybind() && categoryTab.handleMouseCapture(
@@ -113,27 +134,6 @@ public final class ConfigScreen<C> extends Screen {
 		var result = super.mouseClicked(mouseX, mouseY, button);
 		cacheCurrentTabIndex();
 		return result;
-	}
-	private void cacheCurrentTabIndex() {
-		for (var i = 0; i < tabs.size(); i++) {
-			if (tabManager.getCurrentTab() != tabs.get(i)) continue;
-			lastSelectedTabCache.put(cacheKey, i);
-			break;
-		}
-	}
-	@Override
-	public void onClose() {
-		if (isActiveValue()) {
-			getMinecraft().setScreen(previous);
-			return;
-		}
-		getMinecraft().setScreen(new ConfirmScreen(
-			confirmed -> getMinecraft().setScreen(confirmed ? previous : this),
-			Translation.QUIT_CONFIRM_TITLE,
-			Translation.QUIT_CONFIRM_WARNING,
-			Translation.QUIT_CONFIRM_LABEL,
-			Translation.CANCEL_LABEL
-		));
 	}
 	public void saveAndQuit() {
 		var restartRequired = root.restartRequired(config);

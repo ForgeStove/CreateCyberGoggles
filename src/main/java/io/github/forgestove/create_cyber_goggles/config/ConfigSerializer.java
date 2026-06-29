@@ -4,6 +4,7 @@ import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import io.github.forgestove.create_cyber_goggles.config.annotation.Category;
 
+import java.awt.Point;
 import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.*;
@@ -77,10 +78,14 @@ public final class ConfigSerializer<C> {
 			field.setAccessible(true);
 			var fieldName = field.getName();
 			var value = field.get(category);
-			if (field.isAnnotationPresent(Category.class))
-				writeCategory(subConfig, fieldName, value, pathPrefix + "." + fieldName);
+			if (field.isAnnotationPresent(Category.class)) writeCategory(subConfig, fieldName, value, pathPrefix + "." + fieldName);
 			else {
-				subConfig.set(fieldName, value instanceof Enum<?> e ? e.name() : value);
+				if (value instanceof Point p) {
+					var pointConfig = config.createSubConfig();
+					pointConfig.set("x", p.x);
+					pointConfig.set("y", p.y);
+					subConfig.set(fieldName, pointConfig);
+				} else subConfig.set(fieldName, value instanceof Enum<?> e ? e.name() : value);
 				var comment = buildFieldComment(pathPrefix, fieldName);
 				if (!comment.isEmpty()) subConfig.setComment(fieldName, comment);
 			}
@@ -120,6 +125,8 @@ public final class ConfigSerializer<C> {
 			if (type == boolean.class || type == Boolean.class) field.setBoolean(category, (Boolean) value);
 			else if (type == int.class || type == Integer.class) {
 				if (value instanceof Number n) field.setInt(category, n.intValue());
+			} else if (type == Point.class) {
+				if (value instanceof CommentedConfig pc) field.set(category, new Point(pc.getInt("x"), pc.getInt("y")));
 			} else if (type.isEnum()) try {
 				field.set(category, Enum.valueOf((Class<T>) type, (String) value));
 			} catch (IllegalArgumentException ignored) {}

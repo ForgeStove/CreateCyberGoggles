@@ -31,13 +31,18 @@ public final class StockRequestAmountOverlay {
 		amountInput.setValue(Integer.toString(Mth.clamp(initial, 0, this.max)));
 		amountInput.setFocused(true);
 	}
+	private void ensureInput(Font font, int popupX, int popupY) {
+		if (amountInput == null) {
+			amountInput = new EditBox(font, 0, 0, POPUP_WIDTH - 16, 12, Component.translatable(PREFIX + "amount"));
+			amountInput.setMaxLength(9);
+			amountInput.setFilter(value -> value.chars().allMatch(Character::isDigit));
+		}
+		amountInput.setX(popupX + POPUP_PADDING);
+		amountInput.setY(popupY + 45);
+	}
 	public void close() {
 		open = false;
 		stack = ItemStack.EMPTY;
-	}
-	public void relayout(Font font, int popupX, int popupY) {
-		if (!open) return;
-		ensureInput(font, popupX, popupY);
 	}
 	public ClickResult mouseClicked(double mouseX, double mouseY, int button, int popupX, int popupY) {
 		if (!open) return ClickResult.NONE;
@@ -48,6 +53,21 @@ public final class StockRequestAmountOverlay {
 		}
 		if (!isInside(mouseX, mouseY, popupX, popupY)) return ClickResult.CLOSE;
 		return ClickResult.CONSUMED;
+	}
+	private boolean isOnConfirm(double mouseX, double mouseY, int popupX, int popupY) {
+		var x = popupX + 6;
+		var y = popupY + POPUP_HEIGHT - BUTTON_HEIGHT - BUTTON_BOTTOM;
+		var w = POPUP_WIDTH / 2 - 7;
+		return mouseX >= x && mouseX < x + w && mouseY >= y && mouseY < y + BUTTON_HEIGHT;
+	}
+	private boolean isOnCancel(double mouseX, double mouseY, int popupX, int popupY) {
+		var x = popupX + POPUP_WIDTH / 2 + 1;
+		var y = popupY + POPUP_HEIGHT - BUTTON_HEIGHT - BUTTON_BOTTOM;
+		var w = POPUP_WIDTH / 2 - 7;
+		return mouseX >= x && mouseX < x + w && mouseY >= y && mouseY < y + BUTTON_HEIGHT;
+	}
+	private boolean isInside(double mouseX, double mouseY, int popupX, int popupY) {
+		return mouseX >= popupX && mouseX < popupX + POPUP_WIDTH && mouseY >= popupY && mouseY < popupY + POPUP_HEIGHT;
 	}
 	public void charTyped(char codePoint, int modifiers) {
 		if (!open) return;
@@ -91,29 +111,9 @@ public final class StockRequestAmountOverlay {
 		gui.drawCenteredString(font, Component.translatable(PREFIX + "confirm"), confirmX + buttonW / 2, buttonY + 3, 0xFFFFFF);
 		gui.drawCenteredString(font, Component.translatable(PREFIX + "cancel"), cancelX + buttonW / 2, buttonY + 3, 0xFFFFFF);
 	}
-	private void ensureInput(Font font, int popupX, int popupY) {
-		if (amountInput == null) {
-			amountInput = new EditBox(font, 0, 0, POPUP_WIDTH - 16, 12, Component.translatable(PREFIX + "amount"));
-			amountInput.setMaxLength(9);
-			amountInput.setFilter(value -> value.chars().allMatch(Character::isDigit));
-		}
-		amountInput.setX(popupX + POPUP_PADDING);
-		amountInput.setY(popupY + 45);
-	}
-	private boolean isInside(double mouseX, double mouseY, int popupX, int popupY) {
-		return mouseX >= popupX && mouseX < popupX + POPUP_WIDTH && mouseY >= popupY && mouseY < popupY + POPUP_HEIGHT;
-	}
-	private boolean isOnConfirm(double mouseX, double mouseY, int popupX, int popupY) {
-		var x = popupX + 6;
-		var y = popupY + POPUP_HEIGHT - BUTTON_HEIGHT - BUTTON_BOTTOM;
-		var w = POPUP_WIDTH / 2 - 7;
-		return mouseX >= x && mouseX < x + w && mouseY >= y && mouseY < y + BUTTON_HEIGHT;
-	}
-	private boolean isOnCancel(double mouseX, double mouseY, int popupX, int popupY) {
-		var x = popupX + POPUP_WIDTH / 2 + 1;
-		var y = popupY + POPUP_HEIGHT - BUTTON_HEIGHT - BUTTON_BOTTOM;
-		var w = POPUP_WIDTH / 2 - 7;
-		return mouseX >= x && mouseX < x + w && mouseY >= y && mouseY < y + BUTTON_HEIGHT;
+	public void relayout(Font font, int popupX, int popupY) {
+		if (!open) return;
+		ensureInput(font, popupX, popupY);
 	}
 	public enum ClickResult {
 		NONE,

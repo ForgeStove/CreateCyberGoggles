@@ -78,6 +78,24 @@ public final class ForceOverlayClient {
 			hadData = false;
 		}
 	}
+	private static void clear() {
+		targetSubLevelId = null;
+		smoothedClusters = null;
+		lastMass = 0;
+		hadData = false;
+		lastHeartbeatTick = -10;
+		ForceDataCache.clear();
+	}
+	@Nullable
+	private static UUID raycastTargetSubLevel(LocalPlayer player) {
+		var chunks = CCG.config.aeronautics.forceOverlay.targetingChunks;
+		var maxDist = chunks * 16.0;
+		var hit = player.pick(maxDist, 1.0f, false);
+		if (hit.getType() != Type.BLOCK) return null;
+		var blockHit = (BlockHitResult) hit;
+		var containing = Sable.HELPER.getContainingClient(blockHit.getLocation());
+		return containing != null ? containing.getUniqueId() : null;
+	}
 	private static void recomputeSmoothedClusters(
 		Map<ForceGroup, List<PointForce>> rawForces
 	) {
@@ -127,16 +145,6 @@ public final class ForceOverlayClient {
 		}
 		return out;
 	}
-	@Nullable
-	private static UUID raycastTargetSubLevel(LocalPlayer player) {
-		var chunks = CCG.config.aeronautics.forceOverlay.targetingChunks;
-		var maxDist = chunks * 16.0;
-		var hit = player.pick(maxDist, 1.0f, false);
-		if (hit.getType() != Type.BLOCK) return null;
-		var blockHit = (BlockHitResult) hit;
-		var containing = Sable.HELPER.getContainingClient(blockHit.getLocation());
-		return containing != null ? containing.getUniqueId() : null;
-	}
 	// ---- Public accessors for renderers ----
 	@Nullable
 	public static UUID currentTarget() {
@@ -151,13 +159,5 @@ public final class ForceOverlayClient {
 	@Nullable
 	public static Map<ResourceLocation, List<Cluster>> smoothedClusters() {
 		return smoothedClusters;
-	}
-	private static void clear() {
-		targetSubLevelId = null;
-		smoothedClusters = null;
-		lastMass = 0;
-		hadData = false;
-		lastHeartbeatTick = -10;
-		ForceDataCache.clear();
 	}
 }

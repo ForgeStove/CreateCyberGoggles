@@ -81,6 +81,23 @@ public final class ForceOverlayRenderer {
 			RenderSystem.applyModelViewMatrix();
 		}
 	}
+	// ---- Utilities ----
+	private static double overlayPixelScale(Minecraft mc, Vector3dc renderPos, Vec3 camPos) {
+		var minPx = CCG.config.aeronautics.forceOverlay.minOverlayPixelSize;
+		if (minPx <= 0) return 1.0;
+		var viewportHeight = mc.getWindow().getHeight();
+		if (viewportHeight <= 0) return 1.0;
+		var dx = renderPos.x() - camPos.x;
+		var dy = renderPos.y() - camPos.y;
+		var dz = renderPos.z() - camPos.z;
+		var distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+		if (distance <= 0) return 1.0;
+		int fovDeg = mc.options.fov().get();
+		var worldPerPixel = 2.0 * distance * Math.tan(Math.toRadians(fovDeg) * 0.5) / viewportHeight;
+		var minWorldEdge = minPx * worldPerPixel;
+		var nominalEdge = 0.16;
+		return Math.max(1.0, minWorldEdge / nominalEdge);
+	}
 	private static void renderCenterOfMass(PoseStack poseStack, VertexConsumer consumer, boolean haveSnapshot, double scale) {
 		float r, g, b;
 		if (haveSnapshot) {
@@ -167,6 +184,19 @@ public final class ForceOverlayRenderer {
 		}
 		bufferSource.endBatch(triType);
 	}
+	// ---- Primitive renderers ----
+	private static void quadCube(PoseStack poseStack, VertexConsumer consumer, double half, float r, float g, float b) {
+		var pose = poseStack.last();
+		var n = (float) -half;
+		var p = (float) half;
+		// 6 quads for the cube faces
+		quad(pose, consumer, n, n, n, n, p, n, p, p, n, p, n, n, r, g, b);
+		quad(pose, consumer, p, n, p, p, p, p, p, p, n, p, n, n, r, g, b);
+		quad(pose, consumer, n, n, p, p, n, p, p, n, n, n, n, n, r, g, b);
+		quad(pose, consumer, n, p, n, p, p, n, p, p, p, n, p, p, r, g, b);
+		quad(pose, consumer, p, n, n, p, p, n, n, p, n, n, n, n, r, g, b);
+		quad(pose, consumer, n, n, p, n, p, p, p, p, p, p, n, p, r, g, b);
+	}
 	private static boolean shouldShowForceGroup(ResourceLocation key) {
 		var namespace = key.getNamespace();
 		var path = key.getPath();
@@ -216,43 +246,6 @@ public final class ForceOverlayRenderer {
 		var perp2 = new Vector3d(dir).cross(perp1).normalize();
 		return new ArrowDraw(bx, by, bz, tx, ty, tz, dir.x, dir.y, dir.z, perp1, perp2, length, r, g, b);
 	}
-	// ---- Primitive renderers ----
-	private static void quadCube(PoseStack poseStack, VertexConsumer consumer, double half, float r, float g, float b) {
-		var pose = poseStack.last();
-		var n = (float) -half;
-		var p = (float) half;
-		// 6 quads for the cube faces
-		quad(pose, consumer, n, n, n, n, p, n, p, p, n, p, n, n, r, g, b);
-		quad(pose, consumer, p, n, p, p, p, p, p, p, n, p, n, n, r, g, b);
-		quad(pose, consumer, n, n, p, p, n, p, p, n, n, n, n, n, r, g, b);
-		quad(pose, consumer, n, p, n, p, p, n, p, p, p, n, p, p, r, g, b);
-		quad(pose, consumer, p, n, n, p, p, n, n, p, n, n, n, n, r, g, b);
-		quad(pose, consumer, n, n, p, n, p, p, p, p, p, p, n, p, r, g, b);
-	}
-	private static void quad(
-		Pose pose,
-		VertexConsumer consumer,
-		float x1,
-		float y1,
-		float z1,
-		float x2,
-		float y2,
-		float z2,
-		float x3,
-		float y3,
-		float z3,
-		float x4,
-		float y4,
-		float z4,
-		float r,
-		float g,
-		float b
-	) {
-		consumer.addVertex(pose, x1, y1, z1).setColor(r, g, b, 1F);
-		consumer.addVertex(pose, x2, y2, z2).setColor(r, g, b, 1F);
-		consumer.addVertex(pose, x3, y3, z3).setColor(r, g, b, 1F);
-		consumer.addVertex(pose, x4, y4, z4).setColor(r, g, b, 1F);
-	}
 	private static void cylinder(
 		Pose pose,
 		VertexConsumer consumer,
@@ -284,6 +277,44 @@ public final class ForceOverlayRenderer {
 			var oz1 = perp1.z * c1 + perp2.z * s1;
 			triangle(pose, consumer, x0 + ox0, y0 + oy0, z0 + oz0, x1 + ox0, y1 + oy0, z1 + oz0, x1 + ox1, y1 + oy1, z1 + oz1, r, g, b);
 			triangle(pose, consumer, x0 + ox0, y0 + oy0, z0 + oz0, x1 + ox1, y1 + oy1, z1 + oz1, x0 + ox1, y0 + oy1, z0 + oz1, r, g, b);
+		}
+	}
+	private static void cone(
+		PoseStack poseStack,
+		VertexConsumer consumer,
+		double tipX,
+		double tipY,
+		double tipZ,
+		double dx,
+		double dy,
+		double dz,
+		Vector3d perp1,
+		Vector3d perp2,
+		double length,
+		double radius,
+		float r,
+		float g,
+		float b
+	) {
+		var segments = 10;
+		var baseX = tipX - dx * length;
+		var baseY = tipY - dy * length;
+		var baseZ = tipZ - dz * length;
+		var cx = new double[segments + 1];
+		var cy = new double[segments + 1];
+		var cz = new double[segments + 1];
+		for (var i = 0; i <= segments; i++) {
+			var angle = Math.PI * 2.0 * i / segments;
+			var c = Math.cos(angle);
+			var s = Math.sin(angle);
+			cx[i] = baseX + (perp1.x * c + perp2.x * s) * radius;
+			cy[i] = baseY + (perp1.y * c + perp2.y * s) * radius;
+			cz[i] = baseZ + (perp1.z * c + perp2.z * s) * radius;
+		}
+		var pose = poseStack.last();
+		for (var i = 0; i < segments; i++) {
+			triangle(pose, consumer, tipX, tipY, tipZ, cx[i], cy[i], cz[i], cx[i + 1], cy[i + 1], cz[i + 1], r, g, b);
+			triangle(pose, consumer, baseX, baseY, baseZ, cx[i + 1], cy[i + 1], cz[i + 1], cx[i], cy[i], cz[i], r, g, b);
 		}
 	}
 	private static void sphere(
@@ -330,43 +361,29 @@ public final class ForceOverlayRenderer {
 			}
 		}
 	}
-	private static void cone(
-		PoseStack poseStack,
+	private static void quad(
+		Pose pose,
 		VertexConsumer consumer,
-		double tipX,
-		double tipY,
-		double tipZ,
-		double dx,
-		double dy,
-		double dz,
-		Vector3d perp1,
-		Vector3d perp2,
-		double length,
-		double radius,
+		float x1,
+		float y1,
+		float z1,
+		float x2,
+		float y2,
+		float z2,
+		float x3,
+		float y3,
+		float z3,
+		float x4,
+		float y4,
+		float z4,
 		float r,
 		float g,
 		float b
 	) {
-		var segments = 10;
-		var baseX = tipX - dx * length;
-		var baseY = tipY - dy * length;
-		var baseZ = tipZ - dz * length;
-		var cx = new double[segments + 1];
-		var cy = new double[segments + 1];
-		var cz = new double[segments + 1];
-		for (var i = 0; i <= segments; i++) {
-			var angle = Math.PI * 2.0 * i / segments;
-			var c = Math.cos(angle);
-			var s = Math.sin(angle);
-			cx[i] = baseX + (perp1.x * c + perp2.x * s) * radius;
-			cy[i] = baseY + (perp1.y * c + perp2.y * s) * radius;
-			cz[i] = baseZ + (perp1.z * c + perp2.z * s) * radius;
-		}
-		var pose = poseStack.last();
-		for (var i = 0; i < segments; i++) {
-			triangle(pose, consumer, tipX, tipY, tipZ, cx[i], cy[i], cz[i], cx[i + 1], cy[i + 1], cz[i + 1], r, g, b);
-			triangle(pose, consumer, baseX, baseY, baseZ, cx[i + 1], cy[i + 1], cz[i + 1], cx[i], cy[i], cz[i], r, g, b);
-		}
+		consumer.addVertex(pose, x1, y1, z1).setColor(r, g, b, 1F);
+		consumer.addVertex(pose, x2, y2, z2).setColor(r, g, b, 1F);
+		consumer.addVertex(pose, x3, y3, z3).setColor(r, g, b, 1F);
+		consumer.addVertex(pose, x4, y4, z4).setColor(r, g, b, 1F);
 	}
 	private static void triangle(
 		Pose pose,
@@ -387,23 +404,6 @@ public final class ForceOverlayRenderer {
 		consumer.addVertex(pose, (float) x1, (float) y1, (float) z1).setColor(r, g, b, 1.0f);
 		consumer.addVertex(pose, (float) x2, (float) y2, (float) z2).setColor(r, g, b, 1.0f);
 		consumer.addVertex(pose, (float) x3, (float) y3, (float) z3).setColor(r, g, b, 1.0f);
-	}
-	// ---- Utilities ----
-	private static double overlayPixelScale(Minecraft mc, Vector3dc renderPos, Vec3 camPos) {
-		var minPx = CCG.config.aeronautics.forceOverlay.minOverlayPixelSize;
-		if (minPx <= 0) return 1.0;
-		var viewportHeight = mc.getWindow().getHeight();
-		if (viewportHeight <= 0) return 1.0;
-		var dx = renderPos.x() - camPos.x;
-		var dy = renderPos.y() - camPos.y;
-		var dz = renderPos.z() - camPos.z;
-		var distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-		if (distance <= 0) return 1.0;
-		int fovDeg = mc.options.fov().get();
-		var worldPerPixel = 2.0 * distance * Math.tan(Math.toRadians(fovDeg) * 0.5) / viewportHeight;
-		var minWorldEdge = minPx * worldPerPixel;
-		var nominalEdge = 0.16;
-		return Math.max(1.0, minWorldEdge / nominalEdge);
 	}
 	private record ArrowDraw(
 		double bx,

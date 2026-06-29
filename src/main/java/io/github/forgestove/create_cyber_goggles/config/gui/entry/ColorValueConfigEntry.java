@@ -46,14 +46,14 @@ public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer>
 			setValue(Integer.parseUnsignedInt(value, 16));
 		} catch (NumberFormatException ignored) {}
 	}
-	private void accept(int newColor) {
-		setValue(newColor);
-		inputField.setValue(formatColor(newColor));
-	}
 	private void openColorPicker() {
 		var mc = tab.getMinecraft();
 		var screen = new ColorPickerScreen(mc.screen, getValue(), hasAlpha, this::accept);
 		mc.setScreen(screen);
+	}
+	private void accept(int newColor) {
+		setValue(newColor);
+		inputField.setValue(formatColor(newColor));
 	}
 	@Override
 	public void refresh() {

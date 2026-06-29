@@ -24,29 +24,35 @@ public final class ValueConfigNode<C, V> implements ConfigNode<C> {
 	public Class<? extends V> getValueType() {
 		return valueType;
 	}
-	public V getDefaultValue() {
-		return defaultValue;
+	@NotNull
+	public Component getTitle() {
+		return title;
 	}
-	public V getActiveValue(C config) {
-		return valueReader.read(config);
-	}
-	public void setActiveValue(C config, V value) {
-		valueWriter.write(config, value);
-	}
-	public V getEditingValue(C config) {
-		if (editingValue == null) setEditingValue(getActiveValue(config));
-		return editingValue;
-	}
-	public void setEditingValue(V value) {
-		editingValue = value;
+	@Nullable
+	@Override
+	public Component getTooltip() {
+		return tooltip;
 	}
 	@Override
 	public void resetToDefault() {
 		setEditingValue(getDefaultValue());
 	}
+	public void setEditingValue(V value) {
+		editingValue = value;
+	}
+	public V getDefaultValue() {
+		return defaultValue;
+	}
 	@Override
 	public void resetToActive(C config) {
 		setEditingValue(getActiveValue(config));
+	}
+	public V getActiveValue(C config) {
+		return valueReader.read(config);
+	}
+	@Override
+	public boolean restartRequired(C config) {
+		return requiresRestart && !isActiveValue(config);
 	}
 	@Override
 	public boolean isDefaultValue(C config) {
@@ -60,32 +66,26 @@ public final class ValueConfigNode<C, V> implements ConfigNode<C> {
 	public @Nullable Component validate(C config) {
 		return validator == null ? null : validator.validate(getEditingValue(config));
 	}
-	@NotNull
-	public Component getTitle() {
-		return title;
-	}
-	@Nullable
-	@Override
-	public Component getTooltip() {
-		return tooltip;
-	}
-	@Override
-	public boolean restartRequired(C config) {
-		return requiresRestart && !isActiveValue(config);
-	}
-	public boolean isColorValue() {
-		return colorValue != null;
-	}
-	public boolean colorHasAlpha() {
-		return isColorValue() && colorValue.hasAlpha();
-	}
 	@Override
 	public void copy(C from, C to) {
 		setActiveValue(to, getActiveValue(from));
 	}
+	public void setActiveValue(C config, V value) {
+		valueWriter.write(config, value);
+	}
 	@Override
 	public void writeEditingToConfig(C config) {
 		setActiveValue(config, getEditingValue(config));
+	}
+	public V getEditingValue(C config) {
+		if (editingValue == null) setEditingValue(getActiveValue(config));
+		return editingValue;
+	}
+	public boolean colorHasAlpha() {
+		return isColorValue() && colorValue.hasAlpha();
+	}
+	public boolean isColorValue() {
+		return colorValue != null;
 	}
 	@FunctionalInterface
 	public interface ValueReader<S, V> {

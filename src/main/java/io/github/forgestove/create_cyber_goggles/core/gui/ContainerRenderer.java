@@ -8,15 +8,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 public class ContainerRenderer extends AbstractItemGridRenderer {
 	private static final int COLUMNS = 9;
-	private static boolean isVanilla27Container(ItemStack stack) {
-		var item = stack.getItem();
-		if (item instanceof BlockItem blockItem && blockItem.getBlock() instanceof ShulkerBoxBlock) return true;
-		return item == Items.CHEST || item == Items.TRAPPED_CHEST || item == Items.BARREL || item == Items.CHEST_MINECART;
-	}
-	private static boolean isVanilla9Container(ItemStack stack) {
-		var item = stack.getItem();
-		return item == Items.DISPENSER || item == Items.DROPPER || item == Items.HOPPER;
-	}
 	@Override
 	public boolean supports(ItemStack stack) {
 		if (!CCG.config.tooltip.container) return false;
@@ -38,5 +29,14 @@ public class ContainerRenderer extends AbstractItemGridRenderer {
 		var columns = Math.min(slots, COLUMNS);
 		if (isVanilla9Container(stack)) columns = 3;
 		return new OverlayData(items, columns);
+	}
+	private static boolean isVanilla27Container(ItemStack stack) {
+		var item = stack.getItem();
+		if (item instanceof BlockItem blockItem && blockItem.getBlock() instanceof ShulkerBoxBlock) return true;
+		return item == Items.CHEST || item == Items.TRAPPED_CHEST || item == Items.BARREL || item == Items.CHEST_MINECART;
+	}
+	private static boolean isVanilla9Container(ItemStack stack) {
+		var item = stack.getItem();
+		return item == Items.DISPENSER || item == Items.DROPPER || item == Items.HOPPER;
 	}
 }

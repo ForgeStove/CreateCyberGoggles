@@ -24,11 +24,11 @@ public enum CCGMods {
 	public String id() {
 		return id;
 	}
-	public ResourceLocation rl(String path) {
-		return ResourceLocation.fromNamespaceAndPath(id, path);
-	}
 	public Block getBlock(String id) {
 		return BuiltInRegistries.BLOCK.get(rl(id));
+	}
+	public ResourceLocation rl(String path) {
+		return ResourceLocation.fromNamespaceAndPath(id, path);
 	}
 	public Item getItem(String id) {
 		return BuiltInRegistries.ITEM.get(rl(id));

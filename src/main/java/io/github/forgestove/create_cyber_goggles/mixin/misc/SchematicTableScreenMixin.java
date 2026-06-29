@@ -61,49 +61,6 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 		refreshButton.withCallback(this::ccg$refreshFoldersAndFiles);
 	}
 	@Unique
-	private void ccg$refreshFoldersAndFiles() {
-		if (!CCG.config.misc.recursiveSchematicScan) return;
-		ccg$folders = SchematicFolderUtil.listSelectableFolders();
-		var selectedFolder = SchematicFolderUtil.getSelectedFolder();
-		if (!selectedFolder.isEmpty() && !ccg$folders.contains(selectedFolder)) {
-			SchematicFolderUtil.setSelectedFolder("");
-			selectedFolder = "";
-		}
-		if (ccg$folderArea != null) {
-			List<? extends Component> folderOptions = ccg$folders.stream()
-				.map(folder -> folder.isEmpty()
-					? Component.translatable("create_cyber_goggles.screen.schematicTable.folderRoot")
-					: Component.literal(folder))
-				.toList();
-			ccg$folderArea.forOptions(folderOptions);
-			ccg$folderArea.setState(Math.max(0, ccg$folders.indexOf(selectedFolder)));
-			ccg$folderArea.onChanged();
-		}
-		ccg$rebuildSchematicList();
-	}
-	@Unique
-	private void ccg$setFolderPickerVisible(boolean visible) {
-		if (ccg$folderArea != null) {
-			ccg$folderArea.visible = visible;
-			ccg$folderArea.active = visible;
-		}
-		if (ccg$folderLabel != null) ccg$folderLabel.visible = visible;
-		if (ccg$folderPickerButton != null) ccg$folderPickerButton.green = visible;
-		if (schematicsArea != null) {
-			schematicsArea.visible = !visible;
-			schematicsArea.active = !visible;
-		}
-		if (schematicsLabel != null) schematicsLabel.visible = !visible;
-	}
-	@Inject(method = "containerTick", at = @At("TAIL"))
-	private void keepFileListHiddenWhenFolderPickerOpen(CallbackInfo ci) {
-		if (!CCG.config.misc.recursiveSchematicScan) return;
-		if (ccg$folderArea != null && ccg$folderArea.visible) {
-			if (schematicsArea != null) schematicsArea.visible = false;
-			if (schematicsLabel != null) schematicsLabel.visible = false;
-		}
-	}
-	@Unique
 	private void ccg$rebuildSchematicList() {
 		if (!CCG.config.misc.recursiveSchematicScan) return;
 		var schematicSender = CreateClient.SCHEMATIC_SENDER;
@@ -126,5 +83,48 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 			schematicsLabel.text = CommonComponents.EMPTY;
 		}
 		if (ccg$folderArea != null && ccg$folderArea.visible) ccg$setFolderPickerVisible(true);
+	}
+	@Unique
+	private void ccg$setFolderPickerVisible(boolean visible) {
+		if (ccg$folderArea != null) {
+			ccg$folderArea.visible = visible;
+			ccg$folderArea.active = visible;
+		}
+		if (ccg$folderLabel != null) ccg$folderLabel.visible = visible;
+		if (ccg$folderPickerButton != null) ccg$folderPickerButton.green = visible;
+		if (schematicsArea != null) {
+			schematicsArea.visible = !visible;
+			schematicsArea.active = !visible;
+		}
+		if (schematicsLabel != null) schematicsLabel.visible = !visible;
+	}
+	@Unique
+	private void ccg$refreshFoldersAndFiles() {
+		if (!CCG.config.misc.recursiveSchematicScan) return;
+		ccg$folders = SchematicFolderUtil.listSelectableFolders();
+		var selectedFolder = SchematicFolderUtil.getSelectedFolder();
+		if (!selectedFolder.isEmpty() && !ccg$folders.contains(selectedFolder)) {
+			SchematicFolderUtil.setSelectedFolder("");
+			selectedFolder = "";
+		}
+		if (ccg$folderArea != null) {
+			List<? extends Component> folderOptions = ccg$folders.stream()
+				.map(folder -> folder.isEmpty()
+					? Component.translatable("create_cyber_goggles.screen.schematicTable.folderRoot")
+					: Component.literal(folder))
+				.toList();
+			ccg$folderArea.forOptions(folderOptions);
+			ccg$folderArea.setState(Math.max(0, ccg$folders.indexOf(selectedFolder)));
+			ccg$folderArea.onChanged();
+		}
+		ccg$rebuildSchematicList();
+	}
+	@Inject(method = "containerTick", at = @At("TAIL"))
+	private void keepFileListHiddenWhenFolderPickerOpen(CallbackInfo ci) {
+		if (!CCG.config.misc.recursiveSchematicScan) return;
+		if (ccg$folderArea != null && ccg$folderArea.visible) {
+			if (schematicsArea != null) schematicsArea.visible = false;
+			if (schematicsLabel != null) schematicsLabel.visible = false;
+		}
 	}
 }

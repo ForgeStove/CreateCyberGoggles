@@ -37,24 +37,48 @@ public final class CCGUtil {
 	private static HitResult cachedHitResult;
 	private static float lastRealtimeTick;
 	@Contract(pure = true)
-	public static boolean isInGUI() {
-		return mc.screen != null;
-	}
-	@Contract(pure = true)
 	public static boolean isInGame() {
 		return !isInGUI();
 	}
-	public static boolean isClient() {
-		return EffectiveSide.get().isClient();
+	@Contract(pure = true)
+	public static boolean isInGUI() {
+		return mc.screen != null;
 	}
 	public static boolean isServer() {
 		return !isClient();
 	}
-	public static float getRealtimeDeltaTicks() {
-		return mc.getTimer().getRealtimeDeltaTicks();
+	public static boolean isClient() {
+		return EffectiveSide.get().isClient();
+	}
+	/** @return 当前选中的{@link BlockEntity}实例，如果没有选中或类型不匹配则返回{@code null} */
+	public static @Nullable BlockEntity getBlockEntity() {
+		if (mc.level == null) return null;
+		var result = getBlockHitResult();
+		if (result == null || result.getType() == Type.MISS) return null;
+		return mc.level.getBlockEntity(result.getBlockPos());
+	}
+	/** @return 如果类型匹配{@link T}则返回对应实例，否则返回{@code null} */
+	public static <T extends BlockEntity> @Nullable T getBlockEntity(Class<T> clazz) {
+		return getAs(clazz, getBlockEntity());
+	}
+	/** @return 如果类型匹配{@link T}则返回对应实例，否则返回{@code null} */
+	public static <T extends Block> @Nullable T getBlock(Class<T> clazz) {
+		return getAs(clazz, getBlock());
 	}
 	public static <T extends U, U> @Nullable T getAs(@NotNull Class<T> clazz, U object) {
 		return clazz.isInstance(object) ? clazz.cast(object) : null;
+	}
+	/** @return 当前选中的{@link Block}实例，如果没有选中或类型不匹配则返回{@code null} */
+	public static @Nullable Block getBlock() {
+		if (mc.level == null) return null;
+		var result = getBlockHitResult();
+		if (result == null || result.getType() == Type.MISS) return null;
+		return mc.level.getBlockState(result.getBlockPos()).getBlock();
+	}
+	/** @return 当前的{@link BlockHitResult}，如果不是方块命中则返回 {@code null} */
+	@Contract(pure = true)
+	public static @Nullable BlockHitResult getBlockHitResult() {
+		return getCurrentHitResult() instanceof BlockHitResult result && result.getType() != Type.MISS ? result : null;
 	}
 	/** @return 当前帧的{@link HitResult} */
 	private static HitResult getCurrentHitResult() {
@@ -64,10 +88,13 @@ public final class CCGUtil {
 		lastRealtimeTick = currentTick;
 		return cachedHitResult;
 	}
-	/** @return 当前的{@link BlockHitResult}，如果不是方块命中则返回 {@code null} */
-	@Contract(pure = true)
-	public static @Nullable BlockHitResult getBlockHitResult() {
-		return getCurrentHitResult() instanceof BlockHitResult result && result.getType() != Type.MISS ? result : null;
+	public static float getRealtimeDeltaTicks() {
+		return mc.getTimer().getRealtimeDeltaTicks();
+	}
+	/** @return 选中的{@link Entity}实例，如果没有选中或类型不匹配则返回{@code null} */
+	public static @Nullable Entity getEntity() {
+		var result = getEntityHitResult();
+		return result != null ? result.getEntity() : null;
 	}
 	/** @return 当前的{@link EntityHitResult}，如果不是实体命中则返回 {@code null} */
 	@Contract(pure = true)
@@ -105,41 +132,10 @@ public final class CCGUtil {
 		if (!entity.isAlive() || entity.isSpectator()) return false;
 		return entity instanceof ItemRenderable || entity.isPickable();
 	}
-	/** @return 当前选中的{@link BlockEntity}实例，如果没有选中或类型不匹配则返回{@code null} */
-	public static @Nullable BlockEntity getBlockEntity() {
-		if (mc.level == null) return null;
-		var result = getBlockHitResult();
-		if (result == null || result.getType() == Type.MISS) return null;
-		return mc.level.getBlockEntity(result.getBlockPos());
-	}
-	/** @return 如果类型匹配{@link T}则返回对应实例，否则返回{@code null} */
-	public static <T extends BlockEntity> @Nullable T getBlockEntity(Class<T> clazz) {
-		return getAs(clazz, getBlockEntity());
-	}
-	/** @return 当前选中的{@link Block}实例，如果没有选中或类型不匹配则返回{@code null} */
-	public static @Nullable Block getBlock() {
-		if (mc.level == null) return null;
-		var result = getBlockHitResult();
-		if (result == null || result.getType() == Type.MISS) return null;
-		return mc.level.getBlockState(result.getBlockPos()).getBlock();
-	}
-	/** @return 如果类型匹配{@link T}则返回对应实例，否则返回{@code null} */
-	public static <T extends Block> @Nullable T getBlock(Class<T> clazz) {
-		return getAs(clazz, getBlock());
-	}
-	/** @return 选中的{@link Entity}实例，如果没有选中或类型不匹配则返回{@code null} */
-	public static @Nullable Entity getEntity() {
-		var result = getEntityHitResult();
-		return result != null ? result.getEntity() : null;
-	}
 	/** @return 如果输入不为{@code null}则返回其本身，否则返回{@link ItemStack#EMPTY} */
 	@Contract(value = "!null -> param1", pure = true)
 	public static @NotNull ItemStack orEmpty(@Nullable ItemStack itemStack) {
 		return Objects.requireNonNullElse(itemStack, ItemStack.EMPTY);
-	}
-	@Contract("_, _ -> new")
-	public static @NotNull ResourceLocation getRes(String namespace, String path) {
-		return ResourceLocation.fromNamespaceAndPath(namespace, path);
 	}
 	@Contract("_ -> new")
 	public static @NotNull ResourceLocation getMCRes(String path) {
@@ -148,6 +144,10 @@ public final class CCGUtil {
 	@Contract("_ -> new")
 	public static @NotNull ResourceLocation getCCGRes(String path) {
 		return getRes(CCG.ID, path);
+	}
+	@Contract("_, _ -> new")
+	public static @NotNull ResourceLocation getRes(String namespace, String path) {
+		return ResourceLocation.fromNamespaceAndPath(namespace, path);
 	}
 	/** @return 选中的过滤器物品，如果未选中则返回{@code null} */
 	public static @Nullable ItemStack getSelectedFilter() {
@@ -185,7 +185,7 @@ public final class CCGUtil {
 		if (mc.player == null) return false;
 		var allMatch = Stream.of(EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET)
 			.allMatch(slot -> mc.player.getItemBySlot(slot).getItem() instanceof CardboardArmorItem);
-		return CCG.config.chainConveyor.cardBoardedYourself && !mc.player.getAbilities().flying && allMatch;
+		return CCG.config.misc.chainConveyor.cardBoardedYourself && !mc.player.getAbilities().flying && allMatch;
 	}
 	/** @return 如果玩家主手或副手中有物品则返回{@code true}，否则返回{@code false} */
 	public static boolean hasItemInHand() {

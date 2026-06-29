@@ -29,15 +29,11 @@ public class KeyInput {
 		openStockScreen();
 		previewFilterScreen();
 	}
-	public static void mouseScroll(MouseScrollingEvent event) {
-		clothStore(event);
-		tryScrollClipboardPage(event);
-	}
 	private static void toggleGoggle() {
 		toggleConfig(
 			CCGKey.toggleGoggle.isDown(),
-			CCG.config.gameMode.enableGoggles,
-			val -> CCG.config.gameMode.enableGoggles = val,
+			CCG.config.goggles.gameMode.enableGoggles,
+			val -> CCG.config.goggles.gameMode.enableGoggles = val,
 			"message.goggle"
 		);
 	}
@@ -82,6 +78,10 @@ public class KeyInput {
 			(id, inv, stack) -> new PackageFilterScreen(PackageFilterMenu.create(id, inv, stack), inv, stack.getHoverName())
 		).get(itemStack.getItem()).apply(-1, mc.player.getInventory(), itemStack));
 		playSound(SoundEvents.BOOK_PAGE_TURN, 1.0f, 1.0f);
+	}
+	public static void mouseScroll(MouseScrollingEvent event) {
+		clothStore(event);
+		tryScrollClipboardPage(event);
 	}
 	private static void clothStore(MouseScrollingEvent event) {
 		if (!CCG.config.goggles.betterStoreInfo) return;

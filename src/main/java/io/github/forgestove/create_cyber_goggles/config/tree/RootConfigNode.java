@@ -58,10 +58,6 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 		}
 		return error;
 	}
-	@NotNull
-	public ImmutableList<CategoryConfigNode<C>> getCategories() {
-		return categories;
-	}
 	@Override
 	public void copy(C from, C to) {
 		categories.forEach(node -> node.copy(from, to));
@@ -69,6 +65,10 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 	@Override
 	public void writeEditingToConfig(C config) {
 		categories.forEach(node -> node.writeEditingToConfig(config));
+	}
+	@NotNull
+	public ImmutableList<CategoryConfigNode<C>> getCategories() {
+		return categories;
 	}
 	private static class Builder<C> {
 		private final String modId;

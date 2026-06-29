@@ -20,12 +20,12 @@ public abstract class ChainConveyorRidingHandlerMixin {
 	)
 	)
 	private static boolean wrapChainRideableCheck(LocalPlayer instance, Predicate<ItemStack> predicate, Operation<Boolean> original) {
-		if (CCG.config.chainConveyor.preventFalling) ChainConveyorRidingHandler.catchingUp = 20;
-		return CCG.config.chainConveyor.alwaysAllowRidingChain || original.call(instance, predicate);
+		if (CCG.config.misc.chainConveyor.preventFalling) ChainConveyorRidingHandler.catchingUp = 20;
+		return CCG.config.misc.chainConveyor.alwaysAllowRidingChain || original.call(instance, predicate);
 	}
 	@Inject(method = "clientTick", at = @At(value = "TAIL"))
 	private static void injectTail(CallbackInfo ci) {
-		if (!CCG.config.chainConveyor.cardBoardedYourself) return;
+		if (!CCG.config.misc.chainConveyor.cardBoardedYourself) return;
 		if (testForStealth()) sendAction(Action.PRESS_SHIFT_KEY);
 	}
 	@Inject(method = "stopRiding", at = @At("HEAD"))

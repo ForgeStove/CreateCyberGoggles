@@ -1,19 +1,19 @@
 package io.github.forgestove.create_cyber_goggles;
 import io.github.forgestove.create_cyber_goggles.config.annotation.*;
 import io.github.forgestove.create_cyber_goggles.core.factory.*;
+
+import java.awt.Point;
 @ConfigClass(CCG.ID)
 public final class CCGConfig {
 	@Category public final Goggles goggles = new Goggles();
 	@Category public final Tooltip tooltip = new Tooltip();
-	@Category public final GameMode gameMode = new GameMode();
 	@Category public final Overlay overlay = new Overlay();
 	@Category public final Outliner outliner = new Outliner();
-	@Category public final ChainConveyor chainConveyor = new ChainConveyor();
-	@Category public final Wrench wrench = new Wrench();
 	@Category @Condition("simulated") public final Aeronautics aeronautics = new Aeronautics();
 	@Category public final DraftingView draftingView = new DraftingView();
 	@Category public final Misc misc = new Misc();
 	public static class Goggles {
+		@Category public final GameMode gameMode = new GameMode();
 		public boolean enhancedInfo = true;
 		public boolean hideStaticKineticInfo = false;
 		public boolean onlyOnWithGoggles = false;
@@ -25,6 +25,13 @@ public final class CCGConfig {
 		public boolean dedupTooltipLines = true;
 		public boolean preciseNumber = true;
 		@IntRange(min = 0) public int maxFractionDigits = 2;
+		public static class GameMode {
+			public boolean enableGoggles = true;
+			public boolean enableInSurvival = true;
+			public boolean enableInCreative = true;
+			public boolean enableInSpectator = true;
+			public boolean enableInAdventure = true;
+		}
 	}
 	public static class Tooltip {
 		public boolean extraItemTooltip = true;
@@ -51,17 +58,9 @@ public final class CCGConfig {
 		public boolean crushingController = true;
 		public boolean millstone = true;
 	}
-	public static class GameMode {
-		public boolean enableGoggles = true;
-		public boolean enableInSurvival = true;
-		public boolean enableInCreative = true;
-		public boolean enableInSpectator = true;
-		public boolean enableInAdventure = true;
-	}
 	public static class Overlay {
 		public boolean renderItemOverlay = true;
-		public int overlayOffsetX = 0;
-		public int overlayOffsetY = 0;
+		public Point overlayPos = new Point();
 		public TooltipFlagType tooltipFlagType = TooltipFlagType.Default;
 		public TooltipTheme tooltipTheme = TooltipTheme.Default;
 		public boolean useCustomColor = false;
@@ -77,33 +76,18 @@ public final class CCGConfig {
 		@ColorValue public int inColor = 0x7FCDE0;
 		public boolean rainbowDebug = false;
 	}
-	public static class ChainConveyor {
-		public boolean alwaysAllowRidingChain = false;
-		public boolean preventFalling = false;
-		public boolean enhancedConnection = true;
-		public boolean cardBoardedYourself = false;
-	}
-	public static class Wrench {
-		public boolean betterEncasedCogwheel = true;
-		public boolean betterEncasedPipe = true;
-		public boolean betterChassis = true;
-		public boolean alwaysShowScrollValue = true;
-		public boolean alwaysAllowRotating = true;
-		public boolean leftClickFastDismantle = true;
-		public boolean removeCooldown = true;
-		public boolean enchancedRotationMenu = false;
-	}
 	public static class Aeronautics {
+		@Category public final ForceOverlay forceOverlay = new ForceOverlay();
 		public boolean alwaysShowMass = true;
 		public boolean alwaysShowFriction = false;
 		public boolean liftLimitOfHandleRange = false;
 		public boolean customHandleMoveSublevelKey = false;
 		public boolean alwaysAllowRidingRope = true;
-		@Category public final ForceOverlay forceOverlay = new ForceOverlay();
 		public static class ForceOverlay {
 			public boolean forceOverlayEnabled = true;
 			public boolean forceTooltipEnabled = true;
 			public boolean renderCenterOfMass = true;
+			public Point forceOverlayPos = new Point();
 			@DoubleRange(min = 0) public double clusterAngleRadians = 0.1;
 			@DoubleRange(min = 0, max = 1) public double smoothingFactor = 0.5;
 			@DoubleRange(min = 0, max = 1) public double gravityArrowFraction = 0.5;
@@ -129,6 +113,8 @@ public final class CCGConfig {
 		@ColorValue public int lineShadowColor = 0x696965;
 	}
 	public static class Misc {
+		@Category public final ChainConveyor chainConveyor = new ChainConveyor();
+		@Category public final Wrench wrench = new Wrench();
 		public boolean removeMechanicalArmLimit = false;
 		public boolean removeRequestLimit = true;
 		public boolean stockRequestQuickActions = true;
@@ -145,5 +131,21 @@ public final class CCGConfig {
 		public boolean forcedBackend = false;
 		public boolean nbtFix = false;
 		public boolean showScrapContent = true;
+		public static class ChainConveyor {
+			public boolean alwaysAllowRidingChain = false;
+			public boolean preventFalling = false;
+			public boolean enhancedConnection = true;
+			public boolean cardBoardedYourself = false;
+		}
+		public static class Wrench {
+			public boolean betterEncasedCogwheel = true;
+			public boolean betterEncasedPipe = true;
+			public boolean betterChassis = true;
+			public boolean alwaysShowScrollValue = true;
+			public boolean alwaysAllowRotating = true;
+			public boolean leftClickFastDismantle = true;
+			public boolean removeCooldown = true;
+			public boolean enchancedRotationMenu = false;
+		}
 	}
 }

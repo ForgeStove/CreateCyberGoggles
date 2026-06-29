@@ -10,17 +10,6 @@ import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public final class ToolboxRenderer extends AbstractItemGridRenderer {
-	public static ItemStack readToolboxFilter(ToolboxInventory inventory, int compartment) {
-		if (mc.level == null) return ItemStack.EMPTY;
-		var access = mc.level.registryAccess();
-		var tag = inventory.serializeNBT(access);
-		if (!tag.contains("Compartments", 9)) return ItemStack.EMPTY;
-		var compartmentsTag = tag.getList("Compartments", 10);
-		if (compartment < 0 || compartment >= compartmentsTag.size()) return ItemStack.EMPTY;
-		var filterTag = compartmentsTag.getCompound(compartment);
-		if (filterTag.isEmpty() || !filterTag.contains("id", 8)) return ItemStack.EMPTY;
-		return ItemStack.parse(access, filterTag).orElse(ItemStack.EMPTY);
-	}
 	@Override
 	public boolean supports(ItemStack stack) {
 		return CCG.config.tooltip.toolbox && AllItemTags.TOOLBOXES.matches(stack);
@@ -61,5 +50,16 @@ public final class ToolboxRenderer extends AbstractItemGridRenderer {
 		}
 		if (items.isEmpty() || items.stream().allMatch(ItemStack::isEmpty)) return null;
 		return new OverlayData(items, 4, zeroCountSlots);
+	}
+	public static ItemStack readToolboxFilter(ToolboxInventory inventory, int compartment) {
+		if (mc.level == null) return ItemStack.EMPTY;
+		var access = mc.level.registryAccess();
+		var tag = inventory.serializeNBT(access);
+		if (!tag.contains("Compartments", 9)) return ItemStack.EMPTY;
+		var compartmentsTag = tag.getList("Compartments", 10);
+		if (compartment < 0 || compartment >= compartmentsTag.size()) return ItemStack.EMPTY;
+		var filterTag = compartmentsTag.getCompound(compartment);
+		if (filterTag.isEmpty() || !filterTag.contains("id", 8)) return ItemStack.EMPTY;
+		return ItemStack.parse(access, filterTag).orElse(ItemStack.EMPTY);
 	}
 }

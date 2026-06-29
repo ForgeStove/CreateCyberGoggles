@@ -18,6 +18,25 @@ import java.util.*;
 public abstract class BasinBlockEntityMixin implements IHaveGoggleInformation, Self<BasinBlockEntity> {
 	@Shadow public SmartFluidTankBehaviour inputTank;
 	@Shadow protected SmartFluidTankBehaviour outputTank;
+	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), cancellable = true)
+	public void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> cir) {
+		var basin = thiz();
+		var inputItems = ccg$collectItems(basin.getInputInventory());
+		var outputItems = ccg$collectItems(basin.getOutputInventory());
+		var inputCapacities = new ArrayList<Integer>();
+		var outputCapacities = new ArrayList<Integer>();
+		var inputFluids = ccg$collectFluids(inputTank, inputCapacities);
+		var outputFluids = ccg$collectFluids(outputTank, outputCapacities);
+		cir.setReturnValue(GoggleTooltipUtil.basin(
+			tooltip,
+			inputItems,
+			outputItems,
+			inputFluids,
+			outputFluids,
+			inputCapacities,
+			outputCapacities
+		));
+	}
 	@Unique
 	private static @NotNull List<ItemStack> ccg$collectItems(@NotNull IItemHandler inventory) {
 		var items = new ArrayList<ItemStack>();
@@ -41,24 +60,5 @@ public abstract class BasinBlockEntityMixin implements IHaveGoggleInformation, S
 			capacities.add(handler.getTankCapacity(tank));
 		}
 		return fluids;
-	}
-	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), cancellable = true)
-	public void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> cir) {
-		var basin = thiz();
-		var inputItems = ccg$collectItems(basin.getInputInventory());
-		var outputItems = ccg$collectItems(basin.getOutputInventory());
-		var inputCapacities = new ArrayList<Integer>();
-		var outputCapacities = new ArrayList<Integer>();
-		var inputFluids = ccg$collectFluids(inputTank, inputCapacities);
-		var outputFluids = ccg$collectFluids(outputTank, outputCapacities);
-		cir.setReturnValue(GoggleTooltipUtil.basin(
-			tooltip,
-			inputItems,
-			outputItems,
-			inputFluids,
-			outputFluids,
-			inputCapacities,
-			outputCapacities
-		));
 	}
 }

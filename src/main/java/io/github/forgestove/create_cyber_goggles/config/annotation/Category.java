@@ -14,7 +14,6 @@ public @interface Category {
 	 * @return the order of the category
 	 */
 	int value() default 0;
-
 	/**
 	 * Whether the category should be expanded by default in the config GUI.
 	 * Subcategories can be collapsed/expanded by clicking on the header.

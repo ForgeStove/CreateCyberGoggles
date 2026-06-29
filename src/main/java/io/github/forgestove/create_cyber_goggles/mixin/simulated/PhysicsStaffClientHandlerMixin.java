@@ -13,8 +13,6 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 @Mixin(PhysicsStaffClientHandler.class)
 public abstract class PhysicsStaffClientHandlerMixin {
 	@Shadow @Nullable private ClientDragSession dragSession;
-	@Shadow
-	protected abstract double clampDistance(double distance);
 	@Inject(method = "tick", at = @At("TAIL"))
 	private void tick(CallbackInfo ci) {
 		if (dragSession == null) return;
@@ -30,4 +28,6 @@ public abstract class PhysicsStaffClientHandlerMixin {
 				.distanceTo(subLevel.logicalPose().transformPosition(JOMLConversion.toMojang(localAnchor))))
 		);
 	}
+	@Shadow
+	protected abstract double clampDistance(double distance);
 }

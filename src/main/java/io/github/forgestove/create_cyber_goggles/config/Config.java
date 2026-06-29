@@ -22,15 +22,6 @@ public final class Config {
 			configClass.getName()
 		));
 	}
-	public static void initConfigScreen(ModContainer container, String id) {
-		Supplier<IConfigScreenFactory> extension = () -> (modContainer, screen) -> createConfigScreen(id);
-		container.registerExtensionPoint(IConfigScreenFactory.class, extension);
-	}
-	public static Screen createConfigScreen(String id) {
-		var handler = HANDLERS.get(id);
-		if (handler != null) return handler.createConfigScreen();
-		throw new IllegalStateException("Config handler for id '" + id + "' is not initialized. Call getConfig(...) first.");
-	}
 	private static ConfigHandler<?> initializeIfNeeded(Class<?> configClass, Logger logger) {
 		var id = configClass.getAnnotation(ConfigClass.class).value();
 		if (id == null || id.isBlank()) throw new IllegalStateException("Mod id must be provided before building ConfigHandler");
@@ -52,5 +43,14 @@ public final class Config {
 				.logger(logger)
 				.build()
 		);
+	}
+	public static void initConfigScreen(ModContainer container, String id) {
+		Supplier<IConfigScreenFactory> extension = () -> (modContainer, screen) -> createConfigScreen(id);
+		container.registerExtensionPoint(IConfigScreenFactory.class, extension);
+	}
+	public static Screen createConfigScreen(String id) {
+		var handler = HANDLERS.get(id);
+		if (handler != null) return handler.createConfigScreen();
+		throw new IllegalStateException("Config handler for id '" + id + "' is not initialized. Call getConfig(...) first.");
 	}
 }

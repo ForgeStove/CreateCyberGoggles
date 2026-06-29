@@ -22,10 +22,6 @@ public final class CategoryConfigNode<C> implements ConfigNode<C> {
 	public Component getTooltip() {
 		return tooltip;
 	}
-
-	public boolean isDefaultExpanded() {
-		return defaultExpanded;
-	}
 	@Override
 	public void resetToDefault() {
 		children.forEach(ConfigNode::resetToDefault);
@@ -58,10 +54,6 @@ public final class CategoryConfigNode<C> implements ConfigNode<C> {
 		}
 		return error;
 	}
-	@NotNull
-	public ImmutableList<ConfigNode<C>> getChildren() {
-		return children;
-	}
 	@Override
 	public void copy(C from, C to) {
 		children.forEach(node -> node.copy(from, to));
@@ -69,6 +61,13 @@ public final class CategoryConfigNode<C> implements ConfigNode<C> {
 	@Override
 	public void writeEditingToConfig(C config) {
 		children.forEach(node -> node.writeEditingToConfig(config));
+	}
+	public boolean isDefaultExpanded() {
+		return defaultExpanded;
+	}
+	@NotNull
+	public ImmutableList<ConfigNode<C>> getChildren() {
+		return children;
 	}
 	public static final class Builder<C> {
 		private CategoryConfigNode<C> node;

@@ -20,6 +20,13 @@ public final class SchematicFolderUtil {
 		}
 		selectedFolder = normalized;
 	}
+	private static String normalize(String folder) {
+		if (folder == null) return ROOT;
+		var normalized = folder.replace('\\', '/').trim();
+		if (normalized.isEmpty() || normalized.equals(".")) return ROOT;
+		while (normalized.startsWith("/")) normalized = normalized.substring(1);
+		return normalized;
+	}
 	public static synchronized Path getSelectedDirectory() {
 		var selectedDir = CreatePaths.SCHEMATICS_DIR.resolve(selectedFolder).normalize();
 		if (!selectedDir.startsWith(CreatePaths.SCHEMATICS_DIR) || !Files.isDirectory(selectedDir)) {
@@ -51,13 +58,6 @@ public final class SchematicFolderUtil {
 		} catch (IOException ignored) {
 			return false;
 		}
-	}
-	private static String normalize(String folder) {
-		if (folder == null) return ROOT;
-		var normalized = folder.replace('\\', '/').trim();
-		if (normalized.isEmpty() || normalized.equals(".")) return ROOT;
-		while (normalized.startsWith("/")) normalized = normalized.substring(1);
-		return normalized;
 	}
 	public static @NotNull String normalizeUploadName(String schematic) {
 		var normalized = schematic == null ? "" : schematic.replace('\\', '/').trim();

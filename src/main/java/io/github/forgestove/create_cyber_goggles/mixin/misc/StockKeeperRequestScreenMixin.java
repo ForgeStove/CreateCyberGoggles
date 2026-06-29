@@ -32,10 +32,6 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 	@Shadow int windowHeight;
 	@Shadow StockTickerBlockEntity blockEntity;
 	@Shadow @Final Couple<Integer> noneHovered;
-	@Shadow
-	protected abstract Couple<Integer> getHoveredSlot(int x, int y);
-	@Shadow
-	protected abstract BigItemStack getOrderForItem(ItemStack stack);
 	@WrapWithCondition(
 		method = "containerTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;closeContainer()V")
 	)
@@ -64,6 +60,90 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 		}
 		if (!CCGKey.stockRequestSetter.isDown()) return;
 		if (ccg$openPopupForHoveredItem((int) mouseX, (int) mouseY)) cir.setReturnValue(true);
+	}
+	@Unique
+	private int ccg$popupX() {
+		var guiLeft = itemsX - (windowWidth - cols * colWidth) / 2 - 1;
+		return guiLeft + (windowWidth - 120) / 2;
+	}
+	@Unique
+	private int ccg$popupY() {
+		var guiTop = itemsY - 33;
+		return guiTop + (windowHeight - 82) / 2;
+	}
+	@Unique
+	private void ccg$applyPopupAmount() {
+		if (ccg$popup.getStack().isEmpty()) {
+			ccg$popup.close();
+			return;
+		}
+		var requested = ccg$popup.getRequestedAmount();
+		var existingOrder = getOrderForItem(ccg$popup.getStack());
+		if (requested <= 0) {
+			if (existingOrder != null) itemsToOrder.remove(existingOrder);
+			ccg$popup.close();
+			return;
+		}
+		if (existingOrder == null) {
+			if (itemsToOrder.size() < cols) itemsToOrder.add(new BigItemStack(ccg$popup.getStack().copyWithCount(1), requested));
+		} else existingOrder.count = requested;
+		ccg$popup.close();
+	}
+	@Unique
+	private boolean ccg$applyAltFullAmount(int mouseX, int mouseY) {
+		var hoveredSlot = getHoveredSlot(mouseX, mouseY);
+		if (hoveredSlot == noneHovered) return false;
+		int group = hoveredSlot.getFirst();
+		int index = hoveredSlot.getSecond();
+		if (group == -2) return false;
+		var entry = group == -1 ? itemsToOrder.get(index) : displayedItems.get(group).get(index);
+		if (entry == null || entry.stack.isEmpty()) return false;
+		var existingOrder = getOrderForItem(entry.stack);
+		// Bottom order row (-1) should reduce/remove on Alt+LMB; stock list rows should fill to max.
+		if (group == -1) {
+			if (existingOrder != null) itemsToOrder.remove(existingOrder);
+			return true;
+		}
+		var max = ccg$getAvailableMax(entry);
+		if (max <= 0) {
+			if (existingOrder != null) itemsToOrder.remove(existingOrder);
+			return true;
+		}
+		if (existingOrder == null) {
+			if (itemsToOrder.size() < cols) itemsToOrder.add(new BigItemStack(entry.stack.copyWithCount(1), max));
+		} else existingOrder.count = max;
+		return true;
+	}
+	@Unique
+	private boolean ccg$openPopupForHoveredItem(int mouseX, int mouseY) {
+		var hoveredSlot = getHoveredSlot(mouseX, mouseY);
+		if (hoveredSlot == noneHovered) return false;
+		int group = hoveredSlot.getFirst();
+		int index = hoveredSlot.getSecond();
+		if (group == -2) return false; // recipe strip uses its own amount semantics
+		var entry = group == -1 ? itemsToOrder.get(index) : displayedItems.get(group).get(index);
+		if (entry == null || entry.stack.isEmpty()) return false;
+		var max = ccg$getAvailableMax(entry);
+		var existingOrder = getOrderForItem(entry.stack);
+		var initial = existingOrder == null ? 1 : existingOrder.count;
+		ccg$popup.open(entry.stack, initial, max, mc.font, ccg$popupX(), ccg$popupY());
+		return true;
+	}
+	@Shadow
+	protected abstract BigItemStack getOrderForItem(ItemStack stack);
+	@Shadow
+	protected abstract Couple<Integer> getHoveredSlot(int x, int y);
+	@Unique
+	private int ccg$getAvailableMax(BigItemStack entry) {
+		var max = 0;
+		var summary = blockEntity.getLastClientsideStockSnapshotAsSummary();
+		if (summary != null) {
+			var summaryCount = summary.getCountOf(entry.stack);
+			if (summaryCount == BigItemStack.INF) return Integer.MAX_VALUE;
+			if (summaryCount > 0) max = summaryCount;
+		}
+		if (max == 0) return Math.max(1, entry.count);
+		return max;
 	}
 	@Inject(method = "mouseScrolled", at = @At("HEAD"), cancellable = true)
 	private void ccg$mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY, CallbackInfoReturnable<Boolean> cir) {
@@ -94,85 +174,5 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 		}
 		if (!ccg$popup.isOpen()) return;
 		ccg$popup.render(gui, mc.font, mouseX, mouseY, partialTicks, ccg$popupX(), ccg$popupY());
-	}
-	@Unique
-	private boolean ccg$openPopupForHoveredItem(int mouseX, int mouseY) {
-		var hoveredSlot = getHoveredSlot(mouseX, mouseY);
-		if (hoveredSlot == noneHovered) return false;
-		int group = hoveredSlot.getFirst();
-		int index = hoveredSlot.getSecond();
-		if (group == -2) return false; // recipe strip uses its own amount semantics
-		var entry = group == -1 ? itemsToOrder.get(index) : displayedItems.get(group).get(index);
-		if (entry == null || entry.stack.isEmpty()) return false;
-		var max = ccg$getAvailableMax(entry);
-		var existingOrder = getOrderForItem(entry.stack);
-		var initial = existingOrder == null ? 1 : existingOrder.count;
-		ccg$popup.open(entry.stack, initial, max, mc.font, ccg$popupX(), ccg$popupY());
-		return true;
-	}
-	@Unique
-	private boolean ccg$applyAltFullAmount(int mouseX, int mouseY) {
-		var hoveredSlot = getHoveredSlot(mouseX, mouseY);
-		if (hoveredSlot == noneHovered) return false;
-		int group = hoveredSlot.getFirst();
-		int index = hoveredSlot.getSecond();
-		if (group == -2) return false;
-		var entry = group == -1 ? itemsToOrder.get(index) : displayedItems.get(group).get(index);
-		if (entry == null || entry.stack.isEmpty()) return false;
-		var existingOrder = getOrderForItem(entry.stack);
-		// Bottom order row (-1) should reduce/remove on Alt+LMB; stock list rows should fill to max.
-		if (group == -1) {
-			if (existingOrder != null) itemsToOrder.remove(existingOrder);
-			return true;
-		}
-		var max = ccg$getAvailableMax(entry);
-		if (max <= 0) {
-			if (existingOrder != null) itemsToOrder.remove(existingOrder);
-			return true;
-		}
-		if (existingOrder == null) {
-			if (itemsToOrder.size() < cols) itemsToOrder.add(new BigItemStack(entry.stack.copyWithCount(1), max));
-		} else existingOrder.count = max;
-		return true;
-	}
-	@Unique
-	private void ccg$applyPopupAmount() {
-		if (ccg$popup.getStack().isEmpty()) {
-			ccg$popup.close();
-			return;
-		}
-		var requested = ccg$popup.getRequestedAmount();
-		var existingOrder = getOrderForItem(ccg$popup.getStack());
-		if (requested <= 0) {
-			if (existingOrder != null) itemsToOrder.remove(existingOrder);
-			ccg$popup.close();
-			return;
-		}
-		if (existingOrder == null) {
-			if (itemsToOrder.size() < cols) itemsToOrder.add(new BigItemStack(ccg$popup.getStack().copyWithCount(1), requested));
-		} else existingOrder.count = requested;
-		ccg$popup.close();
-	}
-	@Unique
-	private int ccg$getAvailableMax(BigItemStack entry) {
-		var max = 0;
-		var summary = blockEntity.getLastClientsideStockSnapshotAsSummary();
-		if (summary != null) {
-			var summaryCount = summary.getCountOf(entry.stack);
-			if (summaryCount == BigItemStack.INF) return Integer.MAX_VALUE;
-			if (summaryCount > 0) max = summaryCount;
-		}
-		if (max == 0) return Math.max(1, entry.count);
-		return max;
-	}
-	@Unique
-	private int ccg$popupX() {
-		var guiLeft = itemsX - (windowWidth - cols * colWidth) / 2 - 1;
-		return guiLeft + (windowWidth - 120) / 2;
-	}
-	@Unique
-	private int ccg$popupY() {
-		var guiTop = itemsY - 33;
-		return guiTop + (windowHeight - 82) / 2;
 	}
 }

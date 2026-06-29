@@ -14,12 +14,12 @@ import org.jetbrains.annotations.*;
 import java.util.List;
 @SuppressWarnings("unused")
 public class CCGLang {
+	public static @NotNull CCGLangBuilder translate(String langKey) {
+		return builder().translate(langKey);
+	}
 	@Contract(value = " -> new", pure = true)
 	public static @NotNull CCGLangBuilder builder() {
 		return new CCGLangBuilder(CCG.ID);
-	}
-	public static @NotNull CCGLangBuilder translate(String langKey) {
-		return builder().translate(langKey);
 	}
 	public static @NotNull CCGLangBuilder translate(String langKey, ChatFormatting format) {
 		return builder().translate(langKey, format);

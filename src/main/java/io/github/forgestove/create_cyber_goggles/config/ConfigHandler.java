@@ -28,26 +28,12 @@ public final class ConfigHandler<C> {
 		activeConfig = newInstance();
 		configTree.copy(savedConfig, activeConfig);
 	}
-	public static <C> Builder<C> builder(Class<C> configClass) {
-		return new Builder<>(configClass);
-	}
-	public C getConfig() {
-		return activeConfig;
-	}
-	public void save(C config) {
-		configTree.copy(config, savedConfig);
-		configTree.copy(config, activeConfig);
+	private C newInstance() {
 		try {
-			serializer.serialize(config);
-		} catch (SerializationException e) {
-			if (logger != null) logger.error("Failed to save configuration", e);
+			return configClass.getDeclaredConstructor().newInstance();
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to create config instance", e);
 		}
-	}
-	/**
-	 * 重新生成配置文件并进行翻译。在I18n完全加载后（比如玩家加入世界或打开配置界面时）调用它。
-	 */
-	public void regenerateConfigFile() {
-		save(savedConfig);
 	}
 	public C load() {
 		try {
@@ -57,16 +43,30 @@ public final class ConfigHandler<C> {
 			return newInstance();
 		}
 	}
+	public static <C> Builder<C> builder(Class<C> configClass) {
+		return new Builder<>(configClass);
+	}
+	public C getConfig() {
+		return activeConfig;
+	}
 	public Screen createConfigScreen() {
 		// Regenerate config file with translations now that I18n is loaded
 		regenerateConfigFile();
 		return new ConfigScreen<>(configTree, savedConfig, this::save);
 	}
-	private C newInstance() {
+	/**
+	 * 重新生成配置文件并进行翻译。在I18n完全加载后（比如玩家加入世界或打开配置界面时）调用它。
+	 */
+	public void regenerateConfigFile() {
+		save(savedConfig);
+	}
+	public void save(C config) {
+		configTree.copy(config, savedConfig);
+		configTree.copy(config, activeConfig);
 		try {
-			return configClass.getDeclaredConstructor().newInstance();
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to create config instance", e);
+			serializer.serialize(config);
+		} catch (SerializationException e) {
+			if (logger != null) logger.error("Failed to save configuration", e);
 		}
 	}
 	public static final class Builder<C> {

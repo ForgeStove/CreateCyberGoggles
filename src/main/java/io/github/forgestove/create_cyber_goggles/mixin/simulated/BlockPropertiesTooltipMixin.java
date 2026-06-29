@@ -11,10 +11,6 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(BlockPropertiesTooltip.class)
 public abstract class BlockPropertiesTooltipMixin {
-	@Shadow
-	private static MutableComponent formatValue(String key, double value) {
-		throw new UnsupportedOperationException();
-	}
 	@Inject(method = "getMassComponent", at = @At(value = "RETURN", ordinal = 0), cancellable = true)
 	private static void getMassComponent(
 		BlockStateExtension properties,
@@ -27,6 +23,10 @@ public abstract class BlockPropertiesTooltipMixin {
 		var comp = Component.translatable("create_cyber_goggles.tooltip.mass.medium");
 		if (showNumbers) comp.append(formatValue("simulated.unit.mass", mass).withStyle(ChatFormatting.DARK_GRAY));
 		cir.setReturnValue(comp);
+	}
+	@Shadow
+	private static MutableComponent formatValue(String key, double value) {
+		throw new UnsupportedOperationException();
 	}
 	@Inject(method = "getFrictionComponent", at = @At(value = "RETURN", ordinal = 0), cancellable = true)
 	private static void getFrictionComponent(

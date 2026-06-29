@@ -13,7 +13,7 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public abstract class CardboardArmorHandlerMixin {
 	@Inject(method = "testForStealth", at = @At("HEAD"), cancellable = true)
 	private static void injectTestForStealth(Entity entityIn, CallbackInfoReturnable<Boolean> cir) {
-		if (!CCG.config.chainConveyor.cardBoardedYourself) return;
+		if (!CCG.config.misc.chainConveyor.cardBoardedYourself) return;
 		if (isServer()) return;
 		if (ChainConveyorRidingHandler.ridingChainConveyor == null) return;
 		if (!(entityIn instanceof LocalPlayer)) return;

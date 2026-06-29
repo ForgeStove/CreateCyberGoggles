@@ -53,6 +53,37 @@ public final class ForceTooltipOverlay {
 		}
 		return lines;
 	}
+	private static void drawHud(GuiGraphics graphics, Font font, List<Component> lines) {
+		var pos = CCG.config.aeronautics.forceOverlay.forceOverlayPos;
+		var offsetX = pos.x;
+		var offsetY = pos.y;
+		var lineHeight = 9 + 1;
+		var maxLine = 0;
+		for (var line : lines) maxLine = Math.max(maxLine, font.width(line));
+		var textHeight = lines.size() * lineHeight - 1;
+		var textX = graphics.guiWidth() - 4 - 3 - 1 - maxLine + offsetX;
+		var innerX1 = textX - 3;
+		var innerX2 = textX + maxLine + 3;
+		var innerY2 = 8 + textHeight + 3 + offsetY;
+		// Background
+		var bgColor = 0xE0202020;
+		graphics.fill(innerX1, 4 + offsetY, innerX2, 5 + offsetY, bgColor);
+		graphics.fill(innerX1, innerY2, innerX2, innerY2 + 1, bgColor);
+		graphics.fill(innerX1, 5 + offsetY, innerX2, innerY2, bgColor);
+		graphics.fill(innerX1 - 1, 5 + offsetY, innerX1, innerY2, bgColor);
+		graphics.fill(innerX2, 5 + offsetY, innerX2 + 1, innerY2, bgColor);
+		// Border
+		var borderColor = 0xE05A5A5A;
+		graphics.fill(innerX1, 5 + offsetY, innerX2, 6 + offsetY, borderColor);
+		graphics.fill(innerX1, innerY2 - 1, innerX2, innerY2, borderColor);
+		graphics.fill(innerX1, 6 + offsetY, innerX1 + 1, innerY2 - 1, borderColor);
+		graphics.fill(innerX2 - 1, 6 + offsetY, innerX2, innerY2 - 1, borderColor);
+		var y = 8 + offsetY;
+		for (var line : lines) {
+			graphics.drawString(font, line, textX, y, 0xFFFFFF, false);
+			y += lineHeight;
+		}
+	}
 	private static Component labeledLine(Component label, int labelColor, Component value) {
 		var out = Component.empty();
 		out.append(label.copy().withStyle(Style.EMPTY.withColor(TextColor.fromRgb(labelColor & 0xFFFFFF))));
@@ -62,33 +93,5 @@ public final class ForceTooltipOverlay {
 	}
 	static String formatScalar(double value) {
 		return !Double.isFinite(value) ? "—" : String.format(Locale.ROOT, "%,.2f", value);
-	}
-	private static void drawHud(GuiGraphics graphics, Font font, List<Component> lines) {
-		var lineHeight = 9 + 1;
-		var maxLine = 0;
-		for (var line : lines) maxLine = Math.max(maxLine, font.width(line));
-		var textHeight = lines.size() * lineHeight - 1;
-		var textX = graphics.guiWidth() - 4 - 3 - 1 - maxLine;
-		var innerX1 = textX - 3;
-		var innerX2 = textX + maxLine + 3;
-		var innerY2 = 8 + textHeight + 3;
-		// Background
-		var bgColor = 0xE0202020;
-		graphics.fill(innerX1, 4, innerX2, 5, bgColor);
-		graphics.fill(innerX1, innerY2, innerX2, innerY2 + 1, bgColor);
-		graphics.fill(innerX1, 5, innerX2, innerY2, bgColor);
-		graphics.fill(innerX1 - 1, 5, innerX1, innerY2, bgColor);
-		graphics.fill(innerX2, 5, innerX2 + 1, innerY2, bgColor);
-		// Border
-		var borderColor = 0xE05A5A5A;
-		graphics.fill(innerX1, 5, innerX2, 6, borderColor);
-		graphics.fill(innerX1, innerY2 - 1, innerX2, innerY2, borderColor);
-		graphics.fill(innerX1, 6, innerX1 + 1, innerY2 - 1, borderColor);
-		graphics.fill(innerX2 - 1, 6, innerX2, innerY2 - 1, borderColor);
-		var y = 8;
-		for (var line : lines) {
-			graphics.drawString(font, line, textX, y, 0xFFFFFF, false);
-			y += lineHeight;
-		}
 	}
 }

@@ -45,6 +45,21 @@ public class NativeImageUtil {
 		if (sampled == BASE) sampled = sampleFromBakedModelIcon(stack);
 		return clampLuma(sampled);
 	}
+	private static int sampleFromItemIdColor(ItemStack stack) {
+		var id = BuiltInRegistries.ITEM.getKey(stack.getItem());
+		var path = "_" + id.getPath().toLowerCase(Locale.ROOT).replace('-', '_') + "_";
+		for (var entry : ID_COLOR_MAP.entrySet())
+			if (path.contains("_" + entry.getKey() + "_")) return entry.getValue();
+		return BASE;
+	}
+	private static int sampleFromBakedModelIcon(ItemStack stack) {
+		var model = mc.getItemRenderer().getModel(stack, mc.level, mc.player, 0);
+		var sprite = model.getParticleIcon(ModelData.EMPTY);
+		try (var contents = sprite.contents()) {
+			var spriteName = contents.name();
+			return sampleTexture(getRes(spriteName.getNamespace(), "textures/" + spriteName.getPath() + ".png"));
+		}
+	}
 	private static int clampLuma(int rgb) {
 		var r = rgb >> 16 & 0xFF;
 		var g = rgb >> 8 & 0xFF;
@@ -92,20 +107,5 @@ public class NativeImageUtil {
 		var g = (int) (totalG / samples);
 		var b = (int) (totalB / samples);
 		return r << 16 | g << 8 | b;
-	}
-	private static int sampleFromBakedModelIcon(ItemStack stack) {
-		var model = mc.getItemRenderer().getModel(stack, mc.level, mc.player, 0);
-		var sprite = model.getParticleIcon(ModelData.EMPTY);
-		try (var contents = sprite.contents()) {
-			var spriteName = contents.name();
-			return sampleTexture(getRes(spriteName.getNamespace(), "textures/" + spriteName.getPath() + ".png"));
-		}
-	}
-	private static int sampleFromItemIdColor(ItemStack stack) {
-		var id = BuiltInRegistries.ITEM.getKey(stack.getItem());
-		var path = "_" + id.getPath().toLowerCase(Locale.ROOT).replace('-', '_') + "_";
-		for (var entry : ID_COLOR_MAP.entrySet())
-			if (path.contains("_" + entry.getKey() + "_")) return entry.getValue();
-		return BASE;
 	}
 }

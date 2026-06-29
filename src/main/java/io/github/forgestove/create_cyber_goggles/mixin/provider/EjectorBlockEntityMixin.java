@@ -14,10 +14,6 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 @Mixin(EjectorBlockEntity.class)
 public abstract class EjectorBlockEntityMixin implements ItemRenderable, OutlineRenderable, Self<EjectorBlockEntity> {
 	@Shadow DepotBehaviour depotBehaviour;
-	@Shadow
-	protected abstract Direction getFacing();
-	@Shadow
-	protected abstract boolean cannotLaunch();
 	@Override
 	public ItemStack ccg$getItemStack() {
 		return depotBehaviour.getHeldItemStack();
@@ -45,4 +41,8 @@ public abstract class EjectorBlockEntityMixin implements ItemRenderable, Outline
 			mc.level.addParticle(data, vec.x, vec.y, vec.z, 0, 0, 0);
 		}
 	}
+	@Shadow
+	protected abstract boolean cannotLaunch();
+	@Shadow
+	protected abstract Direction getFacing();
 }

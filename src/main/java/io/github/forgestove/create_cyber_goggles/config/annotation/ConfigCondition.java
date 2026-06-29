@@ -12,6 +12,14 @@ import java.util.Arrays;
 @FunctionalInterface
 public interface ConfigCondition {
 	/**
+	 * Check whether a field carries a {@link Condition} annotation and, if so,
+	 * evaluate it. Fields without {@link Condition} always pass.
+	 */
+	static boolean evaluate(Field field) {
+		var condition = field.getAnnotation(Condition.class);
+		return condition == null || evaluate(condition);
+	}
+	/**
 	 * Evaluate a {@link Condition} annotation. Returns {@code true} if all
 	 * conditions (both {@code value} and {@code condition}) are satisfied.
 	 */
@@ -19,14 +27,6 @@ public interface ConfigCondition {
 		var mod = condition.value();
 		if (!mod.isEmpty() && LoadingModList.get().getModFileById(mod) == null) return false;
 		return Arrays.stream(condition.condition()).allMatch(ConfigCondition::evaluate);
-	}
-	/**
-	 * Check whether a field carries a {@link Condition} annotation and, if so,
-	 * evaluate it. Fields without {@link Condition} always pass.
-	 */
-	static boolean evaluate(Field field) {
-		var condition = field.getAnnotation(Condition.class);
-		return condition == null || evaluate(condition);
 	}
 	/**
 	 * Instantiate and evaluate a single condition class.

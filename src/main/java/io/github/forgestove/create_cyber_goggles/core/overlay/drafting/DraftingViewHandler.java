@@ -8,6 +8,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage;
 import org.joml.Vector3f;
+
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.getCCGRes;
 /**
  * Applies the drafting-view post-processing effect to the main render target.
  * <p>
@@ -15,14 +17,8 @@ import org.joml.Vector3f;
  * quantization with dithering, optional pixelation, and an ink-on-paper look.
  */
 public final class DraftingViewHandler {
-	private static final ResourceLocation PALETTE_TEXTURE = ResourceLocation.fromNamespaceAndPath(
-		"create_cyber_goggles",
-		"textures/effects/diagram_palette.png"
-	);
-	private static final ResourceLocation DITHER_TEXTURE = ResourceLocation.fromNamespaceAndPath(
-		"create_cyber_goggles",
-		"textures/effects/dither.png"
-	);
+	private static final ResourceLocation PALETTE_TEXTURE = getCCGRes("textures/effects/diagram_palette.png");
+	private static final ResourceLocation DITHER_TEXTURE = getCCGRes("textures/effects/dither.png");
 	private static DraftingFramebuffer framebuffer;
 	/**
 	 * Applies the drafting-view effect after all block/entity geometry is done but
@@ -74,6 +70,9 @@ public final class DraftingViewHandler {
 		upscale.clear();
 		RenderSystem.depthMask(true);
 	}
+	private static Vector3f unpackColor(int argb) {
+		return new Vector3f((float) (argb >> 16 & 0xFF) / 255.0f, (float) (argb >> 8 & 0xFF) / 255.0f, (float) (argb & 0xFF) / 255.0f);
+	}
 	private static void drawFullscreenTriangle() {
 		var tess = Tesselator.getInstance();
 		var bb = tess.begin(Mode.TRIANGLES, DefaultVertexFormat.POSITION);
@@ -82,8 +81,5 @@ public final class DraftingViewHandler {
 		bb.addVertex(-1.0f, 3.0f, 0.0f);
 		var mesh = bb.buildOrThrow();
 		BufferUploader.drawWithShader(mesh);
-	}
-	private static Vector3f unpackColor(int argb) {
-		return new Vector3f((float) (argb >> 16 & 0xFF) / 255.0f, (float) (argb >> 8 & 0xFF) / 255.0f, (float) (argb & 0xFF) / 255.0f);
 	}
 }

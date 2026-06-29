@@ -11,10 +11,6 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 @Mixin(FactoryPanelBlockEntity.class)
 public abstract class FactoryPanelBlockEntityMixin implements OutlineRenderable, Self<FactoryPanelBlockEntity> {
 	@Override
-	public int ccg$getRenderDelay() {
-		return 0;
-	}
-	@Override
 	public void ccg$render() {
 		var thiz = thiz();
 		var level = thiz.getLevel();
@@ -47,5 +43,9 @@ public abstract class FactoryPanelBlockEntityMixin implements OutlineRenderable,
 				.lineWidth(1 / 16f)
 				.colored(color);
 		});
+	}
+	@Override
+	public int ccg$getRenderDelay() {
+		return 0;
 	}
 }

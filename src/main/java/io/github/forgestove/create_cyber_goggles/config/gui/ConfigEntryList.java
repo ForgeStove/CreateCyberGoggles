@@ -29,47 +29,6 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		this.headerHeight = -3;
 		entries.forEach(this::addEntry);
 	}
-	@Override
-	public void renderWidget(@NotNull GuiGraphics gui, int mouseX, int mouseY, float delta) {
-		smoothScroll.tick(delta);
-		highlight.tick(gui, getX(), getY(), width, height, itemHeight, delta);
-		super.renderWidget(gui, mouseX, mouseY, delta);
-		var entry = getHovered();
-		if (entry == null) return;
-		var widgetTooltip = entry.getHoveredWidgetTooltip(mouseX, mouseY);
-		if (widgetTooltip != null) {
-			tab.getScreen().setTooltipForNextRenderPass(widgetTooltip.toCharSequence(minecraft));
-			return;
-		}
-		if (entry.getTooltip() != null) tab.getScreen().setTooltipForNextRenderPass(entry.getTooltip());
-	}
-	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
-		smoothScroll.onMouseScroll(vertical, itemHeight);
-		return true;
-	}
-	@Override
-	public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-		var result = super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
-		// 同步拖拽后的滚动位置，防止 smoothScroll 在下帧覆盖掉
-		smoothScroll.sync();
-		return result;
-	}
-	@Override
-	public int getRowWidth() {
-		return width * 4 / 5;
-	}
-	@Override
-	protected void renderListItems(@NotNull GuiGraphics gui, int mouseX, int mouseY, float delta) {
-		var left = getRowLeft();
-		var width = getRowWidth();
-		var count = getItemCount();
-		for (var i = 0; i < count; i++) {
-			var top = getRowTop(i);
-			var bottom = getRowBottom(i);
-			if (bottom >= getY() && top <= getBottom()) renderItem(gui, mouseX, mouseY, delta, i, left, top, width, itemHeight);
-		}
-	}
 	public void refreshEntries() {
 		var keyEntries = new ArrayList<KeybindValueConfigEntry<?>>();
 		var localKeyCount = new HashMap<Key, Integer>();
@@ -112,31 +71,71 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 			keyEntry.setConflictUsages(usages);
 		});
 		children().forEach(ConfigEntry::refresh);
+	}	@Override
+	public void renderWidget(@NotNull GuiGraphics gui, int mouseX, int mouseY, float delta) {
+		smoothScroll.tick(delta);
+		highlight.tick(gui, getX(), getY(), width, height, itemHeight, delta);
+		super.renderWidget(gui, mouseX, mouseY, delta);
+		var entry = getHovered();
+		if (entry == null) return;
+		var widgetTooltip = entry.getHoveredWidgetTooltip(mouseX, mouseY);
+		if (widgetTooltip != null) {
+			tab.getScreen().setTooltipForNextRenderPass(widgetTooltip.toCharSequence(minecraft));
+			return;
+		}
+		if (entry.getTooltip() != null) tab.getScreen().setTooltipForNextRenderPass(entry.getTooltip());
 	}
 	public boolean hasEntryError() {
 		for (var configEntry : children()) if (configEntry.hasError()) return true;
 		return false;
+	}	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
+		smoothScroll.onMouseScroll(vertical, itemHeight);
+		return true;
 	}
 	public boolean handleKeyCapture(int keyCode) {
 		for (var entry : children())
 			if (entry instanceof KeybindValueConfigEntry<?> keybindEntry && keybindEntry.handleCaptureKey(keyCode)) return true;
 		return false;
+	}	@Override
+	public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+		var result = super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+		// 同步拖拽后的滚动位置，防止 smoothScroll 在下帧覆盖掉
+		smoothScroll.sync();
+		return result;
 	}
 	public boolean handleMouseCapture(int button) {
 		for (var entry : children())
 			if (entry instanceof KeybindValueConfigEntry<?> keybindEntry && keybindEntry.handleCaptureMouse(button)) return true;
 		return false;
+	}	@Override
+	public int getRowWidth() {
+		return width * 4 / 5;
 	}
 	public boolean isCapturingKeybind() {
 		for (var entry : children())
 			if (entry instanceof KeybindValueConfigEntry<?> keybindEntry && keybindEntry.isCapturing()) return true;
 		return false;
+	}	@Override
+	protected void renderListItems(@NotNull GuiGraphics gui, int mouseX, int mouseY, float delta) {
+		var left = getRowLeft();
+		var width = getRowWidth();
+		var count = getItemCount();
+		for (var i = 0; i < count; i++) {
+			var top = getRowTop(i);
+			var bottom = getRowBottom(i);
+			if (bottom >= getY() && top <= getBottom()) renderItem(gui, mouseX, mouseY, delta, i, left, top, width, itemHeight);
+		}
 	}
-
 	public void replaceAllEntries(List<ConfigEntry> newEntries) {
 		children().clear();
 		newEntries.forEach(this::addEntry);
 		setScrollAmount(getScrollAmount());
 		smoothScroll.sync();
 	}
+
+
+
+
+
 }

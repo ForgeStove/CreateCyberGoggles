@@ -6,12 +6,12 @@ import net.minecraft.client.Minecraft;
  * for the drafting-view post-processing shader.
  */
 public final class DraftingFramebuffer {
-	final TextureTarget target;
-	DraftingFramebuffer(final int width, final int height) {
+	public final TextureTarget target;
+	public DraftingFramebuffer(int width, int height) {
 		target = new TextureTarget(width, height, true, Minecraft.ON_OSX);
 		target.setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	}
-	void resizeIfNeeded(final int width, final int height) {
+	public void resizeIfNeeded(int width, int height) {
 		if (target.width == width && target.height == height) return;
 		target.resize(width, height, Minecraft.ON_OSX);
 	}

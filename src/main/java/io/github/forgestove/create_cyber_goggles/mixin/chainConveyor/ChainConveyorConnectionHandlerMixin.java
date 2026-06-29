@@ -13,7 +13,7 @@ public abstract class ChainConveyorConnectionHandlerMixin {
 		at = @At(value = "INVOKE", target = "Lnet/minecraft/core/BlockPos;closerThan(Lnet/minecraft/core/Vec3i;D)Z", ordinal = 1)
 	)
 	private static boolean wrapCloserThan(BlockPos instance, Vec3i vec3i, double distance, Operation<Boolean> original) {
-		return !CCG.config.chainConveyor.enhancedConnection && original.call(instance, vec3i, distance);
+		return !CCG.config.misc.chainConveyor.enhancedConnection && original.call(instance, vec3i, distance);
 	}
 	@WrapOperation(
 		method = "validateAndConnect", at = @At(
@@ -22,6 +22,6 @@ public abstract class ChainConveyorConnectionHandlerMixin {
 	)
 	)
 	private static Vec3 wrapDiff(Vec3i vec3i, Operation<Vec3> original) {
-		return CCG.config.chainConveyor.enhancedConnection ? new Vec3(2, 0, 2) : original.call(vec3i);
+		return CCG.config.misc.chainConveyor.enhancedConnection ? new Vec3(2, 0, 2) : original.call(vec3i);
 	}
 }

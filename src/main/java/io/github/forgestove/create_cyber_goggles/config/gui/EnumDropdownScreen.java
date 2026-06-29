@@ -57,10 +57,8 @@ public final class EnumDropdownScreen extends Screen {
 		height = parentScreen.height;
 		if (smoothScrool != null) smoothScrool.sync();
 	}
-	@Override
-	public void resize(@NotNull Minecraft minecraft, int width, int height) {
-		parentScreen.resize(minecraft, width, height);
-		update(height);
+	private int getMaxScrollOffset() {
+		return Math.max(0, values.length - maxVisibleOptions);
 	}
 	@Override
 	public void render(@NotNull GuiGraphics gui, int mouseX, int mouseY, float delta) {
@@ -109,6 +107,32 @@ public final class EnumDropdownScreen extends Screen {
 		);
 	}
 	@Override
+	public void resize(@NotNull Minecraft minecraft, int width, int height) {
+		parentScreen.resize(minecraft, width, height);
+		update(height);
+	}
+	private int dropdownY() {
+		return dropdownButton.getY() + dropdownButton.getHeight();
+	}
+	private boolean needsScrollbar() {
+		return values.length > maxVisibleOptions;
+	}
+	private Rectangle getScrollbarTrack() {
+		return new Rectangle(
+			dropdownButton.getX() + dropdownButton.getWidth() - SCROLLBAR_WIDTH - GAP,
+			dropdownY() + GAP,
+			SCROLLBAR_WIDTH,
+			maxVisibleOptions * (HEIGHT + GAP) - GAP
+		);
+	}
+	private Rectangle getScrollbarThumb() {
+		var track = getScrollbarTrack();
+		var thumbHeight = Math.max(15, track.height * maxVisibleOptions / values.length);
+		var maxScroll = getMaxScrollOffset();
+		var thumbY = maxScroll > 0 ? track.y + (track.height - thumbHeight) * smoothScrollOffset / maxScroll : track.y;
+		return new Rectangle(track.x, (int) thumbY, track.width, thumbHeight);
+	}
+	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		if (isOutsidePanel(mouseX, mouseY)) {
 			getMinecraft().setScreen(parentScreen);
@@ -136,58 +160,21 @@ public final class EnumDropdownScreen extends Screen {
 		return super.mouseClicked(mouseX, mouseY, button);
 	}
 	@Override
+	public boolean mouseReleased(double mouseX, double mouseY, int button) {
+		draggingScrollbar = false;
+		return super.mouseReleased(mouseX, mouseY, button);
+	}
+	@Override
 	public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
 		if (!draggingScrollbar) return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
 		updateScrollFromMouse(mouseY);
 		return true;
 	}
 	@Override
-	public boolean mouseReleased(double mouseX, double mouseY, int button) {
-		draggingScrollbar = false;
-		return super.mouseReleased(mouseX, mouseY, button);
-	}
-	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
 		if (isOutsidePanel(mouseX, mouseY)) return super.mouseScrolled(mouseX, mouseY, horizontal, vertical);
 		smoothScrool.onMouseScroll(vertical, 1);
 		return true;
-	}
-	private int dropdownY() {
-		return dropdownButton.getY() + dropdownButton.getHeight();
-	}
-	private void playClickSound() {
-		getMinecraft().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-	}
-	private boolean isOutsidePanel(double mouseX, double mouseY) {
-		var panelX = dropdownButton.getX() - GAP;
-		var panelY = dropdownY() - GAP;
-		var panelW = dropdownButton.getWidth() + GAP;
-		var panelH = maxVisibleOptions * HEIGHT + GAP * 2;
-		return !(mouseX >= panelX) || !(mouseX <= panelX + panelW) || !(mouseY >= panelY) || !(mouseY <= panelY + panelH);
-	}
-	private int getMaxScrollOffset() {
-		return Math.max(0, values.length - maxVisibleOptions);
-	}
-	private boolean needsScrollbar() {
-		return values.length > maxVisibleOptions;
-	}
-	private int getContentWidth() {
-		return needsScrollbar() ? dropdownButton.getWidth() - SCROLLBAR_WIDTH - GAP : dropdownButton.getWidth();
-	}
-	private Rectangle getScrollbarTrack() {
-		return new Rectangle(
-			dropdownButton.getX() + dropdownButton.getWidth() - SCROLLBAR_WIDTH - GAP,
-			dropdownY() + GAP,
-			SCROLLBAR_WIDTH,
-			maxVisibleOptions * (HEIGHT + GAP) - GAP
-		);
-	}
-	private Rectangle getScrollbarThumb() {
-		var track = getScrollbarTrack();
-		var thumbHeight = Math.max(15, track.height * maxVisibleOptions / values.length);
-		var maxScroll = getMaxScrollOffset();
-		var thumbY = maxScroll > 0 ? track.y + (track.height - thumbHeight) * smoothScrollOffset / maxScroll : track.y;
-		return new Rectangle(track.x, (int) thumbY, track.width, thumbHeight);
 	}
 	private void updateScrollFromMouse(double mouseY) {
 		var track = getScrollbarTrack();
@@ -197,5 +184,18 @@ public final class EnumDropdownScreen extends Screen {
 		var relativeY = mouseY - track.y - thumbHeight / 2.0;
 		scrollOffset = Mth.clamp((int) Math.round(relativeY / scrollRange * getMaxScrollOffset()), 0, getMaxScrollOffset());
 		smoothScrool.sync();
+	}
+	private boolean isOutsidePanel(double mouseX, double mouseY) {
+		var panelX = dropdownButton.getX() - GAP;
+		var panelY = dropdownY() - GAP;
+		var panelW = dropdownButton.getWidth() + GAP;
+		var panelH = maxVisibleOptions * HEIGHT + GAP * 2;
+		return !(mouseX >= panelX) || !(mouseX <= panelX + panelW) || !(mouseY >= panelY) || !(mouseY <= panelY + panelH);
+	}
+	private void playClickSound() {
+		getMinecraft().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+	}
+	private int getContentWidth() {
+		return needsScrollbar() ? dropdownButton.getWidth() - SCROLLBAR_WIDTH - GAP : dropdownButton.getWidth();
 	}
 }

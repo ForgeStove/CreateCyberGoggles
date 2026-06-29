@@ -15,7 +15,7 @@ public abstract class ValueSettingsInputHandlerMixin {
 		at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Lnet/minecraft/tags/TagKey;)Z")
 	)
 	private static boolean tick(ItemStack instance, TagKey<Item> tag, Operation<Boolean> original) {
-		return isServer() ? original.call(instance, tag) : CCG.config.wrench.alwaysShowScrollValue || original.call(instance, tag);
+		return isServer() ? original.call(instance, tag) : CCG.config.misc.wrench.alwaysShowScrollValue || original.call(instance, tag);
 	}
 	@WrapOperation(
 		method = "onBlockActivated", at = @At(
@@ -23,6 +23,6 @@ public abstract class ValueSettingsInputHandlerMixin {
 	)
 	)
 	private static boolean tick(ValueSettingsBehaviour instance, Operation<Boolean> original) {
-		return isServer() ? original.call(instance) : CCG.config.wrench.alwaysShowScrollValue || original.call(instance);
+		return isServer() ? original.call(instance) : CCG.config.misc.wrench.alwaysShowScrollValue || original.call(instance);
 	}
 }

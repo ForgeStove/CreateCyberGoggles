@@ -15,16 +15,8 @@ public abstract class ConfigEntry extends Entry<ConfigEntry> {
 	public int getIndent() {
 		return indent;
 	}
-
 	public void setIndent(int indent) {
 		this.indent = indent;
-	}
-
-	private static boolean isMouseOverWidget(AbstractWidget widget, int mouseX, int mouseY) {
-		return mouseX >= widget.getX()
-			&& mouseY >= widget.getY()
-			&& mouseX < widget.getX() + widget.getWidth()
-			&& mouseY < widget.getY() + widget.getHeight();
 	}
 	@Nullable
 	public List<FormattedCharSequence> getTooltip() {
@@ -39,6 +31,12 @@ public abstract class ConfigEntry extends Entry<ConfigEntry> {
 				return tooltip;
 			}
 		return null;
+	}
+	private static boolean isMouseOverWidget(AbstractWidget widget, int mouseX, int mouseY) {
+		return mouseX >= widget.getX()
+			&& mouseY >= widget.getY()
+			&& mouseX < widget.getX() + widget.getWidth()
+			&& mouseY < widget.getY() + widget.getHeight();
 	}
 	public void refresh() {}
 	/**

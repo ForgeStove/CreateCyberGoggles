@@ -12,8 +12,9 @@ import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.*;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.function.Consumer;
 public final class ConfigCategoryTab<C> implements Tab {
 	private final ConfigScreen<C> screen;
@@ -40,7 +41,9 @@ public final class ConfigCategoryTab<C> implements Tab {
 		Color.class,
 		(tab, node) -> new ColorValueConfigEntry<>(tab, cast(node)),
 		Key.class,
-		(tab, node) -> new KeybindValueConfigEntry<>(tab, cast(node))
+		(tab, node) -> new KeybindValueConfigEntry<>(tab, cast(node)),
+		Point.class,
+		(tab, node) -> new PointValueConfigEntry<>(tab, cast(node))
 	);
 	@Nullable private TabButton tabButton;
 	public ConfigCategoryTab(ConfigScreen<C> screen, CategoryConfigNode<C> category, C config) {
@@ -78,23 +81,22 @@ public final class ConfigCategoryTab<C> implements Tab {
 	}
 	private List<ConfigEntry> buildEntries(CategoryConfigNode<C> node, int depth) {
 		var entries = new ArrayList<ConfigEntry>();
-		for (var child : node.getChildren()) {
+		for (var child : node.getChildren())
 			if (child instanceof ValueConfigNode<C, ?> valueNode) {
 				var entry = createValueEntry(valueNode);
 				entry.setIndent(depth * CategoryCollapsibleConfigEntry.INDENT_PX);
 				entries.add(entry);
 			} else if (child instanceof CategoryConfigNode<C> subNode) {
 				var expanded = expandedSubCategories.contains(subNode);
-				entries.add(new CategoryCollapsibleConfigEntry(this, subNode, expanded, depth, () -> {
-					if (expandedSubCategories.contains(subNode))
-						expandedSubCategories.remove(subNode);
-					else
-						expandedSubCategories.add(subNode);
+				entries.add(new CategoryCollapsibleConfigEntry(
+					this, subNode, expanded, depth, () -> {
+					if (expandedSubCategories.contains(subNode)) expandedSubCategories.remove(subNode);
+					else expandedSubCategories.add(subNode);
 					rebuildEntries();
-				}));
+				}
+				));
 				if (expanded) entries.addAll(buildEntries(subNode, depth + 1));
 			}
-		}
 		return entries;
 	}
 	private void collectDefaultExpanded(CategoryConfigNode<C> node) {
@@ -122,14 +124,14 @@ public final class ConfigCategoryTab<C> implements Tab {
 		tabButton.setMessage(GuiUtil.styleAsState(title, hasError, hasChanged));
 		list.refreshEntries();
 	}
+	public boolean hasEntryError() {
+		return list.hasEntryError();
+	}
 	public C getConfig() {
 		return config;
 	}
 	public void setTabButton(@Nullable TabButton tabButton) {
 		this.tabButton = tabButton;
-	}
-	public boolean hasEntryError() {
-		return list.hasEntryError();
 	}
 	public boolean handleKeyCapture(int keyCode) {
 		return list.handleKeyCapture(keyCode);

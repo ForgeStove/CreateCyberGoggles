@@ -46,30 +46,6 @@ public final class ItemTooltip {
 		wrench(stack, tooltip);
 		fluidContainer(stack, tooltip);
 	}
-	public static void gatherComponents(@NotNull GatherComponents event) {
-		var elements = event.getTooltipElements();
-		for (var i = 0; i < elements.size(); i++) {
-			var left = elements.get(i).left().orElse(null);
-			if (!(left instanceof Component comp)) continue;
-			var entry = TooltipComponentUtil.removeItemEntry(comp);
-			if (entry != null) {
-				elements.set(i, Either.right(entry));
-				continue;
-			}
-			var fluid = TooltipComponentUtil.removeFluidEntry(comp);
-			if (fluid != null) {
-				elements.set(i, Either.right(fluid));
-				continue;
-			}
-			var fluidList = TooltipComponentUtil.removeFluidList(comp);
-			if (fluidList != null) {
-				elements.set(i, Either.right(fluidList));
-				continue;
-			}
-			var data = TooltipComponentUtil.removeItemList(comp);
-			if (data != null) elements.set(i, Either.right(data));
-		}
-	}
 	private static void goggles(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!CCG.config.tooltip.goggles) return;
 		if (!(stack.getItem() instanceof GogglesItem)) return;
@@ -96,7 +72,7 @@ public final class ItemTooltip {
 		if (!(stack.getItem() instanceof WrenchItem)) return;
 		var component = CCGLang.translate("config.option.wrench.leftClickFastDismantle")
 			.space()
-			.enabled(CCG.config.wrench.leftClickFastDismantle)
+			.enabled(CCG.config.misc.wrench.leftClickFastDismantle)
 			.component();
 		tooltip.add(1, component);
 	}
@@ -120,6 +96,30 @@ public final class ItemTooltip {
 			var fluid = entries.get(i);
 			var capacity = i < capacities.size() ? capacities.get(i) : Math.max(1, fluid.getAmount());
 			CCGLang.fluidEntry(fluid, capacity).addTo(1, tooltip);
+		}
+	}
+	public static void gatherComponents(@NotNull GatherComponents event) {
+		var elements = event.getTooltipElements();
+		for (var i = 0; i < elements.size(); i++) {
+			var left = elements.get(i).left().orElse(null);
+			if (!(left instanceof Component comp)) continue;
+			var entry = TooltipComponentUtil.removeItemEntry(comp);
+			if (entry != null) {
+				elements.set(i, Either.right(entry));
+				continue;
+			}
+			var fluid = TooltipComponentUtil.removeFluidEntry(comp);
+			if (fluid != null) {
+				elements.set(i, Either.right(fluid));
+				continue;
+			}
+			var fluidList = TooltipComponentUtil.removeFluidList(comp);
+			if (fluidList != null) {
+				elements.set(i, Either.right(fluidList));
+				continue;
+			}
+			var data = TooltipComponentUtil.removeItemList(comp);
+			if (data != null) elements.set(i, Either.right(data));
 		}
 	}
 	public static void renderTooltipPre(@NotNull Pre event) {
@@ -154,14 +154,14 @@ public final class ItemTooltip {
 		}
 		renderer.render(event.getGraphics(), stack, overlayX - 4, overlayY);
 	}
+	private static @NotNull Vector2ic getPos(@NotNull Pre event, int width, int height) {
+		return event.getTooltipPositioner()
+			.positionTooltip(event.getScreenWidth(), event.getScreenHeight(), event.getX(), event.getY(), width, height);
+	}
 	private static int getOverlayX(@NotNull Pre event, Vector2ic pos, int overlayWidth) {
 		return Mth.clamp(pos.x(), 0, Math.max(0, event.getScreenWidth() - overlayWidth));
 	}
 	private static int getOverlayY(Vector2ic pos, int overlayHeight) {
 		return pos.y() - overlayHeight - OVERLAY_GAP;
-	}
-	private static @NotNull Vector2ic getPos(@NotNull Pre event, int width, int height) {
-		return event.getTooltipPositioner()
-			.positionTooltip(event.getScreenWidth(), event.getScreenHeight(), event.getX(), event.getY(), width, height);
 	}
 }

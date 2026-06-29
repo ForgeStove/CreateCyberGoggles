@@ -25,18 +25,16 @@ public class CCGLangBuilder {
 	public CCGLangBuilder(String namespace) {
 		this.namespace = namespace;
 	}
-	static int getIndents(Font font, int defaultIndents) {
-		var spaceWidth = font.width(" ");
-		if (DEFAULT_SPACE_WIDTH == spaceWidth) return defaultIndents;
-		return Mth.ceil(DEFAULT_SPACE_WIDTH * defaultIndents / spaceWidth);
-	}
-	public static Object[] resolveBuilders(Object[] args) {
-		for (var i = 0; i < args.length; i++)
-			if (args[i] instanceof CCGLangBuilder builder) args[i] = builder.component();
-		return args;
-	}
 	public CCGLangBuilder space() {
 		return text(" ");
+	}
+	public CCGLangBuilder text(String literalText) {
+		return add(Component.literal(literalText));
+	}
+	public CCGLangBuilder add(MutableComponent customComponent) {
+		if (customComponent.getStyle().isEmpty()) customComponent.withStyle(WHITE);
+		component = component == null ? customComponent : component.append(customComponent);
+		return this;
 	}
 	public CCGLangBuilder newLine() {
 		return text("\n");
@@ -50,20 +48,20 @@ public class CCGLangBuilder {
 	public CCGLangBuilder translate(String langKey) {
 		return add(Component.translatable(namespace + "." + langKey));
 	}
-	public CCGLangBuilder translate(String langKey, ChatFormatting format) {
-		return add(Component.translatable(namespace + "." + langKey).withStyle(format));
-	}
 	public CCGLangBuilder translate(String langKey, Object... args) {
 		return add(Component.translatable(namespace + "." + langKey, resolveBuilders(args)));
 	}
+	public static Object[] resolveBuilders(Object[] args) {
+		for (var i = 0; i < args.length; i++)
+			if (args[i] instanceof CCGLangBuilder builder) args[i] = builder.component();
+		return args;
+	}
+	public MutableComponent component() {
+		if (component == null) throw new IllegalStateException("Component is null");
+		return component;
+	}
 	public CCGLangBuilder translate(String langKey, ChatFormatting format, Object... args) {
 		return add(Component.translatable(namespace + "." + langKey, resolveBuilders(args)).withStyle(format));
-	}
-	public CCGLangBuilder text(String literalText) {
-		return add(Component.literal(literalText));
-	}
-	public CCGLangBuilder text(String literalText, ChatFormatting format) {
-		return add(Component.literal(literalText).withStyle(format));
 	}
 	public CCGLangBuilder text(String literalText, int color) {
 		return add(Component.literal(literalText).withStyle(style -> style.withColor(color)));
@@ -98,12 +96,18 @@ public class CCGLangBuilder {
 	public CCGLangBuilder is(boolean is) {
 		return is ? translate("message.is", GREEN) : translate("message.not", RED);
 	}
+	public CCGLangBuilder translate(String langKey, ChatFormatting format) {
+		return add(Component.translatable(namespace + "." + langKey).withStyle(format));
+	}
 	public CCGLangBuilder enabled(boolean enabled) {
 		return enabled ? translate("message.enabled", GREEN) : translate("message.disabled", RED);
 	}
 	public CCGLangBuilder progress(float progress, int totalBars) {
 		var filledBars = (int) (Mth.clamp(progress, 0, 1) * totalBars);
 		return text("|".repeat(filledBars), GREEN).text("|".repeat(totalBars - filledBars), GRAY);
+	}
+	public CCGLangBuilder text(String literalText, ChatFormatting format) {
+		return add(Component.literal(literalText).withStyle(format));
 	}
 	public CCGLangBuilder fraction(int current, int total) {
 		return number(current, Color.HSBtoRGB((float) current / total * 0.33F, 1, 1)).text(" / ", GRAY).number(total, DARK_GRAY);
@@ -114,14 +118,6 @@ public class CCGLangBuilder {
 	public CCGLangBuilder fraction(double current, double total) {
 		return number(current, Color.HSBtoRGB((float) (current / total * 0.33), 1, 1)).text(" / ", GRAY).number(total, DARK_GRAY);
 	}
-	public CCGLangBuilder add(CCGLangBuilder builder) {
-		return add(builder.component());
-	}
-	public CCGLangBuilder add(MutableComponent customComponent) {
-		if (customComponent.getStyle().isEmpty()) customComponent.withStyle(WHITE);
-		component = component == null ? customComponent : component.append(customComponent);
-		return this;
-	}
 	public CCGLangBuilder add(Component component) {
 		if (component instanceof MutableComponent mutableComponent) return add(mutableComponent);
 		return add(component.copy());
@@ -130,19 +126,15 @@ public class CCGLangBuilder {
 		if (component != null) component = component.withStyle(formats);
 		return this;
 	}
+	public CCGLangBuilder color(Color color) {
+		return color(color.getRGB());
+	}
 	public CCGLangBuilder color(int color) {
 		if (component != null) component = component.withStyle(s -> s.withColor(color));
 		return this;
 	}
-	public CCGLangBuilder color(Color color) {
-		return color(color.getRGB());
-	}
 	public CCGLangBuilder fluidName(FluidStack stack) {
 		return add(stack.getHoverName().copy());
-	}
-	public MutableComponent component() {
-		if (component == null) throw new IllegalStateException("Component is null");
-		return component;
 	}
 	public String string() {
 		return component().getString();
@@ -165,11 +157,19 @@ public class CCGLangBuilder {
 	public void forGoggles(List<? super MutableComponent> tooltip) {
 		forGoggles(tooltip, 0);
 	}
-	public void forGoggles(int index, List<? super MutableComponent> tooltip) {
-		forGoggles(index, tooltip, 0);
-	}
 	public void forGoggles(List<? super MutableComponent> tooltip, int indents) {
 		tooltip.add(new CCGLangBuilder(namespace).text(Strings.repeat(' ', getIndents(mc.font, 4 + indents))).add(this).component());
+	}
+	public CCGLangBuilder add(CCGLangBuilder builder) {
+		return add(builder.component());
+	}
+	static int getIndents(Font font, int defaultIndents) {
+		var spaceWidth = font.width(" ");
+		if (DEFAULT_SPACE_WIDTH == spaceWidth) return defaultIndents;
+		return Mth.ceil(DEFAULT_SPACE_WIDTH * defaultIndents / spaceWidth);
+	}
+	public void forGoggles(int index, List<? super MutableComponent> tooltip) {
+		forGoggles(index, tooltip, 0);
 	}
 	public void forGoggles(int index, List<? super MutableComponent> tooltip, int indents) {
 		tooltip.add(index,

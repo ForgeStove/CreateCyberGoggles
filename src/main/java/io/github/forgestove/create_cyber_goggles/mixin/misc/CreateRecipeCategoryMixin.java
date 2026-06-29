@@ -26,11 +26,6 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 import static io.github.forgestove.create_cyber_goggles.core.util.SequencedAssemblyUtil.*;
 @Mixin(CreateRecipeCategory.class)
 public abstract class CreateRecipeCategoryMixin<T extends Recipe<?>> implements IRecipeCategory<RecipeHolder<T>> {
-	@Unique
-	protected MutableComponent ccg$chanceComponent(float chance) {
-		var number = chance * 100 % 1 == 0 ? String.valueOf((int) (chance * 100)) : String.format("%.2f", chance * 100);
-		return CreateLang.translateDirect("recipe.processing.chance", number).withStyle(ChatFormatting.GOLD);
-	}
 	@Inject(
 		method = "getTooltipStrings(Lnet/minecraft/world/item/crafting/RecipeHolder;Lmezz/jei/api/gui/ingredient/IRecipeSlotsView;DD)"
 			+ "Ljava/util/List;", at = @At("HEAD"), cancellable = true
@@ -72,6 +67,11 @@ public abstract class CreateRecipeCategoryMixin<T extends Recipe<?>> implements 
 			mc.options.advancedItemTooltips ? Default.ADVANCED : Default.NORMAL
 		));
 		cir.setReturnValue(tooltip);
+	}
+	@Unique
+	protected MutableComponent ccg$chanceComponent(float chance) {
+		var number = chance * 100 % 1 == 0 ? String.valueOf((int) (chance * 100)) : String.format("%.2f", chance * 100);
+		return CreateLang.translateDirect("recipe.processing.chance", number).withStyle(ChatFormatting.GOLD);
 	}
 	@Inject(
 		method = "draw(Lnet/minecraft/world/item/crafting/RecipeHolder;Lmezz/jei/api/gui/ingredient/IRecipeSlotsView;"

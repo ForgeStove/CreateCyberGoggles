@@ -7,7 +7,7 @@ import io.github.forgestove.create_cyber_goggles.core.factory.*;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientFluidEntryTooltipComponent.FluidEntryTooltipComponent;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientItemEntryTooltipComponent.ItemEntryTooltipComponent;
 import io.github.forgestove.create_cyber_goggles.core.factory.TooltipTheme.Theme;
-import io.github.forgestove.create_cyber_goggles.core.util.*;
+import io.github.forgestove.create_cyber_goggles.core.util.TooltipComponentUtil;
 import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.client.DeltaTracker;
@@ -31,7 +31,7 @@ public class TooltipOverlay {
 		event.registerAbove(VanillaGuiLayers.HOTBAR, getCCGRes("tooltip_overlay"), TooltipOverlay::renderOverlay);
 	}
 	public static void renderOverlay(GuiGraphics gui, DeltaTracker deltaTracker) {
-		if (!CCG.config.overlay.renderItemOverlay || !CCG.config.gameMode.enableGoggles) return;
+		if (!CCG.config.overlay.renderItemOverlay || !CCG.config.goggles.gameMode.enableGoggles) return;
 		if (shouldSuppressInfo()) return;
 		if (mc.isPaused() || isInGUI() || mc.options.hideGui) {
 			hoverTicks = 0;
@@ -69,8 +69,8 @@ public class TooltipOverlay {
 		}
 		var width = gui.guiWidth();
 		var height = gui.guiHeight();
-		var x = width / 2 + cfg.overlayOffsetX.get() + overlay.overlayOffsetX;
-		var y = height / 2 + cfg.overlayOffsetY.get() + overlay.overlayOffsetY;
+		var x = width / 2 + cfg.overlayOffsetX.get() + overlay.overlayPos.x;
+		var y = height / 2 + cfg.overlayOffsetY.get() + overlay.overlayPos.y;
 		if (overlay.tooltipFlagType == null) overlay.tooltipFlagType = TooltipFlagType.Default;
 		var tooltipLines = itemStack.getTooltipLines(TooltipContext.of(mc.level), mc.player, overlay.tooltipFlagType.getFlag());
 		var components = buildTooltipComponents(tooltipLines, width - x - 16, true);

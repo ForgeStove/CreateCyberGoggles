@@ -32,6 +32,9 @@ public class TipOverlay {
 			i++;
 		}
 	}
+	public static void show(List<MutableComponent> tip) {
+		show(tip, 0, 0);
+	}
 	/**
 	 * 每次滴答发生时，此方法应在{@link TipOverlay#tick(Post)}之前运行
 	 * <p>
@@ -43,9 +46,6 @@ public class TipOverlay {
 		lastTip = tip;
 		deltaX = x;
 		deltaY = y;
-	}
-	public static void show(List<MutableComponent> tip) {
-		show(tip, 0, 0);
 	}
 	public static void tick(Post ignoredEvent) {
 		if (hoverTicks > 0) hoverTicks--;

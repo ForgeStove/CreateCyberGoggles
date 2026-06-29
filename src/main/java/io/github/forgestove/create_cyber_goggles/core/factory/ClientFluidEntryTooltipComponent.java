@@ -66,27 +66,6 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 		gui.disableScissor();
 		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 	}
-	public static @NotNull String formatFluidAmount(int amountMb) {
-		if (amountMb < 1000) return amountMb + "mB";
-		if (amountMb % 1000 == 0) return amountMb / 1000 + "B";
-		var value = amountMb / 1000F;
-		return CCGLang.number(value).string() + "B";
-	}
-	public static int preferredBarWidth(@NotNull Font font, @NotNull FluidStack fluid, int capacityMb) {
-		var label = buildLabel(fluid, capacityMb, Screen.hasShiftDown());
-		return Math.max(SlotUtil.SIZE * 4, font.width(label) + H_PADDING * 2);
-	}
-	private static @NotNull Component buildLabel(@NotNull FluidStack fluid, int capacityMb, boolean showCapacity) {
-		if (fluid.isEmpty()) return CCGLang.translate("tooltip.empty")
-			.component()
-			.copy()
-			.append(" ")
-			.append(Component.literal(formatFluidAmount(capacityMb)));
-		var label = fluid.getHoverName().copy().append(" ").append(Component.literal(formatFluidAmount(fluid.getAmount())));
-		if (showCapacity) return label.append(Component.literal(" / ").withStyle(ChatFormatting.GRAY))
-			.append(Component.literal(formatFluidAmount(capacityMb)).withStyle(ChatFormatting.GRAY));
-		return label;
-	}
 	private @NotNull Component buildLabel() {
 		return buildLabel(fluid, capacityMb, Screen.hasShiftDown());
 	}
@@ -108,12 +87,33 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 		var textY = y + Mth.floor((SlotUtil.SIZE_SLIM - font.lineHeight) / 2F) + 1;
 		gui.drawString(font, label, textX, textY, 0xFFFFFFFF, true);
 	}
+	private int indentPixels(@NotNull Font font) {
+		return indent * font.width(" ");
+	}
 	private int barWidth(@NotNull Font font) {
 		var preferred = preferredBarWidth(font, fluid, capacityMb);
 		return Math.max(preferred, sharedBarWidth);
 	}
-	private int indentPixels(@NotNull Font font) {
-		return indent * font.width(" ");
+	public static int preferredBarWidth(@NotNull Font font, @NotNull FluidStack fluid, int capacityMb) {
+		var label = buildLabel(fluid, capacityMb, Screen.hasShiftDown());
+		return Math.max(SlotUtil.SIZE * 4, font.width(label) + H_PADDING * 2);
+	}
+	private static @NotNull Component buildLabel(@NotNull FluidStack fluid, int capacityMb, boolean showCapacity) {
+		if (fluid.isEmpty()) return CCGLang.translate("tooltip.empty")
+			.component()
+			.copy()
+			.append(" ")
+			.append(Component.literal(formatFluidAmount(capacityMb)));
+		var label = fluid.getHoverName().copy().append(" ").append(Component.literal(formatFluidAmount(fluid.getAmount())));
+		if (showCapacity) return label.append(Component.literal(" / ").withStyle(ChatFormatting.GRAY))
+			.append(Component.literal(formatFluidAmount(capacityMb)).withStyle(ChatFormatting.GRAY));
+		return label;
+	}
+	public static @NotNull String formatFluidAmount(int amountMb) {
+		if (amountMb < 1000) return amountMb + "mB";
+		if (amountMb % 1000 == 0) return amountMb / 1000 + "B";
+		var value = amountMb / 1000F;
+		return CCGLang.number(value).string() + "B";
 	}
 	public record FluidEntryTooltipComponent(FluidStack fluid, int indent, int capacityMb) implements TooltipComponent {}
 }

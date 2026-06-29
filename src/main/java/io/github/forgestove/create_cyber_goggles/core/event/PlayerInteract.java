@@ -33,22 +33,58 @@ public class PlayerInteract {
 		tableCloth();
 		ItemSwapUtil.tick();
 	}
+	private static void wrench() {
+		if (dismantleDelay < 10) dismantleDelay++;
+	}
+	private static void encasedCogWheel() {
+		if (!CCG.config.misc.wrench.betterEncasedCogwheel) return;
+		var ecb = getBlock(EncasedCogwheelBlock.class);
+		if (ecb == null) return;
+		var bhr = getBlockHitResult();
+		if (mc.level == null || bhr == null) return;
+		if (ecb.getRotationAxis(mc.level.getBlockState(bhr.getBlockPos())) != bhr.getDirection().getAxis()) return;
+		showCommonTip("message.openState");
+	}
+	private static void enacesdPipe() {
+		if (!CCG.config.misc.wrench.betterEncasedPipe) return;
+		if (getBlock(EncasedPipeBlock.class) == null) return;
+		showCommonTip("message.openState");
+	}
+	private static void chassis() {
+		if (!CCG.config.misc.wrench.betterChassis) return;
+		if (mc.level == null) return;
+		var acb = getBlock(AbstractChassisBlock.class);
+		if (acb == null) return;
+		var bhr = getBlockHitResult();
+		if (bhr == null || acb.getGlueableSide(mc.level.getBlockState(bhr.getBlockPos()), bhr.getDirection()) == null) return;
+		showCommonTip("message.glueState");
+	}
+	public static void tableCloth() {
+		if (!CCG.config.goggles.betterStoreInfo) return;
+		if (mc.player == null) return;
+		var currentTick = mc.player.tickCount;
+		if (currentTick == lastTick) return;
+		lastTick = currentTick;
+		var tcbe = getBlockEntity(TableClothBlockEntity.class);
+		if (tcbe == null) return;
+		if (TableClothUtil.getItems(tcbe).size() <= 1) return;
+		var builder = CCGLang.translate("message.toggleItemOverlay", CCGKey.toggleItemOverlay.getFancyName()).style(ChatFormatting.WHITE);
+		TipOverlay.show(List.of(builder.component()), 0, 25);
+	}
+	public static void showCommonTip(String title) {
+		if (hasItemInHand()) return;
+		var tip = new ArrayList<MutableComponent>();
+		CCGLang.translate(title).addTo(tip);
+		CCGLang.translate("message.useSwitchState", CCGKey.getFancyName(mc.options.keyUse)).addTo(tip);
+		CCGLang.translate("message.pressToInteractOpposite", CCGKey.interactOpposite.getFancyName()).addTo(tip);
+		TipOverlay.show(tip);
+	}
 	public static void leftClick(LeftClickBlock event) {
 		if (isServer()) return;
 		wrench(event);
 	}
-	public static void rightClick(RightClickBlock event) {
-		if (isServer()) return;
-		if (isShiftKeyDown) event.setCanceled(true);
-		enacesdPipe(event);
-		encasedCogWheel(event);
-		chassis(event);
-	}
-	private static void wrench() {
-		if (dismantleDelay < 10) dismantleDelay++;
-	}
 	private static void wrench(LeftClickBlock event) {
-		if (!CCG.config.wrench.leftClickFastDismantle) return;
+		if (!CCG.config.misc.wrench.leftClickFastDismantle) return;
 		if (dismantleDelay > 0) dismantleDelay--;
 		var canDismantle = System.currentTimeMillis() - lastDismantleTime > dismantleDelay * 20;
 		if (!canDismantle) return;
@@ -74,17 +110,29 @@ public class PlayerInteract {
 		lastDismantleTime = System.currentTimeMillis();
 		event.setCanceled(true);
 	}
-	private static void encasedCogWheel() {
-		if (!CCG.config.wrench.betterEncasedCogwheel) return;
-		var ecb = getBlock(EncasedCogwheelBlock.class);
-		if (ecb == null) return;
-		var bhr = getBlockHitResult();
-		if (mc.level == null || bhr == null) return;
-		if (ecb.getRotationAxis(mc.level.getBlockState(bhr.getBlockPos())) != bhr.getDirection().getAxis()) return;
-		showCommonTip("message.openState");
+	public static void rightClick(RightClickBlock event) {
+		if (isServer()) return;
+		if (isShiftKeyDown) event.setCanceled(true);
+		enacesdPipe(event);
+		encasedCogWheel(event);
+		chassis(event);
+	}
+	private static void enacesdPipe(RightClickBlock event) {
+		if (!CCG.config.misc.wrench.betterEncasedPipe) return;
+		var pos = event.getPos();
+		var state = event.getLevel().getBlockState(pos);
+		if (!(state.getBlock() instanceof EncasedPipeBlock)
+			|| event.getHand() != InteractionHand.MAIN_HAND
+			|| mc.player == null
+			|| hasItemInHand()) return;
+		var clickedFace = event.getHitVec().getDirection();
+		if (CCGKey.interactOpposite.isDown()) clickedFace = clickedFace.getOpposite();
+		var booleanProperty = EncasedPipeBlock.FACING_TO_PROPERTY_MAP.get(clickedFace);
+		sendToServer(new RadialWrenchMenuSubmitPacket(pos, state.cycle(booleanProperty)));
+		mc.player.swing(mc.player.getUsedItemHand());
 	}
 	private static void encasedCogWheel(RightClickBlock event) {
-		if (!CCG.config.wrench.betterEncasedCogwheel) return;
+		if (!CCG.config.misc.wrench.betterEncasedCogwheel) return;
 		var pos = event.getPos();
 		var state = event.getLevel().getBlockState(pos);
 		if (!(state.getBlock() instanceof EncasedCogwheelBlock)
@@ -101,36 +149,8 @@ public class PlayerInteract {
 		sendToServer(new RadialWrenchMenuSubmitPacket(pos, state.cycle(booleanProperty)));
 		mc.player.swing(mc.player.getUsedItemHand());
 	}
-	private static void enacesdPipe() {
-		if (!CCG.config.wrench.betterEncasedPipe) return;
-		if (getBlock(EncasedPipeBlock.class) == null) return;
-		showCommonTip("message.openState");
-	}
-	private static void enacesdPipe(RightClickBlock event) {
-		if (!CCG.config.wrench.betterEncasedPipe) return;
-		var pos = event.getPos();
-		var state = event.getLevel().getBlockState(pos);
-		if (!(state.getBlock() instanceof EncasedPipeBlock)
-			|| event.getHand() != InteractionHand.MAIN_HAND
-			|| mc.player == null
-			|| hasItemInHand()) return;
-		var clickedFace = event.getHitVec().getDirection();
-		if (CCGKey.interactOpposite.isDown()) clickedFace = clickedFace.getOpposite();
-		var booleanProperty = EncasedPipeBlock.FACING_TO_PROPERTY_MAP.get(clickedFace);
-		sendToServer(new RadialWrenchMenuSubmitPacket(pos, state.cycle(booleanProperty)));
-		mc.player.swing(mc.player.getUsedItemHand());
-	}
-	private static void chassis() {
-		if (!CCG.config.wrench.betterChassis) return;
-		if (mc.level == null) return;
-		var acb = getBlock(AbstractChassisBlock.class);
-		if (acb == null) return;
-		var bhr = getBlockHitResult();
-		if (bhr == null || acb.getGlueableSide(mc.level.getBlockState(bhr.getBlockPos()), bhr.getDirection()) == null) return;
-		showCommonTip("message.glueState");
-	}
 	private static void chassis(RightClickBlock event) {
-		if (!CCG.config.wrench.betterChassis) return;
+		if (!CCG.config.misc.wrench.betterChassis) return;
 		if (hasActivedValueBox()) return;
 		var pos = event.getPos();
 		var state = event.getLevel().getBlockState(pos);
@@ -164,25 +184,5 @@ public class PlayerInteract {
 		if (booleanProperty == null) return;
 		sendToServer(new RadialWrenchMenuSubmitPacket(pos, state.cycle(booleanProperty)));
 		mc.player.swing(mc.player.getUsedItemHand());
-	}
-	public static void tableCloth() {
-		if (!CCG.config.goggles.betterStoreInfo) return;
-		if (mc.player == null) return;
-		var currentTick = mc.player.tickCount;
-		if (currentTick == lastTick) return;
-		lastTick = currentTick;
-		var tcbe = getBlockEntity(TableClothBlockEntity.class);
-		if (tcbe == null) return;
-		if (TableClothUtil.getItems(tcbe).size() <= 1) return;
-		var builder = CCGLang.translate("message.toggleItemOverlay", CCGKey.toggleItemOverlay.getFancyName()).style(ChatFormatting.WHITE);
-		TipOverlay.show(List.of(builder.component()), 0, 25);
-	}
-	public static void showCommonTip(String title) {
-		if (hasItemInHand()) return;
-		var tip = new ArrayList<MutableComponent>();
-		CCGLang.translate(title).addTo(tip);
-		CCGLang.translate("message.useSwitchState", CCGKey.getFancyName(mc.options.keyUse)).addTo(tip);
-		CCGLang.translate("message.pressToInteractOpposite", CCGKey.interactOpposite.getFancyName()).addTo(tip);
-		TipOverlay.show(tip);
 	}
 }

@@ -26,6 +26,23 @@ public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key> {
 		children.add(bindButton);
 		refresh();
 	}
+	@Override
+	public void refresh() {
+		super.refresh();
+		var keyText = getValue().getDisplayName().copy().withStyle(state.color());
+		if (capturing) bindButton.setMessage(Component.literal("> ").append(keyText).append(" <"));
+		else bindButton.setMessage(keyText);
+		if (state == KeybindState.CONFLICT && !conflictUsages.isEmpty()) bindButton.setTooltip(Tooltip.create(getConflictTooltip()));
+		else bindButton.setTooltip(null);
+	}
+	private Component getConflictTooltip() {
+		var usedBy = Component.empty();
+		for (var i = 0; i < conflictUsages.size(); i++) {
+			if (i > 0) usedBy = usedBy.append(Component.literal(", "));
+			usedBy = usedBy.append(conflictUsages.get(i));
+		}
+		return Component.translatable("controls.keybinds.duplicateKeybinds", usedBy);
+	}
 	public boolean isCapturing() {
 		return capturing;
 	}
@@ -55,23 +72,6 @@ public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key> {
 		capturing = false;
 		tab.getScreen().refresh();
 		return true;
-	}
-	@Override
-	public void refresh() {
-		super.refresh();
-		var keyText = getValue().getDisplayName().copy().withStyle(state.color());
-		if (capturing) bindButton.setMessage(Component.literal("> ").append(keyText).append(" <"));
-		else bindButton.setMessage(keyText);
-		if (state == KeybindState.CONFLICT && !conflictUsages.isEmpty()) bindButton.setTooltip(Tooltip.create(getConflictTooltip()));
-		else bindButton.setTooltip(null);
-	}
-	private Component getConflictTooltip() {
-		var usedBy = Component.empty();
-		for (var i = 0; i < conflictUsages.size(); i++) {
-			if (i > 0) usedBy = usedBy.append(Component.literal(", "));
-			usedBy = usedBy.append(conflictUsages.get(i));
-		}
-		return Component.translatable("controls.keybinds.duplicateKeybinds", usedBy);
 	}
 	@Override
 	public void render(

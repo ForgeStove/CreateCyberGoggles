@@ -32,6 +32,17 @@ public final class TableClothUtil {
 			resultX += 21;
 		}
 	}
+	@Contract("_, null -> null")
+	public static @Nullable Integer getIndex(@NotNull List<ItemStack> items, TableClothBlockEntity tcbe) {
+		if (!(tcbe instanceof Index i)) return null;
+		var index = i.ccg$getIndex() - KeyInput.scrollDeltaY;
+		KeyInput.scrollDeltaY = 0;
+		var size = items.size();
+		if (index < 0) index = size - 1;
+		else if (index >= size) index = 0;
+		i.ccg$setIndex(index);
+		return index;
+	}
 	public static void tableOverlay(@NotNull GuiGraphics gui) {
 		var tcbe = getBlockEntity(TableClothBlockEntity.class);
 		if (tcbe == null) return;
@@ -53,17 +64,6 @@ public final class TableClothUtil {
 			gui.renderItem(item, itemX, y + 2);
 			gui.renderItemDecorations(mc.font, item, itemX, y + 2);
 		}
-	}
-	@Contract("_, null -> null")
-	public static @Nullable Integer getIndex(@NotNull List<ItemStack> items, TableClothBlockEntity tcbe) {
-		if (!(tcbe instanceof Index i)) return null;
-		var index = i.ccg$getIndex() - KeyInput.scrollDeltaY;
-		KeyInput.scrollDeltaY = 0;
-		var size = items.size();
-		if (index < 0) index = size - 1;
-		else if (index >= size) index = 0;
-		i.ccg$setIndex(index);
-		return index;
 	}
 	public static List<ItemStack> getItems(@NotNull TableClothBlockEntity tcbe) {
 		return tcbe.isShop()

@@ -33,17 +33,14 @@ public enum CCGKey {
 	CCGKey() {
 		this(UNKNOWN);
 	}
-	CCGKey(@NotNull Type type, int key) {
-		this(type.getOrCreate(key));
-	}
 	CCGKey(@NotNull Key key) {
 		keyMapping = Lazy.of(new KeyMapping(CCG.ID + ".key." + name(), key.getType(), key.getValue(), "key.categories." + CCG.ID));
 	}
+	CCGKey(@NotNull Type type, int key) {
+		this(type.getOrCreate(key));
+	}
 	public static void register(RegisterKeyMappingsEvent event) {
 		for (var key : values()) event.register(key.keyMapping.get());
-	}
-	public static @NotNull Component getFancyName(@NotNull KeyMapping keyMapping) {
-		return keyMapping.getKey().getDisplayName().copy().withStyle(keyMapping.isDown() ? ChatFormatting.GREEN : ChatFormatting.GRAY);
 	}
 	public boolean isDown() {
 		var key = getKey();
@@ -59,5 +56,8 @@ public enum CCGKey {
 	}
 	public @NotNull Component getFancyName() {
 		return getFancyName(keyMapping.get());
+	}
+	public static @NotNull Component getFancyName(@NotNull KeyMapping keyMapping) {
+		return keyMapping.getKey().getDisplayName().copy().withStyle(keyMapping.isDown() ? ChatFormatting.GREEN : ChatFormatting.GRAY);
 	}
 }

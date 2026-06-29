@@ -13,6 +13,6 @@ public abstract class ChassisRangeDisplayMixin {
 		at = @At(value = "INVOKE", target = "Lcom/tterrag/registrate/util/entry/ItemEntry;isIn(Lnet/minecraft/world/item/ItemStack;)Z")
 	)
 	private static boolean tick(ItemEntry<?> instance, ItemStack stack, Operation<Boolean> original) {
-		return CCG.config.wrench.alwaysShowScrollValue || original.call(instance, stack);
+		return CCG.config.misc.wrench.alwaysShowScrollValue || original.call(instance, stack);
 	}
 }

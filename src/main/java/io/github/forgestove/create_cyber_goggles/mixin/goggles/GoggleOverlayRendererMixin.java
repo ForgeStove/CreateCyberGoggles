@@ -32,7 +32,7 @@ public abstract class GoggleOverlayRendererMixin {
 	)
 	)
 	private static GameType wrapGameMode(MultiPlayerGameMode instance, Operation<GameType> original) {
-		return CCG.config.gameMode.enableInSpectator ? null : original.call(instance);
+		return CCG.config.goggles.gameMode.enableInSpectator ? null : original.call(instance);
 	}
 	@WrapOperation(
 		method = "renderOverlay", at = @At(

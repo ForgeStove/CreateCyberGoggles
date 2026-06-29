@@ -24,8 +24,42 @@ public abstract class AbstractItemGridRenderer implements TooltipOverlayRenderer
 		"fluidlogistics",
 		"compressed_storage_tank"
 	);
-	public static int resolveColumns(OverlayData data) {
-		return Mth.clamp(data.columns(), 1, Math.max(1, data.items().size()));
+	public static int getCFLTankAmount(ItemStack stack) {
+		if (!isCFLCompressedTank(stack)) return 0;
+		var handler = stack.getCapability(FluidHandler.ITEM);
+		if (handler == null) return 0;
+		var fluid = handler.getFluidInTank(0);
+		return fluid.isEmpty() ? 0 : fluid.getAmount();
+	}
+	public static boolean isCFLCompressedTank(ItemStack stack) {
+		if (stack.isEmpty()) return false;
+		return BuiltInRegistries.ITEM.getKey(stack.getItem()).equals(CFL_COMPRESSED_TANK_ID);
+	}
+	public abstract boolean supports(ItemStack stack);
+	@Override
+	public int width(ItemStack stack) {
+		var data = getData(stack);
+		if (data == null) return 0;
+		return resolveColumns(data) * SlotUtil.SIZE + PAD * 2;
+	}
+	@Override
+	public int height(ItemStack stack) {
+		var data = getData(stack);
+		if (data == null) return 0;
+		var columns = resolveColumns(data);
+		var rows = Math.max(1, Mth.ceil((float) data.items().size() / columns));
+		return rows * SlotUtil.SIZE + PAD * 2;
+	}
+	@Override
+	public void render(GuiGraphics gui, ItemStack stack, int x, int y) {
+		var data = getData(stack);
+		if (data == null) return;
+		var color = NativeImageUtil.getColor(stack);
+		var r = color.getRed() / 255F;
+		var g = color.getGreen() / 255F;
+		var b = color.getBlue() / 255F;
+		var cols = resolveColumns(data);
+		renderItemGrid(gui, data.items, cols, x, y, r, g, b, data.zeroCountSlots);
 	}
 	public static void renderItemGrid(
 		GuiGraphics gui,
@@ -60,22 +94,6 @@ public abstract class AbstractItemGridRenderer implements TooltipOverlayRenderer
 		}
 		pose.popPose();
 	}
-	public static boolean isCFLCompressedTank(ItemStack stack) {
-		if (stack.isEmpty()) return false;
-		return BuiltInRegistries.ITEM.getKey(stack.getItem()).equals(CFL_COMPRESSED_TANK_ID);
-	}
-	public static int getCFLTankAmount(ItemStack stack) {
-		if (!isCFLCompressedTank(stack)) return 0;
-		var handler = stack.getCapability(FluidHandler.ITEM);
-		if (handler == null) return 0;
-		var fluid = handler.getFluidInTank(0);
-		return fluid.isEmpty() ? 0 : fluid.getAmount();
-	}
-	public static @NotNull String formatFluidAmount(int amountMb) {
-		if (amountMb % 1000 == 0) return amountMb / 1000 + "B";
-		return BigDecimal.valueOf(amountMb).divide(BigDecimal.valueOf(1000), 1, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
-			+ "B";
-	}
 	public static void renderPanel(GuiGraphics gui, int width, int height, float r, float g, float b) {
 		RenderSystem.setShaderColor(r, g, b, 1F);
 		gui.fill(0, 0, width, height, BG);
@@ -92,38 +110,20 @@ public abstract class AbstractItemGridRenderer implements TooltipOverlayRenderer
 		gui.blitSprite(SlotUtil.SLOT, x, y, 0, SlotUtil.SIZE, SlotUtil.SIZE);
 		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 	}
-	public abstract boolean supports(ItemStack stack);
-	public abstract @Nullable OverlayData buildItemGrid(ItemStack stack);
-	@Override
-	public int width(ItemStack stack) {
-		var data = getData(stack);
-		if (data == null) return 0;
-		return resolveColumns(data) * SlotUtil.SIZE + PAD * 2;
-	}
-	@Override
-	public int height(ItemStack stack) {
-		var data = getData(stack);
-		if (data == null) return 0;
-		var columns = resolveColumns(data);
-		var rows = Math.max(1, Mth.ceil((float) data.items().size() / columns));
-		return rows * SlotUtil.SIZE + PAD * 2;
+	public static @NotNull String formatFluidAmount(int amountMb) {
+		if (amountMb % 1000 == 0) return amountMb / 1000 + "B";
+		return BigDecimal.valueOf(amountMb).divide(BigDecimal.valueOf(1000), 1, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
+			+ "B";
 	}
 	private @Nullable OverlayData getData(ItemStack stack) {
 		var data = buildItemGrid(stack);
 		if (data == null || data.items().isEmpty()) return null;
 		return data;
 	}
-	@Override
-	public void render(GuiGraphics gui, ItemStack stack, int x, int y) {
-		var data = getData(stack);
-		if (data == null) return;
-		var color = NativeImageUtil.getColor(stack);
-		var r = color.getRed() / 255F;
-		var g = color.getGreen() / 255F;
-		var b = color.getBlue() / 255F;
-		var cols = resolveColumns(data);
-		renderItemGrid(gui, data.items, cols, x, y, r, g, b, data.zeroCountSlots);
+	public static int resolveColumns(OverlayData data) {
+		return Mth.clamp(data.columns(), 1, Math.max(1, data.items().size()));
 	}
+	public abstract @Nullable OverlayData buildItemGrid(ItemStack stack);
 	public record OverlayData(List<ItemStack> items, int columns, Set<Integer> zeroCountSlots) {
 		public OverlayData(List<ItemStack> items, int columns) {
 			this(items, columns, Set.of());

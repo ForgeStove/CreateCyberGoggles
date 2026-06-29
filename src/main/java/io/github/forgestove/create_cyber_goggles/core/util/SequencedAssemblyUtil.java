@@ -14,9 +14,6 @@ public final class SequencedAssemblyUtil {
 	public static boolean shouldEnable(SequencedAssemblyRecipe recipe) {
 		return recipe.getOutputChance() != 1 && getJunkCount(recipe) > 0;
 	}
-	public static long[] getState(SequencedAssemblyRecipe recipe) {
-		return STATES.computeIfAbsent(recipe, r -> new long[2]);
-	}
 	public static int getJunkCount(SequencedAssemblyRecipe recipe) {
 		return Math.max(recipe.resultPool.size() - 1, 0);
 	}
@@ -42,6 +39,9 @@ public final class SequencedAssemblyUtil {
 				return true;
 			}
 		};
+	}
+	public static long[] getState(SequencedAssemblyRecipe recipe) {
+		return STATES.computeIfAbsent(recipe, r -> new long[2]);
 	}
 }
 

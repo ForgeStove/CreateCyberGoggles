@@ -1,2 +1,6 @@
-- Refactor configuration serialization
-- Rearrange the configuration
+- Add useWorldLabels option
+- Add hudPanelEnabled option
+- Add button click sound for CategoryCollapsibleConfigEntry
+- Change the prefix for CategoryCollapsibleConfigEntry
+- Restructure the package
+- Correct localized text

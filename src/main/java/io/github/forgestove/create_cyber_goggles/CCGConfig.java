@@ -93,7 +93,8 @@ public final class CCGConfig {
 		public boolean alwaysAllowRidingRope = true;
 		public static class ForceOverlay {
 			public boolean forceOverlayEnabled = true;
-			public boolean forceTooltipEnabled = true;
+			public boolean useWorldLabels = true;
+			public boolean hudPanelEnabled = true;
 			public boolean renderCenterOfMass = true;
 			public Point forceOverlayPos = new Point();
 			@DoubleRange(min = 0) public double clusterAngleRadians = 0.1;

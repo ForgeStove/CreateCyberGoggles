@@ -6,8 +6,10 @@ import dev.ryanhcode.sable.api.physics.force.ForceGroups;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.*;
+import net.minecraft.client.gui.Font.DisplayMode;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
+import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
@@ -76,7 +78,10 @@ public final class ForceOverlayRenderer {
 				bufferSource.endBatch(fillType);
 			}
 			// 渲染力箭头
-			if (hasData) renderForces(poseStack, bufferSource, rotationPoint, clientSubLevel, scale);
+			if (hasData) {
+				renderForces(poseStack, bufferSource, rotationPoint, clientSubLevel, scale);
+				renderWorldLabels(poseStack, bufferSource, rotationPoint, clientSubLevel, scale, camera);
+			}
 		} finally {
 			mvStack.popMatrix();
 			RenderSystem.applyModelViewMatrix();
@@ -183,6 +188,109 @@ public final class ForceOverlayRenderer {
 			sphere(pose, triConsumer, a.bx, a.by, a.bz, tailSphereRadius, a.r, a.g, a.b);
 		}
 		bufferSource.endBatch(triType);
+	}
+	// ---- 世界标签渲染 ----
+	/** 收集所有簇的世界坐标 → 在独立世界空间渲染广告牌文字。 */
+	private static void renderWorldLabels(
+		PoseStack poseStack,
+		BufferSource bufferSource,
+		Vector3dc rotationPoint,
+		ClientSubLevel clientSubLevel,
+		double scale,
+		Camera camera
+	) {
+		var config = CCG.config.aeronautics.forceOverlay;
+		if (!config.useWorldLabels) return;
+		var clusters = ForceOverlay.smoothedClusters();
+		if (clusters == null || clusters.isEmpty()) return;
+		var font = Minecraft.getInstance().font;
+		var camPos = camera.getPosition();
+		var renderPose = clientSubLevel.renderPose();
+		var subPos = renderPose.position();
+		var subOrient = new Quaternionf(renderPose.orientation());
+		var bbox = clientSubLevel.boundingBox();
+		var labelOffsetY = (bbox.maxY() - bbox.minY()) * 0.015;
+		// 保存子层级变换、重置为世界空间
+		poseStack.pushPose();
+		poseStack.last().pose().identity();
+		poseStack.last().normal().identity();
+		var textScaleF = (float) (0.025 * scale);
+		// 采集：计算每个标签的世界坐标
+		record Entry(Component text, Vector3d worldPos) {}
+		List<Entry> entries = new ArrayList<>();
+		clusters.forEach((key, value) -> {
+			if (!shouldShowForceGroup(key)) return;
+			var group = ForceGroups.REGISTRY.get(key);
+			if (group == null) return;
+			var groupColor = group.color();
+			for (var cluster : value) {
+				var mag = cluster.force().length();
+				if (mag < 1e-6) continue;
+				var groupName = group.name().getString();
+				var valueStr = String.format(Locale.ROOT, "%.1f", mag);
+				var text = Component.empty()
+					.append(Component.literal(groupName).withStyle(Style.EMPTY.withColor(TextColor.fromRgb(groupColor))))
+					.append(Component.literal("：").withStyle(Style.EMPTY.withColor(TextColor.fromRgb(0xB0B0B0))))
+					.append(Component.literal(valueStr + " N").withStyle(Style.EMPTY.withColor(TextColor.fromRgb(0xFFFFFF))));
+				var forceDir = new Vector3d(cluster.force()).div(mag);
+				var local = new Vector3d(
+					cluster.pos().x() - rotationPoint.x() - forceDir.x * 0.5,
+					cluster.pos().y() - rotationPoint.y() + labelOffsetY - forceDir.y * 0.5,
+					cluster.pos().z() - rotationPoint.z() - forceDir.z * 0.5
+				);
+				var worldDir = subOrient.transform(new Vector3d(local));
+				entries.add(new Entry(
+					text,
+					new Vector3d(
+						subPos.x() + worldDir.x - camPos.x(),
+						subPos.y() + worldDir.y - camPos.y(),
+						subPos.z() + worldDir.z - camPos.z()
+					)
+				));
+			}
+		});
+		if (entries.isEmpty()) {
+			poseStack.popPose();
+			return;
+		}
+		var cameraRot = new Quaternionf(camera.rotation());
+		// 背景
+		var fillConsumer = bufferSource.getBuffer(OverlayRenderTypes.OVERLAY_FILL);
+		for (var e : entries) {
+			var halfW = font.width(e.text) / 2f;
+			poseStack.pushPose();
+			poseStack.translate(e.worldPos.x(), e.worldPos.y(), e.worldPos.z());
+			poseStack.mulPose(cameraRot);
+			poseStack.scale(textScaleF, -textScaleF, textScaleF);
+			drawLabelBg(poseStack.last(), fillConsumer, halfW);
+			poseStack.popPose();
+		}
+		bufferSource.endBatch(OverlayRenderTypes.OVERLAY_FILL);
+		// 文字
+		RenderSystem.disableCull();
+		for (var e : entries) {
+			var halfW = font.width(e.text) / 2;
+			poseStack.pushPose();
+			poseStack.translate(e.worldPos.x(), e.worldPos.y(), e.worldPos.z());
+			poseStack.mulPose(cameraRot);
+			poseStack.scale(textScaleF, -textScaleF, textScaleF);
+			font.drawInBatch(
+				e.text,
+				-halfW,
+				1,
+				0xFFFFFF,
+				false,
+				poseStack.last().pose(),
+				bufferSource,
+				DisplayMode.SEE_THROUGH,
+				0xF000F0,
+				0
+			);
+			poseStack.popPose();
+		}
+		bufferSource.endBatch();
+		RenderSystem.enableCull();
+		poseStack.popPose(); // 恢复子层级变换
 	}
 	private static void quad(
 		Pose pose,
@@ -372,6 +480,28 @@ public final class ForceOverlayRenderer {
 			}
 		}
 	}
+	/** 绘制面板风格的背景 + 边框，与 Create GUI 面板样式一致（四角空、左/右边框上下各缩 1px）。 */
+	private static void drawLabelBg(Pose pose, VertexConsumer consumer, float halfW) {
+		var m = pose.pose();
+		var x = -halfW;
+		var width = 2 * halfW;
+		var y = 1f;
+		var height = 9f;
+		// 颜色参照 GUI：BG=0xC6C6C6, DARK=0x555555
+		int fillRgb = 0x101010, fillA = 0xB0;
+		int bdrRgb = 0x505050, bdrA = 0xE0;
+		// 填充区域（四角留空）
+		coloredQuad(m, consumer, x - 3, y - 4, x + width + 3, y - 3, fillRgb, fillA);
+		coloredQuad(m, consumer, x - 3, y + height + 3, x + width + 3, y + height + 4, fillRgb, fillA);
+		coloredQuad(m, consumer, x - 3, y - 3, x + width + 3, y + height + 3, fillRgb, fillA);
+		coloredQuad(m, consumer, x - 4, y - 3, x - 3, y + height + 3, fillRgb, fillA);
+		coloredQuad(m, consumer, x + width + 3, y - 3, x + width + 4, y + height + 3, fillRgb, fillA);
+		// 边框（统一使用 DARK，top 和 bot 同色）
+		coloredQuad(m, consumer, x - 3, y - 2, x - 2, y + height + 2, bdrRgb, bdrA);   // 左
+		coloredQuad(m, consumer, x + width + 2, y - 2, x + width + 3, y + height + 2, bdrRgb, bdrA); // 右
+		coloredQuad(m, consumer, x - 3, y - 3, x + width + 3, y - 2, bdrRgb, bdrA);     // 上
+		coloredQuad(m, consumer, x - 3, y + height + 2, x + width + 3, y + height + 3, bdrRgb, bdrA); // 下
+	}
 	private static void triangle(
 		Pose pose,
 		VertexConsumer consumer,
@@ -391,6 +521,14 @@ public final class ForceOverlayRenderer {
 		consumer.addVertex(pose, (float) x1, (float) y1, (float) z1).setColor(r, g, b, 1.0f);
 		consumer.addVertex(pose, (float) x2, (float) y2, (float) z2).setColor(r, g, b, 1.0f);
 		consumer.addVertex(pose, (float) x3, (float) y3, (float) z3).setColor(r, g, b, 1.0f);
+	}
+	/** 绘制单个同色矩形（用于面板边框）。 */
+	private static void coloredQuad(Matrix4f m, VertexConsumer consumer, float x1, float y1, float x2, float y2, int rgb, int alpha) {
+		float r = (rgb >> 16 & 0xFF) / 255f, g = (rgb >> 8 & 0xFF) / 255f, b = (rgb & 0xFF) / 255f, a = alpha / 255f;
+		consumer.addVertex(m, x1, y1, 0).setColor(r, g, b, a);
+		consumer.addVertex(m, x2, y1, 0).setColor(r, g, b, a);
+		consumer.addVertex(m, x2, y2, 0).setColor(r, g, b, a);
+		consumer.addVertex(m, x1, y2, 0).setColor(r, g, b, a);
 	}
 	private record ArrowDraw(
 		double bx,

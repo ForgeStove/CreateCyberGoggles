@@ -117,7 +117,7 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 			var pathKey = buildPathKey(path);
 			var builder = CategoryConfigNode.<C>builder()
 				.title(Component.translatable(modId + ".config.category." + pathKey))
-				.defaultExpanded(annotation.defaultExpanded());
+				.defaultExpanded(annotation.expanded());
 			for (var valueField : subCategoryField.getType().getDeclaredFields())
 				if (valueField.isAnnotationPresent(Category.class)) {
 					if (!ConfigCondition.evaluate(valueField)) continue;

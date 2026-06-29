@@ -13,7 +13,7 @@ public final class CCGConfig {
 	@Category public final DraftingView draftingView = new DraftingView();
 	@Category public final Misc misc = new Misc();
 	public static class Goggles {
-		@Category public final GameMode gameMode = new GameMode();
+		@Category(expanded = false) public final GameMode gameMode = new GameMode();
 		public boolean enhancedInfo = true;
 		public boolean hideStaticKineticInfo = false;
 		public boolean onlyOnWithGoggles = false;

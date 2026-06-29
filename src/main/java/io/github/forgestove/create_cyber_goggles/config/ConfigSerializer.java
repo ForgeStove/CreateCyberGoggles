@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.config;
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
-import io.github.forgestove.create_cyber_goggles.config.annotation.Category;
+import io.github.forgestove.create_cyber_goggles.config.annotation.*;
 
 import java.awt.Point;
 import java.lang.reflect.Field;
@@ -86,6 +86,9 @@ public final class ConfigSerializer<C> {
 					pointConfig.set("x", p.x);
 					pointConfig.set("y", p.y);
 					subConfig.set(fieldName, pointConfig);
+				} else if (field.isAnnotationPresent(ColorValue.class)) {
+					var hasAlpha = field.getAnnotation(ColorValue.class).hasAlpha();
+					subConfig.set(fieldName, new HexColorValue(hasAlpha, (Integer) value));
 				} else subConfig.set(fieldName, value instanceof Enum<?> e ? e.name() : value);
 				var comment = buildFieldComment(pathPrefix, fieldName);
 				if (!comment.isEmpty()) subConfig.setComment(fieldName, comment);
@@ -145,14 +148,10 @@ public final class ConfigSerializer<C> {
 			if (value == null && fallbackValues != null) value = fallbackValues.get(field.getName());
 			if (value == null) continue;
 			var type = field.getType();
-			if (type == boolean.class || type == Boolean.class) field.setBoolean(category, (Boolean) value);
-			else if (type == int.class || type == Integer.class) {
-				if (value instanceof Number n) field.setInt(category, n.intValue());
-			} else if (type == Point.class) {
-				if (value instanceof CommentedConfig pc) field.set(category, new Point(pc.getInt("x"), pc.getInt("y")));
-			} else if (type.isEnum()) try {
-				field.set(category, Enum.valueOf((Class<T>) type, (String) value));
-			} catch (IllegalArgumentException ignored) {}
+			if (type == Point.class) {
+				if (value instanceof CommentedConfig cc) field.set(category, new Point(cc.getInt("x"), cc.getInt("y")));
+			} else if (type.isEnum()) field.set(category, Enum.valueOf((Class<T>) type, (String) value));
+			else field.set(category, value);
 		}
 	}
 	public static final class Builder<C> {
@@ -175,5 +174,25 @@ public final class ConfigSerializer<C> {
 		public ConfigSerializer<C> build() {
 			return new ConfigSerializer<>(this);
 		}
+	}
+	public static class HexColorValue extends Number {
+		public final boolean hasAlpha;
+		public final int value;
+		public HexColorValue(boolean hasAlpha, int value) {
+			this.hasAlpha = hasAlpha;
+			this.value = value;
+		}
+		@Override
+		public String toString() {
+			return hasAlpha ? String.format("0x%08X", value) : String.format("0x%06X", value);
+		}
+		@Override
+		public int intValue() {return value;}
+		@Override
+		public long longValue() {return value;}
+		@Override
+		public float floatValue() {return value;}
+		@Override
+		public double doubleValue() {return value;}
 	}
 }

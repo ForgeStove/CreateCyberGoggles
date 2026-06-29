@@ -22,5 +22,5 @@ public @interface Category {
 	 *
 	 * @return whether the category is expanded by default
 	 */
-	boolean defaultExpanded() default true;
+	boolean expanded() default true;
 }

@@ -47,9 +47,10 @@ public final class ConfigSerializer<C> {
 		try (var fileConfig = CommentedFileConfig.builder(configPath.get()).build()) {
 			fileConfig.load();
 			var config = newInstance();
+			var fallbackValues = buildFlatValueMap(fileConfig);
 			for (var categoryField : getCategoryFields()) {
 				categoryField.setAccessible(true);
-				readCategory(fileConfig, categoryField.getName(), categoryField.get(config));
+				readCategory(fileConfig, categoryField.getName(), categoryField.get(config), fallbackValues);
 			}
 			return config;
 		} catch (Exception e) {
@@ -108,18 +109,40 @@ public final class ConfigSerializer<C> {
 		if (translator == null || translationPrefix == null) return null;
 		return translator.apply(translationPrefix + "." + key);
 	}
+	/**
+	 * 递归遍历整个配置树，构建字段名→值的平铺映射。
+	 * 当字段被移动到不同分类路径时，可通过该映射按名称找回旧值。
+	 */
+	private Map<String, Object> buildFlatValueMap(CommentedConfig config) {
+		var map = new HashMap<String, Object>();
+		buildFlatValueMapRecursive(config, map);
+		return map;
+	}
+	private void buildFlatValueMapRecursive(CommentedConfig config, Map<String, Object> map) {
+		for (var entry : config.entrySet()) {
+			var key = entry.getKey();
+			var value = entry.getValue();
+			map.putIfAbsent(key, value);
+			if (value instanceof CommentedConfig sub) buildFlatValueMapRecursive(sub, map);
+		}
+	}
 	@SuppressWarnings({"unchecked"})
-	private <T extends Enum<T>> void readCategory(CommentedConfig config, String categoryName, Object category) throws
-		IllegalAccessException {
+	private <T extends Enum<T>> void readCategory(
+		CommentedConfig config,
+		String categoryName,
+		Object category,
+		Map<String, Object> fallbackValues
+	) throws IllegalAccessException {
 		CommentedConfig subConfig = config.get(categoryName);
-		if (subConfig == null) return;
 		for (var field : category.getClass().getDeclaredFields()) {
 			field.setAccessible(true);
 			if (field.isAnnotationPresent(Category.class)) {
-				readCategory(subConfig, field.getName(), field.get(category));
+				readCategory(subConfig != null ? subConfig : config, field.getName(), field.get(category), fallbackValues);
 				continue;
 			}
-			var value = subConfig.get(field.getName());
+			Object value = null;
+			if (subConfig != null) value = subConfig.get(field.getName());
+			if (value == null && fallbackValues != null) value = fallbackValues.get(field.getName());
 			if (value == null) continue;
 			var type = field.getType();
 			if (type == boolean.class || type == Boolean.class) field.setBoolean(category, (Boolean) value);

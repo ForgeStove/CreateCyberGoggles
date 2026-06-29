@@ -27,7 +27,7 @@ public final class DraftingViewHandler {
 	 */
 	public static void applyIfEnabled(RenderLevelStageEvent event) {
 		if (event.getStage() != Stage.AFTER_TRIPWIRE_BLOCKS) return;
-		if (!CCG.config.draftingView.draftingViewEnabled) return;
+		if (!CCG.config.overlay.draftingView.draftingViewEnabled) return;
 		var view = DraftingShaders.draftingView();
 		var upscale = DraftingShaders.draftingUpscale();
 		if (view == null || upscale == null) return;
@@ -36,7 +36,7 @@ public final class DraftingViewHandler {
 		var window = mc.getWindow();
 		if (framebuffer == null) framebuffer = new DraftingFramebuffer(main.width, main.height);
 		else framebuffer.resizeIfNeeded(main.width, main.height);
-		var cfg = CCG.config.draftingView;
+		var cfg = CCG.config.overlay.draftingView;
 		var lineColor = unpackColor(cfg.lineColor);
 		var lineShadow = unpackColor(cfg.lineShadowColor);
 		var paletteOffset = (float) cfg.paletteOffset;

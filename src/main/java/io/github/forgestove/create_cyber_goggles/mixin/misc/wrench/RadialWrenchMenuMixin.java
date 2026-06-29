@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.mixin.wrench;
+package io.github.forgestove.create_cyber_goggles.mixin.misc.wrench;
 import com.simibubi.create.content.contraptions.wrench.RadialWrenchMenu;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.WrenchMenuUtil;

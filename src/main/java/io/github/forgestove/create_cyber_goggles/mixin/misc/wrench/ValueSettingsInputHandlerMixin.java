@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.mixin.wrench;
+package io.github.forgestove.create_cyber_goggles.mixin.misc.wrench;
 import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.simibubi.create.foundation.blockEntity.behaviour.*;
 import io.github.forgestove.create_cyber_goggles.CCG;

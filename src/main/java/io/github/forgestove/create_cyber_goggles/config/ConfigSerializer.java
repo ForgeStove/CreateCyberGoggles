@@ -60,8 +60,35 @@ public final class ConfigSerializer<C> {
 	private Field[] getCategoryFields() {
 		return Arrays.stream(configClass.getDeclaredFields())
 			.filter(f -> f.isAnnotationPresent(Category.class))
-			.sorted(Comparator.comparingInt(f -> f.getAnnotation(Category.class).value()))
+			.sorted(Comparator.comparingInt(this::orderedFieldIndex))
 			.toArray(Field[]::new);
+	}
+	/**
+	 * Returns the fields of the given class sorted by {@link Order @Order} annotation value.
+	 * Fields without {@code @Order} default to 0 and come first (preserving their
+	 * {@link Class#getDeclaredFields()} relative order).
+	 * Fields with an explicit positive {@code @Order} value come after, sorted by value
+	 * {@link Class#getDeclaredFields() getDeclaredFields()} relative order.
+	 */
+	private Field[] getOrderedFields(Class<?> clazz) {
+		var fields = clazz.getDeclaredFields();
+		var indices = orderCache(fields);
+		Arrays.sort(
+			fields, Comparator.comparingInt((Field f) -> {
+				var ann = f.getAnnotation(Order.class);
+				return ann != null ? ann.value() : 0;
+			}).thenComparingInt(f -> indices.get(f.getName()))
+		);
+		return fields;
+	}
+	private Map<String, Integer> orderCache(Field[] fields) {
+		var map = new HashMap<String, Integer>();
+		for (var i = 0; i < fields.length; i++) map.put(fields[i].getName(), i);
+		return Map.copyOf(map);
+	}
+	private int orderedFieldIndex(Field f) {
+		var ann = f.getAnnotation(Order.class);
+		return ann != null ? ann.value() : 0;
 	}
 	private C newInstance() throws SerializationException {
 		try {
@@ -75,7 +102,7 @@ public final class ConfigSerializer<C> {
 		var subConfig = config.createSubConfig();
 		var categoryComment = translate("category." + pathPrefix);
 		if (categoryComment != null) config.setComment(categoryName, " " + categoryComment);
-		for (var field : category.getClass().getDeclaredFields()) {
+		for (var field : getOrderedFields(category.getClass())) {
 			field.setAccessible(true);
 			var fieldName = field.getName();
 			var value = field.get(category);
@@ -137,7 +164,7 @@ public final class ConfigSerializer<C> {
 		Map<String, Object> fallbackValues
 	) throws IllegalAccessException {
 		CommentedConfig subConfig = config.get(categoryName);
-		for (var field : category.getClass().getDeclaredFields()) {
+		for (var field : getOrderedFields(category.getClass())) {
 			field.setAccessible(true);
 			if (field.isAnnotationPresent(Category.class)) {
 				readCategory(subConfig != null ? subConfig : config, field.getName(), field.get(category), fallbackValues);

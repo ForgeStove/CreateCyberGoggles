@@ -5,10 +5,6 @@
 	"client": [
 		"AbstractFilterScreenMixin",
 		"accessor.RotationPropagatorAccessor",
-		"chainConveyor.CardboardArmorHandlerMixin",
-		"chainConveyor.ChainConveyorConnectionHandlerMixin",
-		"chainConveyor.ChainConveyorInteractionHandlerMixin",
-		"chainConveyor.ChainConveyorRidingHandlerMixin",
 		"compact.GuiGraphicsMixin",
 		"compact.LocalPlayerMixin",
 		"goggles.BlueprintOverlayRendererMixin",
@@ -44,6 +40,15 @@
 		"misc.StockKeeperRequestScreenMixin",
 		"misc.SuperGlueSelectionHandlerMixin",
 		"misc.TrainHUDMixin",
+		"misc.chainConveyor.CardboardArmorHandlerMixin",
+		"misc.chainConveyor.ChainConveyorConnectionHandlerMixin",
+		"misc.chainConveyor.ChainConveyorInteractionHandlerMixin",
+		"misc.chainConveyor.ChainConveyorRidingHandlerMixin",
+		"misc.wrench.ChassisRangeDisplayMixin",
+		"misc.wrench.RadialWrenchHandlerMixin",
+		"misc.wrench.RadialWrenchMenuMixin",
+		"misc.wrench.ScrollValueRendererMixin",
+		"misc.wrench.ValueSettingsInputHandlerMixin",
 		"provider.ArmBlockEntityMixin",
 		"provider.BacktankBlockEntityMixin",
 		"provider.BasinBlockEntityMixin",
@@ -89,11 +94,6 @@
 		"tooltip.ListFilterItemMixin",
 		"tooltip.PackageItemMixin",
 		"tooltip.ShulkerBoxBlockMixin",
-		"tooltip.TableClothBlockItemMixin",
-		"wrench.ChassisRangeDisplayMixin",
-		"wrench.RadialWrenchHandlerMixin",
-		"wrench.RadialWrenchMenuMixin",
-		"wrench.ScrollValueRendererMixin",
-		"wrench.ValueSettingsInputHandlerMixin"
+		"tooltip.TableClothBlockItemMixin"
 	]
 }

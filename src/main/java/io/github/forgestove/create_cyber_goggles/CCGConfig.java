@@ -5,15 +5,14 @@ import io.github.forgestove.create_cyber_goggles.core.factory.*;
 import java.awt.Point;
 @ConfigClass(CCG.ID)
 public final class CCGConfig {
-	@Category public final Goggles goggles = new Goggles();
-	@Category public final Tooltip tooltip = new Tooltip();
-	@Category public final Overlay overlay = new Overlay();
-	@Category public final Outliner outliner = new Outliner();
-	@Category @Condition("simulated") public final Aeronautics aeronautics = new Aeronautics();
-	@Category public final DraftingView draftingView = new DraftingView();
-	@Category public final Misc misc = new Misc();
+	@Category @Order(0) public final Goggles goggles = new Goggles();
+	@Category @Order(1) public final Tooltip tooltip = new Tooltip();
+	@Category @Order(3) public final Overlay overlay = new Overlay();
+	@Category @Order(4) public final Outliner outliner = new Outliner();
+	@Category @Order(5) @Condition("simulated") public final Aeronautics aeronautics = new Aeronautics();
+	@Category @Order(6) public final Misc misc = new Misc();
 	public static class Goggles {
-		@Category(expanded = false) public final GameMode gameMode = new GameMode();
+		@Category(false) public final GameMode gameMode = new GameMode();
 		public boolean enhancedInfo = true;
 		public boolean hideStaticKineticInfo = false;
 		public boolean onlyOnWithGoggles = false;
@@ -59,6 +58,7 @@ public final class CCGConfig {
 		public boolean millstone = true;
 	}
 	public static class Overlay {
+		@Category @Order(1) public final DraftingView draftingView = new DraftingView();
 		public boolean renderItemOverlay = true;
 		public Point overlayPos = new Point();
 		public TooltipFlagType tooltipFlagType = TooltipFlagType.Default;
@@ -67,6 +67,14 @@ public final class CCGConfig {
 		@ColorValue(hasAlpha = true) public int backgroundColor = 0x00000000;
 		@ColorValue(hasAlpha = true) public int borderTopColor = 0x00000000;
 		@ColorValue(hasAlpha = true) public int borderBottomColor = 0x00000000;
+		public static class DraftingView {
+			public boolean draftingViewEnabled = false;
+			@DoubleRange(min = 0, max = 1) public double paletteOffset = 0.25;
+			public boolean pixelate = true;
+			@DoubleRange(min = 1, max = 16) public double pixelScale = 4;
+			@ColorValue public int lineColor = 0x2E3032;
+			@ColorValue public int lineShadowColor = 0x696965;
+		}
 	}
 	public static class Outliner {
 		public boolean renderAnalogBox = true;
@@ -77,7 +85,7 @@ public final class CCGConfig {
 		public boolean rainbowDebug = false;
 	}
 	public static class Aeronautics {
-		@Category public final ForceOverlay forceOverlay = new ForceOverlay();
+		@Category @Order(1) public final ForceOverlay forceOverlay = new ForceOverlay();
 		public boolean alwaysShowMass = true;
 		public boolean alwaysShowFriction = false;
 		public boolean liftLimitOfHandleRange = false;
@@ -104,17 +112,9 @@ public final class CCGConfig {
 			public boolean showMagneticForce = true;
 		}
 	}
-	public static class DraftingView {
-		public boolean draftingViewEnabled = false;
-		@DoubleRange(min = 0, max = 1) public double paletteOffset = 0.25;
-		public boolean pixelate = true;
-		@DoubleRange(min = 1, max = 16) public double pixelScale = 4;
-		@ColorValue public int lineColor = 0x2E3032;
-		@ColorValue public int lineShadowColor = 0x696965;
-	}
 	public static class Misc {
-		@Category public final ChainConveyor chainConveyor = new ChainConveyor();
-		@Category public final Wrench wrench = new Wrench();
+		@Category(false) public final ChainConveyor chainConveyor = new ChainConveyor();
+		@Category(false) public final Wrench wrench = new Wrench();
 		public boolean removeMechanicalArmLimit = false;
 		public boolean removeRequestLimit = true;
 		public boolean stockRequestQuickActions = true;

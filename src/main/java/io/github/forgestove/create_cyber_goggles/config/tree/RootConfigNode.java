@@ -82,13 +82,23 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 				if (!ConfigCondition.evaluate(field)) return false;
 			return true;
 		}
+		private static Field[] sortedFields(Field[] fields) {
+			var indices = new HashMap<String, Integer>();
+			for (var i = 0; i < fields.length; i++) indices.put(fields[i].getName(), i);
+			Arrays.sort(
+				fields,
+				Comparator.comparingInt((Field f) -> f.isAnnotationPresent(Order.class) ? f.getAnnotation(Order.class).value() : 0)
+					.thenComparingInt(f -> indices.get(f.getName()))
+			);
+			return fields;
+		}
 		@NotNull
 		public RootConfigNode<C> build() {
 			var configClass = defaultConfig.getClass();
 			var categories = Arrays.stream(configClass.getFields())
 				.filter(field -> field.isAnnotationPresent(Category.class))
 				.filter(ConfigCondition::evaluate)
-				.map(field -> Map.entry(field.getAnnotation(Category.class).value(), field))
+				.map(field -> Map.entry(field.isAnnotationPresent(Order.class) ? field.getAnnotation(Order.class).value() : 0, field))
 				.sorted(Comparator.comparingInt(Entry::getKey))
 				.map(pair -> createCategoryNode(pair.getValue()))
 				.collect(ImmutableList.toImmutableList());
@@ -99,7 +109,7 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 			var defaultCategory = FieldAccess.getFieldValue(categoryField, defaultConfig);
 			var categoryBuilder = CategoryConfigNode.<C>builder()
 				.title(Component.translatable(modId + ".config.category." + categoryField.getName()));
-			for (var valueField : categoryField.getType().getDeclaredFields())
+			for (var valueField : sortedFields(categoryField.getType().getDeclaredFields()))
 				if (valueField.isAnnotationPresent(Category.class)) {
 					if (!ConfigCondition.evaluate(valueField)) continue;
 					var subBuilder = createSubCategoryNode(List.of(categoryField), valueField);
@@ -117,8 +127,8 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 			var pathKey = buildPathKey(path);
 			var builder = CategoryConfigNode.<C>builder()
 				.title(Component.translatable(modId + ".config.category." + pathKey))
-				.defaultExpanded(annotation.expanded());
-			for (var valueField : subCategoryField.getType().getDeclaredFields())
+				.defaultExpanded(annotation.value());
+			for (var valueField : sortedFields(subCategoryField.getType().getDeclaredFields()))
 				if (valueField.isAnnotationPresent(Category.class)) {
 					if (!ConfigCondition.evaluate(valueField)) continue;
 					if (!evaluatePathCondition(path)) continue;

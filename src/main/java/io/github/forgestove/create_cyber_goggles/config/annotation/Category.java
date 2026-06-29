@@ -7,14 +7,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Category {
 	/**
-	 * Category order. Categories will be sorted by this value in ascending order.
-	 * <p>
-	 * Default value is 0.
-	 *
-	 * @return the order of the category
-	 */
-	int value() default 0;
-	/**
 	 * Whether the category should be expanded by default in the config GUI.
 	 * Subcategories can be collapsed/expanded by clicking on the header.
 	 * <p>
@@ -22,5 +14,5 @@ public @interface Category {
 	 *
 	 * @return whether the category is expanded by default
 	 */
-	boolean expanded() default true;
+	boolean value() default true;
 }

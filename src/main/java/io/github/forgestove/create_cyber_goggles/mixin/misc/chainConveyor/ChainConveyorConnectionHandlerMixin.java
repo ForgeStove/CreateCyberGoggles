@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.mixin.chainConveyor;
+package io.github.forgestove.create_cyber_goggles.mixin.misc.chainConveyor;
 import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorConnectionHandler;
 import io.github.forgestove.create_cyber_goggles.CCG;

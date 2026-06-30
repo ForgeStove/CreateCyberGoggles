@@ -1,5 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.mixin.misc;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.stockTicker.*;
@@ -7,7 +8,6 @@ import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.api.Self;
 import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
 import io.github.forgestove.create_cyber_goggles.core.factory.StockRequestAmountOverlay;
-import io.github.forgestove.create_cyber_goggles.core.factory.StockRequestAmountOverlay.*;
 import net.createmod.catnip.data.Couple;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.player.Player;
@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
 
+import java.awt.Rectangle;
 import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
@@ -41,9 +42,10 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 			return;
 		}
 		if (ccg$popup.isOpen()) {
-			var result = ccg$popup.mouseClicked(mouseX, mouseY, button, ccg$popupX(), ccg$popupY());
-			if (result == ClickResult.APPLY) ccg$applyPopupAmount();
-			if (result == ClickResult.CLOSE) ccg$popup.close();
+			switch (ccg$popup.mouseClicked(mouseX, mouseY, button, ccg$popupX(), ccg$popupY())) {
+				case APPLY -> ccg$applyPopupAmount();
+				case CLOSE -> ccg$popup.close();
+			}
 			cir.setReturnValue(true);
 			return;
 		}
@@ -58,34 +60,6 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 		if (ccg$openPopupForHoveredItem((int) mouseX, (int) mouseY)) cir.setReturnValue(true);
 	}
 	@Unique
-	private int ccg$popupX() {
-		var guiLeft = itemsX - (windowWidth - cols * colWidth) / 2 - 1;
-		return guiLeft + (windowWidth - 120) / 2;
-	}
-	@Unique
-	private int ccg$popupY() {
-		var guiTop = itemsY - 33;
-		return guiTop + (windowHeight - 82) / 2;
-	}
-	@Unique
-	private void ccg$applyPopupAmount() {
-		if (ccg$popup.getStack().isEmpty()) {
-			ccg$popup.close();
-			return;
-		}
-		var requested = ccg$popup.getRequestedAmount();
-		var existingOrder = getOrderForItem(ccg$popup.getStack());
-		if (requested <= 0) {
-			if (existingOrder != null) itemsToOrder.remove(existingOrder);
-			ccg$popup.close();
-			return;
-		}
-		if (existingOrder == null) {
-			if (itemsToOrder.size() < cols) itemsToOrder.add(new BigItemStack(ccg$popup.getStack().copyWithCount(1), requested));
-		} else existingOrder.count = requested;
-		ccg$popup.close();
-	}
-	@Unique
 	private boolean ccg$applyAltFullAmount(int mouseX, int mouseY) {
 		var hoveredSlot = getHoveredSlot(mouseX, mouseY);
 		if (hoveredSlot == noneHovered) return false;
@@ -94,39 +68,32 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 		if (group == -2) return false;
 		var entry = group == -1 ? itemsToOrder.get(index) : displayedItems.get(group).get(index);
 		if (entry == null || entry.stack.isEmpty()) return false;
-		var existingOrder = getOrderForItem(entry.stack);
-		// Bottom order row (-1) should reduce/remove on Alt+LMB; stock list rows should fill to max.
 		if (group == -1) {
-			if (existingOrder != null) itemsToOrder.remove(existingOrder);
+			ccg$setOrRemoveOrder(entry.stack, 0);
 			return true;
 		}
-		var max = ccg$getAvailableMax(entry);
-		if (max <= 0) {
-			if (existingOrder != null) itemsToOrder.remove(existingOrder);
-			return true;
-		}
-		if (existingOrder == null) {
-			if (itemsToOrder.size() < cols) itemsToOrder.add(new BigItemStack(entry.stack.copyWithCount(1), max));
-		} else existingOrder.count = max;
+		ccg$setOrRemoveOrder(entry.stack, ccg$getAvailableMax(entry));
 		return true;
 	}
 	@Unique
-	private boolean ccg$openPopupForHoveredItem(int mouseX, int mouseY) {
+	private BigItemStack ccg$getHoveredEntry(int mouseX, int mouseY) {
 		var hoveredSlot = getHoveredSlot(mouseX, mouseY);
-		if (hoveredSlot == noneHovered) return false;
+		if (hoveredSlot == noneHovered) return null;
 		int group = hoveredSlot.getFirst();
 		int index = hoveredSlot.getSecond();
-		if (group == -2) return false; // recipe strip uses its own amount semantics
+		if (group == -2) return null; // recipe strip uses its own amount semantics
 		var entry = group == -1 ? itemsToOrder.get(index) : displayedItems.get(group).get(index);
-		if (entry == null || entry.stack.isEmpty()) return false;
+		return entry == null || entry.stack.isEmpty() ? null : entry;
+	}
+	@Unique
+	private boolean ccg$openPopupForHoveredItem(int mouseX, int mouseY) {
+		var entry = ccg$getHoveredEntry(mouseX, mouseY);
+		if (entry == null) return false;
 		var max = ccg$getAvailableMax(entry);
-		var existingOrder = getOrderForItem(entry.stack);
-		var initial = existingOrder == null ? 1 : existingOrder.count;
-		ccg$popup.open(entry.stack, initial, max, mc.font, ccg$popupX(), ccg$popupY());
+		var existing = getOrderForItem(entry.stack);
+		ccg$popup.open(entry.stack, existing == null ? 1 : existing.count, max, mc.font, ccg$popupX(), ccg$popupY());
 		return true;
 	}
-	@Shadow
-	protected abstract BigItemStack getOrderForItem(ItemStack stack);
 	@Shadow
 	protected abstract Couple<Integer> getHoveredSlot(int x, int y);
 	@Unique
@@ -157,11 +124,34 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 	private void ccg$keyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
 		if (!CCG.config.misc.stockRequestQuickActions) return;
 		if (!ccg$popup.isOpen()) return;
-		var result = ccg$popup.keyPressed(keyCode, scanCode, modifiers);
-		if (result == KeyResult.APPLY) ccg$applyPopupAmount();
-		if (result == KeyResult.CLOSE) ccg$popup.close();
+		switch (ccg$popup.keyPressed(keyCode, scanCode, modifiers)) {
+			case APPLY -> ccg$applyPopupAmount();
+			case CLOSE -> ccg$popup.close();
+		}
 		cir.setReturnValue(true);
 	}
+	@Unique
+	private void ccg$applyPopupAmount() {
+		if (ccg$popup.getStack().isEmpty()) {
+			ccg$popup.close();
+			return;
+		}
+		ccg$setOrRemoveOrder(ccg$popup.getStack(), ccg$popup.getRequestedAmount());
+		ccg$popup.close();
+	}
+	@Unique
+	private void ccg$setOrRemoveOrder(ItemStack stack, int count) {
+		var existing = getOrderForItem(stack);
+		if (count <= 0) {
+			if (existing != null) itemsToOrder.remove(existing);
+			return;
+		}
+		if (existing == null) {
+			if (itemsToOrder.size() < cols) itemsToOrder.add(new BigItemStack(stack.copyWithCount(1), count));
+		} else existing.count = count;
+	}
+	@Shadow
+	protected abstract BigItemStack getOrderForItem(ItemStack stack);
 	@Inject(method = "renderForeground", at = @At("TAIL"))
 	private void ccg$renderPopup(GuiGraphics gui, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
 		if (!CCG.config.misc.stockRequestQuickActions) {
@@ -170,5 +160,35 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 		}
 		if (!ccg$popup.isOpen()) return;
 		ccg$popup.render(gui, mc.font, mouseX, mouseY, partialTicks, ccg$popupX(), ccg$popupY());
+	}
+	@Unique
+	private int ccg$popupX() {
+		var guiLeft = itemsX - (windowWidth - cols * colWidth) / 2 - 1;
+		return guiLeft + (windowWidth - 120) / 2;
+	}
+	@Unique
+	private int ccg$popupY() {
+		var guiTop = itemsY - 33;
+		return guiTop + (windowHeight - 82) / 2;
+	}
+	@WrapOperation(
+		method = "renderForeground",
+		at = @At(
+			value = "INVOKE",
+			target = "Lcom/simibubi/create/content/logistics/stockTicker/StockKeeperRequestScreen;getHoveredSlot(II)"
+				+ "Lnet/createmod/catnip/data/Couple;"
+		)
+	)
+	private Couple<Integer> ccg$suppressTooltipsWhenPopup(
+		StockKeeperRequestScreen instance,
+		int x,
+		int y,
+		Operation<Couple<Integer>> original
+	) {
+		if (ccg$popup.isOpen()) {
+			var popupArea = new Rectangle(ccg$popupX(), ccg$popupY(), 120, 82);
+			if (popupArea.contains(x, y)) return noneHovered;
+		}
+		return original.call(instance, x, y);
 	}
 }

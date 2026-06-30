@@ -17,7 +17,6 @@ import org.spongepowered.asm.mixin.*;
 import java.util.List;
 @Mixin(SpringBlockEntity.class)
 public abstract class SpringBlockEntityMixin extends SmartBlockEntity implements IHaveGoggleInformation, Self<SpringBlockEntity> {
-	@Shadow protected double desiredLength;
 	@Shadow protected LerpedFloat renderLength;
 	public SpringBlockEntityMixin(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
@@ -30,10 +29,9 @@ public abstract class SpringBlockEntityMixin extends SmartBlockEntity implements
 			.translate("tooltip.size." + getBlockState().getValue(SpringBlock.SIZE).getSerializedName())
 			.forGoggles(tooltip);
 		CCGLang.translate("tooltip.spring.isController", ChatFormatting.GRAY).is(thiz().isController()).forGoggles(tooltip);
-		CCGLang.translate("tooltip.spring.desiredLength", ChatFormatting.GRAY)
-			.fraction(desiredLength, SpringItemHandler.MAX_LENGTH)
+		CCGLang.translate("tooltip.spring.currentLength", ChatFormatting.GRAY)
+			.fraction(renderLength.getValue(), SpringItemHandler.MAX_LENGTH)
 			.forGoggles(tooltip);
-		CCGLang.translate("tooltip.spring.currentLength", ChatFormatting.GRAY).number(renderLength.getValue()).forGoggles(tooltip);
 		return true;
 	}
 }

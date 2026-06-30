@@ -5,7 +5,7 @@ import net.minecraft.client.renderer.RenderType;
 import org.jetbrains.annotations.NotNull;
 /**
  * 力覆盖层的自定义 {@link RenderType}。
- * 全部使用 {@code POSITION_COLOR}，不进行深度测试并启用半透明，使箭头渲染在所有内容之上。
+ * 全部使用 {@link DefaultVertexFormat#POSITION_COLOR}，不进行深度测试并启用半透明，使箭头渲染在所有内容之上。
  */
 public class OverlayRenderTypes extends RenderType {
 	public static final RenderType OVERLAY_FILL = create(

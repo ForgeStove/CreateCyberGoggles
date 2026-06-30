@@ -15,12 +15,12 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
  * 该效果执行：通过深度缓冲进行边缘检测、基于调色板的颜色量化与抖动、可选像素化，以及类似墨水在纸上的外观。
  */
 public final class DraftingViewHandler {
-	private static final ResourceLocation PALETTE_TEXTURE = getCCGRes("textures/effects/diagram_palette.png"), DITHER_TEXTURE = getCCGRes(
-		"textures/effects/dither.png");
+	private static final ResourceLocation PALETTE_TEXTURE = getCCGRes("textures/effects/diagram_palette.png");
+	private static final ResourceLocation DITHER_TEXTURE = getCCGRes("textures/effects/dither.png");
 	private static DraftingFramebuffer framebuffer;
 	/**
 	 * 在所有方块/实体几何体渲染完成后、Create 渲染示意图箭头及其他覆盖元素
-	 * {@linkplain Stage#AFTER_PARTICLES 之前}应用绘图视图效果，使它们在风格化场景上方保持清晰。
+	 * {@link Stage#AFTER_PARTICLES} 之前应用绘图视图效果，使它们在风格化场景上方保持清晰。
 	 */
 	@SuppressWarnings("resource")
 	public static void applyIfEnabled(RenderLevelStageEvent event) {

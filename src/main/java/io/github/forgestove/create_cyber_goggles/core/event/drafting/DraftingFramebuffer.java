@@ -8,7 +8,7 @@ public class DraftingFramebuffer {
 	public final TextureTarget target;
 	public DraftingFramebuffer(int width, int height) {
 		target = new TextureTarget(width, height, true, Minecraft.ON_OSX);
-		target.setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		target.setClearColor(0, 0, 0, 0);
 	}
 	public void resizeIfNeeded(int width, int height) {
 		if (target.width == width && target.height == height) return;

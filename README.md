@@ -93,23 +93,23 @@
 
 | 功能     |   默认值    | 描述                    |
 |:-------|:--------:|:----------------------|
-| 启用图解视图 |    ❌     | 对整个画面应用蓝图/图解风格的后处理效果  |
+| 启用图解视图 |    ❌     | 对整个画面应用图解风格的后处理效果     |
 | 调色板偏移  |   0.25   | 调色板纹理的水平查找偏移 (0..1)   |
-| 像素化    |    ✅     | 将画面粗化以获得蓝图效果          |
+| 像素化    |    ✅     | 将画面粗化以获得图解效果          |
 | 像素缩放   |    4     | 每个虚拟像素覆盖的屏幕像素数 (1=关闭) |
 | 线条颜色   | 0x2E3032 | 边缘轮廓颜色                |
 | 阴影线条颜色 | 0x696965 | 深度提示轮廓的阴影面颜色          |
 
 #### 边框渲染
 
-| 功能     |   默认值   | 描述                 |
-|:-------|:-------:|:-------------------|
-| 渲染模拟盒  |    ✅    | 渲染各种方块显示的模拟盒       |
-| 更好的连接线 |    ✅    | 优化部分渲染连接线          |
-| 延时渲染时长 |   60    | 模拟盒继续渲染的时长 [Ticks] |
-| 向外颜色   | #DDC166 | 模拟盒向外时显示的颜色        |
-| 向内颜色   | #7FCDE0 | 模拟盒向内时显示的颜色        |
-| 彩虹调试   |    ❌    | 启用彩虹调试模式           |
+| 功能     |   默认值    | 描述                 |
+|:-------|:--------:|:-------------------|
+| 渲染模拟盒  |    ✅     | 渲染各种方块显示的模拟盒       |
+| 更好的连接线 |    ✅     | 优化部分渲染连接线          |
+| 延时渲染时长 |    60    | 模拟盒继续渲染的时长 [Ticks] |
+| 向外颜色   | 0xDDC166 | 模拟盒向外时显示的颜色        |
+| 向内颜色   | 0x7FCDE0 | 模拟盒向内时显示的颜色        |
+| 彩虹调试   |    ❌     | 启用彩虹调试模式           |
 
 #### 航空学
 
@@ -125,7 +125,7 @@
 
 | 功能        | 默认值  | 描述                         |
 |:----------|:----:|:---------------------------|
-| 启用受力覆盖层   |  ✅   | 在目标物理结构上渲染力的 3D 箭头和质心标记    |
+| 启用受力覆盖层   |  ✅   | 在目标物理结构上渲染世界内力的箭头和质心标记     |
 | 启用力的提示框   |  ✅   | 显示包含质量和力大小的 HUD 面板         |
 | 渲染质心      |  ✅   | 渲染质心的方块标记                  |
 | 覆盖层位置     | 0, 0 | HUD 提示框位置偏移                |
@@ -288,14 +288,14 @@
 
 ##### Drafting View
 
-| Feature              | Default  | Description                                                             |
-|:---------------------|:--------:|:------------------------------------------------------------------------|
-| Enable Drafting View |    ❌     | Apply a blueprint/schematic post-processing effect to the entire screen |
-| Palette Offset       |   0.25   | Horizontal lookup offset (0..1) into the palette texture                |
-| Pixelate             |    ✅     | Snap the screen to a coarser virtual grid for a blueprint look          |
-| Pixel Scale          |    4     | Each virtual pixel covers this many screen pixels (1=off)               |
-| Line Color           | 0x2E3032 | Edge outline colour                                                     |
-| Line Shadow Color    | 0x696965 | Shadow side colour for depth-cued outlines                              |
+| Feature              | Default  | Description                                                    |
+|:---------------------|:--------:|:---------------------------------------------------------------|
+| Enable Drafting View |    ❌     | Apply a schematic post-processing effect to the entire screen  |
+| Palette Offset       |   0.25   | Horizontal lookup offset (0..1) into the palette texture       |
+| Pixelate             |    ✅     | Snap the screen to a coarser virtual grid for a schematic look |
+| Pixel Scale          |    4     | Each virtual pixel covers this many screen pixels (1=off)      |
+| Line Color           | 0x2E3032 | Edge outline colour                                            |
+| Line Shadow Color    | 0x696965 | Shadow side colour for depth-cued outlines                     |
 
 #### Outliner
 
@@ -429,7 +429,7 @@
 ## 致谢 / Credits
 
 > 本项目包含以下模组的代码：
-> 
+>
 > This project includes code derived from the following mods:
 >
 > - [ShulkerBoxTooltip](https://github.com/MisterPeModder/ShulkerBoxTooltip)

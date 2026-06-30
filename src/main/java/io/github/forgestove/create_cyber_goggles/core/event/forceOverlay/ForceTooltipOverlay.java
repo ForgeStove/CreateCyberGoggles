@@ -3,7 +3,7 @@ import dev.ryanhcode.sable.api.physics.force.ForceGroups;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.*;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.*;
 import net.minecraft.network.chat.*;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.getCCGRes;
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 /**
  * HUD 提示框，显示当前目标子层级的总质量和每个力组的净力大小。
  */
@@ -22,11 +22,11 @@ public final class ForceTooltipOverlay {
 	}
 	private static void render(GuiGraphics graphics, DeltaTracker deltaTracker) {
 		if (!CCG.config.aeronautics.forceOverlay.hudPanelEnabled) return;
-		if (Minecraft.getInstance().options.hideGui) return;
+		if (mc.options.hideGui) return;
 		if (!ForceOverlay.hasData()) return;
 		var lines = buildLines();
 		if (lines.isEmpty()) return;
-		drawHud(graphics, Minecraft.getInstance().font, lines);
+		drawHud(graphics, mc.font, lines);
 	}
 	private static List<Component> buildLines() {
 		List<Component> lines = new ArrayList<>();

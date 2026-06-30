@@ -3,13 +3,12 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage;
 import org.joml.Vector3f;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.getCCGRes;
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 /**
  * 对主渲染目标应用绘图视图后期处理效果。
  * <p>
@@ -30,7 +29,6 @@ public final class DraftingViewHandler {
 		var view = DraftingShaders.draftingView();
 		var upscale = DraftingShaders.draftingUpscale();
 		if (view == null || upscale == null) return;
-		var mc = Minecraft.getInstance();
 		var main = mc.getMainRenderTarget();
 		var window = mc.getWindow();
 		if (framebuffer == null) framebuffer = new DraftingFramebuffer(main.width, main.height);

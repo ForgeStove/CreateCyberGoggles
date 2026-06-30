@@ -59,12 +59,16 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 		var a = ARGB32.alpha(tint) / 255F;
 		RenderSystem.enableBlend();
 		RenderSystem.setShaderColor(r, g, b, a);
-		gui.enableScissor(x, y, x + width, y + height);
-		for (var dx = 0; dx < width; dx += 16)
-			for (var dy = 0; dy < height; dy += 16)
-				gui.blit(x + dx, y + dy, 0, 16, 16, sprite);
-		gui.disableScissor();
-		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
+		try {
+			gui.enableScissor(x, y, x + width, y + height);
+			for (var dx = 0; dx < width; dx += 16)
+				for (var dy = 0; dy < height; dy += 16)
+					gui.blit(x + dx, y + dy, 0, 16, 16, sprite);
+		} finally {
+			gui.disableScissor();
+			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
+			RenderSystem.disableBlend();
+		}
 	}
 	private @NotNull Component buildLabel() {
 		return buildLabel(fluid, capacityMb, Screen.hasShiftDown());
@@ -99,15 +103,11 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 		return Math.max(SlotUtil.SIZE * 4, font.width(label) + H_PADDING * 2);
 	}
 	private static @NotNull Component buildLabel(@NotNull FluidStack fluid, int capacityMb, boolean showCapacity) {
-		if (fluid.isEmpty()) return CCGLang.translate("tooltip.empty")
-			.component()
-			.copy()
-			.append(" ")
-			.append(Component.literal(formatFluidAmount(capacityMb)));
-		var label = fluid.getHoverName().copy().append(" ").append(Component.literal(formatFluidAmount(fluid.getAmount())));
-		if (showCapacity) return label.append(Component.literal(" / ").withStyle(ChatFormatting.GRAY))
-			.append(Component.literal(formatFluidAmount(capacityMb)).withStyle(ChatFormatting.GRAY));
-		return label;
+		if (fluid.isEmpty()) return CCGLang.translate("tooltip.empty").space().text(formatFluidAmount(capacityMb)).component();
+		var label = CCGLang.builder().add(fluid.getHoverName()).space().text(formatFluidAmount(fluid.getAmount()));
+		if (showCapacity)
+			return label.text(" / ", ChatFormatting.GRAY).text(formatFluidAmount(capacityMb), ChatFormatting.GRAY).component();
+		return label.component();
 	}
 	public static @NotNull String formatFluidAmount(int amountMb) {
 		if (amountMb < 1000) return amountMb + "mB";

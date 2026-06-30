@@ -6,7 +6,7 @@ import dev.ryanhcode.sable.api.physics.force.ForceGroups;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import net.minecraft.client.*;
+import net.minecraft.client.Camera;
 import net.minecraft.client.gui.Font.DisplayMode;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.network.chat.*;
@@ -19,7 +19,7 @@ import org.joml.*;
 import java.lang.Math;
 import java.util.*;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.getRes;
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 /**
  * 为当前目标子层级在世界中渲染力箭头和质心标记。
  */
@@ -33,7 +33,6 @@ public final class ForceOverlayRenderer {
 	public static void onRenderStage(RenderLevelStageEvent event) {
 		if (event.getStage() != Stage.AFTER_LEVEL) return;
 		if (!CCG.config.aeronautics.forceOverlay.forceOverlayEnabled) return;
-		var mc = Minecraft.getInstance();
 		var player = mc.player;
 		var level = mc.level;
 		if (player == null || level == null) return;
@@ -60,7 +59,7 @@ public final class ForceOverlayRenderer {
 			poseStack.translate(renderPos.x() - camPos.x, renderPos.y() - camPos.y, renderPos.z() - camPos.z);
 			// 应用子层级旋转
 			poseStack.mulPose(new Quaternionf(renderPose.orientation()));
-			var scale = overlayPixelScale(mc, renderPos, camPos);
+			var scale = overlayPixelScale(renderPos, camPos);
 			var hasData = ForceOverlay.hasData();
 			// 渲染质心标记（始终渲染，即使没有数据）
 			if (CCG.config.aeronautics.forceOverlay.renderCenterOfMass) {
@@ -90,7 +89,7 @@ public final class ForceOverlayRenderer {
 		}
 	}
 	// ---- 工具方法 ----
-	private static double overlayPixelScale(Minecraft mc, Vector3dc renderPos, Vec3 camPos) {
+	private static double overlayPixelScale(Vector3dc renderPos, Vec3 camPos) {
 		var minPx = CCG.config.aeronautics.forceOverlay.minOverlayPixelSize;
 		if (minPx <= 0) return 1.0;
 		var viewportHeight = mc.getWindow().getHeight();
@@ -205,7 +204,7 @@ public final class ForceOverlayRenderer {
 		if (!config.useWorldLabels) return;
 		var clusters = ForceOverlay.smoothedClusters();
 		if (clusters == null || clusters.isEmpty()) return;
-		var font = Minecraft.getInstance().font;
+		var font = mc.font;
 		var camPos = camera.getPosition();
 		var renderPose = clientSubLevel.renderPose();
 		var subPos = renderPose.position();

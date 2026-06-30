@@ -71,12 +71,15 @@ public final class ClientFluidListTooltipComponent implements ClientTooltipCompo
 		var a = ARGB32.alpha(tint) / 255F;
 		RenderSystem.enableBlend();
 		RenderSystem.setShaderColor(r, g, b, a);
-		for (var dx = 0; dx < width; dx += 16) {
-			var sliceWidth = Math.min(16, width - dx);
-			if (sliceWidth <= 0) break;
-			gui.blit(x + dx, y, 0, sliceWidth, height, sprite);
+		try {
+			for (var dx = 0; dx < width; dx += 16) {
+				var sliceWidth = Math.min(16, width - dx);
+				gui.blit(x + dx, y, 0, sliceWidth, height, sprite);
+			}
+		} finally {
+			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
+			RenderSystem.disableBlend();
 		}
-		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 	}
 	private int indentPixels(@NotNull Font font) {
 		return indent * font.width(" ");

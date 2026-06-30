@@ -6,7 +6,6 @@ import dev.simulated_team.simulated.network.packets.contraption_diagram.RequestD
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.event.forceOverlay.ForceClusterer.Cluster;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.BlockHitResult;
@@ -17,7 +16,7 @@ import org.joml.Vector3d;
 
 import java.util.*;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.sendToServer;
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 /**
  * 力覆盖层的客户端控制器。
  * <p>
@@ -33,7 +32,6 @@ public final class ForceOverlay {
 	private static boolean hadData;
 	public static void tick(Post ignoredEvent) {
 		localTick++;
-		var mc = Minecraft.getInstance();
 		var player = mc.player;
 		var level = mc.level;
 		var forceOverlay = CCG.config.aeronautics.forceOverlay;

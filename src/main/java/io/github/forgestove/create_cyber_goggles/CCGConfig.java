@@ -103,6 +103,7 @@ public final class CCGConfig {
 			@DoubleRange(min = 1) public double arrowSaturation = 3;
 			@DoubleRange(min = 0) public double minArrowLength = 0.1;
 			@IntRange(min = 1, max = 64) public int targetingChunks = 4;
+			@IntRange(min = 1) public int heartbeatIntervalTicks = 10;
 			@DoubleRange(min = 0) public double minOverlayPixelSize = 0;
 			public boolean showGravity = true;
 			public boolean showDrag = true;

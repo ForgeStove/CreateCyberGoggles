@@ -15,7 +15,7 @@ public abstract class DiagramDataPacketMixin {
 		at = @At("TAIL"),
 		remap = false
 	)
-	private static void onHandle(final DiagramDataPacket packet, final CallbackInfo ci) {
-		ForceDataCache.set(packet.forces(), packet.mass());
+	private static void handle(DiagramDataPacket packet, CallbackInfo ci) {
+		ForceDataCache.set(packet);
 	}
 }

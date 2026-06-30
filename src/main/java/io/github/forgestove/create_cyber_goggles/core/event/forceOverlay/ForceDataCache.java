@@ -12,15 +12,11 @@ import java.util.*;
  * 上游代码（{@link ForceOverlay}）将其与所请求的目标配对。
  */
 public final class ForceDataCache {
-	private static volatile Map<ForceGroup, List<PointForce>> latestForces;
-	private static volatile double latestMass;
+	private static volatile DiagramDataPacket latestPacket;
 	private static volatile boolean dirty;
-	private ForceDataCache() {
-	}
 	/** 当新的数据包到达时由 mixin 调用。 */
-	public static void set(Map<ForceGroup, List<PointForce>> forces, double mass) {
-		latestForces = forces;
-		latestMass = mass;
+	public static void set(DiagramDataPacket packet) {
+		latestPacket = packet;
 		dirty = true;
 	}
 	/** 原子性地读取并消费"dirty"标记。 */
@@ -31,15 +27,14 @@ public final class ForceDataCache {
 	}
 	@Nullable
 	public static Map<ForceGroup, List<PointForce>> getLatestForces() {
-		return latestForces;
+		return latestPacket.forces();
 	}
 	public static double getLatestMass() {
-		return latestMass;
+		return latestPacket.mass();
 	}
 	/** 重置所有状态（例如当玩家停止瞄准时）。 */
 	public static void clear() {
-		latestForces = null;
-		latestMass = 0;
+		latestPacket = null;
 		dirty = false;
 	}
 }

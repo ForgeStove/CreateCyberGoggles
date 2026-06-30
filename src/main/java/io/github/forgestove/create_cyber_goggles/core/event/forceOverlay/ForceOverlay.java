@@ -12,11 +12,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import net.neoforged.neoforge.client.event.ClientTickEvent.Post;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
 
 import java.util.*;
+
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.sendToServer;
 /**
  * 力覆盖层的客户端控制器。
  * <p>
@@ -24,21 +25,19 @@ import java.util.*;
  * 从服务器请求力数据，并缓存接收到的聚类供渲染使用。
  */
 public final class ForceOverlay {
-	private static final long HEARTBEAT_INTERVAL_TICKS = 10;
-	private static final long SNAPSHOT_TTL_TICKS = 30;
 	private static @Nullable UUID targetSubLevelId;
 	private static @Nullable Map<ResourceLocation, List<Cluster>> smoothedClusters;
 	private static double lastMass;
-	private static long lastHeartbeatTick = -10;
+	private static long lastHeartbeatTick = Long.MIN_VALUE;
 	private static long localTick;
 	private static boolean hadData;
-	/** 每客户端游戏刻通过 {@link Post} 调用。 */
 	public static void tick(Post ignoredEvent) {
 		localTick++;
 		var mc = Minecraft.getInstance();
 		var player = mc.player;
 		var level = mc.level;
-		if (player == null || level == null || !CCG.config.aeronautics.forceOverlay.forceOverlayEnabled) {
+		var forceOverlay = CCG.config.aeronautics.forceOverlay;
+		if (player == null || level == null || !forceOverlay.forceOverlayEnabled) {
 			clear();
 			return;
 		}
@@ -53,11 +52,11 @@ public final class ForceOverlay {
 			smoothedClusters = null;
 			lastMass = 0;
 			hadData = false;
-			lastHeartbeatTick = localTick - HEARTBEAT_INTERVAL_TICKS; // force immediate request
+			lastHeartbeatTick = localTick - forceOverlay.heartbeatIntervalTicks;
 		}
-		// 心跳：每 10 游戏刻请求一次新鲜数据
-		if (localTick - lastHeartbeatTick >= HEARTBEAT_INTERVAL_TICKS) {
-			PacketDistributor.sendToServer(new RequestDiagramDataPacket(newTarget));
+		// 每 N 个游戏刻请求一次数据
+		if (localTick - lastHeartbeatTick >= forceOverlay.heartbeatIntervalTicks) {
+			sendToServer(new RequestDiagramDataPacket(newTarget));
 			lastHeartbeatTick = localTick;
 		}
 		// 如果自上一刻以来新数据到达，则重新聚类
@@ -70,7 +69,7 @@ public final class ForceOverlay {
 			}
 		}
 		// 如果未及时收到心跳响应，则使旧数据过期
-		if (hadData && localTick - lastHeartbeatTick > SNAPSHOT_TTL_TICKS) {
+		if (hadData && localTick - lastHeartbeatTick > 30) {
 			smoothedClusters = null;
 			hadData = false;
 		}

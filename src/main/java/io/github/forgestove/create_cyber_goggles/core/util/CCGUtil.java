@@ -1,5 +1,4 @@
 package io.github.forgestove.create_cyber_goggles.core.util;
-import com.simibubi.create.Create;
 import com.simibubi.create.content.equipment.armor.CardboardArmorItem;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
@@ -8,7 +7,6 @@ import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringB
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.api.ItemRenderable;
 import net.createmod.catnip.outliner.Outliner;
-import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -26,6 +24,7 @@ import net.minecraft.world.phys.*;
 import net.minecraft.world.phys.HitResult.Type;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.neoforged.fml.util.thread.EffectiveSide;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.*;
 
 import java.util.Objects;
@@ -226,9 +225,9 @@ public final class CCGUtil {
 		if (mc.player == null) return;
 		mc.player.connection.send(new ServerboundPlayerCommandPacket(mc.player, action));
 	}
-	/** 使用{@link Create}模组的网络通道系统将数据包发送到服务器 */
+	/** 使用网络通道系统将数据包发送到服务器 */
 	public static void sendToServer(CustomPacketPayload packet) {
-		CatnipServices.NETWORK.sendToServer(packet);
+		PacketDistributor.sendToServer(packet);
 	}
 	public static int blendColors(int c1, int c2) {
 		var r1 = c1 >> 16 & 0xFF;

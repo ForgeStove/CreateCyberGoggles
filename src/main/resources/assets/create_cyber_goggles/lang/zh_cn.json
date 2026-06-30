@@ -32,7 +32,7 @@
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.clusterAngleRadians": "聚类角度阈值",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.clusterAngleRadians.tooltip": "受力方向聚类的角度方差阈值（弧度）",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.forceOverlayEnabled": "启用受力覆盖层",
-	"create_cyber_goggles.config.option.aeronautics.forceOverlay.forceOverlayEnabled.tooltip": "在目标物理结构上渲染力的3D箭头和质心标记",
+	"create_cyber_goggles.config.option.aeronautics.forceOverlay.forceOverlayEnabled.tooltip": "在目标物理结构上渲染世界内力的箭头和质心标记",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.forceOverlayPos": "覆盖层位置",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.forceOverlayPos.tooltip": "HUD提示框位置偏移",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.hudPanelEnabled": "启用HUD面板",

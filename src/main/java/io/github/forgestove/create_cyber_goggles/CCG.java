@@ -5,6 +5,7 @@ import io.github.forgestove.create_cyber_goggles.core.event.*;
 import io.github.forgestove.create_cyber_goggles.core.event.drafting.*;
 import io.github.forgestove.create_cyber_goggles.core.event.forceOverlay.*;
 import io.github.forgestove.create_cyber_goggles.core.factory.*;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGMods;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -27,8 +28,8 @@ public final class CCG {
 		mod.addListener(ClientItemListTooltipComponent::register);
 		mod.addListener(ClientFluidEntryTooltipComponent::register);
 		mod.addListener(ClientFluidListTooltipComponent::register);
-		mod.addListener(ForceTooltipOverlay::register);
 		mod.addListener(DraftingShaders::register);
+		CCGMods.SIMULATED.executeIfInstalled(() -> mod.addListener(ForceTooltipOverlay::register));
 		var game = NeoForge.EVENT_BUS;
 		game.addListener(KeyInput::key);
 		game.addListener(KeyInput::mouseScroll);
@@ -42,8 +43,10 @@ public final class CCG {
 		game.addListener(KineticDebugger::tick);
 		game.addListener(Outliner::tick);
 		game.addListener(TipOverlay::tick);
-		game.addListener(ForceOverlay::tick);
-		game.addListener(ForceOverlayRenderer::onRenderStage);
 		game.addListener(DraftingViewHandler::applyIfEnabled);
+		CCGMods.SIMULATED.executeIfInstalled(() -> {
+			game.addListener(ForceOverlay::tick);
+			game.addListener(ForceOverlayRenderer::onRenderStage);
+		});
 	}
 }

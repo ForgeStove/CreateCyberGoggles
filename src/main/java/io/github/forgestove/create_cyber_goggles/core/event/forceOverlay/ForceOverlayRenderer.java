@@ -18,11 +18,13 @@ import org.joml.*;
 
 import java.lang.Math;
 import java.util.*;
+
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.getRes;
 /**
  * 为当前目标子层级在世界中渲染力箭头和质心标记。
  */
 public final class ForceOverlayRenderer {
-	private static final ResourceLocation GRAVITY_KEY = ResourceLocation.fromNamespaceAndPath("sable", "gravity");
+	private static final ResourceLocation GRAVITY_KEY = getRes("sable", "gravity");
 	private static final double COM_HALF = 0.08, TAIL_SPHERE_PER_BBOX = 0.005, MAX_TAIL_SPHERE_RADIUS = 0.08, CONE_LEN_PER_LENGTH = 0.1,
 		CONE_RADIUS_PER_LEN = 0.4, SHAFT_RADIUS_PER_CONE = 0.35, CONE_RADIUS_PER_TAIL = 1.5, SHAFT_RADIUS_PER_TAIL = 1.0;
 	/**

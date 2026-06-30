@@ -13,13 +13,10 @@ import org.jetbrains.annotations.*;
 import java.math.*;
 import java.util.*;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public abstract class AbstractItemGridRenderer implements TooltipRenderer {
 	public static final int PAD = 4, BG = 0xFFC6C6C6, LIGHT = 0xFFFFFFFF, DARK = 0xFF555555, DARKER = 0xFF373737;
-	private static final ResourceLocation CFL_COMPRESSED_TANK_ID = ResourceLocation.fromNamespaceAndPath(
-		"fluidlogistics",
-		"compressed_storage_tank"
-	);
+	private static final ResourceLocation CFL_COMPRESSED_TANK_ID = getRes("fluidlogistics", "compressed_storage_tank");
 	public static int getCFLTankAmount(ItemStack stack) {
 		if (!isCFLCompressedTank(stack)) return 0;
 		var handler = stack.getCapability(FluidHandler.ITEM);

@@ -38,7 +38,7 @@
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.gravityArrowFraction": "重力箭头比例",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.gravityArrowFraction.tooltip": "重力箭头长度占包围盒高度的比例",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.heartbeatIntervalTicks": "心跳间隔",
-	"create_cyber_goggles.config.option.aeronautics.forceOverlay.heartbeatIntervalTicks.tooltip": "向服务器请求力数据的间隔（游戏刻）",
+	"create_cyber_goggles.config.option.aeronautics.forceOverlay.heartbeatIntervalTicks.tooltip": "向服务器请求力数据的游戏刻间隔",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.hudPanelEnabled": "启用HUD面板",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.hudPanelEnabled.tooltip": "显示包含质量和力大小的HUD面板",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.minArrowLength": "最小箭头长度",

@@ -20,16 +20,16 @@ config = "${modId}.mixins.json"
 modId = "neoforge"
 type = "required"
 ordering = "NONE"
-side = "CLIENT"
+side = "BOTH"
 
 [[dependencies."${modId}"]]
 modId = "minecraft"
 type = "required"
 ordering = "NONE"
-side = "CLIENT"
+side = "BOTH"
 
 [[dependencies."${modId}"]]
 modId = "create"
 type = "required"
 ordering = "NONE"
-side = "CLIENT"
+side = "BOTH"

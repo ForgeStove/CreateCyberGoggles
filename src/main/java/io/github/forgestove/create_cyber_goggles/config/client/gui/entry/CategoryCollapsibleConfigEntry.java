@@ -1,0 +1,91 @@
+package io.github.forgestove.create_cyber_goggles.config.client.gui.entry;
+import io.github.forgestove.create_cyber_goggles.config.client.gui.ConfigCategoryTab;
+import io.github.forgestove.create_cyber_goggles.config.tree.CategoryConfigNode;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.*;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+public final class CategoryCollapsibleConfigEntry extends ConfigEntry {
+	public static final int INDENT_PX = 10;
+	private static final String EXPANDED_PREFIX = "- ";
+	private static final String COLLAPSED_PREFIX = "+ ";
+	private final Minecraft minecraft;
+	private final Component label;
+	private final Runnable onToggle;
+	private final boolean expanded;
+	private final ClickWidget clickWidget;
+	public CategoryCollapsibleConfigEntry(
+		ConfigCategoryTab<?> tab,
+		CategoryConfigNode<?> categoryNode,
+		boolean expanded,
+		int depth,
+		Runnable onToggle
+	) {
+		minecraft = tab.getMinecraft();
+		label = categoryNode.getTitle();
+		this.expanded = expanded;
+		this.onToggle = onToggle;
+		setIndent(depth * INDENT_PX);
+		clickWidget = new ClickWidget();
+	}
+	@NotNull
+	@Override
+	public List<? extends NarratableEntry> narratables() {
+		return List.of(clickWidget);
+	}
+	@Override
+	public void render(
+		GuiGraphics gui,
+		int index,
+		int y,
+		int x,
+		int entryWidth,
+		int entryHeight,
+		int mouseX,
+		int mouseY,
+		boolean hovered,
+		float delta
+	) {
+		var indent = getIndent();
+		clickWidget.setRectangle(entryWidth, entryHeight, x, y);
+		var prefix = expanded ? EXPANDED_PREFIX : COLLAPSED_PREFIX;
+		gui.drawString(minecraft.font, prefix, x + indent, y + 5, 0xAAAAAA, false);
+		gui.drawString(minecraft.font, label.getVisualOrderText(), x + indent + minecraft.font.width(prefix), y + 5, -1, false);
+	}
+	@NotNull
+	@Override
+	public List<? extends GuiEventListener> children() {
+		return List.of(clickWidget);
+	}
+	private class ClickWidget extends AbstractWidget {
+		private ClickWidget() {
+			super(0, 0, 0, 0, Component.empty());
+		}
+		@Override
+		protected void renderWidget(@NotNull GuiGraphics gui, int mouseX, int mouseY, float delta) {
+		}
+		@Override
+		public boolean mouseClicked(double mouseX, double mouseY, int button) {
+			if (button != 0) return false;
+			minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+			onToggle.run();
+			return true;
+		}
+		@NotNull
+		@Override
+		public NarrationPriority narrationPriority() {
+			return NarrationPriority.HOVERED;
+		}
+		@Override
+		public void updateWidgetNarration(@NotNull NarrationElementOutput output) {
+			output.add(NarratedElementType.TITLE, label);
+		}
+	}
+}

@@ -1,1 +1,1 @@
-- Fix #61
+- Add server-side lock-in configuration features

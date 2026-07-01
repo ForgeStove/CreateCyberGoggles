@@ -177,7 +177,7 @@ public final class CCGUtil {
 		return false;
 	}
 	public static boolean shouldSuppressInfo() {
-		return CCG.config.goggles.onlyOnWithGoggles && !GogglesItem.isWearingGoggles(mc.player);
+		return CCG.config.goggles.onlyOnWithGoggles && !(mc.player != null && GogglesItem.isWearingGoggles(mc.player));
 	}
 	/** 检测本地玩家是否穿着全套纸板盔甲并且不在飞行状态 */
 	public static boolean testForStealth() {

@@ -2,6 +2,7 @@ package io.github.forgestove.create_cyber_goggles.config.tree;
 import com.google.common.collect.ImmutableList;
 import io.github.forgestove.create_cyber_goggles.config.*;
 import io.github.forgestove.create_cyber_goggles.config.annotation.*;
+import io.github.forgestove.create_cyber_goggles.config.client.Translation;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode.*;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.*;
@@ -69,6 +70,24 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 	@NotNull
 	public ImmutableList<CategoryConfigNode<C>> getCategories() {
 		return categories;
+	}
+	@Nullable
+	public ValueConfigNode<C, ?> getValueNode(String path) {
+		for (var category : categories) {
+			var result = findValueNode(category, path);
+			if (result != null) return result;
+		}
+		return null;
+	}
+	@Nullable
+	private ValueConfigNode<C, ?> findValueNode(ConfigNode<C> node, String path) {
+		if (node instanceof ValueConfigNode<C, ?> valueNode && valueNode.getPath().equals(path)) return valueNode;
+		if (node instanceof CategoryConfigNode<C> categoryNode)
+			for (var child : categoryNode.getChildren()) {
+				var result = findValueNode(child, path);
+				if (result != null) return result;
+			}
+		return null;
 	}
 	private static class Builder<C> {
 		private final String modId;
@@ -159,8 +178,10 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 			var valueName = valueField.getName();
 			var pathKey = buildPathKey(path);
 			var titleKey = "%s.config.option.%s.%s".formatted(modId, pathKey, valueName);
+			var fullPath = (pathKey.isEmpty() ? "" : pathKey + ".") + valueName;
 			categoryBuilder.value(valueBuilder -> valueBuilder.valueType(type)
 				.name(valueName)
+				.path(fullPath)
 				.title(Component.translatable(titleKey))
 				.tooltip(Component.translatable(titleKey + ".tooltip"))
 				.defaultValue(defaultValue)

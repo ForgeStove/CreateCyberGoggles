@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.config.tree;
 import com.google.common.collect.ImmutableList;
-import io.github.forgestove.create_cyber_goggles.config.Translation;
+import io.github.forgestove.create_cyber_goggles.config.client.Translation;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.*;
 

@@ -1,5 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.config;
 import io.github.forgestove.create_cyber_goggles.config.annotation.*;
+import io.github.forgestove.create_cyber_goggles.config.client.Translation;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode.ValueValidator;
 import org.jetbrains.annotations.Nullable;
 

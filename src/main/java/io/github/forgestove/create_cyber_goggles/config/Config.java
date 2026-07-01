@@ -1,15 +1,14 @@
 package io.github.forgestove.create_cyber_goggles.config;
 import io.github.forgestove.create_cyber_goggles.config.annotation.ConfigClass;
-import net.minecraft.client.gui.screens.Screen;
+import io.github.forgestove.create_cyber_goggles.config.client.ConfigScreenFactory;
+import io.github.forgestove.create_cyber_goggles.config.tree.*;
 import net.minecraft.client.resources.language.I18n;
-import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.loading.FMLPaths;
-import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
 public final class Config {
 	private static final Map<String, ConfigHandler<?>> HANDLERS = new ConcurrentHashMap<>();
 	private static final Map<String, Class<?>> CONFIG_TYPES = new ConcurrentHashMap<>();
@@ -44,13 +43,42 @@ public final class Config {
 				.build()
 		);
 	}
-	public static void initConfigScreen(ModContainer container, String id) {
-		Supplier<IConfigScreenFactory> extension = () -> (modContainer, screen) -> createConfigScreen(id);
-		container.registerExtensionPoint(IConfigScreenFactory.class, extension);
+	/** Get the mod ID of the first registered config. Used by config‑system classes that need the namespace. */
+	public static String getModId() {
+		if (HANDLERS.isEmpty()) throw new IllegalStateException("No config handler registered yet");
+		return HANDLERS.keySet().iterator().next();
 	}
-	public static Screen createConfigScreen(String id) {
-		var handler = HANDLERS.get(id);
-		if (handler != null) return handler.createConfigScreen();
-		throw new IllegalStateException("Config handler for id '" + id + "' is not initialized. Call getConfig(...) first.");
+	/** Apply a locked value to the active config (runtime). Does NOT touch savedConfig, so TOML is never polluted. */
+	@SuppressWarnings("unchecked")
+	public static void applyLockedValue(String modId, ValueConfigNode<?, ?> node, Object parsed) {
+		var handler = HANDLERS.get(modId);
+		if (handler == null) return;
+		((ValueConfigNode<Object, Object>) node).setActiveValue(handler.getConfig(), parsed);
+	}
+	/** Reload from TOML and copy to both configs, completely undoing any lock modifications. */
+	@SuppressWarnings({"unchecked"})
+	public static <C> void resetToSaved(String modId) {
+		var handler = (ConfigHandler<C>) HANDLERS.get(modId);
+		if (handler == null) return;
+		var fresh = handler.load();
+		handler.getConfigTree().copy(fresh, handler.getSavedConfig());
+		handler.getConfigTree().copy(fresh, handler.getConfig());
+	}
+	/** Get the active config POJO for a mod ID. */
+	@Nullable
+	public static Object getActiveConfig(String modId) {
+		var handler = HANDLERS.get(modId);
+		return handler != null ? handler.getConfig() : null;
+	}
+	/** Get the root config node tree for a mod ID. */
+	@Nullable
+	public static RootConfigNode<?> getRootConfigNode(String modId) {
+		var handler = HANDLERS.get(modId);
+		return handler != null ? handler.getConfigTree() : null;
+	}
+	/** Used by client-only {@link ConfigScreenFactory} to create config screens. */
+	@Nullable
+	public static ConfigHandler<?> getHandler(String id) {
+		return HANDLERS.get(id);
 	}
 }

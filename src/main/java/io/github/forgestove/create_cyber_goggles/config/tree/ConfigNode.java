@@ -11,4 +11,7 @@ public interface ConfigNode<C> {
 	@Nullable Component validate(C config);
 	void copy(C from, C to);
 	void writeEditingToConfig(C config);
+	default String getPath() {
+		return "";
+	}
 }

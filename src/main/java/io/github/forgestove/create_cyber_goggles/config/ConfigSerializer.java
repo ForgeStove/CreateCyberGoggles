@@ -54,6 +54,23 @@ public final class ConfigSerializer<C> {
 			throw new SerializationException(e);
 		}
 	}
+	/**
+	 * 从已解析的 {@link CommentedConfig} 反序列化配置实例，不从文件读取。
+	 * 供网络包等场景使用，复用相同的字段映射和类型转换逻辑。
+	 */
+	public C deserializeFrom(CommentedConfig config) throws SerializationException {
+		try {
+			var instance = newInstance();
+			var fallbackValues = buildFlatValueMap(config);
+			for (var categoryField : getCategoryFields()) {
+				categoryField.setAccessible(true);
+				readCategory(config, categoryField.getName(), categoryField.get(instance), fallbackValues);
+			}
+			return instance;
+		} catch (Exception e) {
+			throw new SerializationException(e);
+		}
+	}
 	private Field[] getCategoryFields() {
 		return Arrays.stream(configClass.getDeclaredFields())
 			.filter(f -> f.isAnnotationPresent(Category.class))
@@ -61,11 +78,9 @@ public final class ConfigSerializer<C> {
 			.toArray(Field[]::new);
 	}
 	/**
-	 * Returns the fields of the given class sorted by {@link Order @Order} annotation value.
-	 * Fields without {@code @Order} default to 0 and come first (preserving their
-	 * {@link Class#getDeclaredFields()} relative order).
-	 * Fields with an explicit positive {@code @Order} value come after, sorted by value
-	 * {@link Class#getDeclaredFields() getDeclaredFields()} relative order.
+	 * 对给定类的字段按 {@link Order @Order} 注解值排序。
+	 * 无 {@code @Order} 的字段默认值为 0，排在前面（保持 {@link Class#getDeclaredFields()} 的相对顺序）。
+	 * 有显式正数 {@code @Order} 值的字段在后，先按值排序再按声明顺序排序。
 	 */
 	private Field[] getOrderedFields(Class<?> clazz) {
 		var fields = clazz.getDeclaredFields();
@@ -99,12 +114,11 @@ public final class ConfigSerializer<C> {
 		if (comment != null) writer.write(indent + "# " + comment.trim() + "\n");
 		writer.write(indent + "[" + pathPrefix + "]\n");
 		var fields = getOrderedFields(category.getClass());
-		// First pass: simple values (non-Category, non-Point)
-		var tables = new ArrayList<Field>();
 		for (var field : fields) {
 			field.setAccessible(true);
-			if (field.isAnnotationPresent(Category.class) || field.getType() == Point.class) {
-				tables.add(field);
+			if (field.isAnnotationPresent(Category.class)) {
+				writeFieldComment(writer, indent, pathPrefix, field.getName());
+				writeCategoryToml(writer, field.get(category), pathPrefix + "." + field.getName(), indent + "\t");
 				continue;
 			}
 			writeFieldComment(writer, indent, pathPrefix, field.getName());
@@ -114,22 +128,9 @@ public final class ConfigSerializer<C> {
 				var hex = hasAlpha ? String.format("0x%08X", (Integer) value) : String.format("0x%06X", (Integer) value);
 				writer.write(indent + "\t" + field.getName() + " = " + hex + "\n");
 			} else if (value instanceof Enum<?> e) writer.write(indent + "\t" + field.getName() + " = \"" + e.name() + "\"\n");
+			else if (value instanceof Point p) writer.write(indent + "\t" + field.getName() + " = \"" + p.x + ", " + p.y + "\"\n");
 			else if (value instanceof String s) writer.write(indent + "\t" + field.getName() + " = \"" + s + "\"\n");
 			else writer.write(indent + "\t" + field.getName() + " = " + value + "\n");
-		}
-		// Second pass: sub-tables (Category fields + Point fields)
-		for (var field : tables) {
-			field.setAccessible(true);
-			writeFieldComment(writer, indent, pathPrefix, field.getName());
-			var value = field.get(category);
-			if (field.isAnnotationPresent(Category.class))
-				writeCategoryToml(writer, value, pathPrefix + "." + field.getName(), indent + "\t");
-			else {
-				var p = (Point) value;
-				writer.write(indent + "\t[" + pathPrefix + "." + field.getName() + "]\n");
-				writer.write(indent + "\t\tx = " + p.x + "\n");
-				writer.write(indent + "\t\ty = " + p.y + "\n");
-			}
 		}
 	}
 	private void writeFieldComment(BufferedWriter writer, String indent, String pathPrefix, String fieldName) throws Exception {
@@ -169,11 +170,11 @@ public final class ConfigSerializer<C> {
 		for (var entry : config.entrySet()) {
 			var key = entry.getKey();
 			var value = entry.getValue();
-			map.putIfAbsent(key, value);
 			if (value instanceof CommentedConfig sub) buildFlatValueMapRecursive(sub, map);
+			else map.putIfAbsent(key, value);
 		}
 	}
-	@SuppressWarnings({"unchecked"})
+	@SuppressWarnings("unchecked")
 	private <T extends Enum<T>> void readCategory(
 		CommentedConfig config,
 		String categoryName,
@@ -193,7 +194,12 @@ public final class ConfigSerializer<C> {
 			if (value == null) continue;
 			var type = field.getType();
 			if (type == Point.class) {
-				if (value instanceof CommentedConfig cc) field.set(category, new Point(cc.getInt("x"), cc.getInt("y")));
+				if (value instanceof String s) {
+					var parts = s.split(",");
+					try {
+						field.set(category, new Point(Integer.parseInt(parts[0].trim()), Integer.parseInt(parts[1].trim())));
+					} catch (NumberFormatException ignored) {}
+				} else if (value instanceof CommentedConfig cc) field.set(category, new Point(cc.getInt("x"), cc.getInt("y")));
 			} else if (type.isEnum()) field.set(category, Enum.valueOf((Class<T>) type, (String) value));
 			else field.set(category, value);
 		}

@@ -18,7 +18,7 @@ public final class TipOverlay {
 	public static void register(@NotNull RegisterGuiLayersEvent event) {
 		event.registerAbove(VanillaGuiLayers.HOTBAR, getCCGRes("tip_overlay"), TipOverlay::renderOverlay);
 	}
-	public static void renderOverlay(GuiGraphics gui, DeltaTracker deltaTracker) {
+	public static void renderOverlay(GuiGraphics gui, DeltaTracker ignoredDeltaTracker) {
 		if (mc.options.hideGui) return;
 		if (hoverTicks == 0 || lastTip == null) return;
 		var x = gui.guiWidth() / 2 + deltaX;

@@ -6,6 +6,7 @@ import org.jetbrains.annotations.*;
 import java.util.*;
 public final class ValueConfigNode<C, V> implements ConfigNode<C> {
 	private String name;
+	private String path;
 	private Component title;
 	private Component tooltip;
 	private Class<? extends V> valueType;
@@ -19,6 +20,9 @@ public final class ValueConfigNode<C, V> implements ConfigNode<C> {
 	private CategoryConfigNode<C> category;
 	public static <C, V> Builder<C, V> builder() {
 		return new Builder<>();
+	}
+	public String getPath() {
+		return path;
 	}
 	@NotNull
 	public Class<? extends V> getValueType() {
@@ -111,6 +115,10 @@ public final class ValueConfigNode<C, V> implements ConfigNode<C> {
 			node.name = name;
 			return this;
 		}
+		public Builder<C, V> path(String path) {
+			node.path = path;
+			return this;
+		}
 		public Builder<C, V> title(Component title) {
 			node.title = title;
 			return this;
@@ -149,7 +157,7 @@ public final class ValueConfigNode<C, V> implements ConfigNode<C> {
 		}
 		public ValueConfigNode<C, V> build() {
 			var n = node;
-			List.of(n.name, n.valueType, n.title, n.valueReader, n.valueWriter, n.category).forEach(Objects::requireNonNull);
+			List.of(n.name, n.path, n.valueType, n.title, n.valueReader, n.valueWriter, n.category).forEach(Objects::requireNonNull);
 			node = null;
 			return n;
 		}

@@ -76,7 +76,7 @@ publishMods {
 	file.set(tasks.jar.get().archiveFile)
 	additionalFiles.from(tasks.named<Jar>("sourcesJar").flatMap { it.archiveFile })
 	changelog.set(file("CHANGELOG.md").readText())
-	type.set(STABLE)
+	type.set(BETA)
 	version.set(project.version.toString())
 	displayName.set("[${p("loaderCap")}] ${p("modVersion")} for Create ${p("mcVersion")}-${p("createMinVersion")}")
 	modLoaders.addAll(p("loaderCap"))
@@ -84,6 +84,7 @@ publishMods {
 		accessToken.set(providers.environmentVariable("MODRINTH_TOKEN"))
 		projectId.set("TlQAWQCY")
 		minecraftVersions.add(p("mcVersion"))
+		environment.set(CLIENT_ONLY_SERVER_OPTIONAL)
 		requires("create")
 		optional("create-aeronautics")
 	}

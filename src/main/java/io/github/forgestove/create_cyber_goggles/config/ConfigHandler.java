@@ -1,8 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.config;
 import io.github.forgestove.create_cyber_goggles.config.annotation.ConfigClass;
-import io.github.forgestove.create_cyber_goggles.config.gui.ConfigScreen;
+import io.github.forgestove.create_cyber_goggles.config.client.ConfigScreenFactory;
 import io.github.forgestove.create_cyber_goggles.config.tree.RootConfigNode;
-import net.minecraft.client.gui.screens.Screen;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
@@ -46,19 +45,31 @@ public final class ConfigHandler<C> {
 	public static <C> Builder<C> builder(Class<C> configClass) {
 		return new Builder<>(configClass);
 	}
+	public RootConfigNode<C> getConfigTree() {
+		return configTree;
+	}
 	public C getConfig() {
 		return activeConfig;
 	}
-	public Screen createConfigScreen() {
-		// Regenerate config file with translations now that I18n is loaded
-		regenerateConfigFile();
-		return new ConfigScreen<>(configTree, savedConfig, this::save);
+	/** Used by {@link ConfigScreenFactory} to access the saved config instance. */
+	public C getSavedConfig() {
+		return savedConfig;
+	}
+	/**
+	 * 获取配置序列化器，用于网络包等场景的类型转换和反序列化。
+	 */
+	public ConfigSerializer<C> getSerializer() {
+		return serializer;
 	}
 	/**
 	 * 重新生成配置文件并进行翻译。在I18n完全加载后（比如玩家加入世界或打开配置界面时）调用它。
 	 */
 	public void regenerateConfigFile() {
-		save(savedConfig);
+		try {
+			serializer.serialize(savedConfig);
+		} catch (SerializationException e) {
+			if (logger != null) logger.error("Failed to regenerate config file", e);
+		}
 	}
 	public void save(C config) {
 		configTree.copy(config, savedConfig);

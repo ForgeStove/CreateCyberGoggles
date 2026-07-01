@@ -1,4 +1,4 @@
-![Logo](https://cdn.modrinth.com/data/cached_images/45b7c12e5bfe61cf6cf3a47ecc761b041825de67.png)
+![Logo](https://cdn.modrinth.com/data/cached_images/9f1d22babad387de4381b095c41a0a1713be25da.png)
 
 [![Supported Versions](https://cf.way2muchnoise.eu/versions/1233804(c70039).svg)](https://www.curseforge.com/minecraft/mc-mods/create-cyber-goggles/files)
 [![CurseForge](http://cf.way2muchnoise.eu/1233804.svg)](https://www.curseforge.com/minecraft/mc-mods/create-cyber-goggles)

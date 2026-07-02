@@ -125,7 +125,10 @@ public final class ClientLockManager {
 			var shouldLock = entry.getValue();
 			String value;
 			if (shouldLock) value = getCurrentValueAsString(modId, root, configId);
-			else value = "";
+			else {
+				value = "";
+				updateOriginalValue(modId, root, configId);
+			}
 			PacketDistributor.sendToServer(new ConfigLockPayload(configId, value));
 		}
 		pendingLocks.clear();
@@ -140,11 +143,20 @@ public final class ClientLockManager {
 		var value = ((ValueConfigNode<Object, Object>) node).getActiveValue(config);
 		return switch (value) {
 			case null -> "";
-			case Integer intVal when node.isColorValue() -> String.format(node.colorHasAlpha() ? "0x%08X" : "0x%06X", intVal);
-			case Enum<?> e -> e.name();
-			case Point p -> p.x + ", " + p.y;
+			case Integer integer when node.isColorValue() -> String.format(node.colorHasAlpha() ? "0x%08X" : "0x%06X", integer);
+			case Enum<?> anEnum -> anEnum.name();
+			case Point point -> point.x + ", " + point.y;
 			default -> value.toString();
 		};
+	}
+	@SuppressWarnings("unchecked")
+	private static void updateOriginalValue(String modId, @Nullable RootConfigNode<?> root, String configId) {
+		if (root == null) return;
+		var node = root.getValueNode(configId);
+		if (node == null) return;
+		var config = Config.getActiveConfig(modId);
+		if (config == null) return;
+		originalValues.put(configId, ((ValueConfigNode<Object, Object>) node).getActiveValue(config));
 	}
 	// -- 查询方法 --
 	public static boolean hasReceivedSync() {

@@ -62,12 +62,16 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 		return errorTooltip;
 	}
 	public void resetToDefault() {
-		ClientLockManager.clearPendingLock(valueNode.getPath());
+		var path = valueNode.getPath();
+		var pending = ClientLockManager.getPendingLock(path);
+		if (pending != Boolean.FALSE) ClientLockManager.clearPendingLock(path);
 		valueNode.resetToDefault();
 		tab.getScreen().refresh();
 	}
 	public void resetToActive() {
-		ClientLockManager.clearPendingLock(valueNode.getPath());
+		var path = valueNode.getPath();
+		var pending = ClientLockManager.getPendingLock(path);
+		if (pending != Boolean.FALSE) ClientLockManager.clearPendingLock(path);
 		valueNode.resetToActive(tab.getConfig());
 		tab.getScreen().refresh();
 	}

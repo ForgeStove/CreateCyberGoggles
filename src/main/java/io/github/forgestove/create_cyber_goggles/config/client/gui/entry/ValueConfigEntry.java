@@ -119,9 +119,10 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 	public List<FormattedCharSequence> getTooltip() {
 		return hasError() ? tooltipWithError : tooltip;
 	}
+	@Override
 	public void refresh() {
 		var locked = isLocked();
-		var hasPendingLock = ClientLockManager.getPendingLock(valueNode.getPath()) != null;
+		var hasPendingLock = Boolean.TRUE.equals(ClientLockManager.getPendingLock(valueNode.getPath()));
 		resetButton.active = !locked && !valueNode.isDefaultValue(tab.getConfig());
 		undoButton.active = !locked && !valueNode.isActiveValue(tab.getConfig());
 		validationError = valueNode.validate(tab.getConfig());
@@ -130,10 +131,10 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 		lockButton.visible = shouldShowLockButton();
 		lockButton.active = lockButton.visible && canLock();
 		if (locked) {
-			lockButton.setMessage(Translation.LOCKED_LABEL);
+			lockButton.setMessage(Translation.LOCKED_LABEL.copy().withStyle(ChatFormatting.RED));
 			lockButton.setTooltip(Tooltip.create(Translation.LOCKED_TOOLTIP));
 		} else {
-			lockButton.setMessage(Translation.UNLOCK_LABEL);
+			lockButton.setMessage(Translation.UNLOCK_LABEL.copy().withStyle(ChatFormatting.GREEN));
 			lockButton.setTooltip(Tooltip.create(Translation.UNLOCK_TOOLTIP));
 		}
 	}

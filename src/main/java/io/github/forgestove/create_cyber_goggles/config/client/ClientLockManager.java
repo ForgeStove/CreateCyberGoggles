@@ -86,13 +86,13 @@ public final class ClientLockManager {
 	}
 	/** 递归遍历 CommentedConfig，收集扁平路径→字符串值映射。 */
 	private static void collectPaths(CommentedConfig config, String prefix, Map<String, String> result) {
-		for (var entry : config.entrySet()) {
+		config.entrySet().forEach(entry -> {
 			var key = entry.getKey();
 			var value = entry.getValue();
 			var path = prefix.isEmpty() ? key : prefix + "." + key;
 			if (value instanceof CommentedConfig sub) collectPaths(sub, path, result);
 			else result.put(path, String.valueOf(value));
-		}
+		});
 	}
 	// -- 待处理的锁定操作（延迟至保存时发送） --
 	@Nullable
@@ -100,7 +100,8 @@ public final class ClientLockManager {
 		return pendingLocks.get(configId);
 	}
 	public static void setPendingLock(String configId, boolean shouldLock) {
-		pendingLocks.put(configId, shouldLock);
+		if (!pendingLocks.containsKey(configId)) pendingLocks.put(configId, shouldLock);
+		else pendingLocks.remove(configId);
 	}
 	public static void clearPendingLock(String configId) {
 		pendingLocks.remove(configId);

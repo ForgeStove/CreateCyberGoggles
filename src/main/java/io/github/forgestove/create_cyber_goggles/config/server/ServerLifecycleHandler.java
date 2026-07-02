@@ -20,11 +20,13 @@ public final class ServerLifecycleHandler {
 		lockStore.save();
 		ConfigNetwork.clearLockStore();
 	}
-	/** On player login: send the current locked configs to that player. */
+	/** On player login: send the current locked configs to that player (if they have the mod). */
 	public static void onPlayerLogin(PlayerLoggedInEvent event) {
 		var lockStore = ConfigNetwork.getLockStore();
 		if (lockStore == null) return;
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
+		// Only send to clients that have this mod installed — otherwise NeoForge throws.
+		if (!player.connection.hasChannel(ConfigSyncPayload.TYPE)) return;
 		PacketDistributor.sendToPlayer(player, new ConfigSyncPayload(lockStore.toTomlString()));
 	}
 }

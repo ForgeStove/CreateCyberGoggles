@@ -3,7 +3,7 @@ import io.github.forgestove.create_cyber_goggles.config.annotation.*;
 import io.github.forgestove.create_cyber_goggles.core.factory.*;
 
 import java.awt.Point;
-@ConfigClass(CCG.ID)
+@Config(CCG.ID)
 public final class CCGConfig {
 	@Category public Goggles goggles = new Goggles();
 	@Category public Tooltip tooltip = new Tooltip();
@@ -63,10 +63,10 @@ public final class CCGConfig {
 		public TooltipFlagType tooltipFlagType = TooltipFlagType.Default;
 		public TooltipTheme tooltipTheme = TooltipTheme.Default;
 		public boolean useCustomColor = false;
-		@Category public DraftingView draftingView = new DraftingView();
 		@ColorValue(true) public int backgroundColor = 0x00000000;
 		@ColorValue(true) public int borderTopColor = 0x00000000;
 		@ColorValue(true) public int borderBottomColor = 0x00000000;
+		@Category public DraftingView draftingView = new DraftingView();
 		public static class DraftingView {
 			public boolean draftingViewEnabled = false;
 			@DoubleRange(min = 0, max = 1) public double paletteOffset = 0.25;

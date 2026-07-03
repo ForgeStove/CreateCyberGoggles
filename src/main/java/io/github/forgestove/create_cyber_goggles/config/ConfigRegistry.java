@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.config;
-import io.github.forgestove.create_cyber_goggles.config.annotation.ConfigClass;
+import io.github.forgestove.create_cyber_goggles.config.annotation.Config;
 import io.github.forgestove.create_cyber_goggles.config.client.ConfigScreenFactory;
 import io.github.forgestove.create_cyber_goggles.config.tree.*;
 import net.minecraft.client.resources.language.I18n;
@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-public final class Config {
+public final class ConfigRegistry {
 	private static final Map<String, ConfigHandler<?>> HANDLERS = new ConcurrentHashMap<>();
 	private static final Map<String, Class<?>> CONFIG_TYPES = new ConcurrentHashMap<>();
 	public static <C> C getConfig(Class<C> configClass, Logger logger) {
@@ -22,7 +22,7 @@ public final class Config {
 		));
 	}
 	private static ConfigHandler<?> initializeIfNeeded(Class<?> configClass, Logger logger) {
-		var id = configClass.getAnnotation(ConfigClass.class).value();
+		var id = configClass.getAnnotation(Config.class).value();
 		if (id == null || id.isBlank()) throw new IllegalStateException("Mod id must be provided before building ConfigHandler");
 		CONFIG_TYPES.compute(
 			id, (key, existingClass) -> {

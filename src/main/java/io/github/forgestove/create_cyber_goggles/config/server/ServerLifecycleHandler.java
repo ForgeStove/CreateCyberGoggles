@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.config.server;
-import io.github.forgestove.create_cyber_goggles.config.Config;
+import io.github.forgestove.create_cyber_goggles.config.ConfigRegistry;
 import io.github.forgestove.create_cyber_goggles.config.network.*;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
@@ -9,7 +9,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 public final class ServerLifecycleHandler {
 	/** 服务器启动时：从磁盘加载锁定存储。 */
 	public static void onServerStarting(ServerStartingEvent event) {
-		var lockStore = new ServerConfigLockStore(event.getServer(), Config.getModId());
+		var lockStore = new ServerConfigLockStore(event.getServer(), ConfigRegistry.getModId());
 		lockStore.load();
 		ConfigNetwork.setLockStore(lockStore);
 	}

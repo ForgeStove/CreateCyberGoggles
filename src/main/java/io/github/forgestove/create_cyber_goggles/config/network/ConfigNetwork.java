@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.config.network;
-import io.github.forgestove.create_cyber_goggles.config.Config;
+import io.github.forgestove.create_cyber_goggles.config.ConfigRegistry;
 import io.github.forgestove.create_cyber_goggles.config.client.ClientLockManager;
 import io.github.forgestove.create_cyber_goggles.config.client.gui.ConfigScreen;
 import io.github.forgestove.create_cyber_goggles.config.server.ServerConfigLockStore;
@@ -26,7 +26,7 @@ public final class ConfigNetwork {
 		broadcastLocks();
 	}
 	private static void handleConfigSyncClient(ConfigSyncPayload payload, IPayloadContext context) {
-		ClientLockManager.setLocks(Config.getModId(), payload.tomlContent());
+		ClientLockManager.setLocks(ConfigRegistry.getModId(), payload.tomlContent());
 		context.enqueueWork(() -> {
 			var screen = Minecraft.getInstance().screen;
 			if (screen instanceof ConfigScreen) ((ConfigScreen<?>) screen).refresh();

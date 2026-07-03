@@ -45,7 +45,7 @@ public final class ClientLockManager {
 		var newLocks = new HashMap<String, String>();
 		collectPaths(tomlConfig, "", newLocks);
 		// 使用 ConfigSerializer 获取类型化配置实例
-		var handler = (ConfigHandler<Object>) Config.getHandler(modId);
+		var handler = (ConfigHandler<Object>) ConfigRegistry.getHandler(modId);
 		if (handler == null) return;
 		var root = handler.getConfigTree();
 		if (root == null) return;
@@ -63,7 +63,7 @@ public final class ClientLockManager {
 			var original = originalValues.remove(oldEntry.getKey());
 			if (original == null) continue;
 			var node = root.getValueNode(oldEntry.getKey());
-			if (node != null) Config.applyLockedValue(modId, node, original);
+			if (node != null) ConfigRegistry.applyLockedValue(modId, node, original);
 			if (node == null) continue;
 			node.resetToActive(handler.getConfig());
 		}
@@ -78,7 +78,7 @@ public final class ClientLockManager {
 			}
 			var typedValue = node.getActiveValue(instance);
 			if (typedValue != null) {
-				Config.applyLockedValue(modId, node, typedValue);
+				ConfigRegistry.applyLockedValue(modId, node, typedValue);
 				node.resetToActive(handler.getConfig());
 			}
 		}
@@ -119,7 +119,7 @@ public final class ClientLockManager {
 			pendingLocks.clear();
 			return;
 		}
-		var root = Config.getRootConfigNode(modId);
+		var root = ConfigRegistry.getRootConfigNode(modId);
 		for (var entry : pendingLocks.entrySet()) {
 			var configId = entry.getKey();
 			var shouldLock = entry.getValue();
@@ -138,7 +138,7 @@ public final class ClientLockManager {
 		if (root == null) return "";
 		var node = root.getValueNode(configId);
 		if (node == null) return "";
-		var config = Config.getActiveConfig(modId);
+		var config = ConfigRegistry.getActiveConfig(modId);
 		if (config == null) return "";
 		var value = ((ValueConfigNode<Object, Object>) node).getActiveValue(config);
 		return switch (value) {
@@ -154,7 +154,7 @@ public final class ClientLockManager {
 		if (root == null) return;
 		var node = root.getValueNode(configId);
 		if (node == null) return;
-		var config = Config.getActiveConfig(modId);
+		var config = ConfigRegistry.getActiveConfig(modId);
 		if (config == null) return;
 		originalValues.put(configId, ((ValueConfigNode<Object, Object>) node).getActiveValue(config));
 	}
@@ -163,7 +163,7 @@ public final class ClientLockManager {
 		return receivedSync;
 	}
 	public static void clear() {
-		Config.resetToSaved(Config.getModId());
+		ConfigRegistry.resetToSaved(ConfigRegistry.getModId());
 		originalValues.clear();
 		lockedConfigs = Collections.emptyMap();
 		pendingLocks.clear();

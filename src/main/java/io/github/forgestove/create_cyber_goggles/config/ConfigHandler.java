@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.config;
-import io.github.forgestove.create_cyber_goggles.config.annotation.ConfigClass;
+import io.github.forgestove.create_cyber_goggles.config.annotation.Config;
 import io.github.forgestove.create_cyber_goggles.config.client.ConfigScreenFactory;
 import io.github.forgestove.create_cyber_goggles.config.tree.RootConfigNode;
 import org.slf4j.Logger;
@@ -22,7 +22,7 @@ public final class ConfigHandler<C> {
 		configClass = builder.configClass;
 		serializer = builder.serializerBuilder.build();
 		logger = builder.logger;
-		configTree = RootConfigNode.create(newInstance(), configClass.getAnnotation(ConfigClass.class).value());
+		configTree = RootConfigNode.create(newInstance(), configClass.getAnnotation(Config.class).value());
 		savedConfig = load();
 		activeConfig = newInstance();
 		configTree.copy(savedConfig, activeConfig);

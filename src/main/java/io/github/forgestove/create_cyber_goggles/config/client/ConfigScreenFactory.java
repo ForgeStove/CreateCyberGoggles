@@ -16,7 +16,7 @@ public final class ConfigScreenFactory {
 		container.registerExtensionPoint(IConfigScreenFactory.class, extension);
 	}
 	public static Screen createConfigScreen(String id) {
-		var handler = Config.getHandler(id);
+		var handler = ConfigRegistry.getHandler(id);
 		if (handler == null) throw new IllegalStateException("Config handler for id '" + id + "' is not initialized.");
 		return create(handler);
 	}

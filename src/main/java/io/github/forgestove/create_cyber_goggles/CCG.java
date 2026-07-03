@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles;
 import com.mojang.logging.LogUtils;
-import io.github.forgestove.create_cyber_goggles.config.Config;
+import io.github.forgestove.create_cyber_goggles.config.ConfigRegistry;
 import io.github.forgestove.create_cyber_goggles.config.client.ConfigScreenFactory;
 import io.github.forgestove.create_cyber_goggles.core.event.*;
 import io.github.forgestove.create_cyber_goggles.core.event.drafting.*;
@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 public final class CCG {
 	public static final String ID = "create_cyber_goggles";
 	public static final Logger LOGGER = LogUtils.getLogger();
-	public static final CCGConfig config = Config.getConfig(CCGConfig.class, LOGGER);
+	public static final CCGConfig config = ConfigRegistry.getConfig(CCGConfig.class, LOGGER);
 	public CCG(@NotNull ModContainer container) {
 		if (FMLLoader.getDist().isClient()) clientInit(container);
 	}

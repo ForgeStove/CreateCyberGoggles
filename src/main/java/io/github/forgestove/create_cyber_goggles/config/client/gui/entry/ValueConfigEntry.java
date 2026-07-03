@@ -1,6 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.config.client.gui.entry;
-import io.github.forgestove.create_cyber_goggles.config.client.ClientLockManager;
-import io.github.forgestove.create_cyber_goggles.config.client.Translation;
+import io.github.forgestove.create_cyber_goggles.config.client.*;
 import io.github.forgestove.create_cyber_goggles.config.client.gui.ConfigCategoryTab;
 import io.github.forgestove.create_cyber_goggles.config.client.gui.util.GuiUtil;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode;

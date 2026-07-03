@@ -172,12 +172,11 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 		return guiTop + (windowHeight - 82) / 2;
 	}
 	@WrapOperation(
-		method = "renderForeground",
-		at = @At(
-			value = "INVOKE",
-			target = "Lcom/simibubi/create/content/logistics/stockTicker/StockKeeperRequestScreen;getHoveredSlot(II)"
-				+ "Lnet/createmod/catnip/data/Couple;"
-		)
+		method = "renderForeground", at = @At(
+		value = "INVOKE",
+		target = "Lcom/simibubi/create/content/logistics/stockTicker/StockKeeperRequestScreen;getHoveredSlot(II)"
+			+ "Lnet/createmod/catnip/data/Couple;"
+	)
 	)
 	private Couple<Integer> ccg$suppressTooltipsWhenPopup(
 		StockKeeperRequestScreen instance,

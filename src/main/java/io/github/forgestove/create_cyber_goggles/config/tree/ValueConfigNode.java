@@ -21,9 +21,6 @@ public final class ValueConfigNode<C, V> implements ConfigNode<C> {
 	public static <C, V> Builder<C, V> builder() {
 		return new Builder<>();
 	}
-	public String getPath() {
-		return path;
-	}
 	@NotNull
 	public Class<? extends V> getValueType() {
 		return valueType;
@@ -80,6 +77,9 @@ public final class ValueConfigNode<C, V> implements ConfigNode<C> {
 	@Override
 	public void writeEditingToConfig(C config) {
 		setActiveValue(config, getEditingValue(config));
+	}
+	public String getPath() {
+		return path;
 	}
 	public V getEditingValue(C config) {
 		if (editingValue == null) setEditingValue(getActiveValue(config));

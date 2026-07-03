@@ -75,8 +75,8 @@ public final class ServerConfigLockStore {
 			LOGGER.error("Failed to save config locks to {}", lockFilePath, e);
 		}
 	}
-	public String toTomlString() {
-		return String.join("\n", buildTomlLines());
+	private void writeLines(Path path) throws IOException {
+		Files.write(path, buildTomlLines());
 	}
 	private List<String> buildTomlLines() {
 		var sections = new LinkedHashMap<String, List<Entry<String, String>>>();
@@ -98,9 +98,6 @@ public final class ServerConfigLockStore {
 			}
 		}
 		return lines;
-	}
-	private void writeLines(Path path) throws IOException {
-		Files.write(path, buildTomlLines());
 	}
 	private static String quote(String value) {
 		if (value.equals("true") || value.equals("false")) return value;
@@ -129,6 +126,9 @@ public final class ServerConfigLockStore {
 			return value;
 		} catch (NumberFormatException ignored) {}
 		return "\"" + value.replace("\\", "\\\\").replace("\"", "\\\"") + "\"";
+	}
+	public String toTomlString() {
+		return String.join("\n", buildTomlLines());
 	}
 	/** Unlock a config entry. Removes it from the lock store. */
 	public void unlockEntry(String configId) {

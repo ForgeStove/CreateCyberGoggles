@@ -49,7 +49,11 @@ public final class EnumDropdownScreen extends Screen {
 			values.length,
 			(parentScreen.height - dropdownButton.getY() - dropdownButton.getHeight() - HEIGHT) / (HEIGHT + GAP)
 		);
-		smoothScrollOffset = Mth.clamp(Arrays.asList(values).indexOf(selectedSupplier.get()) - maxVisibleOptions / 2, 0, getMaxScrollOffset());
+		smoothScrollOffset = Mth.clamp(
+			Arrays.asList(values).indexOf(selectedSupplier.get()) - maxVisibleOptions / 2,
+			0,
+			getMaxScrollOffset()
+		);
 	}
 	private int getMaxScrollOffset() {
 		return Math.max(0, values.length - maxVisibleOptions);

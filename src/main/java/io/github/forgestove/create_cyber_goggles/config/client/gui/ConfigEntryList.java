@@ -1,16 +1,12 @@
 package io.github.forgestove.create_cyber_goggles.config.client.gui;
-import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.platform.InputConstants.Key;
 import io.github.forgestove.create_cyber_goggles.config.client.gui.entry.*;
-import io.github.forgestove.create_cyber_goggles.config.client.gui.entry.KeybindValueConfigEntry.KeybindState;
 import io.github.forgestove.create_cyber_goggles.config.client.gui.util.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
-import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.List;
 public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEntry> {
 	private final ConfigCategoryTab<?> tab;
 	private final SmoothScroll smoothScroll = new SmoothScroll(this::setScrollAmount, this::getScrollAmount, this::getMaxScroll);
@@ -30,47 +26,10 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		entries.forEach(this::addEntry);
 	}
 	public void refresh() {
-		var keyEntries = new ArrayList<KeybindValueConfigEntry<?>>();
-		var localKeyCount = new HashMap<Key, Integer>();
-		var localKeyEntries = new HashMap<Key, List<KeybindValueConfigEntry<?>>>();
-		for (var entry : children()) {
-			if (!(entry instanceof KeybindValueConfigEntry<?> keyEntry)) continue;
-			keyEntries.add(keyEntry);
-			var key = keyEntry.getBoundKey();
-			if (key.equals(InputConstants.UNKNOWN)) continue;
-			localKeyCount.merge(key, 1, Integer::sum);
-			localKeyEntries.computeIfAbsent(key, k -> new ArrayList<>()).add(keyEntry);
-		}
-		var registeredKeyCount = new HashMap<Key, Integer>();
-		var registeredKeyUsages = new HashMap<Key, List<Component>>();
-		for (var mapping : tab.getMinecraft().options.keyMappings) {
-			var key = mapping.getKey();
-			if (key.equals(InputConstants.UNKNOWN)) continue;
-			registeredKeyCount.merge(key, 1, Integer::sum);
-			registeredKeyUsages.computeIfAbsent(key, k -> new ArrayList<>()).add(Component.translatable(mapping.getName()));
-		}
-		keyEntries.forEach(keyEntry -> {
-			var key = keyEntry.getBoundKey();
-			if (key.equals(InputConstants.UNKNOWN)) {
-				keyEntry.setKeybindState(KeybindState.UNBOUND);
-				keyEntry.setConflictUsages(List.of());
-				return;
-			}
-			var hasConflict = localKeyCount.getOrDefault(key, 0) > 1 || registeredKeyCount.getOrDefault(key, 0) > 1;
-			keyEntry.setKeybindState(hasConflict ? KeybindState.CONFLICT : KeybindState.BOUND);
-			if (!hasConflict) {
-				keyEntry.setConflictUsages(List.of());
-				return;
-			}
-			var usages = new ArrayList<Component>();
-			for (var localEntry : localKeyEntries.getOrDefault(key, List.of())) {
-				if (localEntry == keyEntry) continue;
-				usages.add(localEntry.getDisplayTitle());
-			}
-			usages.addAll(registeredKeyUsages.getOrDefault(key, List.of()));
-			keyEntry.setConflictUsages(usages);
-		});
-		children().forEach(ConfigEntry::refresh);
+		var entries = children();
+		for (var entry : entries)
+			if (entry instanceof CrossRefreshable cr && cr.beginCrossEntryRefresh(entries)) break;
+		entries.forEach(ConfigEntry::refresh);
 	}
 	public boolean hasEntryError() {
 		for (var configEntry : children()) if (configEntry.hasError()) return true;

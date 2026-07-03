@@ -13,10 +13,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 public final class CategoryCollapsibleConfigEntry extends ConfigEntry {
-	public static final int INDENT_PX = 10;
 	private static final String EXPANDED_PREFIX = "- ";
 	private static final String COLLAPSED_PREFIX = "+ ";
-	private final Minecraft minecraft;
+	private final Minecraft mc;
 	private final Component label;
 	private final Runnable onToggle;
 	private final boolean expanded;
@@ -28,7 +27,7 @@ public final class CategoryCollapsibleConfigEntry extends ConfigEntry {
 		int depth,
 		Runnable onToggle
 	) {
-		minecraft = tab.getMinecraft();
+		mc = tab.getMinecraft();
 		label = categoryNode.getTitle();
 		this.expanded = expanded;
 		this.onToggle = onToggle;
@@ -56,8 +55,8 @@ public final class CategoryCollapsibleConfigEntry extends ConfigEntry {
 		var indent = getIndent();
 		clickWidget.setRectangle(entryWidth, entryHeight, x, y);
 		var prefix = expanded ? EXPANDED_PREFIX : COLLAPSED_PREFIX;
-		gui.drawString(minecraft.font, prefix, x + indent, y + 5, 0xAAAAAA, false);
-		gui.drawString(minecraft.font, label.getVisualOrderText(), x + indent + minecraft.font.width(prefix), y + 5, -1, false);
+		gui.drawString(mc.font, prefix, x + indent, y + 5, 0xAAAAAA, false);
+		gui.drawString(mc.font, label.getVisualOrderText(), x + indent + mc.font.width(prefix), y + 5, -1, false);
 	}
 	@NotNull
 	@Override
@@ -74,7 +73,7 @@ public final class CategoryCollapsibleConfigEntry extends ConfigEntry {
 		@Override
 		public boolean mouseClicked(double mouseX, double mouseY, int button) {
 			if (button != 0) return false;
-			minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+			mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 			onToggle.run();
 			return true;
 		}

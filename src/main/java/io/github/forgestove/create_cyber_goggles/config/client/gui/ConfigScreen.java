@@ -43,10 +43,6 @@ public final class ConfigScreen<C> extends Screen {
 		cacheKey = root.getTitle().getString();
 		keybindCategory = null;
 	}
-	private void initTabs(TabNavigationBar bar) {
-		var i = 0;
-		for (var child : bar.children()) if (child instanceof TabButton tabButton) tabs.get(i++).setTabButton(tabButton);
-	}
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
 		if (capturingEntry != null && capturingEntry.handleCaptureKey(keyCode)) return true;
@@ -82,10 +78,11 @@ public final class ConfigScreen<C> extends Screen {
 		capturingEntry = null;
 		ClientLockManager.clearPendingLocks();
 		root.resetToActive(config);
+		var entryTypeRegistry = new EntryTypeRegistry<C>();
 		var tabNavigationBarBuilder = TabNavigationBar.builder(tabManager, width);
 		tabs = new ArrayList<>();
 		for (var category : root.getCategories()) {
-			var tab = new ConfigCategoryTab<>(this, category, config);
+			var tab = new ConfigCategoryTab<>(this, category, config, entryTypeRegistry);
 			tabNavigationBarBuilder.addTabs(tab);
 			tabs.add(tab);
 		}
@@ -93,7 +90,7 @@ public final class ConfigScreen<C> extends Screen {
 		if (keybindCat != null) {
 			keybindCat.resetToActive(config);
 			keybindCategory = keybindCat;
-			var keybindTab = new ConfigCategoryTab<>(this, keybindCategory, config);
+			var keybindTab = new ConfigCategoryTab<>(this, keybindCategory, config, entryTypeRegistry);
 			tabNavigationBarBuilder.addTabs(keybindTab);
 			tabs.add(keybindTab);
 		} else keybindCategory = null;
@@ -124,6 +121,10 @@ public final class ConfigScreen<C> extends Screen {
 		tabManager.setTabArea(screenRectangle);
 		layout.setHeaderHeight(i);
 		layout.arrangeElements();
+	}
+	private void initTabs(TabNavigationBar bar) {
+		var i = 0;
+		for (var child : bar.children()) if (child instanceof TabButton tabButton) tabs.get(i++).setTabButton(tabButton);
 	}
 	public void onEntryCaptureChanged(KeybindValueConfigEntry<?> entry, boolean capturing) {
 		capturingEntry = capturing ? entry : null;

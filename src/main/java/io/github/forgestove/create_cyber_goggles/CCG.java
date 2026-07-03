@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles;
 import com.mojang.logging.LogUtils;
 import io.github.forgestove.create_cyber_goggles.config.Config;
-import io.github.forgestove.create_cyber_goggles.config.client.*;
+import io.github.forgestove.create_cyber_goggles.config.client.ConfigScreenFactory;
 import io.github.forgestove.create_cyber_goggles.core.event.*;
 import io.github.forgestove.create_cyber_goggles.core.event.drafting.*;
 import io.github.forgestove.create_cyber_goggles.core.event.forceOverlay.*;

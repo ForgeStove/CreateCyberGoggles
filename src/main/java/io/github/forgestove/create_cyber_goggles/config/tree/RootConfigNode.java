@@ -82,11 +82,10 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 	@Nullable
 	private ValueConfigNode<C, ?> findValueNode(ConfigNode<C> node, String path) {
 		if (node instanceof ValueConfigNode<C, ?> valueNode && valueNode.getPath().equals(path)) return valueNode;
-		if (node instanceof CategoryConfigNode<C> categoryNode)
-			for (var child : categoryNode.getChildren()) {
-				var result = findValueNode(child, path);
-				if (result != null) return result;
-			}
+		if (node instanceof CategoryConfigNode<C> categoryNode) for (var child : categoryNode.getChildren()) {
+			var result = findValueNode(child, path);
+			if (result != null) return result;
+		}
 		return null;
 	}
 	private static class Builder<C> {

@@ -9,8 +9,8 @@ import net.minecraft.client.gui.components.*;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key> {
+import java.util.*;
+public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key> implements TabLifecycle, CrossRefreshable {
 	private final Button bindButton;
 	private boolean capturing;
 	private CaptureCallback captureCallback = (e, c) -> {};
@@ -45,20 +45,12 @@ public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key> {
 		}
 		return Component.translatable("controls.keybinds.duplicateKeybinds", usedBy);
 	}
+	@Override
+	public void onAttachedToTab(ConfigCategoryTab<?> tab) {
+		setCaptureCallback(tab.getScreen()::onEntryCaptureChanged);
+	}
 	public void setCaptureCallback(CaptureCallback callback) {
 		captureCallback = callback;
-	}
-	public Key getBoundKey() {
-		return getValue();
-	}
-	public Component getDisplayTitle() {
-		return valueNode.getTitle();
-	}
-	public void setKeybindState(KeybindState state) {
-		this.state = state;
-	}
-	public void setConflictUsages(List<Component> conflictUsages) {
-		this.conflictUsages = conflictUsages;
 	}
 	public boolean handleCaptureKey(int keyCode) {
 		if (!capturing) return false;
@@ -91,6 +83,63 @@ public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key> {
 		float delta
 	) {
 		renderGui(gui, y, x, width, mouseX, mouseY, delta, undoButton, resetButton, bindButton);
+	}
+	@Override
+	public boolean beginCrossEntryRefresh(List<ConfigEntry> siblings) {
+		var keyEntries = new ArrayList<KeybindValueConfigEntry<?>>();
+		var localKeyCount = new HashMap<Key, Integer>();
+		var localKeyEntries = new HashMap<Key, List<KeybindValueConfigEntry<?>>>();
+		for (var entry : siblings) {
+			if (!(entry instanceof KeybindValueConfigEntry<?> keyEntry)) continue;
+			keyEntries.add(keyEntry);
+			var key = keyEntry.getBoundKey();
+			if (key.equals(InputConstants.UNKNOWN)) continue;
+			localKeyCount.merge(key, 1, Integer::sum);
+			localKeyEntries.computeIfAbsent(key, k -> new ArrayList<>()).add(keyEntry);
+		}
+		if (keyEntries.isEmpty()) return false;
+		var registeredKeyCount = new HashMap<Key, Integer>();
+		var registeredKeyUsages = new HashMap<Key, List<Component>>();
+		for (var mapping : tab.getMinecraft().options.keyMappings) {
+			var key = mapping.getKey();
+			if (key.equals(InputConstants.UNKNOWN)) continue;
+			registeredKeyCount.merge(key, 1, Integer::sum);
+			registeredKeyUsages.computeIfAbsent(key, k -> new ArrayList<>()).add(Component.translatable(mapping.getName()));
+		}
+		keyEntries.forEach(keyEntry -> {
+			var key = keyEntry.getBoundKey();
+			if (key.equals(InputConstants.UNKNOWN)) {
+				keyEntry.setKeybindState(KeybindState.UNBOUND);
+				keyEntry.setConflictUsages(List.of());
+				return;
+			}
+			var hasConflict = localKeyCount.getOrDefault(key, 0) > 1 || registeredKeyCount.getOrDefault(key, 0) > 1;
+			keyEntry.setKeybindState(hasConflict ? KeybindState.CONFLICT : KeybindState.BOUND);
+			if (!hasConflict) {
+				keyEntry.setConflictUsages(List.of());
+				return;
+			}
+			var usages = new ArrayList<Component>();
+			for (var localEntry : localKeyEntries.getOrDefault(key, List.of())) {
+				if (localEntry == keyEntry) continue;
+				usages.add(localEntry.getDisplayTitle());
+			}
+			usages.addAll(registeredKeyUsages.getOrDefault(key, List.of()));
+			keyEntry.setConflictUsages(usages);
+		});
+		return true;
+	}
+	public Key getBoundKey() {
+		return getValue();
+	}
+	public void setKeybindState(KeybindState state) {
+		this.state = state;
+	}
+	public void setConflictUsages(List<Component> conflictUsages) {
+		this.conflictUsages = conflictUsages;
+	}
+	public Component getDisplayTitle() {
+		return valueNode.getTitle();
 	}
 	public enum KeybindState {
 		UNBOUND(ChatFormatting.DARK_GRAY),

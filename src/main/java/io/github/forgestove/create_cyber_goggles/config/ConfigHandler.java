@@ -1,27 +1,24 @@
 package io.github.forgestove.create_cyber_goggles.config;
+import com.mojang.logging.LogUtils;
 import io.github.forgestove.create_cyber_goggles.config.annotation.Config;
 import io.github.forgestove.create_cyber_goggles.config.client.ConfigScreenFactory;
 import io.github.forgestove.create_cyber_goggles.config.tree.RootConfigNode;
 import org.slf4j.Logger;
-
-import java.nio.file.Path;
-import java.util.function.*;
 /**
  * 通用配置处理器，管理配置的加载、保存和GUI创建。
  *
  * @param <C> 配置类类型
  */
 public final class ConfigHandler<C> {
+	private static final Logger LOGGER = LogUtils.getLogger();
 	private final Class<C> configClass;
-	private final ConfigSerializer<C> serializer;
-	private final Logger logger;
 	private final RootConfigNode<C> configTree;
-	private final C activeConfig;
+	private final ConfigSerializer<C> serializer;
 	private final C savedConfig;
+	private final C activeConfig;
 	private ConfigHandler(Builder<C> builder) {
 		configClass = builder.configClass;
 		serializer = builder.serializerBuilder.build();
-		logger = builder.logger;
 		configTree = RootConfigNode.create(newInstance(), configClass.getAnnotation(Config.class).value());
 		savedConfig = load();
 		activeConfig = newInstance();
@@ -38,7 +35,7 @@ public final class ConfigHandler<C> {
 		try {
 			return serializer.deserialize();
 		} catch (SerializationException e) {
-			if (logger != null) logger.error("Failed to load configuration, using defaults", e);
+			LOGGER.error("Failed to load configuration, using defaults", e);
 			return newInstance();
 		}
 	}
@@ -67,32 +64,15 @@ public final class ConfigHandler<C> {
 		try {
 			serializer.serialize(config);
 		} catch (SerializationException e) {
-			if (logger != null) logger.error("Failed to save configuration", e);
+			LOGGER.error("Failed to save configuration", e);
 		}
 	}
 	public static final class Builder<C> {
 		private final Class<C> configClass;
 		private final ConfigSerializer.Builder<C> serializerBuilder;
-		private Logger logger;
 		private Builder(Class<C> configClass) {
 			this.configClass = configClass;
 			serializerBuilder = ConfigSerializer.builder(configClass);
-		}
-		public Builder<C> path(Supplier<Path> configPath) {
-			serializerBuilder.path(configPath);
-			return this;
-		}
-		public Builder<C> translationPrefix(String prefix) {
-			serializerBuilder.translationPrefix(prefix);
-			return this;
-		}
-		public Builder<C> translator(Function<String, String> translator) {
-			serializerBuilder.translator(translator);
-			return this;
-		}
-		public Builder<C> logger(Logger logger) {
-			this.logger = logger;
-			return this;
 		}
 		public ConfigHandler<C> build() {
 			return new ConfigHandler<>(this);

@@ -2,18 +2,14 @@ package io.github.forgestove.create_cyber_goggles.config;
 import io.github.forgestove.create_cyber_goggles.config.annotation.Config;
 import io.github.forgestove.create_cyber_goggles.config.client.ConfigScreenFactory;
 import io.github.forgestove.create_cyber_goggles.config.tree.*;
-import net.minecraft.client.resources.language.I18n;
-import net.neoforged.fml.loading.FMLPaths;
-import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
+import org.jetbrains.annotations.*;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 public final class ConfigRegistry {
 	private static final Map<String, ConfigHandler<?>> HANDLERS = new ConcurrentHashMap<>();
-	private static final Map<String, Class<?>> CONFIG_TYPES = new ConcurrentHashMap<>();
-	public static <C> C getConfig(Class<C> configClass, Logger logger) {
-		var handler = initializeIfNeeded(configClass, logger);
+	public static <C> C init(Class<C> configClass) {
+		var handler = HANDLERS.computeIfAbsent(getModId(configClass), string -> ConfigHandler.builder(configClass).build());
 		var config = handler.getConfig();
 		if (configClass.isInstance(config)) return configClass.cast(config);
 		throw new IllegalStateException("ConfigHandler returned config of type %s, expected %s".formatted(
@@ -21,27 +17,10 @@ public final class ConfigRegistry {
 			configClass.getName()
 		));
 	}
-	private static ConfigHandler<?> initializeIfNeeded(Class<?> configClass, Logger logger) {
-		var id = configClass.getAnnotation(Config.class).value();
-		if (id == null || id.isBlank()) throw new IllegalStateException("Mod id must be provided before building ConfigHandler");
-		CONFIG_TYPES.compute(
-			id, (key, existingClass) -> {
-				if (existingClass == null || existingClass.equals(configClass)) return configClass;
-				throw new IllegalStateException("Config for id '%s' is already initialized with %s, cannot reinitialize with %s".formatted(id,
-					existingClass.getName(),
-					configClass.getName()
-				));
-			}
-		);
-		return HANDLERS.computeIfAbsent(
-			id,
-			string -> ConfigHandler.builder(configClass)
-				.path(() -> FMLPaths.CONFIGDIR.get().resolve(id + ".toml"))
-				.translationPrefix(id + ".config")
-				.translator(key -> I18n.exists(key) ? I18n.get(key) : null)
-				.logger(logger)
-				.build()
-		);
+	public static String getModId(@NotNull Class<?> configClass) {
+		var modId = configClass.getAnnotation(Config.class).value();
+		if (modId == null || modId.isBlank()) throw new IllegalStateException("Mod id must be provided before building ConfigHandler");
+		return modId;
 	}
 	/** 获取第一个注册的配置的模组ID。供需要命名空间的配置系统类使用。 */
 	public static String getModId() {
@@ -78,7 +57,7 @@ public final class ConfigRegistry {
 	}
 	/** 由仅客户端的 {@link ConfigScreenFactory} 用于创建配置界面。 */
 	@Nullable
-	public static ConfigHandler<?> getHandler(String id) {
-		return HANDLERS.get(id);
+	public static ConfigHandler<?> getHandler(String modId) {
+		return HANDLERS.get(modId);
 	}
 }

@@ -15,9 +15,9 @@ public final class ConfigScreenFactory {
 		Supplier<IConfigScreenFactory> extension = () -> (modContainer, screen) -> createConfigScreen(id);
 		container.registerExtensionPoint(IConfigScreenFactory.class, extension);
 	}
-	public static Screen createConfigScreen(String id) {
-		var handler = ConfigRegistry.getHandler(id);
-		if (handler == null) throw new IllegalStateException("Config handler for id '" + id + "' is not initialized.");
+	public static Screen createConfigScreen(String modId) {
+		var handler = ConfigRegistry.getHandler(modId);
+		if (handler == null) throw new IllegalStateException("Config handler for id '%s' is not initialized.".formatted(modId));
 		return create(handler);
 	}
 	private static <C> Screen create(ConfigHandler<C> handler) {

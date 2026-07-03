@@ -1,5 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.config.client;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.Nullable;
 public final class Translation {
 	public static final Component RESET_LABEL = Component.translatable("config.ui.reset");
 	public static final Component RESET_TOOLTIP = Component.translatable("config.ui.reset.tooltip");
@@ -27,4 +29,7 @@ public final class Translation {
 	public static final Component UNLOCK_TOOLTIP = Component.translatable("config.ui.unlock.tooltip");
 	public static final Component LOCKED_LABEL = Component.translatable("config.ui.locked");
 	public static final Component LOCKED_TOOLTIP = Component.translatable("config.ui.locked.tooltip");
+	public static @Nullable String getString(String key) {
+		return I18n.exists(key) ? I18n.get(key) : null;
+	}
 }

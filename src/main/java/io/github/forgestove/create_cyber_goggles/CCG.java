@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 public final class CCG {
 	public static final String ID = "create_cyber_goggles";
 	public static final Logger LOGGER = LogUtils.getLogger();
-	public static final CCGConfig config = ConfigRegistry.getConfig(CCGConfig.class, LOGGER);
+	public static final CCGConfig config = ConfigRegistry.init(CCGConfig.class);
 	public CCG(@NotNull ModContainer container) {
 		if (FMLLoader.getDist().isClient()) clientInit(container);
 	}
@@ -25,7 +25,6 @@ public final class CCG {
 		ConfigScreenFactory.initConfigScreen(container, ID);
 		var mod = container.getEventBus();
 		assert mod != null;
-		// Mod事件总线：仅客户端注册
 		mod.addListener(CCGKey::register);
 		mod.addListener(TooltipOverlay::register);
 		mod.addListener(TipOverlay::register);
@@ -35,7 +34,6 @@ public final class CCG {
 		mod.addListener(ClientFluidListTooltipComponent::register);
 		mod.addListener(DraftingShaders::register);
 		CCGMods.SIMULATED.executeIfInstalled(() -> mod.addListener(ForceTooltipOverlay::register));
-		// 游戏事件总线：仅客户端注册
 		var game = NeoForge.EVENT_BUS;
 		game.addListener(KeyInput::key);
 		game.addListener(KeyInput::mouseScroll);

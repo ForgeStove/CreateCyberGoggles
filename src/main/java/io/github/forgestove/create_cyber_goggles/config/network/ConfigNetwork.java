@@ -27,10 +27,7 @@ public final class ConfigNetwork {
 	}
 	private static void handleConfigSyncClient(ConfigSyncPayload payload, IPayloadContext context) {
 		ClientLockManager.setLocks(ConfigRegistry.getModId(), payload.tomlContent());
-		context.enqueueWork(() -> {
-			var screen = Minecraft.getInstance().screen;
-			if (screen instanceof ConfigScreen) ((ConfigScreen<?>) screen).refresh();
-		});
+		context.enqueueWork(() -> {if (Minecraft.getInstance().screen instanceof ConfigScreen<?> configScreen) configScreen.refresh();});
 	}
 	private static void broadcastLocks() {
 		if (lockStore == null) return;

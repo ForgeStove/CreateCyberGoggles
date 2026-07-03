@@ -1,7 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.config.client.gui.entry;
 import io.github.forgestove.create_cyber_goggles.config.client.*;
 import io.github.forgestove.create_cyber_goggles.config.client.gui.ConfigCategoryTab;
-import io.github.forgestove.create_cyber_goggles.config.client.gui.util.GuiUtil;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -156,7 +155,7 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 		AbstractWidget... widgets
 	) {
 		var indent = getIndent();
-		var label = GuiUtil.styleAsState(this.label, hasError(), hasChanged);
+		var label = ConfigCategoryTab.styleAsState(this.label, hasError(), hasChanged);
 		if (isLocked()) label = label.copy().withStyle(ChatFormatting.GRAY, ChatFormatting.STRIKETHROUGH);
 		gui.drawString(tab.getMinecraft().font, label.getVisualOrderText(), x + indent, y + 5, -1, false);
 		var right = x + width;

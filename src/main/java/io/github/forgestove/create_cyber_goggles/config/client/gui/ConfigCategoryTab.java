@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.config.client.gui;
 import io.github.forgestove.create_cyber_goggles.config.client.gui.entry.*;
-import io.github.forgestove.create_cyber_goggles.config.client.gui.util.GuiUtil;
 import io.github.forgestove.create_cyber_goggles.config.tree.*;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.tabs.Tab;
@@ -91,11 +91,18 @@ public final class ConfigCategoryTab<C> implements Tab {
 	public void refresh() {
 		var hasChanged = !category.isActiveValue(config);
 		var hasError = category.validate(config) != null || hasEntryError();
-		tabButton.setMessage(GuiUtil.styleAsState(title, hasError, hasChanged));
+		tabButton.setMessage(styleAsState(title, hasError, hasChanged));
 		list.refresh();
 	}
 	public boolean hasEntryError() {
 		return list.hasEntryError();
+	}
+	public static Component styleAsState(Component component, boolean hasError, boolean hasChanged) {
+		var result = component.copy();
+		if (hasError) result.withStyle(ChatFormatting.RED);
+		else if (hasChanged) result.withStyle(ChatFormatting.YELLOW);
+		if (hasChanged) result.withStyle(ChatFormatting.ITALIC);
+		return result;
 	}
 	public C getConfig() {
 		return config;

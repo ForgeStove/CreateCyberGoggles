@@ -1,3 +1,2 @@
-- Fix an issue where the client could not access the server where this mod was installed if not installed
-- Fix an issue of locking config options
-- Optimize visual effects
+- Add fade in and fade out in overlay
+- Optimize config system

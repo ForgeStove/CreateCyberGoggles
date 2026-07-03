@@ -13,6 +13,7 @@ import java.util.List;
 public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key> {
 	private final Button bindButton;
 	private boolean capturing;
+	private CaptureCallback captureCallback = (e, c) -> {};
 	private KeybindState state = KeybindState.BOUND;
 	private List<Component> conflictUsages = List.of();
 	public KeybindValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Key> valueNode) {
@@ -20,6 +21,7 @@ public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key> {
 		bindButton = Button.builder(
 			Component.empty(), b -> {
 				capturing = true;
+				captureCallback.onCaptureStateChanged(this, true);
 				this.tab.getScreen().refresh();
 			}
 		).size(WIDTH, HEIGHT).build();
@@ -43,8 +45,8 @@ public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key> {
 		}
 		return Component.translatable("controls.keybinds.duplicateKeybinds", usedBy);
 	}
-	public boolean isCapturing() {
-		return capturing;
+	public void setCaptureCallback(CaptureCallback callback) {
+		captureCallback = callback;
 	}
 	public Key getBoundKey() {
 		return getValue();
@@ -63,6 +65,7 @@ public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key> {
 		if (keyCode == InputConstants.KEY_ESCAPE) setValue(InputConstants.UNKNOWN);
 		else setValue(Type.KEYSYM.getOrCreate(keyCode));
 		capturing = false;
+		captureCallback.onCaptureStateChanged(this, false);
 		tab.getScreen().refresh();
 		return true;
 	}
@@ -70,6 +73,7 @@ public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key> {
 		if (!capturing) return false;
 		setValue(Type.MOUSE.getOrCreate(button));
 		capturing = false;
+		captureCallback.onCaptureStateChanged(this, false);
 		tab.getScreen().refresh();
 		return true;
 	}
@@ -99,5 +103,9 @@ public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key> {
 		public ChatFormatting color() {
 			return color;
 		}
+	}
+	@FunctionalInterface
+	public interface CaptureCallback {
+		void onCaptureStateChanged(KeybindValueConfigEntry<?> entry, boolean capturing);
 	}
 }

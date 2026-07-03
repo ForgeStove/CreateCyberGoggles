@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.config.client.gui;
 import com.mojang.blaze3d.platform.InputConstants.Key;
-import io.github.forgestove.create_cyber_goggles.config.client.ClientLockManager;
-import io.github.forgestove.create_cyber_goggles.config.client.Translation;
+import io.github.forgestove.create_cyber_goggles.config.client.*;
+import io.github.forgestove.create_cyber_goggles.config.client.gui.entry.KeybindValueConfigEntry;
 import io.github.forgestove.create_cyber_goggles.config.tree.*;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.components.*;
@@ -30,6 +30,7 @@ public final class ConfigScreen<C> extends Screen {
 	private List<ConfigCategoryTab<C>> tabs;
 	private Button quitButton;
 	private Button saveAndQuitButton;
+	private KeybindValueConfigEntry<?> capturingEntry;
 	public ConfigScreen(RootConfigNode<C> root, C config, Consumer<C> onSave) {
 		super(root.getTitle());
 		this.root = root;
@@ -44,16 +45,11 @@ public final class ConfigScreen<C> extends Screen {
 	}
 	private void initTabs(TabNavigationBar bar) {
 		var i = 0;
-		for (var child : bar.children())
-			if (child instanceof TabButton tabButton) {
-				tabs.get(i).setTabButton(tabButton);
-				++i;
-			}
+		for (var child : bar.children()) if (child instanceof TabButton tabButton) tabs.get(i++).setTabButton(tabButton);
 	}
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		var currentTab = tabManager.getCurrentTab();
-		if (currentTab instanceof ConfigCategoryTab<?> categoryTab && categoryTab.handleKeyCapture(keyCode)) return true;
+		if (capturingEntry != null && capturingEntry.handleCaptureKey(keyCode)) return true;
 		if (tabNavigationBar.keyPressed(keyCode)) {
 			cacheCurrentTabIndex();
 			return true;
@@ -83,6 +79,7 @@ public final class ConfigScreen<C> extends Screen {
 	}
 	@Override
 	protected void init() {
+		capturingEntry = null;
 		ClientLockManager.clearPendingLocks();
 		root.resetToActive(config);
 		var tabNavigationBarBuilder = TabNavigationBar.builder(tabManager, width);
@@ -128,11 +125,12 @@ public final class ConfigScreen<C> extends Screen {
 		layout.setHeaderHeight(i);
 		layout.arrangeElements();
 	}
+	public void onEntryCaptureChanged(KeybindValueConfigEntry<?> entry, boolean capturing) {
+		capturingEntry = capturing ? entry : null;
+	}
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		var currentTab = tabManager.getCurrentTab();
-		if (currentTab instanceof ConfigCategoryTab<?> categoryTab && categoryTab.isCapturingKeybind() && categoryTab.handleMouseCapture(
-			button)) return true;
+		if (capturingEntry != null && capturingEntry.handleCaptureMouse(button)) return true;
 		var result = super.mouseClicked(mouseX, mouseY, button);
 		cacheCurrentTabIndex();
 		return result;

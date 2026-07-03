@@ -10,7 +10,7 @@ import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.tabs.Tab;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.*;
@@ -22,7 +22,7 @@ public final class ConfigCategoryTab<C> implements Tab {
 	private final C config;
 	private final Component title;
 	private final ConfigEntryList list;
-	private final Set<CategoryConfigNode<?>> expandedSubCategories = new HashSet<>();
+	private final Set<CategoryConfigNode<C>> expandedSubCategories = new HashSet<>();
 	private final Map<Class<?>, EntryFactory<C>> entryFactories = Map.of(
 		Enum.class,
 		(tab, node) -> new EnumValueConfigEntry<>(tab, cast(node)),
@@ -45,16 +45,22 @@ public final class ConfigCategoryTab<C> implements Tab {
 		Point.class,
 		(tab, node) -> new PointValueConfigEntry<>(tab, cast(node))
 	);
-	@Nullable private TabButton tabButton;
+	private TabButton tabButton;
 	public ConfigCategoryTab(ConfigScreen<C> screen, CategoryConfigNode<C> category, C config) {
 		this.screen = screen;
 		this.category = category;
 		this.config = config;
 		title = category.getTitle();
 		collectDefaultExpanded(category);
-		var contentHeight = screen.height - screen.getHeaderHeight() - screen.getFooterHeight();
-		list = new ConfigEntryList(this, getMinecraft(), screen.width, contentHeight, screen.getHeaderHeight(), 22, List.of());
-		list.replaceAllEntries(buildEntries(category, 0));
+		list = new ConfigEntryList(
+			this,
+			getMinecraft(),
+			screen.width,
+			screen.height - screen.getHeaderHeight() - screen.getFooterHeight(),
+			screen.getHeaderHeight(),
+			ConfigEntry.HEIGHT + ConfigEntry.GAP,
+			buildEntries(category)
+		);
 	}
 	@SuppressWarnings("unchecked")
 	private static <C, V> ValueConfigNode<C, V> cast(ValueConfigNode<C, ?> node) {
@@ -76,10 +82,18 @@ public final class ConfigCategoryTab<C> implements Tab {
 	private ConfigEntry createValueEntry(ValueConfigNode<C, ?> valueNode) {
 		var type = valueNode.getValueType();
 		for (var entry : entryFactories.entrySet())
-			if (entry.getKey().isAssignableFrom(type)) return entry.getValue().create(this, valueNode);
+			if (entry.getKey().isAssignableFrom(type)) {
+				var configEntry = entry.getValue().create(this, valueNode);
+				if (configEntry instanceof KeybindValueConfigEntry<?> keyEntry)
+					keyEntry.setCaptureCallback(screen::onEntryCaptureChanged);
+				return configEntry;
+			}
 		return new TextConfigEntry(this, Translation.UNSUPPORTED_TYPE.copy().append(type.getSimpleName()).withStyle(ChatFormatting.RED));
 	}
-	private List<ConfigEntry> buildEntries(CategoryConfigNode<C> node, int depth) {
+	public List<ConfigEntry> buildEntries(CategoryConfigNode<C> node) {
+		return buildEntries(node, 0);
+	}
+	private @NotNull List<ConfigEntry> buildEntries(@NotNull CategoryConfigNode<C> node, int depth) {
 		var entries = new ArrayList<ConfigEntry>();
 		for (var child : node.getChildren())
 			if (child instanceof ValueConfigNode<C, ?> valueNode) {
@@ -92,7 +106,7 @@ public final class ConfigCategoryTab<C> implements Tab {
 					this, subNode, expanded, depth, () -> {
 					if (expandedSubCategories.contains(subNode)) expandedSubCategories.remove(subNode);
 					else expandedSubCategories.add(subNode);
-					rebuildEntries();
+					list.replaceAllEntries(buildEntries(category));
 				}
 				));
 				if (expanded) entries.addAll(buildEntries(subNode, depth + 1));
@@ -106,10 +120,6 @@ public final class ConfigCategoryTab<C> implements Tab {
 			collectDefaultExpanded(subNode);
 		}
 	}
-	private void rebuildEntries() {
-		list.replaceAllEntries(buildEntries(category, 0));
-		screen.refresh();
-	}
 	@NotNull
 	public Minecraft getMinecraft() {
 		return Objects.requireNonNull(screen.getMinecraft());
@@ -118,7 +128,6 @@ public final class ConfigCategoryTab<C> implements Tab {
 		return screen;
 	}
 	public void refresh() {
-		if (tabButton == null) return;
 		var hasChanged = !category.isActiveValue(config);
 		var hasError = category.validate(config) != null || hasEntryError();
 		tabButton.setMessage(GuiUtil.styleAsState(title, hasError, hasChanged));
@@ -130,17 +139,8 @@ public final class ConfigCategoryTab<C> implements Tab {
 	public C getConfig() {
 		return config;
 	}
-	public void setTabButton(@Nullable TabButton tabButton) {
+	public void setTabButton(TabButton tabButton) {
 		this.tabButton = tabButton;
-	}
-	public boolean handleKeyCapture(int keyCode) {
-		return list.handleKeyCapture(keyCode);
-	}
-	public boolean handleMouseCapture(int button) {
-		return list.handleMouseCapture(button);
-	}
-	public boolean isCapturingKeybind() {
-		return list.isCapturingKeybind();
 	}
 	@FunctionalInterface
 	private interface EntryFactory<C> {

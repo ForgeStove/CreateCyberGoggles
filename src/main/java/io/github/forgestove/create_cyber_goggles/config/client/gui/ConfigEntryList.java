@@ -76,25 +76,9 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		for (var configEntry : children()) if (configEntry.hasError()) return true;
 		return false;
 	}
-	public boolean handleKeyCapture(int keyCode) {
-		for (var entry : children())
-			if (entry instanceof KeybindValueConfigEntry<?> keybindEntry && keybindEntry.handleCaptureKey(keyCode)) return true;
-		return false;
-	}
-	public boolean handleMouseCapture(int button) {
-		for (var entry : children())
-			if (entry instanceof KeybindValueConfigEntry<?> keybindEntry && keybindEntry.handleCaptureMouse(button)) return true;
-		return false;
-	}
-	public boolean isCapturingKeybind() {
-		for (var entry : children())
-			if (entry instanceof KeybindValueConfigEntry<?> keybindEntry && keybindEntry.isCapturing()) return true;
-		return false;
-	}
 	public void replaceAllEntries(List<ConfigEntry> newEntries) {
 		children().clear();
 		newEntries.forEach(this::addEntry);
-		setScrollAmount(getScrollAmount());
 	}
 	@Override
 	public void renderWidget(@NotNull GuiGraphics gui, int mouseX, int mouseY, float delta) {

@@ -1,4 +1,6 @@
-package io.github.forgestove.create_cyber_goggles.config.client.gui.entry;
+package io.github.forgestove.create_cyber_goggles.config.client.gui;
+import io.github.forgestove.create_cyber_goggles.config.client.gui.entry.ConfigEntry;
+
 import java.util.List;
 /**
  * 需要知道同级别其他 entry 状态才能刷新的入口实现此接口。

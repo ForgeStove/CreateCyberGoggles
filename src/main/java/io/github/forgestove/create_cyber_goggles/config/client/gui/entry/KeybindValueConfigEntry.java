@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.config.client.gui.entry;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.InputConstants.*;
-import io.github.forgestove.create_cyber_goggles.config.client.gui.ConfigCategoryTab;
+import io.github.forgestove.create_cyber_goggles.config.client.gui.*;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;

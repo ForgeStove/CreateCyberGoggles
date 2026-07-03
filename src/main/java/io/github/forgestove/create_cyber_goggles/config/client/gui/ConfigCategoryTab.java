@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.config.client.gui;
-import io.github.forgestove.create_cyber_goggles.config.client.gui.entry.*;
+import io.github.forgestove.create_cyber_goggles.config.client.gui.entry.ConfigEntry;
 import io.github.forgestove.create_cyber_goggles.config.tree.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;

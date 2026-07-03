@@ -7,7 +7,10 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 /** C2S数据包：管理员客户端发送针对特定配置条目的锁定/解锁请求。 */
 public record ConfigLockPayload(String configId, String value) implements CustomPacketPayload {
-	public static final Type<ConfigLockPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(ConfigRegistry.getModId(), "config_lock"));
+	public static final Type<ConfigLockPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(
+		ConfigRegistry.getModId(),
+		"config_lock"
+	));
 	public static final StreamCodec<FriendlyByteBuf, ConfigLockPayload> STREAM_CODEC = StreamCodec.composite(
 		ByteBufCodecs.STRING_UTF8,
 		ConfigLockPayload::configId,

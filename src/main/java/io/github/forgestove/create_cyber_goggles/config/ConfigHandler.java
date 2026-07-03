@@ -61,16 +61,6 @@ public final class ConfigHandler<C> {
 	public ConfigSerializer<C> getSerializer() {
 		return serializer;
 	}
-	/**
-	 * 重新生成配置文件并进行翻译。在I18n完全加载后（比如玩家加入世界或打开配置界面时）调用它。
-	 */
-	public void regenerateConfigFile() {
-		try {
-			serializer.serialize(savedConfig);
-		} catch (SerializationException e) {
-			if (logger != null) logger.error("Failed to regenerate config file", e);
-		}
-	}
 	public void save(C config) {
 		configTree.copy(config, savedConfig);
 		configTree.copy(config, activeConfig);

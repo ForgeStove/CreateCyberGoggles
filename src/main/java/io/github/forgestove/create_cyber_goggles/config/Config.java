@@ -43,19 +43,19 @@ public final class Config {
 				.build()
 		);
 	}
-	/** Get the mod ID of the first registered config. Used by config‑system classes that need the namespace. */
+	/** 获取第一个注册的配置的模组ID。供需要命名空间的配置系统类使用。 */
 	public static String getModId() {
 		if (HANDLERS.isEmpty()) throw new IllegalStateException("No config handler registered yet");
 		return HANDLERS.keySet().iterator().next();
 	}
-	/** Apply a locked value to the active config (runtime). Does NOT touch savedConfig, so TOML is never polluted. */
+	/** 将锁定值应用到活动配置（运行时）。不会修改 savedConfig，因此TOML文件不会被污染。 */
 	@SuppressWarnings("unchecked")
 	public static void applyLockedValue(String modId, ValueConfigNode<?, ?> node, Object parsed) {
 		var handler = HANDLERS.get(modId);
 		if (handler == null) return;
 		((ValueConfigNode<Object, Object>) node).setActiveValue(handler.getConfig(), parsed);
 	}
-	/** Reload from TOML and copy to both configs, completely undoing any lock modifications. */
+	/** 从TOML重新加载并复制到两个配置，完全撤销任何锁定修改。 */
 	@SuppressWarnings({"unchecked"})
 	public static <C> void resetToSaved(String modId) {
 		var handler = (ConfigHandler<C>) HANDLERS.get(modId);
@@ -64,19 +64,19 @@ public final class Config {
 		handler.getConfigTree().copy(fresh, handler.getSavedConfig());
 		handler.getConfigTree().copy(fresh, handler.getConfig());
 	}
-	/** Get the active config POJO for a mod ID. */
+	/** 获取指定模组ID的活动配置POJO。 */
 	@Nullable
 	public static Object getActiveConfig(String modId) {
 		var handler = HANDLERS.get(modId);
 		return handler != null ? handler.getConfig() : null;
 	}
-	/** Get the root config node tree for a mod ID. */
+	/** 获取指定模组ID的根配置节点树。 */
 	@Nullable
 	public static RootConfigNode<?> getRootConfigNode(String modId) {
 		var handler = HANDLERS.get(modId);
 		return handler != null ? handler.getConfigTree() : null;
 	}
-	/** Used by client-only {@link ConfigScreenFactory} to create config screens. */
+	/** 由仅客户端的 {@link ConfigScreenFactory} 用于创建配置界面。 */
 	@Nullable
 	public static ConfigHandler<?> getHandler(String id) {
 		return HANDLERS.get(id);

@@ -10,10 +10,10 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 /**
- * Stores locked config entries per world save.
- * Persisted as a nested-section TOML file in the world's serverconfig directory.
- * Format matches the mod's config style: sections with indented key = value lines.
- * Lifecycle is managed by {@link ServerLifecycleHandler}.
+ * 按世界存档存储锁定的配置条目。
+ * 持久化为世界serverconfig目录中的嵌套分区TOML文件。
+ * 格式与模组的配置风格一致：使用带缩进的键 = 值行的分区。
+ * 生命周期由 {@link ServerLifecycleHandler} 管理。
  */
 public final class ServerConfigLockStore {
 	private static final Logger LOGGER = LogUtils.getLogger();
@@ -24,7 +24,7 @@ public final class ServerConfigLockStore {
 	public ServerConfigLockStore(MinecraftServer server, String modId) {
 		lockFilePath = server.getWorldPath(new LevelResource("serverconfig/" + modId + "_locks.toml"));
 	}
-	/** Load locks from disk. Called on server start. */
+	/** 从磁盘加载锁定。在服务器启动时调用。 */
 	public void load() {
 		locks.clear();
 		if (!Files.exists(lockFilePath)) return;
@@ -56,12 +56,12 @@ public final class ServerConfigLockStore {
 			return raw.substring(1, raw.length() - 1).replace("\\\"", "\"").replace("\\\\", "\\");
 		return raw;
 	}
-	/** Lock a config entry to a specific value string. */
+	/** 将配置条目锁定为特定的值字符串。 */
 	public void lockEntry(String configId, String value) {
 		locks.put(configId, value);
 		save();
 	}
-	/** Save locks to disk. Called on server stop and after each change. */
+	/** 将锁定保存到磁盘。在服务器停止和每次更改后调用。 */
 	public void save() {
 		try {
 			Files.createDirectories(lockFilePath.getParent());
@@ -130,7 +130,7 @@ public final class ServerConfigLockStore {
 	public String toTomlString() {
 		return String.join("\n", buildTomlLines());
 	}
-	/** Unlock a config entry. Removes it from the lock store. */
+	/** 解锁配置条目。将其从锁定存储中移除。 */
 	public void unlockEntry(String configId) {
 		locks.remove(configId);
 		save();

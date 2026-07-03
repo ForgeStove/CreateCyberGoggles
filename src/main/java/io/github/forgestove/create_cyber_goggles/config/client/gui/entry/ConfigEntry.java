@@ -40,7 +40,7 @@ public abstract class ConfigEntry extends Entry<ConfigEntry> {
 	}
 	public void refresh() {}
 	/**
-	 * Returns true if this entry has an error that should prevent saving.
+	 * 如果此条目有阻止保存的错误，则返回 true。
 	 */
 	public boolean hasError() {
 		return false;

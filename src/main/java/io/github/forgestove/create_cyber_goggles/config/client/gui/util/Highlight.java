@@ -17,7 +17,7 @@ public class Highlight {
 		this.rowTopGetter = rowTopGetter;
 	}
 	public void tick(GuiGraphics gui, int listX, int listY, int width, int height, int itemHeight, float delta) {
-		var alphaInt = (int) (alpha * 48); // Max alpha 48 (0x30)
+		var alphaInt = (int) (alpha * 48); // 最大透明度 48 (0x30)
 		var color = alphaInt << 24 | 0xFFFFFF;
 		var top = (int) y - 1;
 		var bottom = top + itemHeight;

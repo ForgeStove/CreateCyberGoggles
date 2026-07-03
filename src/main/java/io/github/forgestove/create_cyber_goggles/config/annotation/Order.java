@@ -1,13 +1,13 @@
 package io.github.forgestove.create_cyber_goggles.config.annotation;
 import java.lang.annotation.*;
 /**
- * Specifies the order of a field within its declaring class during serialization.
- * Fields are sorted by this value in ascending order.
+ * 指定字段在其声明类中序列化时的顺序。
+ * 字段按此值升序排序。
  * <p>
- * Fields without this annotation default to sort value 0 and come first,
- * preserving their relative order from {@link Class#getDeclaredFields()}.
+ * 没有此注解的字段默认排序值为0，排在前面，
+ * 保持来自 {@link Class#getDeclaredFields()} 的相对顺序。
  * <p>
- * Default value is 0.
+ * 默认值为0。
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)

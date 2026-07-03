@@ -25,7 +25,7 @@ public final class CCG {
 		ConfigScreenFactory.initConfigScreen(container, ID);
 		var mod = container.getEventBus();
 		assert mod != null;
-		// Mod event bus: client-only registrations
+		// Mod事件总线：仅客户端注册
 		mod.addListener(CCGKey::register);
 		mod.addListener(TooltipOverlay::register);
 		mod.addListener(TipOverlay::register);
@@ -35,7 +35,7 @@ public final class CCG {
 		mod.addListener(ClientFluidListTooltipComponent::register);
 		mod.addListener(DraftingShaders::register);
 		CCGMods.SIMULATED.executeIfInstalled(() -> mod.addListener(ForceTooltipOverlay::register));
-		// Game event bus: client-only registrations
+		// 游戏事件总线：仅客户端注册
 		var game = NeoForge.EVENT_BUS;
 		game.addListener(KeyInput::key);
 		game.addListener(KeyInput::mouseScroll);

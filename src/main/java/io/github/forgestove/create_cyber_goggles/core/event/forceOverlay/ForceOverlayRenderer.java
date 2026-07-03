@@ -333,7 +333,7 @@ public final class ForceOverlayRenderer {
 			default -> true;
 		};
 	}
-	// ---- Arrow geometry ----
+	// ---- 箭头几何 ----
 	private static ArrowDraw buildArrow(
 		Vector3dc forcePoint,
 		Vector3dc forceVec,

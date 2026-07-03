@@ -74,7 +74,7 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 		valueNode.resetToActive(tab.getConfig());
 		tab.getScreen().refresh();
 	}
-	/** Toggle pending lock state (deferred until save). */
+	/** 切换待处理的锁定状态（延迟至保存时执行）。 */
 	private void onLockToggle() {
 		var path = valueNode.getPath();
 		var shouldLock = !isLocked(); // effective state, considering pending
@@ -92,8 +92,8 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 		return ClientLockManager.hasReceivedSync();
 	}
 	/**
-	 * Check the effective lock state of this entry.
-	 * Considers pending lock actions first, then falls back to server-confirmed locks.
+	 * 检查此条目的有效锁定状态。
+	 * 首先考虑待处理的锁定操作，然后回退到服务器确认的锁定。
 	 */
 	public boolean isLocked() {
 		var path = valueNode.getPath();

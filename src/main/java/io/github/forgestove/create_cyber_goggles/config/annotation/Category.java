@@ -1,18 +1,18 @@
 package io.github.forgestove.create_cyber_goggles.config.annotation;
 import java.lang.annotation.*;
 /**
- * Denotes a field containing a category POJO.
+ * 标记包含分类POJO的字段。
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Category {
 	/**
-	 * Whether the category should be expanded by default in the config GUI.
-	 * Subcategories can be collapsed/expanded by clicking on the header.
+	 * 分类在配置GUI中是否默认展开。
+	 * 子分类可以通过点击标题折叠/展开。
 	 * <p>
-	 * Default value is true.
+	 * 默认值为 true。
 	 *
-	 * @return whether the category is expanded by default
+	 * @return 分类是否默认展开
 	 */
 	boolean value() default true;
 }

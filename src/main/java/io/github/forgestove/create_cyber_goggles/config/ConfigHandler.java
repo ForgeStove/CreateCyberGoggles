@@ -7,9 +7,9 @@ import org.slf4j.Logger;
 import java.nio.file.Path;
 import java.util.function.*;
 /**
- * Generic configuration handler that manages config loading, saving, and GUI creation.
+ * 通用配置处理器，管理配置的加载、保存和GUI创建。
  *
- * @param <C> Configuration class type
+ * @param <C> 配置类类型
  */
 public final class ConfigHandler<C> {
 	private final Class<C> configClass;
@@ -51,7 +51,7 @@ public final class ConfigHandler<C> {
 	public C getConfig() {
 		return activeConfig;
 	}
-	/** Used by {@link ConfigScreenFactory} to access the saved config instance. */
+	/** 由 {@link ConfigScreenFactory} 用于访问已保存的配置实例。 */
 	public C getSavedConfig() {
 		return savedConfig;
 	}

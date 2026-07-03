@@ -101,7 +101,7 @@ public abstract class CreateRecipeCategoryMixin<T extends Recipe<?>> implements 
 			state[1] = now;
 		}
 		var selected = recipe.resultPool.get((int) state[0] + 1).getStack();
-		// Redraw slot background first so Create's default '?' marker is covered.
+		// 先重新绘制槽位背景，以覆盖 Create 默认的 '?' 标记。
 		AllGuiTextures.JEI_CHANCE_SLOT.render(gui, JUNK_X, JUNK_Y);
 		gui.renderItem(selected, JUNK_X + 1, JUNK_Y + 1);
 	}

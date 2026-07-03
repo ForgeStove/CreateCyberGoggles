@@ -59,7 +59,7 @@ public abstract class ClientSchematicLoaderMixin implements Self<ClientSchematic
 				.map(Component::literal)
 				.forEach(availableSchematics::add);
 		} catch (NoSuchFileException ignored) {
-			// No Schematics created yet
+			// 尚未创建任何原理图
 		} catch (IOException e) {
 			Create.LOGGER.error("Failed to refresh schematics", e);
 		}

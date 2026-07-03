@@ -5,27 +5,27 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.neoforged.neoforge.event.server.*;
 import net.neoforged.neoforge.network.PacketDistributor;
-/** Handles server lifecycle events for config lock management. */
+/** 处理配置锁管理的服务器生命周期事件。 */
 public final class ServerLifecycleHandler {
-	/** On server start: load the lock store from disk. */
+	/** 服务器启动时：从磁盘加载锁定存储。 */
 	public static void onServerStarting(ServerStartingEvent event) {
 		var lockStore = new ServerConfigLockStore(event.getServer(), Config.getModId());
 		lockStore.load();
 		ConfigNetwork.setLockStore(lockStore);
 	}
-	/** On server stop: save the lock store to disk. */
+	/** 服务器停止时：将锁定存储保存到磁盘。 */
 	public static void onServerStopping(ServerStoppingEvent ignoredEvent) {
 		var lockStore = ConfigNetwork.getLockStore();
 		if (lockStore == null) return;
 		lockStore.save();
 		ConfigNetwork.clearLockStore();
 	}
-	/** On player login: send the current locked configs to that player (if they have the mod). */
+	/** 玩家登录时：向该玩家发送当前锁定的配置（如果他们安装了该模组）。 */
 	public static void onPlayerLogin(PlayerLoggedInEvent event) {
 		var lockStore = ConfigNetwork.getLockStore();
 		if (lockStore == null) return;
 		if (!(event.getEntity() instanceof ServerPlayer player)) return;
-		// Only send to clients that have this mod installed — otherwise NeoForge throws.
+		// 仅向安装了此模组的客户端发送 — 否则NeoForge会抛出异常。
 		if (!player.connection.hasChannel(ConfigSyncPayload.TYPE)) return;
 		PacketDistributor.sendToPlayer(player, new ConfigSyncPayload(lockStore.toTomlString()));
 	}

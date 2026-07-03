@@ -81,7 +81,7 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 		if (hoveredSlot == noneHovered) return null;
 		int group = hoveredSlot.getFirst();
 		int index = hoveredSlot.getSecond();
-		if (group == -2) return null; // recipe strip uses its own amount semantics
+		if (group == -2) return null; // 配方条使用自己的数量语义
 		var entry = group == -1 ? itemsToOrder.get(index) : displayedItems.get(group).get(index);
 		return entry == null || entry.stack.isEmpty() ? null : entry;
 	}

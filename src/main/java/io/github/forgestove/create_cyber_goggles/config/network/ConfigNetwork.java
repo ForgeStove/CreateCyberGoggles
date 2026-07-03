@@ -16,7 +16,7 @@ public final class ConfigNetwork {
 		registrar.playToServer(ConfigLockPayload.TYPE, ConfigLockPayload.STREAM_CODEC, ConfigNetwork::handleConfigLockServer);
 		registrar.playToClient(ConfigSyncPayload.TYPE, ConfigSyncPayload.STREAM_CODEC, ConfigNetwork::handleConfigSyncClient);
 	}
-	// -- Packet handlers --
+	// -- 数据包处理器 --
 	private static void handleConfigLockServer(ConfigLockPayload payload, IPayloadContext context) {
 		if (!(context.player() instanceof ServerPlayer player)) return;
 		if (!player.hasPermissions(2)) return;
@@ -36,7 +36,7 @@ public final class ConfigNetwork {
 		if (lockStore == null) return;
 		PacketDistributor.sendToAllPlayers(new ConfigSyncPayload(lockStore.toTomlString()));
 	}
-	// -- Lock store management (used by ServerLifecycleHandler) --
+	// -- 锁定存储管理（由ServerLifecycleHandler使用） --
 	@Nullable
 	public static ServerConfigLockStore getLockStore() {
 		return lockStore;

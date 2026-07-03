@@ -1,32 +1,31 @@
 package io.github.forgestove.create_cyber_goggles.config.annotation;
 import java.lang.annotation.*;
 /**
- * Conditional loading for config categories or fields.
+ * 配置分类或字段的条件加载。
  * <p>
- * Apply alongside {@link Category} on a category field, or on a value field
- * within a category POJO. The element is only loaded when all specified
- * conditions are met.
+ * 与 {@link Category} 一起应用于分类字段，或应用于分类POJO内的值字段。
+ * 仅当所有指定条件都满足时，该元素才会被加载。
  * <p>
- * Both {@link #value()} and {@link #condition()} are AND-ed together.
+ * {@link #value()} 和 {@link #condition()} 之间是逻辑与关系。
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Condition {
 	/**
-	 * Shortcut: only load when the mod with this ID is present.
-	 * Leave empty to skip the mod check.
+	 * 快捷方式：仅当具有此ID的模组存在时加载。
+	 * 留空以跳过模组检查。
 	 *
-	 * @return a mod ID, or empty string for no restriction
+	 * @return 模组ID，或空字符串表示无限制
 	 */
 	String value() default "";
 	/**
-	 * Condition classes to evaluate. Each must implement {@link ConfigCondition}
-	 * and provide a no-arg constructor.
+	 * 要评估的条件类。每个类必须实现 {@link ConfigCondition}
+	 * 并提供无参构造函数。
 	 * <p>
-	 * If all return {@code true}, the element is included; otherwise
-	 * it is silently skipped.
+	 * 如果全部返回 {@code true}，则包含该元素；否则
+	 * 静默跳过。
 	 *
-	 * @return array of condition classes
+	 * @return 条件类数组
 	 */
 	Class<? extends ConfigCondition>[] condition() default {};
 }

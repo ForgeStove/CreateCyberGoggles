@@ -82,7 +82,7 @@ public final class ColorPickerScreen extends Screen {
 		renderHueBar(gui, hueBarX, svPos.y);
 		if (hasAlpha) renderAlphaBar(gui, getAlphaBarX(), svPos.y);
 		renderSelectors(gui, hueBarX);
-		// Keep widget rendering order controlled in this screen.
+		// 在此屏幕中保持控件渲染顺序可控。
 		for (var child : children()) if (child instanceof AbstractWidget widget) widget.render(gui, mouseX, mouseY, delta);
 	}
 	private void rebuildSBCache() {

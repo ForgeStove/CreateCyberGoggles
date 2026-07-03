@@ -12,5 +12,5 @@ public @interface ColorValue {
 	 *
 	 * @return 如果颜色包含Alpha通道（ARGB）则返回true，仅RGB则返回false
 	 */
-	boolean hasAlpha() default false;
+	boolean value() default false;
 }

@@ -86,7 +86,7 @@ public final class ValueConfigNode<C, V> implements ConfigNode<C> {
 		return editingValue;
 	}
 	public boolean colorHasAlpha() {
-		return isColorValue() && colorValue.hasAlpha();
+		return isColorValue() && colorValue.value();
 	}
 	public boolean isColorValue() {
 		return colorValue != null;

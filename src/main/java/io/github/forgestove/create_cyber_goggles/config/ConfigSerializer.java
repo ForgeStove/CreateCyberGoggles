@@ -124,7 +124,7 @@ public final class ConfigSerializer<C> {
 			writeFieldComment(writer, indent, pathPrefix, field.getName());
 			var value = field.get(category);
 			if (field.isAnnotationPresent(ColorValue.class)) {
-				var hasAlpha = field.getAnnotation(ColorValue.class).hasAlpha();
+				var hasAlpha = field.getAnnotation(ColorValue.class).value();
 				var hex = hasAlpha ? String.format("0x%08X", (Integer) value) : String.format("0x%06X", (Integer) value);
 				writer.write(indent + "\t" + field.getName() + " = " + hex + "\n");
 			} else if (value instanceof Enum<?> e) writer.write(indent + "\t" + field.getName() + " = \"" + e.name() + "\"\n");

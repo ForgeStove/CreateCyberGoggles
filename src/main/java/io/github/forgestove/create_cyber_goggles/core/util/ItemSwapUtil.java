@@ -78,8 +78,8 @@ public class ItemSwapUtil {
 			inventory.setItem(swappedOriginSlot, currentMainHand);
 		} else // 本地生成 —— 恢复原始物品（仅客户端）
 			if (swappedOriginSlot == LOCAL_SPAWN) inventory.setItem(swappedHandSlot, preSwapMainHand);
-			else if (mc.gameMode != null)
-				mc.gameMode.handleCreativeModeItemAdd(preSwapMainHand, 36 + swappedHandSlot); // 创造模式销毁 —— 通过数据包恢复
+			else if (mc.gameMode != null) mc.gameMode.handleCreativeModeItemAdd(preSwapMainHand, 36 + swappedHandSlot); // 创造模式销毁 ——
+		// 通过数据包恢复
 		isSwapped = false;
 		swappedOriginSlot = -1;
 		swappedHandSlot = -1;

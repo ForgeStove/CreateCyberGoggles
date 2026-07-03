@@ -32,7 +32,7 @@ public final class ForceOverlayRenderer {
 	 */
 	public static void onRenderStage(RenderLevelStageEvent event) {
 		if (event.getStage() != Stage.AFTER_LEVEL) return;
-		if (!CCG.config.aeronautics.forceOverlay.forceOverlayEnabled) return;
+		if (!CCG.config.aeronautics.forceOverlay.enableForceOverlay) return;
 		var player = mc.player;
 		var level = mc.level;
 		if (player == null || level == null) return;

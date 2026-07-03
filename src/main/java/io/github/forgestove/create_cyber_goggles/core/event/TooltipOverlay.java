@@ -26,7 +26,8 @@ import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public final class TooltipOverlay {
-	public static int hoverTicks;
+	public static float hoverTicks;
+	private static ItemStack lastItemStack = ItemStack.EMPTY;
 	public static void register(@NotNull RegisterGuiLayersEvent event) {
 		event.registerAbove(VanillaGuiLayers.HOTBAR, getCCGRes("tooltip_overlay"), TooltipOverlay::renderOverlay);
 	}
@@ -39,8 +40,16 @@ public final class TooltipOverlay {
 		}
 		if (!CCG.config.goggles.canRenderOnValueBox && hasActivedValueBox()) return;
 		var itemStack = toRenderItemStack();
-		if (itemStack.isEmpty()) hoverTicks = 0;
-		else renderItemStack(gui, itemStack);
+		if (itemStack.isEmpty()) {
+			if (CCG.config.goggles.enableFadeOut && hoverTicks > 0) {
+				hoverTicks = Math.max(0, hoverTicks - getRealtimeDeltaTicks() * 2);
+				renderItemStack(gui, lastItemStack);
+			} else hoverTicks = 0;
+			return;
+		}
+		hoverTicks = Math.min(8, hoverTicks + getRealtimeDeltaTicks());
+		lastItemStack = itemStack;
+		renderItemStack(gui, itemStack);
 	}
 	public static @NotNull ItemStack toRenderItemStack() {
 		try {
@@ -60,7 +69,7 @@ public final class TooltipOverlay {
 		var back = theme.backColor();
 		var top = theme.topColor();
 		var bot = theme.botColor();
-		var fade = Mth.clamp((getRealtimeDeltaTicks() + hoverTicks++) / 24F, 0, 1);
+		var fade = Mth.clamp(hoverTicks / 8F, 0, 1);
 		if (fade < 1) {
 			pose.translate(Math.pow(1 - fade, 3) * Math.signum(cfg.overlayOffsetX.get() + 0.5D) * 8, 0, 0);
 			back.scaleAlpha(fade);
@@ -82,7 +91,8 @@ public final class TooltipOverlay {
 			tooltipWidth = Math.max(tooltipWidth, component.getWidth(mc.font));
 			tooltipHeight += component.getHeight();
 		}
-		if (GoggleOverlayRenderer.hoverTicks != 0) y -= tooltipHeight + 10;
+		var goggleFade = Mth.clamp(GoggleOverlayRenderer.hoverTicks / 24F, 0, 1);
+		if (goggleFade > 0) y -= (int) ((tooltipHeight + 10) * goggleFade);
 		x = Mth.clamp(x, 0, width - tooltipWidth);
 		y = Mth.clamp(y, 16, height - tooltipHeight - 100);
 		renderTooltip(gui, itemStack, components, x, y, tooltipWidth, tooltipHeight, back.getRGB(), top.getRGB(), bot.getRGB());

@@ -19,9 +19,10 @@ public final class CCGConfig {
 		public boolean betterStoreInfo = true;
 		public boolean betterFactoryGauge = true;
 		public boolean enableKineticEffect = true;
-		public boolean disableScreenGoggles = true;
+		public boolean disableInScreenGoggles = true;
 		public boolean canRenderOnValueBox = false;
 		public boolean dedupTooltipLines = true;
+		public boolean enableFadeOut = true;
 		public boolean preciseNumber = true;
 		@IntRange(min = 0) public int maxFractionDigits = 2;
 		public static class GameMode {
@@ -92,7 +93,7 @@ public final class CCGConfig {
 		public boolean alwaysAllowRidingRope = true;
 		@Category public ForceOverlay forceOverlay = new ForceOverlay();
 		public static class ForceOverlay {
-			public boolean forceOverlayEnabled = true;
+			public boolean enableForceOverlay = true;
 			public boolean useWorldLabels = true;
 			public boolean hudPanelEnabled = true;
 			public boolean renderCenterOfMass = true;

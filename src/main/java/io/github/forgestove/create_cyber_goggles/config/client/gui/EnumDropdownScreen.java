@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.config.client.gui;
 import io.github.forgestove.create_cyber_goggles.config.client.gui.entry.ConfigEntry;
-import io.github.forgestove.create_cyber_goggles.config.client.gui.util.SmoothScrool;
+import io.github.forgestove.create_cyber_goggles.config.client.gui.util.SmoothScroll;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -22,9 +22,8 @@ public final class EnumDropdownScreen extends Screen {
 	private final Function<Enum<?>, Component> displayMapper;
 	private final Screen parentScreen;
 	private final Button dropdownButton;
-	private final SmoothScrool smoothScrool;
+	private final SmoothScroll smoothScrool;
 	private int maxVisibleOptions;
-	private int scrollOffset;
 	private double smoothScrollOffset;
 	private boolean draggingScrollbar;
 	public EnumDropdownScreen(
@@ -33,8 +32,7 @@ public final class EnumDropdownScreen extends Screen {
 		Consumer<Enum<?>> onSelect,
 		Function<Enum<?>, Component> displayMapper,
 		Screen parentScreen,
-		Button dropdownButton,
-		int screenHeight
+		Button dropdownButton
 	) {
 		super(Component.empty());
 		this.values = values;
@@ -43,19 +41,15 @@ public final class EnumDropdownScreen extends Screen {
 		this.displayMapper = displayMapper;
 		this.parentScreen = parentScreen;
 		this.dropdownButton = dropdownButton;
-		update(screenHeight);
-		smoothScrool = new SmoothScrool(value -> smoothScrollOffset = value, () -> (double) scrollOffset, this::getMaxScrollOffset);
-		smoothScrollOffset = scrollOffset;
+		update();
+		smoothScrool = new SmoothScroll(value -> smoothScrollOffset = value, () -> smoothScrollOffset, this::getMaxScrollOffset);
 	}
-	private void update(int screenHeight) {
+	private void update() {
 		maxVisibleOptions = Math.min(
 			values.length,
-			(screenHeight - dropdownButton.getY() - dropdownButton.getHeight() - HEIGHT) / (HEIGHT + GAP)
+			(parentScreen.height - dropdownButton.getY() - dropdownButton.getHeight() - HEIGHT) / (HEIGHT + GAP)
 		);
-		scrollOffset = Mth.clamp(Arrays.asList(values).indexOf(selectedSupplier.get()) - maxVisibleOptions / 2, 0, getMaxScrollOffset());
-		width = parentScreen.width;
-		height = parentScreen.height;
-		if (smoothScrool != null) smoothScrool.sync();
+		smoothScrollOffset = Mth.clamp(Arrays.asList(values).indexOf(selectedSupplier.get()) - maxVisibleOptions / 2, 0, getMaxScrollOffset());
 	}
 	private int getMaxScrollOffset() {
 		return Math.max(0, values.length - maxVisibleOptions);
@@ -109,7 +103,7 @@ public final class EnumDropdownScreen extends Screen {
 	@Override
 	public void resize(@NotNull Minecraft minecraft, int width, int height) {
 		parentScreen.resize(minecraft, width, height);
-		update(height);
+		update();
 	}
 	private int dropdownY() {
 		return dropdownButton.getY() + dropdownButton.getHeight();
@@ -173,8 +167,7 @@ public final class EnumDropdownScreen extends Screen {
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
 		if (isOutsidePanel(mouseX, mouseY)) return super.mouseScrolled(mouseX, mouseY, horizontal, vertical);
-		smoothScrool.onMouseScroll(vertical, 1);
-		return true;
+		return smoothScrool.onMouseScroll(vertical, 1);
 	}
 	private void updateScrollFromMouse(double mouseY) {
 		var track = getScrollbarTrack();
@@ -182,8 +175,7 @@ public final class EnumDropdownScreen extends Screen {
 		double scrollRange = track.height - thumbHeight;
 		if (scrollRange <= 0) return;
 		var relativeY = mouseY - track.y - thumbHeight / 2.0;
-		scrollOffset = Mth.clamp((int) Math.round(relativeY / scrollRange * getMaxScrollOffset()), 0, getMaxScrollOffset());
-		smoothScrool.sync();
+		smoothScrollOffset = Mth.clamp((int) Math.round(relativeY / scrollRange * getMaxScrollOffset()), 0, getMaxScrollOffset());
 	}
 	private boolean isOutsidePanel(double mouseX, double mouseY) {
 		var panelX = dropdownButton.getX() - GAP;

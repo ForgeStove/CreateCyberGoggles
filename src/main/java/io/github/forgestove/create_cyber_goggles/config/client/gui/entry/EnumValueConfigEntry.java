@@ -27,8 +27,7 @@ public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum<?>> 
 			this::selectValue,
 			this::getDisplayComponent,
 			screen,
-			dropdownButton,
-			screen.height
+			dropdownButton
 		));
 	}
 	private void selectValue(Enum<?> value) {

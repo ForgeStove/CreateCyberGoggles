@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEntry> {
 	private final ConfigCategoryTab<?> tab;
-	private final SmoothScrool smoothScroll = new SmoothScrool(this::setScrollAmount, this::getScrollAmount, this::getMaxScroll);
+	private final SmoothScroll smoothScroll = new SmoothScroll(this::setScrollAmount, this::getScrollAmount, this::getMaxScroll);
 	private final Highlight highlight = new Highlight(() -> children().indexOf(getHovered()), this::getRowTop);
 	public ConfigEntryList(
 		ConfigCategoryTab<?> tab,
@@ -29,7 +29,7 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		this.headerHeight = -3;
 		entries.forEach(this::addEntry);
 	}
-	public void refreshEntries() {
+	public void refresh() {
 		var keyEntries = new ArrayList<KeybindValueConfigEntry<?>>();
 		var localKeyCount = new HashMap<Key, Integer>();
 		var localKeyEntries = new HashMap<Key, List<KeybindValueConfigEntry<?>>>();
@@ -85,7 +85,18 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		for (var entry : children())
 			if (entry instanceof KeybindValueConfigEntry<?> keybindEntry && keybindEntry.handleCaptureMouse(button)) return true;
 		return false;
-	}	@Override
+	}
+	public boolean isCapturingKeybind() {
+		for (var entry : children())
+			if (entry instanceof KeybindValueConfigEntry<?> keybindEntry && keybindEntry.isCapturing()) return true;
+		return false;
+	}
+	public void replaceAllEntries(List<ConfigEntry> newEntries) {
+		children().clear();
+		newEntries.forEach(this::addEntry);
+		setScrollAmount(getScrollAmount());
+	}
+	@Override
 	public void renderWidget(@NotNull GuiGraphics gui, int mouseX, int mouseY, float delta) {
 		smoothScroll.tick(delta);
 		highlight.tick(gui, getX(), getY(), width, height, itemHeight, delta);
@@ -99,29 +110,9 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		}
 		if (entry.getTooltip() != null) tab.getScreen().setTooltipForNextRenderPass(entry.getTooltip());
 	}
-	public boolean isCapturingKeybind() {
-		for (var entry : children())
-			if (entry instanceof KeybindValueConfigEntry<?> keybindEntry && keybindEntry.isCapturing()) return true;
-		return false;
-	}
-	public void replaceAllEntries(List<ConfigEntry> newEntries) {
-		children().clear();
-		newEntries.forEach(this::addEntry);
-		setScrollAmount(getScrollAmount());
-		smoothScroll.sync();
-	}
-
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
-		smoothScroll.onMouseScroll(vertical, itemHeight);
-		return true;
-	}
-	@Override
-	public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-		var result = super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
-		// 同步拖拽后的滚动位置，防止 smoothScroll 在下帧覆盖掉
-		smoothScroll.sync();
-		return result;
+		return smoothScroll.onMouseScroll(vertical, itemHeight);
 	}
 	@Override
 	public int getRowWidth() {

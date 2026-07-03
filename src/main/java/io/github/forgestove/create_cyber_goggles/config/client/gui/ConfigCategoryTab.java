@@ -122,7 +122,7 @@ public final class ConfigCategoryTab<C> implements Tab {
 		var hasChanged = !category.isActiveValue(config);
 		var hasError = category.validate(config) != null || hasEntryError();
 		tabButton.setMessage(GuiUtil.styleAsState(title, hasError, hasChanged));
-		list.refreshEntries();
+		list.refresh();
 	}
 	public boolean hasEntryError() {
 		return list.hasEntryError();

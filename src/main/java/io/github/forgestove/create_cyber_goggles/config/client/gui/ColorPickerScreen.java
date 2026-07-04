@@ -20,21 +20,14 @@ public final class ColorPickerScreen extends Screen {
 	private static final Pattern HEX_PATTERN = Pattern.compile("[0-9A-Fa-f]*");
 	private final Screen parent;
 	private final boolean hasAlpha;
-	/** 颜色确认后的回调 */
 	private final IntConsumer onColorSelected;
-	/** 面板左上角坐标 */
 	private final Point pickerPos = new Point();
-	/** 饱和度/亮度选择区坐标 */
 	private final Point svPos = new Point();
-	// 色相 / 饱和度 / 亮度
 	private float hue, saturation = 1f, brightness = 1f;
 	private int alpha = 255;
-	/** 饱和度/亮度方块缓存 */
 	private int[] sbPixels;
-	private float cachedHue = -1f;
 	private DragMode dragMode = DragMode.NONE;
 	private ConfigEditBox hexInput;
-	/** 防止输入框与颜色状态互相递归更新 */
 	private boolean updatingFromInput;
 	public ColorPickerScreen(Screen parent, int initialColor, boolean hasAlpha, IntConsumer onColorSelected) {
 		super(Translation.COLOR_PICKER_TOOLTIP);
@@ -46,26 +39,29 @@ public final class ColorPickerScreen extends Screen {
 	private void updateHSBFromColor(int color) {
 		if (hasAlpha) alpha = ARGB32.alpha(color);
 		var hsb = Color.RGBtoHSB(ARGB32.red(color), ARGB32.green(color), ARGB32.blue(color), null);
+		if (hue != hsb[0]) sbPixels = null;
 		hue = hsb[0];
 		saturation = hsb[1];
 		brightness = hsb[2];
 	}
 	@Override
 	public void render(@NotNull GuiGraphics gui, int mouseX, int mouseY, float delta) {
-		if (parent != null) parent.render(gui, -1, -1, delta);
+		if (parent != null) {
+			parent.clearFocus();
+			parent.render(gui, -1, -1, delta);
+		}
 		renderBlurredBackground(delta);
 		var totalWidth = PICKER_SIZE + PADDING + BAR_WIDTH + (hasAlpha ? PADDING + BAR_WIDTH : 0) + PADDING * 2 + 8;
 		var totalHeight = PICKER_SIZE + PADDING * 2 + 16 + 28;
 		gui.fill(pickerPos.x - 4, pickerPos.y - 4, pickerPos.x + totalWidth + 4, pickerPos.y + totalHeight + 4, 0xF0101010);
 		gui.renderOutline(pickerPos.x - 4, pickerPos.y - 4, totalWidth + 8, totalHeight + 8, 0xFF404040);
 		gui.drawString(font, title, svPos.x, pickerPos.y + PADDING, 0xFFFFFF);
-		if (cachedHue != hue) rebuildSBCache();
+		if (sbPixels == null) rebuildSBCache();
 		renderSBSquare(gui, svPos.x, svPos.y);
-		var hueBarX = getHueBarX();
+		var hueBarX = svPos.x + PICKER_SIZE + PADDING;
 		renderHueBar(gui, hueBarX, svPos.y);
-		if (hasAlpha) renderAlphaBar(gui, getAlphaBarX(), svPos.y);
+		if (hasAlpha) renderAlphaBar(gui, hueBarX + BAR_WIDTH + PADDING, svPos.y);
 		renderSelectors(gui, hueBarX);
-		// 在此屏幕中保持控件渲染顺序可控。
 		for (var child : children()) if (child instanceof AbstractWidget widget) widget.render(gui, mouseX, mouseY, delta);
 	}
 	private void rebuildSBCache() {
@@ -77,7 +73,6 @@ public final class ColorPickerScreen extends Screen {
 				sbPixels[y * PICKER_SIZE + x] = 0xFF000000 | Color.HSBtoRGB(hue, s, b) & 0xFFFFFF;
 			}
 		}
-		cachedHue = hue;
 	}
 	private void renderSBSquare(GuiGraphics gui, int x, int y) {
 		var blockSize = 4;
@@ -89,9 +84,6 @@ public final class ColorPickerScreen extends Screen {
 				gui.fill(x + bx, y + by, x + endX, y + endY, color);
 			}
 		gui.renderOutline(x, y, PICKER_SIZE, PICKER_SIZE, 0xFF000000);
-	}
-	private int getHueBarX() {
-		return svPos.x + PICKER_SIZE + PADDING;
 	}
 	private void renderHueBar(GuiGraphics gui, int x, int y) {
 		var step = 4;
@@ -111,9 +103,6 @@ public final class ColorPickerScreen extends Screen {
 		}
 		gui.renderOutline(x, y, BAR_WIDTH, PICKER_SIZE, 0xFF000000);
 	}
-	private int getAlphaBarX() {
-		return getHueBarX() + BAR_WIDTH + PADDING;
-	}
 	private void renderSelectors(GuiGraphics gui, int hueBarX) {
 		var sbSelectorX = svPos.x + (int) (saturation * (PICKER_SIZE - 1));
 		var sbSelectorY = svPos.y + (int) ((1f - brightness) * (PICKER_SIZE - 1));
@@ -123,7 +112,7 @@ public final class ColorPickerScreen extends Screen {
 		renderHorizontalArrow(gui, hueBarX, hueSelectorY);
 		if (!hasAlpha) return;
 		var alphaSelectorY = svPos.y + (int) ((1f - alpha / 255f) * (PICKER_SIZE - 1));
-		renderHorizontalArrow(gui, getAlphaBarX(), alphaSelectorY);
+		renderHorizontalArrow(gui, hueBarX + BAR_WIDTH + PADDING, alphaSelectorY);
 	}
 	private int colorFromHSB() {
 		var rgb = Color.HSBtoRGB(hue, saturation, brightness) & 0xFFFFFF;
@@ -137,8 +126,6 @@ public final class ColorPickerScreen extends Screen {
 	}
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		var step = hasShiftDown() ? 0.05f : 0.01f;
-		var intStep = hasShiftDown() ? 16 : 1;
 		assert minecraft != null;
 		var window = minecraft.getWindow().getWindow();
 		var up = InputConstants.isKeyDown(window, InputConstants.KEY_UP);
@@ -152,44 +139,53 @@ public final class ColorPickerScreen extends Screen {
 		var handled = up || down || left || right || pageUp || pageDown || home || end;
 		if (hexInput != null && hexInput.isFocused() && handled) return super.keyPressed(keyCode, scanCode, modifiers);
 		if (!handled) return super.keyPressed(keyCode, scanCode, modifiers);
+		var step = hasShiftDown() ? 0.05f : 0.01f;
+		var intStep = hasShiftDown() ? 16 : 1;
 		if (up) brightness = Mth.clamp(brightness + step, 0f, 1f);
 		if (down) brightness = Mth.clamp(brightness - step, 0f, 1f);
 		if (left) saturation = Mth.clamp(saturation - step, 0f, 1f);
 		if (right) saturation = Mth.clamp(saturation + step, 0f, 1f);
-		if (pageUp) hue = Mth.clamp(hue - step, 0f, 1f);
-		if (pageDown) hue = Mth.clamp(hue + step, 0f, 1f);
+		if (pageUp) {
+			hue = Mth.clamp(hue - step, 0f, 1f);
+			sbPixels = null;
+		}
+		if (pageDown) {
+			hue = Mth.clamp(hue + step, 0f, 1f);
+			sbPixels = null;
+		}
 		if (home) alpha = Mth.clamp(alpha + intStep, 0, 255);
 		if (end) alpha = Mth.clamp(alpha - intStep, 0, 255);
 		updateHexInput();
 		return true;
 	}
 	@Override
+	public void onClose() {
+		if (minecraft != null && parent != null) minecraft.setScreen(parent);
+	}
+	@Override
 	protected void init() {
 		layoutPicker();
 		if (minecraft == null) return;
 		var buttonY = svPos.y + PICKER_SIZE + PADDING;
-		var okButton = Button.builder(
+		addRenderableWidget(Button.builder(
 			Component.translatable("gui.ok"), button -> {
 				onColorSelected.accept(colorFromHSB());
 				minecraft.setScreen(parent);
 			}
-		).bounds(svPos.x, buttonY, BUTTON_WIDTH, SIZE).build();
-		var cancelButton = Button.builder(Component.translatable("gui.cancel"), button -> minecraft.setScreen(parent))
+		).bounds(svPos.x, buttonY, BUTTON_WIDTH, SIZE).build());
+		addRenderableWidget(Button.builder(Component.translatable("gui.cancel"), button -> minecraft.setScreen(parent))
 			.bounds(svPos.x + BUTTON_WIDTH + 2, buttonY, BUTTON_WIDTH, SIZE)
-			.build();
+			.build());
 		hexInput = createHexInput(buttonY);
-		var previewWidget = new ColorPreviewWidget(
+		addRenderableWidget(hexInput);
+		addRenderableWidget(new ColorPreviewWidget(
 			hexInput.getX() + hexInput.getWidth() + 4,
 			buttonY,
 			SIZE,
 			SIZE,
 			hasAlpha,
 			this::colorFromHSB
-		);
-		addRenderableWidget(okButton);
-		addRenderableWidget(cancelButton);
-		addRenderableWidget(hexInput);
-		addRenderableWidget(previewWidget);
+		));
 	}
 	private void layoutPicker() {
 		var totalWidth = PICKER_SIZE + PADDING + BAR_WIDTH + (hasAlpha ? PADDING + BAR_WIDTH : 0);
@@ -234,45 +230,39 @@ public final class ColorPickerScreen extends Screen {
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		if (button != 0) return super.mouseClicked(mouseX, mouseY, button);
-		if (getSBArea().contains(mouseX, mouseY)) {
+		if (new Rectangle(svPos.x, svPos.y, PICKER_SIZE, PICKER_SIZE).contains(mouseX, mouseY)) {
 			setFocused(null);
 			dragMode = DragMode.SV;
-			updateFromMouse((int) mouseX, (int) mouseY);
+			updateFromMouse(mouseX, mouseY);
 			return true;
 		}
-		var hueBarArea = getHueBarArea();
-		if (hueBarArea.contains(mouseX, mouseY)) {
+		if (new Rectangle(svPos.x + PICKER_SIZE + PADDING, svPos.y, BAR_WIDTH, PICKER_SIZE).contains(mouseX, mouseY)) {
 			setFocused(null);
 			dragMode = DragMode.HUE;
-			updateFromMouse((int) mouseX, (int) mouseY);
+			updateFromMouse(mouseX, mouseY);
 			return true;
 		}
-		if (hasAlpha && getAlphaBarArea().contains(mouseX, mouseY)) {
+		if (hasAlpha && new Rectangle(svPos.x + PICKER_SIZE + PADDING + BAR_WIDTH + PADDING, svPos.y, BAR_WIDTH, PICKER_SIZE).contains(mouseX,
+			mouseY
+		)) {
 			setFocused(null);
 			dragMode = DragMode.ALPHA;
-			updateFromMouse((int) mouseX, (int) mouseY);
+			updateFromMouse(mouseX, mouseY);
 			return true;
 		}
 		var handled = super.mouseClicked(mouseX, mouseY, button);
 		if (!handled) setFocused(null);
 		return handled;
 	}
-	private Rectangle getSBArea() {
-		return new Rectangle(svPos.x, svPos.y, PICKER_SIZE, PICKER_SIZE);
-	}
-	private void updateFromMouse(int mouseX, int mouseY) {
+	private void updateFromMouse(double mouseX, double mouseY) {
 		if (dragMode == DragMode.SV) {
 			saturation = Mth.clamp((float) (mouseX - svPos.x) / (PICKER_SIZE - 1), 0f, 1f);
 			brightness = Mth.clamp(1f - (float) (mouseY - svPos.y) / (PICKER_SIZE - 1), 0f, 1f);
-		} else if (dragMode == DragMode.HUE) hue = Mth.clamp((float) (mouseY - svPos.y) / (PICKER_SIZE - 1), 0f, 1f);
-		else if (dragMode == DragMode.ALPHA) alpha = 255 - Mth.clamp((mouseY - svPos.y) * 255 / (PICKER_SIZE - 1), 0, 255);
+		} else if (dragMode == DragMode.HUE) {
+			hue = Mth.clamp((float) (mouseY - svPos.y) / (PICKER_SIZE - 1), 0f, 1f);
+			sbPixels = null;
+		} else if (dragMode == DragMode.ALPHA) alpha = 255 - Mth.clamp((int) ((mouseY - svPos.y) * 255 / (PICKER_SIZE - 1)), 0, 255);
 		updateHexInput();
-	}
-	private Rectangle getHueBarArea() {
-		return new Rectangle(getHueBarX(), svPos.y, BAR_WIDTH, PICKER_SIZE);
-	}
-	private Rectangle getAlphaBarArea() {
-		return new Rectangle(getAlphaBarX(), svPos.y, BAR_WIDTH, PICKER_SIZE);
 	}
 	@Override
 	public boolean mouseReleased(double mouseX, double mouseY, int button) {
@@ -282,35 +272,32 @@ public final class ColorPickerScreen extends Screen {
 	@Override
 	public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
 		if (button == 0 && dragMode != DragMode.NONE) {
-			updateFromMouse((int) mouseX, (int) mouseY);
+			updateFromMouse(mouseX, mouseY);
 			return true;
 		}
 		return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
 	}
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-		if (getHueBarArea().contains(mouseX, mouseY)) {
-			var hueStep = 0.005f;
-			hue = Mth.clamp(hue - (float) scrollY * hueStep, 0f, 1f);
+		if (new Rectangle(svPos.x + PICKER_SIZE + PADDING, svPos.y, BAR_WIDTH, PICKER_SIZE).contains(mouseX, mouseY)) {
+			hue = Mth.clamp(hue - (float) scrollY * 0.005f, 0f, 1f);
+			sbPixels = null;
 			updateHexInput();
 			return true;
 		}
-		if (hasAlpha && getAlphaBarArea().contains(mouseX, mouseY)) {
-			var alphaStep = 1;
-			alpha = Mth.clamp(alpha + (int) (scrollY * alphaStep), 0, 255);
+		if (hasAlpha && new Rectangle(svPos.x + PICKER_SIZE + PADDING + BAR_WIDTH + PADDING, svPos.y, BAR_WIDTH, PICKER_SIZE).contains(mouseX,
+			mouseY
+		)) {
+			alpha = Mth.clamp(alpha + (int) scrollY, 0, 255);
 			updateHexInput();
 			return true;
 		}
 		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
 	}
 	public enum DragMode {
-		/** 未拖拽 */
 		NONE,
-		/** 饱和度 / 亮度区域 */
 		SV,
-		/** 色相滑条 */
 		HUE,
-		/** 透明度滑条 */
 		ALPHA
 	}
 }

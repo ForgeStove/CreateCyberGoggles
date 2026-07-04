@@ -2,6 +2,7 @@ package io.github.forgestove.create_cyber_goggles.config.client.gui.entry;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.InputConstants.*;
 import io.github.forgestove.create_cyber_goggles.config.client.gui.*;
+import io.github.forgestove.create_cyber_goggles.config.client.gui.api.*;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -10,7 +11,7 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key> implements TabLifecycle, CrossRefreshable {
+public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key> implements TabLifecycle, CrossRefreshable, CaptureHandler {
 	private final Button bindButton;
 	private boolean capturing;
 	private CaptureCallback captureCallback = (e, c) -> {};
@@ -155,6 +156,6 @@ public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key> i
 	}
 	@FunctionalInterface
 	public interface CaptureCallback {
-		void onCaptureStateChanged(KeybindValueConfigEntry<?> entry, boolean capturing);
+		void onCaptureStateChanged(CaptureHandler entry, boolean capturing);
 	}
 }

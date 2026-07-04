@@ -16,16 +16,7 @@ import java.awt.*;
 import java.util.function.IntConsumer;
 import java.util.regex.Pattern;
 public final class ColorPickerScreen extends Screen {
-	/** 颜色选择区域的边长 */
-	private static final int PICKER_SIZE = 128;
-	/** 色相/透明度滑条宽度 */
-	private static final int BAR_WIDTH = 16;
-	/** 面板内边距 */
-	private static final int PADDING = ConfigEntry.GAP * 4;
-	/** 基础控件尺寸 */
-	private static final int SIZE = ConfigEntry.SIZE;
-	/** 确认/取消按钮宽度 */
-	private static final int BUTTON_WIDTH = SIZE * 2;
+	private static final int PICKER_SIZE = 128, BAR_WIDTH = 16, PADDING = 8, SIZE = ConfigEntry.SIZE, BUTTON_WIDTH = SIZE * 2;
 	private static final Pattern HEX_PATTERN = Pattern.compile("[0-9A-Fa-f]*");
 	private final Screen parent;
 	private final boolean hasAlpha;
@@ -35,21 +26,13 @@ public final class ColorPickerScreen extends Screen {
 	private final Point pickerPos = new Point();
 	/** 饱和度/亮度选择区坐标 */
 	private final Point svPos = new Point();
-	/** 色相 */
-	private float hue;
-	/** 饱和度 */
-	private float saturation = 1f;
-	/** 亮度 */
-	private float brightness = 1f;
-	/** 透明度 */
+	// 色相 / 饱和度 / 亮度
+	private float hue, saturation = 1f, brightness = 1f;
 	private int alpha = 255;
-	/** 当前拖拽模式 */
-	private DragMode dragMode = DragMode.NONE;
 	/** 饱和度/亮度方块缓存 */
 	private int[] sbPixels;
-	/** 缓存时对应的色相值 */
 	private float cachedHue = -1f;
-	/** 十六进制颜色输入框 */
+	private DragMode dragMode = DragMode.NONE;
 	private ConfigEditBox hexInput;
 	/** 防止输入框与颜色状态互相递归更新 */
 	private boolean updatingFromInput;

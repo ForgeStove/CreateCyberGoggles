@@ -1,4 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.config.client.gui;
+import io.github.forgestove.create_cyber_goggles.config.client.gui.api.TabLifecycle;
 import io.github.forgestove.create_cyber_goggles.config.client.gui.entry.ConfigEntry;
 import io.github.forgestove.create_cyber_goggles.config.tree.*;
 import net.minecraft.ChatFormatting;
@@ -12,13 +13,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.Consumer;
 public final class ConfigCategoryTab<C> implements Tab {
+	private static final Set<CategoryConfigNode<?>> expandedSubCategories = new HashSet<>();
+	private static final Set<CategoryConfigNode<?>> defaultsApplied = new HashSet<>();
 	private final ConfigScreen<C> screen;
 	private final CategoryConfigNode<C> category;
 	private final C config;
 	private final Component title;
 	private final ConfigEntryList list;
 	private final EntryTypeRegistry<C> entryTypeRegistry;
-	private final Set<CategoryConfigNode<C>> expandedSubCategories = new HashSet<>();
 	private TabButton tabButton;
 	public ConfigCategoryTab(ConfigScreen<C> screen, CategoryConfigNode<C> category, C config, EntryTypeRegistry<C> entryTypeRegistry) {
 		this.screen = screen;
@@ -26,7 +28,7 @@ public final class ConfigCategoryTab<C> implements Tab {
 		this.config = config;
 		this.entryTypeRegistry = entryTypeRegistry;
 		title = category.getTitle();
-		collectDefaultExpanded(category);
+		if (defaultsApplied.add(category)) collectDefaultExpanded(category);
 		list = new ConfigEntryList(
 			this,
 			getMinecraft(),
@@ -106,6 +108,9 @@ public final class ConfigCategoryTab<C> implements Tab {
 	}
 	public C getConfig() {
 		return config;
+	}
+	public CategoryConfigNode<C> getCategoryNode() {
+		return category;
 	}
 	public void setTabButton(TabButton tabButton) {
 		this.tabButton = tabButton;

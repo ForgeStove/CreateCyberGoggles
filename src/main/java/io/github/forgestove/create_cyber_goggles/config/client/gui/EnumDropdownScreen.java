@@ -20,7 +20,7 @@ public final class EnumDropdownScreen extends Screen {
 	private final Supplier<Enum<?>> selectedSupplier;
 	private final Consumer<Enum<?>> onSelect;
 	private final Function<Enum<?>, Component> displayMapper;
-	private final Screen parentScreen;
+	private final Screen parent;
 	private final Button dropdownButton;
 	private final SmoothScroll smoothScrool;
 	private int maxVisibleOptions;
@@ -31,7 +31,7 @@ public final class EnumDropdownScreen extends Screen {
 		Supplier<Enum<?>> selectedSupplier,
 		Consumer<Enum<?>> onSelect,
 		Function<Enum<?>, Component> displayMapper,
-		Screen parentScreen,
+		Screen parent,
 		Button dropdownButton
 	) {
 		super(Component.empty());
@@ -39,7 +39,7 @@ public final class EnumDropdownScreen extends Screen {
 		this.selectedSupplier = selectedSupplier;
 		this.onSelect = onSelect;
 		this.displayMapper = displayMapper;
-		this.parentScreen = parentScreen;
+		this.parent = parent;
 		this.dropdownButton = dropdownButton;
 		update();
 		smoothScrool = new SmoothScroll(value -> smoothScrollOffset = value, () -> smoothScrollOffset, this::getMaxScrollOffset);
@@ -47,7 +47,7 @@ public final class EnumDropdownScreen extends Screen {
 	private void update() {
 		maxVisibleOptions = Math.min(
 			values.length,
-			(parentScreen.height - dropdownButton.getY() - dropdownButton.getHeight() - HEIGHT) / (HEIGHT + GAP)
+			(parent.height - dropdownButton.getY() - dropdownButton.getHeight() - HEIGHT) / (HEIGHT + GAP)
 		);
 		smoothScrollOffset = Mth.clamp(
 			Arrays.asList(values).indexOf(selectedSupplier.get()) - maxVisibleOptions / 2,
@@ -65,7 +65,7 @@ public final class EnumDropdownScreen extends Screen {
 		pose.pushPose();
 		pose.translate(0, 0, -100);
 		// 将父屏幕绘制为背景
-		parentScreen.render(gui, 0, 0, delta);
+		parent.render(gui, 0, 0, delta);
 		pose.popPose();
 		var dropdownX = dropdownButton.getX();
 		var dropdownY = dropdownY();
@@ -106,7 +106,7 @@ public final class EnumDropdownScreen extends Screen {
 	}
 	@Override
 	public void resize(@NotNull Minecraft minecraft, int width, int height) {
-		parentScreen.resize(minecraft, width, height);
+		parent.resize(minecraft, width, height);
 		update();
 	}
 	private int dropdownY() {
@@ -133,7 +133,7 @@ public final class EnumDropdownScreen extends Screen {
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		if (isOutsidePanel(mouseX, mouseY)) {
-			getMinecraft().setScreen(parentScreen);
+			getMinecraft().setScreen(parent);
 			playClickSound();
 			return true;
 		}
@@ -150,7 +150,7 @@ public final class EnumDropdownScreen extends Screen {
 			var contentWidth = getContentWidth();
 			if (mouseY >= y && mouseY < y + HEIGHT && mouseX >= dropdownButton.getX() && mouseX < dropdownButton.getX() + contentWidth) {
 				onSelect.accept(values[index]);
-				getMinecraft().setScreen(parentScreen);
+				getMinecraft().setScreen(parent);
 				playClickSound();
 				return true;
 			}

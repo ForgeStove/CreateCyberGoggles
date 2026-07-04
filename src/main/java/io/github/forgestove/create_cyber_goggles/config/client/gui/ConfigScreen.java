@@ -1,7 +1,8 @@
 package io.github.forgestove.create_cyber_goggles.config.client.gui;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import io.github.forgestove.create_cyber_goggles.config.client.*;
-import io.github.forgestove.create_cyber_goggles.config.client.gui.entry.KeybindValueConfigEntry;
+import io.github.forgestove.create_cyber_goggles.config.client.gui.api.CaptureHandler;
+import io.github.forgestove.create_cyber_goggles.config.client.gui.entry.ConfigEntry;
 import io.github.forgestove.create_cyber_goggles.config.tree.*;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.components.*;
@@ -16,31 +17,28 @@ import java.util.function.Consumer;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public final class ConfigScreen<C> extends Screen {
-	/** 按配置屏幕类型缓存最后选择的标签索引 */
-	private static final Map<String, Integer> lastSelectedTabCache = new HashMap<>();
+	private static CategoryConfigNode<?> lastSelectedCategory;
 	public final RootConfigNode<C> root;
 	private final C config;
 	private final Consumer<C> onSave;
-	private final Screen previous;
+	private final Screen parent;
 	private final HeaderAndFooterLayout layout;
 	private final TabManager tabManager;
-	private final String cacheKey;
 	private CategoryConfigNode<C> keybindCategory;
 	private TabNavigationBar tabNavigationBar;
 	private List<ConfigCategoryTab<C>> tabs;
-	private Button quitButton;
-	private Button saveAndQuitButton;
-	private KeybindValueConfigEntry<?> capturingEntry;
+	private Button cancelButton;
+	private Button saveButton;
+	private CaptureHandler capturingEntry;
 	public ConfigScreen(RootConfigNode<C> root, C config, Consumer<C> onSave) {
 		super(root.getTitle());
 		this.root = root;
 		this.config = config;
 		this.onSave = onSave;
-		previous = mc.screen;
+		parent = mc.screen;
 		layout = new HeaderAndFooterLayout(this, 33, 33);
 		tabManager = new TabManager(this::addRenderableWidget, this::removeWidget);
 		tabs = List.of();
-		cacheKey = root.getTitle().getString();
 		keybindCategory = null;
 	}
 	@Override
@@ -53,20 +51,16 @@ public final class ConfigScreen<C> extends Screen {
 		return super.keyPressed(keyCode, scanCode, modifiers);
 	}
 	private void cacheCurrentTabIndex() {
-		for (var i = 0; i < tabs.size(); i++) {
-			if (tabManager.getCurrentTab() != tabs.get(i)) continue;
-			lastSelectedTabCache.put(cacheKey, i);
-			break;
-		}
+		if (tabManager.getCurrentTab() instanceof ConfigCategoryTab<?> tab) lastSelectedCategory = tab.getCategoryNode();
 	}
 	@Override
 	public void onClose() {
 		if (isActiveValue()) {
-			getMinecraft().setScreen(previous);
+			getMinecraft().setScreen(parent);
 			return;
 		}
 		getMinecraft().setScreen(new ConfirmScreen(
-			confirmed -> getMinecraft().setScreen(confirmed ? previous : this),
+			confirmed -> getMinecraft().setScreen(confirmed ? parent : this),
 			Translation.QUIT_CONFIRM_TITLE,
 			Translation.QUIT_CONFIRM_WARNING,
 			Translation.QUIT_CONFIRM_LABEL,
@@ -98,16 +92,14 @@ public final class ConfigScreen<C> extends Screen {
 		initTabs(tabNavigationBar);
 		addRenderableWidget(tabNavigationBar);
 		var footerLayout = layout.addToFooter(LinearLayout.horizontal().spacing(8));
-		quitButton = footerLayout.addChild(Button.builder(getQuitLabel(), b -> onClose()).width(200).build());
-		saveAndQuitButton = footerLayout.addChild(Button.builder(getSaveLabel(), b -> saveAndQuit()).width(200).build());
-		saveAndQuitButton.active = !isActiveValue() && validate() == null;
+		var buttonWidth = ConfigEntry.SIZE * 8;
+		cancelButton = footerLayout.addChild(Button.builder(getCancelLabel(), b -> onClose()).width(buttonWidth).build());
+		saveButton = footerLayout.addChild(Button.builder(getSaveLabel(false), b -> saveAndQuit()).width(buttonWidth).build());
 		layout.visitWidgets(abstractWidget -> {
 			abstractWidget.setTabOrderGroup(1);
 			addRenderableWidget(abstractWidget);
 		});
-		int cachedTabIndex = lastSelectedTabCache.getOrDefault(cacheKey, 0);
-		if (cachedTabIndex >= tabs.size()) cachedTabIndex = 0;
-		tabNavigationBar.selectTab(cachedTabIndex, false);
+		tabNavigationBar.selectTab(lastTabIndex(), false);
 		repositionElements();
 	}
 	@Override
@@ -121,70 +113,6 @@ public final class ConfigScreen<C> extends Screen {
 		tabManager.setTabArea(screenRectangle);
 		layout.setHeaderHeight(i);
 		layout.arrangeElements();
-	}
-	private void initTabs(TabNavigationBar bar) {
-		var i = 0;
-		for (var child : bar.children()) if (child instanceof TabButton tabButton) tabs.get(i++).setTabButton(tabButton);
-	}
-	public void onEntryCaptureChanged(KeybindValueConfigEntry<?> entry, boolean capturing) {
-		capturingEntry = capturing ? entry : null;
-	}
-	@Override
-	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		if (capturingEntry != null && capturingEntry.handleCaptureMouse(button)) return true;
-		var result = super.mouseClicked(mouseX, mouseY, button);
-		cacheCurrentTabIndex();
-		return result;
-	}
-	public void saveAndQuit() {
-		var restartRequired = root.restartRequired(config);
-		root.writeEditingToConfig(config);
-		if (keybindCategory != null) keybindCategory.writeEditingToConfig(config);
-		getMinecraft().options.save();
-		onSave.accept(config);
-		ClientLockManager.flushPendingLocks(root.modId);
-		getMinecraft().setScreen(restartRequired ? new ConfirmScreen(
-			confirmed -> {
-				if (confirmed) getMinecraft().stop();
-				else getMinecraft().setScreen(previous);
-			},
-			Translation.RESTART_REQUIRED_TITLE,
-			Translation.RESTART_REQUIRED_LABEL,
-			Translation.QUIT_GAME,
-			Translation.IGNORE_RESTART_LABEL
-		) : previous);
-	}
-	public int getHeaderHeight() {
-		return layout.getHeaderHeight();
-	}
-	public int getFooterHeight() {
-		return layout.getFooterHeight();
-	}
-	public void refresh() {
-		tabs.forEach(ConfigCategoryTab::refresh);
-		var hasEntryError = tabs.stream().anyMatch(ConfigCategoryTab::hasEntryError);
-		saveAndQuitButton.active = !isActiveValue() && validate() == null && !hasEntryError;
-		quitButton.setMessage(getQuitLabel());
-		saveAndQuitButton.setMessage(getSaveLabel(hasEntryError));
-	}
-	private boolean isActiveValue() {
-		if (ClientLockManager.hasPendingLocks()) return false;
-		return root.isActiveValue(config) && (keybindCategory == null || keybindCategory.isActiveValue(config));
-	}
-	private Component validate() {
-		var rootError = root.validate(config);
-		if (rootError != null) return rootError;
-		if (keybindCategory != null) return keybindCategory.validate(config);
-		return null;
-	}
-	private Component getQuitLabel() {
-		return isActiveValue() ? Translation.CANCEL_LABEL : Translation.QUIT_UNSAVED_LABEL;
-	}
-	private Component getSaveLabel(boolean hasEntryError) {
-		return validate() == null && !hasEntryError ? Translation.SAVE_LABEL : Translation.CANNOT_SAVE_LABEL;
-	}
-	private Component getSaveLabel() {
-		return getSaveLabel(false);
 	}
 	private CategoryConfigNode<C> buildKeybindCategory() {
 		var allMappings = getMinecraft().options.keyMappings;
@@ -204,5 +132,72 @@ public final class ConfigScreen<C> extends Screen {
 			.valueWriter((config, valueKey) -> mapping.setKey(valueKey))
 			.requiresRestart(false)));
 		return builder.build();
+	}
+	private void initTabs(TabNavigationBar bar) {
+		var i = 0;
+		for (var child : bar.children()) if (child instanceof TabButton tabButton) tabs.get(i++).setTabButton(tabButton);
+	}
+	private Component getCancelLabel() {
+		return isActiveValue() ? Translation.CANCEL_LABEL : Translation.QUIT_UNSAVED_LABEL;
+	}
+	private Component getSaveLabel(boolean hasEntryError) {
+		return validate() == null && !hasEntryError ? Translation.SAVE_LABEL : Translation.CANNOT_SAVE_LABEL;
+	}
+	public void saveAndQuit() {
+		var restartRequired = root.restartRequired(config);
+		root.writeEditingToConfig(config);
+		if (keybindCategory != null) keybindCategory.writeEditingToConfig(config);
+		getMinecraft().options.save();
+		onSave.accept(config);
+		ClientLockManager.flushPendingLocks(root.modId);
+		getMinecraft().setScreen(restartRequired ? new ConfirmScreen(
+			confirmed -> {
+				if (confirmed) getMinecraft().stop();
+				else getMinecraft().setScreen(parent);
+			},
+			Translation.RESTART_REQUIRED_TITLE,
+			Translation.RESTART_REQUIRED_LABEL,
+			Translation.QUIT_GAME,
+			Translation.IGNORE_RESTART_LABEL
+		) : parent);
+	}
+	private int lastTabIndex() {
+		if (lastSelectedCategory == null) return 0;
+		for (var i = 0; i < tabs.size(); i++)
+			if (tabs.get(i).getCategoryNode() == lastSelectedCategory) return i;
+		return 0;
+	}
+	private boolean isActiveValue() {
+		if (ClientLockManager.hasPendingLocks()) return false;
+		return root.isActiveValue(config) && (keybindCategory == null || keybindCategory.isActiveValue(config));
+	}
+	private Component validate() {
+		var rootError = root.validate(config);
+		if (rootError != null) return rootError;
+		if (keybindCategory != null) return keybindCategory.validate(config);
+		return null;
+	}
+	public void refresh() {
+		tabs.forEach(ConfigCategoryTab::refresh);
+		var hasEntryError = tabs.stream().anyMatch(ConfigCategoryTab::hasEntryError);
+		saveButton.active = !isActiveValue() && validate() == null && !hasEntryError;
+		cancelButton.setMessage(getCancelLabel());
+		saveButton.setMessage(getSaveLabel(hasEntryError));
+	}
+	public void onEntryCaptureChanged(CaptureHandler entry, boolean capturing) {
+		capturingEntry = capturing ? entry : null;
+	}
+	@Override
+	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		if (capturingEntry != null && capturingEntry.handleCaptureMouse(button)) return true;
+		var result = super.mouseClicked(mouseX, mouseY, button);
+		cacheCurrentTabIndex();
+		return result;
+	}
+	public int getHeaderHeight() {
+		return layout.getHeaderHeight();
+	}
+	public int getFooterHeight() {
+		return layout.getFooterHeight();
 	}
 }

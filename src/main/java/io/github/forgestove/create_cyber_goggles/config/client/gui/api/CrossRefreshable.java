@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.config.client.gui;
+package io.github.forgestove.create_cyber_goggles.config.client.gui.api;
 import io.github.forgestove.create_cyber_goggles.config.client.gui.entry.ConfigEntry;
 
 import java.util.List;

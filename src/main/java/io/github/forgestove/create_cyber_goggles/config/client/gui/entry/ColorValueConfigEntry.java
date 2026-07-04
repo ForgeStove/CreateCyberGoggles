@@ -16,7 +16,7 @@ public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer>
 	public final Button pickerButton;
 	public final ColorPreviewWidget previewWidget;
 	public final boolean hasAlpha;
-	public ColorValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Integer> node) {
+	public ColorValueConfigEntry(ConfigCategoryTab<C, Integer> tab, ValueConfigNode<C, Integer> node) {
 		super(tab, node);
 		hasAlpha = node.colorHasAlpha();
 		previewWidget = new ColorPreviewWidget(0, 0, SIZE, SIZE, hasAlpha, this::getValue);
@@ -58,7 +58,7 @@ public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer>
 	@Override
 	public void refresh() {
 		var maxLength = getMaxLength();
-		var isValid = valueNode.validate(tab.getConfig()) == null && inputField.getValue().length() == maxLength;
+		var isValid = valueNode.validate(tab.config) == null && inputField.getValue().length() == maxLength;
 		if (isValid) {
 			var valueStr = formatColor(getValue());
 			if (!inputField.isFocused() && !inputField.getValue().equalsIgnoreCase(valueStr)) inputField.setValue(valueStr);

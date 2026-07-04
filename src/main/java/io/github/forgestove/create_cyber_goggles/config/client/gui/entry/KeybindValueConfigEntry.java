@@ -18,13 +18,13 @@ public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key> i
 	private CaptureCallback captureCallback = (e, c) -> {};
 	private KeybindState state = KeybindState.BOUND;
 	private List<Component> conflictUsages = List.of();
-	public KeybindValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Key> valueNode) {
+	public KeybindValueConfigEntry(ConfigCategoryTab<C, Key> tab, ValueConfigNode<C, Key> valueNode) {
 		super(tab, valueNode);
 		bindButton = Button.builder(
 			Component.empty(), b -> {
 				capturing = true;
 				captureCallback.onCaptureStateChanged(this, true);
-				this.tab.getScreen().refresh();
+				this.tab.screen.refresh();
 			}
 		).size(WIDTH, HEIGHT).build();
 		children.add(bindButton);
@@ -47,20 +47,13 @@ public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key> i
 		}
 		return Component.translatable("controls.keybinds.duplicateKeybinds", usedBy);
 	}
-	@Override
-	public void onAttachedToTab(ConfigCategoryTab<?> tab) {
-		setCaptureCallback(tab.getScreen()::onEntryCaptureChanged);
-	}
-	public void setCaptureCallback(CaptureCallback callback) {
-		captureCallback = callback;
-	}
 	public boolean handleCaptureKey(int keyCode) {
 		if (!capturing) return false;
 		if (keyCode == InputConstants.KEY_ESCAPE) setValue(InputConstants.UNKNOWN);
 		else setValue(Type.KEYSYM.getOrCreate(keyCode));
 		capturing = false;
 		captureCallback.onCaptureStateChanged(this, false);
-		tab.getScreen().refresh();
+		tab.screen.refresh();
 		return true;
 	}
 	public boolean handleCaptureMouse(int button) {
@@ -68,7 +61,7 @@ public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key> i
 		setValue(Type.MOUSE.getOrCreate(button));
 		capturing = false;
 		captureCallback.onCaptureStateChanged(this, false);
-		tab.getScreen().refresh();
+		tab.screen.refresh();
 		return true;
 	}
 	@Override
@@ -124,7 +117,7 @@ public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key> i
 			var usages = new ArrayList<Component>();
 			for (var localEntry : localKeyEntries.getOrDefault(key, List.of())) {
 				if (localEntry == keyEntry) continue;
-				usages.add(localEntry.getDisplayTitle());
+				usages.add(localEntry.valueNode.getTitle());
 			}
 			usages.addAll(registeredKeyUsages.getOrDefault(key, List.of()));
 			keyEntry.setConflictUsages(usages);
@@ -140,8 +133,12 @@ public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key> i
 	public void setConflictUsages(List<Component> conflictUsages) {
 		this.conflictUsages = conflictUsages;
 	}
-	public Component getDisplayTitle() {
-		return valueNode.getTitle();
+	@Override
+	public void onAttachedToTab(ConfigCategoryTab<?, ?> tab) {
+		setCaptureCallback(tab.screen::onEntryCaptureChanged);
+	}
+	public void setCaptureCallback(CaptureCallback callback) {
+		captureCallback = callback;
 	}
 	public enum KeybindState {
 		UNBOUND(ChatFormatting.DARK_GRAY),

@@ -8,11 +8,11 @@ import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEntry> {
-	private final ConfigScreen<?> screen;
-	private final SmoothScroll smoothScroll = new SmoothScroll(this::setScrollAmount, this::getScrollAmount, this::getMaxScroll);
+public final class ConfigEntryList<C, V> extends ContainerObjectSelectionList<ConfigEntry> {
+	private final ConfigScreen<C, V> screen;
 	private final Highlight highlight = new Highlight(() -> children().indexOf(getHovered()), this::getRowTop);
-	public ConfigEntryList(@NotNull ConfigScreen<?> screen, @NotNull Iterable<ConfigEntry> entries) {
+	private final SmoothScroll smoothScroll = new SmoothScroll(this::setScrollAmount, this::getScrollAmount, this::getMaxScroll);
+	public ConfigEntryList(@NotNull ConfigScreen<C, V> screen, @NotNull Iterable<ConfigEntry> entries) {
 		super(
 			ClientUtil.mc,
 			screen.width,

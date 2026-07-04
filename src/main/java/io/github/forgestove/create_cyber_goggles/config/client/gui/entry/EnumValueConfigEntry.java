@@ -9,14 +9,14 @@ import org.jetbrains.annotations.NotNull;
 public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum<?>> {
 	private final Button dropdownButton;
 	private final String enumClassName;
-	public EnumValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Enum<?>> node) {
+	public EnumValueConfigEntry(ConfigCategoryTab<C, Enum<?>> tab, ValueConfigNode<C, Enum<?>> node) {
 		super(tab, node);
 		enumClassName = node.getValueType().getSimpleName();
 		dropdownButton = Button.builder(getDisplayComponent(getValue()), this::openDropdown).size(WIDTH, HEIGHT).build();
 		children.add(dropdownButton);
 	}
 	private Component getDisplayComponent(Enum<?> value) {
-		return Component.translatable("%s.config.enum.%s.%s".formatted(tab.getScreen().root.modId, enumClassName, value.name()));
+		return Component.translatable("%s.config.enum.%s.%s".formatted(tab.screen.root.modId, enumClassName, value.name()));
 	}
 	private void openDropdown(Button button) {
 		var mc = ClientUtil.mc;

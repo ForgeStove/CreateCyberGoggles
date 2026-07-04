@@ -16,7 +16,7 @@ public final class PointValueConfigEntry<C> extends ValueConfigEntry<C, Point> {
 	public final ConfigEditBox xField;
 	public final ConfigEditBox yField;
 	private boolean updatingFromCode = false;
-	public PointValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Point> node) {
+	public PointValueConfigEntry(ConfigCategoryTab<C, Point> tab, ValueConfigNode<C, Point> node) {
 		super(tab, node);
 		var width = (WIDTH - GAP) / 2;
 		var font = ClientUtil.mc.font;
@@ -51,7 +51,7 @@ public final class PointValueConfigEntry<C> extends ValueConfigEntry<C, Point> {
 	}
 	@Override
 	public void refresh() {
-		var hasError = valueNode.validate(tab.getConfig()) != null;
+		var hasError = valueNode.validate(tab.config) != null;
 		if (!hasError) {
 			var point = getValue();
 			if (!xField.isFocused()) {

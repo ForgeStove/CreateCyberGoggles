@@ -7,28 +7,28 @@ import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.tabs.Tab;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Consumer;
-public final class ConfigCategoryTab<C> implements Tab {
+public final class ConfigCategoryTab<C, V> implements Tab {
 	private static final Set<CategoryConfigNode<?>> expandedSubCategories = new HashSet<>();
 	private static final Set<CategoryConfigNode<?>> defaultsApplied = new HashSet<>();
-	private final ConfigScreen<C> screen;
-	private final CategoryConfigNode<C> category;
-	private final C config;
+	public final ConfigScreen<C, V> screen;
+	public final CategoryConfigNode<C> node;
+	public final C config;
+	public final ConfigEntryList<C, V> list;
 	private final Component title;
-	private final ConfigEntryList list;
 	private final EntryTypeRegistry<C> entryTypeRegistry;
 	private TabButton tabButton;
-	public ConfigCategoryTab(ConfigScreen<C> screen, CategoryConfigNode<C> category, C config, EntryTypeRegistry<C> entryTypeRegistry) {
+	public ConfigCategoryTab(ConfigScreen<C, V> screen, CategoryConfigNode<C> node, C config, EntryTypeRegistry<C> entryTypeRegistry) {
 		this.screen = screen;
-		this.category = category;
+		this.node = node;
 		this.config = config;
 		this.entryTypeRegistry = entryTypeRegistry;
-		title = category.getTitle();
-		if (defaultsApplied.add(category)) collectDefaultExpanded(category);
-		list = new ConfigEntryList(screen, buildEntries(category));
+		title = node.getTitle();
+		if (defaultsApplied.add(node)) collectDefaultExpanded(node);
+		list = new ConfigEntryList<>(screen, buildEntries(node));
 	}
 	@NotNull
 	@Override
@@ -43,7 +43,7 @@ public final class ConfigCategoryTab<C> implements Tab {
 	public void doLayout(ScreenRectangle screenRectangle) {
 		list.setRectangle(screenRectangle.width(), screenRectangle.height(), screenRectangle.left(), screenRectangle.top());
 	}
-	public List<ConfigEntry> buildEntries(CategoryConfigNode<C> node) {
+	public @NotNull List<ConfigEntry> buildEntries(CategoryConfigNode<C> node) {
 		return buildEntries(node, 0);
 	}
 	private @NotNull List<ConfigEntry> buildEntries(@NotNull CategoryConfigNode<C> node, int depth) {
@@ -56,10 +56,11 @@ public final class ConfigCategoryTab<C> implements Tab {
 				entries.add(entry);
 			} else if (child instanceof CategoryConfigNode<C> subNode) {
 				var expanded = expandedSubCategories.contains(subNode);
-				entries.add(entryTypeRegistry.createCategoryEntry(subNode, expanded, depth, () -> {
+				entries.add(entryTypeRegistry.createCategoryEntry(
+					subNode, expanded, depth, () -> {
 						if (expandedSubCategories.contains(subNode)) expandedSubCategories.remove(subNode);
 						else expandedSubCategories.add(subNode);
-						list.replaceAllEntries(buildEntries(category));
+						list.replaceAllEntries(buildEntries(this.node));
 					}
 				));
 				if (expanded) entries.addAll(buildEntries(subNode, depth + 1));
@@ -73,13 +74,10 @@ public final class ConfigCategoryTab<C> implements Tab {
 			collectDefaultExpanded(subNode);
 		}
 	}
-	public ConfigScreen<C> getScreen() {
-		return screen;
-	}
 	public void refresh() {
-		var hasChanged = !category.isActiveValue(config);
-		var hasError = category.validate(config) != null || hasEntryError();
-		tabButton.setMessage(styleAsState(title, hasError, hasChanged));
+		var hasChanged = !node.isActiveValue(config);
+		var hasError = node.validate(config) != null || hasEntryError();
+		if (tabButton != null) tabButton.setMessage(styleAsState(title, hasError, hasChanged));
 		list.refresh();
 	}
 	public boolean hasEntryError() {
@@ -91,12 +89,6 @@ public final class ConfigCategoryTab<C> implements Tab {
 		else if (hasChanged) result.withStyle(ChatFormatting.YELLOW);
 		if (hasChanged) result.withStyle(ChatFormatting.ITALIC);
 		return result;
-	}
-	public C getConfig() {
-		return config;
-	}
-	public CategoryConfigNode<C> getCategoryNode() {
-		return category;
 	}
 	public void setTabButton(TabButton tabButton) {
 		this.tabButton = tabButton;

@@ -5,5 +5,5 @@ import io.github.forgestove.create_cyber_goggles.config.client.gui.ConfigCategor
  * 实现类可在此完成回调注册等初始化逻辑。
  */
 public interface TabLifecycle {
-	void onAttachedToTab(ConfigCategoryTab<?> tab);
+	void onAttachedToTab(ConfigCategoryTab<?, ?> tab);
 }

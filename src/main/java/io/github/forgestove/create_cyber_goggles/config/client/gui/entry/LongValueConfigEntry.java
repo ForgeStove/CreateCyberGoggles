@@ -5,7 +5,7 @@ import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode;
 import java.util.regex.Pattern;
 public final class LongValueConfigEntry<C> extends GenericValueConfigEntry<C, Long> {
 	public static final Pattern LONG_PATTERN = Pattern.compile("-?\\d*");
-	public LongValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Long> node) {
+	public LongValueConfigEntry(ConfigCategoryTab<C, Long> tab, ValueConfigNode<C, Long> node) {
 		super(tab, node, s -> isZero(s) ? 0L : Long.parseLong(s), s -> isZero(s) || LONG_PATTERN.matcher(s).matches());
 	}
 }

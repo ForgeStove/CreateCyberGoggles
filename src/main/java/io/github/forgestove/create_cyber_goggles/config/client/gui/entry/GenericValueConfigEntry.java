@@ -16,7 +16,7 @@ public abstract class GenericValueConfigEntry<C, V> extends ValueConfigEntry<C, 
 	private boolean hasParseError = false;
 	private boolean updatingFromCode = false;
 	public GenericValueConfigEntry(
-		ConfigCategoryTab<C> tab,
+		ConfigCategoryTab<C, V> tab,
 		ValueConfigNode<C, V> valueNode,
 		Function<String, V> parser,
 		Predicate<String> validator
@@ -34,7 +34,7 @@ public abstract class GenericValueConfigEntry<C, V> extends ValueConfigEntry<C, 
 		if (updatingFromCode) return;
 		if (!validator.test(value)) {
 			hasParseError = true;
-			tab.getScreen().refresh();
+			tab.screen.refresh();
 			return;
 		}
 		try {
@@ -43,7 +43,7 @@ public abstract class GenericValueConfigEntry<C, V> extends ValueConfigEntry<C, 
 		} catch (Exception e) {
 			hasParseError = true;
 		}
-		tab.getScreen().refresh();
+		tab.screen.refresh();
 	}
 	@Override
 	public void resetToDefault() {
@@ -52,20 +52,20 @@ public abstract class GenericValueConfigEntry<C, V> extends ValueConfigEntry<C, 
 		updatingFromCode = true;
 		inputField.setValue(getValue().toString());
 		updatingFromCode = false;
-		tab.getScreen().refresh();
+		tab.screen.refresh();
 	}
 	@Override
 	public void resetToActive() {
 		hasParseError = false;
-		valueNode.resetToActive(tab.getConfig());
+		valueNode.resetToActive(tab.config);
 		updatingFromCode = true;
 		inputField.setValue(getValue().toString());
 		updatingFromCode = false;
-		tab.getScreen().refresh();
+		tab.screen.refresh();
 	}
 	@Override
 	public void refresh() {
-		var hasError = hasParseError || valueNode.validate(tab.getConfig()) != null;
+		var hasError = hasParseError || valueNode.validate(tab.config) != null;
 		if (!hasError) {
 			var valueStr = getValue().toString();
 			if (!isZero(inputField.getValue())) try {

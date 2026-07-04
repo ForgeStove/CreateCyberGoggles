@@ -21,6 +21,6 @@ public final class ConfigScreenFactory {
 		return create(handler);
 	}
 	private static <C> Screen create(ConfigHandler<C> handler) {
-		return new ConfigScreen<>(handler.getConfigTree(), handler.getConfig(), handler::save);
+		return new ConfigScreen<>(handler);
 	}
 }

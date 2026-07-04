@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 public final class BooleanValueConfigEntry<C> extends ValueConfigEntry<C, Boolean> {
 	private final CycleButton<Boolean> valueButton;
-	public BooleanValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Boolean> node) {
+	public BooleanValueConfigEntry(ConfigCategoryTab<C, Boolean> tab, ValueConfigNode<C, Boolean> node) {
 		super(tab, node);
 		valueButton = CycleButton.booleanBuilder(
 				CommonComponents.GUI_YES.copy().withStyle(ChatFormatting.GREEN),

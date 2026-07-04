@@ -17,7 +17,7 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 	public final Button resetButton;
 	public final Button undoButton;
 	public final Button lockButton;
-	public final ConfigCategoryTab<C> tab;
+	public final ConfigCategoryTab<C, V> tab;
 	public final List<AbstractWidget> children = new ArrayList<>();
 	public final ValueConfigNode<C, V> valueNode;
 	public final Component label;
@@ -25,7 +25,7 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 	public List<FormattedCharSequence> tooltipWithError;
 	@Nullable public Component validationError;
 	public boolean hasChanged;
-	public ValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, V> node) {
+	public ValueConfigEntry(ConfigCategoryTab<C, V> tab, ValueConfigNode<C, V> node) {
 		valueNode = node;
 		this.tab = tab;
 		label = valueNode.getTitle().copy().withStyle(ChatFormatting.WHITE);
@@ -40,8 +40,8 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 			.size(Math.max(font.width(Translation.UNDO_LABEL) + 6, SIZE), SIZE)
 			.tooltip(Tooltip.create(Translation.UNDO_TOOLTIP))
 			.build();
-		resetButton.active = !valueNode.isDefaultValue(this.tab.getConfig());
-		undoButton.active = !valueNode.isActiveValue(this.tab.getConfig());
+		resetButton.active = !valueNode.isDefaultValue(this.tab.config);
+		undoButton.active = !valueNode.isActiveValue(this.tab.config);
 		lockButton = Button.builder(Translation.UNLOCK_LABEL, b -> onLockToggle())
 			.size(Math.max(font.width(Translation.UNLOCK_LABEL) + 6, SIZE), SIZE)
 			.tooltip(Tooltip.create(Translation.UNLOCK_TOOLTIP))
@@ -59,36 +59,30 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 		if (validationError != null) errorTooltip.add(validationError.copy().withStyle(ChatFormatting.RED).getVisualOrderText());
 		return errorTooltip;
 	}
+	@Override
+	public boolean hasError() {
+		return validationError != null;
+	}
 	public void resetToDefault() {
 		var path = valueNode.getPath();
 		var pending = ClientLockManager.getPendingLock(path);
 		if (pending != Boolean.FALSE) ClientLockManager.clearPendingLock(path);
 		valueNode.resetToDefault();
-		tab.getScreen().refresh();
+		tab.screen.refresh();
 	}
 	public void resetToActive() {
 		var path = valueNode.getPath();
 		var pending = ClientLockManager.getPendingLock(path);
 		if (pending != Boolean.FALSE) ClientLockManager.clearPendingLock(path);
-		valueNode.resetToActive(tab.getConfig());
-		tab.getScreen().refresh();
+		valueNode.resetToActive(tab.config);
+		tab.screen.refresh();
 	}
 	/** 切换待处理的锁定状态（延迟至保存时执行）。 */
 	private void onLockToggle() {
 		var path = valueNode.getPath();
 		var shouldLock = !isLocked(); // effective state, considering pending
 		ClientLockManager.setPendingLock(path, shouldLock);
-		tab.getScreen().refresh();
-	}
-	private boolean canLock() {
-		var mc = Minecraft.getInstance();
-		return mc.player != null && mc.player.hasPermissions(2);
-	}
-	private boolean shouldShowLockButton() {
-		var mc = Minecraft.getInstance();
-		if (mc.player == null) return false;
-		if (mc.isSingleplayer()) return false;
-		return ClientLockManager.hasReceivedSync();
+		tab.screen.refresh();
 	}
 	/**
 	 * 检查此条目的有效锁定状态。
@@ -100,12 +94,22 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 		if (pending != null) return pending;
 		return ClientLockManager.isLocked(path);
 	}
+	private boolean canLock() {
+		var mc = Minecraft.getInstance();
+		return mc.player != null && mc.player.hasPermissions(2);
+	}
+	private boolean shouldShowLockButton() {
+		var mc = Minecraft.getInstance();
+		if (mc.player == null) return false;
+		if (mc.isSingleplayer()) return false;
+		return ClientLockManager.hasReceivedSync();
+	}
 	public V getValue() {
-		return valueNode.getEditingValue(tab.getConfig());
+		return valueNode.getEditingValue(tab.config);
 	}
 	public void setValue(V value) {
 		valueNode.setEditingValue(value);
-		tab.getScreen().refresh();
+		tab.screen.refresh();
 	}
 	@NotNull
 	@Override
@@ -117,7 +121,7 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 	public List<? extends NarratableEntry> narratables() {
 		return children;
 	}
-	@Nullable
+	@Override
 	public List<FormattedCharSequence> getTooltip() {
 		return hasError() ? tooltipWithError : tooltip;
 	}
@@ -125,10 +129,10 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 	public void refresh() {
 		var locked = isLocked();
 		var hasPendingLock = Boolean.TRUE.equals(ClientLockManager.getPendingLock(valueNode.getPath()));
-		resetButton.active = !locked && !valueNode.isDefaultValue(tab.getConfig());
-		undoButton.active = !locked && !valueNode.isActiveValue(tab.getConfig());
-		validationError = valueNode.validate(tab.getConfig());
-		hasChanged = hasPendingLock || !locked && !valueNode.isActiveValue(tab.getConfig());
+		resetButton.active = !locked && !valueNode.isDefaultValue(tab.config);
+		undoButton.active = !locked && !valueNode.isActiveValue(tab.config);
+		validationError = valueNode.validate(tab.config);
+		hasChanged = hasPendingLock || !locked && !valueNode.isActiveValue(tab.config);
 		tooltipWithError = getTooltipWithError();
 		lockButton.visible = shouldShowLockButton();
 		lockButton.active = lockButton.visible && canLock();
@@ -139,10 +143,6 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 			lockButton.setMessage(Translation.UNLOCK_LABEL.copy().withStyle(ChatFormatting.GREEN));
 			lockButton.setTooltip(Tooltip.create(Translation.UNLOCK_TOOLTIP));
 		}
-	}
-	@Override
-	public boolean hasError() {
-		return validationError != null;
 	}
 	public void renderGui(
 		@NotNull GuiGraphics gui,

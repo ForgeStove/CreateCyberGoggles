@@ -1,6 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.config.client.gui.entry;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.InputConstants.*;
+import io.github.forgestove.create_cyber_goggles.config.client.ClientUtil;
 import io.github.forgestove.create_cyber_goggles.config.client.gui.*;
 import io.github.forgestove.create_cyber_goggles.config.client.gui.api.*;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode;
@@ -101,7 +102,7 @@ public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key> i
 		if (keyEntries.isEmpty()) return false;
 		var registeredKeyCount = new HashMap<Key, Integer>();
 		var registeredKeyUsages = new HashMap<Key, List<Component>>();
-		for (var mapping : tab.getMinecraft().options.keyMappings) {
+		for (var mapping : ClientUtil.mc.options.keyMappings) {
 			var key = mapping.getKey();
 			if (key.equals(InputConstants.UNKNOWN)) continue;
 			registeredKeyCount.merge(key, 1, Integer::sum);

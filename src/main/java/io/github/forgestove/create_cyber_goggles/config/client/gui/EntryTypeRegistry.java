@@ -40,17 +40,11 @@ public final class EntryTypeRegistry<C> {
 		var type = node.getValueType();
 		for (var entry : factories.entrySet())
 			if (entry.getKey().isAssignableFrom(type)) return entry.getValue().create(tab, node);
-		return new TextConfigEntry(tab, Translation.UNSUPPORTED_TYPE.copy().append(type.getSimpleName()).withStyle(ChatFormatting.RED));
+		return new TextConfigEntry(Translation.UNSUPPORTED_TYPE.copy().append(type.getSimpleName()).withStyle(ChatFormatting.RED));
 	}
-	@Contract("_, _, _, _, _ -> new")
-	public @NotNull ConfigEntry createCategoryEntry(
-		ConfigCategoryTab<C> tab,
-		CategoryConfigNode<C> node,
-		boolean expanded,
-		int depth,
-		Runnable onToggle
-	) {
-		return new CategoryCollapsibleConfigEntry(tab, node, expanded, depth, onToggle);
+	@Contract("_, _, _, _ -> new")
+	public @NotNull ConfigEntry createCategoryEntry(CategoryConfigNode<C> node, boolean expanded, int depth, Runnable onToggle) {
+		return new CategoryCollapsibleConfigEntry(node, expanded, depth, onToggle);
 	}
 	@FunctionalInterface
 	private interface EntryFactory<C> {

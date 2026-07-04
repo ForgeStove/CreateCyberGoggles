@@ -1,29 +1,27 @@
 package io.github.forgestove.create_cyber_goggles.config.client.gui;
+import io.github.forgestove.create_cyber_goggles.config.client.ClientUtil;
 import io.github.forgestove.create_cyber_goggles.config.client.gui.api.CrossRefreshable;
 import io.github.forgestove.create_cyber_goggles.config.client.gui.entry.ConfigEntry;
 import io.github.forgestove.create_cyber_goggles.config.client.gui.factory.*;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEntry> {
-	private final ConfigCategoryTab<?> tab;
+	private final ConfigScreen<?> screen;
 	private final SmoothScroll smoothScroll = new SmoothScroll(this::setScrollAmount, this::getScrollAmount, this::getMaxScroll);
 	private final Highlight highlight = new Highlight(() -> children().indexOf(getHovered()), this::getRowTop);
-	public ConfigEntryList(
-		ConfigCategoryTab<?> tab,
-		Minecraft minecraft,
-		int width,
-		int height,
-		int headerHeight,
-		int itemHeight,
-		@NotNull Iterable<ConfigEntry> entries
-	) {
-		super(minecraft, width, height, headerHeight, itemHeight);
-		this.tab = tab;
-		this.headerHeight = -3;
+	public ConfigEntryList(@NotNull ConfigScreen<?> screen, @NotNull Iterable<ConfigEntry> entries) {
+		super(
+			ClientUtil.mc,
+			screen.width,
+			screen.height - screen.getHeaderHeight() - screen.getFooterHeight(),
+			screen.getHeaderHeight(),
+			ConfigEntry.HEIGHT + ConfigEntry.GAP
+		);
+		this.screen = screen;
+		headerHeight = -3;
 		entries.forEach(this::addEntry);
 	}
 	public void refresh() {
@@ -36,7 +34,7 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		for (var configEntry : children()) if (configEntry.hasError()) return true;
 		return false;
 	}
-	public void replaceAllEntries(List<ConfigEntry> newEntries) {
+	public void replaceAllEntries(@NotNull List<ConfigEntry> newEntries) {
 		children().clear();
 		newEntries.forEach(this::addEntry);
 	}
@@ -49,10 +47,10 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		if (entry == null) return;
 		var widgetTooltip = entry.getHoveredWidgetTooltip(mouseX, mouseY);
 		if (widgetTooltip != null) {
-			tab.getScreen().setTooltipForNextRenderPass(widgetTooltip.toCharSequence(minecraft));
+			screen.setTooltipForNextRenderPass(widgetTooltip.toCharSequence(minecraft));
 			return;
 		}
-		if (entry.getTooltip() != null) tab.getScreen().setTooltipForNextRenderPass(entry.getTooltip());
+		if (entry.getTooltip() != null) screen.setTooltipForNextRenderPass(entry.getTooltip());
 	}
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {

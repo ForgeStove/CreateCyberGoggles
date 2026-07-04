@@ -1,4 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.config.client.gui.entry;
+import io.github.forgestove.create_cyber_goggles.config.client.ClientUtil;
 import io.github.forgestove.create_cyber_goggles.config.client.gui.*;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode;
 import net.minecraft.client.gui.GuiGraphics;
@@ -18,7 +19,7 @@ public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum<?>> 
 		return Component.translatable("%s.config.enum.%s.%s".formatted(tab.getScreen().root.modId, enumClassName, value.name()));
 	}
 	private void openDropdown(Button button) {
-		var mc = tab.getMinecraft();
+		var mc = ClientUtil.mc;
 		var screen = mc.screen;
 		if (screen == null || screen instanceof EnumDropdownScreen) return;
 		mc.setScreen(new EnumDropdownScreen(

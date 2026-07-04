@@ -1,4 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.config.client.gui.entry;
+import io.github.forgestove.create_cyber_goggles.config.client.ClientUtil;
 import io.github.forgestove.create_cyber_goggles.config.client.gui.*;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode;
 import net.minecraft.ChatFormatting;
@@ -23,7 +24,7 @@ public abstract class GenericValueConfigEntry<C, V> extends ValueConfigEntry<C, 
 		super(tab, valueNode);
 		this.parser = parser;
 		this.validator = validator;
-		inputField = new ConfigEditBox(this.tab.getMinecraft().font, 0, 0, WIDTH, HEIGHT, this.valueNode.getTitle());
+		inputField = new ConfigEditBox(ClientUtil.mc.font, 0, 0, WIDTH, HEIGHT, this.valueNode.getTitle());
 		inputField.setValue(getValue().toString());
 		inputField.setFilter(validator);
 		inputField.setResponder(this::onInputChange);

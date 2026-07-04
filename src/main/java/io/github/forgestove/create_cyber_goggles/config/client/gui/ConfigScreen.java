@@ -55,12 +55,13 @@ public final class ConfigScreen<C> extends Screen {
 	}
 	@Override
 	public void onClose() {
+		var mc = ClientUtil.mc;
 		if (isActiveValue()) {
-			getMinecraft().setScreen(parent);
+			mc.setScreen(parent);
 			return;
 		}
-		getMinecraft().setScreen(new ConfirmScreen(
-			confirmed -> getMinecraft().setScreen(confirmed ? parent : this),
+		mc.setScreen(new ConfirmScreen(
+			confirmed -> mc.setScreen(confirmed ? parent : this),
 			Translation.QUIT_CONFIRM_TITLE,
 			Translation.QUIT_CONFIRM_WARNING,
 			Translation.QUIT_CONFIRM_LABEL,
@@ -115,7 +116,7 @@ public final class ConfigScreen<C> extends Screen {
 		layout.arrangeElements();
 	}
 	private CategoryConfigNode<C> buildKeybindCategory() {
-		var allMappings = getMinecraft().options.keyMappings;
+		var allMappings = ClientUtil.mc.options.keyMappings;
 		var modMappings = new ArrayList<KeyMapping>();
 		for (var allMapping : allMappings) {
 			if (!allMapping.getCategory().equals("key.categories." + root.modId)) continue;
@@ -147,13 +148,14 @@ public final class ConfigScreen<C> extends Screen {
 		var restartRequired = root.restartRequired(config);
 		root.writeEditingToConfig(config);
 		if (keybindCategory != null) keybindCategory.writeEditingToConfig(config);
-		getMinecraft().options.save();
+		var mc = ClientUtil.mc;
+		mc.options.save();
 		onSave.accept(config);
 		ClientLockManager.flushPendingLocks(root.modId);
-		getMinecraft().setScreen(restartRequired ? new ConfirmScreen(
+		mc.setScreen(restartRequired ? new ConfirmScreen(
 			confirmed -> {
-				if (confirmed) getMinecraft().stop();
-				else getMinecraft().setScreen(parent);
+				if (confirmed) mc.stop();
+				else mc.setScreen(parent);
 			},
 			Translation.RESTART_REQUIRED_TITLE,
 			Translation.RESTART_REQUIRED_LABEL,

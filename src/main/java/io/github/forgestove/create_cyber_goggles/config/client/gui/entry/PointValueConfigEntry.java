@@ -1,4 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.config.client.gui.entry;
+import io.github.forgestove.create_cyber_goggles.config.client.ClientUtil;
 import io.github.forgestove.create_cyber_goggles.config.client.gui.*;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode;
 import net.minecraft.ChatFormatting;
@@ -18,7 +19,7 @@ public final class PointValueConfigEntry<C> extends ValueConfigEntry<C, Point> {
 	public PointValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Point> node) {
 		super(tab, node);
 		var width = (WIDTH - GAP) / 2;
-		var font = tab.getMinecraft().font;
+		var font = ClientUtil.mc.font;
 		var x = Component.literal("X");
 		xField = new ConfigEditBox(font, 0, 0, width, HEIGHT, x);
 		xField.setValue(String.valueOf(getValue().x));

@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.config.client.gui.entry;
-import io.github.forgestove.create_cyber_goggles.config.client.Translation;
+import io.github.forgestove.create_cyber_goggles.config.client.*;
 import io.github.forgestove.create_cyber_goggles.config.client.gui.*;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode;
 import net.minecraft.ChatFormatting;
@@ -20,7 +20,7 @@ public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer>
 		super(tab, node);
 		hasAlpha = node.colorHasAlpha();
 		previewWidget = new ColorPreviewWidget(0, 0, SIZE, SIZE, hasAlpha, this::getValue);
-		inputField = new ConfigEditBox(tab.getMinecraft().font, 0, 0, WIDTH - 44, HEIGHT, valueNode.getTitle());
+		inputField = new ConfigEditBox(ClientUtil.mc.font, 0, 0, WIDTH - 44, HEIGHT, valueNode.getTitle());
 		inputField.setMaxLength(getMaxLength());
 		inputField.setValue(formatColor(getValue()));
 		inputField.setFilter(s -> HEX_PATTERN.matcher(s).matches());
@@ -47,7 +47,7 @@ public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer>
 		} catch (NumberFormatException ignored) {}
 	}
 	private void openColorPicker() {
-		var mc = tab.getMinecraft();
+		var mc = ClientUtil.mc;
 		var screen = new ColorPickerScreen(mc.screen, getValue(), hasAlpha, this::accept);
 		mc.setScreen(screen);
 	}

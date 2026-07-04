@@ -3,12 +3,11 @@ import io.github.forgestove.create_cyber_goggles.config.client.gui.api.TabLifecy
 import io.github.forgestove.create_cyber_goggles.config.client.gui.entry.ConfigEntry;
 import io.github.forgestove.create_cyber_goggles.config.tree.*;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.tabs.Tab;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.*;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -29,15 +28,7 @@ public final class ConfigCategoryTab<C> implements Tab {
 		this.entryTypeRegistry = entryTypeRegistry;
 		title = category.getTitle();
 		if (defaultsApplied.add(category)) collectDefaultExpanded(category);
-		list = new ConfigEntryList(
-			this,
-			getMinecraft(),
-			screen.width,
-			screen.height - screen.getHeaderHeight() - screen.getFooterHeight(),
-			screen.getHeaderHeight(),
-			ConfigEntry.HEIGHT + ConfigEntry.GAP,
-			buildEntries(category)
-		);
+		list = new ConfigEntryList(screen, buildEntries(category));
 	}
 	@NotNull
 	@Override
@@ -65,8 +56,7 @@ public final class ConfigCategoryTab<C> implements Tab {
 				entries.add(entry);
 			} else if (child instanceof CategoryConfigNode<C> subNode) {
 				var expanded = expandedSubCategories.contains(subNode);
-				entries.add(entryTypeRegistry.createCategoryEntry(
-					this, subNode, expanded, depth, () -> {
+				entries.add(entryTypeRegistry.createCategoryEntry(subNode, expanded, depth, () -> {
 						if (expandedSubCategories.contains(subNode)) expandedSubCategories.remove(subNode);
 						else expandedSubCategories.add(subNode);
 						list.replaceAllEntries(buildEntries(category));
@@ -82,10 +72,6 @@ public final class ConfigCategoryTab<C> implements Tab {
 			if (subNode.isDefaultExpanded()) expandedSubCategories.add(subNode);
 			collectDefaultExpanded(subNode);
 		}
-	}
-	@NotNull
-	public Minecraft getMinecraft() {
-		return Objects.requireNonNull(screen.getMinecraft());
 	}
 	public ConfigScreen<C> getScreen() {
 		return screen;

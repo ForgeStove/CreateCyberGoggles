@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.config.client.gui.entry;
-import io.github.forgestove.create_cyber_goggles.config.client.gui.ConfigCategoryTab;
+import io.github.forgestove.create_cyber_goggles.config.client.ClientUtil;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.MultiLineTextWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -11,9 +11,9 @@ import java.util.List;
 public final class TextConfigEntry extends ConfigEntry {
 	private final MultiLineTextWidget textWidget;
 	private final List<MultiLineTextWidget> textWidgetAsList;
-	public TextConfigEntry(ConfigCategoryTab<?> tab, Component text) {
+	public TextConfigEntry(Component text) {
 		super();
-		textWidget = new MultiLineTextWidget(text, tab.getMinecraft().font);
+		textWidget = new MultiLineTextWidget(text, ClientUtil.mc.font);
 		textWidgetAsList = List.of(textWidget);
 	}
 	@NotNull

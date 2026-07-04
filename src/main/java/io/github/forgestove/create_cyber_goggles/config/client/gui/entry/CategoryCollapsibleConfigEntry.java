@@ -1,7 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.config.client.gui.entry;
-import io.github.forgestove.create_cyber_goggles.config.client.gui.ConfigCategoryTab;
+import io.github.forgestove.create_cyber_goggles.config.client.ClientUtil;
 import io.github.forgestove.create_cyber_goggles.config.tree.CategoryConfigNode;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -15,19 +14,11 @@ import java.util.List;
 public final class CategoryCollapsibleConfigEntry extends ConfigEntry {
 	private static final String EXPANDED_PREFIX = "- ";
 	private static final String COLLAPSED_PREFIX = "+ ";
-	private final Minecraft mc;
 	private final Component label;
 	private final Runnable onToggle;
 	private final boolean expanded;
 	private final ClickWidget clickWidget;
-	public CategoryCollapsibleConfigEntry(
-		ConfigCategoryTab<?> tab,
-		CategoryConfigNode<?> categoryNode,
-		boolean expanded,
-		int depth,
-		Runnable onToggle
-	) {
-		mc = tab.getMinecraft();
+	public CategoryCollapsibleConfigEntry(CategoryConfigNode<?> categoryNode, boolean expanded, int depth, Runnable onToggle) {
 		label = categoryNode.getTitle();
 		this.expanded = expanded;
 		this.onToggle = onToggle;
@@ -55,25 +46,25 @@ public final class CategoryCollapsibleConfigEntry extends ConfigEntry {
 		var indent = getIndent();
 		clickWidget.setRectangle(entryWidth, entryHeight, x, y);
 		var prefix = expanded ? EXPANDED_PREFIX : COLLAPSED_PREFIX;
-		gui.drawString(mc.font, prefix, x + indent, y + 5, 0xAAAAAA, false);
-		gui.drawString(mc.font, label.getVisualOrderText(), x + indent + mc.font.width(prefix), y + 5, -1, false);
+		var font = ClientUtil.mc.font;
+		gui.drawString(font, prefix, x + indent, y + 5, 0xAAAAAA, false);
+		gui.drawString(font, label.getVisualOrderText(), x + indent + font.width(prefix), y + 5, -1, false);
 	}
 	@NotNull
 	@Override
 	public List<? extends GuiEventListener> children() {
 		return List.of(clickWidget);
 	}
-	private class ClickWidget extends AbstractWidget {
+	public class ClickWidget extends AbstractWidget {
 		private ClickWidget() {
 			super(0, 0, 0, 0, Component.empty());
 		}
 		@Override
-		protected void renderWidget(@NotNull GuiGraphics gui, int mouseX, int mouseY, float delta) {
-		}
+		protected void renderWidget(@NotNull GuiGraphics gui, int mouseX, int mouseY, float delta) {}
 		@Override
 		public boolean mouseClicked(double mouseX, double mouseY, int button) {
 			if (button != 0) return false;
-			mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+			ClientUtil.mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 			onToggle.run();
 			return true;
 		}

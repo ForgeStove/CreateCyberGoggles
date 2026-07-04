@@ -1,4 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.config.client.gui.entry;
+import io.github.forgestove.create_cyber_goggles.config.client.ClientUtil;
 import io.github.forgestove.create_cyber_goggles.config.client.gui.ConfigCategoryTab;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -13,7 +14,7 @@ public final class CategoryTitleConfigEntry extends ConfigEntry {
 	private final Component label;
 	public CategoryTitleConfigEntry(ConfigCategoryTab<?> tab, Component label) {
 		super();
-		minecraft = tab.getMinecraft();
+		minecraft = ClientUtil.mc;
 		this.label = label;
 	}
 	@NotNull

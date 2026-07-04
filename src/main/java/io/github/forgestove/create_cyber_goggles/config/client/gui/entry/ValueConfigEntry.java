@@ -29,7 +29,7 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 		valueNode = node;
 		this.tab = tab;
 		label = valueNode.getTitle().copy().withStyle(ChatFormatting.WHITE);
-		var font = tab.getMinecraft().font;
+		var font = ClientUtil.mc.font;
 		tooltip = valueNode.getTooltip() == null ? null : font.split(valueNode.getTooltip(), 350);
 		tooltipWithError = getTooltipWithError();
 		resetButton = Button.builder(Translation.RESET_LABEL, b -> resetToDefault())
@@ -157,7 +157,7 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 		var indent = getIndent();
 		var label = ConfigCategoryTab.styleAsState(this.label, hasError(), hasChanged);
 		if (isLocked()) label = label.copy().withStyle(ChatFormatting.GRAY, ChatFormatting.STRIKETHROUGH);
-		gui.drawString(tab.getMinecraft().font, label.getVisualOrderText(), x + indent, y + 5, -1, false);
+		gui.drawString(ClientUtil.mc.font, label.getVisualOrderText(), x + indent, y + 5, -1, false);
 		var right = x + width;
 		for (var widget : widgets) {
 			if (!widget.visible) continue;

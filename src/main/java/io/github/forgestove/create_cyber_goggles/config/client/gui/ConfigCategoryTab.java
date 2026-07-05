@@ -14,21 +14,26 @@ import java.util.function.Consumer;
 public final class ConfigCategoryTab<C, V> implements Tab {
 	private static final Set<CategoryConfigNode<?>> expandedSubCategories = new HashSet<>();
 	private static final Set<CategoryConfigNode<?>> defaultsApplied = new HashSet<>();
+	public final C config;
 	public final ConfigScreen<C, V> screen;
 	public final CategoryConfigNode<C> node;
-	public final C config;
-	public final ConfigEntryList<C, V> list;
+	public final ConfigEntryList list;
 	private final Component title;
-	private final EntryTypeRegistry<C> entryTypeRegistry;
 	private TabButton tabButton;
-	public ConfigCategoryTab(ConfigScreen<C, V> screen, CategoryConfigNode<C> node, C config, EntryTypeRegistry<C> entryTypeRegistry) {
+	public ConfigCategoryTab(ConfigScreen<C, V> screen, @NotNull CategoryConfigNode<C> node, C config) {
 		this.screen = screen;
 		this.node = node;
 		this.config = config;
-		this.entryTypeRegistry = entryTypeRegistry;
 		title = node.getTitle();
 		if (defaultsApplied.add(node)) collectDefaultExpanded(node);
-		list = new ConfigEntryList<>(screen, buildEntries(node));
+		list = new ConfigEntryList(screen, buildEntries(node, 0));
+	}
+	public static @NotNull Component styleAsState(@NotNull Component component, boolean hasError, boolean hasChanged) {
+		var result = component.copy();
+		if (hasError) result.withStyle(ChatFormatting.RED);
+		else if (hasChanged) result.withStyle(ChatFormatting.YELLOW);
+		if (hasChanged) result.withStyle(ChatFormatting.ITALIC);
+		return result;
 	}
 	@NotNull
 	@Override
@@ -36,38 +41,34 @@ public final class ConfigCategoryTab<C, V> implements Tab {
 		return title;
 	}
 	@Override
-	public void visitChildren(Consumer<AbstractWidget> consumer) {
+	public void visitChildren(@NotNull Consumer<AbstractWidget> consumer) {
 		consumer.accept(list);
 	}
 	@Override
-	public void doLayout(ScreenRectangle screenRectangle) {
+	public void doLayout(@NotNull ScreenRectangle screenRectangle) {
 		list.setRectangle(screenRectangle.width(), screenRectangle.height(), screenRectangle.left(), screenRectangle.top());
-	}
-	public @NotNull List<ConfigEntry> buildEntries(CategoryConfigNode<C> node) {
-		return buildEntries(node, 0);
 	}
 	private @NotNull List<ConfigEntry> buildEntries(@NotNull CategoryConfigNode<C> node, int depth) {
 		var entries = new ArrayList<ConfigEntry>();
 		for (var child : node.getChildren())
 			if (child instanceof ValueConfigNode<C, ?> valueNode) {
-				var entry = entryTypeRegistry.createValueEntry(this, valueNode);
-				if (entry instanceof TabLifecycle l) l.onAttachedToTab(this);
+				var entry = EntryTypeRegistry.createValueEntry(this, valueNode);
+				if (entry instanceof TabLifecycle lifecycle) lifecycle.onAttachedToTab(this);
 				entry.setIndent(depth * ConfigEntry.INDENT_PX);
 				entries.add(entry);
 			} else if (child instanceof CategoryConfigNode<C> subNode) {
 				var expanded = expandedSubCategories.contains(subNode);
-				entries.add(entryTypeRegistry.createCategoryEntry(
-					subNode, expanded, depth, () -> {
-						if (expandedSubCategories.contains(subNode)) expandedSubCategories.remove(subNode);
-						else expandedSubCategories.add(subNode);
-						list.replaceAllEntries(buildEntries(this.node));
-					}
-				));
+				Runnable onToggle = () -> {
+					if (expandedSubCategories.contains(subNode)) expandedSubCategories.remove(subNode);
+					else expandedSubCategories.add(subNode);
+					list.replaceAllEntries(buildEntries(this.node, 0));
+				};
+				entries.add(EntryTypeRegistry.createCategoryEntry(subNode.getTitle(), expanded, depth, onToggle));
 				if (expanded) entries.addAll(buildEntries(subNode, depth + 1));
 			}
 		return entries;
 	}
-	private void collectDefaultExpanded(CategoryConfigNode<C> node) {
+	private void collectDefaultExpanded(@NotNull CategoryConfigNode<C> node) {
 		for (var child : node.getChildren()) {
 			if (!(child instanceof CategoryConfigNode<C> subNode)) continue;
 			if (subNode.isDefaultExpanded()) expandedSubCategories.add(subNode);
@@ -82,13 +83,6 @@ public final class ConfigCategoryTab<C, V> implements Tab {
 	}
 	public boolean hasEntryError() {
 		return list.hasEntryError();
-	}
-	public static Component styleAsState(Component component, boolean hasError, boolean hasChanged) {
-		var result = component.copy();
-		if (hasError) result.withStyle(ChatFormatting.RED);
-		else if (hasChanged) result.withStyle(ChatFormatting.YELLOW);
-		if (hasChanged) result.withStyle(ChatFormatting.ITALIC);
-		return result;
 	}
 	public void setTabButton(TabButton tabButton) {
 		this.tabButton = tabButton;

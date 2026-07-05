@@ -6,10 +6,11 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
-public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum<?>> {
+@SuppressWarnings("rawtypes")
+public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum> {
 	private final Button dropdownButton;
 	private final String enumClassName;
-	public EnumValueConfigEntry(ConfigCategoryTab<C, Enum<?>> tab, ValueConfigNode<C, Enum<?>> node) {
+	public EnumValueConfigEntry(ConfigCategoryTab<C, Enum> tab, ValueConfigNode<C, Enum> node) {
 		super(tab, node);
 		enumClassName = node.getValueType().getSimpleName();
 		dropdownButton = Button.builder(getDisplayComponent(getValue()), this::openDropdown).size(WIDTH, HEIGHT).build();
@@ -23,7 +24,7 @@ public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum<?>> 
 		var screen = mc.screen;
 		if (screen == null || screen instanceof EnumDropdownScreen) return;
 		mc.setScreen(new EnumDropdownScreen(
-			valueNode.getValueType().getEnumConstants(),
+			node.getValueType().getEnumConstants(),
 			this::getValue,
 			this::selectValue,
 			this::getDisplayComponent,

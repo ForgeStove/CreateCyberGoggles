@@ -51,7 +51,7 @@ public final class PointValueConfigEntry<C> extends ValueConfigEntry<C, Point> {
 	}
 	@Override
 	public void refresh() {
-		var hasError = valueNode.validate(tab.config) != null;
+		var hasError = node.validate(tab.config) != null;
 		if (!hasError) {
 			var point = getValue();
 			if (!xField.isFocused()) {

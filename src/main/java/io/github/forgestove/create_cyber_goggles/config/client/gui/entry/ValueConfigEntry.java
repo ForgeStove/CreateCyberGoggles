@@ -19,18 +19,18 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 	public final Button lockButton;
 	public final ConfigCategoryTab<C, V> tab;
 	public final List<AbstractWidget> children = new ArrayList<>();
-	public final ValueConfigNode<C, V> valueNode;
+	public final ValueConfigNode<C, V> node;
 	public final Component label;
 	@Nullable public final List<FormattedCharSequence> tooltip;
 	public List<FormattedCharSequence> tooltipWithError;
 	@Nullable public Component validationError;
 	public boolean hasChanged;
 	public ValueConfigEntry(ConfigCategoryTab<C, V> tab, ValueConfigNode<C, V> node) {
-		valueNode = node;
+		this.node = node;
 		this.tab = tab;
-		label = valueNode.getTitle().copy().withStyle(ChatFormatting.WHITE);
+		label = this.node.getTitle().copy().withStyle(ChatFormatting.WHITE);
 		var font = ClientUtil.mc.font;
-		tooltip = valueNode.getTooltip() == null ? null : font.split(valueNode.getTooltip(), 350);
+		tooltip = this.node.getTooltip() == null ? null : font.split(this.node.getTooltip(), 350);
 		tooltipWithError = getTooltipWithError();
 		resetButton = Button.builder(Translation.RESET_LABEL, b -> resetToDefault())
 			.size(Math.max(font.width(Translation.RESET_LABEL) + 6, SIZE), SIZE)
@@ -40,8 +40,8 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 			.size(Math.max(font.width(Translation.UNDO_LABEL) + 6, SIZE), SIZE)
 			.tooltip(Tooltip.create(Translation.UNDO_TOOLTIP))
 			.build();
-		resetButton.active = !valueNode.isDefaultValue(this.tab.config);
-		undoButton.active = !valueNode.isActiveValue(this.tab.config);
+		resetButton.active = !this.node.isDefaultValue(this.tab.config);
+		undoButton.active = !this.node.isActiveValue(this.tab.config);
 		lockButton = Button.builder(Translation.UNLOCK_LABEL, b -> onLockToggle())
 			.size(Math.max(font.width(Translation.UNLOCK_LABEL) + 6, SIZE), SIZE)
 			.tooltip(Tooltip.create(Translation.UNLOCK_TOOLTIP))
@@ -64,22 +64,22 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 		return validationError != null;
 	}
 	public void resetToDefault() {
-		var path = valueNode.getPath();
+		var path = node.getPath();
 		var pending = ClientLockManager.getPendingLock(path);
 		if (pending != Boolean.FALSE) ClientLockManager.clearPendingLock(path);
-		valueNode.resetToDefault();
+		node.resetToDefault();
 		tab.screen.refresh();
 	}
 	public void resetToActive() {
-		var path = valueNode.getPath();
+		var path = node.getPath();
 		var pending = ClientLockManager.getPendingLock(path);
 		if (pending != Boolean.FALSE) ClientLockManager.clearPendingLock(path);
-		valueNode.resetToActive(tab.config);
+		node.resetToActive(tab.config);
 		tab.screen.refresh();
 	}
 	/** 切换待处理的锁定状态（延迟至保存时执行）。 */
 	private void onLockToggle() {
-		var path = valueNode.getPath();
+		var path = node.getPath();
 		var shouldLock = !isLocked(); // effective state, considering pending
 		ClientLockManager.setPendingLock(path, shouldLock);
 		tab.screen.refresh();
@@ -89,7 +89,7 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 	 * 首先考虑待处理的锁定操作，然后回退到服务器确认的锁定。
 	 */
 	public boolean isLocked() {
-		var path = valueNode.getPath();
+		var path = node.getPath();
 		var pending = ClientLockManager.getPendingLock(path);
 		if (pending != null) return pending;
 		return ClientLockManager.isLocked(path);
@@ -105,10 +105,10 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 		return ClientLockManager.hasReceivedSync();
 	}
 	public V getValue() {
-		return valueNode.getEditingValue(tab.config);
+		return node.getEditingValue(tab.config);
 	}
 	public void setValue(V value) {
-		valueNode.setEditingValue(value);
+		node.setEditingValue(value);
 		tab.screen.refresh();
 	}
 	@NotNull
@@ -128,11 +128,11 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 	@Override
 	public void refresh() {
 		var locked = isLocked();
-		var hasPendingLock = Boolean.TRUE.equals(ClientLockManager.getPendingLock(valueNode.getPath()));
-		resetButton.active = !locked && !valueNode.isDefaultValue(tab.config);
-		undoButton.active = !locked && !valueNode.isActiveValue(tab.config);
-		validationError = valueNode.validate(tab.config);
-		hasChanged = hasPendingLock || !locked && !valueNode.isActiveValue(tab.config);
+		var hasPendingLock = Boolean.TRUE.equals(ClientLockManager.getPendingLock(node.getPath()));
+		resetButton.active = !locked && !node.isDefaultValue(tab.config);
+		undoButton.active = !locked && !node.isActiveValue(tab.config);
+		validationError = node.validate(tab.config);
+		hasChanged = hasPendingLock || !locked && !node.isActiveValue(tab.config);
 		tooltipWithError = getTooltipWithError();
 		lockButton.visible = shouldShowLockButton();
 		lockButton.active = lockButton.visible && canLock();

@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.config.client.gui.entry;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.InputConstants.*;
 import io.github.forgestove.create_cyber_goggles.config.client.ClientUtil;
-import io.github.forgestove.create_cyber_goggles.config.client.gui.*;
+import io.github.forgestove.create_cyber_goggles.config.client.gui.ConfigCategoryTab;
 import io.github.forgestove.create_cyber_goggles.config.client.gui.api.*;
 import io.github.forgestove.create_cyber_goggles.config.tree.ValueConfigNode;
 import net.minecraft.ChatFormatting;
@@ -117,7 +117,7 @@ public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key> i
 			var usages = new ArrayList<Component>();
 			for (var localEntry : localKeyEntries.getOrDefault(key, List.of())) {
 				if (localEntry == keyEntry) continue;
-				usages.add(localEntry.valueNode.getTitle());
+				usages.add(localEntry.node.getTitle());
 			}
 			usages.addAll(registeredKeyUsages.getOrDefault(key, List.of()));
 			keyEntry.setConflictUsages(usages);

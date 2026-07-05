@@ -24,11 +24,14 @@ public abstract class GenericValueConfigEntry<C, V> extends ValueConfigEntry<C, 
 		super(tab, valueNode);
 		this.parser = parser;
 		this.validator = validator;
-		inputField = new ConfigEditBox(ClientUtil.mc.font, 0, 0, WIDTH, HEIGHT, this.valueNode.getTitle());
+		inputField = new ConfigEditBox(ClientUtil.mc.font, 0, 0, WIDTH, HEIGHT, node.getTitle());
 		inputField.setValue(getValue().toString());
 		inputField.setFilter(validator);
 		inputField.setResponder(this::onInputChange);
 		children.add(inputField);
+	}
+	public static boolean isZero(@NotNull String string) {
+		return string.isEmpty() || string.equals("-");
 	}
 	private void onInputChange(String value) {
 		if (updatingFromCode) return;
@@ -48,7 +51,7 @@ public abstract class GenericValueConfigEntry<C, V> extends ValueConfigEntry<C, 
 	@Override
 	public void resetToDefault() {
 		hasParseError = false;
-		valueNode.resetToDefault();
+		node.resetToDefault();
 		updatingFromCode = true;
 		inputField.setValue(getValue().toString());
 		updatingFromCode = false;
@@ -57,7 +60,7 @@ public abstract class GenericValueConfigEntry<C, V> extends ValueConfigEntry<C, 
 	@Override
 	public void resetToActive() {
 		hasParseError = false;
-		valueNode.resetToActive(tab.config);
+		node.resetToActive(tab.config);
 		updatingFromCode = true;
 		inputField.setValue(getValue().toString());
 		updatingFromCode = false;
@@ -65,7 +68,7 @@ public abstract class GenericValueConfigEntry<C, V> extends ValueConfigEntry<C, 
 	}
 	@Override
 	public void refresh() {
-		var hasError = hasParseError || valueNode.validate(tab.config) != null;
+		var hasError = hasParseError || node.validate(tab.config) != null;
 		if (!hasError) {
 			var valueStr = getValue().toString();
 			if (!isZero(inputField.getValue())) try {
@@ -86,9 +89,6 @@ public abstract class GenericValueConfigEntry<C, V> extends ValueConfigEntry<C, 
 		if (!hasParseError) return;
 		resetButton.active = true;
 		undoButton.active = true;
-	}
-	public static boolean isZero(@NotNull String string) {
-		return string.isEmpty() || string.equals("-");
 	}
 	@Override
 	public boolean hasError() {

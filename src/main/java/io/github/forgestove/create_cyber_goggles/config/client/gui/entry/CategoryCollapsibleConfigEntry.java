@@ -1,6 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.config.client.gui.entry;
 import io.github.forgestove.create_cyber_goggles.config.client.ClientUtil;
-import io.github.forgestove.create_cyber_goggles.config.tree.CategoryConfigNode;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -18,8 +17,8 @@ public final class CategoryCollapsibleConfigEntry extends ConfigEntry {
 	private final Runnable onToggle;
 	private final boolean expanded;
 	private final ClickWidget clickWidget;
-	public CategoryCollapsibleConfigEntry(CategoryConfigNode<?> categoryNode, boolean expanded, int depth, Runnable onToggle) {
-		label = categoryNode.getTitle();
+	public CategoryCollapsibleConfigEntry(Component label, boolean expanded, int depth, Runnable onToggle) {
+		this.label = label;
 		this.expanded = expanded;
 		this.onToggle = onToggle;
 		setIndent(depth * INDENT_PX);

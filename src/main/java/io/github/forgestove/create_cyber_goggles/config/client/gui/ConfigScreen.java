@@ -68,16 +68,15 @@ public final class ConfigScreen<C, V> extends Screen {
 		ClientLockManager.clearPendingLocks();
 		tabs.clear();
 		root.resetToActive(config);
-		var entryTypeRegistry = new EntryTypeRegistry<C>();
 		for (var category : root.getCategories()) {
-			var tab = new ConfigCategoryTab<>(this, category, config, entryTypeRegistry);
+			var tab = new ConfigCategoryTab<>(this, category, config);
 			tabs.add(tab);
 		}
 		var keybindCat = buildKeybindCategory();
 		if (keybindCat != null) {
 			keybindCat.resetToActive(config);
 			keybindCategory = keybindCat;
-			var keybindTab = new ConfigCategoryTab<>(this, keybindCategory, config, entryTypeRegistry);
+			var keybindTab = new ConfigCategoryTab<>(this, keybindCategory, config);
 			tabs.add(keybindTab);
 		} else keybindCategory = null;
 		initTabLayout();

@@ -20,7 +20,7 @@ public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer>
 		super(tab, node);
 		hasAlpha = node.colorHasAlpha();
 		previewWidget = new ColorPreviewWidget(0, 0, SIZE, SIZE, hasAlpha, this::getValue);
-		inputField = new ConfigEditBox(ClientUtil.mc.font, 0, 0, WIDTH - 44, HEIGHT, valueNode.getTitle());
+		inputField = new ConfigEditBox(ClientUtil.mc.font, 0, 0, WIDTH - 44, HEIGHT, this.node.getTitle());
 		inputField.setMaxLength(getMaxLength());
 		inputField.setValue(formatColor(getValue()));
 		inputField.setFilter(s -> HEX_PATTERN.matcher(s).matches());
@@ -58,7 +58,7 @@ public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer>
 	@Override
 	public void refresh() {
 		var maxLength = getMaxLength();
-		var isValid = valueNode.validate(tab.config) == null && inputField.getValue().length() == maxLength;
+		var isValid = node.validate(tab.config) == null && inputField.getValue().length() == maxLength;
 		if (isValid) {
 			var valueStr = formatColor(getValue());
 			if (!inputField.isFocused() && !inputField.getValue().equalsIgnoreCase(valueStr)) inputField.setValue(valueStr);

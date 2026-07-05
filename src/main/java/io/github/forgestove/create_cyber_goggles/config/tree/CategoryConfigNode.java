@@ -32,15 +32,18 @@ public final class CategoryConfigNode<C> implements ConfigNode<C> {
 	}
 	@Override
 	public boolean restartRequired(C config) {
-		return children.stream().anyMatch(configNode -> configNode.restartRequired(config));
+		for (var node : children) if (node.restartRequired(config)) return true;
+		return false;
 	}
 	@Override
 	public boolean isDefaultValue(C config) {
-		return children.stream().allMatch(node -> node.isDefaultValue(config));
+		for (var node : children) if (!node.isDefaultValue(config)) return false;
+		return true;
 	}
 	@Override
 	public boolean isActiveValue(C config) {
-		return children.stream().allMatch(node -> node.isActiveValue(config));
+		for (var node : children) if (!node.isActiveValue(config)) return false;
+		return true;
 	}
 	@Nullable
 	@Override

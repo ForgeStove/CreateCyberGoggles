@@ -28,6 +28,7 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public final class TooltipOverlay {
 	public static float hoverTicks;
 	private static ItemStack lastItemStack = ItemStack.EMPTY;
+	private static boolean liftAboveGoggle;
 	public static void register(@NotNull RegisterGuiLayersEvent event) {
 		event.registerAbove(VanillaGuiLayers.HOTBAR, getCCGRes("tooltip_overlay"), TooltipOverlay::renderOverlay);
 	}
@@ -49,6 +50,8 @@ public final class TooltipOverlay {
 		}
 		hoverTicks = Math.min(8, hoverTicks + getRealtimeDeltaTicks());
 		lastItemStack = itemStack;
+		// 锁存"是否抬到目镜信息上方"，使淡出期间保持在偏移后的位置，而非随护目镜层的 hoverTicks 提前落回原位
+		liftAboveGoggle = GoggleOverlayRenderer.hoverTicks > 0;
 		renderItemStack(gui, itemStack);
 	}
 	public static @NotNull ItemStack toRenderItemStack() {
@@ -91,8 +94,8 @@ public final class TooltipOverlay {
 			tooltipWidth = Math.max(tooltipWidth, component.getWidth(mc.font));
 			tooltipHeight += component.getHeight();
 		}
-		var goggleFade = Mth.clamp(GoggleOverlayRenderer.hoverTicks / 24F, 0, 1);
-		if (goggleFade > 0) y -= (int) ((tooltipHeight + 10) * goggleFade);
+		// 物品悬浮框淡入淡出全程停留在该偏移位置
+		if (liftAboveGoggle) y -= tooltipHeight + 10;
 		x = Mth.clamp(x, 0, width - tooltipWidth);
 		y = Mth.clamp(y, 16, height - tooltipHeight - 100);
 		renderTooltip(gui, itemStack, components, x, y, tooltipWidth, tooltipHeight, back.getRGB(), top.getRGB(), bot.getRGB());

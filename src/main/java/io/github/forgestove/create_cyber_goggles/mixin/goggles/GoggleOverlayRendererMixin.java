@@ -25,7 +25,7 @@ import java.util.*;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 @Mixin(GoggleOverlayRenderer.class)
 public abstract class GoggleOverlayRendererMixin {
-	@Unique private static BlockHitResult ccg$lastBlockHitResult;
+	@Unique private static HitResult ccg$lastHitResult;
 	@Inject(method = "renderOverlay", at = @At("HEAD"), cancellable = true)
 	private static void renderOverlay(CallbackInfo ci) {
 		if (!CCG.config.goggles.disableInScreenGoggles || isInGame()) return;
@@ -106,13 +106,16 @@ public abstract class GoggleOverlayRendererMixin {
 		if (original instanceof BlockHitResult bhr && bhr.getType() == Type.BLOCK && mc.level != null) {
 			var be = mc.level.getBlockEntity(bhr.getBlockPos());
 			if (be instanceof IHaveGoggleInformation || be instanceof IHaveHoveringInformation) {
-				ccg$lastBlockHitResult = bhr;
+				ccg$lastHitResult = bhr;
 				return original;
 			}
-			// 非渲染方块：淡出时返回缓存的上一个渲染方块
-			return ccg$isFadingOut() && ccg$lastBlockHitResult != null ? ccg$lastBlockHitResult : original;
+		} else if (original instanceof EntityHitResult ehr && ehr.getEntity() instanceof IHaveGoggleInformation) {
+			//放置在地面的实现目镜信息接口的实体
+			ccg$lastHitResult = ehr;
+			return original;
 		}
-		return ccg$isFadingOut() && ccg$lastBlockHitResult != null ? ccg$lastBlockHitResult : original;
+		// 非渲染目标：淡出时返回缓存的上一个渲染目标
+		return ccg$isFadingOut() && ccg$lastHitResult != null ? ccg$lastHitResult : original;
 	}
 	@Unique
 	private static boolean ccg$isFadingOut() {
@@ -120,8 +123,8 @@ public abstract class GoggleOverlayRendererMixin {
 		var hit = mc.hitResult;
 		if (hit instanceof BlockHitResult bhr && bhr.getType() == Type.BLOCK && mc.level != null) {
 			var be = mc.level.getBlockEntity(bhr.getBlockPos());
-			if (be instanceof IHaveGoggleInformation || be instanceof IHaveHoveringInformation) return false; // 当前方块会渲染 tooltip
-		}
+			if (be instanceof IHaveGoggleInformation || be instanceof IHaveHoveringInformation) return false;
+		} else if (hit instanceof EntityHitResult ehr && ehr.getEntity() instanceof IHaveGoggleInformation) return false;
 		return GoggleOverlayRenderer.hoverTicks > 0; // 无有效 tooltip 且之前有渲染 → 淡出
 	}
 	@ModifyExpressionValue(method = "renderOverlay", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z", ordinal = 1))

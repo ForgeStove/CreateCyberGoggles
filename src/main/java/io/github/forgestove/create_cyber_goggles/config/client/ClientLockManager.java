@@ -28,7 +28,6 @@ public final class ClientLockManager {
 	private static Map<String, String> lockedConfigs = Collections.emptyMap();
 	private static boolean receivedSync = false;
 	/** 更新服务端锁定的配置：解析 TOML → 用 ConfigSerializer 获取类型化值 → 应用锁定。 */
-	@SuppressWarnings("unchecked")
 	public static void setLocks(String modId, String tomlContent) {
 		// 忽略玩家已断开连接后的延迟包
 		if (Minecraft.getInstance().getConnection() == null && !Minecraft.getInstance().isSingleplayer()) return;
@@ -45,8 +44,7 @@ public final class ClientLockManager {
 		var newLocks = new HashMap<String, String>();
 		collectPaths(tomlConfig, "", newLocks);
 		// 使用 ConfigSerializer 获取类型化配置实例
-		var handler = (ConfigHandler<Object>) ConfigRegistry.getHandler(modId);
-		if (handler == null) return;
+		var handler = ConfigRegistry.getHandler(modId).cast();
 		var root = handler.getConfigTree();
 		if (root == null) return;
 		Object instance;
@@ -133,14 +131,13 @@ public final class ClientLockManager {
 		}
 		pendingLocks.clear();
 	}
-	@SuppressWarnings("unchecked")
-	private static @NotNull String getCurrentValueAsString(String modId, @Nullable RootConfigNode<?> root, String configId) {
+	private static @NotNull String getCurrentValueAsString(String modId, @Nullable RootConfigNode<Object, Object> root, String configId) {
 		if (root == null) return "";
 		var node = root.getValueNode(configId);
 		if (node == null) return "";
 		var config = ConfigRegistry.getActiveConfig(modId);
 		if (config == null) return "";
-		var value = ((ValueConfigNode<Object, Object>) node).getActiveValue(config);
+		var value = node.getActiveValue(config);
 		return switch (value) {
 			case null -> "";
 			case Integer integer when node.isColorValue() -> String.format(node.colorHasAlpha() ? "0x%08X" : "0x%06X", integer);
@@ -150,7 +147,7 @@ public final class ClientLockManager {
 		};
 	}
 	@SuppressWarnings("unchecked")
-	private static void updateOriginalValue(String modId, @Nullable RootConfigNode<?> root, String configId) {
+	private static void updateOriginalValue(String modId, @Nullable RootConfigNode<?, ?> root, String configId) {
 		if (root == null) return;
 		var node = root.getValueNode(configId);
 		if (node == null) return;

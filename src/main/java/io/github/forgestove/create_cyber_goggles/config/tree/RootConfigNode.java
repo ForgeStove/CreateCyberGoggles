@@ -11,19 +11,24 @@ import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.Map.Entry;
-public final class RootConfigNode<C> implements ConfigNode<C> {
+public final class RootConfigNode<C, V> implements ConfigNode<C> {
 	public final String modId;
 	private final ImmutableList<CategoryConfigNode<C>> categories;
+	@Contract(pure = true)
 	private RootConfigNode(ImmutableList<CategoryConfigNode<C>> categories, String modId) {
 		this.categories = categories;
 		this.modId = modId;
 	}
-	public static <C> RootConfigNode<C> create(C defaultConfig, String modId) {
-		return new Builder<>(defaultConfig, modId).build();
+	@SuppressWarnings("unchecked")
+	@Contract("_, _ -> new")
+	public static <C, V> @NotNull RootConfigNode<C, V> create(C defaultConfig, String modId) {
+		return (RootConfigNode<C, V>) new Builder<>(defaultConfig, modId).build();
 	}
+	@Contract(value = " -> new", pure = true)
 	public @NotNull Component getTitle() {
 		return Component.empty();
 	}
+	@Contract(pure = true)
 	@Override
 	public @Nullable Component getTooltip() {
 		return null;
@@ -72,7 +77,7 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 		return categories;
 	}
 	@Nullable
-	public ValueConfigNode<C, ?> getValueNode(String path) {
+	public ValueConfigNode<C, V> getValueNode(String path) {
 		for (var category : categories) {
 			var result = findValueNode(category, path);
 			if (result != null) return result;
@@ -80,8 +85,9 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 		return null;
 	}
 	@Nullable
-	private ValueConfigNode<C, ?> findValueNode(ConfigNode<C> node, String path) {
-		if (node instanceof ValueConfigNode<C, ?> valueNode && valueNode.getPath().equals(path)) return valueNode;
+	@SuppressWarnings("unchecked")
+	private ValueConfigNode<C, V> findValueNode(ConfigNode<C> node, String path) {
+		if (node instanceof ValueConfigNode<C, ?> valueNode && valueNode.getPath().equals(path)) return (ValueConfigNode<C, V>) valueNode;
 		if (node instanceof CategoryConfigNode<C> categoryNode) for (var child : categoryNode.getChildren()) {
 			var result = findValueNode(child, path);
 			if (result != null) return result;
@@ -95,12 +101,13 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 			this.defaultConfig = defaultConfig;
 			this.modId = modId;
 		}
-		private static boolean evaluatePathCondition(List<Field> path) {
+		private static boolean evaluatePathCondition(@NotNull List<Field> path) {
 			for (var field : path)
 				if (!ConfigCondition.evaluate(field)) return false;
 			return true;
 		}
-		private static Field[] sortedFields(Field[] fields) {
+		@Contract("_ -> param1")
+		private static Field[] sortedFields(Field @NotNull [] fields) {
 			var indices = new HashMap<String, Integer>();
 			for (var i = 0; i < fields.length; i++) indices.put(fields[i].getName(), i);
 			Arrays.sort(
@@ -111,7 +118,7 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 			return fields;
 		}
 		@NotNull
-		public RootConfigNode<C> build() {
+		public RootConfigNode<C, ?> build() {
 			var configClass = defaultConfig.getClass();
 			var categories = Arrays.stream(configClass.getFields())
 				.filter(field -> field.isAnnotationPresent(Category.class))
@@ -155,7 +162,7 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 				} else addValueNode(defaultSubCategory, path, valueField, builder);
 			return builder;
 		}
-		private String buildPathKey(List<Field> fields) {
+		private @NotNull String buildPathKey(@NotNull List<Field> fields) {
 			if (fields.isEmpty()) return "";
 			var sb = new StringBuilder();
 			for (var f : fields) {
@@ -190,7 +197,7 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 				.requiresRestart(valueField.isAnnotationPresent(RequiresRestart.class))
 				.validator(FieldValidators.validatorFor(type, valueField)));
 		}
-		private <V> ValueReader<C, V> makePathValueReader(Class<? extends V> type, List<Field> path, Field valueField) {
+		private @NotNull <V> ValueReader<C, V> makePathValueReader(Class<? extends V> type, @NotNull List<Field> path, Field valueField) {
 			var pathHandles = path.stream().map(FieldAccess::varHandle).toArray(VarHandle[]::new);
 			var valueHandle = FieldAccess.varHandle(valueField);
 			return config -> {
@@ -199,7 +206,7 @@ public final class RootConfigNode<C> implements ConfigNode<C> {
 				return type.cast(FieldAccess.readField(valueHandle, current, valueField));
 			};
 		}
-		private <V> ValueWriter<C, V> makePathValueWriter(Class<? extends V> type, List<Field> path, Field valueField) {
+		private @NotNull <V> ValueWriter<C, V> makePathValueWriter(Class<? extends V> type, @NotNull List<Field> path, Field valueField) {
 			var pathHandles = path.stream().map(FieldAccess::varHandle).toArray(VarHandle[]::new);
 			var valueHandle = FieldAccess.varHandle(valueField);
 			return (config, value) -> {

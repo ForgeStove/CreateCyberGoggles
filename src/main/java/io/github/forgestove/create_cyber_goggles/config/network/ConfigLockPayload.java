@@ -4,7 +4,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.*;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.*;
 /** C2S数据包：管理员客户端发送针对特定配置条目的锁定/解锁请求。 */
 public record ConfigLockPayload(String configId, String value) implements CustomPacketPayload {
 	public static final Type<ConfigLockPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(
@@ -18,6 +18,7 @@ public record ConfigLockPayload(String configId, String value) implements Custom
 		ConfigLockPayload::value,
 		ConfigLockPayload::new
 	);
+	@Contract(pure = true)
 	@Override
 	public @NotNull Type<ConfigLockPayload> type() {
 		return TYPE;

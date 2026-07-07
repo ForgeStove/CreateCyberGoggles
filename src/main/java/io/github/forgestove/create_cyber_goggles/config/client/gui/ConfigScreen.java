@@ -17,9 +17,9 @@ import org.jetbrains.annotations.*;
 import java.util.*;
 public final class ConfigScreen<C, V> extends Screen {
 	public static CategoryConfigNode<?> lastSelectedCategory;
-	public final RootConfigNode<C> root;
+	public final RootConfigNode<C, V> root;
 	private final C config;
-	private final ConfigHandler<C> handler;
+	private final ConfigHandler<C, V> handler;
 	private final Screen parent;
 	private final TabManager tabManager;
 	private final List<ConfigCategoryTab<C, V>> tabs;
@@ -28,7 +28,7 @@ public final class ConfigScreen<C, V> extends Screen {
 	private TabNavigationBar tabNavigationBar;
 	private Button cancelButton, saveButton;
 	private CaptureHandler capturingEntry;
-	public ConfigScreen(ConfigHandler<C> handler) {
+	public ConfigScreen(ConfigHandler<C, V> handler) {
 		super(handler.getConfigTree().getTitle());
 		root = handler.getConfigTree();
 		config = handler.getConfig();

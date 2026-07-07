@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.config.network;
-import io.github.forgestove.create_cyber_goggles.config.ConfigRegistry;
+import io.github.forgestove.create_cyber_goggles.config.*;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.*;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;

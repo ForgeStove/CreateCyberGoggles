@@ -1,2 +1,2 @@
-- Add fade in and fade out in overlay
+- Fix tooltip fade out animation [#65](https://github.com/ForgeStove/CreateCyberGoggles/pull/65)
 - Optimize config system

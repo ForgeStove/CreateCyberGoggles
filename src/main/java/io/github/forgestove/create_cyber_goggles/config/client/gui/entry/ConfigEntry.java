@@ -12,12 +12,6 @@ public abstract class ConfigEntry extends Entry<ConfigEntry> {
 	public static final int GAP = 2;
 	public static final int INDENT_PX = 10;
 	private int indent;
-	private static boolean isMouseOverWidget(AbstractWidget widget, int mouseX, int mouseY) {
-		return mouseX >= widget.getX()
-			&& mouseY >= widget.getY()
-			&& mouseX < widget.getX() + widget.getWidth()
-			&& mouseY < widget.getY() + widget.getHeight();
-	}
 	public int getIndent() {
 		return indent;
 	}
@@ -37,6 +31,12 @@ public abstract class ConfigEntry extends Entry<ConfigEntry> {
 				return tooltip;
 			}
 		return null;
+	}
+	private static boolean isMouseOverWidget(AbstractWidget widget, int mouseX, int mouseY) {
+		return mouseX >= widget.getX()
+			&& mouseY >= widget.getY()
+			&& mouseX < widget.getX() + widget.getWidth()
+			&& mouseY < widget.getY() + widget.getHeight();
 	}
 	public void refresh() {}
 	/**

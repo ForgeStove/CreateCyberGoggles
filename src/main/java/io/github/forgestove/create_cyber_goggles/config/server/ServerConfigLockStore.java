@@ -24,40 +24,6 @@ public final class ServerConfigLockStore {
 	public ServerConfigLockStore(MinecraftServer server, String modId) {
 		lockFilePath = server.getWorldPath(new LevelResource("serverconfig/" + modId + "_locks.toml"));
 	}
-	private static String unquote(String raw) {
-		raw = raw.strip();
-		if (raw.startsWith("\"") && raw.endsWith("\""))
-			return raw.substring(1, raw.length() - 1).replace("\\\"", "\"").replace("\\\\", "\\");
-		return raw;
-	}
-	private static String quote(String value) {
-		if (value.equals("true") || value.equals("false")) return value;
-		try {
-			Integer.parseInt(value);
-			return value;
-		} catch (NumberFormatException ignored) {}
-		try {
-			Integer.decode(value); // 支持 0xFF0000 等十六进制颜色
-			return value;
-		} catch (NumberFormatException ignored) {}
-		try {
-			Long.parseLong(value);
-			return value;
-		} catch (NumberFormatException ignored) {}
-		try {
-			Long.decode(value);
-			return value;
-		} catch (NumberFormatException ignored) {}
-		try {
-			Float.parseFloat(value);
-			return value;
-		} catch (NumberFormatException ignored) {}
-		try {
-			Double.parseDouble(value);
-			return value;
-		} catch (NumberFormatException ignored) {}
-		return "\"" + value.replace("\\", "\\\\").replace("\"", "\\\"") + "\"";
-	}
 	/** 从磁盘加载锁定。在服务器启动时调用。 */
 	public void load() {
 		locks.clear();
@@ -83,6 +49,12 @@ public final class ServerConfigLockStore {
 		} catch (IOException e) {
 			LOGGER.error("Failed to load config locks from {}", lockFilePath, e);
 		}
+	}
+	private static String unquote(String raw) {
+		raw = raw.strip();
+		if (raw.startsWith("\"") && raw.endsWith("\""))
+			return raw.substring(1, raw.length() - 1).replace("\\\"", "\"").replace("\\\\", "\\");
+		return raw;
 	}
 	/** 将配置条目锁定为特定的值字符串。 */
 	public void lockEntry(String configId, String value) {
@@ -126,6 +98,34 @@ public final class ServerConfigLockStore {
 			}
 		}
 		return lines;
+	}
+	private static String quote(String value) {
+		if (value.equals("true") || value.equals("false")) return value;
+		try {
+			Integer.parseInt(value);
+			return value;
+		} catch (NumberFormatException ignored) {}
+		try {
+			Integer.decode(value); // 支持 0xFF0000 等十六进制颜色
+			return value;
+		} catch (NumberFormatException ignored) {}
+		try {
+			Long.parseLong(value);
+			return value;
+		} catch (NumberFormatException ignored) {}
+		try {
+			Long.decode(value);
+			return value;
+		} catch (NumberFormatException ignored) {}
+		try {
+			Float.parseFloat(value);
+			return value;
+		} catch (NumberFormatException ignored) {}
+		try {
+			Double.parseDouble(value);
+			return value;
+		} catch (NumberFormatException ignored) {}
+		return "\"" + value.replace("\\", "\\\\").replace("\"", "\\\"") + "\"";
 	}
 	public String toTomlString() {
 		return String.join("\n", buildTomlLines());

@@ -47,20 +47,8 @@ public final class ConfigScreen<C, V> extends Screen {
 		}
 		return super.keyPressed(keyCode, scanCode, modifiers);
 	}
-	@Override
-	public void onClose() {
-		var mc = ClientUtil.mc;
-		if (isActiveValue()) {
-			mc.setScreen(parent);
-			return;
-		}
-		mc.setScreen(new ConfirmScreen(
-			confirmed -> mc.setScreen(confirmed ? parent : this),
-			Translation.QUIT_CONFIRM_TITLE,
-			Translation.QUIT_CONFIRM_WARNING,
-			Translation.QUIT_CONFIRM_LABEL,
-			Translation.CANCEL_LABEL
-		));
+	private void cacheTabIndex() {
+		if (tabManager.getCurrentTab() instanceof ConfigCategoryTab<?, ?> tab) lastSelectedCategory = tab.node;
 	}
 	@Override
 	protected void init() {
@@ -92,32 +80,6 @@ public final class ConfigScreen<C, V> extends Screen {
 		});
 		repositionElements();
 	}
-	@Override
-	protected void repositionElements() {
-		refresh();
-		repositionTabLayout();
-	}
-	private void cacheTabIndex() {
-		if (tabManager.getCurrentTab() instanceof ConfigCategoryTab<?, ?> tab) lastSelectedCategory = tab.node;
-	}
-	private void initTabLayout() {
-		var builder = TabNavigationBar.builder(tabManager, width);
-		tabs.forEach(builder::addTabs);
-		tabNavigationBar = builder.build();
-		initTabs(tabNavigationBar);
-		addRenderableWidget(tabNavigationBar);
-		tabNavigationBar.selectTab(lastTabIndex(), false);
-	}
-	private void repositionTabLayout() {
-		if (tabNavigationBar == null) return;
-		tabNavigationBar.setWidth(width);
-		tabNavigationBar.arrangeElements();
-		var i = tabNavigationBar.getRectangle().bottom();
-		var screenRectangle = new ScreenRectangle(0, i, width, height - layout.getFooterHeight() - i);
-		tabManager.setTabArea(screenRectangle);
-		layout.setHeaderHeight(i);
-		layout.arrangeElements();
-	}
 	private @Nullable CategoryConfigNode<C> buildKeybindCategory() {
 		var allMappings = ClientUtil.mc.options.keyMappings;
 		var modMappings = new ArrayList<KeyMapping>();
@@ -137,12 +99,31 @@ public final class ConfigScreen<C, V> extends Screen {
 			.requiresRestart(false)));
 		return builder.build();
 	}
-	private void initTabs(@NotNull TabNavigationBar bar) {
-		var i = 0;
-		for (var child : bar.children()) if (child instanceof TabButton tabButton) tabs.get(i++).setTabButton(tabButton);
+	private void initTabLayout() {
+		var builder = TabNavigationBar.builder(tabManager, width);
+		tabs.forEach(builder::addTabs);
+		tabNavigationBar = builder.build();
+		initTabs(tabNavigationBar);
+		addRenderableWidget(tabNavigationBar);
+		tabNavigationBar.selectTab(lastTabIndex(), false);
 	}
 	private Component getCancelLabel() {
 		return isActiveValue() ? Translation.CANCEL_LABEL : Translation.QUIT_UNSAVED_LABEL;
+	}
+	@Override
+	public void onClose() {
+		var mc = ClientUtil.mc;
+		if (isActiveValue()) {
+			mc.setScreen(parent);
+			return;
+		}
+		mc.setScreen(new ConfirmScreen(
+			confirmed -> mc.setScreen(confirmed ? parent : this),
+			Translation.QUIT_CONFIRM_TITLE,
+			Translation.QUIT_CONFIRM_WARNING,
+			Translation.QUIT_CONFIRM_LABEL,
+			Translation.CANCEL_LABEL
+		));
 	}
 	private Component getSaveLabel(boolean hasEntryError) {
 		return validate() == null && !hasEntryError ? Translation.SAVE_LABEL : Translation.CANNOT_SAVE_LABEL;
@@ -166,6 +147,15 @@ public final class ConfigScreen<C, V> extends Screen {
 			Translation.IGNORE_RESTART_LABEL
 		) : parent);
 	}
+	@Override
+	protected void repositionElements() {
+		refresh();
+		repositionTabLayout();
+	}
+	private void initTabs(@NotNull TabNavigationBar bar) {
+		var i = 0;
+		for (var child : bar.children()) if (child instanceof TabButton tabButton) tabs.get(i++).setTabButton(tabButton);
+	}
 	private int lastTabIndex() {
 		if (lastSelectedCategory == null) return 0;
 		for (var i = 0; i < tabs.size(); i++)
@@ -188,6 +178,16 @@ public final class ConfigScreen<C, V> extends Screen {
 		saveButton.active = !isActiveValue() && validate() == null && !hasEntryError;
 		cancelButton.setMessage(getCancelLabel());
 		saveButton.setMessage(getSaveLabel(hasEntryError));
+	}
+	private void repositionTabLayout() {
+		if (tabNavigationBar == null) return;
+		tabNavigationBar.setWidth(width);
+		tabNavigationBar.arrangeElements();
+		var i = tabNavigationBar.getRectangle().bottom();
+		var screenRectangle = new ScreenRectangle(0, i, width, height - layout.getFooterHeight() - i);
+		tabManager.setTabArea(screenRectangle);
+		layout.setHeaderHeight(i);
+		layout.arrangeElements();
 	}
 	public void onEntryCaptureChanged(CaptureHandler entry, boolean capturing) {
 		capturingEntry = capturing ? entry : null;

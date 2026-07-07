@@ -81,16 +81,6 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 	public int getWidth(@NotNull Font font) {
 		return indentPixels(font) + barWidth(font);
 	}
-	@Override
-	public void renderImage(@NotNull Font font, int x, int y, @NotNull GuiGraphics gui) {
-		var label = buildLabel();
-		var barX = x + indentPixels(font);
-		var barWidth = barWidth(font);
-		renderFluidBar(gui, fluid, capacityMb, barX, y, barWidth, SlotUtil.SIZE_SLIM);
-		var textX = barX + H_PADDING;
-		var textY = y + Mth.floor((SlotUtil.SIZE_SLIM - font.lineHeight) / 2F) + 1;
-		gui.drawString(font, label, textX, textY, 0xFFFFFFFF, true);
-	}
 	private int indentPixels(@NotNull Font font) {
 		return indent * font.width(" ");
 	}
@@ -114,6 +104,16 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 		if (amountMb % 1000 == 0) return amountMb / 1000 + "B";
 		var value = amountMb / 1000F;
 		return CCGLang.number(value).string() + "B";
+	}
+	@Override
+	public void renderImage(@NotNull Font font, int x, int y, @NotNull GuiGraphics gui) {
+		var label = buildLabel();
+		var barX = x + indentPixels(font);
+		var barWidth = barWidth(font);
+		renderFluidBar(gui, fluid, capacityMb, barX, y, barWidth, SlotUtil.SIZE_SLIM);
+		var textX = barX + H_PADDING;
+		var textY = y + Mth.floor((SlotUtil.SIZE_SLIM - font.lineHeight) / 2F) + 1;
+		gui.drawString(font, label, textX, textY, 0xFFFFFFFF, true);
 	}
 	public record FluidEntryTooltipComponent(FluidStack fluid, int indent, int capacityMb) implements TooltipComponent {}
 }

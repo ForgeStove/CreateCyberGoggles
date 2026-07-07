@@ -34,6 +34,9 @@ public final class ClientItemEntryTooltipComponent implements ClientTooltipCompo
 	public int getWidth(@NotNull Font font) {
 		return indentPixels(font) + SlotUtil.SIZE_SLIM + font.width(label);
 	}
+	private int indentPixels(@NotNull Font font) {
+		return indent * font.width(" ");
+	}
 	@Override
 	public void renderText(@NotNull Font font, int x, int y, @NotNull Matrix4f matrix, @NotNull BufferSource source) {
 		var textX = x + indentPixels(font) + SlotUtil.SIZE_SLIM;
@@ -50,9 +53,6 @@ public final class ClientItemEntryTooltipComponent implements ClientTooltipCompo
 		gui.renderItem(stack, 0, 0);
 		gui.renderItemDecorations(font, stack, 0, 0);
 		pose.popPose();
-	}
-	private int indentPixels(@NotNull Font font) {
-		return indent * font.width(" ");
 	}
 	public record ItemEntryTooltipComponent(ItemStack stack, int indent, Component label) implements TooltipComponent {}
 }

@@ -35,6 +35,15 @@ public abstract class AbstractItemGridRenderer implements TooltipRenderer {
 		if (data == null) return 0;
 		return resolveColumns(data) * SlotUtil.SIZE + PAD * 2;
 	}
+	private @Nullable OverlayData getData(ItemStack stack) {
+		var data = buildItemGrid(stack);
+		if (data == null || data.items().isEmpty()) return null;
+		return data;
+	}
+	public static int resolveColumns(OverlayData data) {
+		return Mth.clamp(data.columns(), 1, Math.max(1, data.items().size()));
+	}
+	public abstract @Nullable OverlayData buildItemGrid(ItemStack stack);
 	@Override
 	public int height(ItemStack stack) {
 		var data = getData(stack);
@@ -108,15 +117,6 @@ public abstract class AbstractItemGridRenderer implements TooltipRenderer {
 		return BigDecimal.valueOf(amountMb).divide(BigDecimal.valueOf(1000), 1, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
 			+ "B";
 	}
-	private @Nullable OverlayData getData(ItemStack stack) {
-		var data = buildItemGrid(stack);
-		if (data == null || data.items().isEmpty()) return null;
-		return data;
-	}
-	public static int resolveColumns(OverlayData data) {
-		return Mth.clamp(data.columns(), 1, Math.max(1, data.items().size()));
-	}
-	public abstract @Nullable OverlayData buildItemGrid(ItemStack stack);
 	public record OverlayData(List<ItemStack> items, int columns, Set<Integer> zeroCountSlots) {
 		public OverlayData(List<ItemStack> items, int columns) {
 			this(items, columns, Set.of());

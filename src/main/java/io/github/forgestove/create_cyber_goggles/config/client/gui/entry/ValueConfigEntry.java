@@ -59,10 +59,6 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 		if (validationError != null) errorTooltip.add(validationError.copy().withStyle(ChatFormatting.RED).getVisualOrderText());
 		return errorTooltip;
 	}
-	@Override
-	public boolean hasError() {
-		return validationError != null;
-	}
 	public void resetToDefault() {
 		var path = node.getPath();
 		var pending = ClientLockManager.getPendingLock(path);
@@ -84,16 +80,6 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 		ClientLockManager.setPendingLock(path, shouldLock);
 		tab.screen.refresh();
 	}
-	/**
-	 * 检查此条目的有效锁定状态。
-	 * 首先考虑待处理的锁定操作，然后回退到服务器确认的锁定。
-	 */
-	public boolean isLocked() {
-		var path = node.getPath();
-		var pending = ClientLockManager.getPendingLock(path);
-		if (pending != null) return pending;
-		return ClientLockManager.isLocked(path);
-	}
 	private boolean canLock() {
 		var mc = Minecraft.getInstance();
 		return mc.player != null && mc.player.hasPermissions(2);
@@ -103,6 +89,20 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 		if (mc.player == null) return false;
 		if (mc.isSingleplayer()) return false;
 		return ClientLockManager.hasReceivedSync();
+	}
+	@Override
+	public boolean hasError() {
+		return validationError != null;
+	}
+	/**
+	 * 检查此条目的有效锁定状态。
+	 * 首先考虑待处理的锁定操作，然后回退到服务器确认的锁定。
+	 */
+	public boolean isLocked() {
+		var path = node.getPath();
+		var pending = ClientLockManager.getPendingLock(path);
+		if (pending != null) return pending;
+		return ClientLockManager.isLocked(path);
 	}
 	public V getValue() {
 		return node.getEditingValue(tab.config);

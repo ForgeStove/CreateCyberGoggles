@@ -40,6 +40,9 @@ public final class ClientFluidListTooltipComponent implements ClientTooltipCompo
 	public int getWidth(@NotNull Font font) {
 		return columns * SlotUtil.SIZE + indentPixels(font);
 	}
+	private int indentPixels(@NotNull Font font) {
+		return indent * font.width(" ");
+	}
 	@Override
 	public void renderImage(@NotNull Font font, int x, int y, @NotNull GuiGraphics gui) {
 		for (var i = 0; i < fluids.size(); i++) {
@@ -80,9 +83,6 @@ public final class ClientFluidListTooltipComponent implements ClientTooltipCompo
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 			RenderSystem.disableBlend();
 		}
-	}
-	private int indentPixels(@NotNull Font font) {
-		return indent * font.width(" ");
 	}
 	public record FluidListTooltipComponent(List<FluidStack> fluids, int indent, int maxColumns) implements TooltipComponent {}
 }

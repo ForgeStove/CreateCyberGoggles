@@ -25,13 +25,13 @@ public final class ConfigNetwork {
 		else lockStore.lockEntry(payload.configId(), payload.value());
 		broadcastLocks();
 	}
-	private static void broadcastLocks() {
-		if (lockStore == null) return;
-		PacketDistributor.sendToAllPlayers(new ConfigSyncPayload(lockStore.toTomlString()));
-	}
 	private static void handleConfigSyncClient(ConfigSyncPayload payload, IPayloadContext context) {
 		ClientLockManager.setLocks(ConfigRegistry.getModId(), payload.tomlContent());
 		context.enqueueWork(() -> {if (Minecraft.getInstance().screen instanceof ConfigScreen<?, ?> configScreen) configScreen.refresh();});
+	}
+	private static void broadcastLocks() {
+		if (lockStore == null) return;
+		PacketDistributor.sendToAllPlayers(new ConfigSyncPayload(lockStore.toTomlString()));
 	}
 	// -- 锁定存储管理（由ServerLifecycleHandler使用） --
 	@Nullable

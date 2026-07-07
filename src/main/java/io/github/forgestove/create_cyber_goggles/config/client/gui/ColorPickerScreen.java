@@ -158,6 +158,16 @@ public final class ColorPickerScreen extends Screen {
 		updateHexInput();
 		return true;
 	}
+	private void updateHexInput() {
+		if (hexInput == null || updatingFromInput) return;
+		updatingFromInput = true;
+		hexInput.setValue(formatHexColor());
+		updatingFromInput = false;
+	}
+	private String formatHexColor() {
+		var color = colorFromHSB();
+		return hasAlpha ? String.format("%08X", color) : String.format("%06X", color & 0xFFFFFF);
+	}
 	@Override
 	public void onClose() {
 		if (minecraft != null && parent != null) minecraft.setScreen(parent);
@@ -216,16 +226,6 @@ public final class ColorPickerScreen extends Screen {
 	public void resize(@NotNull Minecraft minecraft, int width, int height) {
 		if (parent != null) parent.resize(minecraft, width, height);
 		super.resize(minecraft, width, height);
-	}
-	private void updateHexInput() {
-		if (hexInput == null || updatingFromInput) return;
-		updatingFromInput = true;
-		hexInput.setValue(formatHexColor());
-		updatingFromInput = false;
-	}
-	private String formatHexColor() {
-		var color = colorFromHSB();
-		return hasAlpha ? String.format("%08X", color) : String.format("%06X", color & 0xFFFFFF);
 	}
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {

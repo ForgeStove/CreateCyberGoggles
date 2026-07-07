@@ -56,12 +56,16 @@ public final class ValueConfigNode<C, V> implements ConfigNode<C> {
 		return requiresRestart && !isActiveValue(config);
 	}
 	@Override
-	public boolean isDefaultValue(C config) {
-		return Objects.equals(getDefaultValue(), getEditingValue(config));
-	}
-	@Override
 	public boolean isActiveValue(C config) {
 		return Objects.equals(getActiveValue(config), getEditingValue(config));
+	}
+	public V getEditingValue(C config) {
+		if (editingValue == null) setEditingValue(getActiveValue(config));
+		return editingValue;
+	}
+	@Override
+	public boolean isDefaultValue(C config) {
+		return Objects.equals(getDefaultValue(), getEditingValue(config));
 	}
 	@Override
 	public @Nullable Component validate(C config) {
@@ -80,10 +84,6 @@ public final class ValueConfigNode<C, V> implements ConfigNode<C> {
 	}
 	public String getPath() {
 		return path;
-	}
-	public V getEditingValue(C config) {
-		if (editingValue == null) setEditingValue(getActiveValue(config));
-		return editingValue;
 	}
 	public boolean colorHasAlpha() {
 		return isColorValue() && colorValue.value();

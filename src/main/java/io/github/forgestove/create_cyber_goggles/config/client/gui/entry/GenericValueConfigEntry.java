@@ -30,9 +30,6 @@ public abstract class GenericValueConfigEntry<C, V> extends ValueConfigEntry<C, 
 		inputField.setResponder(this::onInputChange);
 		children.add(inputField);
 	}
-	public static boolean isZero(@NotNull String string) {
-		return string.isEmpty() || string.equals("-");
-	}
 	private void onInputChange(String value) {
 		if (updatingFromCode) return;
 		if (!validator.test(value)) {
@@ -89,6 +86,9 @@ public abstract class GenericValueConfigEntry<C, V> extends ValueConfigEntry<C, 
 		if (!hasParseError) return;
 		resetButton.active = true;
 		undoButton.active = true;
+	}
+	public static boolean isZero(@NotNull String string) {
+		return string.isEmpty() || string.equals("-");
 	}
 	@Override
 	public boolean hasError() {

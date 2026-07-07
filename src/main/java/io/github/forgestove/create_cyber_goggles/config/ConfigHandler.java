@@ -25,10 +25,6 @@ public final class ConfigHandler<C, V> {
 		activeConfig = newInstance();
 		configTree.copy(savedConfig, activeConfig);
 	}
-	@Contract(value = "_ -> new", pure = true)
-	public static <C, V> @NotNull Builder<C, V> builder(Class<C> configClass) {
-		return new Builder<>(configClass);
-	}
 	private @NotNull C newInstance() {
 		try {
 			return configClass.getDeclaredConstructor().newInstance();
@@ -43,6 +39,10 @@ public final class ConfigHandler<C, V> {
 			LOGGER.error("Failed to load configuration, using defaults", e);
 			return newInstance();
 		}
+	}
+	@Contract(value = "_ -> new", pure = true)
+	public static <C, V> @NotNull Builder<C, V> builder(Class<C> configClass) {
+		return new Builder<>(configClass);
 	}
 	@Contract(pure = true)
 	public RootConfigNode<C, V> getConfigTree() {

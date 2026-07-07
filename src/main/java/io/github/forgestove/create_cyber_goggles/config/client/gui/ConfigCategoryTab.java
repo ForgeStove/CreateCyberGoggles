@@ -28,13 +28,6 @@ public final class ConfigCategoryTab<C, V> implements Tab {
 		if (defaultsApplied.add(node)) collectDefaultExpanded(node);
 		list = new ConfigEntryList(screen, buildEntries(node, 0));
 	}
-	public static @NotNull Component styleAsState(@NotNull Component component, boolean hasError, boolean hasChanged) {
-		var result = component.copy();
-		if (hasError) result.withStyle(ChatFormatting.RED);
-		else if (hasChanged) result.withStyle(ChatFormatting.YELLOW);
-		if (hasChanged) result.withStyle(ChatFormatting.ITALIC);
-		return result;
-	}
 	@NotNull
 	@Override
 	public Component getTabTitle() {
@@ -83,6 +76,13 @@ public final class ConfigCategoryTab<C, V> implements Tab {
 	}
 	public boolean hasEntryError() {
 		return list.hasEntryError();
+	}
+	public static @NotNull Component styleAsState(@NotNull Component component, boolean hasError, boolean hasChanged) {
+		var result = component.copy();
+		if (hasError) result.withStyle(ChatFormatting.RED);
+		else if (hasChanged) result.withStyle(ChatFormatting.YELLOW);
+		if (hasChanged) result.withStyle(ChatFormatting.ITALIC);
+		return result;
 	}
 	public void setTabButton(TabButton tabButton) {
 		this.tabButton = tabButton;

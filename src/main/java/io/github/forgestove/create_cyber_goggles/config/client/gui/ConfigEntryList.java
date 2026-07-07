@@ -58,10 +58,6 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 		return smoothScroll.onMouseScroll(vertical, itemHeight);
 	}
 	@Override
-	public int getRowWidth() {
-		return width * 4 / 5;
-	}
-	@Override
 	protected void renderListItems(@NotNull GuiGraphics gui, int mouseX, int mouseY, float delta) {
 		var left = getRowLeft();
 		var width = getRowWidth();
@@ -71,5 +67,9 @@ public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEn
 			var bottom = getRowBottom(i);
 			if (bottom >= getY() && top <= getBottom()) renderItem(gui, mouseX, mouseY, delta, i, left, top, width, itemHeight);
 		}
+	}
+	@Override
+	public int getRowWidth() {
+		return width * 4 / 5;
 	}
 }

@@ -36,6 +36,9 @@ public final class ClientItemListTooltipComponent implements ClientTooltipCompon
 	public int getWidth(@NotNull Font font) {
 		return columns * SlotUtil.SIZE + indentPixels(font);
 	}
+	private int indentPixels(@NotNull Font font) {
+		return indent * font.width(" ");
+	}
 	@Override
 	public void renderImage(@NotNull Font font, int x, int y, @NotNull GuiGraphics gui) {
 		for (var i = 0; i < items.size(); i++) {
@@ -52,9 +55,6 @@ public final class ClientItemListTooltipComponent implements ClientTooltipCompon
 		if (AbstractItemGridRenderer.isCFLCompressedTank(stack) && stack.getCount() > 1)
 			gui.renderItemDecorations(font, stack, x + 1, y + 1, AbstractItemGridRenderer.formatFluidAmount(stack.getCount()));
 		else gui.renderItemDecorations(font, stack, x + 1, y + 1);
-	}
-	private int indentPixels(@NotNull Font font) {
-		return indent * font.width(" ");
 	}
 	public record ItemListTooltipComponent(List<ItemStack> items, int indent, int maxColumns) implements TooltipComponent {}
 }

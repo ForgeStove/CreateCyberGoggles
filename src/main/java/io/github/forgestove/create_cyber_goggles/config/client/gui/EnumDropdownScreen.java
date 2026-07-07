@@ -104,11 +104,6 @@ public final class EnumDropdownScreen extends Screen {
 			thumbHovered || draggingScrollbar ? 0xFF888888 : 0xFF555555
 		);
 	}
-	@Override
-	public void resize(@NotNull Minecraft minecraft, int width, int height) {
-		parent.resize(minecraft, width, height);
-		update();
-	}
 	private int dropdownY() {
 		return dropdownButton.getY() + dropdownButton.getHeight();
 	}
@@ -129,6 +124,11 @@ public final class EnumDropdownScreen extends Screen {
 		var maxScroll = getMaxScrollOffset();
 		var thumbY = maxScroll > 0 ? track.y + (track.height - thumbHeight) * smoothScrollOffset / maxScroll : track.y;
 		return new Rectangle(track.x, (int) thumbY, track.width, thumbHeight);
+	}
+	@Override
+	public void resize(@NotNull Minecraft minecraft, int width, int height) {
+		parent.resize(minecraft, width, height);
+		update();
 	}
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
@@ -157,30 +157,6 @@ public final class EnumDropdownScreen extends Screen {
 		}
 		return super.mouseClicked(mouseX, mouseY, button);
 	}
-	@Override
-	public boolean mouseReleased(double mouseX, double mouseY, int button) {
-		draggingScrollbar = false;
-		return super.mouseReleased(mouseX, mouseY, button);
-	}
-	@Override
-	public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-		if (!draggingScrollbar) return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
-		updateScrollFromMouse(mouseY);
-		return true;
-	}
-	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
-		if (isOutsidePanel(mouseX, mouseY)) return super.mouseScrolled(mouseX, mouseY, horizontal, vertical);
-		return smoothScrool.onMouseScroll(vertical, 1);
-	}
-	private void updateScrollFromMouse(double mouseY) {
-		var track = getScrollbarTrack();
-		var thumbHeight = Math.max(15, track.height * maxVisibleOptions / values.length);
-		double scrollRange = track.height - thumbHeight;
-		if (scrollRange <= 0) return;
-		var relativeY = mouseY - track.y - thumbHeight / 2.0;
-		smoothScrollOffset = Mth.clamp((int) Math.round(relativeY / scrollRange * getMaxScrollOffset()), 0, getMaxScrollOffset());
-	}
 	private boolean isOutsidePanel(double mouseX, double mouseY) {
 		var panelX = dropdownButton.getX() - GAP;
 		var panelY = dropdownY() - GAP;
@@ -193,5 +169,29 @@ public final class EnumDropdownScreen extends Screen {
 	}
 	private int getContentWidth() {
 		return needsScrollbar() ? dropdownButton.getWidth() - SCROLLBAR_WIDTH - GAP : dropdownButton.getWidth();
+	}
+	@Override
+	public boolean mouseReleased(double mouseX, double mouseY, int button) {
+		draggingScrollbar = false;
+		return super.mouseReleased(mouseX, mouseY, button);
+	}
+	@Override
+	public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+		if (!draggingScrollbar) return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+		updateScrollFromMouse(mouseY);
+		return true;
+	}
+	private void updateScrollFromMouse(double mouseY) {
+		var track = getScrollbarTrack();
+		var thumbHeight = Math.max(15, track.height * maxVisibleOptions / values.length);
+		double scrollRange = track.height - thumbHeight;
+		if (scrollRange <= 0) return;
+		var relativeY = mouseY - track.y - thumbHeight / 2.0;
+		smoothScrollOffset = Mth.clamp((int) Math.round(relativeY / scrollRange * getMaxScrollOffset()), 0, getMaxScrollOffset());
+	}
+	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
+		if (isOutsidePanel(mouseX, mouseY)) return super.mouseScrolled(mouseX, mouseY, horizontal, vertical);
+		return smoothScrool.onMouseScroll(vertical, 1);
 	}
 }

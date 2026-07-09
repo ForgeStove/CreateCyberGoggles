@@ -43,7 +43,7 @@ public final class KineticParticle {
 		for (var direction : Direction.values()) {
 			if (!kb.hasShaftTowards(mc.level, kbe.getBlockPos(), state, direction)) continue;
 			var axis = direction.getAxis();
-			var directionSpeed = particleSpeed * RotationPropagatorAccessor.getAxisModifier(kbe, direction);
+			var directionSpeed = particleSpeed * RotationPropagatorAccessor.callGetAxisModifier(kbe, direction);
 			var offset = direction.getAxisDirection().getStep() / 2D;
 			var axisVec = new Vec3(axis == Axis.X ? offset : 0, axis == Axis.Y ? offset : 0, axis == Axis.Z ? offset : 0);
 			var pos = center.add(axisVec);

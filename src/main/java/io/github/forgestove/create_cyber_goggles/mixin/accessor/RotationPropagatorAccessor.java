@@ -6,8 +6,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(RotationPropagator.class)
 public interface RotationPropagatorAccessor {
-	@Invoker("getAxisModifier")
-	static float getAxisModifier(KineticBlockEntity be, Direction direction) {
+	@Invoker
+	static float callGetAxisModifier(KineticBlockEntity be, Direction direction) {
 		throw new AssertionError();
 	}
 }

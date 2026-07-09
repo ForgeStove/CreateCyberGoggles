@@ -1,4 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.core.util;
+import io.github.forgestove.create_cyber_goggles.mixin.accessor.FontAccessor;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.*;
@@ -58,7 +59,12 @@ public final class ItemCountFontUtil {
 		var shadowColor = alpha << 24 | red << 16 | green << 8 | blue;
 		var matrix4f = new Matrix4f(matrix);
 		matrix4f.translate(0F, 0F, 0.1F);
-		font.drawInBatch8xOutline(text, x, y, color, shadowColor, matrix4f, buffer, packedLightCoords);
+		var accessor = (FontAccessor) font;
+		for (var dx = -1; dx <= 1; dx++)
+			for (var dy = -1; dy <= 1; dy++)
+				if (dx != 0 || dy != 0)
+					accessor.callDrawInternal(text, x + dx, y + dy, shadowColor, false, matrix4f, buffer, Font.DisplayMode.NORMAL, 0, packedLightCoords);
+		accessor.callDrawInternal(text, x, y, color, false, matrix4f, buffer, Font.DisplayMode.POLYGON_OFFSET, 0, packedLightCoords);
 		cir.setReturnValue(font.width(text) + 1);
 	}
 }

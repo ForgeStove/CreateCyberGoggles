@@ -4,6 +4,7 @@
 	"package": "io.github.forgestove.create_cyber_goggles.mixin",
 	"client": [
 		"AbstractFilterScreenMixin",
+		"accessor.FontAccessor",
 		"accessor.RotationPropagatorAccessor",
 		"compact.AbstractStorageTerminalScreenMixin",
 		"compact.EmiRenderHelperMixin",

@@ -13,12 +13,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Font.class)
 public abstract class FontMixin implements Self<Font> {
 	@Inject(
-		method = "drawInternal(Lnet/minecraft/util/FormattedCharSequence;FFIZLorg/joml/Matrix4f;"
+		method = "drawInBatch(Lnet/minecraft/util/FormattedCharSequence;FFIZLorg/joml/Matrix4f;"
 			+ "Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/client/gui/Font$DisplayMode;II)I",
 		at = @At("HEAD"),
 		cancellable = true
 	)
-	public void drawInternal(
+	public void drawInBatch(
 		FormattedCharSequence text,
 		float x,
 		float y,

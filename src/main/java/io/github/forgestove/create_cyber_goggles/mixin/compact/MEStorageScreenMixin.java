@@ -16,15 +16,7 @@ public class MEStorageScreenMixin {
 		ordinal = 0
 	)
 	)
-	public void renderSlot(
-		GuiGraphics gui,
-		Font font,
-		float x,
-		float y,
-		String text,
-		boolean largeFonts,
-		Operation<Void> original
-	) {
+	public void renderSlot(GuiGraphics gui, Font font, float x, float y, String text, boolean largeFonts, Operation<Void> original) {
 		if (!CCG.config.misc.createStyleCount) {
 			original.call(gui, font, x, y, text, largeFonts);
 			return;

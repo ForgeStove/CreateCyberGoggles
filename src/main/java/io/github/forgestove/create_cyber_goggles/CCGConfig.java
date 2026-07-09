@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles;
-import io.github.forgestove.create_cyber_goggles.config.annotation.*;
 import io.github.forgestove.create_cyber_goggles.core.factory.*;
+import io.github.forgestove.config.api.*;
 
 import java.awt.Point;
 @Config(CCG.ID)

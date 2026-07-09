@@ -114,7 +114,7 @@
 	"create_cyber_goggles.config.option.misc.chainConveyor.preventFalling": "阻止自动分离",
 	"create_cyber_goggles.config.option.misc.chainConveyor.preventFalling.tooltip": "阻止在锁链传动轮上因为障碍物而自动分离",
 	"create_cyber_goggles.config.option.misc.createStyleCount": "机械动力风格堆叠数字",
-	"create_cyber_goggles.config.option.misc.createStyleCount.tooltip": "将物品堆叠数字替换为机械动力 3x5 像素字体",
+	"create_cyber_goggles.config.option.misc.createStyleCount.tooltip": "将物品堆叠数字替换为机械动力风格的字体",
 	"create_cyber_goggles.config.option.misc.enableNegativeInfThrottle": "启用负无穷油门",
 	"create_cyber_goggles.config.option.misc.enableNegativeInfThrottle.tooltip": "允许列车油门滚动突破正常最低限制",
 	"create_cyber_goggles.config.option.misc.fixSchematicName": "修复蓝图名称",

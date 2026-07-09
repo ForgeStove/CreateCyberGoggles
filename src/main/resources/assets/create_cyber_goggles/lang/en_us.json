@@ -114,7 +114,7 @@
 	"create_cyber_goggles.config.option.misc.chainConveyor.preventFalling": "Prevent Auto Detach",
 	"create_cyber_goggles.config.option.misc.chainConveyor.preventFalling.tooltip": "Prevent automatic detachment from chain conveyors due to obstacles",
 	"create_cyber_goggles.config.option.misc.createStyleCount": "Create Style Count",
-	"create_cyber_goggles.config.option.misc.createStyleCount.tooltip": "Replace item stack counts with Create's 3x5 pixel font",
+	"create_cyber_goggles.config.option.misc.createStyleCount.tooltip": "Replace item stack counts with Create's style font",
 	"create_cyber_goggles.config.option.misc.enableNegativeInfThrottle": "Enable Negative Infinity Throttle",
 	"create_cyber_goggles.config.option.misc.enableNegativeInfThrottle.tooltip": "Allow train throttle to scroll past the normal minimum limit",
 	"create_cyber_goggles.config.option.misc.fixSchematicName": "Fix Schematic Name",

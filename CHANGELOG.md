@@ -1,2 +1,2 @@
-- Fix tooltip fade out animation [#65](https://github.com/ForgeStove/CreateCyberGoggles/pull/65)
+- Add createStyleCount option
 - Optimize config system

@@ -118,6 +118,7 @@ public final class CCGConfig {
 	public static class Misc {
 		@Category(false) public ChainConveyor chainConveyor = new ChainConveyor();
 		@Category(false) public Wrench wrench = new Wrench();
+		public boolean createStyleCount = true;
 		public boolean removeMechanicalArmLimit = false;
 		public boolean removeRequestLimit = true;
 		public boolean stockRequestQuickActions = true;

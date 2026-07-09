@@ -46,7 +46,8 @@ repositories {
 	maven("https://maven.createmod.net") // Create, Ponder, Flywheel
 	maven("https://mvn.devos.one/snapshots") // Registrate
 	maven("https://maven.ryanhcode.dev/releases") // Aeronautics
-	maven("https://maven.blamejared.com") // JEI, Veil
+	maven("https://maven.blamejared.com") // JEI, Veil, Ars Nouveau
+	maven("https://maven.terraformersmc.com") // EMI
 	maven("https://api.modrinth.com/maven") { content { includeGroup("maven.modrinth") } } // Modrinth
 }
 dependencies {
@@ -69,6 +70,10 @@ dependencies {
 	compileOnly("maven.modrinth:create-dragons-plus:${p("dragonPlusVersion")}")
 	//endregion
 	implementation("mezz.jei:jei-${p("mcVersion")}-${p("loader")}:${p("jeiVersion")}")
+	compileOnly("dev.emi:emi-${p("loader")}:${p("emiVersion")}+${p("mcVersion")}")
+	compileOnly("maven.modrinth:sophisticated-core:${p("mcVersion")}-${p("sophisticatedCoreVersion")}")
+	compileOnly("com.hollingsworth.ars_nouveau:ars_nouveau-${p("mcVersion")}:${p("arsNouveauVersion")}") { isTransitive = false }
+	compileOnly("org.appliedenergistics:appliedenergistics2:${p("appliedenergisticsVersion")}")
 	runtimeOnly("maven.modrinth:jade:${p("jadeVersion")}+${p("loader")}")
 	add("additionalRuntimeClasspath", "dev.vfyjxf:mixin-hotswap-agent:${p("mixinAgentVersion")}")
 }

@@ -1,9 +1,8 @@
 package io.github.forgestove.config.network;
-import io.github.forgestove.config.*;
-import io.github.forgestove.config.client.ClientLockManager;
+import io.github.forgestove.config.ConfigRegistry;
+import io.github.forgestove.config.client.*;
 import io.github.forgestove.config.client.gui.ConfigScreen;
 import io.github.forgestove.config.server.ServerConfigLockStore;
-import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -29,7 +28,7 @@ public final class ConfigNetwork {
 	}
 	private static void handleConfigSyncClient(ConfigSyncPayload payload, IPayloadContext context) {
 		ClientLockManager.setLocks(payload.modId(), payload.tomlContent());
-		context.enqueueWork(() -> {if (Minecraft.getInstance().screen instanceof ConfigScreen<?, ?> configScreen) configScreen.refresh();});
+		context.enqueueWork(() -> {if (ClientUtil.mc.screen instanceof ConfigScreen<?, ?> configScreen) configScreen.refresh();});
 	}
 	private static void broadcastLocks() {
 		if (lockStores.isEmpty()) return;

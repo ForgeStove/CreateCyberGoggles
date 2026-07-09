@@ -2,7 +2,6 @@ package io.github.forgestove.create_cyber_goggles.core.factory;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -15,6 +14,8 @@ import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactori
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
+
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int capacityMb, int sharedBarWidth)
 	implements ClientTooltipComponent {
 	private static final int H_PADDING = 4;
@@ -51,7 +52,7 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 		if (stack.isEmpty()) return;
 		var ext = IClientFluidTypeExtensions.of(stack.getFluid());
 		var still = ext.getStillTexture(stack);
-		var sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(still);
+		var sprite = mc.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(still);
 		var tint = ext.getTintColor(stack);
 		var r = ARGB32.red(tint) / 255F;
 		var g = ARGB32.green(tint) / 255F;

@@ -1,7 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.factory;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.forgestove.create_cyber_goggles.core.util.SlotUtil;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.util.FastColor.ARGB32;
@@ -13,6 +12,8 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public final class ClientFluidListTooltipComponent implements ClientTooltipComponent {
 	private final List<FluidStack> fluids;
 	private final int maxColumns;
@@ -66,7 +67,7 @@ public final class ClientFluidListTooltipComponent implements ClientTooltipCompo
 		if (stack.isEmpty()) return;
 		var ext = IClientFluidTypeExtensions.of(stack.getFluid());
 		var still = ext.getStillTexture(stack);
-		var sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(still);
+		var sprite = mc.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(still);
 		var tint = ext.getTintColor(stack);
 		var r = ARGB32.red(tint) / 255F;
 		var g = ARGB32.green(tint) / 255F;

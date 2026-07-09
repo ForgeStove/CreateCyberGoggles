@@ -5,7 +5,6 @@ import com.mojang.logging.LogUtils;
 import io.github.forgestove.config.*;
 import io.github.forgestove.config.network.*;
 import io.github.forgestove.config.tree.*;
-import net.minecraft.client.Minecraft;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.*;
 import org.slf4j.Logger;
@@ -30,7 +29,7 @@ public final class ClientLockManager {
 	/** 更新服务端锁定的配置：解析 TOML → 用 ConfigSerializer 获取类型化值 → 应用锁定。 */
 	public static void setLocks(String modId, String tomlContent) {
 		// 忽略玩家已断开连接后的延迟包
-		if (Minecraft.getInstance().getConnection() == null && !Minecraft.getInstance().isSingleplayer()) return;
+		if (ClientUtil.mc.getConnection() == null && !ClientUtil.mc.isSingleplayer()) return;
 		receivedSync = true;
 		// 解析 TOML
 		CommentedConfig tomlConfig;
@@ -112,8 +111,7 @@ public final class ClientLockManager {
 	}
 	public static void flushPendingLocks(String modId) {
 		if (pendingLocks.isEmpty()) return;
-		var mc = Minecraft.getInstance();
-		if (mc.player == null) {
+		if (ClientUtil.mc.player == null) {
 			pendingLocks.clear();
 			return;
 		}

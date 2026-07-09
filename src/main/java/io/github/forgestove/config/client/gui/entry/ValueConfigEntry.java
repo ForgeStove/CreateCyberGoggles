@@ -3,7 +3,6 @@ import io.github.forgestove.config.client.*;
 import io.github.forgestove.config.client.gui.ConfigCategoryTab;
 import io.github.forgestove.config.tree.ValueConfigNode;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -81,13 +80,11 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 		tab.screen.refresh();
 	}
 	private boolean canLock() {
-		var mc = Minecraft.getInstance();
-		return mc.player != null && mc.player.hasPermissions(2);
+		return ClientUtil.mc.player != null && ClientUtil.mc.player.hasPermissions(2);
 	}
 	private boolean shouldShowLockButton() {
-		var mc = Minecraft.getInstance();
-		if (mc.player == null) return false;
-		if (mc.isSingleplayer()) return false;
+		if (ClientUtil.mc.player == null) return false;
+		if (ClientUtil.mc.isSingleplayer()) return false;
 		return ClientLockManager.hasReceivedSync();
 	}
 	@Override

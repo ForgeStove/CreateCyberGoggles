@@ -11,6 +11,7 @@ import net.neoforged.neoforge.client.ClientHooks;
 import org.spongepowered.asm.mixin.*;
 
 import java.util.List;
+@Pseudo
 @Mixin(GuiGraphics.class)
 public abstract class GuiGraphicsMixin implements Self<GuiGraphics> {
 	@Shadow private ItemStack tooltipStack;

@@ -4,8 +4,8 @@ import com.mojang.blaze3d.platform.InputConstants.*;
 import io.github.forgestove.config.client.ClientUtil;
 import io.github.forgestove.config.client.gui.ConfigCategoryTab;
 import io.github.forgestove.config.client.gui.api.*;
+import io.github.forgestove.config.client.gui.factory.KeybindState;
 import io.github.forgestove.config.tree.ValueConfigNode;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.network.chat.Component;
@@ -47,6 +47,7 @@ public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key> i
 		}
 		return Component.translatable("controls.keybinds.duplicateKeybinds", usedBy);
 	}
+	@Override
 	public boolean handleCaptureKey(int keyCode) {
 		if (!capturing) return false;
 		if (keyCode == InputConstants.KEY_ESCAPE) setValue(InputConstants.UNKNOWN);
@@ -56,6 +57,7 @@ public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key> i
 		tab.screen.refresh();
 		return true;
 	}
+	@Override
 	public boolean handleCaptureMouse(int button) {
 		if (!capturing) return false;
 		setValue(Type.MOUSE.getOrCreate(button));
@@ -87,7 +89,7 @@ public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key> i
 		for (var entry : siblings) {
 			if (!(entry instanceof KeybindValueConfigEntry<?> keyEntry)) continue;
 			keyEntries.add(keyEntry);
-			var key = keyEntry.getBoundKey();
+			var key = keyEntry.getValue();
 			if (key.equals(InputConstants.UNKNOWN)) continue;
 			localKeyCount.merge(key, 1, Integer::sum);
 			localKeyEntries.computeIfAbsent(key, k -> new ArrayList<>()).add(keyEntry);
@@ -102,16 +104,16 @@ public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key> i
 			registeredKeyUsages.computeIfAbsent(key, k -> new ArrayList<>()).add(Component.translatable(mapping.getName()));
 		}
 		keyEntries.forEach(keyEntry -> {
-			var key = keyEntry.getBoundKey();
+			var key = keyEntry.getValue();
 			if (key.equals(InputConstants.UNKNOWN)) {
-				keyEntry.setKeybindState(KeybindState.UNBOUND);
-				keyEntry.setConflictUsages(List.of());
+				keyEntry.state = KeybindState.UNBOUND;
+				keyEntry.conflictUsages = List.of();
 				return;
 			}
 			var hasConflict = localKeyCount.getOrDefault(key, 0) > 1 || registeredKeyCount.getOrDefault(key, 0) > 1;
-			keyEntry.setKeybindState(hasConflict ? KeybindState.CONFLICT : KeybindState.BOUND);
+			keyEntry.state = hasConflict ? KeybindState.CONFLICT : KeybindState.BOUND;
 			if (!hasConflict) {
-				keyEntry.setConflictUsages(List.of());
+				keyEntry.conflictUsages = List.of();
 				return;
 			}
 			var usages = new ArrayList<Component>();
@@ -120,40 +122,12 @@ public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key> i
 				usages.add(localEntry.node.getTitle());
 			}
 			usages.addAll(registeredKeyUsages.getOrDefault(key, List.of()));
-			keyEntry.setConflictUsages(usages);
+			keyEntry.conflictUsages = usages;
 		});
 		return true;
 	}
-	public Key getBoundKey() {
-		return getValue();
-	}
-	public void setKeybindState(KeybindState state) {
-		this.state = state;
-	}
-	public void setConflictUsages(List<Component> conflictUsages) {
-		this.conflictUsages = conflictUsages;
-	}
 	@Override
 	public void onAttachedToTab(ConfigCategoryTab<?, ?> tab) {
-		setCaptureCallback(tab.screen::onEntryCaptureChanged);
-	}
-	public void setCaptureCallback(CaptureCallback callback) {
-		captureCallback = callback;
-	}
-	public enum KeybindState {
-		UNBOUND(ChatFormatting.DARK_GRAY),
-		CONFLICT(ChatFormatting.YELLOW),
-		BOUND(ChatFormatting.GREEN);
-		private final ChatFormatting color;
-		KeybindState(ChatFormatting color) {
-			this.color = color;
-		}
-		public ChatFormatting color() {
-			return color;
-		}
-	}
-	@FunctionalInterface
-	public interface CaptureCallback {
-		void onCaptureStateChanged(CaptureHandler entry, boolean capturing);
+		captureCallback = tab.screen::onEntryCaptureChanged;
 	}
 }

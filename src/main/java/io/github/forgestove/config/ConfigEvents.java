@@ -1,5 +1,5 @@
 package io.github.forgestove.config;
-import io.github.forgestove.config.client.ClientLockManager;
+import io.github.forgestove.config.client.*;
 import io.github.forgestove.config.client.gui.ConfigEditBox;
 import io.github.forgestove.config.network.ConfigNetwork;
 import io.github.forgestove.config.server.ServerLifecycleHandler;
@@ -7,10 +7,13 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingOut;
+import net.neoforged.neoforge.client.event.ClientTickEvent.Post;
 import net.neoforged.neoforge.client.event.ScreenEvent.MouseButtonPressed.Pre;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.neoforged.neoforge.event.server.*;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+
+import java.util.*;
 @EventBusSubscriber
 public class ConfigEvents {
 	@SubscribeEvent
@@ -19,9 +22,17 @@ public class ConfigEvents {
 	}
 	@EventBusSubscriber(Dist.CLIENT)
 	public static class Client {
+		private static final Map<String, Boolean> PREVIOUS_STATES = new HashMap<>();
 		@SubscribeEvent
 		public static void register(Pre event) {
 			ConfigEditBox.onScreenMouseClicked(event);
+		}
+		@SubscribeEvent
+		public static void onClientTick(Post event) {
+			if (ClientUtil.mc.screen != null) return;
+			var window = ClientUtil.mc.getWindow().getWindow();
+			for (var modId : ConfigRegistry.getRegisteredModIds())
+				ConfigRegistry.getHandler(modId).tickTriggerKeybinds(window, PREVIOUS_STATES);
 		}
 		@SubscribeEvent
 		public static void onLoggingOut(LoggingOut event) {

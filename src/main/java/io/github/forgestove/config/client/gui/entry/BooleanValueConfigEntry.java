@@ -1,47 +1,46 @@
 package io.github.forgestove.config.client.gui.entry;
+import io.github.forgestove.config.client.*;
 import io.github.forgestove.config.client.gui.ConfigCategoryTab;
 import io.github.forgestove.config.tree.ValueConfigNode;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.CycleButton;
-import net.minecraft.network.chat.CommonComponents;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.client.gui.components.*;
 
 import java.util.Objects;
-public final class BooleanValueConfigEntry<C> extends ValueConfigEntry<C, Boolean> {
+public final class BooleanValueConfigEntry<C> extends CapturableValueConfigEntry<C, Boolean> {
 	private final CycleButton<Boolean> valueButton;
 	public BooleanValueConfigEntry(ConfigCategoryTab<C, Boolean> tab, ValueConfigNode<C, Boolean> node) {
 		super(tab, node);
 		valueButton = CycleButton.booleanBuilder(
-				CommonComponents.GUI_YES.copy().withStyle(ChatFormatting.GREEN),
-				CommonComponents.GUI_NO.copy().withStyle(ChatFormatting.RED)
+				Translation.ON_LABEL.copy().withStyle(ChatFormatting.GREEN),
+				Translation.OFF_LABEL.copy().withStyle(ChatFormatting.RED)
 			)
 			.withInitialValue(getValue())
 			.displayOnlyValue()
-			.create(0, 0, WIDTH, HEIGHT, node.getTitle(), (b, value) -> setValue(value));
+			.create(0, 0, WIDTH / 2, HEIGHT, node.getTitle(), (b, value) -> setValue(value));
 		children.add(valueButton);
+		registerKeybindTask();
+	}
+	@Override
+	protected void registerKeybindTask() {
+		registerTriggerAction(() -> {
+			var newVal = !getValue();
+			setValue(newVal);
+			var title = node.getTitle().copy().withStyle(ChatFormatting.WHITE);
+			var valText = newVal
+				? Translation.ON_LABEL.copy().withStyle(ChatFormatting.GREEN)
+				: Translation.OFF_LABEL.copy().withStyle(ChatFormatting.RED);
+			if (ClientUtil.mc.player == null) return;
+			ClientUtil.mc.player.displayClientMessage(title.append(": ").append(valText), true);
+		});
+	}
+	@Override
+	protected AbstractWidget getValueWidget() {
+		return valueButton;
 	}
 	@Override
 	public void refresh() {
 		super.refresh();
 		var value = getValue();
-		if (Objects.equals(valueButton.getValue(), value)) return;
-		valueButton.setValue(value);
-	}
-	@Override
-	public void render(
-		@NotNull GuiGraphics gui,
-		int index,
-		int y,
-		int x,
-		int width,
-		int height,
-		int mouseX,
-		int mouseY,
-		boolean hovering,
-		float delta
-	) {
-		renderGui(gui, y, x, width, mouseX, mouseY, delta, lockButton, undoButton, resetButton, valueButton);
-		valueButton.active = !isLocked();
+		if (!Objects.equals(valueButton.getValue(), value)) valueButton.setValue(value);
 	}
 }

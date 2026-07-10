@@ -198,8 +198,6 @@
 	"create_cyber_goggles.key.showSuperGlue": "Видимость суперклея",
 	"create_cyber_goggles.key.stockRequestSelectAll": "Заказать максимум количества ресурса",
 	"create_cyber_goggles.key.stockRequestSetter": "Открыть экран настройки запроса",
-	"create_cyber_goggles.key.toggleDiving": "Включить/выключить водолазные ботинки",
-	"create_cyber_goggles.key.toggleGoggle": "Включить/выключить очки",
 	"create_cyber_goggles.key.toggleItemOverlay": "Отображение информации о предмете",
 	"create_cyber_goggles.key.usePhysicsStaff": "Видимость физического посоха",
 	"create_cyber_goggles.key.useSchematic": "Использовать схематику",

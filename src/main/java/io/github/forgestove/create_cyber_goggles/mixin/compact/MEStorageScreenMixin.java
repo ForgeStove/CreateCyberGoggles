@@ -4,8 +4,9 @@ import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.ItemCountFontUtil;
 import net.minecraft.client.gui.*;
-import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
+@Pseudo
 @Mixin(MEStorageScreen.class)
 public class MEStorageScreenMixin {
 	@WrapOperation(

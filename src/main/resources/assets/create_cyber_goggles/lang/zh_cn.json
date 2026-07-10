@@ -263,8 +263,6 @@
 	"create_cyber_goggles.key.showSuperGlue": "显示强力胶",
 	"create_cyber_goggles.key.stockRequestSelectAll": "仓储请求快捷全选",
 	"create_cyber_goggles.key.stockRequestSetter": "打开仓储请求数量设置界面",
-	"create_cyber_goggles.key.toggleDiving": "切换潜水靴开关",
-	"create_cyber_goggles.key.toggleGoggle": "切换护目镜开关",
 	"create_cyber_goggles.key.toggleItemOverlay": "切换要显示的物品",
 	"create_cyber_goggles.key.usePhysicsStaff": "使用物理法杖",
 	"create_cyber_goggles.key.useSchematic": "使用蓝图",

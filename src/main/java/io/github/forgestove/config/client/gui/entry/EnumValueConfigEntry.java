@@ -2,19 +2,19 @@ package io.github.forgestove.config.client.gui.entry;
 import io.github.forgestove.config.client.ClientUtil;
 import io.github.forgestove.config.client.gui.*;
 import io.github.forgestove.config.tree.ValueConfigNode;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.components.*;
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("rawtypes")
-public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum> {
+public final class EnumValueConfigEntry<C> extends CapturableValueConfigEntry<C, Enum> {
 	private final Button dropdownButton;
 	private final String enumClassName;
 	public EnumValueConfigEntry(ConfigCategoryTab<C, Enum> tab, ValueConfigNode<C, Enum> node) {
 		super(tab, node);
 		enumClassName = node.getValueType().getSimpleName();
-		dropdownButton = Button.builder(getDisplayComponent(getValue()), this::openDropdown).size(WIDTH, HEIGHT).build();
+		dropdownButton = Button.builder(getDisplayComponent(getValue()), this::openDropdown).size(WIDTH / 2, HEIGHT).build();
 		children.add(dropdownButton);
+		registerKeybindTask();
 	}
 	private Component getDisplayComponent(Enum<?> value) {
 		return Component.translatable("%s.config.enum.%s.%s".formatted(tab.screen.root.modId, enumClassName, value.name()));
@@ -32,29 +32,29 @@ public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum> {
 			dropdownButton
 		));
 	}
+	@Override
+	protected void registerKeybindTask() {
+		registerTriggerAction(() -> {
+			var values = node.getValueType().getEnumConstants();
+			var nextIndex = (getValue().ordinal() + 1) % values.length;
+			setValue(values[nextIndex]);
+			var title = node.getTitle().copy().withStyle(ChatFormatting.WHITE);
+			var valText = getDisplayComponent(getValue()).copy().withStyle(ChatFormatting.UNDERLINE, ChatFormatting.BOLD);
+			if (ClientUtil.mc.player == null) return;
+			ClientUtil.mc.player.displayClientMessage(title.append(": ").append(valText), true);
+		});
+	}
 	private void selectValue(Enum<?> value) {
 		setValue(value);
 		dropdownButton.setMessage(getDisplayComponent(value));
 	}
 	@Override
+	protected AbstractWidget getValueWidget() {
+		return dropdownButton;
+	}
+	@Override
 	public void refresh() {
 		super.refresh();
 		dropdownButton.setMessage(getDisplayComponent(getValue()));
-	}
-	@Override
-	public void render(
-		@NotNull GuiGraphics gui,
-		int index,
-		int y,
-		int x,
-		int width,
-		int height,
-		int mouseX,
-		int mouseY,
-		boolean hovered,
-		float delta
-	) {
-		renderGui(gui, y, x, width, mouseX, mouseY, delta, lockButton, undoButton, resetButton, dropdownButton);
-		dropdownButton.active = !isLocked();
 	}
 }

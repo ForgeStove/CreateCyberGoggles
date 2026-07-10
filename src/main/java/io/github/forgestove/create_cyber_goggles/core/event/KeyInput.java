@@ -23,27 +23,9 @@ public final class KeyInput {
 	public static StockTickerBlockEntity lastSTBE;
 	public static int scrollDeltaY;
 	public static void key(Key ignoredEvent) {
-		toggleGoggle();
-		toggleDiving();
 		openConfigScreen();
 		openStockScreen();
 		previewFilterScreen();
-	}
-	private static void toggleGoggle() {
-		toggleConfig(
-			CCGKey.toggleGoggle.isDown(),
-			CCG.config.goggles.gameMode.enableGoggles,
-			val -> CCG.config.goggles.gameMode.enableGoggles = val,
-			"message.goggle"
-		);
-	}
-	private static void toggleDiving() {
-		toggleConfig(
-			CCGKey.toggleDiving.isDown(),
-			CCG.config.misc.allowDivingBoot,
-			val -> CCG.config.misc.allowDivingBoot = val,
-			"message.divingBoot"
-		);
 	}
 	private static void openConfigScreen() {
 		if (!CCGKey.openConfig.isDown()) return;

@@ -28,6 +28,7 @@ public final class ConfigScreen<C, V> extends Screen {
 	private TabNavigationBar tabNavigationBar;
 	private Button cancelButton, saveButton;
 	private CaptureHandler capturingEntry;
+	private Map<String, String> savedTriggerKeybinds = Map.of();
 	public ConfigScreen(ConfigHandler<C, V> handler) {
 		super(handler.getConfigTree().getTitle());
 		root = handler.getConfigTree();
@@ -54,6 +55,7 @@ public final class ConfigScreen<C, V> extends Screen {
 	protected void init() {
 		capturingEntry = null;
 		ClientLockManager.clearPendingLocks();
+		savedTriggerKeybinds = new LinkedHashMap<>(handler.getAllTriggerKeybinds());
 		tabs.clear();
 		root.resetToActive(config);
 		for (var category : root.getCategories()) {
@@ -118,7 +120,10 @@ public final class ConfigScreen<C, V> extends Screen {
 			return;
 		}
 		mc.setScreen(new ConfirmScreen(
-			confirmed -> mc.setScreen(confirmed ? parent : this),
+			confirmed -> {
+				if (confirmed) handler.restoreTriggerKeybinds(savedTriggerKeybinds);
+				mc.setScreen(confirmed ? parent : this);
+			},
 			Translation.QUIT_CONFIRM_TITLE,
 			Translation.QUIT_CONFIRM_WARNING,
 			Translation.QUIT_CONFIRM_LABEL,
@@ -136,6 +141,8 @@ public final class ConfigScreen<C, V> extends Screen {
 		mc.options.save();
 		handler.save(config);
 		ClientLockManager.flushPendingLocks(root.modId);
+		handler.saveTriggerKeybinds();
+		savedTriggerKeybinds = new LinkedHashMap<>(handler.getAllTriggerKeybinds());
 		mc.setScreen(restartRequired ? new ConfirmScreen(
 			confirmed -> {
 				if (confirmed) mc.stop();
@@ -164,7 +171,8 @@ public final class ConfigScreen<C, V> extends Screen {
 	}
 	private boolean isActiveValue() {
 		if (ClientLockManager.hasPendingLocks()) return false;
-		return root.isActiveValue(config) && (keybindCategory == null || keybindCategory.isActiveValue(config));
+		if (!root.isActiveValue(config) || keybindCategory != null && !keybindCategory.isActiveValue(config)) return false;
+		return savedTriggerKeybinds.equals(handler.getAllTriggerKeybinds());
 	}
 	private @Nullable Component validate() {
 		var rootError = root.validate(config);
@@ -188,6 +196,13 @@ public final class ConfigScreen<C, V> extends Screen {
 		tabManager.setTabArea(screenRectangle);
 		layout.setHeaderHeight(i);
 		layout.arrangeElements();
+	}
+	/** 由全局快捷键触发调用：将已由 entry 写入配置的值持久化到磁盘。 */
+	public void saveByKeybind() {
+		handler.save(config);
+	}
+	public ConfigHandler<C, V> getHandler() {
+		return handler;
 	}
 	public void onEntryCaptureChanged(CaptureHandler entry, boolean capturing) {
 		capturingEntry = capturing ? entry : null;

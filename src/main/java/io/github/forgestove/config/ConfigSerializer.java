@@ -123,8 +123,11 @@ public final class ConfigSerializer<C> {
 				writer.write("\t%s = %s\n".formatted(field.getName(), hex));
 			} else switch (value) {
 				case Enum<?> e -> writer.write("\t%s = \"%s\"\n".formatted(field.getName(), e.name()));
-				case Point p -> writer.write("\t%s = \"%d, %d\"\n".formatted(field.getName(), p.x, p.y));
-				case String s -> writer.write("\t%s = \"%s\"\n".formatted(field.getName(), s));
+				case Point p -> writer.write("\t%s = { x = %d, y = %d }\n".formatted(field.getName(), p.x, p.y));
+				case String s -> writer.write("\t%s = \"%s\"\n".formatted(
+					field.getName(),
+					s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n")
+				));
 				default -> writer.write("\t%s = %s\n".formatted(field.getName(), value));
 			}
 		}
@@ -187,12 +190,7 @@ public final class ConfigSerializer<C> {
 			if (value == null) continue;
 			var type = field.getType();
 			if (type == Point.class) {
-				if (value instanceof String s) {
-					var parts = s.split(",");
-					try {
-						field.set(category, new Point(Integer.parseInt(parts[0].trim()), Integer.parseInt(parts[1].trim())));
-					} catch (NumberFormatException ignored) {}
-				} else if (value instanceof CommentedConfig cc) field.set(category, new Point(cc.getInt("x"), cc.getInt("y")));
+				if (value instanceof CommentedConfig cc) field.set(category, new Point(cc.getInt("x"), cc.getInt("y")));
 			} else if (type.isEnum()) field.set(category, Enum.valueOf((Class) type, (String) value));
 			else field.set(category, value);
 		}

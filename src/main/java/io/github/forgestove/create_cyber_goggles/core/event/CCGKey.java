@@ -25,8 +25,6 @@ public enum CCGKey {
 	showSuperGlue,
 	stockRequestSelectAll(Type.KEYSYM, KEY_LALT),
 	stockRequestSetter(Type.MOUSE, MOUSE_BUTTON_MIDDLE),
-	toggleDiving,
-	toggleGoggle,
 	toggleItemOverlay(Type.KEYSYM, KEY_LCONTROL),
 	usePhysicsStaff(CCGMods.SIMULATED),
 	useSchematic;

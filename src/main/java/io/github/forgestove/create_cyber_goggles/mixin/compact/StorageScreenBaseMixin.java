@@ -3,11 +3,12 @@ import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.ItemCountFontUtil;
 import net.minecraft.client.gui.GuiGraphics;
 import net.p3pp3rf1y.sophisticatedcore.client.gui.StorageScreenBase;
-import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
+@Pseudo
 @Mixin(StorageScreenBase.class)
 public class StorageScreenBaseMixin {
 	@Inject(method = "renderStackCount", at = @At("HEAD"), cancellable = true)

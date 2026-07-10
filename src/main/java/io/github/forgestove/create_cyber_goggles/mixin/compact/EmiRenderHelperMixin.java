@@ -4,11 +4,12 @@ import dev.emi.emi.runtime.EmiDrawContext;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.ItemCountFontUtil;
 import net.minecraft.network.chat.Component;
-import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
+@Pseudo
 @Mixin(EmiRenderHelper.class)
 public class EmiRenderHelperMixin {
 	@Inject(method = "renderAmount", at = @At("HEAD"), cancellable = true)

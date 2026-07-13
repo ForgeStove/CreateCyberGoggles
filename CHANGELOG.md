@@ -1,2 +1,1 @@
-- Add hot key bind for config system
-- Remove old hot key toggleDiving and toggleGoggle
+- Fix render for createStyleCount

@@ -38,6 +38,7 @@ neoForge {
 			if(files.isNotEmpty()) jvmArgument("-javaagent:${files.first().toPath()}")
 		}
 	}
+	accessTransformers.publish(file("src/main/resources/META-INF/accesstransformer.cfg"))
 	mods.create(p("modId")).sourceSet(sourceSets.main.get())
 }
 repositories {

@@ -12,7 +12,8 @@ import java.util.Optional;
 import java.util.function.Supplier;
 public enum CCGMods {
 	SIMULATED,
-	OBSCURE_TOOLTIPS;
+	OBSCURE_TOOLTIPS,
+	MODERNUI;
 	private final String id;
 	CCGMods() {
 		id = Lang.asId(name());

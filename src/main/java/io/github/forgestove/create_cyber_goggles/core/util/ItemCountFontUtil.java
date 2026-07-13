@@ -1,5 +1,4 @@
 package io.github.forgestove.create_cyber_goggles.core.util;
-import io.github.forgestove.create_cyber_goggles.mixin.accessor.FontAccessor;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.Font.DisplayMode;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -58,24 +57,52 @@ public final class ItemCountFontUtil {
 		green = (int) ((float) green * darkenFactor) & 255;
 		blue = (int) ((float) blue * darkenFactor) & 255;
 		var shadowColor = alpha << 24 | red << 16 | green << 8 | blue;
-		var matrix4f = new Matrix4f(matrix);
-		matrix4f.translate(0F, 0F, 0.1F);
-		var accessor = (FontAccessor) font;
-		for (var dx = -1; dx <= 1; dx++)
-			for (var dy = -1; dy <= 1; dy++)
-				if (dx != 0 || dy != 0) accessor.callDrawInternal(
-					text,
-					x + dx,
-					y + dy,
-					shadowColor,
-					false,
-					matrix4f,
-					buffer,
-					DisplayMode.NORMAL,
-					0,
-					packedLightCoords
-				);
-		accessor.callDrawInternal(text, x, y, color, false, matrix4f, buffer, DisplayMode.POLYGON_OFFSET, 0, packedLightCoords);
+		if (!CCGMods.MODERNUI.isLoaded()) font.drawInBatch8xOutline(text, x, y, color, shadowColor, matrix, buffer, packedLightCoords);
+		else drawInBatch8xOutline(font, text, x, y, color, matrix, buffer, packedLightCoords, shadowColor);
 		cir.setReturnValue(font.width(text) + 1);
+	}
+	public static void drawInBatch8xOutline(
+		Font font,
+		FormattedCharSequence text,
+		float x,
+		float y,
+		int color,
+		Matrix4f matrix,
+		MultiBufferSource buffer,
+		int packedLightCoords,
+		int shadowColor
+	) {
+		var finalY = y - 1F;
+		var adjusted = Font.adjustColor(shadowColor);
+		var outputOutliner = font.new StringRenderOutput(buffer, 0, 0, adjusted, false, matrix, DisplayMode.NORMAL, packedLightCoords);
+		var boldOffset = 2F;
+		for (var j = -1; j <= 1; j++)
+			for (var k = -1; k <= 1; k++) {
+				if (j == 0 && k == 0) continue;
+				var afloat = new float[]{x};
+				var l = j;
+				var i1 = k;
+				text.accept((pos, style, codePoint) -> {
+					var flag = style.isBold();
+					var fontset = font.getFontSet(style.getFont());
+					var glyphinfo = fontset.getGlyphInfo(codePoint, font.filterFishyGlyphs);
+					outputOutliner.x = afloat[0] + (float) l * glyphinfo.getShadowOffset() * boldOffset;
+					outputOutliner.y = finalY + (float) i1 * glyphinfo.getShadowOffset() * boldOffset;
+					afloat[0] += glyphinfo.getAdvance(flag);
+					return outputOutliner.accept(pos, style.withColor(adjusted), codePoint);
+				});
+			}
+		var outputInner = font.new StringRenderOutput(
+			buffer,
+			x,
+			finalY,
+			Font.adjustColor(color),
+			false,
+			matrix,
+			DisplayMode.POLYGON_OFFSET,
+			packedLightCoords
+		);
+		text.accept(outputInner);
+		outputInner.finish(0, x);
 	}
 }

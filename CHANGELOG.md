@@ -1,1 +1,1 @@
-- Fix render for createStyleCount
+- Add color config for createStyleStackCount

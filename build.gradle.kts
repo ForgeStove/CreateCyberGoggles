@@ -82,7 +82,7 @@ publishMods {
 	file.set(tasks.jar.get().archiveFile)
 	additionalFiles.from(tasks.named<Jar>("sourcesJar").flatMap { it.archiveFile })
 	changelog.set(file("CHANGELOG.md").readText())
-	type.set(BETA)
+	type.set(STABLE)
 	version.set(project.version.toString())
 	displayName.set("[${p("loaderCap")}] ${p("modVersion")} for Create ${p("mcVersion")}-${p("createMinVersion")}")
 	modLoaders.addAll(p("loaderCap"))

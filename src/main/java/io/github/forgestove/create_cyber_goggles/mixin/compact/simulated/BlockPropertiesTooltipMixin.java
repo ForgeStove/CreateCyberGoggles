@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.mixin.simulated;
+package io.github.forgestove.create_cyber_goggles.mixin.compact.simulated;
 import com.llamalad7.mixinextras.sugar.Local;
 import dev.ryanhcode.sable.mixinterface.block_properties.BlockStateExtension;
 import dev.simulated_team.simulated.client.BlockPropertiesTooltip;

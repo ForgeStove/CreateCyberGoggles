@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.mixin.simulated;
+package io.github.forgestove.create_cyber_goggles.mixin.compact.simulated;
 import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.simibubi.create.AllTags.AllItemTags;
 import dev.simulated_team.simulated.content.blocks.rope.strand.client.ZiplineClientManager;

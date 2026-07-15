@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.mixin.simulated;
+package io.github.forgestove.create_cyber_goggles.mixin.compact.simulated;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.simulated_team.simulated.content.physics_staff.PhysicsStaffClientHandler;
 import dev.simulated_team.simulated.content.physics_staff.PhysicsStaffClientHandler.ClientDragSession;

@@ -14,7 +14,7 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public class EmiRenderHelperMixin {
 	@Inject(method = "renderAmount", at = @At("HEAD"), cancellable = true)
 	private static void renderAmount(EmiDrawContext context, int x, int y, Component amount, CallbackInfo ci) {
-		if (!CCG.config.misc.createStyleCount) return;
+		if (!CCG.config.misc.createStackCount.enableCreateStyleStackCount) return;
 		ItemCountFontUtil.renderSizeLabel(context.raw(), mc.font, x, y, ItemCountFontUtil.getStyledAmount(amount));
 		ci.cancel();
 	}

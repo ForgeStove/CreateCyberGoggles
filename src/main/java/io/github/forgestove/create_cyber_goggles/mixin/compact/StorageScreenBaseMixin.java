@@ -13,7 +13,7 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public class StorageScreenBaseMixin {
 	@Inject(method = "renderStackCount", at = @At("HEAD"), cancellable = true)
 	public void renderStackCount(GuiGraphics gui, String count, int x, int y, CallbackInfo ci) {
-		if (!CCG.config.misc.createStyleCount) return;
+		if (!CCG.config.misc.createStackCount.enableCreateStyleStackCount) return;
 		var component = ItemCountFontUtil.getStyledAmount(count);
 		ItemCountFontUtil.renderSizeLabel(gui, mc.font, x, y, component);
 		ci.cancel();

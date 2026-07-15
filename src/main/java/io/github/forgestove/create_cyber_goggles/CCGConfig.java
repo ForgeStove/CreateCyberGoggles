@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles;
-import io.github.forgestove.create_cyber_goggles.core.factory.*;
 import io.github.forgestove.config.api.*;
+import io.github.forgestove.create_cyber_goggles.core.factory.*;
 
 import java.awt.Point;
 @Config(CCG.ID)
@@ -118,7 +118,7 @@ public final class CCGConfig {
 	public static class Misc {
 		@Category(false) public ChainConveyor chainConveyor = new ChainConveyor();
 		@Category(false) public Wrench wrench = new Wrench();
-		public boolean createStyleCount = true;
+		@Category(false) public CreateStackCount createStackCount = new CreateStackCount();
 		public boolean removeMechanicalArmLimit = false;
 		public boolean removeRequestLimit = true;
 		public boolean stockRequestQuickActions = true;
@@ -150,6 +150,10 @@ public final class CCGConfig {
 			public boolean leftClickFastDismantle = true;
 			public boolean removeCooldown = true;
 			public boolean enchancedRotationMenu = false;
+		}
+		public static class CreateStackCount {
+			public boolean enableCreateStyleStackCount = true;
+			@ColorValue(true) public int countOutlineColor = 0xFF383838;
 		}
 	}
 }

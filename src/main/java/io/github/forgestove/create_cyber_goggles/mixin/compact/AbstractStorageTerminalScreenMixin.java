@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class AbstractStorageTerminalScreenMixin {
 	@Inject(method = "drawStackSize", at = @At("HEAD"), cancellable = true)
 	public void drawStackSize(GuiGraphics graphics, Font font, long size, int x, int y, CallbackInfo ci) {
-		if (!CCG.config.misc.createStyleCount) return;
+		if (!CCG.config.misc.createStackCount.enableCreateStyleStackCount) return;
 		ItemCountFontUtil.renderSizeLabel(graphics, font, x, y, ItemCountFontUtil.getStyledAmount(NumberFormatUtil.formatNumber(size)));
 		ci.cancel();
 	}

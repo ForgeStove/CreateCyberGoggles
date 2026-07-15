@@ -31,7 +31,7 @@ public abstract class FontMixin implements Self<Font> {
 		int packedLightCoords,
 		CallbackInfoReturnable<Integer> cir
 	) {
-		if (!CCG.config.misc.createStyleCount) return;
+		if (!CCG.config.misc.createStackCount.enableCreateStyleStackCount) return;
 		ItemCountFontUtil.drawOutline(thiz(), text, x, y, color, dropShadow, matrix, buffer, packedLightCoords, cir);
 	}
 }

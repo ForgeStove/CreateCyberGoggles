@@ -16,7 +16,6 @@ import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket.Action;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -200,14 +199,6 @@ public final class CCGUtil {
 	/** 使用网络通道系统将数据包发送到服务器 */
 	public static void sendToServer(CustomPacketPayload packet) {
 		PacketDistributor.sendToServer(packet);
-	}
-	/** 按系数暗化ARGB颜色并保留透明度 */
-	public static int darkenColor(int color, double factor) {
-		var a = ARGB32.alpha(color);
-		var r = (int) (ARGB32.red(color) * factor);
-		var g = (int) (ARGB32.green(color) * factor);
-		var b = (int) (ARGB32.blue(color) * factor);
-		return ARGB32.color(a, r, g, b);
 	}
 	/** 混合两种RGB颜色，取各通道平均值，忽略透明度 */
 	public static int blendColors(int c1, int c2) {

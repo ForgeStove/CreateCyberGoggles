@@ -18,7 +18,7 @@ public class MEStorageScreenMixin {
 	)
 	)
 	public void renderSlot(GuiGraphics gui, Font font, float x, float y, String text, boolean largeFonts, Operation<Void> original) {
-		if (!CCG.config.misc.createStyleCount) {
+		if (!CCG.config.misc.createStackCount.enableCreateStyleStackCount) {
 			original.call(gui, font, x, y, text, largeFonts);
 			return;
 		}

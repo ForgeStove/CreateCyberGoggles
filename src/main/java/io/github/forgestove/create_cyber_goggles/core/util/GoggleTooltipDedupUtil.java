@@ -11,12 +11,12 @@ public final class GoggleTooltipDedupUtil {
 		for (var current : tooltip) {
 			var previousKept = deduped.isEmpty() ? null : deduped.getLast();
 			if (isDedupTarget(previousKept) && isDedupTarget(current) && isSimilarLine(previousKept, current)) {
-				// 相邻行相似时保留较新的信息。
+				// 相邻行相似时保留较新的信息
 				deduped.set(deduped.size() - 1, current);
 				replacedDuplicate = true;
 				continue;
 			}
-			// 如果刚刚替换了重复对，也删除紧随其后的空白分隔行。
+			// 如果刚刚替换了重复对，也删除紧随其后的空白分隔行
 			if (replacedDuplicate && isBlankLine(current)) {
 				replacedDuplicate = false;
 				continue;

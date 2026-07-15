@@ -16,6 +16,7 @@ import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket.Action;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -28,7 +29,6 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.*;
 
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 public final class CCGUtil {
 	public static final Minecraft mc = Minecraft.getInstance();
@@ -190,37 +190,9 @@ public final class CCGUtil {
 	public static boolean hasItemInHand() {
 		return mc.player != null && !Stream.of(mc.player.getMainHandItem(), mc.player.getOffhandItem()).allMatch(ItemStack::isEmpty);
 	}
-	/**
-	 * 播放指定的音效
-	 *
-	 * @param sound  音效事件
-	 * @param pitch  音高
-	 * @param volume 音量
-	 */
 	public static void playSound(SoundEvent sound, float pitch, float volume) {
 		mc.getSoundManager().play(SimpleSoundInstance.forUI(sound, pitch, volume));
 	}
-	/**
-	 * 切换配置项的启用状态，并显示提示消息与播放音效。
-	 * <p>
-	 * 仅在按键按下且玩家未处于GUI界面时生效。
-	 * <p>
-	 * 切换后通过{@code setter}设置新状态，显示对应启用/禁用消息，并播放确认或拒绝音效。
-	 *
-	 * @param keyDown    是否按下相关按键
-	 * @param enabled    当前配置项是否启用
-	 * @param setter     用于设置配置项状态的回调
-	 * @param messageKey 状态切换时显示消息的语言键
-	 */
-	public static void toggleConfig(boolean keyDown, boolean enabled, Consumer<Boolean> setter, String messageKey) {
-		if (!keyDown) return;
-		if (isInGUI()) return;
-		var newEnabled = !enabled;
-		setter.accept(newEnabled);
-		if (mc.player == null) return;
-		CCGLang.translate(messageKey).space().enabled(newEnabled).sendStatus(mc.player);
-	}
-	/** 向服务器发送玩家动作指令 */
 	public static void sendAction(Action action) {
 		if (mc.player == null) return;
 		mc.player.connection.send(new ServerboundPlayerCommandPacket(mc.player, action));
@@ -229,6 +201,15 @@ public final class CCGUtil {
 	public static void sendToServer(CustomPacketPayload packet) {
 		PacketDistributor.sendToServer(packet);
 	}
+	/** 按系数暗化ARGB颜色并保留透明度 */
+	public static int darkenColor(int color, double factor) {
+		var a = ARGB32.alpha(color);
+		var r = (int) (ARGB32.red(color) * factor);
+		var g = (int) (ARGB32.green(color) * factor);
+		var b = (int) (ARGB32.blue(color) * factor);
+		return ARGB32.color(a, r, g, b);
+	}
+	/** 混合两种RGB颜色，取各通道平均值，忽略透明度 */
 	public static int blendColors(int c1, int c2) {
 		var r1 = c1 >> 16 & 0xFF;
 		var g1 = c1 >> 8 & 0xFF;

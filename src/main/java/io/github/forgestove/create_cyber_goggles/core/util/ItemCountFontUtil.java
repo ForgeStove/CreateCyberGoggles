@@ -8,7 +8,7 @@ import net.minecraft.util.FormattedCharSequence;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.getCCGRes;
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public final class ItemCountFontUtil {
 	public static final ResourceLocation FONT_CREATE = getCCGRes("create");
 	public static Component getStyledAmount(Component component) {
@@ -48,17 +48,9 @@ public final class ItemCountFontUtil {
 		});
 		if (rl[0] == null || !rl[0].equals(FONT_CREATE)) return;
 		if (!dropShadow) return;
-		var alpha = color >> 24 & 255;
-		var red = color >> 16 & 255;
-		var green = color >> 8 & 255;
-		var blue = color & 255;
-		var darkenFactor = 0.22F;
-		red = (int) ((float) red * darkenFactor) & 255;
-		green = (int) ((float) green * darkenFactor) & 255;
-		blue = (int) ((float) blue * darkenFactor) & 255;
-		var shadowColor = alpha << 24 | red << 16 | green << 8 | blue;
+		var shadowColor = darkenColor(color, 0.22);
 		if (!CCGMods.MODERNUI.isLoaded()) font.drawInBatch8xOutline(text, x, y, color, shadowColor, matrix, buffer, packedLightCoords);
-		else drawInBatch8xOutline(font, text, x, y, color, matrix, buffer, packedLightCoords, shadowColor);
+		else drawInBatch8xOutline(font, text, x, y, color, shadowColor, matrix, buffer, packedLightCoords);
 		cir.setReturnValue(font.width(text) + 1);
 	}
 	public static void drawInBatch8xOutline(
@@ -67,10 +59,10 @@ public final class ItemCountFontUtil {
 		float x,
 		float y,
 		int color,
+		int shadowColor,
 		Matrix4f matrix,
 		MultiBufferSource buffer,
-		int packedLightCoords,
-		int shadowColor
+		int packedLightCoords
 	) {
 		var finalY = y - 1F;
 		var adjusted = Font.adjustColor(shadowColor);

@@ -7,14 +7,12 @@
 [![Crowdin](https://badges.crowdin.net/create-cyber-goggles/localized.svg)](https://crowdin.com/project/create-cyber-goggles)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/ForgeStove/CreateCyberGoggles)
 
----
 # 概述 / Overview
 
 **Create: Cyber Goggles** 是[**机械动力**](https://modrinth.com/mod/create)的客户端附属模组，为其提供了模块化的辅助功能。
 
 **Create: Cyber Goggles** is a client-side mod for [**Create**](https://modrinth.com/mod/create), providing modular assistance features.
 
----
 # 版本 / Versions
 
 |   Minecraft   | Forge | Fabric/Quilt | NeoForge | Create: Cyber Goggles |             Create             |
@@ -24,16 +22,12 @@
 |    1.20.1     |   ✅   |      ✅       |    ✅     |        1.x~7.x        | 1.x: 0.5+, 6.0+; 2.x~7.x: 6.0+ |
 | 1.18.2-1.19.2 |   ✅   |      ✅       |          |          1.x          |              0.5+              |
 
----
 # 本地化 / Localization
 
 欢迎通过 [Crowdin](https://crowdin.com/project/create-cyber-goggles) 帮助将此模组翻译成更多语言！
 
 Welcome to help translate this mod into more languages on [Crowdin](https://crowdin.com/project/create-cyber-goggles)!
 
-[![Crowdin](https://badges.crowdin.net/create-cyber-goggles/localized.svg)](https://crowdin.com/project/create-cyber-goggles)
-
----
 # 致谢 / Credits
 
 本项目使用了以下模组的代码：

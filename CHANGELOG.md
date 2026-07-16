@@ -1,1 +1,1 @@
-- Add color config for createStyleStackCount
+- Fixed the issue where color values exceeding the int limit couldn't be deserialized correctly

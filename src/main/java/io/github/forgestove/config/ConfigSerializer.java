@@ -192,6 +192,13 @@ public final class ConfigSerializer<C> {
 			if (type == Point.class) {
 				if (value instanceof CommentedConfig cc) field.set(category, new Point(cc.getInt("x"), cc.getInt("y")));
 			} else if (type.isEnum()) field.set(category, Enum.valueOf((Class) type, (String) value));
+			else if (value instanceof Number num) if (type == int.class || type == Integer.class) field.setInt(category, num.intValue());
+			else if (type == long.class || type == Long.class) field.setLong(category, num.longValue());
+			else if (type == double.class || type == Double.class) field.setDouble(category, num.doubleValue());
+			else if (type == float.class || type == Float.class) field.setFloat(category, num.floatValue());
+			else if (type == byte.class || type == Byte.class) field.setByte(category, num.byteValue());
+			else if (type == short.class || type == Short.class) field.setShort(category, num.shortValue());
+			else field.set(category, value);
 			else field.set(category, value);
 		}
 	}

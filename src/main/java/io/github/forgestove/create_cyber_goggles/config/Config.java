@@ -29,7 +29,7 @@ public final class Config {
 		var id = configClass.getAnnotation(ConfigClass.class).value();
 		if (id == null || id.isBlank()) throw new IllegalStateException("Mod id must be provided before building ConfigHandler");
 		CONFIG_TYPES.compute(
-			id, (key, existingClass) -> {
+			id, (_, existingClass) -> {
 				if (existingClass == null || existingClass.equals(configClass)) return configClass;
 				throw new IllegalStateException("Config for id '%s' is already initialized with %s, cannot reinitialize with %s".formatted(id,
 					existingClass.getName(),
@@ -39,7 +39,7 @@ public final class Config {
 		);
 		return HANDLERS.computeIfAbsent(
 			id,
-			string -> ConfigHandler.builder(configClass)
+			_ -> ConfigHandler.builder(configClass)
 				.path(() -> Path.of(FabricLoader.getInstance().getConfigDir().toString(), id + ".toml"))
 				.translationPrefix(id + ".config")
 				.translator(key -> I18n.exists(key) ? I18n.get(key) : null)

@@ -5,7 +5,6 @@ public final class Translation {
 	public static final Component RESET_TOOLTIP = Component.translatable("config.ui.reset.tooltip");
 	public static final Component UNDO_LABEL = Component.translatable("config.ui.undo");
 	public static final Component UNDO_TOOLTIP = Component.translatable("config.ui.undo.tooltip");
-	public static final Component KEYBINDS_LABEL = Component.translatable("config.ui.keybinds");
 	public static final Component CANCEL_LABEL = Component.translatable("gui.cancel");
 	public static final Component QUIT_UNSAVED_LABEL = Component.translatable("config.ui.quit.unsaved");
 	public static final Component SAVE_LABEL = Component.translatable("config.ui.save");

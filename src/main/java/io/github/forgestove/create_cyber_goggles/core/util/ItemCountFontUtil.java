@@ -9,7 +9,7 @@ import net.minecraft.util.FormattedCharSequence;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.getCCGRes;
 public final class ItemCountFontUtil {
 	public static final ResourceLocation FONT_CREATE = getCCGRes("create");
 	public static Component getStyledAmount(Component component) {
@@ -68,20 +68,19 @@ public final class ItemCountFontUtil {
 		var finalY = y - 1F;
 		var adjusted = Font.adjustColor(shadowColor);
 		var outputOutliner = font.new StringRenderOutput(buffer, 0, 0, adjusted, false, matrix, DisplayMode.NORMAL, packedLightCoords);
-		var boldOffset = 2F;
-		for (var j = -1; j <= 1; j++)
-			for (var k = -1; k <= 1; k++) {
-				if (j == 0 && k == 0) continue;
-				var afloat = new float[]{x};
-				var l = j;
-				var i1 = k;
+		for (var dx = -1; dx <= 1; dx++)
+			for (var dy = -1; dy <= 1; dy++) {
+				if (dx == 0 && dy == 0) continue;
+				var cursorX = new float[]{x};
+				var finalDx = dx;
+				var finalDy = dy;
 				text.accept((pos, style, codePoint) -> {
-					var flag = style.isBold();
 					var fontset = font.getFontSet(style.getFont());
 					var glyphinfo = fontset.getGlyphInfo(codePoint, font.filterFishyGlyphs);
-					outputOutliner.x = afloat[0] + (float) l * glyphinfo.getShadowOffset() * boldOffset;
-					outputOutliner.y = finalY + (float) i1 * glyphinfo.getShadowOffset() * boldOffset;
-					afloat[0] += glyphinfo.getAdvance(flag);
+					var offset = glyphinfo.getShadowOffset();
+					outputOutliner.x = cursorX[0] + finalDx * offset * 2F;
+					outputOutliner.y = finalY + finalDy * offset * 2F;
+					cursorX[0] += glyphinfo.getAdvance(style.isBold());
 					return outputOutliner.accept(pos, style.withColor(adjusted), codePoint);
 				});
 			}

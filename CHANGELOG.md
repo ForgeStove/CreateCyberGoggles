@@ -1,2 +1,3 @@
-- Try to fix [#67](https://github.com/ForgeStove/CreateCyberGoggles/issues/67)
-- Fix [#68](https://github.com/ForgeStove/CreateCyberGoggles/issues/68)
+- Add the ASM auto-scanning annotation AutoTooltipRenderer
+- Fix [#67](https://github.com/ForgeStove/CreateCyberGoggles/issues/67)
+- Optimize the cache issue with the ender chest

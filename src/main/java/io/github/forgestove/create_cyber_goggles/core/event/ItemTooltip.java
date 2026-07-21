@@ -5,13 +5,13 @@ import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import com.simibubi.create.content.equipment.wrench.WrenchItem;
 import com.simibubi.create.foundation.utility.CreateLang;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.api.TooltipRenderer;
-import io.github.forgestove.create_cyber_goggles.core.tooltipRenderer.*;
+import io.github.forgestove.create_cyber_goggles.core.api.*;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.client.event.RenderTooltipEvent.*;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.fluids.*;
@@ -22,19 +22,20 @@ import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public final class ItemTooltip {
-	public static final List<TooltipRenderer> OVERLAY_RENDERERS = List.of(
-		new ContainerRenderer(),
-		new PackageItemRenderer(),
-		new ToolboxRenderer(),
-		new ListFilterRenderer(),
-		new EnderChestRenderer(),
-		new ClipboardRenderer(),
-		new MapTooltipRenderer(),
-		new LinkedControllerRenderer(),
-		new TableClothRenderer(),
-		new RedstoneRequesterRenderer()
-	);
+	public final static List<TooltipRenderer> OVERLAY_RENDERERS = new ArrayList<>();
 	private static final int OVERLAY_GAP = 6;
+	static {
+		var annoName = AutoTooltipRenderer.class.getName();
+		ModList.get().getAllScanData().forEach(scanData -> scanData.getAnnotations().forEach(annoData -> {
+			if (annoData.annotationType().getClassName().equals(annoName)) try {
+				var clazz = Class.forName(annoData.memberName());
+				if (TooltipRenderer.class.isAssignableFrom(clazz))
+					OVERLAY_RENDERERS.add((TooltipRenderer) clazz.getDeclaredConstructor().newInstance());
+			} catch (Exception e) {
+				CCG.LOGGER.error("Unable to load tooltip renderer: {}", annoData.memberName(), e);
+			}
+		}));
+	}
 	public static void itemTooltip(@NotNull ItemTooltipEvent event) {
 		if (!CCG.config.tooltip.extraItemTooltip) return;
 		if (shouldSuppressInfo()) return;

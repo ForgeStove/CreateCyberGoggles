@@ -26,7 +26,8 @@ public abstract class ItemCountFontMixin {
 		Operation<Integer> original,
 		@Local(ordinal = 0, argsOnly = true) int itemX
 	) {
-		if (!CCG.config.misc.createStackCount.enableCreateStyleStackCount) return original.call(gui, font, text, strX, strY, color, dropShadow);
+		if (!CCG.config.misc.createStackCount.enableCreateStyleStackCount)
+			return original.call(gui, font, text, strX, strY, color, dropShadow);
 		var styled = ItemCountFontUtil.getStyledAmount(text);
 		var x = itemX + 16 - font.width(styled);
 		return gui.drawString(font, styled, x, strY, color);

@@ -1,11 +1,13 @@
 package io.github.forgestove.create_cyber_goggles.core.tooltipRenderer;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.api.AutoTooltipRenderer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+@AutoTooltipRenderer
 public class ContainerRenderer extends AbstractItemGridRenderer {
 	private static final int COLUMNS = 9;
 	@Override

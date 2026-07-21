@@ -2,10 +2,12 @@ package io.github.forgestove.create_cyber_goggles.core.tooltipRenderer;
 import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.content.logistics.tableCloth.TableClothBlockItem;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.api.AutoTooltipRenderer;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+@AutoTooltipRenderer
 public final class TableClothRenderer extends AbstractItemGridRenderer {
 	@Override
 	public boolean supports(ItemStack stack) {

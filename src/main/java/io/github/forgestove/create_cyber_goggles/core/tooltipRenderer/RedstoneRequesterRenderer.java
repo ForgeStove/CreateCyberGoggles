@@ -3,6 +3,7 @@ import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequester
 import com.simibubi.create.content.logistics.stockTicker.PackageOrderWithCrafts;
 import com.simibubi.create.content.logistics.tableCloth.TableClothBlockItem;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.api.AutoTooltipRenderer;
 import net.createmod.catnip.codecs.CatnipCodecUtils;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
@@ -11,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
+@AutoTooltipRenderer
 public final class RedstoneRequesterRenderer extends AbstractItemGridRenderer {
 	@Override
 	public boolean supports(ItemStack stack) {

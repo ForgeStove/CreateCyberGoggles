@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.tooltipRenderer;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.api.TooltipRenderer;
+import io.github.forgestove.create_cyber_goggles.core.api.*;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.core.component.DataComponents;
@@ -9,6 +9,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.level.material.MapColor;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
+@AutoTooltipRenderer
 public final class MapTooltipRenderer implements TooltipRenderer {
 	private static final int PADDING = 4;
 	private static final int MAP_SIZE = 128;

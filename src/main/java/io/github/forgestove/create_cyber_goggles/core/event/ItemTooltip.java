@@ -27,7 +27,7 @@ public final class ItemTooltip {
 	static {
 		var annoName = AutoTooltipRenderer.class.getName();
 		ModList.get().getAllScanData().forEach(scanData -> scanData.getAnnotations().forEach(annoData -> {
-			if (annoData.annotationType().getClassName().equals(annoName)) try {
+			if (annoName.equals(annoData.annotationType().getClassName())) try {
 				var clazz = Class.forName(annoData.memberName());
 				if (TooltipRenderer.class.isAssignableFrom(clazz))
 					OVERLAY_RENDERERS.add((TooltipRenderer) clazz.getDeclaredConstructor().newInstance());

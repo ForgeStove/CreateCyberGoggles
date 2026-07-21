@@ -93,26 +93,25 @@ public class ArmInteractionPointHandlerMixin {
 		var maxX = Integer.MAX_VALUE;
 		var minZ = Integer.MIN_VALUE;
 		var maxZ = Integer.MAX_VALUE;
-		var hasValidPoint = false;
+		var validPoints = new ArrayList<BlockPos>();
 		for (var point : currentSelection) {
 			if (point == null || !point.isValid()) continue;
-			hasValidPoint = true;
 			var center = point.getPos();
+			validPoints.add(center);
 			minX = Math.max(minX, center.getX() - range);
 			maxX = Math.min(maxX, center.getX() + range);
 			minZ = Math.max(minZ, center.getZ() - range);
 			maxZ = Math.min(maxZ, center.getZ() + range);
 		}
-		if (!hasValidPoint) return ccg$cachedRangeHints;
-		Couple<List<BlockPos>> hints = Couple.create(ArrayList::new);
+		if (validPoints.isEmpty()) return ccg$cachedRangeHints = Couple.create(ArrayList::new);
+		var hints = Couple.<List<BlockPos>>create(ArrayList::new);
 		var rangeSq = range * range;
+		var points = validPoints.toArray(new BlockPos[0]);
 		for (var x = minX; x <= maxX; x++)
 			for (var z = minZ; z <= maxZ; z++) {
 				var candidate = new BlockPos(x, yLevel, z);
 				var connectable = true;
-				for (var point : currentSelection) {
-					if (point == null || !point.isValid()) continue;
-					var center = point.getPos();
+				for (var center : points) {
 					var dx = x - center.getX();
 					var dy = yLevel - center.getY();
 					var dz = z - center.getZ();
@@ -122,7 +121,6 @@ public class ArmInteractionPointHandlerMixin {
 				}
 				hints.get(connectable).add(candidate);
 			}
-		ccg$cachedRangeHints = hints;
-		return hints;
+		return ccg$cachedRangeHints = hints;
 	}
 }

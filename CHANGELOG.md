@@ -1,1 +1,2 @@
-- Fixed the issue where color values exceeding the int limit couldn't be deserialized correctly
+- Try to fix [#67](https://github.com/ForgeStove/CreateCyberGoggles/issues/67)
+- Fix [#68](https://github.com/ForgeStove/CreateCyberGoggles/issues/68)

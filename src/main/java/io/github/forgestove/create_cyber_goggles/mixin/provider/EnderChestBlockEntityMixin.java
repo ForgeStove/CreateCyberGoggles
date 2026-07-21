@@ -8,7 +8,6 @@ import org.spongepowered.asm.mixin.Mixin;
 public abstract class EnderChestBlockEntityMixin implements ItemRenderable, Self<EnderChestBlockEntity> {
 	@Override
 	public ItemStack ccg$getItemStack() {
-		if (!CCG.config.tooltip.container) return null;
-		return new ItemStack(thiz().getBlockState().getBlock());
+		return CCG.config.tooltip.container ? new ItemStack(thiz().getBlockState().getBlock()) : null;
 	}
 }

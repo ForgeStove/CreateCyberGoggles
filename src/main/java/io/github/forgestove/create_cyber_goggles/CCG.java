@@ -1,26 +1,23 @@
 package io.github.forgestove.create_cyber_goggles;
 import com.mojang.logging.LogUtils;
+import io.github.forgestove.config.ConfigRegistry;
+import io.github.forgestove.config.client.ConfigScreenFactory;
 import io.github.forgestove.create_cyber_goggles.core.event.*;
 import io.github.forgestove.create_cyber_goggles.core.event.drafting.*;
 import io.github.forgestove.create_cyber_goggles.core.event.forceOverlay.*;
 import io.github.forgestove.create_cyber_goggles.core.factory.*;
-import io.github.forgestove.create_cyber_goggles.core.util.CCGMods;
-import io.github.forgestove.config.ConfigRegistry;
-import io.github.forgestove.config.client.ConfigScreenFactory;
+import io.github.forgestove.create_cyber_goggles.core.util.*;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
-@Mod(CCG.ID)
+@Mod(value = CCG.ID, dist = Dist.CLIENT)
 public final class CCG {
 	public static final String ID = "create_cyber_goggles";
 	public static final Logger LOGGER = LogUtils.getLogger();
 	public static final CCGConfig config = ConfigRegistry.init(CCGConfig.class);
 	public CCG(ModContainer container) {
-		if (FMLEnvironment.dist.isClient()) clientInit(container);
-	}
-	public void clientInit(ModContainer container) {
 		ConfigScreenFactory.initConfigScreen(container, ID);
 		var mod = container.getEventBus();
 		assert mod != null;
@@ -47,6 +44,7 @@ public final class CCG {
 		game.addListener(Outliner::tick);
 		game.addListener(TipOverlay::tick);
 		game.addListener(DraftingViewHandler::applyIfEnabled);
+		game.addListener(EnderChestTooltipUtil::clear);
 		CCGMods.SIMULATED.executeIfInstalled(() -> {
 			game.addListener(ForceOverlay::tick);
 			game.addListener(ForceOverlayRenderer::onRenderStage);

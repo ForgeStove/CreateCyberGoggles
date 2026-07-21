@@ -10,8 +10,11 @@ public final class EnderChestRenderer extends AbstractItemGridRenderer {
 	}
 	@Override
 	public @Nullable OverlayData buildItemGrid(ItemStack stack) {
-		var items = EnderChestTooltipUtil.getCachedItems();
-		if (!items.isEmpty()) return new OverlayData(items, 9);
+		var items = EnderChestTooltipUtil.cachedItems;
+		for (var item : items) {
+			if (item.isEmpty()) continue;
+			return new OverlayData(items, 9);
+		}
 		return null;
 	}
 }

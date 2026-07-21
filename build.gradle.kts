@@ -17,11 +17,8 @@ val generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
 	into("build/generated/sources/modMetadata")
 }
 sourceSets.main.get().resources.srcDir(generateMetadata)
-configurations.create("mixinAgent") {
-	isCanBeConsumed = false
-	isCanBeResolved = true
-	defaultDependencies { add(dependencyFactory.create("dev.vfyjxf:mixin-hotswap-agent:${p("mixinAgentVersion")}").setTransitive(false)) }
-}
+val mixinAgentNotation = "dev.vfyjxf:mixin-hotswap-agent:${p("mixinAgentVersion")}"
+val mixinAgent = configurations.create("mixinAgent").defaultDependencies { add(dependencyFactory.create(mixinAgentNotation)) }
 neoForge {
 	version = p("loaderVersion")
 	parchment {
@@ -32,10 +29,8 @@ neoForge {
 		create("client").client()
 		create("server").server()
 		configureEach {
-			jvmArguments.addAll("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition")
 			systemProperty("terminal.jline", "true")
-			val files = configurations["mixinAgent"].files
-			if(files.isNotEmpty()) jvmArgument("-javaagent:${files.first().toPath()}")
+			jvmArguments.addAll("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition", "-javaagent:${mixinAgent.files.first().toPath()}")
 		}
 	}
 	accessTransformers.publish(file("src/main/resources/META-INF/accesstransformer.cfg"))
@@ -58,7 +53,7 @@ dependencies {
 	implementation("net.createmod.ponder:ponder-${p("loader")}:${p("ponderVersion")}+mc${p("mcVersion")}") { isTransitive = false }
 	implementation("com.tterrag.registrate:Registrate:${p("registrateVersion")}")
 	//endregion
-	//region Aeronautics
+	//region Create Aeronautics
 	implementation("dev.simulated_team.simulated:simulated-${p("loader")}-${p("mcVersion")}:${p("areoVersion")}") { isTransitive = false }
 	implementation("dev.ryanhcode.offroad:offroad-${p("loader")}-${p("mcVersion")}:${p("areoVersion")}") { isTransitive = false }
 	implementation("dev.eriksonn.aeronautics:aeronautics-${p("loader")}-${p("mcVersion")}:${p("areoVersion")}") { isTransitive = false }
@@ -66,7 +61,7 @@ dependencies {
 	implementation("dev.ryanhcode.sable-companion:sable-companion-common-${p("mcVersion")}:${p("sableCompanionVersion")}") { isTransitive = false }
 	implementation("foundry.veil:veil-${p("loader")}-${p("mcVersion")}:${p("veilVersion")}")
 	//endregion
-	//region Enchantment Industry
+	//region Create Enchantment Industry
 	compileOnly("maven.modrinth:create-enchantment-industry:${p("ceiVersion")}")
 	compileOnly("maven.modrinth:create-dragons-plus:${p("dragonPlusVersion")}")
 	//endregion
@@ -76,7 +71,7 @@ dependencies {
 	compileOnly("com.hollingsworth.ars_nouveau:ars_nouveau-${p("mcVersion")}:${p("arsNouveauVersion")}") { isTransitive = false }
 	compileOnly("org.appliedenergistics:appliedenergistics2:${p("appliedenergisticsVersion")}")
 	runtimeOnly("maven.modrinth:jade:${p("jadeVersion")}+${p("loader")}")
-	add("additionalRuntimeClasspath", "dev.vfyjxf:mixin-hotswap-agent:${p("mixinAgentVersion")}")
+	add("additionalRuntimeClasspath", mixinAgentNotation)
 }
 publishMods {
 	file.set(tasks.jar.get().archiveFile)
@@ -104,3 +99,4 @@ publishMods {
 	}
 }
 fun p(key: String) = property(key).toString()
+println("Java: ${System.getProperty("java.version")}, JVM: ${System.getProperty("java.vm.version")} (${System.getProperty("java.vendor")}), Arch: ${System.getProperty("os.arch")}")

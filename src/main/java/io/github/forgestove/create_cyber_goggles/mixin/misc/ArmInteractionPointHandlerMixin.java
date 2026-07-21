@@ -103,6 +103,16 @@ public class ArmInteractionPointHandlerMixin {
 			minZ = Math.min(minZ, center.getZ() - range);
 			maxZ = Math.max(maxZ, center.getZ() + range);
 		}
+		if (hasValidPoint) {
+			// 限制边界盒以防止点间距较远时内存泄露
+			var MAX_RENDER_RADIUS = 64;
+			var cx = ((long) minX + maxX) / 2;
+			var cz = ((long) minZ + maxZ) / 2;
+			minX = Math.max(minX, (int) (cx - MAX_RENDER_RADIUS));
+			maxX = Math.min(maxX, (int) (cx + MAX_RENDER_RADIUS));
+			minZ = Math.max(minZ, (int) (cz - MAX_RENDER_RADIUS));
+			maxZ = Math.min(maxZ, (int) (cz + MAX_RENDER_RADIUS));
+		}
 		Couple<List<BlockPos>> hints = Couple.create(ArrayList::new);
 		if (hasValidPoint) {
 			var rangeSq = range * range;

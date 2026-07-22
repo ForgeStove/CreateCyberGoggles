@@ -15,7 +15,7 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 
 import java.util.*;
 @EventBusSubscriber
-public class ConfigEvents {
+public final class ConfigEvents {
 	@SubscribeEvent
 	public static void register(RegisterPayloadHandlersEvent event) {
 		ConfigNetwork.register(event);

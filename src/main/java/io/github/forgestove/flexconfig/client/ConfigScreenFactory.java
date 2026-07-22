@@ -1,7 +1,6 @@
 package io.github.forgestove.flexconfig.client;
 import io.github.forgestove.flexconfig.ConfigRegistry;
 import io.github.forgestove.flexconfig.client.gui.ConfigScreen;
-import net.minecraft.client.gui.screens.Screen;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import org.jetbrains.annotations.*;
@@ -13,7 +12,7 @@ public final class ConfigScreenFactory {
 		container.registerExtensionPoint(IConfigScreenFactory.class, extension);
 	}
 	@Contract("_ -> new")
-	public static @NotNull Screen createConfigScreen(String modId) {
+	public static @NotNull ConfigScreen<?, ?> createConfigScreen(String modId) {
 		return new ConfigScreen<>(ConfigRegistry.getHandler(modId));
 	}
 }

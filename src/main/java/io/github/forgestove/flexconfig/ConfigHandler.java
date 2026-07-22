@@ -134,10 +134,9 @@ public final class ConfigHandler<C, V> {
 	}
 	/** 遍历所有快捷键，边缘检测并执行触发动作。 */
 	public void tickTriggerKeybinds(long window, Map<String, Boolean> previousStates) {
-		for (var entry : triggerKeybinds.entrySet()) {
-			var path = entry.getKey();
-			var keybind = EntryKeybind.deserialize(entry.getValue());
-			if (keybind.isUnbound()) continue;
+		triggerKeybinds.forEach((path, value) -> {
+			var keybind = EntryKeybind.deserialize(value);
+			if (keybind.isUnbound()) return;
 			var isPressed = EntryKeybind.isKeyPressed(window, keybind);
 			var wasPressed = previousStates.getOrDefault(path, false);
 			previousStates.put(path, isPressed);
@@ -145,7 +144,7 @@ public final class ConfigHandler<C, V> {
 				var action = triggerActions.get(path);
 				if (action != null) action.run();
 			}
-		}
+		});
 	}
 	/** 将快捷键绑定恢复到指定的快照（用于取消时回撤清屏幕时还原）。 */
 	public void restoreTriggerKeybinds(Map<String, String> snapshot) {

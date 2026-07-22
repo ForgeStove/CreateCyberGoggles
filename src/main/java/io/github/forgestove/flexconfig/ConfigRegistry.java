@@ -2,25 +2,35 @@ package io.github.forgestove.flexconfig;
 import io.github.forgestove.flexconfig.api.Config;
 import io.github.forgestove.flexconfig.client.ConfigScreenFactory;
 import io.github.forgestove.flexconfig.tree.*;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static io.github.forgestove.create_cyber_goggles.CCG.ID;
 public final class ConfigRegistry {
 	private static final Map<String, ConfigHandler<?, ?>> HANDLERS = new ConcurrentHashMap<>();
-	public static <C> C init(Class<C> configClass) {
-		var handler = HANDLERS.computeIfAbsent(getModId(configClass), string -> ConfigHandler.builder(configClass).build());
+	public static <C> C init(Class<C> clazz) {
+		var modId = getModId(clazz);
+		var handler = HANDLERS.computeIfAbsent(modId, string -> ConfigHandler.builder(clazz).build());
+		initConfigScreenForClient(modId);
 		var config = handler.getConfig();
-		if (configClass.isInstance(config)) return configClass.cast(config);
+		if (clazz.isInstance(config)) return clazz.cast(config);
 		throw new IllegalStateException("ConfigHandler returned config of type %s, expected %s".formatted(
 			config.getClass().getName(),
-			configClass.getName()
+			clazz.getName()
 		));
 	}
 	public static String getModId(@NotNull Class<?> configClass) {
 		var modId = configClass.getAnnotation(Config.class).value();
-		if (modId == null || modId.isBlank()) throw new IllegalStateException("Mod id must be provided before building ConfigHandler");
-		return modId;
+		if (modId != null && !modId.isBlank()) return modId;
+		throw new IllegalStateException("Mod id must be provided before building ConfigHandler");
+	}
+	private static void initConfigScreenForClient(String modId) {
+		if (FMLEnvironment.dist.isDedicatedServer()) return;
+		ModList.get().getModContainerById(modId).ifPresent(container -> ConfigScreenFactory.initConfigScreen(container, ID));
 	}
 	/** 将锁定值应用到活动配置（运行时）。不会修改 savedConfig，因此TOML文件不会被污染。 */
 	public static void applyLockedValue(String modId, ValueConfigNode<Object, Object> node, Object parsed) {
@@ -48,8 +58,8 @@ public final class ConfigRegistry {
 	/** 由仅客户端的 {@link ConfigScreenFactory} 用于创建配置界面。 */
 	public static @NotNull ConfigHandler<?, ?> getHandler(String modId) {
 		var handler = HANDLERS.get(modId);
-		if (handler == null) throw new IllegalStateException("Config handler for id '%s' is not initialized.".formatted(modId));
-		return handler;
+		if (handler != null) return handler;
+		throw new IllegalStateException("Config handler for id '%s' is not initialized.".formatted(modId));
 	}
 	/** 获取所有已注册模组的 modId。 */
 	public static Set<String> getRegisteredModIds() {

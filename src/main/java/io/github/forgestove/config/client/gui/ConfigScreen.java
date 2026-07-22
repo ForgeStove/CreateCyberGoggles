@@ -123,11 +123,7 @@ public final class ConfigScreen<C, V> extends Screen {
 			confirmed -> {
 				if (confirmed) handler.restoreTriggerKeybinds(savedTriggerKeybinds);
 				mc.setScreen(confirmed ? parent : this);
-			},
-			Translation.QUIT_CONFIRM_TITLE,
-			Translation.QUIT_CONFIRM_WARNING,
-			Translation.QUIT_CONFIRM_LABEL,
-			Translation.CANCEL_LABEL
+			}, Translation.QUIT_CONFIRM_TITLE, Translation.QUIT_CONFIRM_WARNING, Translation.QUIT_CONFIRM_LABEL, Translation.CANCEL_LABEL
 		));
 	}
 	private Component getSaveLabel(boolean hasEntryError) {

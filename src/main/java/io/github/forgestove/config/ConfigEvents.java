@@ -31,8 +31,8 @@ public class ConfigEvents {
 		public static void onClientTick(Post event) {
 			if (ClientUtil.mc.screen != null) return;
 			var window = ClientUtil.mc.getWindow().getWindow();
-			for (var modId : ConfigRegistry.getRegisteredModIds())
-				ConfigRegistry.getHandler(modId).tickTriggerKeybinds(window, PREVIOUS_STATES);
+			ConfigRegistry.getRegisteredModIds()
+				.forEach(modId -> ConfigRegistry.getHandler(modId).tickTriggerKeybinds(window, PREVIOUS_STATES));
 		}
 		@SubscribeEvent
 		public static void onLoggingOut(LoggingOut event) {

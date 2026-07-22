@@ -1,5 +1,5 @@
 package io.github.forgestove.config.network;
-import io.github.forgestove.config.ConfigRegistry;
+import io.github.forgestove.config.FlexConfig;
 import io.github.forgestove.config.client.*;
 import io.github.forgestove.config.client.gui.ConfigScreen;
 import io.github.forgestove.config.server.ServerConfigLockStore;
@@ -12,9 +12,9 @@ import java.util.*;
 public final class ConfigNetwork {
 	private static final Map<String, ServerConfigLockStore> lockStores = new HashMap<>();
 	public static void register(RegisterPayloadHandlersEvent event) {
-		var registrar = event.registrar(ConfigRegistry.getFirstModId()).optional();
-		registrar.playToServer(ConfigLockPayload.TYPE, ConfigLockPayload.STREAM_CODEC, ConfigNetwork::handleConfigLockServer);
-		registrar.playToClient(ConfigSyncPayload.TYPE, ConfigSyncPayload.STREAM_CODEC, ConfigNetwork::handleConfigSyncClient);
+		var registrar = event.registrar(FlexConfig.ID).optional();
+		registrar.playToServer(ConfigLockPayload.TYPE, ConfigLockPayload.STREAM_CODEC, ConfigNetwork::handleConfigLockServer)
+			.playToClient(ConfigSyncPayload.TYPE, ConfigSyncPayload.STREAM_CODEC, ConfigNetwork::handleConfigSyncClient);
 	}
 	// -- 数据包处理器 --
 	private static void handleConfigLockServer(ConfigLockPayload payload, IPayloadContext context) {

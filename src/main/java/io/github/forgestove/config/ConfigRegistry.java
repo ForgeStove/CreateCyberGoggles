@@ -55,8 +55,4 @@ public final class ConfigRegistry {
 	public static Set<String> getRegisteredModIds() {
 		return HANDLERS.keySet();
 	}
-	public static String getFirstModId() {
-		for (var s : HANDLERS.keySet()) return s;
-		throw new IllegalStateException("Config handler has been not initialized by any mod");
-	}
 }

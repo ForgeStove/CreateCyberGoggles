@@ -3,3 +3,4 @@
 - Fix an issue where config could not be locked correctly
 - Fix an issue where config locks would cause incorrect resets
 - Rename the config system to flexconfig
+- Lower ScrollValueRendererMixin injection priority to support Overwrite injection for Create Train Parts

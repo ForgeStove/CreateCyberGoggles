@@ -23,7 +23,7 @@ public final class DraftingViewHandler {
 	 * {@link Stage#AFTER_PARTICLES} 之前应用绘图视图效果，使它们在风格化场景上方保持清晰。
 	 */
 	@SuppressWarnings("resource")
-	public static void applyIfEnabled(RenderLevelStageEvent event) {
+	public static void render(RenderLevelStageEvent event) {
 		if (event.getStage() != Stage.AFTER_TRIPWIRE_BLOCKS) return;
 		if (!CCG.config.overlay.draftingView.draftingViewEnabled) return;
 		var view = DraftingShaders.draftingView();

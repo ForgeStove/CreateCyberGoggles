@@ -43,11 +43,11 @@ public final class CCG {
 		game.addListener(KineticDebugger::tick);
 		game.addListener(Outliner::tick);
 		game.addListener(TipOverlay::tick);
-		game.addListener(DraftingViewHandler::applyIfEnabled);
+		game.addListener(DraftingViewHandler::render);
 		game.addListener(EnderChestTooltipUtil::clear);
 		CCGMods.SIMULATED.executeIfInstalled(() -> {
 			game.addListener(ForceOverlay::tick);
-			game.addListener(ForceOverlayRenderer::onRenderStage);
+			game.addListener(ForceOverlayRenderer::render);
 		});
 	}
 }

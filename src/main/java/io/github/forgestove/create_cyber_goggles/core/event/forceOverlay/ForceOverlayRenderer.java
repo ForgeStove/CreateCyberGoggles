@@ -30,7 +30,7 @@ public final class ForceOverlayRenderer {
 	/**
 	 * 注册到 {@link RenderLevelStageEvent} 的 {@link Stage#AFTER_LEVEL} 阶段。
 	 */
-	public static void onRenderStage(RenderLevelStageEvent event) {
+	public static void render(RenderLevelStageEvent event) {
 		if (event.getStage() != Stage.AFTER_LEVEL) return;
 		if (!CCG.config.aeronautics.forceOverlay.enableForceOverlay) return;
 		var player = mc.player;

@@ -69,7 +69,7 @@ public abstract class CapturableValueConfigEntry<C, V> extends ValueConfigEntry<
 			hasChanged = true;
 			undoButton.active = true;
 		}
-		// 重置：keybind 不为默认（null）
+		// 重置：keybind 不为默认（null）时启用
 		if (currentSerialized != null) resetButton.active = true;
 	}
 	/** 获取当前绑定快捷键。 */
@@ -104,7 +104,6 @@ public abstract class CapturableValueConfigEntry<C, V> extends ValueConfigEntry<
 		var valueWidget = getValueWidget();
 		renderGui(gui, y, x, width, mouseX, mouseY, delta, lockButton, undoButton, resetButton, keybindButton, valueWidget);
 		valueWidget.active = !isLocked();
-		keybindButton.active = !isLocked();
 	}
 	/** 子类实现：返回值控件（valueButton、dropdownButton 等），用于 render。 */
 	protected abstract AbstractWidget getValueWidget();
@@ -189,6 +188,11 @@ public abstract class CapturableValueConfigEntry<C, V> extends ValueConfigEntry<
 	}
 	@Override
 	public void resetToDefault() {
+		if (isLocked()) {
+			tab.screen.getHandler().setTriggerKeybind(node.getPath(), null, null);
+			tab.screen.refresh();
+			return;
+		}
 		tab.screen.getHandler().setTriggerKeybind(node.getPath(), null, null);
 		super.resetToDefault();
 	}

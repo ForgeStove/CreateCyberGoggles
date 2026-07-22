@@ -59,6 +59,7 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 		return errorTooltip;
 	}
 	public void resetToDefault() {
+		if (isLocked()) return;
 		var path = node.getPath();
 		var pending = ClientLockManager.getPendingLock(path);
 		if (pending != Boolean.FALSE) ClientLockManager.clearPendingLock(path);

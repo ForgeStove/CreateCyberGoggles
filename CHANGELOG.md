@@ -1,3 +1,5 @@
-- Add the ASM auto-scanning annotation AutoTooltipRenderer
-- Fix [#67](https://github.com/ForgeStove/CreateCyberGoggles/issues/67)
-- Optimize the cache issue with the ender chest
+- Add id "flexconfig" for config system
+- Fix an issue where the server could not start
+- Fix an issue where config could not be locked correctly
+- Fix an issue where config locks would cause incorrect resets
+- Rename the config system to flexconfig

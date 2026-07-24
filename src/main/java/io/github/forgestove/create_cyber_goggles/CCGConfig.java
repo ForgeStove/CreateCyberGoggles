@@ -152,7 +152,7 @@ public final class CCGConfig {
 			public boolean enchancedRotationMenu = false;
 		}
 		public static class CreateStackCount {
-			public boolean enableCreateStyleStackCount = true;
+			public boolean enableCreateStyleStackCount = false;
 			@ColorValue(true) public int countOutlineColor = 0xFF383838;
 		}
 	}

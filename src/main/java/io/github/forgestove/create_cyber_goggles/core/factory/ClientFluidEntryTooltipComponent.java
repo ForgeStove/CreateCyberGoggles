@@ -1,5 +1,4 @@
 package io.github.forgestove.create_cyber_goggles.core.factory;
-import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.*;
@@ -58,18 +57,11 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 		var g = ARGB32.green(tint) / 255F;
 		var b = ARGB32.blue(tint) / 255F;
 		var a = ARGB32.alpha(tint) / 255F;
-		RenderSystem.enableBlend();
-		RenderSystem.setShaderColor(r, g, b, a);
-		try {
-			gui.enableScissor(x, y, x + width, y + height);
-			for (var dx = 0; dx < width; dx += 16)
-				for (var dy = 0; dy < height; dy += 16)
-					gui.blit(x + dx, y + dy, 0, 16, 16, sprite);
-		} finally {
-			gui.disableScissor();
-			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-			RenderSystem.disableBlend();
-		}
+		gui.enableScissor(x, y, x + width, y + height);
+		for (var dx = 0; dx < width; dx += 16)
+			for (var dy = 0; dy < height; dy += 16)
+				gui.blit(x + dx, y + dy, 0, 16, 16, sprite, r, g, b, a);
+		gui.disableScissor();
 	}
 	private @NotNull Component buildLabel() {
 		return buildLabel(fluid, capacityMb, Screen.hasShiftDown());

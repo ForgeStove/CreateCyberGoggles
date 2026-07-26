@@ -1,5 +1,4 @@
 package io.github.forgestove.create_cyber_goggles.core.factory;
-import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.forgestove.create_cyber_goggles.core.util.SlotUtil;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -73,16 +72,9 @@ public final class ClientFluidListTooltipComponent implements ClientTooltipCompo
 		var g = ARGB32.green(tint) / 255F;
 		var b = ARGB32.blue(tint) / 255F;
 		var a = ARGB32.alpha(tint) / 255F;
-		RenderSystem.enableBlend();
-		RenderSystem.setShaderColor(r, g, b, a);
-		try {
-			for (var dx = 0; dx < width; dx += 16) {
-				var sliceWidth = Math.min(16, width - dx);
-				gui.blit(x + dx, y, 0, sliceWidth, height, sprite);
-			}
-		} finally {
-			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-			RenderSystem.disableBlend();
+		for (var dx = 0; dx < width; dx += 16) {
+			var sliceWidth = Math.min(16, width - dx);
+			gui.blit(x + dx, y, 0, sliceWidth, height, sprite, r, g, b, a);
 		}
 	}
 	public record FluidListTooltipComponent(List<FluidStack> fluids, int indent, int maxColumns) implements TooltipComponent {}

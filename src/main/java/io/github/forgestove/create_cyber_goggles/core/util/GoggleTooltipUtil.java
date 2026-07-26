@@ -107,6 +107,7 @@ public final class GoggleTooltipUtil {
 		if (!CCG.config.goggles.enhancedInfo) return false;
 		CCGLang.translate("tooltip.cannonState").forGoggles(tooltip);
 		CreateLang.translate("schematicannon.status." + sbe.statusMsg).style(GOLD).forGoggles(tooltip);
+		if (sbe.missingItem != null) CCGLang.itemEntry(sbe.missingItem).forGoggles(tooltip);
 		var shotsLeft = sbe.remainingFuel;
 		var shotsLeftWithItems = shotsLeft + sbe.inventory.getStackInSlot(4).getCount() * sbe.getShotsPerGunpowder();
 		if (sbe.hasCreativeCrate) {

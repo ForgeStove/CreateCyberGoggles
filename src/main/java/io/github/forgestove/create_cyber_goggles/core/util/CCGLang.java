@@ -78,13 +78,16 @@ public class CCGLang {
 	public static @NotNull CCGLangBuilder seconds() {
 		return builder().add(CreateLang.translate("generic.unit.seconds").component());
 	}
-	public static @NotNull CCGLangBuilder item(@NotNull ItemStack stack) {
-		return builder().add(stack.getHoverName().copy().setStyle(stack.getDisplayName().getStyle()));
+	public static @NotNull CCGLangBuilder itemEntry(@NotNull ItemStack stack) {
+		return itemEntry(stack, item(stack).component().copy());
 	}
 	public static @NotNull CCGLangBuilder itemEntry(@NotNull ItemStack stack, @NotNull Component label) {
 		var marker = Component.empty();
 		TooltipComponentUtil.ITEM_ENTRY_MAP.put(marker, new ItemEntryTooltipComponent(stack.copy(), 0, label.copy()));
 		return builder().add(marker);
+	}
+	public static @NotNull CCGLangBuilder item(@NotNull ItemStack stack) {
+		return builder().add(stack.getHoverName().copy().setStyle(stack.getDisplayName().getStyle()));
 	}
 	public static @NotNull CCGLangBuilder itemList(@NotNull List<ItemStack> items, int maxColumns) {
 		var marker = Component.empty();

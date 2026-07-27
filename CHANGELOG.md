@@ -1,6 +1,11 @@
-- Add id "flexconfig" for config system
-- Fix an issue where the server could not start
-- Fix an issue where config could not be locked correctly
-- Fix an issue where config locks would cause incorrect resets
-- Rename the config system to flexconfig
-- Lower ScrollValueRendererMixin injection priority to support Overwrite injection for Create Train Parts
+- Add screen null check for Item Swap
+- Add predictive time to CEI blocks
+- Add in-world forceOverlay scaling configurations and rearrange the power stack layers
+- Optimize rendering of fluid text components
+- Optimize translation key usage, all changed to original Component translations
+- Disable createStackCount by default
+- Blueprint Cannon now features new item component rendering
+- Remove openStock hotkey
+- Change the default forceOverlay scaling ratio in the world to 0.01
+- Fix text rendering issues with tooltipOverlay exceptions
+- Fix an issue where the Blaze Enchanter would incorrectly display old predictions after changing enchantment levels

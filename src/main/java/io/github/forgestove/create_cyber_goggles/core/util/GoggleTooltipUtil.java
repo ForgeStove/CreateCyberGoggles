@@ -121,7 +121,8 @@ public final class GoggleTooltipUtil {
 					.withStyle(GRAY))
 				.forGoggles(tooltip);
 			if (shotsLeftWithItems != shotsLeft) CreateLang.builder()
-				.add(CreateLang.translateDirect("gui.schematicannon.shotsRemainingWithBackup",
+				.add(CreateLang.translateDirect(
+					"gui.schematicannon.shotsRemainingWithBackup",
 					CCGLang.number(shotsLeftWithItems, BLUE).component()
 				).withStyle(GRAY))
 				.forGoggles(tooltip);
@@ -188,35 +189,32 @@ public final class GoggleTooltipUtil {
 		List<Integer> inputCapacities,
 		List<Integer> outputCapacities
 	) {
-		var hasItems = !inputItems.isEmpty() || !outputItems.isEmpty();
-		var hasFluids = !inputFluids.isEmpty() || !outputFluids.isEmpty();
-		if (!hasItems && !hasFluids) return false;
+		if (inputItems.isEmpty() && outputItems.isEmpty() && inputFluids.isEmpty() && outputFluids.isEmpty()) return false;
 		CreateLang.translate("gui.goggles.basin_contents").forGoggles(tooltip);
-		if (!inputItems.isEmpty()) {
-			CCGLang.translate("tooltip.inputItems", GRAY).forGoggles(tooltip, 1);
-			inputItems.forEach(stack -> CCGLang.itemEntry(stack, CCGLang.item(stack).component()).forGoggles(tooltip, 1));
-		}
-		if (!inputFluids.isEmpty()) {
-			CCGLang.translate("tooltip.inputFluids", GRAY).forGoggles(tooltip, 1);
-			for (var i = 0; i < inputFluids.size(); i++) {
-				var fluidStack = inputFluids.get(i);
-				var capacityMb = i < inputCapacities.size() ? inputCapacities.get(i) : Math.max(1000, fluidStack.getAmount());
-				CCGLang.fluidEntry(fluidStack, capacityMb).forGoggles(tooltip, 1);
-			}
-		}
-		if (!outputItems.isEmpty()) {
-			CCGLang.translate("tooltip.outputItems", GRAY).forGoggles(tooltip, 1);
-			outputItems.forEach(stack -> CCGLang.itemEntry(stack, CCGLang.item(stack).component()).forGoggles(tooltip, 1));
-		}
-		if (!outputFluids.isEmpty()) {
-			CCGLang.translate("tooltip.outputFluids", GRAY).forGoggles(tooltip, 1);
-			for (var i = 0; i < outputFluids.size(); i++) {
-				var fluidStack = outputFluids.get(i);
-				var capacityMb = i < outputCapacities.size() ? outputCapacities.get(i) : Math.max(1000, fluidStack.getAmount());
-				CCGLang.fluidEntry(fluidStack, capacityMb).forGoggles(tooltip, 1);
-			}
-		}
+		addItems(tooltip, inputItems, "tooltip.inputItems");
+		addFluids(tooltip, inputFluids, inputCapacities, "tooltip.inputFluids");
+		addItems(tooltip, outputItems, "tooltip.outputItems");
+		addFluids(tooltip, outputFluids, outputCapacities, "tooltip.outputFluids");
 		return true;
+	}
+	private static void addItems(List<Component> tooltip, @NotNull List<ItemStack> items, @NotNull String key) {
+		if (items.isEmpty()) return;
+		CCGLang.translate(key, GRAY).forGoggles(tooltip, 1);
+		items.forEach(stack -> CCGLang.itemEntry(stack, CCGLang.item(stack).component()).forGoggles(tooltip, 1));
+	}
+	private static void addFluids(
+		List<Component> tooltip,
+		@NotNull List<FluidStack> fluids,
+		@NotNull List<Integer> capacities,
+		@NotNull String key
+	) {
+		if (fluids.isEmpty()) return;
+		CCGLang.translate(key, GRAY).forGoggles(tooltip, 1);
+		for (var i = 0; i < fluids.size(); i++) {
+			var fluidStack = fluids.get(i);
+			var capacityMb = i < capacities.size() ? capacities.get(i) : Math.max(1000, fluidStack.getAmount());
+			CCGLang.fluidEntry(fluidStack, capacityMb).forGoggles(tooltip, 1);
+		}
 	}
 	public static boolean crushingController(List<Component> tooltip, CrushingWheelControllerBlockEntity cwcbe) {
 		if (!CCG.config.tooltip.crushingController) return false;

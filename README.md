@@ -1,6 +1,5 @@
 ![Logo](https://cdn.modrinth.com/data/cached_images/9f1d22babad387de4381b095c41a0a1713be25da.png)
 
-[![Supported Versions](https://cf.way2muchnoise.eu/versions/1233804(c70039).svg)](https://www.curseforge.com/minecraft/mc-mods/create-cyber-goggles/files)
 [![CurseForge](https://img.shields.io/curseforge/dt/1233804?logo=curseforge&label=&suffix=%20&style=flat&color=242629&labelColor=e04e14&logoColor=1c1c1c)](https://www.curseforge.com/minecraft/mc-mods/create-cyber-goggles)
 [![Modrinth](https://img.shields.io/modrinth/dt/create-cyber-goggles?logo=modrinth&label=&suffix=%20&style=flat&color=242629&labelColor=5ca424&logoColor=1c1c1c)](https://modrinth.com/mod/create-cyber-goggles)
 [![License](https://img.shields.io/github/license/ForgeStove/CreateCyberGoggles?style=flat&color=900c3f)](https://github.com/ForgeStove/CreateCyberGoggles?tab=readme-ov-file#MIT-1-ov-file)
@@ -15,12 +14,12 @@
 
 ## 版本 / Versions
 
-|   Minecraft   | Forge | Fabric/Quilt | NeoForge | Create: Cyber Goggles |             Create             |
-|:-------------:|:-----:|:------------:|:--------:|:---------------------:|:------------------------------:|
-| 1.21.8-26.1.2 |       |      ✅       |          |         3.0+          |       6.0+ (Create-Fly)        |
-|    1.21.1     |       |              |    ✅     |        1.x~7.x        |              6.0+              |
-|    1.20.1     |   ✅   |      ✅       |    ✅     |        1.x~7.x        | 1.x: 0.5+, 6.0+; 2.x~7.x: 6.0+ |
-| 1.18.2-1.19.2 |   ✅   |      ✅       |          |          1.x          |              0.5+              |
+|   Minecraft   | Forge | Fabric/Quilt | NeoForge | Create: Cyber Goggles |           Create            |
+|:-------------:|:-----:|:------------:|:--------:|:---------------------:|:---------------------------:|
+| 1.21.8-26.1.2 |       |      ✅      |          |         3.0+          |      6.0+ (Create-Fly)      |
+|    1.21.1     |       |              |    ✅    |         1.0+          |            6.0+             |
+|    1.20.1     |  ✅   |      ✅      |    ✅    |         1.0+          | 1.x: 0.5+, 6.0+; 2.0+: 6.0+ |
+| 1.18.2-1.19.2 |  ✅   |      ✅      |          |          1.x          |            0.5+             |
 
 ## 本地化 / Localization
 

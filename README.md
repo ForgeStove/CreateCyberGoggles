@@ -6,6 +6,7 @@
 [![Crowdin](https://badges.crowdin.net/create-cyber-goggles/localized.svg)](https://crowdin.com/project/create-cyber-goggles)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/ForgeStove/CreateCyberGoggles)
 
+---
 ## 概述 / Overview
 
 **Create: Cyber Goggles** 是[**机械动力**](https://modrinth.com/mod/create)的客户端附属模组，为其提供了模块化的辅助功能。
@@ -27,7 +28,7 @@
 
 Welcome to help translate this mod into more languages on [Crowdin](https://crowdin.com/project/create-cyber-goggles)!
 
-## 致谢 / Credits
+##  / Credits
 
 本项目使用了以下模组的代码：
 

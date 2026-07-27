@@ -27,9 +27,6 @@ public final class ForceOverlayRenderer {
 	private static final ResourceLocation GRAVITY_KEY = getRes("sable", "gravity");
 	private static final double COM_HALF = 0.08, TAIL_SPHERE_PER_BBOX = 0.005, MAX_TAIL_SPHERE_RADIUS = 0.08, CONE_LEN_PER_LENGTH = 0.1,
 		CONE_RADIUS_PER_LEN = 0.4, SHAFT_RADIUS_PER_CONE = 0.35, CONE_RADIUS_PER_TAIL = 1.5, SHAFT_RADIUS_PER_TAIL = 1.0;
-	/**
-	 * 注册到 {@link RenderLevelStageEvent} 的 {@link Stage#AFTER_LEVEL} 阶段。
-	 */
 	public static void render(RenderLevelStageEvent event) {
 		if (event.getStage() != Stage.AFTER_LEVEL) return;
 		if (!CCG.config.aeronautics.forceOverlay.enableForceOverlay) return;
@@ -215,7 +212,7 @@ public final class ForceOverlayRenderer {
 		poseStack.pushPose();
 		poseStack.last().pose().identity();
 		poseStack.last().normal().identity();
-		var textScaleF = (float) (0.025 * scale);
+		var textScaleF = (float) (0.01 * scale);
 		// 采集：计算每个标签的世界坐标
 		record Entry(Component text, Vector3d worldPos) {}
 		List<Entry> entries = new ArrayList<>();

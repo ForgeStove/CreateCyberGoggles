@@ -133,7 +133,10 @@ public class CCGLangBuilder {
 		return add(component.copy());
 	}
 	public CCGLangBuilder style(ChatFormatting... formats) {
-		if (component != null) component = component.withStyle(formats);
+		if (component == null) return this;
+		component = component.withStyle(formats);
+		var siblings = component.getSiblings();
+		siblings.replaceAll(c -> c.copy().withStyle(formats));
 		return this;
 	}
 	public CCGLangBuilder color(Color color) {

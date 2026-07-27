@@ -21,6 +21,7 @@ public class ItemSwapUtil {
 	private static int swappedHandSlot = -1;
 	private static ItemStack preSwapMainHand = ItemStack.EMPTY;
 	public static void tick() {
+		if (mc.screen != null) return;
 		var player = mc.player;
 		if (player == null) return;
 		var inventory = player.getInventory();

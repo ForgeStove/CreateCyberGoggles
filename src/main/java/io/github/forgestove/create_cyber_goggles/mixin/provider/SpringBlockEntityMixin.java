@@ -24,12 +24,20 @@ public abstract class SpringBlockEntityMixin extends SmartBlockEntity implements
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		if (!CCG.config.goggles.enhancedInfo) return false;
-		CCGLang.translate("tooltip.spring").forGoggles(tooltip);
-		CCGLang.translate("tooltip.size", ChatFormatting.GRAY)
-			.translate("tooltip.size." + getBlockState().getValue(SpringBlock.SIZE).getSerializedName())
+		CCGLang.add(Component.translatable("create_cyber_goggles.tooltip.spring")).forGoggles(tooltip);
+		var size = switch (getBlockState().getValue(SpringBlock.SIZE).getSerializedName()) {
+			case "small" -> Component.translatable("create_cyber_goggles.tooltip.size.small");
+			case "medium" -> Component.translatable("create_cyber_goggles.tooltip.size.medium");
+			case "large" -> Component.translatable("create_cyber_goggles.tooltip.size.large");
+			default -> Component.translatable("multiplayer.status.unknown");
+		};
+		CCGLang.add(Component.translatable("create_cyber_goggles.tooltip.size").withStyle(ChatFormatting.GRAY))
+			.add(size)
 			.forGoggles(tooltip);
-		CCGLang.translate("tooltip.spring.isController", ChatFormatting.GRAY).is(thiz().isController()).forGoggles(tooltip);
-		CCGLang.translate("tooltip.spring.currentLength", ChatFormatting.GRAY)
+		CCGLang.add(Component.translatable("create_cyber_goggles.tooltip.spring.isController").withStyle(ChatFormatting.GRAY))
+			.is(thiz().isController())
+			.forGoggles(tooltip);
+		CCGLang.add(Component.translatable("create_cyber_goggles.tooltip.spring.currentLength").withStyle(ChatFormatting.GRAY))
 			.fraction(renderLength.getValue(), SpringItemHandler.MAX_LENGTH)
 			.forGoggles(tooltip);
 		return true;

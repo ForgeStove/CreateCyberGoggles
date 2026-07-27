@@ -86,8 +86,11 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 		return Math.max(SlotUtil.SIZE * 4, font.width(label) + H_PADDING * 2);
 	}
 	private static @NotNull Component buildLabel(@NotNull FluidStack fluid, int capacityMb, boolean showCapacity) {
-		if (fluid.isEmpty()) return CCGLang.translate("tooltip.empty").space().text(formatFluidAmount(capacityMb)).component();
-		var label = CCGLang.builder().add(fluid.getHoverName()).space().text(formatFluidAmount(fluid.getAmount()));
+		if (fluid.isEmpty()) return CCGLang.add(Component.translatable("create_cyber_goggles.tooltip.empty"))
+			.space()
+			.text(formatFluidAmount(capacityMb))
+			.component();
+		var label = CCGLang.add(fluid.getHoverName()).space().text(formatFluidAmount(fluid.getAmount()));
 		if (showCapacity)
 			return label.text(" / ", ChatFormatting.GRAY).text(formatFluidAmount(capacityMb), ChatFormatting.GRAY).component();
 		return label.component();

@@ -36,13 +36,13 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 		ccg$folders = SchematicFolderUtil.listSelectableFolders();
 		List<? extends Component> folderOptions = ccg$folders.stream()
 			.map(folder -> folder.isEmpty()
-				? Component.translatable("create_cyber_goggles.screen.schematicTable.folderRoot")
+				? Component.translatable("create_cyber_goggles.gui.schematicTable.folderRoot")
 				: Component.literal(folder))
 			.toList();
 		ccg$folderLabel = new Label(x + 51, y + 26, CommonComponents.EMPTY).withShadow();
 		var selectedIndex = Math.max(0, ccg$folders.indexOf(SchematicFolderUtil.getSelectedFolder()));
 		ccg$folderArea = (SelectionScrollInput) new SelectionScrollInput(x + 45, y + 21, 139, 18).forOptions(folderOptions)
-			.titled(Component.translatable("create_cyber_goggles.screen.schematicTable.folderSelector"))
+			.titled(Component.translatable("create_cyber_goggles.gui.schematicTable.folderSelector"))
 			.writingTo(ccg$folderLabel)
 			.calling(state -> {
 				if (state < 0 || state >= ccg$folders.size()) return;
@@ -56,7 +56,7 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 		addRenderableWidget(ccg$folderLabel);
 		ccg$folderPickerButton = new IconButton(folderButton.getX() - 19, folderButton.getY(), AllIcons.I_VIEW_SCHEDULE);
 		ccg$folderPickerButton.withCallback(() -> ccg$setFolderPickerVisible(!ccg$folderArea.visible));
-		ccg$folderPickerButton.setToolTip(Component.translatable("create_cyber_goggles.screen.schematicTable.selectFolder"));
+		ccg$folderPickerButton.setToolTip(Component.translatable("create_cyber_goggles.gui.schematicTable.selectFolder"));
 		addRenderableWidget(ccg$folderPickerButton);
 		refreshButton.withCallback(this::ccg$refreshFoldersAndFiles);
 	}
@@ -110,7 +110,7 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 		if (ccg$folderArea != null) {
 			List<? extends Component> folderOptions = ccg$folders.stream()
 				.map(folder -> folder.isEmpty()
-					? Component.translatable("create_cyber_goggles.screen.schematicTable.folderRoot")
+					? Component.translatable("create_cyber_goggles.gui.schematicTable.folderRoot")
 					: Component.literal(folder))
 				.toList();
 			ccg$folderArea.forOptions(folderOptions);

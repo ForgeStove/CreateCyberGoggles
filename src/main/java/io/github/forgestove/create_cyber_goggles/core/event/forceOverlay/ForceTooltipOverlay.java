@@ -1,7 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.event.forceOverlay;
 import dev.ryanhcode.sable.api.physics.force.ForceGroups;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.*;
@@ -32,9 +31,9 @@ public final class ForceTooltipOverlay {
 		List<Component> lines = new ArrayList<>();
 		var mass = ForceOverlay.currentMass();
 		lines.add(labeledLine(
-			CCGLang.translate("hud.force_overlay.mass").component(),
+			Component.translatable("create_cyber_goggles.hud.forceOverlay.mass"),
 			0xCCCCCC,
-			CCGLang.translate("hud.force_overlay.mass_value", formatScalar(mass)).component()
+			Component.translatable("create_cyber_goggles.hud.forceOverlay.massValue", formatScalar(mass))
 		));
 		var clusters = ForceOverlay.smoothedClusters();
 		if (clusters == null) return lines;
@@ -47,7 +46,7 @@ public final class ForceTooltipOverlay {
 			lines.add(labeledLine(
 				group.name(),
 				0xFF000000 | group.color(),
-				CCGLang.translate("hud.force_overlay.force_value", formatScalar(netMagnitude)).component()
+				Component.translatable("create_cyber_goggles.hud.forceOverlay.forceValue", formatScalar(netMagnitude))
 			));
 		}
 		return lines;

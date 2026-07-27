@@ -35,7 +35,12 @@ public enum CCGKey {
 	}
 	CCGKey(@NotNull Key key, CCGMods requiredMod) {
 		this.requiredMod = requiredMod;
-		keyMapping = Lazy.of(new KeyMapping(CCG.ID + ".key." + name(), key.getType(), key.getValue(), "key.categories." + CCG.ID));
+		keyMapping = Lazy.of(new KeyMapping(
+			CCG.ID + ".key." + name(),
+			key.getType(),
+			key.getValue(),
+			"key.categories.create_cyber_goggles"
+		));
 	}
 	CCGKey(@NotNull CCGMods requiredMod) {
 		this(UNKNOWN, requiredMod);

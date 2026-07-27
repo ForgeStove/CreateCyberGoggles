@@ -48,6 +48,12 @@ public class CCGLangBuilder {
 	public CCGLangBuilder translate(String langKey) {
 		return add(Component.translatable(namespace + "." + langKey));
 	}
+	public CCGLangBuilder langKey(String fullKey) {
+		return add(Component.translatable(fullKey));
+	}
+	public CCGLangBuilder langKey(String fullKey, ChatFormatting format) {
+		return add(Component.translatable(fullKey).withStyle(format));
+	}
 	public CCGLangBuilder translate(String langKey, Object... args) {
 		return add(Component.translatable(namespace + "." + langKey, resolveBuilders(args)));
 	}
@@ -94,13 +100,17 @@ public class CCGLangBuilder {
 		return text(String.valueOf(number), format);
 	}
 	public CCGLangBuilder is(boolean is) {
-		return is ? translate("message.is", GREEN) : translate("message.not", RED);
+		return CCGLang.add(is
+			? Component.translatable("create_cyber_goggles.message.is").withStyle(GREEN)
+			: Component.translatable("create_cyber_goggles.message.not").withStyle(RED));
 	}
 	public CCGLangBuilder translate(String langKey, ChatFormatting format) {
 		return add(Component.translatable(namespace + "." + langKey).withStyle(format));
 	}
 	public CCGLangBuilder enabled(boolean enabled) {
-		return enabled ? translate("message.enabled", GREEN) : translate("message.disabled", RED);
+		return CCGLang.add(enabled
+			? Component.translatable("create_cyber_goggles.message.enabled").withStyle(GREEN)
+			: Component.translatable("create_cyber_goggles.message.disabled").withStyle(RED));
 	}
 	public CCGLangBuilder progress(float progress, int totalBars) {
 		var filledBars = (int) (Mth.clamp(progress, 0, 1) * totalBars);

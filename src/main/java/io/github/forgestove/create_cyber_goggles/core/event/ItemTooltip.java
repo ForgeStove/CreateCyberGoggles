@@ -3,7 +3,6 @@ import com.mojang.datafixers.util.Either;
 import com.simibubi.create.content.equipment.armor.*;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import com.simibubi.create.content.equipment.wrench.WrenchItem;
-import com.simibubi.create.foundation.utility.CreateLang;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.api.*;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
@@ -51,32 +50,27 @@ public final class ItemTooltip {
 		if (!CCG.config.tooltip.goggles) return;
 		if (!(stack.getItem() instanceof GogglesItem)) return;
 		if (mc.player == null) return;
-		var component = CCGLang.enabled(GogglesItem.isWearingGoggles(mc.player)).component();
-		tooltip.add(1, component);
+		CCGLang.enabled(GogglesItem.isWearingGoggles(mc.player)).addTo(1, tooltip);
 	}
 	private static void backtank(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!CCG.config.tooltip.backtank) return;
 		if (!(stack.getItem() instanceof BacktankItem)) return;
-		var component = CreateLang.translate("gui.goggles.fluid_container.capacity")
-			.style(ChatFormatting.GRAY)
-			.add(CCGLang.fraction(BacktankUtil.getAir(stack), BacktankUtil.maxAir(stack)).component())
-			.component();
-		tooltip.add(1, component);
+		CCGLang.add(Component.translatable("create.gui.goggles.fluid_container.capacity").withStyle(ChatFormatting.GRAY))
+			.fraction(BacktankUtil.getAir(stack), BacktankUtil.maxAir(stack))
+			.addTo(1, tooltip);
 	}
 	private static void divingBoots(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!CCG.config.tooltip.divingBoots) return;
 		if (!(stack.getItem() instanceof DivingBootsItem)) return;
-		var component = CCGLang.enabled(CCG.config.misc.allowDivingBoot).component();
-		tooltip.add(1, component);
+		CCGLang.enabled(CCG.config.misc.allowDivingBoot).addTo(1, tooltip);
 	}
 	private static void wrench(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!CCG.config.tooltip.wrench) return;
 		if (!(stack.getItem() instanceof WrenchItem)) return;
-		var component = CCGLang.translate("config.option.misc.wrench.leftClickFastDismantle")
+		CCGLang.add(Component.translatable("create_cyber_goggles.config.option.misc.wrench.leftClickFastDismantle"))
 			.space()
 			.enabled(CCG.config.misc.wrench.leftClickFastDismantle)
-			.component();
-		tooltip.add(1, component);
+			.addTo(1, tooltip);
 	}
 	private static void fluidContainer(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!CCG.config.tooltip.fluidContainer) return;

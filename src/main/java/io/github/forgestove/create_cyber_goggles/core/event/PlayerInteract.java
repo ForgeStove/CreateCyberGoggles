@@ -10,7 +10,7 @@ import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction.AxisDirection;
-import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.*;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket.Action;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.block.RotatedPillarBlock;
@@ -43,12 +43,12 @@ public final class PlayerInteract {
 		var bhr = getBlockHitResult();
 		if (mc.level == null || bhr == null) return;
 		if (ecb.getRotationAxis(mc.level.getBlockState(bhr.getBlockPos())) != bhr.getDirection().getAxis()) return;
-		showCommonTip("message.openState");
+		showCommonTip(Component.translatable("create_cyber_goggles.message.openState"));
 	}
 	private static void enacesdPipe() {
 		if (!CCG.config.misc.wrench.betterEncasedPipe) return;
 		if (getBlock(EncasedPipeBlock.class) == null) return;
-		showCommonTip("message.openState");
+		showCommonTip(Component.translatable("create_cyber_goggles.message.openState"));
 	}
 	private static void chassis() {
 		if (!CCG.config.misc.wrench.betterChassis) return;
@@ -57,7 +57,7 @@ public final class PlayerInteract {
 		if (acb == null) return;
 		var bhr = getBlockHitResult();
 		if (bhr == null || acb.getGlueableSide(mc.level.getBlockState(bhr.getBlockPos()), bhr.getDirection()) == null) return;
-		showCommonTip("message.glueState");
+		showCommonTip(Component.translatable("create_cyber_goggles.message.glueState"));
 	}
 	public static void tableCloth() {
 		if (!CCG.config.goggles.betterStoreInfo) return;
@@ -68,15 +68,20 @@ public final class PlayerInteract {
 		var tcbe = getBlockEntity(TableClothBlockEntity.class);
 		if (tcbe == null) return;
 		if (TableClothUtil.getItems(tcbe).size() <= 1) return;
-		var builder = CCGLang.translate("message.toggleItemOverlay", CCGKey.toggleItemOverlay.getFancyName()).style(ChatFormatting.WHITE);
+		var builder = CCGLang.add(Component.translatable(
+			"create_cyber_goggles.message.toggleItemOverlay",
+			CCGKey.toggleItemOverlay.getFancyName()
+		)).style(ChatFormatting.WHITE);
 		TipOverlay.show(List.of(builder.component()), 0, 25);
 	}
-	public static void showCommonTip(String title) {
+	public static void showCommonTip(Component title) {
 		if (hasItemInHand()) return;
 		var tip = new ArrayList<MutableComponent>();
-		CCGLang.translate(title).addTo(tip);
-		CCGLang.translate("message.useSwitchState", CCGKey.getFancyName(mc.options.keyUse)).addTo(tip);
-		CCGLang.translate("message.pressToInteractOpposite", CCGKey.interactOpposite.getFancyName()).addTo(tip);
+		CCGLang.add(title).addTo(tip);
+		CCGLang.add(Component.translatable("create_cyber_goggles.message.useSwitchState", CCGKey.getFancyName(mc.options.keyUse)))
+			.addTo(tip);
+		CCGLang.add(Component.translatable("create_cyber_goggles.message.pressToInteractOpposite", CCGKey.interactOpposite.getFancyName()))
+			.addTo(tip);
 		TipOverlay.show(tip);
 	}
 	public static void leftClick(LeftClickBlock event) {

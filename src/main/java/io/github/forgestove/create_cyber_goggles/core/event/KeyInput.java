@@ -10,6 +10,7 @@ import io.github.forgestove.create_cyber_goggles.core.util.*;
 import io.github.forgestove.flexconfig.client.ConfigScreenFactory;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
@@ -39,7 +40,10 @@ public final class KeyInput {
 		var stbe = getBlockEntity(StockTickerBlockEntity.class);
 		if (stbe != null) lastSTBE = stbe;
 		if (lastSTBE == null || lastSTBE.isRemoved()) {
-			CCGLang.translate("message.notStock").text("  ").translate("key.openStock").style(ChatFormatting.RED).sendStatus(mc.player);
+			CCGLang.add(Component.translatable("create_cyber_goggles.message.notStock"))
+				.text("  ")
+				.add(Component.translatable("create_cyber_goggles.key.openStock").withStyle(ChatFormatting.RED))
+				.sendStatus(mc.player);
 			return;
 		}
 		var inv = mc.player.getInventory();

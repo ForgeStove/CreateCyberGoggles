@@ -30,7 +30,7 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 		}
 		super.addToTooltip(tooltip, isPlayerSneaking);
 		TooltipHelper.addHint(tooltip, "hint.full_deployer");
-		CCGLang.translate("tooltip.content").style(ChatFormatting.GRAY).forGoggles(tooltip);
+		CCGLang.add(Component.translatable("create_cyber_goggles.tooltip.content").withStyle(ChatFormatting.GRAY)).forGoggles(tooltip);
 		CCGLang.itemList(overflowItems, 9).forGoggles(tooltip.size(), tooltip);
 		cir.setReturnValue(true);
 	}

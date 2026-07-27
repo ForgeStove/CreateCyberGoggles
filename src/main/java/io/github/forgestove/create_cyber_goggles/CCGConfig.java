@@ -97,7 +97,6 @@ public final class CCGConfig {
 			public boolean hudPanelEnabled = true;
 			public Point forceOverlayPos = new Point();
 			public boolean useWorldLabels = true;
-			public boolean renderCenterOfMass = true;
 			@DoubleRange(min = 0, max = 10) public double worldLabelScale = 1.0;
 			@DoubleRange(min = 0) public double clusterAngleRadians = 0.1;
 			@DoubleRange(min = 0, max = 1) public double smoothingFactor = 0.5;
@@ -107,6 +106,7 @@ public final class CCGConfig {
 			@IntRange(min = 1, max = 64) public int targetingChunks = 4;
 			@IntRange(min = 1) public int heartbeatIntervalTicks = 10;
 			@DoubleRange(min = 0) public double minOverlayPixelSize = 0;
+			public boolean showCenterOfMass = true;
 			public boolean showGravity = true;
 			public boolean showDrag = true;
 			public boolean showLevitation = true;

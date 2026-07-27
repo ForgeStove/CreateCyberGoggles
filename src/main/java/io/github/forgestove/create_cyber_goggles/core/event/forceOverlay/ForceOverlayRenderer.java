@@ -59,7 +59,7 @@ public final class ForceOverlayRenderer {
 			var scale = overlayPixelScale(renderPos, camPos);
 			var hasData = ForceOverlay.hasData();
 			// 渲染质心标记（始终渲染，即使没有数据）
-			if (CCG.config.aeronautics.forceOverlay.renderCenterOfMass) {
+			if (CCG.config.aeronautics.forceOverlay.showCenterOfMass) {
 				var fillType = OverlayRenderTypes.OVERLAY_FILL;
 				var consumer = bufferSource.getBuffer(fillType);
 				float r, g, b;

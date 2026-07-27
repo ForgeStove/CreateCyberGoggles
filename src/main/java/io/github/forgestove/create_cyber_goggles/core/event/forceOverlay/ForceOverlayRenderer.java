@@ -212,7 +212,7 @@ public final class ForceOverlayRenderer {
 		poseStack.pushPose();
 		poseStack.last().pose().identity();
 		poseStack.last().normal().identity();
-		var textScaleF = (float) (0.01 * scale);
+		var textScaleF = (float) (0.01 * scale * config.worldLabelScale);
 		// 采集：计算每个标签的世界坐标
 		record Entry(Component text, Vector3d worldPos) {}
 		List<Entry> entries = new ArrayList<>();

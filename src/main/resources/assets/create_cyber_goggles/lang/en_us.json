@@ -68,6 +68,8 @@
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.targetingChunks.tooltip": "Maximum raycast distance for targeting sub-levels (in chunks)",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.useWorldLabels": "Use World Labels",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.useWorldLabels.tooltip": "Render floating labels in the world near each force arrow",
+	"create_cyber_goggles.config.option.aeronautics.forceOverlay.worldLabelScale": "World Label Scale",
+	"create_cyber_goggles.config.option.aeronautics.forceOverlay.worldLabelScale.tooltip": "Scale factor for in-world force labels (1.0 = default size)",
 	"create_cyber_goggles.config.option.aeronautics.liftLimitOfHandleRange": "Lift Limit Of Handle Range",
 	"create_cyber_goggles.config.option.aeronautics.liftLimitOfHandleRange.tooltip": "Lift the limit of the iron handle range",
 	"create_cyber_goggles.config.option.goggles.betterFactoryGauge": "Better Factory Gauge",

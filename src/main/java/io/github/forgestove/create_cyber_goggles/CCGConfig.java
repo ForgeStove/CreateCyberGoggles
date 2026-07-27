@@ -94,10 +94,11 @@ public final class CCGConfig {
 		@Category public ForceOverlay forceOverlay = new ForceOverlay();
 		public static class ForceOverlay {
 			public boolean enableForceOverlay = true;
-			public boolean useWorldLabels = true;
 			public boolean hudPanelEnabled = true;
-			public boolean renderCenterOfMass = true;
 			public Point forceOverlayPos = new Point();
+			public boolean useWorldLabels = true;
+			public boolean renderCenterOfMass = true;
+			@DoubleRange(min = 0, max = 10) public double worldLabelScale = 1.0;
 			@DoubleRange(min = 0) public double clusterAngleRadians = 0.1;
 			@DoubleRange(min = 0, max = 1) public double smoothingFactor = 0.5;
 			@DoubleRange(min = 0, max = 1) public double gravityArrowFraction = 0.5;

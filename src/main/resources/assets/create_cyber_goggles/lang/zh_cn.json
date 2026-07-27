@@ -68,6 +68,8 @@
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.targetingChunks.tooltip": "用于目标物理结构的最大射线追踪距离（以区块为单位）",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.useWorldLabels": "使用世界标签",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.useWorldLabels.tooltip": "在世界中每个力箭头旁渲染悬浮的文字标签",
+	"create_cyber_goggles.config.option.aeronautics.forceOverlay.worldLabelScale": "世界标签缩放",
+	"create_cyber_goggles.config.option.aeronautics.forceOverlay.worldLabelScale.tooltip": "世界内力标签的缩放比例（1.0 = 默认大小）",
 	"create_cyber_goggles.config.option.aeronautics.liftLimitOfHandleRange": "解限把手范围",
 	"create_cyber_goggles.config.option.aeronautics.liftLimitOfHandleRange.tooltip": "解除铁把手的范围限制",
 	"create_cyber_goggles.config.option.goggles.betterFactoryGauge": "更好的工厂仪表",

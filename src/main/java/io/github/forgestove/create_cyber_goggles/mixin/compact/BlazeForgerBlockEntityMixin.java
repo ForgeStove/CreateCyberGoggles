@@ -10,7 +10,7 @@ import plus.dragons.createenchantmentindustry.common.processing.forger.BlazeForg
 
 import java.util.List;
 @Pseudo
-@Mixin(value = BlazeForgerBlockEntity.class, remap = false)
+@Mixin(BlazeForgerBlockEntity.class)
 public abstract class BlazeForgerBlockEntityMixin {
 	@Shadow protected int processingTime;
 	@Inject(method = "addToGoggleTooltip", at = @At("RETURN"))

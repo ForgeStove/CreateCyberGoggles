@@ -16,7 +16,7 @@ import plus.dragons.createenchantmentindustry.common.processing.enchanter.*;
 
 import java.util.List;
 @Pseudo
-@Mixin(value = BlazeEnchanterBlockEntity.class, remap = false)
+@Mixin(BlazeEnchanterBlockEntity.class)
 public abstract class BlazeEnchanterBlockEntityMixin extends BlazeExperienceBlockEntity
 	implements ItemRenderable, Self<BlazeEnchanterBlockEntity> {
 	@Unique public ItemStack ccg$cachedResult = ItemStack.EMPTY;

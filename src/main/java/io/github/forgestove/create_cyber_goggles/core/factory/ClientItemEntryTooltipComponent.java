@@ -18,7 +18,7 @@ public final class ClientItemEntryTooltipComponent implements ClientTooltipCompo
 	public ClientItemEntryTooltipComponent(ItemStack stack, int indent, Component label) {
 		this.stack = stack;
 		this.indent = indent;
-		this.label = label.copy().withStyle(stack.getDisplayName().getStyle());
+		this.label = label.copy().withStyle(stack.getRarity().getStyleModifier().apply(label.getStyle()));
 	}
 	public static void register(@NotNull RegisterClientTooltipComponentFactoriesEvent event) {
 		event.register(

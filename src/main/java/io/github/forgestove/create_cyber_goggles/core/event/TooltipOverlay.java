@@ -1,4 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
+import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import io.github.forgestove.create_cyber_goggles.CCG;
@@ -13,6 +14,7 @@ import net.createmod.catnip.theme.Color;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.*;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.*;
 import net.minecraft.world.item.Item.TooltipContext;
@@ -64,6 +66,7 @@ public final class TooltipOverlay {
 		return ItemStack.EMPTY;
 	}
 	public static void renderItemStack(@NotNull GuiGraphics gui, @NotNull ItemStack itemStack) {
+		if (itemStack.isEmpty()) return;
 		var pose = gui.pose();
 		pose.pushPose();
 		var overlay = CCG.config.overlay;
@@ -196,12 +199,22 @@ public final class TooltipOverlay {
 		pose.pushPose();
 		TooltipRenderUtil.renderTooltipBackground(gui, tooltipX, tooltipY, tooltipWidth, tooltipHeight, 400, back, back, top, bot);
 		pose.translate(0, 0, 400);
-		int i = 0, textY = tooltipY;
-		for (var component : components) {
-			component.renderText(mc.font, tooltipX, textY, pose.last().pose(), gui.bufferSource());
+		// 用独立BufferSource渲染文字并立即提交(防止后续renderImage干扰文字shader state)，再单独循环渲染所有图片
+		try (var bbBuilder = new ByteBufferBuilder(256)) {
+			var textBuffer = MultiBufferSource.immediate(bbBuilder);
+			var textY = tooltipY;
+			for (var i = 0; i < components.size(); i++) {
+				var component = components.get(i);
+				component.renderText(mc.font, tooltipX, textY, pose.last().pose(), textBuffer);
+				textY += component.getHeight() + (i == 0 ? 2 : 0);
+			}
+			textBuffer.endBatch();
+		}
+		var textY = tooltipY;
+		for (var i = 0; i < components.size(); i++) {
+			var component = components.get(i);
 			component.renderImage(mc.font, tooltipX, textY, gui);
 			textY += component.getHeight() + (i == 0 ? 2 : 0);
-			i++;
 		}
 		pose.popPose();
 	}

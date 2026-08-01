@@ -17,7 +17,7 @@ public final class EnumValueConfigEntry<C> extends CapturableValueConfigEntry<C,
 		registerKeybindTask();
 	}
 	private Component getDisplayComponent(Enum<?> value) {
-		return Component.translatable("%s.config.enum.%s.%s".formatted(tab.screen.root.modId, enumClassName, value.name()));
+		return Component.translatable("%s.config.enum.%s.%s".formatted(tab.screen.root.modId(), enumClassName, value.name()));
 	}
 	private void openDropdown(Button button) {
 		var mc = ClientUtil.mc;

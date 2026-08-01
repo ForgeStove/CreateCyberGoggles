@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.simibubi.create.AllSpecialTextures;
 import com.simibubi.create.content.logistics.factoryBoard.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.api.*;
+import io.github.forgestove.create_cyber_goggles.api.*;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.Mixin;

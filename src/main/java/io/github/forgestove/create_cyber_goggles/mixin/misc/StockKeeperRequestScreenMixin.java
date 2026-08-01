@@ -5,7 +5,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.stockTicker.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.api.Self;
+import io.github.forgestove.create_cyber_goggles.api.Self;
 import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
 import io.github.forgestove.create_cyber_goggles.core.factory.StockRequestAmountOverlay;
 import net.createmod.catnip.data.Couple;

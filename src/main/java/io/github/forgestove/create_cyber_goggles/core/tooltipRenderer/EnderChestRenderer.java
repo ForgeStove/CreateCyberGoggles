@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.tooltipRenderer;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.api.AutoTooltipRenderer;
+import io.github.forgestove.create_cyber_goggles.api.AutoTooltipRenderer;
 import io.github.forgestove.create_cyber_goggles.core.util.EnderChestTooltipUtil;
 import net.minecraft.world.item.*;
 import org.jetbrains.annotations.Nullable;

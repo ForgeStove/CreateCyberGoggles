@@ -3,7 +3,7 @@ import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.api.ItemRenderable;
+import io.github.forgestove.create_cyber_goggles.api.ItemRenderable;
 import io.github.forgestove.create_cyber_goggles.core.factory.*;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientFluidEntryTooltipComponent.FluidEntryTooltipComponent;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientItemEntryTooltipComponent.ItemEntryTooltipComponent;

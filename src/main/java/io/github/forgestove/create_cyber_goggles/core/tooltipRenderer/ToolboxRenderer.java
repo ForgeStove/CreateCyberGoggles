@@ -3,7 +3,7 @@ import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.AllTags.AllItemTags;
 import com.simibubi.create.content.equipment.toolbox.ToolboxInventory;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.api.AutoTooltipRenderer;
+import io.github.forgestove.create_cyber_goggles.api.AutoTooltipRenderer;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 

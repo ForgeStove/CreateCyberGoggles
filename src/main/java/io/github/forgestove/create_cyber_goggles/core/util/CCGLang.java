@@ -12,30 +12,16 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.*;
 
 import java.util.List;
-@SuppressWarnings("unused")
 public class CCGLang {
-	@Deprecated(forRemoval = true)
-	public static @NotNull CCGLangBuilder translate(String langKey) {
-		return builder().translate(langKey);
+	public static @NotNull CCGLangBuilder add(Component component) {
+		return builder().add(component);
 	}
 	@Contract(value = " -> new", pure = true)
 	public static @NotNull CCGLangBuilder builder() {
 		return new CCGLangBuilder(CCG.ID);
 	}
-	public static @NotNull CCGLangBuilder add(Component component) {
-		return builder().add(component);
-	}
 	public static @NotNull CCGLangBuilder add(CCGLangBuilder builder) {
 		return builder().add(builder);
-	}
-	public static @NotNull CCGLangBuilder translate(String langKey, ChatFormatting format) {
-		return builder().translate(langKey, format);
-	}
-	public static @NotNull CCGLangBuilder translate(String langKey, Object... args) {
-		return builder().translate(langKey, args);
-	}
-	public static @NotNull CCGLangBuilder translate(String langKey, ChatFormatting format, Object... args) {
-		return builder().translate(langKey, format, args);
 	}
 	public static @NotNull CCGLangBuilder text(String text) {
 		return builder().text(text);
@@ -79,9 +65,11 @@ public class CCGLang {
 	public static @NotNull CCGLangBuilder fraction(int current, int total) {
 		return builder().fraction(current, total);
 	}
+	@SuppressWarnings("unused")
 	public static @NotNull CCGLangBuilder fraction(float current, float total) {
 		return builder().fraction(current, total);
 	}
+	@SuppressWarnings("unused")
 	public static @NotNull CCGLangBuilder seconds() {
 		return builder().add(CreateLang.translate("generic.unit.seconds").component());
 	}

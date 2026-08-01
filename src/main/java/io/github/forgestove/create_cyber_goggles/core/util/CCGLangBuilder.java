@@ -17,7 +17,6 @@ import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 import static net.minecraft.ChatFormatting.*;
-@SuppressWarnings("unused")
 public class CCGLangBuilder {
 	public static final float DEFAULT_SPACE_WIDTH = 4.0F;
 	public String namespace;
@@ -36,38 +35,11 @@ public class CCGLangBuilder {
 		component = component == null ? customComponent : component.append(customComponent);
 		return this;
 	}
-	public CCGLangBuilder newLine() {
-		return text("\n");
-	}
 	public CCGLangBuilder seconds() {
 		return add(CreateLang.translate("generic.unit.seconds").component());
 	}
 	public CCGLangBuilder seconds(ChatFormatting format) {
 		return add(CreateLang.translate("generic.unit.seconds").style(format).component());
-	}
-	public CCGLangBuilder translate(String langKey) {
-		return add(Component.translatable(namespace + "." + langKey));
-	}
-	public CCGLangBuilder langKey(String fullKey) {
-		return add(Component.translatable(fullKey));
-	}
-	public CCGLangBuilder langKey(String fullKey, ChatFormatting format) {
-		return add(Component.translatable(fullKey).withStyle(format));
-	}
-	public CCGLangBuilder translate(String langKey, Object... args) {
-		return add(Component.translatable(namespace + "." + langKey, resolveBuilders(args)));
-	}
-	public static Object[] resolveBuilders(Object[] args) {
-		for (var i = 0; i < args.length; i++)
-			if (args[i] instanceof CCGLangBuilder builder) args[i] = builder.component();
-		return args;
-	}
-	public MutableComponent component() {
-		if (component == null) throw new IllegalStateException("Component is null");
-		return component;
-	}
-	public CCGLangBuilder translate(String langKey, ChatFormatting format, Object... args) {
-		return add(Component.translatable(namespace + "." + langKey, resolveBuilders(args)).withStyle(format));
 	}
 	public CCGLangBuilder text(String literalText, int color) {
 		return add(Component.literal(literalText).withStyle(style -> style.withColor(color)));
@@ -146,18 +118,26 @@ public class CCGLangBuilder {
 		if (component != null) component = component.withStyle(s -> s.withColor(color));
 		return this;
 	}
+	@SuppressWarnings("unused")
 	public CCGLangBuilder fluidName(FluidStack stack) {
 		return add(stack.getHoverName().copy());
 	}
 	public String string() {
 		return component().getString();
 	}
+	public MutableComponent component() {
+		if (component == null) throw new IllegalStateException("Component is null");
+		return component;
+	}
+	@SuppressWarnings("unused")
 	public String json() {
 		return Serializer.toJson(component(), RegistryAccess.EMPTY);
 	}
+	@SuppressWarnings("unused")
 	public void sendStatus(Player player) {
 		player.displayClientMessage(component(), true);
 	}
+	@SuppressWarnings("unused")
 	public void sendChat(Player player) {
 		player.displayClientMessage(component(), false);
 	}

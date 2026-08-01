@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.mixin.misc;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.api.Self;
+import io.github.forgestove.create_cyber_goggles.api.Self;
 import io.github.forgestove.create_cyber_goggles.core.util.ItemCountFontUtil;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Font.DisplayMode;

@@ -4,7 +4,7 @@ import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import dev.simulated_team.simulated.content.blocks.spring.*;
 import dev.simulated_team.simulated.content.items.spring.SpringItemHandler;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.api.Self;
+import io.github.forgestove.create_cyber_goggles.api.Self;
 import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.minecraft.ChatFormatting;

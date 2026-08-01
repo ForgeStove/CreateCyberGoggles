@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.core.api;
+package io.github.forgestove.create_cyber_goggles.api;
 import io.github.forgestove.create_cyber_goggles.core.event.ItemTooltip;
 
 import java.lang.annotation.*;

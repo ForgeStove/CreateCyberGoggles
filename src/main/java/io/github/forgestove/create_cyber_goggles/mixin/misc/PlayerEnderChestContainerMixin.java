@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.mixin.misc;
-import io.github.forgestove.create_cyber_goggles.core.api.Self;
+import io.github.forgestove.create_cyber_goggles.api.Self;
 import io.github.forgestove.create_cyber_goggles.core.util.EnderChestTooltipUtil;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.PlayerEnderChestContainer;

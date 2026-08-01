@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.core.api;
+package io.github.forgestove.create_cyber_goggles.api;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 

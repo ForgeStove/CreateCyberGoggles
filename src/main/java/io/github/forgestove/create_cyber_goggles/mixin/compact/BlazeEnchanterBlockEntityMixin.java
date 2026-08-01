@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.mixin.compact;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.api.*;
+import io.github.forgestove.create_cyber_goggles.api.*;
 import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;

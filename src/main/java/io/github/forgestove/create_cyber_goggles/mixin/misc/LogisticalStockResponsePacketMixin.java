@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.mixin.misc;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.stockTicker.LogisticalStockResponsePacket;
-import io.github.forgestove.create_cyber_goggles.core.api.StockSnapshotHolder;
+import io.github.forgestove.create_cyber_goggles.api.StockSnapshotHolder;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import org.spongepowered.asm.mixin.*;

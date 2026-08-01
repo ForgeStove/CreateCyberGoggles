@@ -3,7 +3,7 @@ import com.simibubi.create.*;
 import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.mixin.accessor.ItemStackHandlerAccessor;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.api.AutoTooltipRenderer;
+import io.github.forgestove.create_cyber_goggles.api.AutoTooltipRenderer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.neoforged.neoforge.items.ItemStackHandler;

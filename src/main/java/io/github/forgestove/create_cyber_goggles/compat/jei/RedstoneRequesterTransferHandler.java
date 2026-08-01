@@ -3,13 +3,13 @@ import com.simibubi.create.AllMenuTypes;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.redstoneRequester.*;
 import com.simibubi.create.foundation.gui.menu.GhostItemSubmitPacket;
-import io.github.forgestove.create_cyber_goggles.core.api.*;
-import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
+import io.github.forgestove.create_cyber_goggles.api.*;
 import io.github.forgestove.create_cyber_goggles.mixin.accessor.RedstoneRequesterScreenAccessor;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.transfer.*;
 import mezz.jei.library.transfer.RecipeTransferErrorTooltip;
 import net.createmod.catnip.platform.CatnipServices;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
@@ -73,7 +73,7 @@ public class RedstoneRequesterTransferHandler implements IUniversalRecipeTransfe
 			}
 		}
 		if (groups.size() > 9)
-			return new RecipeTransferErrorTooltip(CCGLang.builder().translate("gui.redstoneRequester.tooManyIngredients").component());
+			return new RecipeTransferErrorTooltip(Component.translatable("create_cyber_goggles.gui.redstoneRequester.tooManyIngredients"));
 		if (!doTransfer) return null;
 		// 填入请求槽并同步服务端（每格物品 count=1，数量由 amounts 决定，避免与 amounts 渲染叠加假数量）
 		for (var i = 0; i < 9; i++) {
@@ -83,7 +83,8 @@ public class RedstoneRequesterTransferHandler implements IUniversalRecipeTransfe
 			CatnipServices.NETWORK.sendToServer(new GhostItemSubmitPacket(stack, i));
 		}
 		// 通过菜单关联的 Screen 同步请求数量显示和最终请求数量
-		if (container instanceof ScreenReferenced referenced && referenced.ccg$getScreenReference() instanceof RedstoneRequesterScreen screen) {
+		if (container instanceof ScreenReferenced referenced
+			&& referenced.ccg$getScreenReference() instanceof RedstoneRequesterScreen screen) {
 			var amounts = ((RedstoneRequesterScreenAccessor) screen).getAmounts();
 			for (var i = 0; i < amounts.size(); i++)
 				amounts.set(i, i < groups.size() ? groups.get(i).count : 1);

@@ -4,7 +4,7 @@ import com.simibubi.create.content.logistics.filter.ListFilterItem;
 import com.simibubi.create.foundation.mixin.accessor.ItemStackHandlerAccessor;
 import com.simibubi.create.foundation.utility.CreateLang;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.api.Self;
+import io.github.forgestove.create_cyber_goggles.api.Self;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;

@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.tooltipRenderer;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.api.AutoTooltipRenderer;
+import io.github.forgestove.create_cyber_goggles.api.AutoTooltipRenderer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.ShulkerBoxBlock;

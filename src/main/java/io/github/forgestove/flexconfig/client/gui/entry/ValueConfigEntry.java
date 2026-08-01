@@ -100,7 +100,7 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 		var path = node.getPath();
 		var pending = ClientLockManager.getPendingLock(path);
 		if (pending != null) return pending;
-		return ClientLockManager.isLocked(tab.screen.root.modId, path);
+		return ClientLockManager.isLocked(tab.screen.root.modId(), path);
 	}
 	public V getValue() {
 		return node.getEditingValue(tab.config);

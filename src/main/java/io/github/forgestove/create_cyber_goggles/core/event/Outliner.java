@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.api.OutlineRenderable;
+import io.github.forgestove.create_cyber_goggles.api.OutlineRenderable;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.client.event.ClientTickEvent.Post;

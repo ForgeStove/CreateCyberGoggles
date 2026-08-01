@@ -11,13 +11,10 @@ import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.Map.Entry;
-public final class RootConfigNode<C, V> implements ConfigNode<C> {
-	public final String modId;
-	private final ImmutableList<CategoryConfigNode<C>> categories;
+public record RootConfigNode<C, V>(String modId, ImmutableList<CategoryConfigNode<C>> categories) implements ConfigNode<C> {
 	@Contract(pure = true)
 	private RootConfigNode(ImmutableList<CategoryConfigNode<C>> categories, String modId) {
-		this.categories = categories;
-		this.modId = modId;
+		this(modId, categories);
 	}
 	@SuppressWarnings("unchecked")
 	@Contract("_, _ -> new")
@@ -72,8 +69,9 @@ public final class RootConfigNode<C, V> implements ConfigNode<C> {
 	public void writeEditingToConfig(C config) {
 		categories.forEach(node -> node.writeEditingToConfig(config));
 	}
+	@Override
 	@NotNull
-	public ImmutableList<CategoryConfigNode<C>> getCategories() {
+	public ImmutableList<CategoryConfigNode<C>> categories() {
 		return categories;
 	}
 	@Nullable

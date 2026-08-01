@@ -279,7 +279,6 @@
 	"create_cyber_goggles.key.usePhysicsStaff": "Видимость физического посоха",
 	"create_cyber_goggles.key.useSchematic": "Использовать схематику",
 	"create_cyber_goggles.message.disabled": "Выключено",
-	"create_cyber_goggles.message.divingBoot": "Подводные ботинки",
 	"create_cyber_goggles.message.enabled": "Включено",
 	"create_cyber_goggles.message.glueState": "Состояние клея",
 	"create_cyber_goggles.message.goggle": "Очки",

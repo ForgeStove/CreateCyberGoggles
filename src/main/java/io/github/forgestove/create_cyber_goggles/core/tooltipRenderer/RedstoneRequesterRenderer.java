@@ -3,7 +3,7 @@ import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequester
 import com.simibubi.create.content.logistics.stockTicker.PackageOrderWithCrafts;
 import com.simibubi.create.content.logistics.tableCloth.TableClothBlockItem;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.api.AutoTooltipRenderer;
+import io.github.forgestove.create_cyber_goggles.api.AutoTooltipRenderer;
 import net.createmod.catnip.codecs.CatnipCodecUtils;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;

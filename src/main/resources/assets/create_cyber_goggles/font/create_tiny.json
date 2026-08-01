@@ -1,17 +1,17 @@
 {
-  "providers": [
-    {
-      "type": "space",
-      "advances": {
-        " ": 3
-      }
-    },
-    {
-      "type": "ttf",
-      "file": "create_cyber_goggles:create_tiny.ttf",
-      "oversample": 5,
-      "size": 5,
-      "shift": [0, -1]
-    }
-  ]
+	"providers": [
+		{
+			"type": "space",
+			"advances": {
+				" ": 3
+			}
+		},
+		{
+			"type": "ttf",
+			"file": "create_cyber_goggles:create_tiny.ttf",
+			"oversample": 5,
+			"size": 5,
+			"shift": [0, -1]
+		}
+	]
 }

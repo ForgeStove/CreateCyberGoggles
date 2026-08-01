@@ -3,7 +3,7 @@ import com.simibubi.create.AllSpecialTextures;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.fan.EncasedFanBlockEntity;
-import io.github.forgestove.create_cyber_goggles.core.api.*;
+import io.github.forgestove.create_cyber_goggles.api.*;
 import io.github.forgestove.create_cyber_goggles.core.event.Outliner;
 import io.github.forgestove.create_cyber_goggles.core.util.GoggleTooltipUtil;
 import net.minecraft.core.BlockPos;

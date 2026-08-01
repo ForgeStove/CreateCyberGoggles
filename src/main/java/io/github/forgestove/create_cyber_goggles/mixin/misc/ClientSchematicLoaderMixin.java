@@ -3,7 +3,7 @@ import com.simibubi.create.Create;
 import com.simibubi.create.content.schematics.client.ClientSchematicLoader;
 import com.simibubi.create.foundation.utility.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.api.Self;
+import io.github.forgestove.create_cyber_goggles.api.Self;
 import io.github.forgestove.create_cyber_goggles.core.util.SchematicFolderUtil;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;

@@ -6,7 +6,7 @@ import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.content.equipment.clipboard.*;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.api.*;
+import io.github.forgestove.create_cyber_goggles.api.*;
 import net.minecraft.client.gui.Font.DisplayMode;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.*;

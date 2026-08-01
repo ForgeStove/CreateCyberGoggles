@@ -3,7 +3,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.simibubi.create.content.logistics.redstoneRequester.*;
 import com.simibubi.create.content.logistics.stockTicker.LogisticalStockRequestPacket;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.api.*;
+import io.github.forgestove.create_cyber_goggles.api.*;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.world.item.Item;
 import org.spongepowered.asm.mixin.*;

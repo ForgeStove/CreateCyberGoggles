@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.crusher.CrushingWheelControllerBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.api.*;
+import io.github.forgestove.create_cyber_goggles.api.*;
 import io.github.forgestove.create_cyber_goggles.core.util.GoggleTooltipUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.item.ItemEntity;

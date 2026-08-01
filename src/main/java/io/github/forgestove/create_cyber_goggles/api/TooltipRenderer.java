@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.core.api;
+package io.github.forgestove.create_cyber_goggles.api;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
 public interface TooltipRenderer {

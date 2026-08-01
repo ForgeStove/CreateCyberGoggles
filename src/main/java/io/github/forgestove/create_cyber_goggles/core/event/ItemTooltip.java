@@ -4,7 +4,7 @@ import com.simibubi.create.content.equipment.armor.*;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import com.simibubi.create.content.equipment.wrench.WrenchItem;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.api.*;
+import io.github.forgestove.create_cyber_goggles.api.*;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;

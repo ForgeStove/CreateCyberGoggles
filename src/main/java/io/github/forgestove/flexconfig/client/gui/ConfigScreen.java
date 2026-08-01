@@ -58,7 +58,7 @@ public final class ConfigScreen<C, V> extends Screen {
 		savedTriggerKeybinds = new LinkedHashMap<>(handler.getAllTriggerKeybinds());
 		tabs.clear();
 		root.resetToActive(config);
-		for (var category : root.getCategories()) {
+		for (var category : root.categories()) {
 			var tab = new ConfigCategoryTab<>(this, category, config);
 			tabs.add(tab);
 		}
@@ -86,7 +86,7 @@ public final class ConfigScreen<C, V> extends Screen {
 		var allMappings = ClientUtil.mc.options.keyMappings;
 		var modMappings = new ArrayList<KeyMapping>();
 		for (var allMapping : allMappings) {
-			if (!allMapping.getCategory().equals("key.categories." + root.modId)) continue;
+			if (!allMapping.getCategory().equals("key.categories." + root.modId())) continue;
 			modMappings.add(allMapping);
 		}
 		if (modMappings.isEmpty()) return null;
@@ -136,7 +136,7 @@ public final class ConfigScreen<C, V> extends Screen {
 		var mc = ClientUtil.mc;
 		mc.options.save();
 		handler.save(config);
-		ClientLockManager.flushPendingLocks(root.modId);
+		ClientLockManager.flushPendingLocks(root.modId());
 		handler.saveTriggerKeybinds();
 		savedTriggerKeybinds = new LinkedHashMap<>(handler.getAllTriggerKeybinds());
 		mc.setScreen(restartRequired ? new ConfirmScreen(

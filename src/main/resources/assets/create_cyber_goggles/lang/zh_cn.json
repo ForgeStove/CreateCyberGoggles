@@ -108,7 +108,7 @@
 	"create_cyber_goggles.config.option.goggles.preciseNumber.tooltip": "显示更加精确的数值信息",
 	"create_cyber_goggles.config.option.misc.allowDivingBoot": "允许潜水靴",
 	"create_cyber_goggles.config.option.misc.allowDivingBoot.tooltip": "潜水靴的功能，禁用以使它们像普通的靴子一样",
-	"create_cyber_goggles.config.option.misc.allowLargeCrafting": "允许大型动力合成 [§c实验性§r]",
+	"create_cyber_goggles.config.option.misc.allowLargeCrafting": "允许大型动力合成",
 	"create_cyber_goggles.config.option.misc.allowLargeCrafting.tooltip": "允许工厂仪表和仓储请求中使用大于 3×3 的动力合成配方（如 5×5）\n§c警告：将此类包裹输入理包机可能导致吞物品",
 	"create_cyber_goggles.config.option.misc.chainConveyor.alwaysAllowRidingChain": "始终允许悬挂锁链",
 	"create_cyber_goggles.config.option.misc.chainConveyor.alwaysAllowRidingChain.tooltip": "无需扳手即可悬挂在锁链传动轮上",

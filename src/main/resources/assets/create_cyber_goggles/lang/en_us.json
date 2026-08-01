@@ -108,7 +108,7 @@
 	"create_cyber_goggles.config.option.goggles.preciseNumber.tooltip": "Display more precise numerical values",
 	"create_cyber_goggles.config.option.misc.allowDivingBoot": "Allow Diving Boots",
 	"create_cyber_goggles.config.option.misc.allowDivingBoot.tooltip": "Diving boots functionality, disable to make them act like normal boots",
-	"create_cyber_goggles.config.option.misc.allowLargeCrafting": "Allow Large Crafting [§cEXPERIMENTAL§r]",
+	"create_cyber_goggles.config.option.misc.allowLargeCrafting": "Allow Large Crafting",
 	"create_cyber_goggles.config.option.misc.allowLargeCrafting.tooltip": "Allow mechanical crafting recipes larger than 3×3 (e.g. 5×5) for factory gauges and stock requests\n§cWarning: Entering such packages into the Repackager may cause swallowing of items",
 	"create_cyber_goggles.config.option.misc.chainConveyor.alwaysAllowRidingChain": "Always Allow Riding Chain",
 	"create_cyber_goggles.config.option.misc.chainConveyor.alwaysAllowRidingChain.tooltip": "Hang on chain conveyors without needing a wrench",

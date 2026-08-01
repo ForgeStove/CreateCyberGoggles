@@ -50,6 +50,7 @@
 		"misc.SchematicTableScreenMixin",
 		"misc.SimpleBackendMixin",
 		"misc.StockKeeperRequestScreenMixin",
+		"misc.StockKeeperTransferHandlerMixin",
 		"misc.SuperGlueSelectionHandlerMixin",
 		"misc.TrainHUDMixin",
 		"misc.chainConveyor.CardboardArmorHandlerMixin",

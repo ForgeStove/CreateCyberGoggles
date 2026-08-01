@@ -6,8 +6,11 @@ import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelScreen;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.createmod.catnip.gui.AbstractSimiScreen;
-import net.minecraft.world.item.Item;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.*;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
@@ -20,6 +23,7 @@ public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen {
 	@Shadow private IconButton relocateButton;
 	@Shadow private boolean craftingActive;
 	@Shadow private CraftingRecipe availableCraftingRecipe;
+	@Shadow private List<BigItemStack> craftingIngredients;
 	@ModifyConstant(method = "mouseScrolled", constant = @Constant(intValue = 64))
 	public int modifyMaxScrollAmount(int original) {
 		return CCG.config.misc.removeRequestLimit ? Integer.MAX_VALUE : original;
@@ -56,18 +60,43 @@ public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen {
 		recipes.addAll(instance.getAllRecipesFor(AllRecipeTypes.MECHANICAL_CRAFTING.getType()));
 		return recipes;
 	}
-	/** renderInputItem 原固定按 3×3 网格布局（slot % 3 / slot / 3），改为按配方实际宽度动态布局 */
-	@ModifyConstant(method = "renderInputItem", constant = @Constant(intValue = 3, ordinal = 0))
-	private int gridColumnsInX(int value) {
-		return CCG.config.misc.allowLargeCrafting ? ccg$gridColumns() : value;
+	/** >3×3 配方改为在 3×3 区域内显示总计原料（避免完整网格出界）；悬停 3×3 框显示实际配方样式 */
+	@Inject(method = "renderInputItem", at = @At("HEAD"), cancellable = true)
+	private void renderLargeTotals(GuiGraphics graphics, int slot, BigItemStack itemStack, int mouseX, int mouseY, CallbackInfo ci) {
+		if (!(craftingActive && availableCraftingRecipe instanceof ShapedRecipe shaped && shaped.getWidth() > 3)) return;
+		var totals = ccg$totals();
+		if (slot >= totals.size()) {
+			ci.cancel();
+			return;
+		}
+		var total = totals.get(slot);
+		var inputX = guiLeft + 68 + slot % 3 * 20;
+		var inputY = guiTop + 28 + slot / 3 * 20;
+		graphics.renderItem(total.stack, inputX, inputY);
+		graphics.renderItemDecorations(font, total.stack, inputX, inputY, total.count + "");
+		if (slot == 0 && mouseX >= inputX - 2 && mouseX < inputX - 2 + 60 && mouseY >= inputY - 2 && mouseY < inputY - 2 + 60) {
+			var recipeItems = craftingIngredients.stream().map(b -> b.stack).toList();
+			List<Component> tooltip = new ArrayList<>();
+			CCGLang.itemList(recipeItems, shaped.getWidth()).addTo(tooltip);
+			graphics.renderComponentTooltip(font, tooltip, mouseX, mouseY);
+		}
+		ci.cancel();
 	}
+	/** >3×3 配方把原料按种类汇总（最多 9 格） */
 	@Unique
-	private int ccg$gridColumns() {
-		if (craftingActive && availableCraftingRecipe instanceof ShapedRecipe shaped) return Math.max(3, shaped.getWidth());
-		return 3;
-	}
-	@ModifyConstant(method = "renderInputItem", constant = @Constant(intValue = 3, ordinal = 1))
-	private int gridColumnsInY(int value) {
-		return CCG.config.misc.allowLargeCrafting ? ccg$gridColumns() : value;
+	private List<BigItemStack> ccg$totals() {
+		List<BigItemStack> totals = new ArrayList<>();
+		for (var entry : craftingIngredients) {
+			if (entry.stack.isEmpty()) continue;
+			BigItemStack existing = null;
+			for (var t : totals) {
+				if (!ItemStack.isSameItemSameComponents(t.stack, entry.stack)) continue;
+				existing = t;
+				break;
+			}
+			if (existing != null) existing.count++;
+			else totals.add(new BigItemStack(entry.stack.copyWithCount(1), 1));
+		}
+		return totals;
 	}
 }

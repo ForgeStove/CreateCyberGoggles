@@ -20,7 +20,7 @@ public enum CCGKey {
 	openConfig,
 	previewFilter,
 	showHoneyGlue(CCGMods.SIMULATED),
-	showStress(Type.KEYSYM, KEY_TAB),
+	showStress(Type.KEYSYM, KEY_LSHIFT),
 	showSuperGlue,
 	stockRequestSelectAll(Type.KEYSYM, KEY_LALT),
 	stockRequestSetter(Type.MOUSE, MOUSE_BUTTON_MIDDLE),

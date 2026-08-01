@@ -102,8 +102,8 @@ public abstract class CapturableValueConfigEntry<C, V> extends ValueConfigEntry<
 		float delta
 	) {
 		var valueWidget = getValueWidget();
-		renderGui(gui, y, x, width, mouseX, mouseY, delta, lockButton, undoButton, resetButton, keybindButton, valueWidget);
 		valueWidget.active = !isLocked();
+		renderGui(gui, y, x, width, mouseX, mouseY, delta, lockButton, undoButton, resetButton, keybindButton, valueWidget);
 	}
 	/** 子类实现：返回值控件（valueButton、dropdownButton 等），用于 render。 */
 	protected abstract AbstractWidget getValueWidget();

@@ -107,7 +107,7 @@ public abstract class GenericValueConfigEntry<C, V> extends ValueConfigEntry<C, 
 		boolean hovering,
 		float delta
 	) {
-		renderGui(gui, y, x, width, mouseX, mouseY, delta, lockButton, undoButton, resetButton, inputField);
 		inputField.active = !isLocked();
+		renderGui(gui, y, x, width, mouseX, mouseY, delta, lockButton, undoButton, resetButton, inputField);
 	}
 }

@@ -85,9 +85,9 @@ public final class PointValueConfigEntry<C> extends ValueConfigEntry<C, Point> {
 		boolean hovering,
 		float delta
 	) {
-		renderGui(gui, y, x, width, mouseX, mouseY, delta, lockButton, undoButton, resetButton, yField, xField);
 		var locked = isLocked();
 		xField.active = !locked;
 		yField.active = !locked;
+		renderGui(gui, y, x, width, mouseX, mouseY, delta, lockButton, undoButton, resetButton, yField, xField);
 	}
 }

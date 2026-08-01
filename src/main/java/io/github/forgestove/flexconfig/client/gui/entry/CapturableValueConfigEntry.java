@@ -57,6 +57,8 @@ public abstract class CapturableValueConfigEntry<C, V> extends ValueConfigEntry<
 	@Override
 	public void refresh() {
 		super.refresh();
+		var locked = isLocked();
+		keybindButton.active = !locked;
 		var keybind = getCurrentKeybind();
 		var keyText = keybind.getDisplayName().copy().withStyle(state.color());
 		if (capturing) keybindButton.setMessage(Component.literal("> ").append(keyText).append(" <"));
@@ -65,12 +67,12 @@ public abstract class CapturableValueConfigEntry<C, V> extends ValueConfigEntry<
 		else keybindButton.setTooltip(null);
 		// 撤销：keybind 与初始快照不同
 		var currentSerialized = getCurrentKeybindSerialized();
-		if (!Objects.equals(currentSerialized, initialKeybindSerialized)) {
+		if (!Objects.equals(currentSerialized, initialKeybindSerialized) && !locked) {
 			hasChanged = true;
 			undoButton.active = true;
 		}
 		// 重置：keybind 不为默认（null）时启用
-		if (currentSerialized != null) resetButton.active = true;
+		if (currentSerialized != null && !locked) resetButton.active = true;
 	}
 	/** 获取当前绑定快捷键。 */
 	private EntryKeybind getCurrentKeybind() {

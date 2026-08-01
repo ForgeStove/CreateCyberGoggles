@@ -17,7 +17,7 @@ public enum CCGKey {
 	correctionSublevel(Type.KEYSYM, KEY_LCONTROL, CCGMods.SIMULATED),
 	handleMoveSublevel(Type.KEYSYM, KEY_LCONTROL, CCGMods.SIMULATED),
 	interactOpposite(Type.KEYSYM, KEY_TAB),
-	openConfig,
+	openConfig(Type.KEYSYM, KEY_BACKSLASH),
 	previewFilter,
 	showHoneyGlue(CCGMods.SIMULATED),
 	showStress(Type.KEYSYM, KEY_LSHIFT),

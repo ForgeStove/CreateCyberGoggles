@@ -123,6 +123,7 @@ public final class CCGConfig {
 		public boolean removeMechanicalArmLimit = false;
 		public boolean removeRequestLimit = true;
 		public boolean allowLargeCrafting = true;
+		public boolean redstoneRequesterJEIRequest = true;
 		public boolean stockRequestQuickActions = true;
 		public boolean recursiveSchematicScan = true;
 		public boolean preventSelectionDiscard = true;

@@ -38,7 +38,7 @@ public abstract class CreateRecipeCategoryMixin<T extends Recipe<?>> implements 
 	) {
 		var t = holder.value();
 		if (!(t instanceof SequencedAssemblyRecipe recipe)) return;
-		if (!CCG.config.misc.showScrapContent || recipe.getOutputChance() == 1 || !isOverJunkSlot(mouseX, mouseY)) return;
+		if (!CCG.config.misc.jei.showScrapContent || recipe.getOutputChance() == 1 || !isOverJunkSlot(mouseX, mouseY)) return;
 		var junkCount = getJunkCount(recipe);
 		if (junkCount <= 0) return;
 		var state = getState(recipe);
@@ -88,7 +88,7 @@ public abstract class CreateRecipeCategoryMixin<T extends Recipe<?>> implements 
 	) {
 		var t = holder.value();
 		if (!(t instanceof SequencedAssemblyRecipe recipe)) return;
-		if (!CCG.config.misc.showScrapContent || recipe.getOutputChance() == 1) return;
+		if (!CCG.config.misc.jei.showScrapContent || recipe.getOutputChance() == 1) return;
 		var junkCount = getJunkCount(recipe);
 		if (junkCount <= 0) return;
 		var state = getState(recipe);
@@ -109,7 +109,7 @@ public abstract class CreateRecipeCategoryMixin<T extends Recipe<?>> implements 
 	@Override
 	public void createRecipeExtras(@NotNull IRecipeExtrasBuilder builder, @NotNull RecipeHolder<T> holder, @NotNull IFocusGroup focuses) {
 		IRecipeCategory.super.createRecipeExtras(builder, holder, focuses);
-		if (!CCG.config.misc.showScrapContent) return;
+		if (!CCG.config.misc.jei.showScrapContent) return;
 		var t = holder.value();
 		if (!(t instanceof SequencedAssemblyRecipe recipe)) return;
 		if (!shouldEnable(recipe)) return;

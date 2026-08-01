@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class CreateJEIMixin {
 	@Inject(method = "registerRecipeTransferHandlers", at = @At("TAIL"))
 	private void registerRedstoneRequester(IRecipeTransferRegistration registration, CallbackInfo ci) {
-		if (CCG.config.misc.redstoneRequesterJEIRequest)
+		if (CCG.config.misc.jei.redstoneRequesterJEIRequest)
 			registration.addUniversalRecipeTransferHandler(new RedstoneRequesterTransferHandler());
 	}
 }

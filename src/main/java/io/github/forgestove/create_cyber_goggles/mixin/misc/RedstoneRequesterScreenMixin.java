@@ -20,7 +20,7 @@ public abstract class RedstoneRequesterScreenMixin implements Self<RedstoneReque
 		if (thiz().getMenu() instanceof RedstoneRequesterMenu menu) {
 			((ScreenReferenced) menu).ccg$setScreenReference(thiz());
 			// 打开界面时请求一次网络库存，供 JEI 转移按库存选择原料
-			if (CCG.config.misc.redstoneRequesterJEIRequest && menu.contentHolder != null)
+			if (CCG.config.misc.jei.redstoneRequesterJEIRequest && menu.contentHolder != null)
 				CatnipServices.NETWORK.sendToServer(new LogisticalStockRequestPacket(menu.contentHolder.getBlockPos()));
 		}
 	}

@@ -55,7 +55,7 @@ public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen {
 		RecipeType<Recipe<RecipeInput>> type,
 		Operation<List<RecipeHolder<Recipe<RecipeInput>>>> original
 	) {
-		if (!CCG.config.misc.allowLargeCrafting) return original.call(instance, type);
+		if (!CCG.config.misc.jei.allowLargeCrafting) return original.call(instance, type);
 		var recipes = new ArrayList<>(original.call(instance, type));
 		recipes.addAll(instance.getAllRecipesFor(AllRecipeTypes.MECHANICAL_CRAFTING.getType()));
 		return recipes;

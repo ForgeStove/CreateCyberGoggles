@@ -7,6 +7,6 @@ import org.spongepowered.asm.mixin.injection.*;
 public abstract class StockKeeperTransferHandlerMixin {
 	@ModifyConstant(method = "transferRecipeOnClient", constant = @Constant(intValue = 9))
 	private int transferRecipeOnClient(int constant) {
-		return CCG.config.misc.allowLargeCrafting ? 81 : constant;
+		return CCG.config.misc.jei.allowLargeCrafting ? 81 : constant;
 	}
 }

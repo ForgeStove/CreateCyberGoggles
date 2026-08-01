@@ -120,10 +120,9 @@ public final class CCGConfig {
 		@Category(false) public ChainConveyor chainConveyor = new ChainConveyor();
 		@Category(false) public Wrench wrench = new Wrench();
 		@Category(false) public CreateStackCount createStackCount = new CreateStackCount();
+		@Category(false) public Jei jei = new Jei();
 		public boolean removeMechanicalArmLimit = false;
 		public boolean removeRequestLimit = true;
-		public boolean allowLargeCrafting = true;
-		public boolean redstoneRequesterJEIRequest = true;
 		public boolean stockRequestQuickActions = true;
 		public boolean recursiveSchematicScan = true;
 		public boolean preventSelectionDiscard = true;
@@ -137,7 +136,6 @@ public final class CCGConfig {
 		public boolean enableNegativeInfThrottle = false;
 		public boolean forcedBackend = false;
 		public boolean nbtFix = false;
-		public boolean showScrapContent = true;
 		public static class ChainConveyor {
 			public boolean alwaysAllowRidingChain = false;
 			public boolean preventFalling = false;
@@ -157,6 +155,11 @@ public final class CCGConfig {
 		public static class CreateStackCount {
 			public boolean enableCreateStyleStackCount = false;
 			@ColorValue(true) public int countOutlineColor = 0xFF383838;
+		}
+		public static class Jei {
+			public boolean allowLargeCrafting = true;
+			public boolean redstoneRequesterJEIRequest = true;
+			public boolean showScrapContent = true;
 		}
 	}
 }

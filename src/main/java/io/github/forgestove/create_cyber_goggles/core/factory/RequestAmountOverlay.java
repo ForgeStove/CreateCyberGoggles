@@ -17,7 +17,7 @@ import java.awt.Rectangle;
 import java.util.function.Consumer;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
-public final class StockRequestAmountOverlay implements Renderable {
+public final class RequestAmountOverlay implements Renderable {
 	private static final int POPUP_WIDTH = 218, POPUP_HEIGHT = 79;
 	private final Rectangle popupRect = new Rectangle(POPUP_WIDTH, POPUP_HEIGHT);
 	private final IconButton confirmButton;
@@ -30,11 +30,11 @@ public final class StockRequestAmountOverlay implements Renderable {
 	private ItemStack stack = ItemStack.EMPTY;
 	private int max = 1;
 	private ItemStack packageBox = ItemStack.EMPTY;
-	public StockRequestAmountOverlay() {
+	public RequestAmountOverlay() {
 		confirmButton = new IconButton(0, 0, AllIcons.I_CONFIRM);
 		confirmButton.withCallback(this::apply);
 		confirmButton.setToolTip(Component.translatable("config.ui.quit.confirm"));
-		abortButton = new IconButton(0, 0, AllIcons.I_TRASH);
+		abortButton = new IconButton(0, 0, AllIcons.I_CONFIG_BACK);
 		abortButton.withCallback(this::close);
 		abortButton.setToolTip(Component.translatable("gui.cancel"));
 	}

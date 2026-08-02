@@ -10,7 +10,7 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.*;
 import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
-import io.github.forgestove.create_cyber_goggles.core.factory.StockRequestAmountOverlay;
+import io.github.forgestove.create_cyber_goggles.core.factory.RequestAmountOverlay;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -27,7 +27,7 @@ import java.util.List;
 public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainerScreen<RedstoneRequesterMenu>
 	implements Self<RedstoneRequesterScreen> {
 	/** 快捷数量设置弹窗（create 原版样式，叠加渲染在当前界面） */
-	@Unique private final StockRequestAmountOverlay ccg$popup = new StockRequestAmountOverlay();
+	@Unique private final RequestAmountOverlay ccg$popup = new RequestAmountOverlay();
 	@Shadow private List<Integer> amounts;
 	/** 翻页按钮（无法切换时禁用） */
 	@Unique private IconButton ccg$prevButton;

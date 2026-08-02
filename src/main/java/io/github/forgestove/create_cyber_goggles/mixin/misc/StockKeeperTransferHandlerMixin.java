@@ -37,6 +37,7 @@ public abstract class StockKeeperTransferHandlerMixin {
 		Operation<RecipeTransferOperationsResult> original,
 		@Local(argsOnly = true) RecipeHolder<Recipe<?>> recipeHolder
 	) {
+		if (!CCG.config.misc.jei.optimizeRecipeProcessing) return original.call(helper, availableItemStacks, required, crafting);
 		var items = ccg$recipeItems(recipeHolder.value());
 		if (items.isEmpty()) return original.call(helper, availableItemStacks, required, crafting);
 		Map<Slot, ItemStack> filtered = new HashMap<>();

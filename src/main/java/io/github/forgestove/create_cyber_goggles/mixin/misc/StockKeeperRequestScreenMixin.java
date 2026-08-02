@@ -267,6 +267,8 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 		int newTypeLimit,
 		Operation<Pair<Integer, List<List<BigItemStack>>>> original
 	) {
+		if (!CCG.config.misc.jei.optimizeRecipeProcessing)
+			return original.call(instance, cbis, availableItems, countModifier, newTypeLimit);
 		Set<Item> items = new HashSet<>();
 		for (var ingredient : cbis.getIngredients()) {
 			if (ingredient.isEmpty()) continue;
@@ -284,6 +286,7 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 	/** create 的 resolveIngredientAmounts 按数量逐 1 递减，物品数量巨大时 O(总量) 卡顿；改为按共享引用数一次分摊 */
 	@Inject(method = "resolveIngredientAmounts", at = @At("HEAD"), cancellable = true)
 	private void fastResolve(List<List<BigItemStack>> validIngredients, CallbackInfoReturnable<List<List<BigItemStack>>> cir) {
+		if (!CCG.config.misc.jei.optimizeRecipeProcessing) return;
 		Map<BigItemStack, Integer> shareCount = new IdentityHashMap<>();
 		for (var list : validIngredients)
 			for (BigItemStack entry : list)

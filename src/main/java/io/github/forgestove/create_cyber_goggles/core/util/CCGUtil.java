@@ -9,13 +9,11 @@ import io.github.forgestove.create_cyber_goggles.api.ItemRenderable;
 import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket.Action;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -188,9 +186,6 @@ public final class CCGUtil {
 	/** @return 如果玩家主手或副手中有物品则返回{@code true}，否则返回{@code false} */
 	public static boolean hasItemInHand() {
 		return mc.player != null && !Stream.of(mc.player.getMainHandItem(), mc.player.getOffhandItem()).allMatch(ItemStack::isEmpty);
-	}
-	public static void playSound(SoundEvent sound, float pitch, float volume) {
-		mc.getSoundManager().play(SimpleSoundInstance.forUI(sound, pitch, volume));
 	}
 	public static void sendAction(Action action) {
 		if (mc.player == null) return;

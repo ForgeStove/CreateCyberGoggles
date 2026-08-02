@@ -1,138 +1,122 @@
 package io.github.forgestove.create_cyber_goggles.core.factory;
+import com.simibubi.create.content.logistics.box.PackageStyles;
+import com.simibubi.create.foundation.gui.*;
+import com.simibubi.create.foundation.gui.widget.IconButton;
+import net.createmod.catnip.gui.element.GuiGameElement;
 import net.minecraft.client.gui.*;
-import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.*;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
 import java.awt.Rectangle;
-public final class StockRequestAmountOverlay {
-	private static final int POPUP_WIDTH = 120, POPUP_HEIGHT = 82, POPUP_PADDING = 8;
-	private static final int BUTTON_WIDTH = POPUP_WIDTH / 2 - 7, BUTTON_HEIGHT = 14, BUTTON_Y = POPUP_HEIGHT - BUTTON_HEIGHT - 6;
-	private static final int CONFIRM_X = 6, CANCEL_X = POPUP_WIDTH / 2 + 1;
-	private final Rectangle confirmRect = new Rectangle(BUTTON_WIDTH, BUTTON_HEIGHT);
-	private final Rectangle cancelRect = new Rectangle(BUTTON_WIDTH, BUTTON_HEIGHT);
+import java.util.function.Consumer;
+
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
+public final class StockRequestAmountOverlay implements Renderable {
+	private static final int POPUP_WIDTH = 218, POPUP_HEIGHT = 79;
 	private final Rectangle popupRect = new Rectangle(POPUP_WIDTH, POPUP_HEIGHT);
+	private final IconButton confirmButton;
+	private final IconButton abortButton;
+	private final int x = (mc.getWindow().getGuiScaledWidth() - POPUP_WIDTH) / 2;
+	private final int y = (mc.getWindow().getGuiScaledHeight() - POPUP_HEIGHT) / 2;
+	private Consumer<Integer> onApply;
 	private boolean open;
 	private EditBox amountInput;
 	private ItemStack stack = ItemStack.EMPTY;
 	private int max = 1;
+	private ItemStack packageBox = ItemStack.EMPTY;
+	public StockRequestAmountOverlay() {
+		confirmButton = new IconButton(0, 0, AllIcons.I_CONFIRM);
+		confirmButton.withCallback(this::apply);
+		confirmButton.setToolTip(Component.translatable("config.ui.quit.confirm"));
+		abortButton = new IconButton(0, 0, AllIcons.I_TRASH);
+		abortButton.withCallback(this::close);
+		abortButton.setToolTip(Component.translatable("gui.cancel"));
+	}
+	private void apply() {
+		var amount = 0;
+		try {
+			amount = Mth.clamp(Integer.parseInt(amountInput.getValue()), 0, max);
+		} catch (NumberFormatException ignored) {
+		}
+		onApply.accept(amount);
+		close();
+	}
+	public void close() {
+		open = false;
+		stack = ItemStack.EMPTY;
+	}
 	public boolean isOpen() {
 		return open;
 	}
 	public ItemStack getStack() {
 		return stack;
 	}
-	public void open(ItemStack stack, int initial, int max, Font font, int popupX, int popupY) {
+	public void open(ItemStack stack, int initial, int max, Font font, Consumer<Integer> onApply) {
+		this.onApply = onApply;
 		open = true;
 		this.stack = stack.copyWithCount(1);
 		this.max = Math.max(0, max);
-		ensureInput(font, popupX, popupY);
+		ensureInput(font);
 		amountInput.setValue(Integer.toString(Mth.clamp(initial, 0, this.max)));
 		amountInput.setFocused(true);
+		confirmButton.setX(x + 185);
+		confirmButton.setY(y + 55);
+		abortButton.setX(x + 155);
+		abortButton.setY(y + 55);
+		packageBox = PackageStyles.getRandomBox();
+		mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1));
 	}
-	private void ensureInput(Font font, int popupX, int popupY) {
+	private void ensureInput(Font font) {
 		if (amountInput == null) {
-			var amount = Component.translatable("create_cyber_goggles.gui.stockRequest.amount");
-			amountInput = new EditBox(font, 0, 0, POPUP_WIDTH - 16, 12, amount);
+			amountInput = new EditBox(font, 0, 0, 129, 9, Component.translatable("create_cyber_goggles.gui.stockRequest.amount"));
 			amountInput.setMaxLength(9);
 			amountInput.setFilter(value -> value.chars().allMatch(Character::isDigit));
+			amountInput.setBordered(false);
 		}
-		amountInput.setX(popupX + POPUP_PADDING);
-		amountInput.setY(popupY + 45);
+		amountInput.setPosition(x + 44, y + 28);
 	}
-	public void close() {
-		open = false;
-		stack = ItemStack.EMPTY;
-	}
-	public PopupResult mouseClicked(double mouseX, double mouseY, int button, int popupX, int popupY) {
-		if (!open) return PopupResult.NONE;
-		updateRects(popupX, popupY);
-		if (amountInput.mouseClicked(mouseX, mouseY, button)) return PopupResult.CONSUMED;
-		if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-			if (confirmRect.contains(mouseX, mouseY)) return PopupResult.APPLY;
-			if (cancelRect.contains(mouseX, mouseY)) return PopupResult.CLOSE;
-		}
-		if (!popupRect.contains(mouseX, mouseY)) return PopupResult.CLOSE;
-		return PopupResult.CONSUMED;
-	}
-	private void updateRects(int popupX, int popupY) {
-		var buttonY = popupY + BUTTON_Y;
-		confirmRect.setLocation(popupX + CONFIRM_X, buttonY);
-		cancelRect.setLocation(popupX + CANCEL_X, buttonY);
-		popupRect.setLocation(popupX, popupY);
+	public void mouseClicked(double mouseX, double mouseY, int button) {
+		if (!open) return;
+		if (amountInput.mouseClicked(mouseX, mouseY, button)) return;
+		if (confirmButton.mouseClicked(mouseX, mouseY, button)) return;
+		if (abortButton.mouseClicked(mouseX, mouseY, button)) return;
+		if (!popupRect.contains(mouseX, mouseY)) close();
 	}
 	public void charTyped(char codePoint, int modifiers) {
 		if (open) amountInput.charTyped(codePoint, modifiers);
 	}
-	public PopupResult keyPressed(int keyCode, int scanCode, int modifiers) {
-		if (!open) return PopupResult.NONE;
-		if (keyCode == GLFW.GLFW_KEY_ESCAPE) return PopupResult.CLOSE;
-		if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) return PopupResult.APPLY;
-		amountInput.keyPressed(keyCode, scanCode, modifiers);
-		return PopupResult.CONSUMED;
-	}
-	public int getRequestedAmount() {
-		if (!open) return 0;
-		try {
-			return Mth.clamp(Integer.parseInt(amountInput.getValue()), 0, max);
-		} catch (NumberFormatException ignored) {
-			return 0;
-		}
-	}
-	public void render(GuiGraphics gui, Font font, int mouseX, int mouseY, float partialTicks, int popupX, int popupY) {
+	public void keyPressed(int keyCode, int scanCode, int modifiers) {
 		if (!open) return;
-		ensureInput(font, popupX, popupY);
-		updateRects(popupX, popupY);
-		gui.fill(popupX - 3, popupY - 3, popupX + POPUP_WIDTH + 3, popupY + POPUP_HEIGHT + 3, 0xB0101010);
-		gui.fill(popupX, popupY, popupX + POPUP_WIDTH, popupY + POPUP_HEIGHT, 0xE02D2D2D);
-		gui.renderOutline(popupX, popupY, POPUP_WIDTH, POPUP_HEIGHT, 0xFF666666);
-		gui.drawString(
-			font,
-			Component.translatable("create_cyber_goggles.gui.stockRequest.title"),
-			popupX + POPUP_PADDING,
-			popupY + 6,
-			0xFFFFFF,
-			false
-		);
-		var maxText = max == Integer.MAX_VALUE
-			? Component.translatable("create_cyber_goggles.gui.stockRequest.infinite")
-			: Component.literal(Integer.toString(max));
-		gui.drawString(
-			font,
-			Component.translatable("create_cyber_goggles.gui.stockRequest.max", maxText),
-			popupX + POPUP_PADDING,
-			popupY + 20,
-			0xC8C8C8,
-			false
-		);
-		gui.drawString(
-			font,
-			Component.translatable("create_cyber_goggles.gui.stockRequest.amount"),
-			popupX + POPUP_PADDING,
-			popupY + 34,
-			0xD8D8D8,
-			false
-		);
-		amountInput.render(gui, mouseX, mouseY, partialTicks);
-		var confirmColor = confirmRect.contains(mouseX, mouseY) ? 0xFF4A7A4A : 0xFF3A5F3A;
-		var cancelColor = cancelRect.contains(mouseX, mouseY) ? 0xFF7A4A4A : 0xFF5F3A3A;
-		gui.fill(confirmRect.x, confirmRect.y, confirmRect.x + BUTTON_WIDTH, confirmRect.y + BUTTON_HEIGHT, confirmColor);
-		gui.fill(cancelRect.x, cancelRect.y, cancelRect.x + BUTTON_WIDTH, cancelRect.y + BUTTON_HEIGHT, cancelColor);
-		gui.drawCenteredString(
-			font,
-			Component.translatable("selectWorld.edit.save"),
-			confirmRect.x + BUTTON_WIDTH / 2,
-			confirmRect.y + 3,
-			0xFFFFFF
-		);
-		gui.drawCenteredString(font, Component.translatable("gui.cancel"), cancelRect.x + BUTTON_WIDTH / 2, cancelRect.y + 3, 0xFFFFFF);
+		if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+			close();
+			return;
+		}
+		if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+			apply();
+			return;
+		}
+		amountInput.keyPressed(keyCode, scanCode, modifiers);
 	}
-	public enum PopupResult {
-		NONE,
-		CONSUMED,
-		APPLY,
-		CLOSE
+	@Override
+	public void render(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+		if (!open) return;
+		var font = mc.font;
+		ensureInput(font);
+		popupRect.setLocation(x, y);
+		AllGuiTextures.PACKAGE_FILTER.render(gui, x, y);
+		if (!stack.isEmpty()) gui.renderItem(stack, x + 16, y + 24);
+		var title = Component.translatable("create_cyber_goggles.gui.stockRequest.title");
+		gui.drawString(font, title, x + (210 - font.width(title)) / 2, y + 4, 0x303030, false);
+		amountInput.render(gui, mouseX, mouseY, partialTick);
+		confirmButton.render(gui, mouseX, mouseY, partialTick);
+		abortButton.render(gui, mouseX, mouseY, partialTick);
+		// 确认按钮右侧渲染随机外观的包裹实体
+		if (!packageBox.isEmpty()) GuiGameElement.of(packageBox).scale(3).at(x + 215, y + 35, 0).render(gui);
 	}
 }

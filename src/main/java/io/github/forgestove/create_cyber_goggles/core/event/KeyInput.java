@@ -8,7 +8,8 @@ import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.TableClothUtil;
 import io.github.forgestove.flexconfig.client.ConfigScreenFactory;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.*;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.*;
@@ -41,7 +42,7 @@ public final class KeyInput {
 			AllItems.PACKAGE_FILTER.get(),
 			(id, inv, stack) -> new PackageFilterScreen(PackageFilterMenu.create(id, inv, stack), inv, stack.getHoverName())
 		).get(itemStack.getItem()).apply(-1, mc.player.getInventory(), itemStack));
-		playSound(SoundEvents.BOOK_PAGE_TURN, 1, 1);
+		mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1));
 	}
 	public static void mouseScroll(MouseScrollingEvent event) {
 		clothStore(event);
@@ -75,6 +76,6 @@ public final class KeyInput {
 		var target = Mth.clamp(page + (delta < 0 ? 1 : -1), 0, pages.size() - 1);
 		if (target == page) return;
 		stack.set(AllDataComponents.CLIPBOARD_CONTENT, content.setPreviouslyOpenedPage(target));
-		playSound(SoundEvents.BOOK_PAGE_TURN, 1, 1);
+		mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1));
 	}
 }

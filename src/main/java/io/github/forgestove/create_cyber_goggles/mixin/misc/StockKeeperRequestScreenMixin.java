@@ -1,6 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.mixin.misc;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
-import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.stockTicker.*;
@@ -16,7 +15,6 @@ import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
 
-import java.awt.Rectangle;
 import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
@@ -24,8 +22,7 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperRequestScreen> {
 	@Unique private final StockRequestAmountOverlay ccg$popup = new StockRequestAmountOverlay();
 	@Shadow public List<List<BigItemStack>> displayedItems;
-	@Shadow @Final int cols, colWidth;
-	@Shadow int itemsX, itemsY, windowWidth, windowHeight;
+	@Shadow @Final int cols;
 	@Shadow StockTickerBlockEntity blockEntity;
 	@Shadow @Final Couple<Integer> noneHovered;
 	@WrapWithCondition(
@@ -41,10 +38,7 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 			return;
 		}
 		if (ccg$popup.isOpen()) {
-			switch (ccg$popup.mouseClicked(mouseX, mouseY, button, ccg$popupX(), ccg$popupY())) {
-				case APPLY -> ccg$applyPopupAmount();
-				case CLOSE -> ccg$popup.close();
-			}
+			ccg$popup.mouseClicked(mouseX, mouseY, button);
 			cir.setReturnValue(true);
 			return;
 		}
@@ -90,7 +84,8 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 		if (entry == null) return false;
 		var max = ccg$getAvailableMax(entry);
 		var existing = getOrderForItem(entry.stack);
-		ccg$popup.open(entry.stack, existing == null ? 1 : existing.count, max, mc.font, ccg$popupX(), ccg$popupY());
+		ccg$popup.open(entry.stack, existing == null ? 1 : existing.count, max, mc.font, count -> ccg$setOrRemoveOrder(entry.stack,
+			count));
 		return true;
 	}
 	@Shadow
@@ -107,11 +102,6 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 		if (max == 0) return Math.max(1, entry.count);
 		return max;
 	}
-	@Inject(method = "mouseScrolled", at = @At("HEAD"), cancellable = true)
-	private void mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY, CallbackInfoReturnable<Boolean> cir) {
-		if (!CCG.config.misc.stockRequestQuickActions) return;
-		if (ccg$popup.isOpen()) cir.setReturnValue(true);
-	}
 	@Inject(method = "charTyped", at = @At("HEAD"), cancellable = true)
 	private void charTyped(char codePoint, int modifiers, CallbackInfoReturnable<Boolean> cir) {
 		if (!CCG.config.misc.stockRequestQuickActions) return;
@@ -123,20 +113,17 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 	private void keyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
 		if (!CCG.config.misc.stockRequestQuickActions) return;
 		if (!ccg$popup.isOpen()) return;
-		switch (ccg$popup.keyPressed(keyCode, scanCode, modifiers)) {
-			case APPLY -> ccg$applyPopupAmount();
-			case CLOSE -> ccg$popup.close();
-		}
+		ccg$popup.keyPressed(keyCode, scanCode, modifiers);
 		cir.setReturnValue(true);
 	}
-	@Unique
-	private void ccg$applyPopupAmount() {
-		if (ccg$popup.getStack().isEmpty()) {
-			ccg$popup.close();
+	@Inject(method = "renderForeground", at = @At("TAIL"))
+	private void renderPopup(GuiGraphics gui, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
+		if (!CCG.config.misc.stockRequestQuickActions) {
+			if (ccg$popup.isOpen()) ccg$popup.close();
 			return;
 		}
-		ccg$setOrRemoveOrder(ccg$popup.getStack(), ccg$popup.getRequestedAmount());
-		ccg$popup.close();
+		if (!ccg$popup.isOpen()) return;
+		ccg$popup.render(gui, mouseX, mouseY, partialTicks);
 	}
 	@Unique
 	private void ccg$setOrRemoveOrder(ItemStack stack, int count) {
@@ -152,42 +139,4 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 	}
 	@Shadow
 	protected abstract BigItemStack getOrderForItem(ItemStack stack);
-	@Inject(method = "renderForeground", at = @At("TAIL"))
-	private void renderPopup(GuiGraphics gui, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
-		if (!CCG.config.misc.stockRequestQuickActions) {
-			if (ccg$popup.isOpen()) ccg$popup.close();
-			return;
-		}
-		if (!ccg$popup.isOpen()) return;
-		ccg$popup.render(gui, mc.font, mouseX, mouseY, partialTicks, ccg$popupX(), ccg$popupY());
-	}
-	@Unique
-	private int ccg$popupX() {
-		var guiLeft = itemsX - (windowWidth - cols * colWidth) / 2 - 1;
-		return guiLeft + (windowWidth - 120) / 2;
-	}
-	@Unique
-	private int ccg$popupY() {
-		var guiTop = itemsY - 33;
-		return guiTop + (windowHeight - 82) / 2;
-	}
-	@WrapOperation(
-		method = "renderForeground", at = @At(
-		value = "INVOKE",
-		target = "Lcom/simibubi/create/content/logistics/stockTicker/StockKeeperRequestScreen;getHoveredSlot(II)"
-			+ "Lnet/createmod/catnip/data/Couple;"
-	)
-	)
-	private Couple<Integer> suppressTooltipsWhenPopup(
-		StockKeeperRequestScreen instance,
-		int x,
-		int y,
-		Operation<Couple<Integer>> original
-	) {
-		if (ccg$popup.isOpen()) {
-			var popupArea = new Rectangle(ccg$popupX(), ccg$popupY(), 120, 82);
-			if (popupArea.contains(x, y)) return noneHovered;
-		}
-		return original.call(instance, x, y);
-	}
 }

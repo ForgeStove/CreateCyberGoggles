@@ -142,10 +142,10 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 		if (!CCG.config.misc.jei.allowLargeCrafting) return;
 		var thiz = thiz();
 		var button = new IconButton(thiz.getGuiLeft() + windowWidth - 29, thiz.getGuiTop() + windowHeight - 21, AllIcons.I_3x3);
-		button.green = ccg$plainRequest;
+		button.green = !ccg$plainRequest;
 		button.withCallback(() -> {
 			ccg$plainRequest = !ccg$plainRequest;
-			button.green = ccg$plainRequest;
+			button.green = !ccg$plainRequest;
 		});
 		button.setToolTip(Component.translatable("create.gui.factory_panel.activate_crafting"));
 		addRenderableWidget(button);

@@ -158,6 +158,7 @@ public final class CCGConfig {
 		}
 		public static class Jei {
 			public boolean allowLargeCrafting = true;
+			public boolean plainRequest = false;
 			public boolean redstoneRequesterJEIRequest = true;
 			public boolean showScrapContent = true;
 		}

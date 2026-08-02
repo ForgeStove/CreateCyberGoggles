@@ -133,6 +133,8 @@
 	"create_cyber_goggles.config.option.misc.jei.allowLargeCrafting.tooltip": "Allow mechanical crafting recipes larger than 3×3 (e.g. 5×5) for factory gauges and stock requests\n§cWarning: Entering such packages into the Repackager may cause swallowing of items",
 	"create_cyber_goggles.config.option.misc.jei.redstoneRequesterJEIRequest": "Redstone Requester JEI Request",
 	"create_cyber_goggles.config.option.misc.jei.redstoneRequesterJEIRequest.tooltip": "Show a JEI recipe transfer button in the redstone requester to fill in ingredients by network stock",
+	"create_cyber_goggles.config.option.misc.jei.plainRequest": "Plain Requests",
+	"create_cyber_goggles.config.option.misc.jei.plainRequest.tooltip": "Send mechanical crafting requests as plain item requests (no recipe pattern) so the repackager doesn't swallow items",
 	"create_cyber_goggles.config.option.misc.jei.showScrapContent": "Show Scrap Content",
 	"create_cyber_goggles.config.option.misc.jei.showScrapContent.tooltip": "Show specific contents of random scrap in sequenced assembly",
 	"create_cyber_goggles.config.option.misc.nbtFix": "NBT Fix",

@@ -133,6 +133,8 @@
 	"create_cyber_goggles.config.option.misc.jei.allowLargeCrafting.tooltip": "允许工厂仪表和仓储请求中使用大于 3×3 的动力合成配方（如 5×5）\n§c警告：将此类包裹输入理包机可能导致吞物品",
 	"create_cyber_goggles.config.option.misc.jei.redstoneRequesterJEIRequest": "红石请求器 JEI 请求",
 	"create_cyber_goggles.config.option.misc.jei.redstoneRequesterJEIRequest.tooltip": "在红石请求器界面显示 JEI 配方转移按钮，按网络库存填入原料",
+	"create_cyber_goggles.config.option.misc.jei.plainRequest": "普通请求",
+	"create_cyber_goggles.config.option.misc.jei.plainRequest.tooltip": "将动力合成请求作为普通物品请求发出（不带配方图案），避免理包机吞物品",
 	"create_cyber_goggles.config.option.misc.jei.showScrapContent": "显示废料内容",
 	"create_cyber_goggles.config.option.misc.jei.showScrapContent.tooltip": "显示序列组装中随机废料的具体内容",
 	"create_cyber_goggles.config.option.misc.nbtFix": "NBT 修复",

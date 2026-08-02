@@ -129,6 +129,8 @@
 	"create_cyber_goggles.config.option.misc.forcedBackend.tooltip": "Принудительно использовать определённый бэкенд отрисовки, может решить проблемы с производительностью или совместимостью на некоторых системах",
 	"create_cyber_goggles.config.option.misc.infEditBoxLength": "Бесконечная длина поля ввода",
 	"create_cyber_goggles.config.option.misc.infEditBoxLength.tooltip": "Бесконечная длина поля ввода (2^31 - 1)",
+	"create_cyber_goggles.config.option.misc.jei.plainRequest": "Обычные запросы",
+	"create_cyber_goggles.config.option.misc.jei.plainRequest.tooltip": "Отправлять запросы механического крафта как обычные запросы предметов (без рецепта), чтобы репакер не терял предметы",
 	"create_cyber_goggles.config.option.misc.jei.showScrapContent": "Показывать информацию о мусоре",
 	"create_cyber_goggles.config.option.misc.jei.showScrapContent.tooltip": "Показывать детальную информацию о мусоре при последовательной сборке",
 	"create_cyber_goggles.config.option.misc.nbtFix": "NBT фикс",

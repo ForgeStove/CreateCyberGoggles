@@ -51,19 +51,19 @@ public class RedstoneRequesterTransferHandler implements IUniversalRecipeTransfe
 		for (var ingredient : recipeHolder.value().getIngredients()) {
 			if (ingredient.isEmpty()) continue;
 			ItemStack representative = null;
-			if (hasStock) {
-				// 网络库存里匹配该原料的物品优先（解决 tag 轮播取到不在库存的物品）
-				for (var stock : summary.getStacks())
-					if (stock.count > 0 && ingredient.test(stock.stack)) {
-						representative = stock.stack;
-						break;
-					}
-			} else {
+			// 网络库存里匹配该原料的物品优先（解决 tag 轮播取到不在库存的物品）
+			if (hasStock) for (var stock : summary.getStacks())
+				if (stock.count > 0 && ingredient.test(stock.stack)) {
+					representative = stock.stack;
+					break;
+				}
+			if (representative == null) {
+				// 缺货时仍按配方候选填入，保证请求配置完整（是否部分发送由服务端 allowPartial 决定）
 				var matches = ingredient.getItems();
 				if (matches.length > 0) representative = matches[0];
 			}
 			if (representative == null) {
-				currentGroup = null; // 该格原料不在网络内 → 不请求并断开连续
+				currentGroup = null; // 该格原料既不在网络也不在配方候选 → 断开连续
 				continue;
 			}
 			if (currentGroup != null && ItemStack.isSameItemSameComponents(currentGroup.stack, representative)) currentGroup.count++;
@@ -72,11 +72,12 @@ public class RedstoneRequesterTransferHandler implements IUniversalRecipeTransfe
 				groups.add(currentGroup);
 			}
 		}
-		if (groups.size() > 9)
+		var slots = container.ghostInventory.getSlots();
+		if (groups.size() > slots)
 			return new RecipeTransferErrorTooltip(Component.translatable("create_cyber_goggles.gui.redstoneRequester.tooManyIngredients"));
 		if (!doTransfer) return null;
 		// 填入请求槽并同步服务端（每格物品 count=1，数量由 amounts 决定，避免与 amounts 渲染叠加假数量）
-		for (var i = 0; i < 9; i++) {
+		for (var i = 0; i < slots; i++) {
 			var group = i < groups.size() ? groups.get(i) : null;
 			var stack = group != null ? group.stack.copyWithCount(1) : ItemStack.EMPTY;
 			container.ghostInventory.setStackInSlot(i, stack);

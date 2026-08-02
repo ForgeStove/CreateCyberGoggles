@@ -48,6 +48,7 @@
 		"misc.NbtAccounterMixin",
 		"misc.NetheriteBacktankFirstPersonRendererMixin",
 		"misc.PlayerEnderChestContainerMixin",
+		"misc.GhostIngredientHandlerMixin",
 		"misc.RedstoneRequesterMenuMixin",
 		"misc.RedstoneRequesterScreenMixin",
 		"misc.RedstoneRequesterStockMixin",

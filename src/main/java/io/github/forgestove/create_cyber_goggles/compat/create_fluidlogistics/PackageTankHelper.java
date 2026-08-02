@@ -1,0 +1,21 @@
+package io.github.forgestove.create_cyber_goggles.compat.create_fluidlogistics;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.capabilities.Capabilities.FluidHandler;
+
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.getRes;
+public class PackageTankHelper {
+	private static final ResourceLocation CFL_COMPRESSED_TANK_ID = getRes("fluidlogistics", "compressed_storage_tank");
+	public static int getCFLTankAmount(ItemStack stack) {
+		if (!isCFLCompressedTank(stack)) return 0;
+		var handler = stack.getCapability(FluidHandler.ITEM);
+		if (handler == null) return 0;
+		var fluid = handler.getFluidInTank(0);
+		return fluid.isEmpty() ? 0 : fluid.getAmount();
+	}
+	public static boolean isCFLCompressedTank(ItemStack stack) {
+		if (stack.isEmpty()) return false;
+		return BuiltInRegistries.ITEM.getKey(stack.getItem()).equals(CFL_COMPRESSED_TANK_ID);
+	}
+}

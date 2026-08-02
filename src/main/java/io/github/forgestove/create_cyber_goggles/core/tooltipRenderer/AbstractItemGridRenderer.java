@@ -2,14 +2,13 @@ package io.github.forgestove.create_cyber_goggles.core.tooltipRenderer;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.forgestove.create_cyber_goggles.api.TooltipRenderer;
+import io.github.forgestove.create_cyber_goggles.compat.create_fluidlogistics.PackageTankHelper;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.capabilities.Capabilities.FluidHandler;
 import org.jetbrains.annotations.*;
 
 import java.io.IOException;
@@ -19,22 +18,10 @@ import java.util.*;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public abstract class AbstractItemGridRenderer implements TooltipRenderer {
 	public static final int PAD = 4;
-	private static final ResourceLocation CFL_COMPRESSED_TANK_ID = getRes("fluidlogistics", "compressed_storage_tank");
 	private static final ResourceLocation CONTAINER_BACKGROUND = getMCRes("textures/gui/container/generic_54.png");
 	private static final int PANEL_TEX = 256, PANEL_EDGE = 4, PANEL_SRC_W = 176, PANEL_SRC_H = 222;
 	private static PanelRect cachedRect;
 	private static String cachedPackId;
-	public static int getCFLTankAmount(ItemStack stack) {
-		if (!isCFLCompressedTank(stack)) return 0;
-		var handler = stack.getCapability(FluidHandler.ITEM);
-		if (handler == null) return 0;
-		var fluid = handler.getFluidInTank(0);
-		return fluid.isEmpty() ? 0 : fluid.getAmount();
-	}
-	public static boolean isCFLCompressedTank(ItemStack stack) {
-		if (stack.isEmpty()) return false;
-		return BuiltInRegistries.ITEM.getKey(stack.getItem()).equals(CFL_COMPRESSED_TANK_ID);
-	}
 	public static void renderItemGrid(
 		GuiGraphics gui,
 		@NotNull List<ItemStack> items,
@@ -68,7 +55,7 @@ public abstract class AbstractItemGridRenderer implements TooltipRenderer {
 				var item = items.get(i);
 				gui.renderItem(item, slotX + 1, slotY + 1);
 				if (zeroCountSlots.contains(i)) gui.renderItemDecorations(mc.font, item, slotX + 1, slotY + 1, "0");
-				else if (isCFLCompressedTank(item) && item.getCount() > 1)
+				else if (PackageTankHelper.isCFLCompressedTank(item) && item.getCount() > 1)
 					gui.renderItemDecorations(mc.font, item, slotX + 1, slotY + 1, formatFluidAmount(item.getCount()));
 				else gui.renderItemDecorations(mc.font, item, slotX + 1, slotY + 1);
 			}

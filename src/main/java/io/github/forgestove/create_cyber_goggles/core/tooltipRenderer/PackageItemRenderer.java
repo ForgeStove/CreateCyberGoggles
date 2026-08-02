@@ -3,6 +3,7 @@ import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.AutoTooltipRenderer;
+import io.github.forgestove.create_cyber_goggles.compat.create_fluidlogistics.PackageTankHelper;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,7 +21,7 @@ public final class PackageItemRenderer extends AbstractItemGridRenderer {
 		for (var i = 0; i < contents.getSlots(); i++) {
 			var itemstack = contents.getStackInSlot(i);
 			if (itemstack.isEmpty()) continue;
-			var amount = getCFLTankAmount(itemstack);
+			var amount = PackageTankHelper.getCFLTankAmount(itemstack);
 			items.add(amount > 0 ? itemstack.copyWithCount(amount) : itemstack);
 		}
 		return items.isEmpty() ? null : new OverlayData(items, 3);

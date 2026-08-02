@@ -28,7 +28,7 @@
 
 Welcome to help translate this mod into more languages on [Crowdin](https://crowdin.com/project/create-cyber-goggles)!
 
-##  / Credits
+## 致谢 / Credits
 
 本项目使用了以下模组的代码：
 

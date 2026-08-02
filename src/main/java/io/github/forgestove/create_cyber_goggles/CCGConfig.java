@@ -158,9 +158,7 @@ public final class CCGConfig {
 		}
 		public static class Jei {
 			public boolean allowLargeCrafting = true;
-			public boolean plainRequest = false;
 			public boolean optimizeRecipeProcessing = true;
-			/** 红石请求器突破 9 格，界面显示前 9 种，其余通过溢出 tooltip 查看 */
 			public boolean redstoneRequesterLargeRequest = true;
 			public boolean redstoneRequesterJEIRequest = true;
 			public boolean showScrapContent = true;

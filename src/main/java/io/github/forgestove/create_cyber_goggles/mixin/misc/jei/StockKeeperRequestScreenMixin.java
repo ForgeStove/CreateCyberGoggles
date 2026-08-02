@@ -4,19 +4,31 @@ import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.stockTicker.*;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrderWithCrafts.CraftingEntry;
+import com.simibubi.create.foundation.gui.AllIcons;
+import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
+import com.simibubi.create.foundation.gui.widget.IconButton;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.Self;
 import net.createmod.catnip.data.Pair;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.*;
 
 import java.util.*;
 import java.util.function.Function;
 @Mixin(StockKeeperRequestScreen.class)
-public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperRequestScreen> {
+public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContainerScreen<StockKeeperRequestMenu>
+	implements Self<StockKeeperRequestScreen> {
+	/** 普通请求模式：由界面右下角按钮切换，static 缓存跨界面共享 */
+	@Unique private static boolean ccg$plainRequest;
+	@Shadow int windowWidth, windowHeight;
+	public StockKeeperRequestScreenMixin(StockKeeperRequestMenu container, Inventory inv, Component title) {
+		super(container, inv, title);
+	}
 	/** 仓库管理员发包去掉 ordered_crafts，使理包机不吞物品 */
 	@ModifyArg(
 		method = "sendIt", at = @At(
@@ -26,7 +38,8 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 	), index = 1
 	)
 	private List<CraftingEntry> plainRequest(List<CraftingEntry> orderedCrafts) {
-		return CCG.config.misc.jei.plainRequest ? List.of() : orderedCrafts;
+		if (!CCG.config.misc.jei.allowLargeCrafting) return orderedCrafts;
+		return ccg$plainRequest ? List.of() : orderedCrafts;
 	}
 	/** 普通请求模式下 ordered_stacks 按配方连续组生成（与红石请求器一致，理包机输出有序） */
 	@ModifyArg(
@@ -37,7 +50,7 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 	), index = 0
 	)
 	private PackageOrder orderedByRecipe(PackageOrder orderedStacks) {
-		if (!CCG.config.misc.jei.plainRequest) return orderedStacks;
+		if (!CCG.config.misc.jei.allowLargeCrafting || !ccg$plainRequest) return orderedStacks;
 		var groups = ccg$recipeGroups();
 		return groups.isEmpty() ? orderedStacks : new PackageOrder(groups);
 	}
@@ -122,5 +135,19 @@ public abstract class StockKeeperRequestScreenMixin implements Self<StockKeeperR
 			resolved.add(resolvedList);
 		}
 		cir.setReturnValue(resolved);
+	}
+	/** 在右下角添加动力合成切换按钮（复用工厂仪表动力合成按钮样式与 tooltip） */
+	@Inject(method = "init", at = @At("TAIL"))
+	private void ccg$addPlainRequestButton(CallbackInfo ci) {
+		if (!CCG.config.misc.jei.allowLargeCrafting) return;
+		var thiz = thiz();
+		var button = new IconButton(thiz.getGuiLeft() + windowWidth - 29, thiz.getGuiTop() + windowHeight - 21, AllIcons.I_3x3);
+		button.green = ccg$plainRequest;
+		button.withCallback(() -> {
+			ccg$plainRequest = !ccg$plainRequest;
+			button.green = ccg$plainRequest;
+		});
+		button.setToolTip(Component.translatable("create.gui.factory_panel.activate_crafting"));
+		addRenderableWidget(button);
 	}
 }

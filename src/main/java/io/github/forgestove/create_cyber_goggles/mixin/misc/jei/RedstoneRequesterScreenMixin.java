@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.mixin.misc;
+package io.github.forgestove.create_cyber_goggles.mixin.misc.jei;
 import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.simibubi.create.content.logistics.redstoneRequester.*;
 import com.simibubi.create.content.logistics.stockTicker.LogisticalStockRequestPacket;
@@ -63,7 +63,7 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 	@Unique
 	private void ccg$updatePageButtons() {
 		if (ccg$prevButton == null || ccg$nextButton == null) return;
-		int page = ccg$page();
+		var page = ccg$page();
 		ccg$prevButton.active = page > 0;
 		ccg$nextButton.active = page < 8;
 	}

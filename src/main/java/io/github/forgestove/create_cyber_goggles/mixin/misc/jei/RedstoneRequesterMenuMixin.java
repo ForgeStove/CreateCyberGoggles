@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.mixin.misc;
+package io.github.forgestove.create_cyber_goggles.mixin.misc.jei;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.redstoneRequester.*;
 import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterMenu.SorterProofSlot;
@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.*;
 /** 给红石请求器菜单添加 screenReference，使 JEI 转移时能拿到对应 Screen 更新请求数量 */
-@Mixin(value = RedstoneRequesterMenu.class, remap = false)
+@Mixin(RedstoneRequesterMenu.class)
 public abstract class RedstoneRequesterMenuMixin extends GhostItemMenu<RedstoneRequesterBlockEntity>
 	implements ScreenReferenced, RequestPageProvider {
 	@Unique private Object ccg$screenReference;

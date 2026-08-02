@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.mixin.misc;
+package io.github.forgestove.create_cyber_goggles.mixin.misc.jei;
 import com.simibubi.create.compat.jei.category.CreateRecipeCategory;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import com.simibubi.create.foundation.gui.AllGuiTextures;

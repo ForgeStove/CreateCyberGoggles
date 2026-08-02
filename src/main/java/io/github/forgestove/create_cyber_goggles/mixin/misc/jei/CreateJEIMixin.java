@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.mixin.misc;
+package io.github.forgestove.create_cyber_goggles.mixin.misc.jei;
 import com.simibubi.create.compat.jei.CreateJEI;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.compat.jei.RedstoneRequesterTransferHandler;

@@ -58,19 +58,20 @@ public abstract class AbstractItemGridRenderer implements TooltipRenderer {
 			renderPanel(gui, panelWidth, panelHeight);
 			RenderSystem.setShaderColor(1, 1, 1, 1);
 		} else renderPanel(gui, panelWidth, panelHeight);
-		for (var i = 0; i < items.size(); i++) {
-			var col = i % columns;
-			var row = i / columns;
-			var slotX = PAD + col * SlotUtil.SIZE;
-			var slotY = PAD + row * SlotUtil.SIZE;
-			renderTintedSlot(gui, slotX, slotY, r, g, b);
-			var item = items.get(i);
-			gui.renderItem(item, slotX + 1, slotY + 1);
-			if (zeroCountSlots.contains(i)) gui.renderItemDecorations(mc.font, item, slotX + 1, slotY + 1, "0");
-			else if (isCFLCompressedTank(item) && item.getCount() > 1)
-				gui.renderItemDecorations(mc.font, item, slotX + 1, slotY + 1, formatFluidAmount(item.getCount()));
-			else gui.renderItemDecorations(mc.font, item, slotX + 1, slotY + 1);
-		}
+		for (var row = 0; row < rows; row++)
+			for (var col = 0; col < columns; col++) {
+				var slotX = PAD + col * SlotUtil.SIZE;
+				var slotY = PAD + row * SlotUtil.SIZE;
+				renderTintedSlot(gui, slotX, slotY, r, g, b);
+				var i = row * columns + col;
+				if (i >= items.size()) continue;
+				var item = items.get(i);
+				gui.renderItem(item, slotX + 1, slotY + 1);
+				if (zeroCountSlots.contains(i)) gui.renderItemDecorations(mc.font, item, slotX + 1, slotY + 1, "0");
+				else if (isCFLCompressedTank(item) && item.getCount() > 1)
+					gui.renderItemDecorations(mc.font, item, slotX + 1, slotY + 1, formatFluidAmount(item.getCount()));
+				else gui.renderItemDecorations(mc.font, item, slotX + 1, slotY + 1);
+			}
 		pose.popPose();
 	}
 	public static void renderPanel(GuiGraphics gui, int width, int height) {
@@ -83,7 +84,6 @@ public abstract class AbstractItemGridRenderer implements TooltipRenderer {
 		var x1 = rect.x1();
 		var y1 = rect.y1();
 		var sw = Math.max(0, x1 - x0 - e * 2);
-		var sh = Math.max(0, y1 - y0 - e * 2);
 		// 四角（保留圆角）
 		blitPanelPiece(gui, rect, 0, 0, e, e, x0, y0, e, e);
 		blitPanelPiece(gui, rect, width - e, 0, e, e, x1 - e, y0, e, e);
@@ -94,8 +94,6 @@ public abstract class AbstractItemGridRenderer implements TooltipRenderer {
 		blitPanelPiece(gui, rect, e, height - e, mw, e, x0 + e, y1 - e, sw, e);
 		blitPanelPiece(gui, rect, 0, e, e, mh, x0, y1 - e * 2, e, e);
 		blitPanelPiece(gui, rect, width - e, e, e, mh, x1 - e, y1 - e * 2, e, e);
-		// 中心
-		blitPanelPiece(gui, rect, e, e, mw, mh, x0 + e, y0 + e, sw, sh);
 	}
 	public static void renderTintedSlot(GuiGraphics gui, int x, int y, float r, float g, float b) {
 		RenderSystem.setShaderColor(r, g, b, 1F);

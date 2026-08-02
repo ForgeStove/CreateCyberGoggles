@@ -128,7 +128,7 @@
 	"create_cyber_goggles.config.option.misc.forcedBackend": "Force Flywheel Backend",
 	"create_cyber_goggles.config.option.misc.forcedBackend.tooltip": "Force enable Flywheel rendering backend (conflicts with shaders, unless you know what you're doing)",
 	"create_cyber_goggles.config.option.misc.infEditBoxLength": "Infinite Edit Box Length",
-	"create_cyber_goggles.config.option.misc.infEditBoxLength.tooltip": "Infinite edit box length (actually 2^31 - 1)",
+	"create_cyber_goggles.config.option.misc.infEditBoxLength.tooltip": "Remove the length limit for most edit boxes",
 	"create_cyber_goggles.config.option.misc.jei.allowLargeCrafting": "Allow Large Crafting",
 	"create_cyber_goggles.config.option.misc.jei.allowLargeCrafting.tooltip": "Allow mechanical crafting recipes larger than 3×3 (e.g. 5×5) for factory gauges and stock requests\n§cWarning: Entering such packages into the Repackager may cause swallowing of items",
 	"create_cyber_goggles.config.option.misc.jei.redstoneRequesterJEIRequest": "Redstone Requester JEI Request",

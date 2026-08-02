@@ -128,7 +128,7 @@
 	"create_cyber_goggles.config.option.misc.forcedBackend": "强制飞轮优化",
 	"create_cyber_goggles.config.option.misc.forcedBackend.tooltip": "强制启用飞轮渲染后端（与着色器冲突，除非你知道你在做什么）",
 	"create_cyber_goggles.config.option.misc.infEditBoxLength": "无限编辑框长度",
-	"create_cyber_goggles.config.option.misc.infEditBoxLength.tooltip": "无限编辑框长度（实际上是 2^31 -1）",
+	"create_cyber_goggles.config.option.misc.infEditBoxLength.tooltip": "解除大部分编辑框的长度限制",
 	"create_cyber_goggles.config.option.misc.jei.allowLargeCrafting": "允许大型动力合成",
 	"create_cyber_goggles.config.option.misc.jei.allowLargeCrafting.tooltip": "允许工厂仪表和仓储请求中使用大于 3×3 的动力合成配方（如 5×5）\n§c警告：将此类包裹输入理包机可能导致吞物品",
 	"create_cyber_goggles.config.option.misc.jei.redstoneRequesterJEIRequest": "红石请求器 JEI 请求",

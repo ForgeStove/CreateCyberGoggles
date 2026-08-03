@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
 
 import java.util.List;
-@Mixin(value = RedstoneRequesterScreen.class, remap = false)
+@Mixin(RedstoneRequesterScreen.class)
 public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainerScreen<RedstoneRequesterMenu>
 	implements Self<RedstoneRequesterScreen> {
 	/** 快捷数量设置弹窗（create 原版样式，叠加渲染在当前界面） */

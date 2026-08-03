@@ -1,11 +1,6 @@
-- Remove the packet send limit for client warehouse pages and factory gauges
-- Add JEI compatibility to the Redstone Requester
-- Optimize GUI display for larger kinetic crafting recipes in the gauges
-- Change the default showStress keybinding to Left Shift
-- Change the default openConfig keybinding to Backslash
-- Fix the config system flickering when locked
-- Prevent modifying bound hotkeys, reset, and undo when the config is locked
-- Add a normal request mode to optimize recipe speed
-- Add a configuration to optimize recipe speed
-- Add multi-item request configuration to the Redstone Requester
-- Optimize item background panel rendering
+- Improve RequestAmountOverlay layout and UI, optimize sound references
+- Resolve config disorganization, update some localization keys
+- Add custom quantity setting for factory panels
+- Fix numerous display and modifier-key interaction issues
+- Fix scrollbar taking priority over modifier keys
+- Fix GUI layer rendering issue

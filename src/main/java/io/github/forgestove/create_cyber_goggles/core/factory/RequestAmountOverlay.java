@@ -46,7 +46,7 @@ public class RequestAmountOverlay extends AbstractContainerEventHandler implemen
 		cancelButton.withCallback(this::close);
 		cancelButton.setToolTip(Component.translatable("gui.cancel"));
 		addRenderableWidget(cancelButton);
-		amountInput = new EditBox(mc.font, x + 44, y + 28, 129, 9, Component.translatable("create_cyber_goggles.gui.stockRequest.amount"));
+		amountInput = new EditBox(mc.font, x + 44, y + 28, 129, 9, Component.translatable("create_cyber_goggles.gui.request.amount"));
 		amountInput.setMaxLength(10);
 		amountInput.setFilter(value -> value.chars().allMatch(Character::isDigit));
 		amountInput.setBordered(false);

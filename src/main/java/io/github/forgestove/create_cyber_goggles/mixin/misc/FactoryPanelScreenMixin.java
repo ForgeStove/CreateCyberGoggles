@@ -4,16 +4,27 @@ import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelScreen;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
+import io.github.forgestove.create_cyber_goggles.core.factory.RequestAmountOverlay;
 import net.createmod.catnip.gui.AbstractSimiScreen;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.*;
+
+import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.getModifiedScrollAmount;
 @Mixin(FactoryPanelScreen.class)
 public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen {
 	@Shadow private boolean restocker;
+	@Shadow private boolean craftingActive;
+	@Shadow private List<BigItemStack> inputConfig;
 	@Shadow private IconButton relocateButton;
+	/** 自定义请求数量弹窗（复用红石/仓储的 RequestAmountOverlay） */
+	@Unique private RequestAmountOverlay ccg$popup = new RequestAmountOverlay();
 	@ModifyConstant(method = "mouseScrolled", constant = @Constant(intValue = 64))
 	public int modifyMaxScrollAmount(int original) {
 		return CCG.config.misc.removeRequestLimit ? Integer.MAX_VALUE : original;
@@ -36,5 +47,61 @@ public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen {
 		if (!restocker) return;
 		relocateButton.setPosition(relocateButton.getX() - 23, relocateButton.getY() - 54);
 		addRenderableWidget(relocateButton);
+	}
+	@Override
+	public void resize(@NotNull Minecraft minecraft, int width, int height) {
+		super.resize(minecraft, width, height);
+		ccg$popup = new RequestAmountOverlay();
+	}
+	@Override
+	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		if (ccg$popup.open) {
+			ccg$popup.mouseClicked(mouseX, mouseY, button);
+			return true;
+		}
+		if (CCG.config.misc.quickRequestActions && CCGKey.stockRequestSetter.isDown() && ccg$openPopupForHoveredSlot(mouseX, mouseY))
+			return true;
+		return super.mouseClicked(mouseX, mouseY, button);
+	}
+	/** 自定义请求数量弹窗：中键/按住中键点击输入格触发 */
+	@Unique
+	private boolean ccg$openPopupForHoveredSlot(double mouseX, double mouseY) {
+		if (craftingActive) return false;
+		for (var i = 0; i < inputConfig.size(); i++) {
+			var inputX = guiLeft + (restocker ? 88 : 68 + i % 3 * 20);
+			var inputY = guiTop + (restocker ? 12 : 28) + i / 3 * 20;
+			if (mouseX < inputX || mouseX >= inputX + 16 || mouseY < inputY || mouseY >= inputY + 16) continue;
+			var itemStack = inputConfig.get(i);
+			if (itemStack.stack.isEmpty()) return false;
+			var max = CCG.config.misc.removeRequestLimit ? Integer.MAX_VALUE : 64;
+			ccg$popup.open(itemStack.stack, itemStack.count, max, count -> itemStack.count = count);
+			return true;
+		}
+		return false;
+	}
+	@Inject(method = "mouseScrolled", at = @At("HEAD"), cancellable = true)
+	private void mouseScrolledEarlyReturn(
+		double mouseX,
+		double mouseY,
+		double scrollX,
+		double scrollY,
+		CallbackInfoReturnable<Boolean> cir
+	) {
+		if (ccg$popup.open) cir.setReturnValue(true);
+	}
+	@Override
+	public boolean charTyped(char codePoint, int modifiers) {
+		if (!ccg$popup.open) return super.charTyped(codePoint, modifiers);
+		return ccg$popup.charTyped(codePoint, modifiers);
+	}
+	@Override
+	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+		if (!ccg$popup.open) return super.keyPressed(keyCode, scanCode, modifiers);
+		return ccg$popup.keyPressed(keyCode, scanCode, modifiers);
+	}
+	@Inject(method = "renderWindow", at = @At("TAIL"))
+	private void renderPopup(GuiGraphics gui, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
+		if (!ccg$popup.open) return;
+		ccg$popup.render(gui, mouseX, mouseY, partialTicks);
 	}
 }

@@ -13,7 +13,7 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public abstract class LogisticalStockResponsePacketMixin implements Self<LogisticalStockResponsePacket> {
 	@Inject(method = "handle", at = @At("HEAD"), cancellable = true)
 	private void handleRedstoneRequester(LocalPlayer player, CallbackInfo ci) {
-		if (!CCG.config.misc.jei.redstoneRequesterLargeRequest) return;
+		if (!CCG.config.misc.redstoneRequesterLargeRequest) return;
 		var thiz = thiz();
 		if (mc.level == null || !(mc.level.getBlockEntity(thiz.pos()) instanceof StockSnapshotHolder holder)) return;
 		holder.ccg$receiveStockPacket(thiz.items(), thiz.lastPacket());

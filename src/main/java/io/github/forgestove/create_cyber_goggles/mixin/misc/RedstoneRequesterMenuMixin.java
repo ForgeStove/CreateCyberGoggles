@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.mixin.misc.jei;
+package io.github.forgestove.create_cyber_goggles.mixin.misc;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.redstoneRequester.*;
 import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterMenu.SorterProofSlot;
@@ -43,7 +43,7 @@ public abstract class RedstoneRequesterMenuMixin extends GhostItemMenu<RedstoneR
 		cancellable = true
 	)
 	private void saveData(RedstoneRequesterBlockEntity contentHolder, CallbackInfo ci) {
-		if (!CCG.config.misc.jei.redstoneRequesterLargeRequest) return;
+		if (!CCG.config.misc.redstoneRequesterLargeRequest) return;
 		if (contentHolder.getLevel() == null || !contentHolder.getLevel().isClientSide) return;
 		var screen = ccg$getScreenReference() instanceof RedstoneRequesterScreen s ? s : null;
 		var amounts = screen == null ? null : ((RedstoneRequesterScreenAccessor) screen).getAmounts();
@@ -67,12 +67,12 @@ public abstract class RedstoneRequesterMenuMixin extends GhostItemMenu<RedstoneR
 	/** 突破 9 格：幽灵库存扩到 81 槽，支持大配方请求 */
 	@ModifyConstant(method = "createGhostInventory", constant = @Constant(intValue = 9))
 	private int ghostInventorySize(int constant) {
-		return CCG.config.misc.jei.redstoneRequesterLargeRequest ? 81 : constant;
+		return CCG.config.misc.redstoneRequesterLargeRequest ? 81 : constant;
 	}
 	/** 81 槽全部注册在屏幕外，由 Screen 分页自绘当前 9 格（GhostItemMenu 基类按 ghostInventory 槽数索引，需注册全部 Slot 防越界） */
 	@Inject(method = "addSlots", at = @At("HEAD"), cancellable = true)
 	private void addSlots(CallbackInfo ci) {
-		if (!CCG.config.misc.jei.redstoneRequesterLargeRequest) return;
+		if (!CCG.config.misc.redstoneRequesterLargeRequest) return;
 		addPlayerSlots(5, 142);
 		for (var i = 0; i < 81; i++)
 			addSlot(new SorterProofSlot(ghostInventory, i, -999, -999));

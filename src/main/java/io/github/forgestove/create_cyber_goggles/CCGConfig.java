@@ -121,16 +121,17 @@ public final class CCGConfig {
 		@Category(false) public Wrench wrench = new Wrench();
 		@Category public CreateStackCount createStackCount = new CreateStackCount();
 		@Category public Jei jei = new Jei();
+		public boolean quickRequestActions = true;
+		public boolean redstoneRequesterLargeRequest = true;
 		public boolean removeMechanicalArmLimit = false;
 		public boolean removeRequestLimit = true;
-		public boolean stockRequestQuickActions = true;
-		public boolean recursiveSchematicScan = true;
-		public boolean preventSelectionDiscard = true;
-		public boolean preventAutoCloseFilter = false;
 		public boolean infEditBoxLength = false;
 		public boolean removeCardboardOverlay = true;
 		public boolean removeNetheriteFirstPerson = false;
+		public boolean preventSelectionDiscard = true;
+		public boolean preventAutoCloseFilter = false;
 		public boolean allowDivingBoot = true;
+		public boolean recursiveSchematicScan = true;
 		public boolean fixSchematicName = true;
 		public boolean removeTrainDamage = false;
 		public boolean enableNegativeInfThrottle = false;
@@ -159,7 +160,6 @@ public final class CCGConfig {
 		public static class Jei {
 			public boolean allowLargeCrafting = true;
 			public boolean optimizeRecipeProcessing = true;
-			public boolean redstoneRequesterLargeRequest = true;
 			public boolean redstoneRequesterJEIRequest = true;
 			public boolean showScrapContent = true;
 		}

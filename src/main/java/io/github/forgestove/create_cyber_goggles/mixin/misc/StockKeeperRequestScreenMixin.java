@@ -49,19 +49,19 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 	}
 	@ModifyVariable(method = "mouseScrolled", at = @At("STORE"), name = "transfer")
 	private int mouseScrolled(int transfer, @Local(name = "scrollY") double scrollY) {
-		if (!CCG.config.misc.stockRequestQuickActions) return transfer;
+		if (!CCG.config.misc.quickRequestActions) return transfer;
 		return Mth.ceil(Math.abs(scrollY)) * getModifiedScrollAmount();
 	}
 	/** 值恰为 1 时修正步进：shift +63 / ctrl +9，结果正好对齐 64 / 10 */
 	@WrapOperation(method = "mouseScrolled", at = @At(value = "INVOKE", target = "Ljava/lang/Math;min(II)I"))
 	private int adjustFromOne(int transfer, int stockAvailable, Operation<Integer> original, @Local(name = "current") int current) {
-		if (!CCG.config.misc.stockRequestQuickActions) return original.call(transfer, stockAvailable);
+		if (!CCG.config.misc.quickRequestActions) return original.call(transfer, stockAvailable);
 		if (current == 1 && transfer > 1) transfer--;
 		return original.call(transfer, stockAvailable);
 	}
 	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
 	private void mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
-		if (!CCG.config.misc.stockRequestQuickActions) {
+		if (!CCG.config.misc.quickRequestActions) {
 			if (ccg$popup.open) ccg$popup.close();
 			return;
 		}
@@ -128,21 +128,21 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 	}
 	@Inject(method = "charTyped", at = @At("HEAD"), cancellable = true)
 	private void charTyped(char codePoint, int modifiers, CallbackInfoReturnable<Boolean> cir) {
-		if (!CCG.config.misc.stockRequestQuickActions) return;
+		if (!CCG.config.misc.quickRequestActions) return;
 		if (!ccg$popup.open) return;
 		ccg$popup.charTyped(codePoint, modifiers);
 		cir.setReturnValue(true);
 	}
 	@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
 	private void keyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
-		if (!CCG.config.misc.stockRequestQuickActions) return;
+		if (!CCG.config.misc.quickRequestActions) return;
 		if (!ccg$popup.open) return;
 		ccg$popup.keyPressed(keyCode, scanCode, modifiers);
 		cir.setReturnValue(true);
 	}
 	@Inject(method = "renderForeground", at = @At("TAIL"))
 	private void renderPopup(GuiGraphics gui, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
-		if (!CCG.config.misc.stockRequestQuickActions) {
+		if (!CCG.config.misc.quickRequestActions) {
 			if (ccg$popup.open) ccg$popup.close();
 			return;
 		}

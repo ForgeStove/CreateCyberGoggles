@@ -53,7 +53,7 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 	/** 添加翻页按钮（9 格右侧下方） */
 	@Inject(method = "init", at = @At("TAIL"))
 	private void addPageButtons(CallbackInfo ci) {
-		if (!CCG.config.misc.jei.redstoneRequesterLargeRequest) return;
+		if (!CCG.config.misc.redstoneRequesterLargeRequest) return;
 		var x = thiz().getGuiLeft() + 27;
 		var y = thiz().getGuiTop() + 28;
 		var menu = (RequestPageProvider) thiz().getMenu();
@@ -85,17 +85,17 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 	/** 突破 9 格：数量列表扩到 81（与幽灵库存一致） */
 	@ModifyConstant(method = "<init>", constant = @Constant(intValue = 9))
 	private int amountsSize(int constant) {
-		return CCG.config.misc.jei.redstoneRequesterLargeRequest ? 81 : constant;
+		return CCG.config.misc.redstoneRequesterLargeRequest ? 81 : constant;
 	}
 	/** 分页后原版数量渲染会沿 i*20 横向溢出，禁用它（数量由下方自绘当前页） */
 	@WrapOperation(method = "renderForeground", at = @At(value = "INVOKE", target = "Ljava/util/List;size()I"))
 	private int disableVanillaAmounts(List<?> instance, Operation<Integer> original) {
-		return CCG.config.misc.jei.redstoneRequesterLargeRequest ? 0 : original.call(instance);
+		return CCG.config.misc.redstoneRequesterLargeRequest ? 0 : original.call(instance);
 	}
 	/** 分页渲染当前 9 格物品（背景纹理自带槽边框）与数量，并显示 hover tooltip 与页码 */
 	@Inject(method = "renderForeground", at = @At("RETURN"))
 	private void renderPage(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
-		if (!CCG.config.misc.jei.redstoneRequesterLargeRequest) return;
+		if (!CCG.config.misc.redstoneRequesterLargeRequest) return;
 		var x = thiz().getGuiLeft() + 27;
 		var y = thiz().getGuiTop() + 28;
 		var ghost = thiz().getMenu().ghostInventory;
@@ -141,7 +141,7 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 	}
 	@Unique
 	private int ccg$getPagedSlotIndex(int i) {
-		if (!CCG.config.misc.jei.redstoneRequesterLargeRequest) return i;
+		if (!CCG.config.misc.redstoneRequesterLargeRequest) return i;
 		return ccg$page() * 9 + i;
 	}
 	/** 动态总页数（无物品返回 0） */
@@ -160,8 +160,8 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 			ccg$popup.mouseClicked(mouseX, mouseY, button);
 			return true;
 		}
-		if (!CCG.config.misc.jei.redstoneRequesterLargeRequest) return super.mouseClicked(mouseX, mouseY, button);
-		if (CCGKey.stockRequestSetter.isDown() && ccg$openPopupForHoveredSlot(mouseX, mouseY)) return true;
+		if (CCG.config.misc.quickRequestActions && CCGKey.stockRequestSetter.isDown() && ccg$openPopupForHoveredSlot(mouseX, mouseY)) return true;
+		if (!CCG.config.misc.redstoneRequesterLargeRequest) return super.mouseClicked(mouseX, mouseY, button);
 		var x = thiz().getGuiLeft() + 27;
 		var y = thiz().getGuiTop() + 28;
 		var gx = (int) ((mouseX - x) / 20);
@@ -223,21 +223,21 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 	)
 	)
 	private int shiftSlotGet(int i) {
-		if (!CCG.config.misc.jei.redstoneRequesterLargeRequest) return i;
+		if (!CCG.config.misc.redstoneRequesterLargeRequest) return i;
 		return ccg$getPagedSlotIndex(i);
 	}
 	@ModifyArg(
 		method = "mouseScrolled", at = @At(value = "INVOKE", target = "Ljava/util/List;set(ILjava/lang/Object;)Ljava/lang/Object;")
 	)
 	private int shiftAmountSet(int i) {
-		if (!CCG.config.misc.jei.redstoneRequesterLargeRequest) return i;
+		if (!CCG.config.misc.redstoneRequesterLargeRequest) return i;
 		return ccg$getPagedSlotIndex(i);
 	}
 	@ModifyArg(
 		method = "mouseScrolled", at = @At(value = "INVOKE", target = "Ljava/util/List;get(I)Ljava/lang/Object;")
 	)
 	private int shiftAmountGet(int i) {
-		if (!CCG.config.misc.jei.redstoneRequesterLargeRequest) return i;
+		if (!CCG.config.misc.redstoneRequesterLargeRequest) return i;
 		return ccg$getPagedSlotIndex(i);
 	}
 	/** 快捷设置弹窗：字符输入 */

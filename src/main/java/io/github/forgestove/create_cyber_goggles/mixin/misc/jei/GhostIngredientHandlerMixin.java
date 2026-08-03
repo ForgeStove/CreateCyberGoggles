@@ -26,7 +26,7 @@ public abstract class GhostIngredientHandlerMixin<T extends GhostItemMenu<?>> {
 		boolean doStart,
 		CallbackInfoReturnable<List<Target<I>>> cir
 	) {
-		if (!CCG.config.misc.jei.redstoneRequesterLargeRequest) return;
+		if (!CCG.config.misc.redstoneRequesterLargeRequest) return;
 		if (!(gui.getMenu() instanceof RedstoneRequesterMenu menu)) return;
 		if (ingredient.getType() != VanillaTypes.ITEM_STACK) return;
 		var targets = new ArrayList<Target<I>>();

@@ -24,15 +24,15 @@ import org.spongepowered.asm.mixin.injection.callback.*;
 
 import java.util.List;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.getModifiedScrollAmount;
 @Mixin(StockKeeperRequestScreen.class)
 public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContainerScreen<StockKeeperRequestMenu>
 	implements Self<StockKeeperRequestScreen> {
-	@Unique private RequestAmountOverlay ccg$popup = new RequestAmountOverlay();
 	@Shadow public List<List<BigItemStack>> displayedItems;
 	@Shadow @Final int cols;
 	@Shadow StockTickerBlockEntity blockEntity;
 	@Shadow @Final Couple<Integer> noneHovered;
+	@Unique private RequestAmountOverlay ccg$popup = new RequestAmountOverlay();
 	public StockKeeperRequestScreenMixin(StockKeeperRequestMenu container, Inventory inv, Component title) {
 		super(container, inv, title);
 	}
@@ -46,6 +46,15 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 	public void resize(@NotNull Minecraft minecraft, int width, int height) {
 		super.resize(minecraft, width, height);
 		ccg$popup = new RequestAmountOverlay();
+	}
+	/** 滚动条分支仅在无修饰键时启用，使 ctrl/alt 滚动也能修改数量（原版只放行 shift） */
+	@WrapOperation(
+		method = "mouseScrolled",
+		at = @At(value = "INVOKE", target = "Lcom/simibubi/create/content/logistics/stockTicker/StockKeeperRequestScreen;hasShiftDown()Z")
+	)
+	private boolean modifyMaxScroll(Operation<Boolean> original) {
+		if (!CCG.config.misc.quickRequestActions) return original.call();
+		return hasControlDown() || original.call() || hasAltDown();
 	}
 	@ModifyVariable(method = "mouseScrolled", at = @At("STORE"), name = "transfer")
 	private int mouseScrolled(int transfer, @Local(name = "scrollY") double scrollY) {

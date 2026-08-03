@@ -20,7 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
-import org.spongepowered.asm.mixin.injection.callback.*;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
@@ -46,6 +46,17 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 	public void resize(@NotNull Minecraft minecraft, int width, int height) {
 		super.resize(minecraft, width, height);
 		ccg$popup = new RequestAmountOverlay();
+	}
+	@Override
+	public void render(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+		if (!CCG.config.misc.quickRequestActions) {
+			if (ccg$popup.open) ccg$popup.close();
+		} else if (ccg$popup.open) {
+			super.render(gui, 0, 0, partialTick);
+			ccg$popup.render(gui, mouseX, mouseY, partialTick);
+			return;
+		}
+		super.render(gui, mouseX, mouseY, partialTick);
 	}
 	/** 滚动条分支仅在无修饰键时启用，使 ctrl/alt 滚动也能修改数量（原版只放行 shift） */
 	@WrapOperation(
@@ -148,15 +159,6 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 		if (!ccg$popup.open) return;
 		ccg$popup.keyPressed(keyCode, scanCode, modifiers);
 		cir.setReturnValue(true);
-	}
-	@Inject(method = "renderForeground", at = @At("TAIL"))
-	private void renderPopup(GuiGraphics gui, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
-		if (!CCG.config.misc.quickRequestActions) {
-			if (ccg$popup.open) ccg$popup.close();
-			return;
-		}
-		if (!ccg$popup.open) return;
-		ccg$popup.render(gui, mouseX, mouseY, partialTicks);
 	}
 	@Unique
 	private void ccg$setOrRemoveOrder(ItemStack stack, int count) {

@@ -41,6 +41,15 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 		super.resize(minecraft, width, height);
 		ccg$popup = new RequestAmountOverlay();
 	}
+	@Override
+	public void render(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+		if (ccg$popup.open) {
+			super.render(gui, 0, 0, partialTick);
+			ccg$popup.render(gui, mouseX, mouseY, partialTick);
+			return;
+		}
+		super.render(gui, mouseX, mouseY, partialTick);
+	}
 	/** 打开界面时把当前 Screen 关联到菜单，供 JEI 转移读取 */
 	@Inject(method = "init", at = @At("HEAD"))
 	private void linkScreen(CallbackInfo ci) {
@@ -137,7 +146,6 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 			graphics.renderComponentTooltip(font, tooltip, mouseX, mouseY);
 			break;
 		}
-		if (ccg$popup.open) ccg$popup.render(graphics, mouseX, mouseY, partialTicks);
 	}
 	@Unique
 	private int ccg$getPagedSlotIndex(int i) {
@@ -160,7 +168,8 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 			ccg$popup.mouseClicked(mouseX, mouseY, button);
 			return true;
 		}
-		if (CCG.config.misc.quickRequestActions && CCGKey.stockRequestSetter.isDown() && ccg$openPopupForHoveredSlot(mouseX, mouseY)) return true;
+		if (CCG.config.misc.quickRequestActions && CCGKey.stockRequestSetter.isDown() && ccg$openPopupForHoveredSlot(mouseX, mouseY))
+			return true;
 		if (!CCG.config.misc.redstoneRequesterLargeRequest) return super.mouseClicked(mouseX, mouseY, button);
 		var x = thiz().getGuiLeft() + 27;
 		var y = thiz().getGuiTop() + 28;

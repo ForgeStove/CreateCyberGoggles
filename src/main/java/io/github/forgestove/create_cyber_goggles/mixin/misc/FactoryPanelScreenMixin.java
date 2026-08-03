@@ -54,6 +54,15 @@ public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen {
 		ccg$popup = new RequestAmountOverlay();
 	}
 	@Override
+	public void render(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+		if (ccg$popup.open) {
+			super.render(gui, 0, 0, partialTick);
+			ccg$popup.render(gui, mouseX, mouseY, partialTick);
+			return;
+		}
+		super.render(gui, mouseX, mouseY, partialTick);
+	}
+	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		if (ccg$popup.open) {
 			ccg$popup.mouseClicked(mouseX, mouseY, button);
@@ -98,10 +107,5 @@ public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen {
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
 		if (!ccg$popup.open) return super.keyPressed(keyCode, scanCode, modifiers);
 		return ccg$popup.keyPressed(keyCode, scanCode, modifiers);
-	}
-	@Inject(method = "renderWindow", at = @At("TAIL"))
-	private void renderPopup(GuiGraphics gui, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
-		if (!ccg$popup.open) return;
-		ccg$popup.render(gui, mouseX, mouseY, partialTicks);
 	}
 }

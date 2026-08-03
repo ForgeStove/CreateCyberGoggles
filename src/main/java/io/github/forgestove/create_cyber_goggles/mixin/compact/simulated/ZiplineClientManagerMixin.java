@@ -14,7 +14,7 @@ public abstract class ZiplineClientManagerMixin {
 		at = @At(value = "INVOKE", target = "Lcom/simibubi/create/AllTags$AllItemTags;matches(Lnet/minecraft/world/item/ItemStack;)Z")
 	)
 	private static boolean ridingTick(AllItemTags instance, ItemStack stack, Operation<Boolean> original) {
-		if (!CCG.config.aeronautics.alwaysAllowRidingRope) return original.call(instance, stack);
-		return true;
+		if (AllItemTags.CHAIN_RIDEABLE.equals(instance) && CCG.config.aeronautics.alwaysAllowRidingRope) return true;
+		return original.call(instance, stack);
 	}
 }

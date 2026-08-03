@@ -1,10 +1,14 @@
 package io.github.forgestove.create_cyber_goggles.core.factory;
+import com.google.common.collect.Lists;
 import com.simibubi.create.content.logistics.box.PackageStyles;
 import com.simibubi.create.foundation.gui.*;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import net.createmod.catnip.gui.element.GuiGameElement;
-import net.minecraft.client.gui.*;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
+import net.minecraft.client.gui.components.events.*;
+import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -13,110 +17,127 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
-import java.awt.Rectangle;
+import java.util.List;
 import java.util.function.Consumer;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
-public final class RequestAmountOverlay implements Renderable {
-	private static final int POPUP_WIDTH = 218, POPUP_HEIGHT = 79;
-	private final Rectangle popupRect = new Rectangle(POPUP_WIDTH, POPUP_HEIGHT);
-	private final IconButton confirmButton;
-	private final IconButton abortButton;
-	private final int x = (mc.getWindow().getGuiScaledWidth() - POPUP_WIDTH) / 2;
-	private final int y = (mc.getWindow().getGuiScaledHeight() - POPUP_HEIGHT) / 2;
-	private Consumer<Integer> onApply;
-	private boolean open;
-	private EditBox amountInput;
-	private ItemStack stack = ItemStack.EMPTY;
-	private int max = 1;
-	private ItemStack packageBox = ItemStack.EMPTY;
+public class RequestAmountOverlay extends AbstractContainerEventHandler implements Renderable {
+	protected static final int POPUP_WIDTH = 218, POPUP_HEIGHT = 79;
+	public final List<Renderable> renderables = Lists.newArrayList();
+	protected final List<GuiEventListener> children = Lists.newArrayList();
+	protected final IconButton confirmButton;
+	protected final IconButton cancelButton;
+	protected final ScreenRectangle popupRect;
+	protected final EditBox amountInput;
+	protected final int x = (mc.getWindow().getGuiScaledWidth() - POPUP_WIDTH) / 2;
+	protected final int y = (mc.getWindow().getGuiScaledHeight() - POPUP_HEIGHT) / 2;
+	public boolean open;
+	protected Consumer<Integer> onApply;
+	protected ItemStack stack = ItemStack.EMPTY;
+	protected int max = 1;
+	protected ItemStack packageBox = ItemStack.EMPTY;
 	public RequestAmountOverlay() {
-		confirmButton = new IconButton(0, 0, AllIcons.I_CONFIRM);
+		popupRect = new ScreenRectangle(x, y, POPUP_WIDTH, POPUP_HEIGHT);
+		confirmButton = new IconButton(x + 185, y + 55, AllIcons.I_CONFIRM);
 		confirmButton.withCallback(this::apply);
 		confirmButton.setToolTip(Component.translatable("config.ui.quit.confirm"));
-		abortButton = new IconButton(0, 0, AllIcons.I_CONFIG_BACK);
-		abortButton.withCallback(this::close);
-		abortButton.setToolTip(Component.translatable("gui.cancel"));
+		addRenderableWidget(confirmButton);
+		cancelButton = new IconButton(x + 155, y + 55, AllIcons.I_CONFIG_BACK);
+		cancelButton.withCallback(this::close);
+		cancelButton.setToolTip(Component.translatable("gui.cancel"));
+		addRenderableWidget(cancelButton);
+		amountInput = new EditBox(mc.font, x + 44, y + 28, 129, 9, Component.translatable("create_cyber_goggles.gui.stockRequest.amount"));
+		amountInput.setMaxLength(10);
+		amountInput.setFilter(value -> value.chars().allMatch(Character::isDigit));
+		amountInput.setBordered(false);
+		addRenderableWidget(amountInput);
 	}
-	private void apply() {
-		var amount = 0;
+	protected void apply() {
+		var amount = 1;
 		try {
 			amount = Mth.clamp(Integer.parseInt(amountInput.getValue()), 0, max);
-		} catch (NumberFormatException ignored) {
-		}
+		} catch (NumberFormatException ignored) {}
 		onApply.accept(amount);
 		close();
+	}
+	protected <T extends GuiEventListener & Renderable & NarratableEntry> void addRenderableWidget(T widget) {
+		renderables.add(widget);
+		children.add(widget);
 	}
 	public void close() {
 		open = false;
 		stack = ItemStack.EMPTY;
 	}
-	public boolean isOpen() {
-		return open;
-	}
-	public ItemStack getStack() {
-		return stack;
-	}
-	public void open(ItemStack stack, int initial, int max, Font font, Consumer<Integer> onApply) {
+	public void open(ItemStack stack, int initial, int max, Consumer<Integer> onApply) {
 		this.onApply = onApply;
 		open = true;
 		this.stack = stack.copyWithCount(1);
 		this.max = Math.max(0, max);
-		ensureInput(font);
-		amountInput.setValue(Integer.toString(Mth.clamp(initial, 0, this.max)));
+		amountInput.setValue(initial > 1 ? Integer.toString(Mth.clamp(initial, 0, this.max)) : "");
 		amountInput.setFocused(true);
-		confirmButton.setX(x + 185);
-		confirmButton.setY(y + 55);
-		abortButton.setX(x + 155);
-		abortButton.setY(y + 55);
 		packageBox = PackageStyles.getRandomBox();
 		mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1));
 	}
-	private void ensureInput(Font font) {
-		if (amountInput == null) {
-			amountInput = new EditBox(font, 0, 0, 129, 9, Component.translatable("create_cyber_goggles.gui.stockRequest.amount"));
-			amountInput.setMaxLength(9);
-			amountInput.setFilter(value -> value.chars().allMatch(Character::isDigit));
-			amountInput.setBordered(false);
+	@Override
+	public @NotNull List<? extends GuiEventListener> children() {
+		return children;
+	}
+	@Override
+	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		if (!open) return false;
+		if (amountInput.mouseClicked(mouseX, mouseY, button)) return true;
+		if (confirmButton.mouseClicked(mouseX, mouseY, button)) return true;
+		if (cancelButton.mouseClicked(mouseX, mouseY, button)) return true;
+		if (!getRectangle().containsPoint((int) mouseX, (int) mouseY)) {
+			close();
+			mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1));
+			return true;
 		}
-		amountInput.setPosition(x + 44, y + 28);
+		return false;
 	}
-	public void mouseClicked(double mouseX, double mouseY, int button) {
-		if (!open) return;
-		if (amountInput.mouseClicked(mouseX, mouseY, button)) return;
-		if (confirmButton.mouseClicked(mouseX, mouseY, button)) return;
-		if (abortButton.mouseClicked(mouseX, mouseY, button)) return;
-		if (!popupRect.contains(mouseX, mouseY)) close();
+	@Override
+	public @NotNull ScreenRectangle getRectangle() {
+		return popupRect;
 	}
-	public void charTyped(char codePoint, int modifiers) {
-		if (open) amountInput.charTyped(codePoint, modifiers);
+	@Override
+	public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+		return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
 	}
-	public void keyPressed(int keyCode, int scanCode, int modifiers) {
-		if (!open) return;
+	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+	}
+	@Override
+	public boolean charTyped(char codePoint, int modifiers) {
+		return open ? amountInput.charTyped(codePoint, modifiers) : super.charTyped(codePoint, modifiers);
+	}
+	@Override
+	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+		if (!open) return super.keyReleased(keyCode, scanCode, modifiers);
 		if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
 			close();
-			return;
+			mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1));
+			return super.keyReleased(keyCode, scanCode, modifiers);
 		}
 		if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
 			apply();
-			return;
+			return super.keyReleased(keyCode, scanCode, modifiers);
 		}
-		amountInput.keyPressed(keyCode, scanCode, modifiers);
+		return amountInput.keyPressed(keyCode, scanCode, modifiers);
 	}
 	@Override
 	public void render(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
 		if (!open) return;
 		var font = mc.font;
-		ensureInput(font);
-		popupRect.setLocation(x, y);
+		var pose = gui.pose();
+		pose.pushPose();
+		pose.translate(0, 0, 500);
 		AllGuiTextures.PACKAGE_FILTER.render(gui, x, y);
 		if (!stack.isEmpty()) gui.renderItem(stack, x + 16, y + 24);
-		var title = Component.translatable("create_cyber_goggles.gui.stockRequest.title");
+		var title = Component.translatable("create_cyber_goggles.gui.request.title");
 		gui.drawString(font, title, x + (210 - font.width(title)) / 2, y + 4, 0x303030, false);
-		amountInput.render(gui, mouseX, mouseY, partialTick);
-		confirmButton.render(gui, mouseX, mouseY, partialTick);
-		abortButton.render(gui, mouseX, mouseY, partialTick);
-		// 确认按钮右侧渲染随机外观的包裹实体
+		renderables.forEach(renderable -> renderable.render(gui, mouseX, mouseY, partialTick));
 		if (!packageBox.isEmpty()) GuiGameElement.of(packageBox).scale(3).at(x + 215, y + 35, 0).render(gui);
+		pose.popPose();
 	}
 }

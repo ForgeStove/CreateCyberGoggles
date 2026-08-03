@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.mixin.misc;
+package io.github.forgestove.create_cyber_goggles.mixin.misc.jei;
 import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.simibubi.create.compat.jei.StockKeeperTransferHandler;

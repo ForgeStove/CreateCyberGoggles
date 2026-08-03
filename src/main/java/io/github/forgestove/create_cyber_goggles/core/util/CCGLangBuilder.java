@@ -44,6 +44,9 @@ public class CCGLangBuilder {
 	public CCGLangBuilder text(String literalText, int color) {
 		return add(Component.literal(literalText).withStyle(style -> style.withColor(color)));
 	}
+	public CCGLangBuilder text(String literalText, net.createmod.catnip.theme.Color color) {
+		return add(Component.literal(literalText).withStyle(style -> style.withColor(color.getRGB())));
+	}
 	public CCGLangBuilder number(double number) {
 		return text(LangNumberFormat.format(number));
 	}
@@ -111,12 +114,15 @@ public class CCGLangBuilder {
 		siblings.replaceAll(c -> c.copy().withStyle(formats));
 		return this;
 	}
-	public CCGLangBuilder color(Color color) {
+	public CCGLangBuilder color(net.createmod.catnip.theme.Color color) {
 		return color(color.getRGB());
 	}
 	public CCGLangBuilder color(int color) {
 		if (component != null) component = component.withStyle(s -> s.withColor(color));
 		return this;
+	}
+	public CCGLangBuilder color(Color color) {
+		return color(color.getRGB());
 	}
 	@SuppressWarnings("unused")
 	public CCGLangBuilder fluidName(FluidStack stack) {

@@ -8,6 +8,7 @@ import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.ItemRenderable;
 import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -207,5 +208,11 @@ public final class CCGUtil {
 		var g = (g1 + g2) / 2;
 		var b = (b1 + b2) / 2;
 		return r << 16 | g << 8 | b;
+	}
+	public static int getModifiedScrollAmount() {
+		if (Screen.hasAltDown()) return 576;
+		if (Screen.hasShiftDown()) return 64;
+		if (Screen.hasControlDown()) return 10;
+		return 1;
 	}
 }

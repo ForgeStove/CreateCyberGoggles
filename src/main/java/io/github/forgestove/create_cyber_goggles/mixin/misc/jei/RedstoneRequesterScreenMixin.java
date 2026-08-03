@@ -6,34 +6,40 @@ import com.simibubi.create.content.logistics.stockTicker.LogisticalStockRequestP
 import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.menu.*;
 import com.simibubi.create.foundation.gui.widget.*;
-import com.simibubi.create.foundation.utility.CreateLang;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.*;
 import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
 import io.github.forgestove.create_cyber_goggles.core.factory.RequestAmountOverlay;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
 
 import java.util.List;
-@Mixin(RedstoneRequesterScreen.class)
+@Mixin(value = RedstoneRequesterScreen.class, remap = false)
 public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainerScreen<RedstoneRequesterMenu>
 	implements Self<RedstoneRequesterScreen> {
 	/** 快捷数量设置弹窗（create 原版样式，叠加渲染在当前界面） */
-	@Unique private final RequestAmountOverlay ccg$popup = new RequestAmountOverlay();
+	@Unique private RequestAmountOverlay ccg$popup = new RequestAmountOverlay();
 	@Shadow private List<Integer> amounts;
 	/** 翻页按钮（无法切换时禁用） */
 	@Unique private IconButton ccg$prevButton;
 	@Unique private IconButton ccg$nextButton;
 	public RedstoneRequesterScreenMixin(RedstoneRequesterMenu container, Inventory inv, Component title) {
 		super(container, inv, title);
+	}
+	@Override
+	public void resize(@NotNull Minecraft minecraft, int width, int height) {
+		super.resize(minecraft, width, height);
+		ccg$popup = new RequestAmountOverlay();
 	}
 	/** 打开界面时把当前 Screen 关联到菜单，供 JEI 转移读取 */
 	@Inject(method = "init", at = @At("HEAD"))
@@ -93,51 +99,50 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 		var x = thiz().getGuiLeft() + 27;
 		var y = thiz().getGuiTop() + 28;
 		var ghost = thiz().getMenu().ghostInventory;
-		var page = ccg$page();
 		for (var i = 0; i < 9; i++) {
-			// 槽框由背景纹理 REDSTONE_REQUESTER 自带，这里只画物品与数量
-			var stack = ghost.getStackInSlot(page * 9 + i);
+			var index = ccg$getPagedSlotIndex(i);
+			var stack = ghost.getStackInSlot(index);
 			if (stack.isEmpty()) continue;
 			graphics.renderItem(stack, x + 20 * i, y);
-			graphics.renderItemDecorations(font, stack, x + 20 * i, y, amounts.get(page * 9 + i) + "");
+			graphics.renderItemDecorations(font, stack, x + 20 * i, y, amounts.get(index) + "");
 		}
-		// 页码（缩小一半，固定 9 页；无物品不显示）
+		// 页码（固定 9 页；无物品不显示）
 		ccg$updatePageButtons();
 		if (ccg$pageCount() > 0) {
 			var ms = graphics.pose();
 			ms.pushPose();
 			ms.scale(0.5F, 0.5F, 1F);
-			graphics.drawString(font, (page + 1) + "/9", (x + 164) * 2, (y + 21) * 2, 0xFFFFFF);
+			graphics.drawString(font, (ccg$page() + 1) + "/9", (x + 164) * 2, (y + 21) * 2, 0xFFFFFF);
 			ms.popPose();
 		}
-		// hover 当前页物品显示 create 风格 tooltip
+		// 提示框
 		for (var i = 0; i < 9; i++) {
 			var ix = x + 20 * i;
 			if (mouseX < ix || mouseX >= ix + 16 || mouseY < y || mouseY >= y + 16) continue;
-			// create 原版悬停任意槽（含空槽）都显示高亮背景
 			renderSlotHighlight(graphics, ix, y, 0);
-			var stack = ghost.getStackInSlot(page * 9 + i);
+			var index = ccg$getPagedSlotIndex(i);
+			var stack = ghost.getStackInSlot(index);
 			if (stack.isEmpty()) break;
 			List<Component> tooltip = List.of(
-				CreateLang.translate(
-						"gui.factory_panel.send_item",
-						CreateLang.itemName(stack).add(CreateLang.text(" x" + amounts.get(page * 9 + i)))
-					)
-					.color(ScrollInput.HEADER_RGB)
-					.component(),
-				CreateLang.translate("gui.factory_panel.scroll_to_change_amount")
-					.style(ChatFormatting.DARK_GRAY)
-					.style(ChatFormatting.ITALIC)
-					.component(),
-				CreateLang.translate("gui.scrollInput.shiftScrollsFaster")
-					.style(ChatFormatting.DARK_GRAY)
-					.style(ChatFormatting.ITALIC)
-					.component()
+				Component.translatable(
+					"create.gui.factory_panel.send_item",
+					CCGLang.itemName(stack)
+						.text(" x" + amounts.get(index), ScrollInput.HEADER_RGB)
+						.color(ScrollInput.HEADER_RGB)
+						.component()
+				).withColor(ScrollInput.HEADER_RGB.getRGB()),
+				Component.translatable("create.gui.factory_panel.scroll_to_change_amount")
+					.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC)
 			);
 			graphics.renderComponentTooltip(font, tooltip, mouseX, mouseY);
 			break;
 		}
-		if (ccg$popup.isOpen()) ccg$popup.render(graphics, mouseX, mouseY, partialTicks);
+		if (ccg$popup.open) ccg$popup.render(graphics, mouseX, mouseY, partialTicks);
+	}
+	@Unique
+	private int ccg$getPagedSlotIndex(int i) {
+		if (!CCG.config.misc.jei.redstoneRequesterLargeRequest) return i;
+		return ccg$page() * 9 + i;
 	}
 	/** 动态总页数（无物品返回 0） */
 	@Unique
@@ -146,22 +151,22 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 		var last = -1;
 		for (var i = 0; i < ghost.getSlots(); i++)
 			if (!ghost.getStackInSlot(i).isEmpty()) last = i;
-		return last / 9 + 1;
+		return last < 0 ? 0 : last / 9 + 1;
 	}
 	/** 分页交互：当前 9 格放置/移除物品（翻页由 IconButton 处理） */
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		if (ccg$popup.isOpen()) {
+		if (ccg$popup.open) {
 			ccg$popup.mouseClicked(mouseX, mouseY, button);
 			return true;
 		}
 		if (!CCG.config.misc.jei.redstoneRequesterLargeRequest) return super.mouseClicked(mouseX, mouseY, button);
-		if (button == 0 && CCGKey.stockRequestSetter.isDown() && ccg$openPopupForHoveredSlot(mouseX, mouseY)) return true;
+		if (CCGKey.stockRequestSetter.isDown() && ccg$openPopupForHoveredSlot(mouseX, mouseY)) return true;
 		var x = thiz().getGuiLeft() + 27;
 		var y = thiz().getGuiTop() + 28;
 		var gx = (int) ((mouseX - x) / 20);
 		if (gx >= 0 && gx < 9 && mouseY >= y && mouseY < y + 16) {
-			var slot = ccg$page() * 9 + gx;
+			var slot = ccg$getPagedSlotIndex(gx);
 			var ghost = thiz().getMenu().ghostInventory;
 			if (button == 0) {
 				var carried = thiz().getMenu().getCarried();
@@ -183,10 +188,10 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 		var y = thiz().getGuiTop() + 28;
 		var gx = (int) ((mouseX - x) / 20);
 		if (gx < 0 || gx >= 9 || mouseY < y || mouseY >= y + 16) return false;
-		var slot = ccg$page() * 9 + gx;
+		var slot = ccg$getPagedSlotIndex(gx);
 		var stack = thiz().getMenu().ghostInventory.getStackInSlot(slot);
 		if (stack.isEmpty()) return false;
-		ccg$popup.open(stack, amounts.get(slot), ccg$getAvailableMax(stack), font, count -> amounts.set(slot, count));
+		ccg$popup.open(stack, amounts.get(slot), ccg$getAvailableMax(stack), count -> amounts.set(slot, count));
 		return true;
 	}
 	@Unique
@@ -199,48 +204,52 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 				if (count > 0) return count;
 			}
 		}
-		return 256;
+		return CCG.config.misc.removeRequestLimit ? Integer.MAX_VALUE : 256;
 	}
 	/** 分页交互：当前 9 格滚轮改数量（功能关闭时放行原版，否则会覆盖 create 的 mouseScrolled） */
 	@Inject(method = "mouseScrolled", at = @At("HEAD"), cancellable = true)
-	private void mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY, CallbackInfoReturnable<Boolean> cir) {
-		if (ccg$popup.isOpen()) {
-			cir.setReturnValue(true);
-			return;
-		}
-		if (!CCG.config.misc.jei.redstoneRequesterLargeRequest) return;
-		var x = thiz().getGuiLeft() + 27;
-		var y = thiz().getGuiTop() + 28;
-		for (var i = 0; i < 9; i++)
-			if (mouseX >= x + 20 * i && mouseX < x + 20 * i + 16 && mouseY >= y && mouseY < y + 16) {
-				var slot = ccg$page() * 9 + i;
-				if (thiz().getMenu().ghostInventory.getStackInSlot(slot).isEmpty()) {
-					cir.setReturnValue(true);
-					return;
-				}
-				var base = hasShiftDown() ? 10 : 1;
-				var max = CCG.config.misc.removeRequestLimit ? Integer.MAX_VALUE : 256;
-				amounts.set(slot, Mth.clamp(amounts.get(slot) + (int) Math.signum(scrollY) * base, 1, max));
-				cir.setReturnValue(true);
-				return;
-			}
+	private void mouseScrolledEarlyReturn(
+		double mouseX,
+		double mouseY,
+		double scrollX,
+		double scrollY,
+		CallbackInfoReturnable<Boolean> cir
+	) {
+		if (ccg$popup.open) cir.setReturnValue(true);
+	}
+	@ModifyArg(
+		method = "mouseScrolled", at = @At(
+		value = "INVOKE", target = "Lnet/neoforged/neoforge/items/ItemStackHandler;getStackInSlot(I)Lnet/minecraft/world/item/ItemStack;"
+	)
+	)
+	private int shiftSlotGet(int i) {
+		if (!CCG.config.misc.jei.redstoneRequesterLargeRequest) return i;
+		return ccg$getPagedSlotIndex(i);
+	}
+	@ModifyArg(
+		method = "mouseScrolled", at = @At(value = "INVOKE", target = "Ljava/util/List;set(ILjava/lang/Object;)Ljava/lang/Object;")
+	)
+	private int shiftAmountSet(int i) {
+		if (!CCG.config.misc.jei.redstoneRequesterLargeRequest) return i;
+		return ccg$getPagedSlotIndex(i);
+	}
+	@ModifyArg(
+		method = "mouseScrolled", at = @At(value = "INVOKE", target = "Ljava/util/List;get(I)Ljava/lang/Object;")
+	)
+	private int shiftAmountGet(int i) {
+		if (!CCG.config.misc.jei.redstoneRequesterLargeRequest) return i;
+		return ccg$getPagedSlotIndex(i);
 	}
 	/** 快捷设置弹窗：字符输入 */
 	@Override
 	public boolean charTyped(char codePoint, int modifiers) {
-		if (ccg$popup.isOpen()) {
-			ccg$popup.charTyped(codePoint, modifiers);
-			return true;
-		}
-		return super.charTyped(codePoint, modifiers);
+		if (!ccg$popup.open) return super.charTyped(codePoint, modifiers);
+		return ccg$popup.charTyped(codePoint, modifiers);
 	}
 	/** 快捷设置弹窗：键盘处理 */
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		if (ccg$popup.isOpen()) {
-			ccg$popup.keyPressed(keyCode, scanCode, modifiers);
-			return true;
-		}
-		return super.keyPressed(keyCode, scanCode, modifiers);
+		if (!ccg$popup.open) return super.keyPressed(keyCode, scanCode, modifiers);
+		return ccg$popup.keyPressed(keyCode, scanCode, modifiers);
 	}
 }

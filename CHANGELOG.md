@@ -1,6 +1,7 @@
 - Improve RequestAmountOverlay layout and UI, optimize sound references
 - Resolve config disorganization, update some localization keys
 - Add custom quantity setting for factory panels
+- Add clipboard item model render compact
 - Fix numerous display and modifier-key interaction issues
 - Fix scrollbar taking priority over modifier keys
 - Fix GUI layer rendering issue

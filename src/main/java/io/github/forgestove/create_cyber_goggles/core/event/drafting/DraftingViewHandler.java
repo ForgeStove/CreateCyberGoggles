@@ -18,11 +18,7 @@ public final class DraftingViewHandler {
 	private static final ResourceLocation PALETTE_TEXTURE = getCCGRes("textures/effects/diagram_palette.png");
 	private static final ResourceLocation DITHER_TEXTURE = getCCGRes("textures/effects/dither.png");
 	private static DraftingFramebuffer framebuffer;
-	/**
-	 * 在所有方块/实体几何体渲染完成后、Create 渲染示意图箭头及其他覆盖元素
-	 * {@link Stage#AFTER_PARTICLES} 之前应用绘图视图效果，使它们在风格化场景上方保持清晰。
-	 */
-	@SuppressWarnings("resource")
+	@SuppressWarnings("resource") // 着色器由 DraftingShaders 缓存管理，不应在此关闭
 	public static void render(RenderLevelStageEvent event) {
 		if (event.getStage() != Stage.AFTER_TRIPWIRE_BLOCKS) return;
 		if (!CCG.config.overlay.draftingView.draftingViewEnabled) return;

@@ -10,6 +10,7 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 @AutoTooltipRenderer
 public class ListFilterRenderer extends AbstractItemGridRenderer {
+	@Override
 	public boolean supports(ItemStack stack) {
 		return CCG.config.tooltip.listFilter && stack.is(AllItems.FILTER);
 	}

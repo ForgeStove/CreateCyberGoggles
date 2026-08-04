@@ -147,6 +147,7 @@ public abstract class AbstractItemGridRenderer implements TooltipRenderer {
 	) {
 		gui.blit(CONTAINER_BACKGROUND, x, y, dstW, dstH, srcU, srcV, srcW, srcH, rect.texW(), rect.texH());
 	}
+	@Override
 	public abstract boolean supports(ItemStack stack);
 	@Override
 	public int width(ItemStack stack) {

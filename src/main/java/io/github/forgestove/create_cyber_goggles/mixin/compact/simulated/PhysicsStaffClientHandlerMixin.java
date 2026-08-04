@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
+@Pseudo
 @Mixin(PhysicsStaffClientHandler.class)
 public abstract class PhysicsStaffClientHandlerMixin {
 	@Shadow @Nullable private ClientDragSession dragSession;

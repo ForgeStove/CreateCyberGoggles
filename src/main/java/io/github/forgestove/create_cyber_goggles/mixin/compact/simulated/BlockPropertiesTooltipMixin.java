@@ -9,6 +9,7 @@ import net.minecraft.world.item.BlockItem;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+@Pseudo
 @Mixin(BlockPropertiesTooltip.class)
 public abstract class BlockPropertiesTooltipMixin {
 	@Inject(method = "getMassComponent", at = @At(value = "RETURN", ordinal = 0), cancellable = true)

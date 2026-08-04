@@ -8,6 +8,7 @@ import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
+@Pseudo
 @Mixin(ClientHandleHandler.class)
 public abstract class ClientHandleHandlerMixin extends BlockHoldInteraction {
 	@Shadow private float desiredRange;

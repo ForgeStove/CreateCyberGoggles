@@ -36,6 +36,7 @@ public class CCGClient {
 		game.addListener(KineticParticle::tick);
 		game.addListener(KineticDebugger::tick);
 		game.addListener(Outliner::tick);
+		game.addListener(ChainConveyorFlowHandler::render);
 		game.addListener(TipOverlay::tick);
 		game.addListener(DraftingViewHandler::render);
 		game.addListener(EnderChestTooltipUtil::clear);

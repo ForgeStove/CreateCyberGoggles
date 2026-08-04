@@ -6,6 +6,7 @@ import dev.ryanhcode.sable.api.physics.force.ForceGroups;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.factory.CCGRenderTypes;
 import net.minecraft.client.Camera;
 import net.minecraft.client.gui.Font.DisplayMode;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
@@ -60,7 +61,7 @@ public final class ForceOverlayRenderer {
 			var hasData = ForceOverlay.hasData();
 			// 渲染质心标记（始终渲染，即使没有数据）
 			if (CCG.config.aeronautics.forceOverlay.showCenterOfMass) {
-				var fillType = OverlayRenderTypes.OVERLAY_FILL;
+				var fillType = CCGRenderTypes.OVERLAY_FILL;
 				var consumer = bufferSource.getBuffer(fillType);
 				float r, g, b;
 				if (hasData) {
@@ -170,7 +171,7 @@ public final class ForceOverlayRenderer {
 		});
 		if (arrows.isEmpty()) return;
 		// 渲染所有箭头
-		var triType = OverlayRenderTypes.OVERLAY_TRIANGLES;
+		var triType = CCGRenderTypes.OVERLAY_TRIANGLES;
 		var triConsumer = bufferSource.getBuffer(triType);
 		var pose = poseStack.last();
 		for (var a : arrows) {
@@ -253,7 +254,7 @@ public final class ForceOverlayRenderer {
 		}
 		var cameraRot = new Quaternionf(camera.rotation());
 		// 背景
-		var fillConsumer = bufferSource.getBuffer(OverlayRenderTypes.OVERLAY_FILL);
+		var fillConsumer = bufferSource.getBuffer(CCGRenderTypes.OVERLAY_FILL);
 		for (var e : entries) {
 			var halfW = font.width(e.text) / 2f;
 			poseStack.pushPose();
@@ -263,7 +264,7 @@ public final class ForceOverlayRenderer {
 			drawLabelBg(poseStack.last(), fillConsumer, halfW);
 			poseStack.popPose();
 		}
-		bufferSource.endBatch(OverlayRenderTypes.OVERLAY_FILL);
+		bufferSource.endBatch(CCGRenderTypes.OVERLAY_FILL);
 		// 文字
 		RenderSystem.disableCull();
 		for (var e : entries) {

@@ -14,6 +14,7 @@ public class ListFilterRenderer extends AbstractItemGridRenderer {
 	public boolean supports(ItemStack stack) {
 		return CCG.config.tooltip.listFilter && stack.is(AllItems.FILTER);
 	}
+	@Override
 	public @Nullable OverlayData buildItemGrid(ItemStack stack) {
 		var accessor = (ItemStackHandlerAccessor) getFilterItemHandler(stack);
 		var stacks = accessor.create$getStacks();

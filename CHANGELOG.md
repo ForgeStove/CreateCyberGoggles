@@ -1,7 +1,6 @@
-- Improve RequestAmountOverlay layout and UI, optimize sound references
-- Resolve config disorganization, update some localization keys
-- Add custom quantity setting for factory panels
-- Add clipboard item model render compact
-- Fix numerous display and modifier-key interaction issues
-- Fix scrollbar taking priority over modifier keys
-- Fix GUI layer rendering issue
+- Fix compact for Extra Gauge and Fluidlogistic
+- Fix tooltip position bug
+- Fix compact for ClipboardRenderer in shaders
+- Optimize LinkedControllerRenderer
+- Add the rendering of the chain movement direction for Chain Conveyor
+- Add item model render support for clipboard in hand

@@ -13,11 +13,13 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.RenderStateShard.TextureStateShard;
 import net.minecraft.client.renderer.RenderType.CompositeState;
-import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.*;
+import net.neoforged.neoforge.client.ClientHooks;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 @AutoTooltipRenderer
@@ -27,22 +29,41 @@ public final class ClipboardRenderer implements TooltipRenderer {
 	private static final float ICON_SCALE = 10F;
 	// renderClipboardPage 对剪贴板坐标系的整体缩放
 	private static final float HAND_SCALE = 0.01F * 0.4F * SCALE;
+	// 图标用 RenderType：text shader 匹配 BLOCK 格式且 light 有效，NO_DEPTH_TEST 无视背景深度，始终显示在剪贴板上方
+	private static final RenderType ICON_NO_DEPTH = RenderType.create(
+		"ccg_clipboard_icon",
+		DefaultVertexFormat.BLOCK,
+		Mode.QUADS,
+		2097152,
+		true,
+		true,
+		CompositeState.builder()
+			.setShaderState(RenderType.RENDERTYPE_TEXT_SHADER)
+			.setTextureState(new TextureStateShard(InventoryMenu.BLOCK_ATLAS, false, false))
+			.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
+			.setLightmapState(RenderType.LIGHTMAP)
+			.setDepthTestState(RenderType.NO_DEPTH_TEST)
+			.setWriteMaskState(RenderType.COLOR_WRITE)
+			.createCompositeState(true)
+	);
 	public static void renderClipboardPage(PoseStack pose, MultiBufferSource buffer, int light, ItemStack stack) {
 		pose.pushPose();
 		var matrix = pose.last().pose();
 		matrix.rotate(Axis.YP.rotationDegrees(180F)).rotate(Axis.ZP.rotationDegrees(180F)).translate(-0.25F, -0.3F, 0F).scale(HAND_SCALE);
-		var renderType = textNoDepthWrite(AllGuiTextures.CLIPBOARD.getLocation(), false);
+		var renderType = textWithDepth(AllGuiTextures.CLIPBOARD.getLocation(), false);
 		renderGuiTexure(AllGuiTextures.CLIPBOARD, pose, buffer, light, 0, 0, renderType);
 		renderText(pose, buffer, light, stack);
 		pose.popPose();
 	}
-	private static RenderType textNoDepthWrite(ResourceLocation location, boolean polygonOffset) {
+	// 背景/贴图用 RenderType：正常深度遮挡并写深度（挡住云等透明物），图标改用 NO_DEPTH_TEST 不受其深度影响
+	private static RenderType textWithDepth(ResourceLocation location, boolean polygonOffset) {
 		var builder = CompositeState.builder()
 			.setShaderState(RenderType.RENDERTYPE_TEXT_SHADER)
 			.setTextureState(new TextureStateShard(location, false, false))
 			.setTransparencyState(RenderType.TRANSLUCENT_TRANSPARENCY)
 			.setLightmapState(RenderType.LIGHTMAP)
-			.setWriteMaskState(RenderType.COLOR_WRITE);
+			.setDepthTestState(RenderType.LEQUAL_DEPTH_TEST)
+			.setWriteMaskState(RenderType.COLOR_DEPTH_WRITE);
 		if (polygonOffset) builder.setLayeringState(RenderType.POLYGON_OFFSET_LAYERING);
 		return RenderType.create(
 			"ccg_clipboard_text",
@@ -102,7 +123,7 @@ public final class ClipboardRenderer implements TooltipRenderer {
 			var checked = entry.checked;
 			if (address) {
 				var texture = checked ? AllGuiTextures.CLIPBOARD_ADDRESS_INACTIVE : AllGuiTextures.CLIPBOARD_ADDRESS;
-				renderGuiTexure(texture, pose, buffer, light, x - 1, y, textNoDepthWrite(texture.getLocation(), true));
+				renderGuiTexure(texture, pose, buffer, light, x - 1, y, textWithDepth(texture.getLocation(), true));
 			} else {
 				font.drawInBatch("□", x, y, checked ? 0x668D7F6B : 0xFF8D7F6B, false, matrix, buffer, mode, 0, light);
 				if (checked) font.drawInBatch("✔", x, y - 1, 0x31B25D, false, matrix, buffer, mode, 0, light);
@@ -116,8 +137,14 @@ public final class ClipboardRenderer implements TooltipRenderer {
 				pose.mulPose(Axis.XP.rotationDegrees(180F));
 				pose.mulPose(Axis.YP.rotationDegrees(180F));
 				pose.scale(ICON_SCALE, ICON_SCALE, ICON_SCALE);
-				mc.getItemRenderer()
-					.renderStatic(entry.icon, ItemDisplayContext.NONE, light, OverlayTexture.NO_OVERLAY, pose, buffer, mc.level, 0);
+				// 手动渲染模型：NO_DEPTH_TEST 无视背景深度，始终显示在剪贴板上
+				// 与 renderStatic 内部一致：translate(0.5) → 相机变换 → translate(-0.5)，模型绕中心旋转
+				var itemRenderer = mc.getItemRenderer();
+				var model = itemRenderer.getModel(entry.icon, mc.level, null, 0);
+				var handled = ClientHooks.handleCameraTransforms(pose, model, ItemDisplayContext.NONE, false);
+				pose.translate(-0.5F, -0.5F, -0.5F);
+				itemRenderer.renderModelLists(handled, entry.icon, light, OverlayTexture.NO_OVERLAY, pose,
+					buffer.getBuffer(ICON_NO_DEPTH));
 				pose.popPose();
 			}
 			for (var sequence : font.split(Component.literal(text), 150 - iconOffset)) {

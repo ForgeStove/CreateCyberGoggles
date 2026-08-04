@@ -65,6 +65,7 @@ dependencies {
 	compileOnly("maven.modrinth:create-enchantment-industry:${p("ceiVersion")}")
 	compileOnly("maven.modrinth:create-dragons-plus:${p("dragonPlusVersion")}")
 	//endregion
+	implementation("maven.modrinth:createfluidlogistic:${p("fluidlogisticVersion")}")
 	implementation("mezz.jei:jei-${p("mcVersion")}-${p("loader")}:${p("jeiVersion")}")
 	compileOnly("dev.emi:emi-${p("loader")}:${p("emiVersion")}+${p("mcVersion")}")
 	compileOnly("maven.modrinth:sophisticated-core:${p("mcVersion")}-${p("sophisticatedCoreVersion")}")

@@ -16,7 +16,11 @@ public final class OverlayLayoutManager {
 	public static float overallScale = 1;
 	/** 整体缩放锚点（三个 overlay 包围盒中心），整体缩放围绕此点 */
 	public static int scaleCenterX, scaleCenterY;
+	/** 上面 overlay（TooltipOverlay/itemtooltip）占据的最大底部 y；prev 为上一帧值，供 Goggle（最下）避让 */
+	public static int upperBottom, prevUpperBottom;
 	public static void clearFrame() {
+		prevUpperBottom = upperBottom;
+		upperBottom = 0;
 		overallOffsetY = 0;
 		overallScale = 1;
 		occupied.clear();

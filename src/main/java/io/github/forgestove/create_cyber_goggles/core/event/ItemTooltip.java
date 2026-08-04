@@ -22,7 +22,6 @@ import java.util.*;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public final class ItemTooltip {
 	public final static List<TooltipRenderer> OVERLAY_RENDERERS = new ArrayList<>();
-	private static final int OVERLAY_GAP = 6;
 	static {
 		var annoName = AutoTooltipRenderer.class.getName();
 		ModList.get().getAllScanData().forEach(scanData -> scanData.getAnnotations().forEach(annoData -> {
@@ -154,16 +153,6 @@ public final class ItemTooltip {
 			OverlayLayoutManager.overallOffsetY = Math.max(OverlayLayoutManager.overallOffsetY, -overlayY);
 			overlayY = 0;
 		}
-		// 避开已占用区域（TooltipOverlay 物品框 / Goggle 目镜）：优先移到其下方，否则上方
-		var overlap = OverlayLayoutManager.findOverlap(overlayX - 4, overlayY, overlayWidth, overlayHeight);
-		if (overlap != null) {
-			var above = overlap.getY() - overlayHeight - OVERLAY_GAP;
-			if (above >= 0) overlayY = above;
-			else {
-				var below = overlap.getY() + overlap.getHeight() + OVERLAY_GAP;
-				if (below + overlayHeight <= event.getScreenHeight()) overlayY = below;
-			}
-		}
 		// 完整 clamp 到屏幕内（避免越界）
 		overlayX = Mth.clamp(overlayX, 0, Math.max(0, event.getScreenWidth() - overlayWidth));
 		overlayY = Mth.clamp(overlayY, 0, Math.max(0, event.getScreenHeight() - overlayHeight));
@@ -193,6 +182,7 @@ public final class ItemTooltip {
 			pose.translate(-OverlayLayoutManager.scaleCenterX, -OverlayLayoutManager.scaleCenterY, 0);
 		}
 		renderer.render(graphics, stack, overlayX - 4, overlayY);
+		OverlayLayoutManager.upperBottom = Math.max(OverlayLayoutManager.upperBottom, overlayY + overlayHeight);
 		pose.popPose();
 	}
 	private static @NotNull Vector2ic getPos(@NotNull Pre event, int width, int height) {
@@ -203,6 +193,6 @@ public final class ItemTooltip {
 		return Mth.clamp(pos.x(), 0, Math.max(0, event.getScreenWidth() - overlayWidth));
 	}
 	private static int getOverlayY(Vector2ic pos, int overlayHeight) {
-		return pos.y() - overlayHeight - OVERLAY_GAP;
+		return pos.y() - overlayHeight - 6;
 	}
 }

@@ -3,9 +3,12 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.simibubi.create.api.equipment.goggles.*;
 import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
+import com.simibubi.create.infrastructure.config.AllConfigs;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.event.*;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
+import net.createmod.catnip.gui.element.GuiGameElement.GuiRenderBuilder;
+import net.createmod.catnip.gui.element.RenderElement;
 import net.createmod.catnip.outliner.Outliner.OutlineEntry;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -23,15 +26,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
-@Mixin(GoggleOverlayRenderer.class)
+@Mixin(value = GoggleOverlayRenderer.class, remap = false)
 public abstract class GoggleOverlayRendererMixin {
 	@Unique private static HitResult ccg$lastHitResult;
+	@Unique private static int ccg$goggleIconOffset;
 	@Inject(method = "renderOverlay", at = @At("HEAD"), cancellable = true)
 	private static void renderOverlay(CallbackInfo ci) {
 		OverlayLayoutManager.clearFrame(); // 帧开始清空已占用区域
 		// 默认整体缩放锚点为屏幕中心（itemtooltip 渲染时会更新为包围盒中心）
 		OverlayLayoutManager.scaleCenterX = mc.getWindow().getGuiScaledWidth() / 2;
 		OverlayLayoutManager.scaleCenterY = mc.getWindow().getGuiScaledHeight() / 2;
+		// 计算 Goggle 让开偏移（供 tooltip 与自带 icon 一起使用）
+		var goggleY = mc.getWindow().getGuiScaledHeight() / 2 + AllConfigs.client().overlayOffsetY.get();
+		ccg$goggleIconOffset = goggleY < OverlayLayoutManager.prevUpperBottom ? OverlayLayoutManager.prevUpperBottom + 22 - goggleY : 0;
 		if (!CCG.config.goggles.disableInScreenGoggles || isInGame()) return;
 		ci.cancel();
 	}
@@ -82,6 +89,8 @@ public abstract class GoggleOverlayRendererMixin {
 		Operation<Void> original
 	) {
 		if (CCG.config.goggles.dedupTooltipLines) tooltip = GoggleTooltipDedupUtil.dedupAdjacentLines(tooltip);
+		// 下面避让上面：Goggle（最下）让开 TooltipOverlay/itemtooltip（上面）占据的区域
+		y += ccg$goggleIconOffset;
 		var hasItemList = false;
 		for (var line : tooltip) {
 			if (!TooltipComponentUtil.hasIcon(line)) continue;
@@ -97,6 +106,16 @@ public abstract class GoggleOverlayRendererMixin {
 		var tooltipWidth = components.stream().mapToInt(c -> c.getWidth(mc.font)).max().orElse(0);
 		var tooltipHeight = components.stream().mapToInt(ClientTooltipComponent::getHeight).sum() + (components.size() > 1 ? 2 : 0);
 		TooltipOverlay.renderTooltip(gui, ItemStack.EMPTY, components, x, y, tooltipWidth, tooltipHeight, back, top, bot);
+	}
+	@WrapOperation(
+		method = "renderOverlay", at = @At(
+		value = "INVOKE",
+		target = "Lnet/createmod/catnip/gui/element/GuiGameElement$GuiRenderBuilder;at(FFF)"
+			+ "Lnet/createmod/catnip/gui/element/RenderElement;"
+	)
+	)
+	private static RenderElement adjustIcon(GuiRenderBuilder instance, float x, float y, float z, Operation<GuiRenderBuilder> original) {
+		return original.call(instance, x, y + ccg$goggleIconOffset, z);
 	}
 	@ModifyExpressionValue(
 		method = "renderOverlay", at = @At(

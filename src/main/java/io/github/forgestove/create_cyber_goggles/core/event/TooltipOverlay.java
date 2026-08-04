@@ -229,6 +229,7 @@ public final class TooltipOverlay {
 			textY += component.getHeight() + (i == 0 ? 2 : 0);
 		}
 		// 登记已渲染区域，供后渲染的 TooltipRenderer 避让
+		OverlayLayoutManager.upperBottom = Math.max(OverlayLayoutManager.upperBottom, tooltipY + tooltipHeight);
 		OverlayLayoutManager.occupy(tooltipX, tooltipY, tooltipWidth, tooltipHeight);
 		pose.popPose();
 	}

@@ -7,7 +7,7 @@ import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.factory.CCGRenderTypes;
-import io.github.forgestove.create_cyber_goggles.core.util.CCGMods;
+import io.github.forgestove.create_cyber_goggles.core.factory.CCGMods;
 import net.minecraft.client.Camera;
 import net.minecraft.client.gui.Font.DisplayMode;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;

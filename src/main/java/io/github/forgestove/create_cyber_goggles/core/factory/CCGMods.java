@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.core.util;
+package io.github.forgestove.create_cyber_goggles.core.factory;
 import net.createmod.catnip.lang.Lang;
 import net.createmod.catnip.registry.RegisteredObjectsHelper;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -15,6 +15,7 @@ public enum CCGMods {
 	simulated,
 	sable,
 	fluidlogistics,
+	extra_gauges,
 	obscure_tooltips,
 	modernui;
 	private final String id;

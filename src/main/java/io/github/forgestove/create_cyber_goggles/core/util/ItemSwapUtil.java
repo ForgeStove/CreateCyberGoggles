@@ -2,6 +2,7 @@ package io.github.forgestove.create_cyber_goggles.core.util;
 import com.simibubi.create.AllItems;
 import dev.simulated_team.simulated.index.SimItems;
 import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
+import io.github.forgestove.create_cyber_goggles.core.factory.CCGMods;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.world.entity.player.Inventory;

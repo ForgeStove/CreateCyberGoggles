@@ -1,5 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.util;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.factory.CCGMods;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.Font.DisplayMode;
 import net.minecraft.client.renderer.MultiBufferSource;

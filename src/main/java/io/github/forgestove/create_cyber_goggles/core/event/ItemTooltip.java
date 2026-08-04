@@ -140,24 +140,24 @@ public final class ItemTooltip {
 		var overlayHeight = renderer.height(stack);
 		var pos = getPos(event, tooltipWidth, tooltipHeight);
 		var overlayX = getOverlayX(event, pos, overlayWidth);
-		var rawOverlayY = getOverlayY(pos, overlayHeight) + OverlayLayoutManager.overallOffsetY;
+		var rawOverlayY = getOverlayY(pos, overlayHeight) + OverlayManager.overallOffsetY;
 		// 触底：期望位置底部越界 → 更新整体缩放（供 Goggle/TooltipOverlay 下一帧使用）
 		if (rawOverlayY + overlayHeight > event.getScreenHeight())
-			OverlayLayoutManager.overallScale = Math.min(
-				OverlayLayoutManager.overallScale,
+			OverlayManager.overallScale = Math.min(
+				OverlayManager.overallScale,
 				(float) event.getScreenHeight() / (rawOverlayY + overlayHeight)
 			);
 		var overlayY = rawOverlayY;
 		// 触顶：更新整体下移量（供 Goggle/TooltipOverlay 下一帧使用），自身钳到顶部
 		if (overlayY < 0) {
-			OverlayLayoutManager.overallOffsetY = Math.max(OverlayLayoutManager.overallOffsetY, -overlayY);
+			OverlayManager.overallOffsetY = Math.max(OverlayManager.overallOffsetY, -overlayY);
 			overlayY = 0;
 		}
 		// 完整 clamp 到屏幕内（避免越界）
 		overlayX = Mth.clamp(overlayX, 0, Math.max(0, event.getScreenWidth() - overlayWidth));
 		overlayY = Mth.clamp(overlayY, 0, Math.max(0, event.getScreenHeight() - overlayHeight));
 		// 缩放兜底（含整体缩放）：仍越界则缩放（围绕 overlay 中心缩放）
-		var scale = OverlayLayoutManager.overallScale;
+		var scale = OverlayManager.overallScale;
 		if (overlayX + overlayWidth > event.getScreenWidth())
 			scale = Math.min(scale, (float) (event.getScreenWidth() - overlayX) / overlayWidth);
 		if (overlayY + overlayHeight > event.getScreenHeight())
@@ -166,23 +166,23 @@ public final class ItemTooltip {
 		// 更新整体缩放锚点：已占用区域 + 自身包围盒中心
 		var minY = overlayY;
 		var maxY = overlayY + overlayHeight;
-		for (var rect : OverlayLayoutManager.getOccupied()) {
+		for (var rect : OverlayManager.getOccupied()) {
 			minY = Math.min(minY, rect.getY());
 			maxY = Math.max(maxY, rect.getY() + rect.getHeight());
 		}
 		// 水平围绕屏幕中心（避免偏右），垂直围绕整体包围盒中心
-		OverlayLayoutManager.scaleCenterX = event.getScreenWidth() / 2;
-		OverlayLayoutManager.scaleCenterY = (minY + maxY) / 2;
+		OverlayManager.scaleCenterX = event.getScreenWidth() / 2;
+		OverlayManager.scaleCenterY = (minY + maxY) / 2;
 		var graphics = event.getGraphics();
 		var pose = graphics.pose();
 		pose.pushPose();
 		if (scale < 1) {
-			pose.translate(OverlayLayoutManager.scaleCenterX, OverlayLayoutManager.scaleCenterY, 0);
+			pose.translate(OverlayManager.scaleCenterX, OverlayManager.scaleCenterY, 0);
 			pose.scale(scale, scale, 1);
-			pose.translate(-OverlayLayoutManager.scaleCenterX, -OverlayLayoutManager.scaleCenterY, 0);
+			pose.translate(-OverlayManager.scaleCenterX, -OverlayManager.scaleCenterY, 0);
 		}
 		renderer.render(graphics, stack, overlayX - 4, overlayY);
-		OverlayLayoutManager.upperBottom = Math.max(OverlayLayoutManager.upperBottom, overlayY + overlayHeight);
+		OverlayManager.upperBottom = Math.max(OverlayManager.upperBottom, overlayY + overlayHeight);
 		pose.popPose();
 	}
 	private static @NotNull Vector2ic getPos(@NotNull Pre event, int width, int height) {

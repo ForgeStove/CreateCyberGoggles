@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.compat.create_fluidlogistics;
-import io.github.forgestove.create_cyber_goggles.core.util.CCGMods;
+import io.github.forgestove.create_cyber_goggles.core.factory.CCGMods;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;

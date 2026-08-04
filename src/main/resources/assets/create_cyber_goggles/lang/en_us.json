@@ -148,7 +148,7 @@
 	"create_cyber_goggles.config.option.misc.recursiveSchematicScan": "Recursive Schematic Scan",
 	"create_cyber_goggles.config.option.misc.recursiveSchematicScan.tooltip": "Include schematics in subfolders when refreshing the list",
 	"create_cyber_goggles.config.option.misc.redstoneRequesterLargeRequest": "Redstone Requester Large Requests",
-	"create_cyber_goggles.config.option.misc.redstoneRequesterLargeRequest.tooltip": "Allow the redstone requester to request more than 9 item types",
+	"create_cyber_goggles.config.option.misc.redstoneRequesterLargeRequest.tooltip": "Allow the redstone requester to request more than 9 item types§cWarning: This feature is not compatible with most mods. If you set more than 9 items, the Redstone Requester won't open if the feature is not enabled",
 	"create_cyber_goggles.config.option.misc.removeCardboardOverlay": "Remove Cardboard Overlay",
 	"create_cyber_goggles.config.option.misc.removeCardboardOverlay.tooltip": "Remove cardboard box vision obstruction when sneaking",
 	"create_cyber_goggles.config.option.misc.removeMechanicalArmLimit": "Remove Mechanical Arm Limit",

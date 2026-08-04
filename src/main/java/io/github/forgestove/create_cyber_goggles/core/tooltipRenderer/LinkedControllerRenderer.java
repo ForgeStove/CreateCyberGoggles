@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.core.tooltipRenderer;
 import com.simibubi.create.content.redstone.link.controller.LinkedControllerItem;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.AutoTooltipRenderer;
-import io.github.forgestove.create_cyber_goggles.core.util.CCGMods;
+import io.github.forgestove.create_cyber_goggles.core.factory.CCGMods;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;

@@ -4,6 +4,7 @@ import com.simibubi.create.AllRecipeTypes;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelScreen;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.factory.CCGMods;
 import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.minecraft.client.gui.GuiGraphics;
@@ -36,7 +37,7 @@ public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen {
 		RecipeType<Recipe<RecipeInput>> type,
 		Operation<List<RecipeHolder<Recipe<RecipeInput>>>> original
 	) {
-		if (!CCG.config.misc.jei.allowLargeCrafting) return original.call(instance, type);
+		if (!CCG.config.misc.jei.allowLargeCrafting || CCGMods.extra_gauges.isLoaded()) return original.call(instance, type);
 		var recipes = new ArrayList<>(original.call(instance, type));
 		recipes.addAll(instance.getAllRecipesFor(AllRecipeTypes.MECHANICAL_CRAFTING.getType()));
 		return recipes;
@@ -44,7 +45,7 @@ public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen {
 	/** >3×3 配方改为在 3×3 区域内显示总计原料（避免完整网格出界）；悬停 3×3 框显示实际配方样式 */
 	@Inject(method = "renderInputItem", at = @At("HEAD"), cancellable = true)
 	private void renderLargeTotals(GuiGraphics graphics, int slot, BigItemStack itemStack, int mouseX, int mouseY, CallbackInfo ci) {
-		if (!CCG.config.misc.jei.allowLargeCrafting) return;
+		if (!CCG.config.misc.jei.allowLargeCrafting || CCGMods.extra_gauges.isLoaded()) return;
 		if (!(craftingActive && availableCraftingRecipe instanceof ShapedRecipe shaped && shaped.getWidth() > 3)) return;
 		var totals = ccg$totals();
 		if (slot >= totals.size()) {

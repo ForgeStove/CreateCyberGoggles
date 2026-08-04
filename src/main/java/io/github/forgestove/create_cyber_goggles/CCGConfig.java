@@ -122,9 +122,9 @@ public final class CCGConfig {
 		@Category public CreateStackCount createStackCount = new CreateStackCount();
 		@Category public Jei jei = new Jei();
 		public boolean quickRequestActions = true;
-		public boolean redstoneRequesterLargeRequest = true;
-		public boolean removeMechanicalArmLimit = false;
+		public boolean redstoneRequesterLargeRequest = false;
 		public boolean removeRequestLimit = true;
+		public boolean removeMechanicalArmLimit = false;
 		public boolean infEditBoxLength = false;
 		public boolean removeCardboardOverlay = true;
 		public boolean removeNetheriteFirstPerson = false;

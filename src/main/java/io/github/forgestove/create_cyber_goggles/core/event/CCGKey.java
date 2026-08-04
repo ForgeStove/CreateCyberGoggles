@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.CCGMods;
+import io.github.forgestove.create_cyber_goggles.core.factory.CCGMods;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.network.chat.Component;

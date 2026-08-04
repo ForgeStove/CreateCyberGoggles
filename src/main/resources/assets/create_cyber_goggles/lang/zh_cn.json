@@ -148,7 +148,7 @@
 	"create_cyber_goggles.config.option.misc.recursiveSchematicScan": "递归扫描蓝图",
 	"create_cyber_goggles.config.option.misc.recursiveSchematicScan.tooltip": "刷新蓝图列表时包含子文件夹中的蓝图",
 	"create_cyber_goggles.config.option.misc.redstoneRequesterLargeRequest": "红石请求器多物品请求",
-	"create_cyber_goggles.config.option.misc.redstoneRequesterLargeRequest.tooltip": "允许红石请求器请求超过 9 种物品",
+	"create_cyber_goggles.config.option.misc.redstoneRequesterLargeRequest.tooltip": "允许红石请求器请求超过 9 种物品\n§c警告：此功能与大多数模组不兼容，一旦设置超过 9 种物品将导致未启用该功能无法打开红石请求器",
 	"create_cyber_goggles.config.option.misc.removeCardboardOverlay": "移除纸板套视线遮挡",
 	"create_cyber_goggles.config.option.misc.removeCardboardOverlay.tooltip": "移除纸板套在潜行时的视线遮挡",
 	"create_cyber_goggles.config.option.misc.removeMechanicalArmLimit": "移除动力臂限制",

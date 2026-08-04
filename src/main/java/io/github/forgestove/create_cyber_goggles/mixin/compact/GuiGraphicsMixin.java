@@ -3,7 +3,7 @@ import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import io.github.forgestove.create_cyber_goggles.api.Self;
 import io.github.forgestove.create_cyber_goggles.core.event.ItemTooltip;
-import io.github.forgestove.create_cyber_goggles.core.util.CCGMods;
+import io.github.forgestove.create_cyber_goggles.core.factory.CCGMods;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.inventory.tooltip.*;
 import net.minecraft.world.item.ItemStack;

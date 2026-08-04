@@ -29,17 +29,18 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 @Mixin(value = GoggleOverlayRenderer.class, remap = false)
 public abstract class GoggleOverlayRendererMixin {
 	@Unique private static HitResult ccg$lastHitResult;
-	@Unique private static int ccg$goggleIconOffset;
+	@Unique private static int ccg$Offset;
 	@Inject(method = "renderOverlay", at = @At("HEAD"), cancellable = true)
 	private static void renderOverlay(CallbackInfo ci) {
-		OverlayLayoutManager.clearFrame(); // 帧开始清空已占用区域
-		// 默认整体缩放锚点为屏幕中心（itemtooltip 渲染时会更新为包围盒中心）
-		OverlayLayoutManager.scaleCenterX = mc.getWindow().getGuiScaledWidth() / 2;
-		OverlayLayoutManager.scaleCenterY = mc.getWindow().getGuiScaledHeight() / 2;
-		// 计算 Goggle 让开偏移（供 tooltip 与自带 icon 一起使用）
-		var goggleY = mc.getWindow().getGuiScaledHeight() / 2 + AllConfigs.client().overlayOffsetY.get();
-		ccg$goggleIconOffset = goggleY < OverlayLayoutManager.prevUpperBottom ? OverlayLayoutManager.prevUpperBottom + 22 - goggleY : 0;
+		OverlayManager.clearFrame(); // 帧开始清空已占用区域
 		if (!CCG.config.goggles.disableInScreenGoggles || isInGame()) return;
+		// 默认整体缩放锚点为屏幕中心（itemtooltip 渲染时会更新为包围盒中心）
+		var window = mc.getWindow();
+		OverlayManager.scaleCenterX = window.getGuiScaledWidth() / 2;
+		OverlayManager.scaleCenterY = window.getGuiScaledHeight() / 2;
+		// 计算 Goggle 让开偏移（供 tooltip 与自带 icon 一起使用）
+		var goggleY = window.getGuiScaledHeight() / 2 + AllConfigs.client().overlayOffsetY.get();
+		ccg$Offset = goggleY < OverlayManager.prevUpperBottom ? OverlayManager.prevUpperBottom + 22 - goggleY : 0;
 		ci.cancel();
 	}
 	@WrapOperation(
@@ -89,8 +90,7 @@ public abstract class GoggleOverlayRendererMixin {
 		Operation<Void> original
 	) {
 		if (CCG.config.goggles.dedupTooltipLines) tooltip = GoggleTooltipDedupUtil.dedupAdjacentLines(tooltip);
-		// 下面避让上面：Goggle（最下）让开 TooltipOverlay/itemtooltip（上面）占据的区域
-		y += ccg$goggleIconOffset;
+		y += ccg$Offset;
 		var hasItemList = false;
 		for (var line : tooltip) {
 			if (!TooltipComponentUtil.hasIcon(line)) continue;
@@ -98,7 +98,12 @@ public abstract class GoggleOverlayRendererMixin {
 			break;
 		}
 		if (!hasItemList) {
+			y += OverlayManager.prevOverallOffsetY;
+			var pose = gui.pose();
+			pose.pushPose();
+			ccg$applyOverallScale(gui);
 			original.call(gui, tooltip, x, y, screenWidth, screenHeight, maxWidth, back, top, bot, font);
+			pose.popPose();
 			return;
 		}
 		var components = TooltipOverlay.buildTooltipComponents(tooltip, maxWidth, false);
@@ -106,6 +111,15 @@ public abstract class GoggleOverlayRendererMixin {
 		var tooltipWidth = components.stream().mapToInt(c -> c.getWidth(mc.font)).max().orElse(0);
 		var tooltipHeight = components.stream().mapToInt(ClientTooltipComponent::getHeight).sum() + (components.size() > 1 ? 2 : 0);
 		TooltipOverlay.renderTooltip(gui, ItemStack.EMPTY, components, x, y, tooltipWidth, tooltipHeight, back, top, bot);
+	}
+	@Unique
+	private static void ccg$applyOverallScale(GuiGraphics gui) {
+		if (OverlayManager.prevOverallScale < 1) {
+			var pose = gui.pose();
+			pose.translate(OverlayManager.scaleCenterX, OverlayManager.scaleCenterY, 0);
+			pose.scale(OverlayManager.prevOverallScale, OverlayManager.prevOverallScale, 1);
+			pose.translate(-OverlayManager.scaleCenterX, -OverlayManager.scaleCenterY, 0);
+		}
 	}
 	@WrapOperation(
 		method = "renderOverlay", at = @At(
@@ -115,7 +129,20 @@ public abstract class GoggleOverlayRendererMixin {
 	)
 	)
 	private static RenderElement adjustIcon(GuiRenderBuilder instance, float x, float y, float z, Operation<GuiRenderBuilder> original) {
-		return original.call(instance, x, y + ccg$goggleIconOffset, z);
+		return original.call(instance, x, y + ccg$Offset + OverlayManager.prevOverallOffsetY, z);
+	}
+	@WrapOperation(
+		method = "renderOverlay", at = @At(
+		value = "INVOKE", target = "Lnet/createmod/catnip/gui/element/RenderElement;render(Lnet/minecraft/client/gui/GuiGraphics;)V"
+	)
+	)
+	private static void wrapRenderElement(RenderElement instance, GuiGraphics gui, Operation<Void> original) {
+		// 物品 icon 应用上一帧整体缩放（围绕整体锚点），渲染后还原
+		var pose = gui.pose();
+		pose.pushPose();
+		ccg$applyOverallScale(gui);
+		original.call(instance, gui);
+		pose.popPose();
 	}
 	@ModifyExpressionValue(
 		method = "renderOverlay", at = @At(

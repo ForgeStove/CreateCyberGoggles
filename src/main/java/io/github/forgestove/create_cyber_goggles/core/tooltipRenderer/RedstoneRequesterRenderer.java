@@ -30,7 +30,7 @@ public final class RedstoneRequesterRenderer extends AbstractItemGridRenderer {
 		if (encodedRequest.isEmpty()) return null;
 		var items = new ArrayList<ItemStack>();
 		encodedRequest.stacks().forEach(bigStack -> items.add(bigStack.stack.copyWithCount(bigStack.count)));
-		if (!items.isEmpty()) return new OverlayData(items, 3);
+		if (!items.isEmpty()) return new OverlayData(items, items.size() > 9 ? 9 : 3);
 		return null;
 	}
 }

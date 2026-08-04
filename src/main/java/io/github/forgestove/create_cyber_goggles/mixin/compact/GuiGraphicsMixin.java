@@ -24,7 +24,7 @@ public abstract class GuiGraphicsMixin implements Self<GuiGraphics> {
 		ClientTooltipPositioner tooltipPositioner,
 		Operation<Void> original
 	) {
-		if (!CCGMods.OBSCURE_TOOLTIPS.isLoaded()) {
+		if (!CCGMods.obscure_tooltips.isLoaded()) {
 			original.call(font, components, mouseX, mouseY, tooltipPositioner);
 			return;
 		}

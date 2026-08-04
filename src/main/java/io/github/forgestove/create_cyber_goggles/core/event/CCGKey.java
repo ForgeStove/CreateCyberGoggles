@@ -14,18 +14,18 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public enum CCGKey {
 	clickPenetrate(Type.KEYSYM, KEY_LCONTROL),
 	clipboardPageScroll(Type.KEYSYM, KEY_LCONTROL),
-	correctionSublevel(Type.KEYSYM, KEY_LCONTROL, CCGMods.SIMULATED),
-	handleMoveSublevel(Type.KEYSYM, KEY_LCONTROL, CCGMods.SIMULATED),
+	correctionSublevel(Type.KEYSYM, KEY_LCONTROL, CCGMods.simulated),
+	handleMoveSublevel(Type.KEYSYM, KEY_LCONTROL, CCGMods.simulated),
 	interactOpposite(Type.KEYSYM, KEY_TAB),
 	openConfig(Type.KEYSYM, KEY_BACKSLASH),
 	previewFilter,
-	showHoneyGlue(CCGMods.SIMULATED),
+	showHoneyGlue(CCGMods.simulated),
 	showStress(Type.KEYSYM, KEY_LSHIFT),
 	showSuperGlue,
 	stockRequestSelectAll(Type.KEYSYM, KEY_LALT),
 	stockRequestSetter(Type.MOUSE, MOUSE_BUTTON_MIDDLE),
 	toggleItemOverlay(Type.KEYSYM, KEY_LCONTROL),
-	usePhysicsStaff(CCGMods.SIMULATED),
+	usePhysicsStaff(CCGMods.simulated),
 	useSchematic;
 	public final Lazy<KeyMapping> keyMapping;
 	private final CCGMods requiredMod;

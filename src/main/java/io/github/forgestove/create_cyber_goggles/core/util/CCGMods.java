@@ -11,9 +11,12 @@ import net.neoforged.fml.loading.LoadingModList;
 import java.util.Optional;
 import java.util.function.Supplier;
 public enum CCGMods {
-	SIMULATED,
-	OBSCURE_TOOLTIPS,
-	MODERNUI;
+	create,
+	simulated,
+	sable,
+	fluidlogistics,
+	obscure_tooltips,
+	modernui;
 	private final String id;
 	CCGMods() {
 		id = Lang.asId(name());

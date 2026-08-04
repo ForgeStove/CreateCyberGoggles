@@ -135,7 +135,7 @@ public class ItemSwapUtil {
 		if (isCreative && mc.gameMode != null) {
 			mc.gameMode.handleCreativeModeItemAdd(target, 36 + handSlot);
 			isSwapped = true;
-		} else if (!(CCGMods.SIMULATED.isLoaded() && target.is(SimItems.PHYSICS_STAFF.get()))) {
+		} else if (!(CCGMods.simulated.isLoaded() && target.is(SimItems.PHYSICS_STAFF.get()))) {
 			inventory.setItem(handSlot, target.copy());
 			swappedOriginSlot = LOCAL_SPAWN;
 			isSwapped = true;
@@ -145,7 +145,7 @@ public class ItemSwapUtil {
 		var items = new LinkedHashMap<CCGKey, ItemStack>();
 		items.put(CCGKey.useSchematic, AllItems.SCHEMATIC_AND_QUILL.asStack());
 		items.put(CCGKey.showSuperGlue, AllItems.SUPER_GLUE.asStack());
-		CCGMods.SIMULATED.executeIfInstalled(() -> {
+		CCGMods.simulated.executeIfInstalled(() -> {
 			items.put(CCGKey.usePhysicsStaff, SimItems.PHYSICS_STAFF.asStack());
 			items.put(CCGKey.showHoneyGlue, SimItems.HONEY_GLUE.asStack());
 		});

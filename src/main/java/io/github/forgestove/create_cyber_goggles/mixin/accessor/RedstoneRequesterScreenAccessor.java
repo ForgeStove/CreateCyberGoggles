@@ -7,6 +7,6 @@ import java.util.List;
 @Mixin(RedstoneRequesterScreen.class)
 public interface RedstoneRequesterScreenAccessor {
 	/** 红石请求器界面每格的请求数量 */
-	@Accessor("amounts")
+	@Accessor
 	List<Integer> getAmounts();
 }

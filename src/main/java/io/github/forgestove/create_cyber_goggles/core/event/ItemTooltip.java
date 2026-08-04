@@ -141,14 +141,59 @@ public final class ItemTooltip {
 		var overlayHeight = renderer.height(stack);
 		var pos = getPos(event, tooltipWidth, tooltipHeight);
 		var overlayX = getOverlayX(event, pos, overlayWidth);
-		var overlayY = getOverlayY(pos, overlayHeight);
+		var rawOverlayY = getOverlayY(pos, overlayHeight) + OverlayLayoutManager.overallOffsetY;
+		// 触底：期望位置底部越界 → 更新整体缩放（供 Goggle/TooltipOverlay 下一帧使用）
+		if (rawOverlayY + overlayHeight > event.getScreenHeight())
+			OverlayLayoutManager.overallScale = Math.min(
+				OverlayLayoutManager.overallScale,
+				(float) event.getScreenHeight() / (rawOverlayY + overlayHeight)
+			);
+		var overlayY = rawOverlayY;
+		// 触顶：更新整体下移量（供 Goggle/TooltipOverlay 下一帧使用），自身钳到顶部
 		if (overlayY < 0) {
-			event.setY(event.getY() - overlayY);
-			pos = getPos(event, tooltipWidth, tooltipHeight);
-			overlayX = getOverlayX(event, pos, overlayWidth);
-			overlayY = Math.max(0, getOverlayY(pos, overlayHeight));
+			OverlayLayoutManager.overallOffsetY = Math.max(OverlayLayoutManager.overallOffsetY, -overlayY);
+			overlayY = 0;
 		}
-		renderer.render(event.getGraphics(), stack, overlayX - 4, overlayY);
+		// 避开已占用区域（TooltipOverlay 物品框 / Goggle 目镜）：优先移到其下方，否则上方
+		var overlap = OverlayLayoutManager.findOverlap(overlayX - 4, overlayY, overlayWidth, overlayHeight);
+		if (overlap != null) {
+			var above = overlap.getY() - overlayHeight - OVERLAY_GAP;
+			if (above >= 0) overlayY = above;
+			else {
+				var below = overlap.getY() + overlap.getHeight() + OVERLAY_GAP;
+				if (below + overlayHeight <= event.getScreenHeight()) overlayY = below;
+			}
+		}
+		// 完整 clamp 到屏幕内（避免越界）
+		overlayX = Mth.clamp(overlayX, 0, Math.max(0, event.getScreenWidth() - overlayWidth));
+		overlayY = Mth.clamp(overlayY, 0, Math.max(0, event.getScreenHeight() - overlayHeight));
+		// 缩放兜底（含整体缩放）：仍越界则缩放（围绕 overlay 中心缩放）
+		var scale = OverlayLayoutManager.overallScale;
+		if (overlayX + overlayWidth > event.getScreenWidth())
+			scale = Math.min(scale, (float) (event.getScreenWidth() - overlayX) / overlayWidth);
+		if (overlayY + overlayHeight > event.getScreenHeight())
+			scale = Math.min(scale, (float) (event.getScreenHeight() - overlayY) / overlayHeight);
+		scale = Mth.clamp(scale, 0.1F, 1F);
+		// 更新整体缩放锚点：已占用区域 + 自身包围盒中心
+		var minY = overlayY;
+		var maxY = overlayY + overlayHeight;
+		for (var rect : OverlayLayoutManager.getOccupied()) {
+			minY = Math.min(minY, rect.getY());
+			maxY = Math.max(maxY, rect.getY() + rect.getHeight());
+		}
+		// 水平围绕屏幕中心（避免偏右），垂直围绕整体包围盒中心
+		OverlayLayoutManager.scaleCenterX = event.getScreenWidth() / 2;
+		OverlayLayoutManager.scaleCenterY = (minY + maxY) / 2;
+		var graphics = event.getGraphics();
+		var pose = graphics.pose();
+		pose.pushPose();
+		if (scale < 1) {
+			pose.translate(OverlayLayoutManager.scaleCenterX, OverlayLayoutManager.scaleCenterY, 0);
+			pose.scale(scale, scale, 1);
+			pose.translate(-OverlayLayoutManager.scaleCenterX, -OverlayLayoutManager.scaleCenterY, 0);
+		}
+		renderer.render(graphics, stack, overlayX - 4, overlayY);
+		pose.popPose();
 	}
 	private static @NotNull Vector2ic getPos(@NotNull Pre event, int width, int height) {
 		return event.getTooltipPositioner()

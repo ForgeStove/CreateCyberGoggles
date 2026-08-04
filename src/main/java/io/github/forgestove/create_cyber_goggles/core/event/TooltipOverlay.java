@@ -99,6 +99,9 @@ public final class TooltipOverlay {
 		}
 		// 物品悬浮框淡入淡出全程停留在该偏移位置
 		if (liftAboveGoggle) y -= tooltipHeight + 10;
+		// 触底：期望位置（未 clamp）底部越界 → 整体缩放
+		if (y + tooltipHeight > height)
+			OverlayLayoutManager.overallScale = Math.min(OverlayLayoutManager.overallScale, (float) height / (y + tooltipHeight));
 		x = Mth.clamp(x, 0, width - tooltipWidth);
 		y = Mth.clamp(y, 16, height - tooltipHeight - 100);
 		renderTooltip(gui, itemStack, components, x, y, tooltipWidth, tooltipHeight, back.getRGB(), top.getRGB(), bot.getRGB());
@@ -194,9 +197,18 @@ public final class TooltipOverlay {
 		if (ClientHooks.onRenderTooltipPre(itemStack, gui, x, y, width, height, components, mc.font, positioner).isCanceled()) return;
 		var tooltipPos = positioner.positionTooltip(width, height, x, y, tooltipWidth, tooltipHeight);
 		var tooltipX = tooltipPos.x();
-		var tooltipY = tooltipPos.y();
+		var tooltipY = tooltipPos.y() + OverlayLayoutManager.overallOffsetY;
+		// 触底：期望位置底部越界 → 更新整体缩放（供所有 overlay 下一帧使用）
+		if (y + tooltipHeight > height)
+			OverlayLayoutManager.overallScale = Math.min(OverlayLayoutManager.overallScale, (float) height / (y + tooltipHeight));
 		var pose = gui.pose();
 		pose.pushPose();
+		// 整体缩放（最靠底触底时，三个 overlay 一起围绕整体锚点缩放）
+		if (OverlayLayoutManager.overallScale < 1) {
+			pose.translate(OverlayLayoutManager.scaleCenterX, OverlayLayoutManager.scaleCenterY, 0);
+			pose.scale(OverlayLayoutManager.overallScale, OverlayLayoutManager.overallScale, 1);
+			pose.translate(-OverlayLayoutManager.scaleCenterX, -OverlayLayoutManager.scaleCenterY, 0);
+		}
 		TooltipRenderUtil.renderTooltipBackground(gui, tooltipX, tooltipY, tooltipWidth, tooltipHeight, 400, back, back, top, bot);
 		pose.translate(0, 0, 400);
 		// 用独立BufferSource渲染文字并立即提交(防止后续renderImage干扰文字shader state)，再单独循环渲染所有图片
@@ -216,6 +228,8 @@ public final class TooltipOverlay {
 			component.renderImage(mc.font, tooltipX, textY, gui);
 			textY += component.getHeight() + (i == 0 ? 2 : 0);
 		}
+		// 登记已渲染区域，供后渲染的 TooltipRenderer 避让
+		OverlayLayoutManager.occupy(tooltipX, tooltipY, tooltipWidth, tooltipHeight);
 		pose.popPose();
 	}
 }

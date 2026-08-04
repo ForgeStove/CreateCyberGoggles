@@ -4,7 +4,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.simibubi.create.api.equipment.goggles.*;
 import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.event.TooltipOverlay;
+import io.github.forgestove.create_cyber_goggles.core.event.*;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.createmod.catnip.outliner.Outliner.OutlineEntry;
 import net.minecraft.client.gui.*;
@@ -28,6 +28,10 @@ public abstract class GoggleOverlayRendererMixin {
 	@Unique private static HitResult ccg$lastHitResult;
 	@Inject(method = "renderOverlay", at = @At("HEAD"), cancellable = true)
 	private static void renderOverlay(CallbackInfo ci) {
+		OverlayLayoutManager.clearFrame(); // 帧开始清空已占用区域
+		// 默认整体缩放锚点为屏幕中心（itemtooltip 渲染时会更新为包围盒中心）
+		OverlayLayoutManager.scaleCenterX = mc.getWindow().getGuiScaledWidth() / 2;
+		OverlayLayoutManager.scaleCenterY = mc.getWindow().getGuiScaledHeight() / 2;
 		if (!CCG.config.goggles.disableInScreenGoggles || isInGame()) return;
 		ci.cancel();
 	}

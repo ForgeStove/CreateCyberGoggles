@@ -11,6 +11,7 @@
 		"compact.BlazeForgerBlockEntityMixin",
 		"compact.EmiRenderHelperMixin",
 		"compact.GuiGraphicsMixin",
+		"compact.MechanicalFluidGunBlockEntityMixin",
 		"compact.MEStorageScreenMixin",
 		"compact.StorageScreenBaseMixin",
 		"compact.simulated.BlockPropertiesTooltipMixin",

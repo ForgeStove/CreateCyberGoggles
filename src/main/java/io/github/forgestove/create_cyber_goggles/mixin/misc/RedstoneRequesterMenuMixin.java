@@ -7,6 +7,7 @@ import com.simibubi.create.foundation.gui.menu.GhostItemMenu;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.*;
 import io.github.forgestove.create_cyber_goggles.mixin.accessor.RedstoneRequesterScreenAccessor;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 import org.spongepowered.asm.mixin.*;
@@ -18,14 +19,14 @@ import java.util.*;
 @Mixin(RedstoneRequesterMenu.class)
 public abstract class RedstoneRequesterMenuMixin extends GhostItemMenu<RedstoneRequesterBlockEntity>
 	implements ScreenReferenced, RequestPageProvider {
-	@Unique private Object ccg$screenReference;
+	@Unique private Screen ccg$screenReference;
 	/** 分页当前页码（Screen 与 JEI 拖入共享） */
 	@Unique private int ccg$requestPage;
 	protected RedstoneRequesterMenuMixin(MenuType<?> type, int id, Inventory inv, RedstoneRequesterBlockEntity contentHolder) {
 		super(type, id, inv, contentHolder);
 	}
 	@Override
-	public void ccg$setScreenReference(Object screen) {
+	public void ccg$setScreenReference(Screen screen) {
 		ccg$screenReference = screen;
 	}
 	@Override
@@ -61,7 +62,7 @@ public abstract class RedstoneRequesterMenuMixin extends GhostItemMenu<RedstoneR
 		ci.cancel();
 	}
 	@Override
-	public Object ccg$getScreenReference() {
+	public Screen ccg$getScreenReference() {
 		return ccg$screenReference;
 	}
 	/** 突破 9 格：幽灵库存扩到 81 槽，支持大配方请求 */

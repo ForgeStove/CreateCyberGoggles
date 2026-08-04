@@ -19,8 +19,8 @@ public abstract class ArmBlockEntityMixin implements ItemRenderable, OutlineRend
 	}
 	@Override
 	public void ccg$render() {
+		var center = thiz().getBlockPos().getCenter();
 		List.of(inputs, outputs).forEach(points -> {
-			var center = thiz().getBlockPos().getCenter();
 			for (var point : points) {
 				if (!point.isValid()) continue;
 				var level = point.getLevel();

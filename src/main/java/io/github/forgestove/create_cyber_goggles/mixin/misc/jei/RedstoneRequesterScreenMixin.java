@@ -9,46 +9,30 @@ import com.simibubi.create.foundation.gui.widget.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.*;
 import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
-import io.github.forgestove.create_cyber_goggles.core.factory.RequestAmountOverlay;
+import io.github.forgestove.create_cyber_goggles.core.factory.RequestAmountScreen;
 import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
-import org.spongepowered.asm.mixin.injection.callback.*;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
+
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 @Mixin(RedstoneRequesterScreen.class)
 public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainerScreen<RedstoneRequesterMenu>
 	implements Self<RedstoneRequesterScreen> {
-	/** 快捷数量设置弹窗（create 原版样式，叠加渲染在当前界面） */
-	@Unique private RequestAmountOverlay ccg$popup = new RequestAmountOverlay();
 	@Shadow private List<Integer> amounts;
 	/** 翻页按钮（无法切换时禁用） */
 	@Unique private IconButton ccg$prevButton;
 	@Unique private IconButton ccg$nextButton;
 	public RedstoneRequesterScreenMixin(RedstoneRequesterMenu container, Inventory inv, Component title) {
 		super(container, inv, title);
-	}
-	@Override
-	public void resize(@NotNull Minecraft minecraft, int width, int height) {
-		super.resize(minecraft, width, height);
-		ccg$popup = new RequestAmountOverlay();
-	}
-	@Inject(method = "renderForeground", at = @At("TAIL"))
-	public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
-		if (ccg$popup.open) {
-			super.render(gui, -1, -1, partialTick);
-			ccg$popup.render(gui, mouseX, mouseY, partialTick);
-			return;
-		}
-		super.render(gui, mouseX, mouseY, partialTick);
 	}
 	/** 打开界面时把当前 Screen 关联到菜单，供 JEI 转移读取 */
 	@Inject(method = "init", at = @At("HEAD"))
@@ -164,10 +148,6 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 	/** 分页交互：当前 9 格放置/移除物品（翻页由 IconButton 处理） */
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		if (ccg$popup.open) {
-			ccg$popup.mouseClicked(mouseX, mouseY, button);
-			return true;
-		}
 		if (CCG.config.misc.quickRequestActions && CCGKey.stockRequestSetter.isDown() && ccg$openPopupForHoveredSlot(mouseX, mouseY))
 			return true;
 		if (!CCG.config.misc.redstoneRequesterLargeRequest) return super.mouseClicked(mouseX, mouseY, button);
@@ -200,7 +180,13 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 		var slot = ccg$getPagedSlotIndex(gx);
 		var stack = thiz().getMenu().ghostInventory.getStackInSlot(slot);
 		if (stack.isEmpty()) return false;
-		ccg$popup.open(stack, amounts.get(slot), ccg$getAvailableMax(stack), count -> amounts.set(slot, count));
+		mc.setScreen(new RequestAmountScreen(
+			thiz(),
+			stack,
+			amounts.get(slot),
+			ccg$getAvailableMax(stack),
+			count -> amounts.set(slot, count)
+		));
 		return true;
 	}
 	@Unique
@@ -214,17 +200,6 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 			}
 		}
 		return CCG.config.misc.removeRequestLimit ? Integer.MAX_VALUE : 256;
-	}
-	/** 分页交互：当前 9 格滚轮改数量（功能关闭时放行原版，否则会覆盖 create 的 mouseScrolled） */
-	@Inject(method = "mouseScrolled", at = @At("HEAD"), cancellable = true)
-	private void mouseScrolledEarlyReturn(
-		double mouseX,
-		double mouseY,
-		double scrollX,
-		double scrollY,
-		CallbackInfoReturnable<Boolean> cir
-	) {
-		if (ccg$popup.open) cir.setReturnValue(true);
 	}
 	@ModifyArg(
 		method = "mouseScrolled", at = @At(
@@ -248,17 +223,5 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 	private int shiftAmountGet(int i) {
 		if (!CCG.config.misc.redstoneRequesterLargeRequest) return i;
 		return ccg$getPagedSlotIndex(i);
-	}
-	/** 快捷设置弹窗：字符输入 */
-	@Override
-	public boolean charTyped(char codePoint, int modifiers) {
-		if (!ccg$popup.open) return super.charTyped(codePoint, modifiers);
-		return ccg$popup.charTyped(codePoint, modifiers);
-	}
-	/** 快捷设置弹窗：键盘处理 */
-	@Override
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		if (!ccg$popup.open) return super.keyPressed(keyCode, scanCode, modifiers);
-		return ccg$popup.keyPressed(keyCode, scanCode, modifiers);
 	}
 }

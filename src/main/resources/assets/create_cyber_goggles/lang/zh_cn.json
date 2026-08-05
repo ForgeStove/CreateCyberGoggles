@@ -262,8 +262,6 @@
 	"create_cyber_goggles.config.option.tooltip.wrench": "扳手",
 	"create_cyber_goggles.config.option.tooltip.wrench.tooltip": "显示扳手的额外工具提示信息",
 	"create_cyber_goggles.gui.redstoneRequester.tooManyIngredients": "请求的原料种类过多",
-	"create_cyber_goggles.gui.request.amount": "数量",
-	"create_cyber_goggles.gui.request.title": "自定义数量",
 	"create_cyber_goggles.gui.schematicTable.folderRoot": "根目录 (/)",
 	"create_cyber_goggles.gui.schematicTable.folderSelector": "蓝图文件夹",
 	"create_cyber_goggles.gui.schematicTable.selectFolder": "选择蓝图文件夹",

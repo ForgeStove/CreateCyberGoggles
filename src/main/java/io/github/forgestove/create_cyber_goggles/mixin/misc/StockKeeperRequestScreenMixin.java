@@ -9,22 +9,19 @@ import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.Self;
 import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
-import io.github.forgestove.create_cyber_goggles.core.factory.RequestAmountOverlay;
+import io.github.forgestove.create_cyber_goggles.core.factory.RequestAmountScreen;
 import net.createmod.catnip.data.Couple;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.*;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.getModifiedScrollAmount;
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 @Mixin(StockKeeperRequestScreen.class)
 public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContainerScreen<StockKeeperRequestMenu>
 	implements Self<StockKeeperRequestScreen> {
@@ -32,7 +29,6 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 	@Shadow @Final int cols;
 	@Shadow StockTickerBlockEntity blockEntity;
 	@Shadow @Final Couple<Integer> noneHovered;
-	@Unique private RequestAmountOverlay ccg$popup = new RequestAmountOverlay();
 	public StockKeeperRequestScreenMixin(StockKeeperRequestMenu container, Inventory inv, Component title) {
 		super(container, inv, title);
 	}
@@ -41,22 +37,6 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 	)
 	public boolean containerTick(Player instance) {
 		return thiz().getMenu().containerId != -1;
-	}
-	@Override
-	public void resize(@NotNull Minecraft minecraft, int width, int height) {
-		super.resize(minecraft, width, height);
-		ccg$popup = new RequestAmountOverlay();
-	}
-	@Override
-	public void render(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
-		if (!CCG.config.misc.quickRequestActions) {
-			if (ccg$popup.open) ccg$popup.close();
-		} else if (ccg$popup.open) {
-			super.render(gui, -1, -1, partialTick);
-			ccg$popup.render(gui, mouseX, mouseY, partialTick);
-			return;
-		}
-		super.render(gui, mouseX, mouseY, partialTick);
 	}
 	/** 滚动条分支仅在无修饰键时启用，使 ctrl/alt 滚动也能修改数量（原版只放行 shift） */
 	@WrapOperation(
@@ -81,15 +61,6 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 	}
 	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
 	private void mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
-		if (!CCG.config.misc.quickRequestActions) {
-			if (ccg$popup.open) ccg$popup.close();
-			return;
-		}
-		if (ccg$popup.open) {
-			ccg$popup.mouseClicked(mouseX, mouseY, button);
-			cir.setReturnValue(true);
-			return;
-		}
 		if (button == InputConstants.MOUSE_BUTTON_LEFT && CCGKey.stockRequestSelectAll.isDown() && ccg$applyFullAmount(mouseX, mouseY)) {
 			cir.setReturnValue(true);
 			return;
@@ -119,7 +90,7 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 		var hoveredSlot = getHoveredSlot((int) mouseX, (int) mouseY);
 		if (hoveredSlot != noneHovered) {
 			int group = hoveredSlot.getFirst();
-			int index = hoveredSlot.getSecond();// 配方条使用自己的数量语义
+			int index = hoveredSlot.getSecond(); // 配方条使用自己的数量语义
 			if (group != -2) {
 				var entry1 = group == -1 ? thiz().itemsToOrder.get(index) : displayedItems.get(group).get(index);
 				result = entry1 == null || entry1.stack.isEmpty() ? null : entry1;
@@ -129,7 +100,13 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 		if (entry == null) return false;
 		var max = ccg$getAvailableMax(entry);
 		var existing = getOrderForItem(entry.stack);
-		ccg$popup.open(entry.stack, existing == null ? 0 : existing.count, max, count -> ccg$setOrRemoveOrder(entry.stack, count));
+		mc.setScreen(new RequestAmountScreen(
+			thiz(),
+			entry.stack,
+			existing == null ? 0 : existing.count,
+			max,
+			count -> ccg$setOrRemoveOrder(entry.stack, count)
+		));
 		return true;
 	}
 	@Shadow
@@ -145,20 +122,6 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 		}
 		if (max == 0) return Math.max(1, entry.count);
 		return max;
-	}
-	@Inject(method = "charTyped", at = @At("HEAD"), cancellable = true)
-	private void charTyped(char codePoint, int modifiers, CallbackInfoReturnable<Boolean> cir) {
-		if (!CCG.config.misc.quickRequestActions) return;
-		if (!ccg$popup.open) return;
-		ccg$popup.charTyped(codePoint, modifiers);
-		cir.setReturnValue(true);
-	}
-	@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
-	private void keyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
-		if (!CCG.config.misc.quickRequestActions) return;
-		if (!ccg$popup.open) return;
-		ccg$popup.keyPressed(keyCode, scanCode, modifiers);
-		cir.setReturnValue(true);
 	}
 	@Unique
 	private void ccg$setOrRemoveOrder(ItemStack stack, int count) {

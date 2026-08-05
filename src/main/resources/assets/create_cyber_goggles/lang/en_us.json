@@ -262,8 +262,6 @@
 	"create_cyber_goggles.config.option.tooltip.wrench": "Wrench",
 	"create_cyber_goggles.config.option.tooltip.wrench.tooltip": "Show extra tooltip info for wrench",
 	"create_cyber_goggles.gui.redstoneRequester.tooManyIngredients": "Too many ingredient types",
-	"create_cyber_goggles.gui.request.amount": "Amount",
-	"create_cyber_goggles.gui.request.title": "Custom Amount",
 	"create_cyber_goggles.gui.schematicTable.folderRoot": "Root (/)",
 	"create_cyber_goggles.gui.schematicTable.folderSelector": "Schematic Folder",
 	"create_cyber_goggles.gui.schematicTable.selectFolder": "Select Schematic Folder",

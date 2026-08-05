@@ -253,8 +253,6 @@
 	"create_cyber_goggles.config.option.tooltip.toolbox.tooltip": "Показывать содержимое ящика для инструментов",
 	"create_cyber_goggles.config.option.tooltip.wrench": "Гаечный ключ",
 	"create_cyber_goggles.config.option.tooltip.wrench.tooltip": "Показывать дополнительную информацию для гаечного ключа",
-	"create_cyber_goggles.gui.request.amount": "Количество",
-	"create_cyber_goggles.gui.request.title": "Пользовательское количество",
 	"create_cyber_goggles.gui.schematicTable.folderRoot": "Корневой каталог (/)",
 	"create_cyber_goggles.gui.schematicTable.folderSelector": "Выбрать папку",
 	"create_cyber_goggles.gui.schematicTable.selectFolder": "Выберите папку для сохранения схематики",

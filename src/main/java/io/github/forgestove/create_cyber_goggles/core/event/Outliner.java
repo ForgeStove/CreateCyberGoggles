@@ -22,7 +22,7 @@ public final class Outliner {
 		try {
 			cachedBE.entrySet().removeIf(Outliner::render);
 		} catch (Throwable throwable) {
-			CCG.LOGGER.error(throwable.getMessage(), throwable);
+			CCG.LOGGER.error(throwable.getLocalizedMessage(), throwable);
 		}
 	}
 	private static boolean render(@NotNull Entry<BlockEntity, Integer> entry) {

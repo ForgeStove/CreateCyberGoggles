@@ -38,7 +38,7 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 	public boolean containerTick(Player instance) {
 		return thiz().getMenu().containerId != -1;
 	}
-	/** 滚动条分支仅在无修饰键时启用，使 ctrl/alt 滚动也能修改数量（原版只放行 shift） */
+	/** 滚动条分支仅在无修饰键时启用，使 ctrl/alt 滚动也能修改数量 */
 	@WrapOperation(
 		method = "mouseScrolled",
 		at = @At(value = "INVOKE", target = "Lcom/simibubi/create/content/logistics/stockTicker/StockKeeperRequestScreen;hasShiftDown()Z")
@@ -48,11 +48,10 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 		return hasControlDown() || original.call() || hasAltDown();
 	}
 	@ModifyVariable(method = "mouseScrolled", at = @At("STORE"), name = "transfer")
-	private int mouseScrolled(int transfer, @Local(name = "scrollY") double scrollY) {
+	private int modifyScrollAmount(int transfer, @Local(name = "scrollY") double scrollY) {
 		if (!CCG.config.misc.quickRequestActions) return transfer;
 		return Mth.ceil(Math.abs(scrollY)) * getModifiedScrollAmount();
 	}
-	/** 值恰为 1 时修正步进：shift +63 / ctrl +9，结果正好对齐 64 / 10 */
 	@WrapOperation(method = "mouseScrolled", at = @At(value = "INVOKE", target = "Ljava/lang/Math;min(II)I"))
 	private int adjustFromOne(int transfer, int stockAvailable, Operation<Integer> original, @Local(name = "current") int current) {
 		if (!CCG.config.misc.quickRequestActions) return original.call(transfer, stockAvailable);
@@ -60,7 +59,7 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 		return original.call(transfer, stockAvailable);
 	}
 	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
-	private void mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
+	private void openPopup(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
 		if (button == InputConstants.MOUSE_BUTTON_LEFT && CCGKey.stockRequestSelectAll.isDown() && ccg$applyFullAmount(mouseX, mouseY)) {
 			cir.setReturnValue(true);
 			return;

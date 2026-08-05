@@ -1,7 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.factory;
 import io.github.forgestove.create_cyber_goggles.compat.create_fluidlogistics.PackageTankHelper;
-import io.github.forgestove.create_cyber_goggles.core.tooltipRenderer.AbstractItemGridRenderer;
-import io.github.forgestove.create_cyber_goggles.core.util.SlotUtil;
+import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
@@ -53,9 +52,10 @@ public final class ClientItemListTooltipComponent implements ClientTooltipCompon
 	private void renderSlot(GuiGraphics gui, Font font, ItemStack stack, int x, int y) {
 		gui.blitSprite(SlotUtil.SLOT, x, y, 0, SlotUtil.SIZE, SlotUtil.SIZE);
 		gui.renderItem(stack, x + 1, y + 1);
-		if (PackageTankHelper.isCFLCompressedTank(stack) && stack.getCount() > 1)
-			gui.renderItemDecorations(font, stack, x + 1, y + 1, AbstractItemGridRenderer.formatFluidAmount(stack.getCount()));
-		else gui.renderItemDecorations(font, stack, x + 1, y + 1);
+		var count = stack.getCount();
+		if (PackageTankHelper.isCFLCompressedTank(stack))
+			gui.renderItemDecorations(font, stack, x + 1, y + 1, AmountUtil.formatFluidAmount(count));
+		else if (count > 1) gui.renderItemDecorations(font, stack, x + 1, y + 1, AmountUtil.formatItemCount(count));
 	}
 	public record ItemListTooltipComponent(List<ItemStack> items, int indent, int maxColumns) implements TooltipComponent {}
 }

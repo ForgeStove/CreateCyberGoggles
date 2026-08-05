@@ -1,4 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.core.factory;
+import io.github.forgestove.create_cyber_goggles.core.util.AmountUtil;
 import io.github.forgestove.create_cyber_goggles.core.util.SlotUtil;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.Font.DisplayMode;
@@ -51,7 +52,8 @@ public final class ClientItemEntryTooltipComponent implements ClientTooltipCompo
 		pose.translate(slotX, y, 450F);
 		pose.scale(0.75F, 0.75F, 1F);
 		gui.renderItem(stack, 0, 0);
-		gui.renderItemDecorations(font, stack, 0, 0);
+		var count = stack.getCount();
+		gui.renderItemDecorations(font, stack, 0, 0, count > 1 ? AmountUtil.formatItemCount(count) : null);
 		pose.popPose();
 	}
 	public record ItemEntryTooltipComponent(ItemStack stack, int indent, Component label) implements TooltipComponent {}

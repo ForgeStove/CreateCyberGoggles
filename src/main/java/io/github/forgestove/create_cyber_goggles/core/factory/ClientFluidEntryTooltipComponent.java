@@ -88,18 +88,12 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 	private static @NotNull Component buildLabel(@NotNull FluidStack fluid, int capacityMb, boolean showCapacity) {
 		if (fluid.isEmpty()) return CCGLang.add(Component.translatable("create_cyber_goggles.tooltip.empty"))
 			.space()
-			.text(formatFluidAmount(capacityMb))
+			.text(AmountUtil.formatFluidAmount(capacityMb))
 			.component();
-		var label = CCGLang.add(fluid.getHoverName()).space().text(formatFluidAmount(fluid.getAmount()));
+		var label = CCGLang.add(fluid.getHoverName()).space().text(AmountUtil.formatFluidAmount(fluid.getAmount()));
 		if (showCapacity)
-			return label.text(" / ", ChatFormatting.GRAY).text(formatFluidAmount(capacityMb), ChatFormatting.GRAY).component();
+			return label.text(" / ", ChatFormatting.GRAY).text(AmountUtil.formatFluidAmount(capacityMb), ChatFormatting.GRAY).component();
 		return label.component();
-	}
-	public static @NotNull String formatFluidAmount(int amountMb) {
-		if (amountMb < 1000) return amountMb + "mB";
-		if (amountMb % 1000 == 0) return amountMb / 1000 + "B";
-		var value = amountMb / 1000F;
-		return CCGLang.number(value).string() + "B";
 	}
 	@Override
 	public void renderImage(@NotNull Font font, int x, int y, @NotNull GuiGraphics gui) {

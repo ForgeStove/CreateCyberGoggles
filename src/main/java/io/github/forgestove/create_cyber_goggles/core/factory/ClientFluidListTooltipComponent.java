@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.core.factory;
-import io.github.forgestove.create_cyber_goggles.core.util.SlotUtil;
+import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.util.FastColor.ARGB32;
@@ -46,24 +46,29 @@ public final class ClientFluidListTooltipComponent implements ClientTooltipCompo
 	@Override
 	public void renderImage(@NotNull Font font, int x, int y, @NotNull GuiGraphics gui) {
 		for (var i = 0; i < fluids.size(); i++) {
+			var stack = fluids.get(i);
+			if (stack.isEmpty()) return;
 			var col = i % maxColumns;
 			var row = i / maxColumns;
 			var slotX = x + col * SlotUtil.SIZE + indentPixels(font);
 			var slotY = y + row * SlotUtil.SIZE;
-			renderFluidBar(gui, fluids.get(i), slotX, slotY, SlotUtil.SIZE, SlotUtil.SIZE);
+			renderFluidBar(gui, stack, slotX, slotY, SlotUtil.SIZE, SlotUtil.SIZE);
+			renderFluidCount(gui, font, stack, slotX, slotY);
 		}
 	}
 	public static void renderFluidBar(@NotNull GuiGraphics gui, @NotNull FluidStack stack, int x, int y, int width, int height) {
 		gui.blitSprite(SlotUtil.SLOT, x, y, 0, SlotUtil.SIZE, SlotUtil.SIZE + 2);
-		if (stack.isEmpty()) return;
 		var innerX = x + 1;
 		var innerY = y + 1;
 		var innerW = Math.max(0, width - 2);
 		var innerH = Math.max(0, height - 2);
 		renderFluid(gui, stack, innerX, innerY, innerW, innerH);
 	}
+	private static void renderFluidCount(@NotNull GuiGraphics gui, @NotNull Font font, @NotNull FluidStack stack, int x, int y) {
+		var text = AmountUtil.formatFluidAmount(stack.getAmount());
+		gui.drawString(font, text, x + SlotUtil.SIZE - font.width(text), y + SlotUtil.SIZE - font.lineHeight, 0xFFFFFF, true);
+	}
 	private static void renderFluid(@NotNull GuiGraphics gui, @NotNull FluidStack stack, int x, int y, int width, int height) {
-		if (stack.isEmpty()) return;
 		var ext = IClientFluidTypeExtensions.of(stack.getFluid());
 		var still = ext.getStillTexture(stack);
 		var sprite = mc.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(still);

@@ -132,11 +132,12 @@ public class RequestAmountScreen extends AbstractSimiScreen {
 			gui.renderComponentTooltip(mc.font, getTooltipFromItem(mc, stack), mouseX, mouseY);
 	}
 	@Override
+	protected void renderMenuBackground(@NotNull GuiGraphics gui, int x, int y, int width, int height) {}
+	@Override
 	protected void renderWindowBackground(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
 		var pose = gui.pose();
 		pose.pushPose();
 		pose.translate(0, 0, -500);
-		super.renderWindowBackground(gui, mouseX, mouseY, partialTick);
 		var currentScreen = mc.screen;
 		mc.screen = parentScreen;
 		parentScreen.renderBackground(gui, -1, -1, partialTick);

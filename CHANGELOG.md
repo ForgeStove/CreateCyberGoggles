@@ -1,6 +1,5 @@
-- Fix compact for Extra Gauge and Fluidlogistic
-- Fix tooltip position bug
-- Fix compact for ClipboardRenderer in shaders
-- Optimize LinkedControllerRenderer
-- Add the rendering of the chain movement direction for Chain Conveyor
-- Add item model render support for clipboard in hand
+- Fix the factory gauge's left-click logic being incorrectly overridden
+- Improve the request amount screen
+- Allowe opening the request screen from the factory gauge's output slot
+- Improve the amount display
+- Improve the ColorPickerScreen

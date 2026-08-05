@@ -137,8 +137,11 @@ public class RequestAmountScreen extends AbstractSimiScreen {
 		pose.pushPose();
 		pose.translate(0, 0, -500);
 		super.renderWindowBackground(gui, mouseX, mouseY, partialTick);
+		var currentScreen = mc.screen;
+		mc.screen = parentScreen;
 		parentScreen.renderBackground(gui, -1, -1, partialTick);
 		parentScreen.render(gui, -1, -1, partialTick);
+		mc.screen = currentScreen;
 		pose.popPose();
 		pose.pushPose();
 		pose.translate(windowXOffset, windowYOffset, 0);

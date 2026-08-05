@@ -53,24 +53,18 @@ public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen {
 		super.resize(minecraft, width, height);
 		ccg$popup = new RequestAmountOverlay();
 	}
-	@Override
-	public void render(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
-		if (ccg$popup.open) {
-			super.render(gui, 0, 0, partialTick);
-			ccg$popup.render(gui, mouseX, mouseY, partialTick);
-			return;
-		}
-		super.render(gui, mouseX, mouseY, partialTick);
+	@Inject(method = "renderWindow", at = @At("HEAD"))
+	public void renderWindow(GuiGraphics gui, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
+		if (ccg$popup.open) ccg$popup.render(gui, mouseX, mouseY, partialTicks);
 	}
-	@Override
-	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
+	public void mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
 		if (ccg$popup.open) {
 			ccg$popup.mouseClicked(mouseX, mouseY, button);
-			return true;
+			cir.setReturnValue(true);
 		}
 		if (CCG.config.misc.quickRequestActions && CCGKey.stockRequestSetter.isDown() && ccg$openPopupForHoveredSlot(mouseX, mouseY))
-			return true;
-		return super.mouseClicked(mouseX, mouseY, button);
+			cir.setReturnValue(true);
 	}
 	/** 自定义请求数量弹窗：中键/按住中键点击输入格触发 */
 	@Unique

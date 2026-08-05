@@ -15,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.util.function.IntConsumer;
 import java.util.regex.Pattern;
+
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public final class ColorPickerScreen extends Screen {
 	private static final int PICKER_SIZE = 128, BAR_WIDTH = 16, PADDING = 8, SIZE = ConfigEntry.SIZE, BUTTON_WIDTH = SIZE * 2;
 	private static final Pattern HEX_PATTERN = Pattern.compile("[0-9A-Fa-f]*");
@@ -46,10 +48,8 @@ public final class ColorPickerScreen extends Screen {
 	}
 	@Override
 	public void render(@NotNull GuiGraphics gui, int mouseX, int mouseY, float delta) {
-		if (parent != null) {
-			parent.clearFocus();
-			parent.render(gui, -1, -1, delta);
-		}
+		parent.clearFocus();
+		parent.render(gui, -1, -1, delta);
 		renderBlurredBackground(delta);
 		var totalWidth = PICKER_SIZE + PADDING + BAR_WIDTH + (hasAlpha ? PADDING + BAR_WIDTH : 0) + PADDING * 2 + 8;
 		var totalHeight = PICKER_SIZE + PADDING * 2 + 16 + 28;
@@ -170,20 +170,20 @@ public final class ColorPickerScreen extends Screen {
 	}
 	@Override
 	public void onClose() {
-		if (minecraft != null && parent != null) minecraft.setScreen(parent);
+		removed();
+		mc.screen = parent;
 	}
 	@Override
 	protected void init() {
 		layoutPicker();
-		if (minecraft == null) return;
 		var buttonY = svPos.y + PICKER_SIZE + PADDING;
 		addRenderableWidget(Button.builder(
 			Component.translatable("gui.ok"), button -> {
 				onColorSelected.accept(colorFromHSB());
-				minecraft.setScreen(parent);
+				mc.setScreen(parent);
 			}
 		).bounds(svPos.x, buttonY, BUTTON_WIDTH, SIZE).build());
-		addRenderableWidget(Button.builder(Component.translatable("gui.cancel"), button -> minecraft.setScreen(parent))
+		addRenderableWidget(Button.builder(Component.translatable("gui.cancel"), button -> mc.setScreen(parent))
 			.bounds(svPos.x + BUTTON_WIDTH + 2, buttonY, BUTTON_WIDTH, SIZE)
 			.build());
 		hexInput = createHexInput(buttonY);
@@ -224,7 +224,7 @@ public final class ColorPickerScreen extends Screen {
 	}
 	@Override
 	public void resize(@NotNull Minecraft minecraft, int width, int height) {
-		if (parent != null) parent.resize(minecraft, width, height);
+		parent.resize(minecraft, width, height);
 		super.resize(minecraft, width, height);
 	}
 	@Override

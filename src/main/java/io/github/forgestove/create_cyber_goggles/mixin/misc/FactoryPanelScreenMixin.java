@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
 
-import java.util.*;
+import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 @Mixin(FactoryPanelScreen.class)
@@ -52,13 +52,27 @@ public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen impleme
 	@Unique
 	private boolean ccg$openPopupForHoveredSlot(double mouseX, double mouseY) {
 		if (craftingActive) return false;
-		var list = new ArrayList<>(inputConfig);
-		list.add(outputConfig);
-		for (var i = 0; i < list.size(); i++) {
+		// 输出格（仅非 restocker 模式显示，原版位置 x+160, y+48）
+		if (!restocker && !outputConfig.stack.isEmpty()) {
+			var outputX = guiLeft + 160;
+			var outputY = guiTop + 48;
+			if (mouseX >= outputX && mouseX < outputX + 16 && mouseY >= outputY && mouseY < outputY + 16) {
+				var max = CCG.config.misc.removeRequestLimit ? Integer.MAX_VALUE : 64;
+				mc.setScreen(new RequestAmountScreen(
+					thiz(),
+					outputConfig.stack,
+					outputConfig.count,
+					max,
+					count -> outputConfig.count = count
+				));
+				return true;
+			}
+		}
+		for (var i = 0; i < inputConfig.size(); i++) {
 			var inputX = guiLeft + (restocker ? 88 : 68 + i % 3 * 20);
 			var inputY = guiTop + (restocker ? 12 : 28) + i / 3 * 20;
 			if (mouseX < inputX || mouseX >= inputX + 16 || mouseY < inputY || mouseY >= inputY + 16) continue;
-			var itemStack = list.get(i);
+			var itemStack = inputConfig.get(i);
 			if (itemStack.stack.isEmpty()) return false;
 			var max = CCG.config.misc.removeRequestLimit ? Integer.MAX_VALUE : 64;
 			mc.setScreen(new RequestAmountScreen(thiz(), itemStack.stack, itemStack.count, max, count -> itemStack.count = count));

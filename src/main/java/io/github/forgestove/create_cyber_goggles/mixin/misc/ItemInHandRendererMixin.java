@@ -16,7 +16,7 @@ public abstract class ItemInHandRendererMixin {
 	@Inject(method = "renderArmWithItem", at = @At("HEAD"), cancellable = true)
 	private void renderClipboardLikeMap(
 		AbstractClientPlayer player,
-		float partialTicks,
+		float partialTick,
 		float pitch,
 		InteractionHand hand,
 		float swingProgress,

@@ -173,15 +173,15 @@ public final class ItemTooltip {
 		// 水平围绕屏幕中心（避免偏右），垂直围绕整体包围盒中心
 		OverlayManager.scaleCenterX = event.getScreenWidth() / 2;
 		OverlayManager.scaleCenterY = (minY + maxY) / 2;
-		var graphics = event.getGraphics();
-		var pose = graphics.pose();
+		var gui = event.getGraphics();
+		var pose = gui.pose();
 		pose.pushPose();
 		if (scale < 1) {
 			pose.translate(OverlayManager.scaleCenterX, OverlayManager.scaleCenterY, 0);
 			pose.scale(scale, scale, 1);
 			pose.translate(-OverlayManager.scaleCenterX, -OverlayManager.scaleCenterY, 0);
 		}
-		renderer.render(graphics, stack, overlayX - 4, overlayY);
+		renderer.render(gui, stack, overlayX - 4, overlayY);
 		OverlayManager.upperBottom = Math.max(OverlayManager.upperBottom, overlayY + overlayHeight);
 		pose.popPose();
 	}

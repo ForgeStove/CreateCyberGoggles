@@ -44,7 +44,7 @@ public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen {
 	}
 	/** >3×3 配方改为在 3×3 区域内显示总计原料（避免完整网格出界）；悬停 3×3 框显示实际配方样式 */
 	@Inject(method = "renderInputItem", at = @At("HEAD"), cancellable = true)
-	private void renderLargeTotals(GuiGraphics graphics, int slot, BigItemStack itemStack, int mouseX, int mouseY, CallbackInfo ci) {
+	private void renderLargeTotals(GuiGraphics gui, int slot, BigItemStack itemStack, int mouseX, int mouseY, CallbackInfo ci) {
 		if (!CCG.config.misc.jei.allowLargeCrafting || CCGMods.extra_gauges.isLoaded()) return;
 		if (!(craftingActive && availableCraftingRecipe instanceof ShapedRecipe shaped && shaped.getWidth() > 3)) return;
 		var totals = ccg$totals();
@@ -55,13 +55,13 @@ public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen {
 		var total = totals.get(slot);
 		var inputX = guiLeft + 68 + slot % 3 * 20;
 		var inputY = guiTop + 28 + slot / 3 * 20;
-		graphics.renderItem(total.stack, inputX, inputY);
-		graphics.renderItemDecorations(font, total.stack, inputX, inputY, total.count + "");
+		gui.renderItem(total.stack, inputX, inputY);
+		gui.renderItemDecorations(font, total.stack, inputX, inputY, total.count + "");
 		if (slot == 0 && mouseX >= inputX - 2 && mouseX < inputX - 2 + 60 && mouseY >= inputY - 2 && mouseY < inputY - 2 + 60) {
 			var recipeItems = craftingIngredients.stream().map(b -> b.stack).toList();
 			List<Component> tooltip = new ArrayList<>();
 			CCGLang.itemList(recipeItems, shaped.getWidth()).addTo(tooltip);
-			graphics.renderComponentTooltip(font, tooltip, mouseX, mouseY);
+			gui.renderComponentTooltip(font, tooltip, mouseX, mouseY);
 		}
 		ci.cancel();
 	}

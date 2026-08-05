@@ -41,10 +41,10 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 		super.resize(minecraft, width, height);
 		ccg$popup = new RequestAmountOverlay();
 	}
-	@Override
-	public void render(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+	@Inject(method = "renderForeground", at = @At("TAIL"))
+	public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
 		if (ccg$popup.open) {
-			super.render(gui, 0, 0, partialTick);
+			super.render(gui, -1, -1, partialTick);
 			ccg$popup.render(gui, mouseX, mouseY, partialTick);
 			return;
 		}
@@ -103,7 +103,7 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 	}
 	/** 分页渲染当前 9 格物品（背景纹理自带槽边框）与数量，并显示 hover tooltip 与页码 */
 	@Inject(method = "renderForeground", at = @At("RETURN"))
-	private void renderPage(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
+	private void renderPage(GuiGraphics gui, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
 		if (!CCG.config.misc.redstoneRequesterLargeRequest) return;
 		var x = thiz().getGuiLeft() + 27;
 		var y = thiz().getGuiTop() + 28;
@@ -112,23 +112,23 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 			var index = ccg$getPagedSlotIndex(i);
 			var stack = ghost.getStackInSlot(index);
 			if (stack.isEmpty()) continue;
-			graphics.renderItem(stack, x + 20 * i, y);
-			graphics.renderItemDecorations(font, stack, x + 20 * i, y, amounts.get(index) + "");
+			gui.renderItem(stack, x + 20 * i, y);
+			gui.renderItemDecorations(font, stack, x + 20 * i, y, amounts.get(index) + "");
 		}
 		// 页码（固定 9 页；无物品不显示）
 		ccg$updatePageButtons();
 		if (ccg$pageCount() > 0) {
-			var ms = graphics.pose();
+			var ms = gui.pose();
 			ms.pushPose();
 			ms.scale(0.5F, 0.5F, 1F);
-			graphics.drawString(font, (ccg$page() + 1) + "/9", (x + 164) * 2, (y + 21) * 2, 0xFFFFFF);
+			gui.drawString(font, (ccg$page() + 1) + "/9", (x + 164) * 2, (y + 21) * 2, 0xFFFFFF);
 			ms.popPose();
 		}
 		// 提示框
 		for (var i = 0; i < 9; i++) {
 			var ix = x + 20 * i;
 			if (mouseX < ix || mouseX >= ix + 16 || mouseY < y || mouseY >= y + 16) continue;
-			renderSlotHighlight(graphics, ix, y, 0);
+			renderSlotHighlight(gui, ix, y, 0);
 			var index = ccg$getPagedSlotIndex(i);
 			var stack = ghost.getStackInSlot(index);
 			if (stack.isEmpty()) break;
@@ -143,7 +143,7 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 				Component.translatable("create.gui.factory_panel.scroll_to_change_amount")
 					.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC)
 			);
-			graphics.renderComponentTooltip(font, tooltip, mouseX, mouseY);
+			gui.renderComponentTooltip(font, tooltip, mouseX, mouseY);
 			break;
 		}
 	}

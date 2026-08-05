@@ -53,9 +53,9 @@ public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen {
 		super.resize(minecraft, width, height);
 		ccg$popup = new RequestAmountOverlay();
 	}
-	@Inject(method = "renderWindow", at = @At("HEAD"))
-	public void renderWindow(GuiGraphics gui, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
-		if (ccg$popup.open) ccg$popup.render(gui, mouseX, mouseY, partialTicks);
+	@Inject(method = "renderWindow", at = @At("TAIL"))
+	public void renderWindow(GuiGraphics gui, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
+		if (ccg$popup.open) ccg$popup.render(gui, mouseX, mouseY, partialTick);
 	}
 	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
 	public void mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {

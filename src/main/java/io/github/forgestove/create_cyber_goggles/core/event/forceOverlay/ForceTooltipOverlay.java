@@ -19,13 +19,13 @@ public final class ForceTooltipOverlay {
 	public static void register(@NotNull RegisterGuiLayersEvent event) {
 		event.registerAbove(VanillaGuiLayers.HOTBAR, getCCGRes("force_tooltip"), ForceTooltipOverlay::render);
 	}
-	private static void render(GuiGraphics graphics, DeltaTracker deltaTracker) {
+	private static void render(GuiGraphics gui, DeltaTracker deltaTracker) {
 		if (!CCG.config.aeronautics.forceOverlay.hudPanelEnabled) return;
 		if (mc.options.hideGui) return;
 		if (!ForceOverlay.hasData()) return;
 		var lines = buildLines();
 		if (lines.isEmpty()) return;
-		drawHud(graphics, mc.font, lines);
+		drawHud(gui, mc.font, lines);
 	}
 	private static List<Component> buildLines() {
 		List<Component> lines = new ArrayList<>();
@@ -51,7 +51,7 @@ public final class ForceTooltipOverlay {
 		}
 		return lines;
 	}
-	private static void drawHud(GuiGraphics graphics, Font font, List<Component> lines) {
+	private static void drawHud(GuiGraphics gui, Font font, List<Component> lines) {
 		var pos = CCG.config.aeronautics.forceOverlay.forceOverlayPos;
 		var offsetX = pos.x;
 		var offsetY = pos.y;
@@ -59,26 +59,26 @@ public final class ForceTooltipOverlay {
 		var maxLine = 0;
 		for (var line : lines) maxLine = Math.max(maxLine, font.width(line));
 		var textHeight = lines.size() * lineHeight - 1;
-		var textX = graphics.guiWidth() - 4 - 3 - 1 - maxLine + offsetX;
+		var textX = gui.guiWidth() - 4 - 3 - 1 - maxLine + offsetX;
 		var innerX1 = textX - 3;
 		var innerX2 = textX + maxLine + 3;
 		var innerY2 = 8 + textHeight + 3 + offsetY;
 		// 背景
 		var bgColor = 0xE0202020;
-		graphics.fill(innerX1, 4 + offsetY, innerX2, 5 + offsetY, bgColor);
-		graphics.fill(innerX1, innerY2, innerX2, innerY2 + 1, bgColor);
-		graphics.fill(innerX1, 5 + offsetY, innerX2, innerY2, bgColor);
-		graphics.fill(innerX1 - 1, 5 + offsetY, innerX1, innerY2, bgColor);
-		graphics.fill(innerX2, 5 + offsetY, innerX2 + 1, innerY2, bgColor);
+		gui.fill(innerX1, 4 + offsetY, innerX2, 5 + offsetY, bgColor);
+		gui.fill(innerX1, innerY2, innerX2, innerY2 + 1, bgColor);
+		gui.fill(innerX1, 5 + offsetY, innerX2, innerY2, bgColor);
+		gui.fill(innerX1 - 1, 5 + offsetY, innerX1, innerY2, bgColor);
+		gui.fill(innerX2, 5 + offsetY, innerX2 + 1, innerY2, bgColor);
 		// 边框
 		var borderColor = 0xE05A5A5A;
-		graphics.fill(innerX1, 5 + offsetY, innerX2, 6 + offsetY, borderColor);
-		graphics.fill(innerX1, innerY2 - 1, innerX2, innerY2, borderColor);
-		graphics.fill(innerX1, 6 + offsetY, innerX1 + 1, innerY2 - 1, borderColor);
-		graphics.fill(innerX2 - 1, 6 + offsetY, innerX2, innerY2 - 1, borderColor);
+		gui.fill(innerX1, 5 + offsetY, innerX2, 6 + offsetY, borderColor);
+		gui.fill(innerX1, innerY2 - 1, innerX2, innerY2, borderColor);
+		gui.fill(innerX1, 6 + offsetY, innerX1 + 1, innerY2 - 1, borderColor);
+		gui.fill(innerX2 - 1, 6 + offsetY, innerX2, innerY2 - 1, borderColor);
 		var y = 8 + offsetY;
 		for (var line : lines) {
-			graphics.drawString(font, line, textX, y, 0xFFFFFF, false);
+			gui.drawString(font, line, textX, y, 0xFFFFFF, false);
 			y += lineHeight;
 		}
 	}

@@ -52,7 +52,7 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 		if (!CCG.config.misc.quickRequestActions) {
 			if (ccg$popup.open) ccg$popup.close();
 		} else if (ccg$popup.open) {
-			super.render(gui, 0, 0, partialTick);
+			super.render(gui, -1, -1, partialTick);
 			ccg$popup.render(gui, mouseX, mouseY, partialTick);
 			return;
 		}

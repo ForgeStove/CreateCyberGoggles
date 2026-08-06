@@ -3,7 +3,7 @@ import io.github.forgestove.create_cyber_goggles.core.event.*;
 import io.github.forgestove.create_cyber_goggles.core.event.drafting.*;
 import io.github.forgestove.create_cyber_goggles.core.event.forceOverlay.*;
 import io.github.forgestove.create_cyber_goggles.core.factory.*;
-import io.github.forgestove.create_cyber_goggles.core.util.*;
+import io.github.forgestove.create_cyber_goggles.core.util.EnderChestTooltipUtil;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;

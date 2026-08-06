@@ -25,47 +25,6 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 			data -> new ClientFluidEntryTooltipComponent(data.fluid(), data.indent(), data.capacityMb(), data.sharedBarWidth())
 		);
 	}
-	public static void renderFluidBar(
-		@NotNull GuiGraphics gui,
-		@NotNull FluidStack stack,
-		int capacityMb,
-		int x,
-		int y,
-		int width,
-		int height
-	) {
-		gui.fill(x, y, x + width, y + 1, BORDER_COLOR);
-		gui.fill(x, y + height - 1, x + width, y + height, BORDER_COLOR);
-		gui.fill(x, y, x + 1, y + height, BORDER_COLOR);
-		gui.fill(x + width - 1, y, x + width, y + height, BORDER_COLOR);
-		if (stack.isEmpty()) return;
-		var innerX = x + 1;
-		var innerY = y + 1;
-		var innerW = Math.max(0, width - 2);
-		var innerH = Math.max(0, height - 2);
-		var fillRatio = Mth.clamp(stack.getAmount() / (float) Math.max(1, capacityMb), 0F, 1F);
-		var fillWidth = Mth.clamp(Mth.floor(innerW * fillRatio), 1, innerW);
-		renderFluid(gui, stack, innerX, innerY, fillWidth, innerH);
-	}
-	private static void renderFluid(@NotNull GuiGraphics gui, @NotNull FluidStack stack, int x, int y, int width, int height) {
-		if (stack.isEmpty()) return;
-		var ext = IClientFluidTypeExtensions.of(stack.getFluid());
-		var still = ext.getStillTexture(stack);
-		var sprite = mc.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(still);
-		var tint = ext.getTintColor(stack);
-		var r = ARGB32.red(tint) / 255F;
-		var g = ARGB32.green(tint) / 255F;
-		var b = ARGB32.blue(tint) / 255F;
-		var a = ARGB32.alpha(tint) / 255F;
-		gui.enableScissor(x, y, x + width, y + height);
-		for (var dx = 0; dx < width; dx += 16)
-			for (var dy = 0; dy < height; dy += 16)
-				gui.blit(x + dx, y + dy, 0, 16, 16, sprite, r, g, b, a);
-		gui.disableScissor();
-	}
-	private @NotNull Component buildLabel() {
-		return buildLabel(fluid, capacityMb, Screen.hasShiftDown());
-	}
 	@Override
 	public int getHeight() {
 		return SlotUtil.SIZE_SLIM + 2;
@@ -104,6 +63,47 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 		var textX = barX + H_PADDING;
 		var textY = y + Mth.floor((SlotUtil.SIZE_SLIM - font.lineHeight) / 2F) + 1;
 		gui.drawString(font, label, textX, textY, 0xFFFFFFFF, true);
+	}
+	private @NotNull Component buildLabel() {
+		return buildLabel(fluid, capacityMb, Screen.hasShiftDown());
+	}
+	public static void renderFluidBar(
+		@NotNull GuiGraphics gui,
+		@NotNull FluidStack stack,
+		int capacityMb,
+		int x,
+		int y,
+		int width,
+		int height
+	) {
+		gui.fill(x, y, x + width, y + 1, BORDER_COLOR);
+		gui.fill(x, y + height - 1, x + width, y + height, BORDER_COLOR);
+		gui.fill(x, y, x + 1, y + height, BORDER_COLOR);
+		gui.fill(x + width - 1, y, x + width, y + height, BORDER_COLOR);
+		if (stack.isEmpty()) return;
+		var innerX = x + 1;
+		var innerY = y + 1;
+		var innerW = Math.max(0, width - 2);
+		var innerH = Math.max(0, height - 2);
+		var fillRatio = Mth.clamp(stack.getAmount() / (float) Math.max(1, capacityMb), 0F, 1F);
+		var fillWidth = Mth.clamp(Mth.floor(innerW * fillRatio), 1, innerW);
+		renderFluid(gui, stack, innerX, innerY, fillWidth, innerH);
+	}
+	private static void renderFluid(@NotNull GuiGraphics gui, @NotNull FluidStack stack, int x, int y, int width, int height) {
+		if (stack.isEmpty()) return;
+		var ext = IClientFluidTypeExtensions.of(stack.getFluid());
+		var still = ext.getStillTexture(stack);
+		var sprite = mc.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(still);
+		var tint = ext.getTintColor(stack);
+		var r = ARGB32.red(tint) / 255F;
+		var g = ARGB32.green(tint) / 255F;
+		var b = ARGB32.blue(tint) / 255F;
+		var a = ARGB32.alpha(tint) / 255F;
+		gui.enableScissor(x, y, x + width, y + height);
+		for (var dx = 0; dx < width; dx += 16)
+			for (var dy = 0; dy < height; dy += 16)
+				gui.blit(x + dx, y + dy, 0, 16, 16, sprite, r, g, b, a);
+		gui.disableScissor();
 	}
 	public record FluidEntryTooltipComponent(FluidStack fluid, int indent, int capacityMb, int sharedBarWidth) implements TooltipComponent {
 		/** 兼容旧调用：共享条宽在 GatherComponents 阶段按同 tooltip 最大条宽填充 */

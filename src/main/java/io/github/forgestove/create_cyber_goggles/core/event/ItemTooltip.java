@@ -128,12 +128,6 @@ public final class ItemTooltip {
 			i++;
 		}
 	}
-	public static @Nullable TooltipRenderer findRenderer(@NotNull ItemStack stack) {
-		for (var renderer : OVERLAY_RENDERERS) {
-			if (renderer.supports(stack)) return renderer;
-		}
-		return null;
-	}
 	public static void renderTooltipPre(@NotNull Pre event) {
 		if (!CCG.config.tooltip.extraItemTooltip) return;
 		var stack = event.getItemStack();
@@ -181,5 +175,9 @@ public final class ItemTooltip {
 		// 登记已渲染区域，供后渲染的 GoggleOverlay 避让
 		OverlayManager.upperBottom = Math.max(OverlayManager.upperBottom, overlayY + overlayHeight);
 		pose.popPose();
+	}
+	public static @Nullable TooltipRenderer findRenderer(@NotNull ItemStack stack) {
+		for (var renderer : OVERLAY_RENDERERS) if (renderer.supports(stack)) return renderer;
+		return null;
 	}
 }

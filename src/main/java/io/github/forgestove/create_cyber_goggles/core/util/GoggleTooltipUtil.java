@@ -243,7 +243,8 @@ public final class GoggleTooltipUtil {
 			holder -> holder.value().getRollableResults().forEach(result -> {
 				var stack = result.getStack();
 				var chance = result.getChance();
-				var label = CCGLang.itemName(stack).text(" x", DARK_GRAY).number(chance * 100).style(AQUA).text("%", DARK_GRAY).component();
+				var label =
+					CCGLang.itemName(stack).text(" x", DARK_GRAY).number(chance * 100).style(AQUA).text("%", DARK_GRAY).component();
 				CCGLang.itemEntry(stack.copyWithCount(inputCount * stack.getCount()), label).forGoggles(tooltip);
 			}), () -> CCGLang.itemName(ItemStack.EMPTY).forGoggles(tooltip, 2)
 		);

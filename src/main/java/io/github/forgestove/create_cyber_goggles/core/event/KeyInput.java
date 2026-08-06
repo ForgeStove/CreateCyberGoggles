@@ -9,7 +9,7 @@ import io.github.forgestove.create_cyber_goggles.core.util.TableClothUtil;
 import io.github.forgestove.flexconfig.client.ConfigScreenFactory;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.sounds.*;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.*;

@@ -26,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
-@Mixin(value = GoggleOverlayRenderer.class, remap = false)
+@Mixin(GoggleOverlayRenderer.class)
 public abstract class GoggleOverlayRendererMixin {
 	@Unique private static HitResult ccg$lastHitResult;
 	@Unique private static int ccg$Offset;

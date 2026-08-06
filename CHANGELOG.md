@@ -1,3 +1,1 @@
-- Fix incorrect slot order in LinkedControllerRenderer
-- Fix GoggleOverlay repeatedly triggering fade-in/fade-out at certain positions caused by the fade-out logic
-- Optimize tooltip rendering layout
+- Fix crash when item's component is empty

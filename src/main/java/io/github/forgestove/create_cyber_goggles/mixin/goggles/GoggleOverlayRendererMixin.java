@@ -141,8 +141,7 @@ public abstract class GoggleOverlayRendererMixin {
 			ccg$lastHitResult = ehr;
 			return original;
 		}
-		// 非渲染目标：淡出时返回缓存的上一个渲染目标
-		return ccg$isFadingOut() && ccg$lastHitResult != null ? ccg$lastHitResult : original;
+		return !ccg$isFadingOut() || ccg$lastHitResult == null ? null : ccg$lastHitResult;
 	}
 	@Unique
 	private static boolean ccg$hasInfo(BlockHitResult bhr) {

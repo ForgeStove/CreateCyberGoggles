@@ -91,8 +91,10 @@ public final class TooltipOverlay {
 		if (overlay.tooltipFlagType == null) overlay.tooltipFlagType = TooltipFlagType.Default;
 		var tooltipLines = itemStack.getTooltipLines(TooltipContext.of(mc.level), mc.player, overlay.tooltipFlagType.getFlag());
 		var components = buildTooltipComponents(tooltipLines, width - x - 16, true);
-		var itemEntryComponent = new ItemEntryTooltipComponent(itemStack, 0, itemStack.getHoverName());
-		components.set(0, ClientTooltipComponent.create(itemEntryComponent));
+		// tooltipLines 可能为空（部分物品无 tooltip 行），此时 components 为空，需用 add 而非 set
+		var itemEntryComponent = ClientTooltipComponent.create(new ItemEntryTooltipComponent(itemStack, 0, itemStack.getHoverName()));
+		if (components.isEmpty()) components.add(itemEntryComponent);
+		else components.set(0, itemEntryComponent);
 		var tooltipWidth = 0;
 		var tooltipHeight = 0;
 		for (var component : components) {

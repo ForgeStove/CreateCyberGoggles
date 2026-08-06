@@ -1,5 +1,3 @@
-- Fix the factory gauge's left-click logic being incorrectly overridden
-- Improve the request amount screen
-- Allowe opening the request screen from the factory gauge's output slot
-- Improve the amount display
-- Improve the ColorPickerScreen
+- Fix incorrect slot order in LinkedControllerRenderer
+- Fix GoggleOverlay repeatedly triggering fade-in/fade-out at certain positions caused by the fade-out logic
+- Optimize tooltip rendering layout

@@ -22,7 +22,7 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 	public static void register(@NotNull RegisterClientTooltipComponentFactoriesEvent event) {
 		event.register(
 			FluidEntryTooltipComponent.class,
-			data -> new ClientFluidEntryTooltipComponent(data.fluid(), data.indent(), data.capacityMb(), 0)
+			data -> new ClientFluidEntryTooltipComponent(data.fluid(), data.indent(), data.capacityMb(), data.sharedBarWidth())
 		);
 	}
 	public static void renderFluidBar(
@@ -105,5 +105,10 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 		var textY = y + Mth.floor((SlotUtil.SIZE_SLIM - font.lineHeight) / 2F) + 1;
 		gui.drawString(font, label, textX, textY, 0xFFFFFFFF, true);
 	}
-	public record FluidEntryTooltipComponent(FluidStack fluid, int indent, int capacityMb) implements TooltipComponent {}
+	public record FluidEntryTooltipComponent(FluidStack fluid, int indent, int capacityMb, int sharedBarWidth) implements TooltipComponent {
+		/** 兼容旧调用：共享条宽在 GatherComponents 阶段按同 tooltip 最大条宽填充 */
+		public FluidEntryTooltipComponent(FluidStack fluid, int indent, int capacityMb) {
+			this(fluid, indent, capacityMb, 0);
+		}
+	}
 }

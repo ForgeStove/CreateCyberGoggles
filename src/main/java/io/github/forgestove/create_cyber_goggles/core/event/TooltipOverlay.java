@@ -6,7 +6,9 @@ import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.ItemRenderable;
 import io.github.forgestove.create_cyber_goggles.core.factory.*;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientFluidEntryTooltipComponent.FluidEntryTooltipComponent;
+import io.github.forgestove.create_cyber_goggles.core.factory.ClientFluidListTooltipComponent.FluidListTooltipComponent;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientItemEntryTooltipComponent.ItemEntryTooltipComponent;
+import io.github.forgestove.create_cyber_goggles.core.factory.ClientItemListTooltipComponent.ItemListTooltipComponent;
 import io.github.forgestove.create_cyber_goggles.core.factory.TooltipTheme.Theme;
 import io.github.forgestove.create_cyber_goggles.core.util.TooltipComponentUtil;
 import net.createmod.catnip.gui.element.BoxElement;
@@ -99,11 +101,9 @@ public final class TooltipOverlay {
 		}
 		// 物品悬浮框淡入淡出全程停留在该偏移位置
 		if (liftAboveGoggle) y -= tooltipHeight + 10;
-		// 触底：期望位置（未 clamp）底部越界 → 整体缩放
-		if (y + tooltipHeight > height)
-			OverlayManager.overallScale = Math.min(OverlayManager.overallScale, (float) height / (y + tooltipHeight));
+		// 顶部下限固定 16：悬浮框过高导致 height - tooltipHeight - 100 < 16 时不得超顶
 		x = Mth.clamp(x, 0, width - tooltipWidth);
-		y = Mth.clamp(y, 16, height - tooltipHeight - 100);
+		y = Mth.clamp(y, 16, Math.max(16, height - tooltipHeight - 100));
 		renderTooltip(gui, itemStack, components, x, y, tooltipWidth, tooltipHeight, back.getRGB(), top.getRGB(), bot.getRGB());
 		pose.popPose();
 	}
@@ -132,46 +132,50 @@ public final class TooltipOverlay {
 	) {
 		var effectiveMaxWidth = maxWidth > 0 ? maxWidth : Integer.MAX_VALUE;
 		var parsed = new ArrayList<>();
-		var fluidEntries = new ArrayList<FluidEntryTooltipComponent>();
 		for (var i = 0; i < tooltipLines.size(); i++) {
 			var line = tooltipLines.get(i);
-			var item = TooltipComponentUtil.removeItemEntry(line);
-			if (item != null) {
-				parsed.add(new ClientItemEntryTooltipComponent(item.stack(), item.indent(), item.label()));
-				continue;
-			}
-			var fluid = TooltipComponentUtil.removeFluidEntry(line);
-			if (fluid != null) {
-				parsed.add(fluid);
-				fluidEntries.add(fluid);
-				continue;
-			}
-			var itemList = TooltipComponentUtil.removeItemList(line);
-			if (itemList != null) {
-				parsed.add(new ClientItemListTooltipComponent(itemList.items(), itemList.indent(), itemList.maxColumns()));
-				continue;
-			}
-			var fluidList = TooltipComponentUtil.removeFluidList(line);
-			if (fluidList != null) {
-				parsed.add(new ClientFluidListTooltipComponent(fluidList.fluids(), fluidList.indent(), fluidList.maxColumns()));
+			var split = TooltipComponentUtil.consumeMarker(line);
+			if (split != null) {
+				// marker 与普通文本混行：剩余文本单独成行，UI 独立成行
+				var remaining = split.remaining();
+				if (remaining != null) parsed.addAll(mc.font.split(remaining, effectiveMaxWidth));
+				parsed.add(split.data());
 				continue;
 			}
 			if (firstLinePadding && i == 0) line = Component.literal(" ".repeat(Mth.ceil(16F / mc.font.width(" ")))).append(line);
 			parsed.addAll(mc.font.split(line, effectiveMaxWidth));
 		}
 		var sharedFluidWidth = 0;
-		for (var fluidEntry : fluidEntries) {
-			var preferred = ClientFluidEntryTooltipComponent.preferredBarWidth(mc.font, fluidEntry.fluid(), fluidEntry.capacityMb());
-			if (preferred > sharedFluidWidth) sharedFluidWidth = preferred;
-		}
+		for (var value : parsed)
+			if (value instanceof FluidEntryTooltipComponent fluidEntry) {
+				var preferred = ClientFluidEntryTooltipComponent.preferredBarWidth(mc.font, fluidEntry.fluid(), fluidEntry.capacityMb());
+				if (preferred > sharedFluidWidth) sharedFluidWidth = preferred;
+			}
 		var components = new ArrayList<ClientTooltipComponent>(parsed.size());
 		for (var value : parsed) {
 			if (value instanceof ClientTooltipComponent client) {
 				components.add(client);
 				continue;
 			}
-			if (value instanceof FluidEntryTooltipComponent(var fluid, var indent, var capacityMb)) {
-				components.add(new ClientFluidEntryTooltipComponent(fluid, indent, capacityMb, sharedFluidWidth));
+			if (value instanceof FluidEntryTooltipComponent fluidEntry) {
+				components.add(new ClientFluidEntryTooltipComponent(
+					fluidEntry.fluid(),
+					fluidEntry.indent(),
+					fluidEntry.capacityMb(),
+					sharedFluidWidth
+				));
+				continue;
+			}
+			if (value instanceof ItemEntryTooltipComponent(var stack, var indent, var label)) {
+				components.add(new ClientItemEntryTooltipComponent(stack, indent, label));
+				continue;
+			}
+			if (value instanceof ItemListTooltipComponent(var items, var indent, var maxColumns)) {
+				components.add(new ClientItemListTooltipComponent(items, indent, maxColumns));
+				continue;
+			}
+			if (value instanceof FluidListTooltipComponent(var fluids, var indent, var maxColumns)) {
+				components.add(new ClientFluidListTooltipComponent(fluids, indent, maxColumns));
 				continue;
 			}
 			if (value instanceof FormattedCharSequence text) components.add(ClientTooltipComponent.create(text));
@@ -194,21 +198,14 @@ public final class TooltipOverlay {
 		var width = gui.guiWidth();
 		var height = gui.guiHeight();
 		var positioner = DefaultTooltipPositioner.INSTANCE;
-		if (ClientHooks.onRenderTooltipPre(itemStack, gui, x, y, width, height, components, mc.font, positioner).isCanceled()) return;
-		var tooltipPos = positioner.positionTooltip(width, height, x, y, tooltipWidth, tooltipHeight);
+		// 触发 Pre 事件：面板（renderTooltipPre）与悬浮框共用同一锚点；用 preEvent 位置定位以响应 setY 让位
+		var preEvent = ClientHooks.onRenderTooltipPre(itemStack, gui, x, y, width, height, components, mc.font, positioner);
+		if (preEvent.isCanceled()) return;
+		var tooltipPos = positioner.positionTooltip(width, height, preEvent.getX(), preEvent.getY(), tooltipWidth, tooltipHeight);
 		var tooltipX = tooltipPos.x();
-		var tooltipY = tooltipPos.y() + OverlayManager.prevOverallOffsetY;
-		// 触底：期望位置底部越界 → 更新整体缩放（供所有 overlay 下一帧使用）
-		if (y + tooltipHeight > height)
-			OverlayManager.overallScale = Math.min(OverlayManager.overallScale, (float) height / (y + tooltipHeight));
+		var tooltipY = tooltipPos.y();
 		var pose = gui.pose();
 		pose.pushPose();
-		// 整体缩放（上一帧触底结果，最靠底触底时三个 overlay 一起围绕整体锚点缩放）
-		if (OverlayManager.prevOverallScale < 1) {
-			pose.translate(OverlayManager.scaleCenterX, OverlayManager.scaleCenterY, 0);
-			pose.scale(OverlayManager.prevOverallScale, OverlayManager.prevOverallScale, 1);
-			pose.translate(-OverlayManager.scaleCenterX, -OverlayManager.scaleCenterY, 0);
-		}
 		TooltipRenderUtil.renderTooltipBackground(gui, tooltipX, tooltipY, tooltipWidth, tooltipHeight, 400, back, back, top, bot);
 		pose.translate(0, 0, 400);
 		// 用独立BufferSource渲染文字并立即提交(防止后续renderImage干扰文字shader state)，再单独循环渲染所有图片
@@ -228,9 +225,8 @@ public final class TooltipOverlay {
 			component.renderImage(mc.font, tooltipX, textY, gui);
 			textY += component.getHeight() + (i == 0 ? 2 : 0);
 		}
-		// 登记已渲染区域，供后渲染的 TooltipRenderer 避让
-		OverlayManager.upperBottom = Math.max(OverlayManager.upperBottom, tooltipY + tooltipHeight);
-		OverlayManager.occupy(tooltipX, tooltipY, tooltipWidth, tooltipHeight);
+		// 登记已渲染区域供 Goggle 避让；Goggle 自身 tooltip（EMPTY）不登记，避免其自我避让导致持续下移
+		if (!itemStack.isEmpty()) OverlayManager.upperBottom = Math.max(OverlayManager.upperBottom, tooltipY + tooltipHeight);
 		pose.popPose();
 	}
 }

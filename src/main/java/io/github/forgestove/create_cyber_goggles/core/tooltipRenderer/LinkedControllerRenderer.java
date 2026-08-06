@@ -22,16 +22,16 @@ public final class LinkedControllerRenderer extends AbstractItemGridRenderer {
 	/** 槽位左上角，按 buildItemGrid 槽位顺序 */
 	private static final Point[] SLOT_POINTS = {
 		new Point(12, 34),
-		new Point(12, 52),
 		new Point(36, 34),
-		new Point(36, 52),
 		new Point(60, 34),
-		new Point(60, 52),
 		new Point(84, 34),
-		new Point(84, 52),
 		new Point(119, 34),
-		new Point(119, 52),
 		new Point(143, 34),
+		new Point(12, 52),
+		new Point(36, 52),
+		new Point(60, 52),
+		new Point(84, 52),
+		new Point(119, 52),
 		new Point(143, 52)
 	};
 	@Override

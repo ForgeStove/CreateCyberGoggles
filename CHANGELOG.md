@@ -1,1 +1,1 @@
-- Fix crash when item's component is empty
+- Re-enable the use of Physics Staff in Survival mode, disabled by default

@@ -9,6 +9,8 @@ on:
         type: boolean
         required: true
         default: false
+  schedule:
+    - cron: '0 0 * * *'
 jobs:
   synchronize-with-crowdin:
     runs-on: ubuntu-latest

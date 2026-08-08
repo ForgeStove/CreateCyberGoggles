@@ -1,1 +1,2 @@
 - Fix [#77](https://github.com/ForgeStove/CreateCyberGoggles/issues/77)
+- Fix mixin compact for ThirstWasTaken

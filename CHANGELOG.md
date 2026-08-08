@@ -1,2 +1,1 @@
-- Fix [#77](https://github.com/ForgeStove/CreateCyberGoggles/issues/77)
-- Fix mixin compact for Thirst Was Reclaimed
+- Optimize direction rendering for ChainConveyor

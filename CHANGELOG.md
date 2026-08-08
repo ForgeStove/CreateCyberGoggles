@@ -1,1 +1,1 @@
-- Re-enable the use of Physics Staff in Survival mode, disabled by default
+- Fix [#77](https://github.com/ForgeStove/CreateCyberGoggles/issues/77)

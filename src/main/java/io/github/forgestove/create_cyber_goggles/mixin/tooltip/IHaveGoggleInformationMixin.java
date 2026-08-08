@@ -14,7 +14,11 @@ import java.util.List;
 @Mixin(IHaveGoggleInformation.class)
 public interface IHaveGoggleInformationMixin {
 	@WrapMethod(method = "containedFluidTooltip")
-	private boolean containedFluidTooltip(List<Component> tooltip, boolean isPlayerSneaking, IFluidHandler handler, Operation<Boolean> original
+	private boolean containedFluidTooltip(
+		List<Component> tooltip,
+		boolean isPlayerSneaking,
+		IFluidHandler handler,
+		Operation<Boolean> original
 	) {
 		if (!CCG.config.tooltip.fluidContainer) return original.call(tooltip, isPlayerSneaking, handler);
 		if (handler == null || handler.getTanks() == 0) return original.call(tooltip, isPlayerSneaking, handler);

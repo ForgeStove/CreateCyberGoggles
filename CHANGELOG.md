@@ -1,1 +1,1 @@
-- Optimize direction rendering for ChainConveyor
+- Fix the issue of visual click misalignment of enum type configuration

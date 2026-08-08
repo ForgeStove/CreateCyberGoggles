@@ -98,14 +98,18 @@ public final class ItemTooltip {
 		var elements = event.getTooltipElements();
 		// 第一遍：只读收集流体条目，取最大 preferred 条宽作为统一宽度（不消费 marker）
 		var sharedBarWidth = 0;
-		for (var element : elements)
-			if (element.left().orElse(null) instanceof Component comp) {
-				var fluid = TooltipComponentUtil.peekFluidEntry(comp);
-				if (fluid != null) {
-					var preferred = ClientFluidEntryTooltipComponent.preferredBarWidth(mc.font, fluid.fluid(), fluid.capacityMb());
-					if (preferred > sharedBarWidth) sharedBarWidth = preferred;
-				}
-			}
+		for (var element : elements) {
+			if (!(element.left().orElse(null) instanceof Component comp)) continue;
+			var fluid = TooltipComponentUtil.peekFluidEntry(comp);
+			if (fluid == null) continue;
+			var preferred = ClientFluidEntryTooltipComponent.preferredBarWidth(
+				mc.font,
+				fluid.fluid(),
+				fluid.capacityMb(),
+				fluid.label()
+			);
+			if (preferred > sharedBarWidth) sharedBarWidth = preferred;
+		}
 		// 第二遍：消费 marker 并原地替换（marker 与文本混行时剩余文本保留，UI 独立成行插入）
 		for (var i = 0; i < elements.size(); ) {
 			var left = elements.get(i).left().orElse(null);
@@ -120,7 +124,7 @@ public final class ItemTooltip {
 			}
 			var ui = split.data();
 			if (ui instanceof FluidEntryTooltipComponent fluid)
-				ui = new FluidEntryTooltipComponent(fluid.fluid(), fluid.indent(), fluid.capacityMb(), sharedBarWidth);
+				ui = new FluidEntryTooltipComponent(fluid.fluid(), fluid.indent(), fluid.capacityMb(), sharedBarWidth, fluid.label());
 			if (split.remaining() != null) {
 				elements.set(i, Either.left(split.remaining()));
 				elements.add(i + 1, Either.right(ui));

@@ -147,41 +147,38 @@ public final class TooltipOverlay {
 			if (firstLinePadding && i == 0) line = Component.literal(" ".repeat(Mth.ceil(16F / mc.font.width(" ")))).append(line);
 			parsed.addAll(mc.font.split(line, effectiveMaxWidth));
 		}
-		var sharedFluidWidth = 0;
-		for (var value : parsed)
-			if (value instanceof FluidEntryTooltipComponent fluidEntry) {
-				var preferred = ClientFluidEntryTooltipComponent.preferredBarWidth(mc.font, fluidEntry.fluid(), fluidEntry.capacityMb());
-				if (preferred > sharedFluidWidth) sharedFluidWidth = preferred;
-			}
-		var components = new ArrayList<ClientTooltipComponent>(parsed.size());
+		var sharedBarWidth = 0;
 		for (var value : parsed) {
-			if (value instanceof ClientTooltipComponent client) {
-				components.add(client);
-				continue;
-			}
-			if (value instanceof FluidEntryTooltipComponent fluidEntry) {
-				components.add(new ClientFluidEntryTooltipComponent(
-					fluidEntry.fluid(),
-					fluidEntry.indent(),
-					fluidEntry.capacityMb(),
-					sharedFluidWidth
-				));
-				continue;
-			}
-			if (value instanceof ItemEntryTooltipComponent(var stack, var indent, var label)) {
-				components.add(new ClientItemEntryTooltipComponent(stack, indent, label));
-				continue;
-			}
-			if (value instanceof ItemListTooltipComponent(var items, var indent, var maxColumns)) {
-				components.add(new ClientItemListTooltipComponent(items, indent, maxColumns));
-				continue;
-			}
-			if (value instanceof FluidListTooltipComponent(var fluids, var indent, var maxColumns)) {
-				components.add(new ClientFluidListTooltipComponent(fluids, indent, maxColumns));
-				continue;
-			}
-			if (value instanceof FormattedCharSequence text) components.add(ClientTooltipComponent.create(text));
+			if (!(value instanceof FluidEntryTooltipComponent fluidEntry)) continue;
+			var preferred = ClientFluidEntryTooltipComponent.preferredBarWidth(
+				mc.font,
+				fluidEntry.fluid(),
+				fluidEntry.capacityMb(),
+				fluidEntry.label()
+			);
+			if (preferred > sharedBarWidth) sharedBarWidth = preferred;
 		}
+		var components = new ArrayList<ClientTooltipComponent>(parsed.size());
+		for (var value : parsed)
+			switch (value) {
+				case ClientTooltipComponent client -> components.add(client);
+				case FluidEntryTooltipComponent fluidEntry ->
+					components.add(new ClientFluidEntryTooltipComponent(new FluidEntryTooltipComponent(
+						fluidEntry.fluid(),
+						fluidEntry.indent(),
+						fluidEntry.capacityMb(),
+						sharedBarWidth,
+						fluidEntry.label()
+					)));
+				case ItemEntryTooltipComponent(var stack, var indent, var label) ->
+					components.add(new ClientItemEntryTooltipComponent(new ItemEntryTooltipComponent(stack, indent, label)));
+				case ItemListTooltipComponent(var items, var indent, var maxColumns) ->
+					components.add(new ClientItemListTooltipComponent(new ItemListTooltipComponent(items, indent, maxColumns)));
+				case FluidListTooltipComponent(var fluids, var indent, var maxColumns) ->
+					components.add(new ClientFluidListTooltipComponent(new FluidListTooltipComponent(fluids, indent, maxColumns)));
+				case FormattedCharSequence text -> components.add(ClientTooltipComponent.create(text));
+				default -> {}
+			}
 		return components;
 	}
 	public static void renderTooltip(

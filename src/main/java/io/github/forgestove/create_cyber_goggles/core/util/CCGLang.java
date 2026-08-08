@@ -91,8 +91,14 @@ public class CCGLang {
 		return builder().add(marker);
 	}
 	public static @NotNull CCGLangBuilder fluidEntry(@NotNull FluidStack fluid, int capacityMb) {
+		return fluidEntry(fluid, capacityMb, null);
+	}
+	public static @NotNull CCGLangBuilder fluidEntry(@NotNull FluidStack fluid, int capacityMb, @Nullable Component label) {
 		var marker = Component.empty();
-		TooltipComponentUtil.FLUID_ENTRY_MAP.put(marker, new FluidEntryTooltipComponent(fluid.copy(), 0, Math.max(1, capacityMb)));
+		TooltipComponentUtil.FLUID_ENTRY_MAP.put(
+			marker,
+			new FluidEntryTooltipComponent(fluid.copy(), 0, Math.max(1, capacityMb), 0, label)
+		);
 		return builder().add(marker);
 	}
 	@SuppressWarnings("unused")

@@ -71,6 +71,7 @@ dependencies {
 	compileOnly("maven.modrinth:sophisticated-core:${p("mcVersion")}-${p("sophisticatedCoreVersion")}")
 	compileOnly("com.hollingsworth.ars_nouveau:ars_nouveau-${p("mcVersion")}:${p("arsNouveauVersion")}") { isTransitive = false }
 	compileOnly("org.appliedenergistics:appliedenergistics2:${p("appliedenergisticsVersion")}")
+	compileOnly("maven.modrinth:thirst-was-reclaimed:${p("mcVersion")}-${p("thirstVersion")}")
 	runtimeOnly("maven.modrinth:jade:${p("jadeVersion")}+${p("loader")}")
 	add("additionalRuntimeClasspath", mixinAgentNotation)
 }

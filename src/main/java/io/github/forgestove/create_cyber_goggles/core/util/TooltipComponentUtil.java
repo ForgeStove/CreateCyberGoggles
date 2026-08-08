@@ -54,7 +54,7 @@ public final class TooltipComponentUtil {
 		var result = findMarker(comp, FLUID_ENTRY_MAP, 0, false);
 		if (result == null) return null;
 		var data = result.data();
-		return new FluidEntryTooltipComponent(data.fluid(), result.indent(), data.capacityMb());
+		return new FluidEntryTooltipComponent(data.fluid(), result.indent(), data.capacityMb(), 0, data.label());
 	}
 	public static boolean hasIcon(@NotNull Object key) {
 		if (!(key instanceof Component comp)) return false;
@@ -80,7 +80,7 @@ public final class TooltipComponentUtil {
 		var fluid = removeMarker(line, FLUID_ENTRY_MAP);
 		if (fluid != null) return buildSplit(
 			line,
-			new FluidEntryTooltipComponent(fluid.data().fluid(), fluid.indent(), fluid.data().capacityMb()),
+			new FluidEntryTooltipComponent(fluid.data().fluid(), fluid.indent(), fluid.data().capacityMb(), 0, fluid.data().label()),
 			fluid.marker()
 		);
 		var fluidList = removeMarker(line, FLUID_LIST_MAP);

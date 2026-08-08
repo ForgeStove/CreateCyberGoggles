@@ -12,12 +12,13 @@ import java.util.Optional;
 import java.util.function.Supplier;
 public enum CCGMods {
 	create,
-	simulated,
-	sable,
-	fluidlogistics,
 	extra_gauges,
+	fluidlogistics,
+	modernui,
 	obscure_tooltips,
-	modernui;
+	sable,
+	simulated,
+	thirst;
 	private final String id;
 	CCGMods() {
 		id = Lang.asId(name());

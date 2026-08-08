@@ -12,18 +12,18 @@ import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
-public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int capacityMb, int sharedBarWidth)
-	implements ClientTooltipComponent {
+public final class ClientFluidEntryTooltipComponent implements ClientTooltipComponent {
 	private static final int H_PADDING = 4;
 	private static final int BORDER_COLOR = 0xFF777777;
+	private final FluidEntryTooltipComponent c;
 	public static void register(@NotNull RegisterClientTooltipComponentFactoriesEvent event) {
-		event.register(
-			FluidEntryTooltipComponent.class,
-			data -> new ClientFluidEntryTooltipComponent(data.fluid(), data.indent(), data.capacityMb(), data.sharedBarWidth())
-		);
+		event.register(FluidEntryTooltipComponent.class, ClientFluidEntryTooltipComponent::new);
+	}
+	public ClientFluidEntryTooltipComponent(FluidEntryTooltipComponent c) {
+		this.c = c;
 	}
 	@Override
 	public int getHeight() {
@@ -34,38 +34,41 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 		return indentPixels(font) + barWidth(font);
 	}
 	private int indentPixels(@NotNull Font font) {
-		return indent * font.width(" ");
+		return c.indent * font.width(" ");
 	}
 	private int barWidth(@NotNull Font font) {
-		var preferred = preferredBarWidth(font, fluid, capacityMb);
-		return Math.max(preferred, sharedBarWidth);
+		var preferred = preferredBarWidth(font, c.fluid, c.capacityMb, c.label);
+		return Math.max(preferred, c.sharedBarWidth);
 	}
-	public static int preferredBarWidth(@NotNull Font font, @NotNull FluidStack fluid, int capacityMb) {
-		var label = buildLabel(fluid, capacityMb, Screen.hasShiftDown());
-		return Math.max(SlotUtil.SIZE * 4, font.width(label) + H_PADDING * 2);
+	public static int preferredBarWidth(@NotNull Font font, @NotNull FluidStack fluid, int capacityMb, @Nullable Component label) {
+		var labelComp = buildLabel(fluid, capacityMb, Screen.hasShiftDown(), label);
+		return Math.max(SlotUtil.SIZE * 4, font.width(labelComp) + H_PADDING * 2);
 	}
-	private static @NotNull Component buildLabel(@NotNull FluidStack fluid, int capacityMb, boolean showCapacity) {
+	private static @NotNull Component buildLabel(
+		@NotNull FluidStack fluid,
+		int capacityMb,
+		boolean showCapacity,
+		@Nullable Component label
+	) {
 		if (fluid.isEmpty()) return CCGLang.add(Component.translatable("create_cyber_goggles.tooltip.empty"))
 			.space()
 			.text(AmountUtil.formatFluidAmount(capacityMb))
 			.component();
-		var label = CCGLang.add(fluid.getHoverName()).space().text(AmountUtil.formatFluidAmount(fluid.getAmount()));
+		var name = (label != null ? label : fluid.getHoverName()).copy();
+		var result = CCGLang.add(name).space().text(AmountUtil.formatFluidAmount(fluid.getAmount()));
 		if (showCapacity)
-			return label.text(" / ", ChatFormatting.GRAY).text(AmountUtil.formatFluidAmount(capacityMb), ChatFormatting.GRAY).component();
-		return label.component();
+			return result.text(" / ", ChatFormatting.GRAY).text(AmountUtil.formatFluidAmount(capacityMb), ChatFormatting.GRAY).component();
+		return result.component();
 	}
 	@Override
 	public void renderImage(@NotNull Font font, int x, int y, @NotNull GuiGraphics gui) {
-		var label = buildLabel();
+		var label = buildLabel(c.fluid, c.capacityMb, Screen.hasShiftDown(), c.label);
 		var barX = x + indentPixels(font);
 		var barWidth = barWidth(font);
-		renderFluidBar(gui, fluid, capacityMb, barX, y, barWidth, SlotUtil.SIZE_SLIM);
+		renderFluidBar(gui, c.fluid, c.capacityMb, barX, y, barWidth, SlotUtil.SIZE_SLIM);
 		var textX = barX + H_PADDING;
 		var textY = y + Mth.floor((SlotUtil.SIZE_SLIM - font.lineHeight) / 2F) + 1;
 		gui.drawString(font, label, textX, textY, 0xFFFFFFFF, true);
-	}
-	private @NotNull Component buildLabel() {
-		return buildLabel(fluid, capacityMb, Screen.hasShiftDown());
 	}
 	public static void renderFluidBar(
 		@NotNull GuiGraphics gui,
@@ -105,10 +108,6 @@ public record ClientFluidEntryTooltipComponent(FluidStack fluid, int indent, int
 				gui.blit(x + dx, y + dy, 0, 16, 16, sprite, r, g, b, a);
 		gui.disableScissor();
 	}
-	public record FluidEntryTooltipComponent(FluidStack fluid, int indent, int capacityMb, int sharedBarWidth) implements TooltipComponent {
-		/** 兼容旧调用：共享条宽在 GatherComponents 阶段按同 tooltip 最大条宽填充 */
-		public FluidEntryTooltipComponent(FluidStack fluid, int indent, int capacityMb) {
-			this(fluid, indent, capacityMb, 0);
-		}
-	}
+	public record FluidEntryTooltipComponent(FluidStack fluid, int indent, int capacityMb, int sharedBarWidth, @Nullable Component label)
+		implements TooltipComponent {}
 }

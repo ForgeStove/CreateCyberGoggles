@@ -14,23 +14,16 @@ import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public final class ClientFluidListTooltipComponent implements ClientTooltipComponent {
-	private final List<FluidStack> fluids;
-	private final int maxColumns;
+	private final FluidListTooltipComponent c;
 	private final int columns;
 	private final int rows;
-	private final int indent;
-	public ClientFluidListTooltipComponent(List<FluidStack> fluids, int indent, int maxColumns) {
-		this.fluids = fluids;
-		this.indent = indent;
-		this.maxColumns = maxColumns;
-		columns = Math.min(fluids.size(), maxColumns);
-		rows = (fluids.size() + maxColumns - 1) / maxColumns;
-	}
 	public static void register(@NotNull RegisterClientTooltipComponentFactoriesEvent event) {
-		event.register(
-			FluidListTooltipComponent.class,
-			data -> new ClientFluidListTooltipComponent(data.fluids(), data.indent(), data.maxColumns())
-		);
+		event.register(FluidListTooltipComponent.class, ClientFluidListTooltipComponent::new);
+	}
+	public ClientFluidListTooltipComponent(FluidListTooltipComponent c) {
+		this.c = c;
+		columns = Math.min(c.fluids.size(), c.maxColumns);
+		rows = (c.fluids.size() + c.maxColumns - 1) / c.maxColumns;
 	}
 	@Override
 	public int getHeight() {
@@ -41,15 +34,15 @@ public final class ClientFluidListTooltipComponent implements ClientTooltipCompo
 		return columns * SlotUtil.SIZE + indentPixels(font);
 	}
 	private int indentPixels(@NotNull Font font) {
-		return indent * font.width(" ");
+		return c.indent * font.width(" ");
 	}
 	@Override
 	public void renderImage(@NotNull Font font, int x, int y, @NotNull GuiGraphics gui) {
-		for (var i = 0; i < fluids.size(); i++) {
-			var stack = fluids.get(i);
+		for (var i = 0; i < c.fluids.size(); i++) {
+			var stack = c.fluids.get(i);
 			if (stack.isEmpty()) return;
-			var col = i % maxColumns;
-			var row = i / maxColumns;
+			var col = i % c.maxColumns;
+			var row = i / c.maxColumns;
 			var slotX = x + col * SlotUtil.SIZE + indentPixels(font);
 			var slotY = y + row * SlotUtil.SIZE;
 			renderFluidBar(gui, stack, slotX, slotY, SlotUtil.SIZE, SlotUtil.SIZE);

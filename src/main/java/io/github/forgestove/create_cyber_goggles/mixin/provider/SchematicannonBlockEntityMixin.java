@@ -6,6 +6,7 @@ import com.simibubi.create.content.schematics.cannon.SchematicannonBlockEntity.S
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.*;
 import io.github.forgestove.create_cyber_goggles.core.util.GoggleTooltipUtil;
+import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;

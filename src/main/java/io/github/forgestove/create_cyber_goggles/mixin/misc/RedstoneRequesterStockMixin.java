@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.mixin.misc;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterBlockEntity;
-import io.github.forgestove.create_cyber_goggles.api.StockSnapshotHolder;
+import io.github.forgestove.create_cyber_goggles.compat.jei.StockSnapshotHolder;
 import org.spongepowered.asm.mixin.*;
 
 import java.util.*;

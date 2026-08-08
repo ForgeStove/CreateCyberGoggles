@@ -1,7 +1,8 @@
-package io.github.forgestove.create_cyber_goggles.mixin.compact;
+package io.github.forgestove.create_cyber_goggles.mixin.compact.enchantmentIndustry;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.api.*;
+import io.github.forgestove.create_cyber_goggles.api.ItemRenderable;
 import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
+import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;

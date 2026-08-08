@@ -2,6 +2,7 @@ package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.simibubi.create.content.logistics.depot.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.*;
+import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.core.Direction;

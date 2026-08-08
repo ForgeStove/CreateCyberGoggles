@@ -1,7 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.compat.jei;
 import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterMenu;
 import com.simibubi.create.foundation.gui.menu.GhostItemSubmitPacket;
-import io.github.forgestove.create_cyber_goggles.api.RequestPageProvider;
 import mezz.jei.api.gui.handlers.IGhostIngredientHandler.Target;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.client.renderer.Rect2i;

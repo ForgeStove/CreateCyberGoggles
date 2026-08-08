@@ -1,7 +1,8 @@
 package io.github.forgestove.create_cyber_goggles.mixin.misc.jei;
 import com.simibubi.create.content.logistics.stockTicker.LogisticalStockResponsePacket;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.api.*;
+import io.github.forgestove.create_cyber_goggles.compat.jei.StockSnapshotHolder;
+import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
 import net.minecraft.client.player.LocalPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;

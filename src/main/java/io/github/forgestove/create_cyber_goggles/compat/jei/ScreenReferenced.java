@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.api;
+package io.github.forgestove.create_cyber_goggles.compat.jei;
 import net.minecraft.client.gui.screens.Screen;
 /** 让菜单能反向引用它关联的 Screen */
 public interface ScreenReferenced {

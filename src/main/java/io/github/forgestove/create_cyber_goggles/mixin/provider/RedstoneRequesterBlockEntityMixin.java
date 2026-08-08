@@ -1,8 +1,8 @@
 package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterBlockEntity;
-import io.github.forgestove.create_cyber_goggles.api.Self;
 import io.github.forgestove.create_cyber_goggles.core.util.GoggleTooltipUtil;
+import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 

@@ -1,8 +1,9 @@
-package io.github.forgestove.create_cyber_goggles.mixin.compact;
+package io.github.forgestove.create_cyber_goggles.mixin.compact.fluidlogistics;
 import com.simibubi.create.AllSpecialTextures;
 import com.yision.fluidlogistics.content.equipment.mechanicalFluidGun.MechanicalFluidGunBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.api.*;
+import io.github.forgestove.create_cyber_goggles.api.OutlineRenderable;
+import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
 import org.spongepowered.asm.mixin.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.outliner;

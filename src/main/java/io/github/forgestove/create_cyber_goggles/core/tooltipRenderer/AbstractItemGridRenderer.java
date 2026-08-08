@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.core.tooltipRenderer;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.forgestove.create_cyber_goggles.api.TooltipRenderer;
-import io.github.forgestove.create_cyber_goggles.compat.create_fluidlogistics.PackageTankHelper;
+import io.github.forgestove.create_cyber_goggles.compat.fluidlogistics.PackageTankHelper;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;

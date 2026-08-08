@@ -1,7 +1,8 @@
 package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity;
 import com.simibubi.create.content.logistics.packagePort.PackagePortBlockEntity;
-import io.github.forgestove.create_cyber_goggles.api.*;
+import io.github.forgestove.create_cyber_goggles.api.OutlineRenderable;
+import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
 import net.minecraft.world.phys.*;
 import org.spongepowered.asm.mixin.Mixin;
 

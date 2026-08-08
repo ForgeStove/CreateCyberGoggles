@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.mixin.compact;
+package io.github.forgestove.create_cyber_goggles.mixin.compact.appliedEnergistics;
 import appeng.client.gui.me.common.MEStorageScreen;
 import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import io.github.forgestove.create_cyber_goggles.CCG;

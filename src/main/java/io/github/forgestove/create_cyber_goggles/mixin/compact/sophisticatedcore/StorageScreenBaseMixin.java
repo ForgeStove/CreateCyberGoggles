@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.mixin.compact;
+package io.github.forgestove.create_cyber_goggles.mixin.compact.sophisticatedcore;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.ItemCountFontUtil;
 import net.minecraft.client.gui.GuiGraphics;

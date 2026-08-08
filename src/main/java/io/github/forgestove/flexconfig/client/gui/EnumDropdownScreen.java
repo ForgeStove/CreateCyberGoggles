@@ -83,7 +83,7 @@ public final class EnumDropdownScreen extends Screen {
 			var y = (int) Math.round(dropdownY + (optionIndex - smoothScrollOffset) * itemHeight);
 			if (y + HEIGHT < dropdownY || y > dropdownY + dropdownHeight + GAP) continue;
 			var isSelected = values[optionIndex] == selectedSupplier.get();
-			var isHovered = mouseX >= dropdownX && mouseX < dropdownX + dropdownWidth && mouseY >= y && mouseY < y + HEIGHT;
+			var isHovered = mouseX >= dropdownX && mouseX < dropdownX + dropdownWidth && mouseY >= y + GAP && mouseY < y + HEIGHT + GAP;
 			if (isSelected) gui.fill(dropdownX + GAP, y + GAP, dropdownX + dropdownWidth - GAP, y + HEIGHT + GAP, 0xFF3366BB);
 			else if (isHovered) gui.fill(dropdownX + GAP, y + GAP, dropdownX + dropdownWidth - GAP, y + HEIGHT + GAP, 0xFF404040);
 			var color = isSelected ? 0xFFFFFFFF : isHovered ? 0xFFFFFF00 : 0xFFE0E0E0;
@@ -141,19 +141,19 @@ public final class EnumDropdownScreen extends Screen {
 			draggingScrollbar = true;
 			return true;
 		}
-		// 从鼠标位置反算点击的选项索引
 		var dropdownY = dropdownY();
 		var itemHeight = HEIGHT + GAP;
-		var index = (int) Math.floor((mouseY - dropdownY + smoothScrollOffset * itemHeight) / itemHeight);
-		if (index >= 0 && index < values.length) {
-			var y = (int) Math.round(dropdownY + (index - smoothScrollOffset) * itemHeight);
-			var contentWidth = getContentWidth();
-			if (mouseY >= y && mouseY < y + HEIGHT && mouseX >= dropdownButton.getX() && mouseX < dropdownButton.getX() + contentWidth) {
-				onSelect.accept(values[index]);
-				getMinecraft().setScreen(parent);
-				playClickSound();
-				return true;
-			}
+		var firstIndex = Math.max(0, (int) Math.floor(smoothScrollOffset));
+		var lastIndex = Math.min(values.length - 1, (int) Math.ceil(smoothScrollOffset + maxVisibleOptions));
+		var contentWidth = getContentWidth();
+		for (var optionIndex = firstIndex; optionIndex <= lastIndex; optionIndex++) {
+			var y = (int) Math.round(dropdownY + (optionIndex - smoothScrollOffset) * itemHeight);
+			if (mouseX < dropdownButton.getX() || mouseX >= dropdownButton.getX() + contentWidth) continue;
+			if (!(mouseY >= y + GAP) || !(mouseY < y + HEIGHT + GAP)) continue;
+			onSelect.accept(values[optionIndex]);
+			getMinecraft().setScreen(parent);
+			playClickSound();
+			return true;
 		}
 		return super.mouseClicked(mouseX, mouseY, button);
 	}
@@ -161,7 +161,7 @@ public final class EnumDropdownScreen extends Screen {
 		var panelX = dropdownButton.getX() - GAP;
 		var panelY = dropdownY() - GAP;
 		var panelW = dropdownButton.getWidth() + GAP;
-		var panelH = maxVisibleOptions * HEIGHT + GAP * 2;
+		var panelH = maxVisibleOptions * (HEIGHT + GAP) + GAP * 2;
 		return !(mouseX >= panelX) || !(mouseX <= panelX + panelW) || !(mouseY >= panelY) || !(mouseY <= panelY + panelH);
 	}
 	private void playClickSound() {

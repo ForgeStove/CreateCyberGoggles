@@ -47,12 +47,12 @@ public abstract class PhysicsStaffClientHandlerMixin {
 		InteractionHand hand,
 		Operation<Void> original
 	) {
-		if (CCG.config.aeronautics.enablePhysicsStaff && ItemSwapUtil.isSwapped()) return;
+		if (CCG.config.aeronautics.enablePhysicsStaff && mc.player != null && !mc.player.isCreative() && ItemSwapUtil.isSwapped()) return;
 		original.call(subLevel, hitLocation, player, hand);
 	}
 	@WrapMethod(method = "stopDragging")
 	public void wrapSendStopPacket(Operation<Void> original) {
-		if (CCG.config.aeronautics.enablePhysicsStaff && ItemSwapUtil.isSwapped()) return;
+		if (CCG.config.aeronautics.enablePhysicsStaff && mc.player != null && !mc.player.isCreative() && ItemSwapUtil.isSwapped()) return;
 		original.call();
 	}
 }

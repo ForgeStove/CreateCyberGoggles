@@ -9,6 +9,6 @@ import org.spongepowered.asm.mixin.Mixin;
 public abstract class SchematicAndQuillHandlerMixin {
 	@WrapMethod(method = "isActive")
 	public boolean isActive(Minecraft mc, Operation<Boolean> original) {
-		return CCGKey.useSchematic.keyMapping.isDown() && mc.screen == null || original.call(mc);
+		return CCGKey.useSchematic.keyMapping.isDown() && mc.gui.screen() == null || original.call(mc);
 	}
 }

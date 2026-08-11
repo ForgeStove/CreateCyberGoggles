@@ -28,7 +28,7 @@ public abstract class PackagePortBlockEntityMixin extends SmartBlockEntity imple
 		var source = Vec3.atBottomCenterOf(pos);
 		var exactTarget = target.getExactTargetLocation(ppbe, level, pos);
 		if (exactTarget == Vec3.ZERO) return;
-		if (be instanceof ChainConveyorBlockEntity && exactTarget.closerThan(bePos.getCenter(), 1))
+		if (be instanceof ChainConveyorBlockEntity && exactTarget.closerThan(Vec3.atCenterOf(bePos), 1))
 			exactTarget = exactTarget.add(0, -0.25, 0);
 		var color = 0x9EDE73;
 		outliner.showLine("PackagePortConnection" + this, source, exactTarget).lineWidth(1 / 8f).colored(color);

@@ -56,7 +56,7 @@ public class KineticDebugger {
 	 * @param time    当前时间戳
 	 */
 	public static void renderKineticPath(@NotNull List<KineticBlockEntity> kbePath, long time) {
-		var frustum = mc.gameRenderer.getMainCamera().getCullFrustum();
+		var frustum = mc.gameRenderer.mainCamera().getCullFrustum();
 		for (var depth = 0; depth < kbePath.size(); depth++) {
 			var nodeBE = kbePath.get(depth);
 			// 渲染前判断包围盒是否在视锥体内

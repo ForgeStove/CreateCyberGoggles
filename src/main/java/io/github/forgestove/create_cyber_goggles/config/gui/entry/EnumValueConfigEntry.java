@@ -19,9 +19,9 @@ public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum<?>> 
 	}
 	private void openDropdown(Button button) {
 		var mc = tab.getMinecraft();
-		var screen = mc.screen;
+		var screen = mc.gui.screen();
 		if (screen == null || screen instanceof EnumDropdownScreen) return;
-		mc.setScreen(new EnumDropdownScreen(
+		mc.gui.setScreen(new EnumDropdownScreen(
 			valueNode.getValueType().getEnumConstants(),
 			this::getValue,
 			this::selectValue,

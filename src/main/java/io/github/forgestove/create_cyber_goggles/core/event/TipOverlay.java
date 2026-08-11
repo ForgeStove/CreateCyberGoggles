@@ -12,7 +12,7 @@ public class TipOverlay {
 	public static int hoverTicks;
 	public static int deltaX, deltaY;
 	public static void renderOverlay(GuiGraphicsExtractor graphics, DeltaTracker ignoredDeltaTracker) {
-		if (mc.options.hideGui) return;
+		if (mc.gui.hud.isHidden()) return;
 		if (hoverTicks == 0 || lastTip == null) return;
 		var x = graphics.guiWidth() / 2 + deltaX;
 		var y = graphics.guiHeight() - 75 - lastTip.size() * 12 + deltaY;
@@ -31,7 +31,7 @@ public class TipOverlay {
 	 * 以确保{@link TipOverlay#hoverTicks}的状态正确更新。
 	 */
 	public static void show(List<MutableComponent> tip, int x, int y) {
-		if (mc.screen != null || hasActivedValueBox()) return;
+		if (mc.gui.screen() != null || hasActivedValueBox()) return;
 		hoverTicks = hoverTicks == 0 ? 11 : Math.max(hoverTicks, 6);
 		lastTip = tip;
 		deltaX = x;

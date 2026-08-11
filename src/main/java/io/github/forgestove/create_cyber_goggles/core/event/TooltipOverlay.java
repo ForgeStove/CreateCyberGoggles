@@ -27,7 +27,7 @@ public class TooltipOverlay {
 	public static int hoverTicks;
 	public static void renderOverlay(GuiGraphicsExtractor gui, DeltaTracker ignoredDeltaTracker) {
 		if (!CCG.config.overlay.renderItemOverlay || !CCG.config.gameMode.enableGoggles) return;
-		if (mc.isPaused() || isInGUI() || mc.options.hideGui) {
+		if (mc.isPaused() || isInGUI() || mc.gui.hud.isHidden()) {
 			hoverTicks = 0;
 			return;
 		}

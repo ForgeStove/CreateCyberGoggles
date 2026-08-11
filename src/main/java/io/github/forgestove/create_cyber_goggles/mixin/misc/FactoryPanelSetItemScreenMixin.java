@@ -27,13 +27,13 @@ public abstract class FactoryPanelSetItemScreenMixin extends AbstractSimiContain
 		var newInputButton = new IconButton(x + 4, y + 63, AllIcons.I_ADD);
 		newInputButton.withCallback(() -> {
 			FactoryPanelConnectionHandler.startConnection(behaviour);
-			mc.setScreen(null);
+			mc.gui.setScreen(null);
 		});
 		newInputButton.setToolTip(CreateLang.translate("gui.factory_panel.connect_input").component());
 		var relocateButton = new IconButton(x + 26, y + 63, AllIcons.I_MOVE_GAUGE);
 		relocateButton.withCallback(() -> {
 			FactoryPanelConnectionHandler.startRelocating(behaviour);
-			mc.setScreen(null);
+			mc.gui.setScreen(null);
 		});
 		relocateButton.setToolTip(CreateLang.translate("gui.factory_panel.relocate").component());
 		addRenderableWidget(newInputButton);

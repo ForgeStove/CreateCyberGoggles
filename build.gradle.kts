@@ -1,5 +1,5 @@
 plugins {
-	id("net.fabricmc.fabric-loom") version "1.17.8"
+	id("net.fabricmc.fabric-loom") version "1.17.19"
 	id("me.modmuss50.mod-publish-plugin") version "+"
 }
 base.archivesName.set(p("modName"))
@@ -32,18 +32,19 @@ dependencies {
 	minecraft("com.mojang:minecraft:${p("mcVersion")}")
 	implementation("net.fabricmc:fabric-loader:${p("fabricLoaderVersion")}")
 	implementation("net.fabricmc.fabric-api:fabric-api:${p("fabricApiVersion")}+${p("mcVersion")}")
-	implementation("maven.modrinth:create-fly:${p("mcVersion")}-${p("createVersion")}")
+	implementation("maven.modrinth:create-fly:${p("createVersion")}")
 	implementation("com.terraformersmc:modmenu:${p("modmenuVersion")}")
-	implementation("com.electronwill.night-config:core:${p("nightConfigVersion")}")
-	implementation("com.electronwill.night-config:toml:${p("nightConfigVersion")}")
-	include("com.electronwill.night-config:core:${p("nightConfigVersion")}")
-	include("com.electronwill.night-config:toml:${p("nightConfigVersion")}")
+	impleInclude("com.electronwill.night-config:core:${p("nightConfigVersion")}")
+	impleInclude("com.electronwill.night-config:toml:${p("nightConfigVersion")}")
+}
+fun DependencyHandler.impleInclude(dependency: Any) {
+	include(dependency)?.let { implementation(it) }
 }
 publishMods {
 	file.set(tasks.jar.get().archiveFile)
 	additionalFiles.from(tasks.named<Jar>("sourcesJar"))
 	changelog.set(file("CHANGELOG.md").readText())
-	type.set(STABLE)
+	type.set(BETA)
 	version.set(project.version.toString())
 	displayName.set("[${p("loaderCap")}] ${p("modVersion")} for Create ${p("mcVersion")}-${p("createMinVersion")}")
 	modLoaders.addAll(p("loaderCap"), p("loaderOtherCap"))

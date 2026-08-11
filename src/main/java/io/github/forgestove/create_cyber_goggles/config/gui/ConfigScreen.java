@@ -24,7 +24,7 @@ public final class ConfigScreen<C> extends Screen {
 	private final HeaderAndFooterLayout layout;
 	private final TabManager tabManager;
 	private final String cacheKey;
-	private TabNavigationBar tabNavigationBar;
+	private MenuTabBar tabNavigationBar;
 	private List<ConfigCategoryTab<C>> tabs;
 	private Button quitButton;
 	private Button saveAndQuitButton;
@@ -33,7 +33,7 @@ public final class ConfigScreen<C> extends Screen {
 		this.root = root;
 		this.config = config;
 		this.onSave = onSave;
-		previous = mc.screen;
+		previous = mc.gui.screen();
 		layout = new HeaderAndFooterLayout(this, 33, 33);
 		tabManager = new TabManager(this::addRenderableWidget, this::removeWidget);
 		tabs = List.of();
@@ -42,7 +42,7 @@ public final class ConfigScreen<C> extends Screen {
 	@Override
 	protected void init() {
 		root.resetToActive(config);
-		var tabNavigationBarBuilder = TabNavigationBar.builder(tabManager, width);
+		var tabNavigationBarBuilder = MenuTabBar.builder(tabManager, width);
 		tabs = new ArrayList<>();
 		for (var category : root.getCategories()) {
 			var tab = new ConfigCategoryTab<>(this, category, config);
@@ -65,7 +65,7 @@ public final class ConfigScreen<C> extends Screen {
 		tabNavigationBar.selectTab(cachedTabIndex, false);
 		repositionElements();
 	}
-	private void initTabs(TabNavigationBar bar) {
+	private void initTabs(MenuTabBar bar) {
 		var i = 0;
 		for (var child : bar.children())
 			if (child instanceof TabButton tabButton) {
@@ -77,8 +77,7 @@ public final class ConfigScreen<C> extends Screen {
 	protected void repositionElements() {
 		refresh();
 		if (tabNavigationBar == null) return;
-		tabNavigationBar.updateWidth(width);
-		tabNavigationBar.arrangeElements();
+		tabNavigationBar.arrangeElements(width);
 		var i = tabNavigationBar.getRectangle().bottom();
 		var screenRectangle = new ScreenRectangle(0, i, width, height - layout.getFooterHeight() - i);
 		tabManager.setTabArea(screenRectangle);
@@ -110,11 +109,11 @@ public final class ConfigScreen<C> extends Screen {
 	@Override
 	public void onClose() {
 		if (isActiveValue()) {
-			minecraft.setScreen(previous);
+			minecraft.gui.setScreen(previous);
 			return;
 		}
-		minecraft.setScreen(new ConfirmScreen(
-			confirmed -> minecraft.setScreen(confirmed ? previous : this),
+		minecraft.gui.setScreen(new ConfirmScreen(
+			confirmed -> minecraft.gui.setScreen(confirmed ? previous : this),
 			Translation.QUIT_CONFIRM_TITLE,
 			Translation.QUIT_CONFIRM_WARNING,
 			Translation.QUIT_CONFIRM_LABEL,
@@ -126,10 +125,10 @@ public final class ConfigScreen<C> extends Screen {
 		root.writeEditingToConfig(config);
 		minecraft.options.save();
 		onSave.accept(config);
-		minecraft.setScreen(restartRequired ? new ConfirmScreen(
+		minecraft.gui.setScreen(restartRequired ? new ConfirmScreen(
 			confirmed -> {
 				if (confirmed) minecraft.stop();
-				else minecraft.setScreen(previous);
+				else minecraft.gui.setScreen(previous);
 			},
 			Translation.RESTART_REQUIRED_TITLE,
 			Translation.RESTART_REQUIRED_LABEL,

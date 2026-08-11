@@ -7,6 +7,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.tabs.Tab;
+import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.*;
@@ -16,11 +17,12 @@ import java.awt.Color;
 import java.util.*;
 import java.util.function.Consumer;
 public final class ConfigCategoryTab<C> implements Tab {
+	public final ConfigEntryList list;
 	private final ConfigScreen<C> screen;
 	private final CategoryConfigNode<C> category;
 	private final C config;
 	private final Component title;
-	private final ConfigEntryList list;
+	private final Layout layout = new TabLayout(this);
 	private final Map<Class<?>, EntryFactory<C>> entryFactories = Map.of(
 		Enum.class,
 		(tab, node) -> new EnumValueConfigEntry<>(tab, cast(node)),
@@ -55,23 +57,6 @@ public final class ConfigCategoryTab<C> implements Tab {
 		var listHeight = totalEntryHeight <= contentHeight ? totalEntryHeight - 2 : contentHeight;
 		list = new ConfigEntryList(getMinecraft(), screen.width, listHeight, screen.getHeaderHeight(), 22, entries);
 	}
-	@SuppressWarnings("unchecked")
-	private static <C, V> ValueConfigNode<C, V> cast(ValueConfigNode<C, ?> node) {
-		return (ValueConfigNode<C, V>) node;
-	}
-	@NotNull
-	@Override
-	public Component getTabTitle() {
-		return title;
-	}
-	@Override
-	public void visitChildren(Consumer<AbstractWidget> consumer) {
-		consumer.accept(list);
-	}
-	@Override
-	public void doLayout(ScreenRectangle screenRectangle) {
-		list.setRectangle(screenRectangle.width(), screenRectangle.height(), screenRectangle.left(), screenRectangle.top());
-	}
 	private ConfigEntry createValueEntry(ValueConfigNode<C, ?> valueNode) {
 		var type = valueNode.getValueType();
 		for (var entry : entryFactories.entrySet())
@@ -89,6 +74,27 @@ public final class ConfigCategoryTab<C> implements Tab {
 	public Minecraft getMinecraft() {
 		return Objects.requireNonNull(Minecraft.getInstance());
 	}
+	@SuppressWarnings("unchecked")
+	private static <C, V> ValueConfigNode<C, V> cast(ValueConfigNode<C, ?> node) {
+		return (ValueConfigNode<C, V>) node;
+	}
+	@NotNull
+	@Override
+	public Component getTabTitle() {
+		return title;
+	}
+	@Override
+	public void visitChildren(Consumer<AbstractWidget> consumer) {
+		consumer.accept(list);
+	}
+	@Override
+	public void doLayout(ScreenRectangle screenRectangle) {
+		list.setRectangle(screenRectangle.width(), screenRectangle.height(), screenRectangle.left(), screenRectangle.top());
+	}
+	@Override
+	public @NonNull Layout getLayout() {
+		return layout;
+	}
 	@Override
 	public @NonNull Component getTabExtraNarration() {
 		return title;
@@ -103,14 +109,14 @@ public final class ConfigCategoryTab<C> implements Tab {
 		tabButton.setMessage(GuiUtil.styleAsState(title, hasError, hasChanged));
 		list.refreshEntries();
 	}
+	public boolean hasEntryError() {
+		return list.hasEntryError();
+	}
 	public C getConfig() {
 		return config;
 	}
 	public void setTabButton(@Nullable TabButton tabButton) {
 		this.tabButton = tabButton;
-	}
-	public boolean hasEntryError() {
-		return list.hasEntryError();
 	}
 	@FunctionalInterface
 	private interface EntryFactory<C> {

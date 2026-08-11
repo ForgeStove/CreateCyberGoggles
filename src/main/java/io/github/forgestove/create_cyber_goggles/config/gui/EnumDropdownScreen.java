@@ -114,7 +114,7 @@ public final class EnumDropdownScreen extends Screen {
 		var mouseX = event.x();
 		var mouseY = event.y();
 		if (isOutsidePanel(mouseX, mouseY)) {
-			minecraft.setScreen(parentScreen);
+			minecraft.gui.setScreen(parentScreen);
 			playClickSound();
 			return true;
 		}
@@ -131,7 +131,7 @@ public final class EnumDropdownScreen extends Screen {
 			var contentWidth = getContentWidth();
 			if (mouseY >= y && mouseY < y + HEIGHT && mouseX >= dropdownButton.getX() && mouseX < dropdownButton.getX() + contentWidth) {
 				onSelect.accept(values[index]);
-				minecraft.setScreen(parentScreen);
+				minecraft.gui.setScreen(parentScreen);
 				playClickSound();
 				return true;
 			}

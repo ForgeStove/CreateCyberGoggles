@@ -49,8 +49,8 @@ public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer>
 	}
 	private void openColorPicker() {
 		var mc = tab.getMinecraft();
-		var screen = new ColorPickerScreen(mc.screen, getValue(), hasAlpha, this::accept);
-		mc.setScreen(screen);
+		var screen = new ColorPickerScreen(mc.gui.screen(), getValue(), hasAlpha, this::accept);
+		mc.gui.setScreen(screen);
 	}
 	@Override
 	public void refresh() {

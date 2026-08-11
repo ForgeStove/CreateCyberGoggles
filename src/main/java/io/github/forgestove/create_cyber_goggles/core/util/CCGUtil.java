@@ -37,7 +37,7 @@ public class CCGUtil {
 	private static float lastRealtimeTick;
 	@Contract(pure = true)
 	public static boolean isInGUI() {
-		return mc.screen != null;
+		return mc.gui.screen() != null;
 	}
 	@Contract(pure = true)
 	public static boolean isInGame() {
@@ -151,7 +151,7 @@ public class CCGUtil {
 	/** @return 选中的过滤器物品，如果未选中则返回{@code null} */
 	public static @Nullable ItemStack getSelectedFilter() {
 		if (isInGUI()) {
-			if (!(mc.screen instanceof AbstractContainerScreen<?> screen)) return null;
+			if (!(mc.gui.screen() instanceof AbstractContainerScreen<?> screen)) return null;
 			var slot = ((AbstractContainerScreenAccessor) screen).getHoveredSlot();
 			return slot == null ? null : slot.getItem();
 		}
@@ -160,7 +160,7 @@ public class CCGUtil {
 		if (sbe == null || result == null) return null;
 		var behaviour = sbe.getBehaviour(FilteringBehaviour.TYPE);
 		//noinspection ConstantValue
-		if (behaviour == null)  return null;
+		if (behaviour == null) return null;
 		return behaviour.getFilter(result.getDirection());
 	}
 	/** @return 该位置方块的{@link AABB}包围盒，若无法获取则返回{@link Shapes#block()}的包围盒 */

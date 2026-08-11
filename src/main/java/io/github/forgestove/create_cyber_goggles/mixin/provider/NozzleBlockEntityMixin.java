@@ -8,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.outliner;
@@ -20,7 +21,7 @@ public abstract class NozzleBlockEntityMixin extends SmartBlockEntity implements
 	}
 	@Override
 	public void ccg$render() {
-		var center = thiz().getBlockPos().getCenter();
+		var center = Vec3.atCenterOf(thiz().getBlockPos());
 		var color = Outliner.getColor(pushing);
 		var range = this.range / 2F;
 		outliner.chaseAABB("NozzleAirBox" + this, new AABB(center, center).inflate(range))

@@ -3,6 +3,7 @@ import io.github.forgestove.create_cyber_goggles.config.annotation.ConfigClass;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.locale.Language;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
@@ -42,7 +43,7 @@ public final class Config {
 			_ -> ConfigHandler.builder(configClass)
 				.path(() -> Path.of(FabricLoader.getInstance().getConfigDir().toString(), id + ".toml"))
 				.translationPrefix(id + ".config")
-				.translator(key -> I18n.exists(key) ? I18n.get(key) : null)
+				.translator(key -> Language.getInstance().has(key) ? I18n.get(key) : null)
 				.logger(logger)
 				.build()
 		);

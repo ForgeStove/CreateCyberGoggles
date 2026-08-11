@@ -76,10 +76,10 @@ public final class ColorPickerScreen extends Screen {
 		var okButton = Button.builder(
 			Component.translatable("gui.ok"), _ -> {
 				onColorSelected.accept(colorFromHSB());
-				minecraft.setScreen(parent);
+				minecraft.gui.setScreen(parent);
 			}
 		).bounds(svPos.x, buttonY, BUTTON_WIDTH, SIZE).build();
-		var cancelButton = Button.builder(Component.translatable("gui.cancel"), _ -> minecraft.setScreen(parent))
+		var cancelButton = Button.builder(Component.translatable("gui.cancel"), _ -> minecraft.gui.setScreen(parent))
 			.bounds(svPos.x + BUTTON_WIDTH + 2, buttonY, BUTTON_WIDTH, SIZE)
 			.build();
 		hexInput = createHexInput(buttonY);

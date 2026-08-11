@@ -55,7 +55,7 @@ public class KeyInput {
 	private static void openConfigScreen() {
 		if (!CCGKey.openConfig.isDown()) return;
 		if (isInGUI()) return;
-		mc.setScreen(Config.createConfigScreen(CCG.ID));
+		mc.gui.setScreen(Config.createConfigScreen(CCG.ID));
 	}
 	private static void openStockScreen() {
 		if (!CCGKey.openStock.isDown()) return;
@@ -69,14 +69,14 @@ public class KeyInput {
 		}
 		var inv = mc.player.getInventory();
 		var menu = new StockKeeperRequestMenu(-1, inv, lastSTBE);
-		mc.setScreen(new StockKeeperRequestScreen(menu, inv, lastSTBE.getBlockState().getBlock().getName()));
+		mc.gui.setScreen(new StockKeeperRequestScreen(menu, inv, lastSTBE.getBlockState().getBlock().getName()));
 	}
 	private static void previewFilterScreen() {
 		if (!CCGKey.previewFilter.isDown()) return;
 		if (mc.player == null) return;
 		var itemStack = getSelectedFilter();
 		if (itemStack == null || !(itemStack.getItem() instanceof FilterItem)) return;
-		mc.setScreen(Map.<Item, Function3<Integer, Inventory, ItemStack, Screen>>of(
+		mc.gui.setScreen(Map.<Item, Function3<Integer, Inventory, ItemStack, Screen>>of(
 			AllItems.FILTER.asItem(),
 			(id, inv, stack) -> new FilterScreen(new FilterMenu(id, inv, stack), inv, stack.getHoverName()),
 			AllItems.ATTRIBUTE_FILTER.asItem(),
@@ -98,7 +98,7 @@ public class KeyInput {
 	}
 	private static boolean tryScrollClipboardPage(double scrollDelta) {
 		if (!CCGKey.clipboardPageScroll.keyMapping.isDown()) return false;
-		if (mc.player == null || mc.screen != null) return false;
+		if (mc.player == null || mc.gui.screen() != null) return false;
 		var stack = mc.player.getMainHandItem();
 		if (!(stack.getItem() instanceof ClipboardBlockItem)) {
 			stack = mc.player.getOffhandItem();

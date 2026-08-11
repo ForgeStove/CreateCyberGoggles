@@ -6,12 +6,14 @@ base.archivesName.set(p("modName"))
 group = p("modGroupId")
 version = "${p("mcVersion")}-${p("modVersion")}-${p("loaderCap")}"
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(p("javaVersion")))
+java.withSourcesJar()
 tasks.jar {
 	from("LICENSE")
 	manifest.attributes("MixinConfigs" to "${p("modId")}.mixins.json")
 }
-var generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
-	val values = properties.mapValues { it.value.toString() }
+val generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
+	description = "Generate this project metadata from templates."
+	val values = project.extra.properties.mapValues { it.value.toString() }
 	inputs.properties(values)
 	expand(values)
 	from("src/main/templates")
@@ -30,9 +32,10 @@ legacyForge {
 	}
 	runs {
 		create("client").client()
+		create("server").server()
 		configureEach {
-			jvmArguments.addAll("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition")
 			systemProperty("terminal.jline", "true")
+			jvmArguments.addAll("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition")
 		}
 	}
 	mods.create(p("modId")).sourceSet(sourceSets.main.get())
@@ -65,16 +68,21 @@ publishMods {
 	displayName.set("[${p("loaderCap")}] ${p("modVersion")} for Create ${p("mcVersion")}-${p("createMinVersion")}")
 	modLoaders.addAll(p("loaderCap"), p("loaderOtherCap"))
 	modrinth {
+		additionalFile(tasks.named<Jar>("sourcesJar")) { type.set(SOURCES_JAR) }
 		accessToken.set(providers.environmentVariable("MODRINTH_TOKEN"))
 		projectId.set("TlQAWQCY")
 		minecraftVersions.add(p("mcVersion"))
+		environment.set(CLIENT_ONLY_SERVER_OPTIONAL)
 		requires("create")
 	}
 	curseforge {
+		additionalFiles.from(tasks.named<Jar>("sourcesJar"))
 		accessToken.set(providers.environmentVariable("CURSEFORGE_TOKEN"))
 		projectId.set("1233804")
 		minecraftVersions.add(p("mcVersion"))
+		client.set(true)
 		requires("create")
 	}
 }
 fun p(key: String) = property(key).toString()
+println("Java: ${System.getProperty("java.version")}, JVM: ${System.getProperty("java.vm.version")} (${System.getProperty("java.vendor")}), Arch: ${System.getProperty("os.arch")}")

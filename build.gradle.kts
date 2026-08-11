@@ -42,13 +42,13 @@ fun DependencyHandler.impleInclude(dependency: Any) {
 }
 publishMods {
 	file.set(tasks.jar.get().archiveFile)
-	additionalFiles.from(tasks.named<Jar>("sourcesJar"))
 	changelog.set(file("CHANGELOG.md").readText())
 	type.set(BETA)
 	version.set(project.version.toString())
 	displayName.set("[${p("loaderCap")}] ${p("modVersion")} for Create ${p("mcVersion")}-${p("createMinVersion")}")
 	modLoaders.addAll(p("loaderCap"), p("loaderOtherCap"))
 	modrinth {
+		additionalFile(tasks.named<Jar>("sourcesJar")) { type.set(SOURCES_JAR) }
 		accessToken.set(providers.environmentVariable("MODRINTH_TOKEN"))
 		projectId.set("TlQAWQCY")
 		minecraftVersions.add(p("mcVersion"))
@@ -56,6 +56,7 @@ publishMods {
 		optional("modmenu")
 	}
 	curseforge {
+		additionalFiles.from(tasks.named<Jar>("sourcesJar"))
 		accessToken.set(providers.environmentVariable("CURSEFORGE_TOKEN"))
 		projectId.set("1233804")
 		minecraftVersions.add(p("mcVersion"))

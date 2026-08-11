@@ -15,10 +15,11 @@ public final class CCGConfig {
 		public boolean hideStaticKineticInfo = false;
 		public boolean betterStoreInfo = true;
 		public boolean enableKineticEffect = true;
-		public boolean preciseNumber = true;
 		public boolean disableScreenGoggles = true;
 		public boolean canRenderOnValueBox = false;
 		public boolean dedupTooltipLines = true;
+		public boolean preciseNumber = true;
+		@IntRange(min = 0) public int maxFractionDigits = 2;
 	}
 	public static class Tooltip {
 		public boolean extraItemTooltip = true;

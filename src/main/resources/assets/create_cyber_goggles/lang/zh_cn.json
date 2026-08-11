@@ -48,6 +48,8 @@
 	"create_cyber_goggles.config.option.goggles.enhancedInfo.tooltip": "让护目镜显示更多信息",
 	"create_cyber_goggles.config.option.goggles.hideStaticKineticInfo": "隐藏静态旋转信息",
 	"create_cyber_goggles.config.option.goggles.hideStaticKineticInfo.tooltip": "在护目镜中隐藏静态方块的旋转信息",
+	"create_cyber_goggles.config.option.goggles.maxFractionDigits": "最大分数位数",
+	"create_cyber_goggles.config.option.goggles.maxFractionDigits.tooltip": "精确数值所使用的最大分数位数",
 	"create_cyber_goggles.config.option.goggles.preciseNumber": "精确数值",
 	"create_cyber_goggles.config.option.goggles.preciseNumber.tooltip": "显示更加精确的数值信息",
 	"create_cyber_goggles.config.option.misc.allowDivingBoot": "允许潜水靴",

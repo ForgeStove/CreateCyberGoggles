@@ -1,2 +1,1 @@
-- Add RedstoneRequesterBlockMixin to support table cloth item tooltip display
-- Fix [#31](https://github.com/ForgeStove/CreateCyberGoggles/issues/31)
+- Fix [#71](https://github.com/ForgeStove/CreateCyberGoggles/issues/71)

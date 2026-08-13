@@ -11,11 +11,10 @@ public final class AmountUtil {
 		if (count >= 1_000) return (count * 10 / 1000) / 10f + "k";
 		return String.valueOf(count);
 	}
-	/** 流体数量缩写：mB/B/KB 分档，规则与 FluidLogistics 一致 */
 	public static String formatFluidAmount(int amountMb) {
 		if (amountMb >= BigItemStack.INF) return "∞";
 		if (amountMb >= MB_PER_KILOBUCKET) return formatCompact(amountMb, MB_PER_KILOBUCKET, "KB");
-		if (amountMb >= 100) return formatCompact(amountMb, MB_PER_BUCKET, "B");
+		if (amountMb >= MB_PER_BUCKET) return formatCompact(amountMb, MB_PER_BUCKET, "B");
 		return amountMb + "mB";
 	}
 	private static String formatCompact(int amount, int unitSize, String suffix) {

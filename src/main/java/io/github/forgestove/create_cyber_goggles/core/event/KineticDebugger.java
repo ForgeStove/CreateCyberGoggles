@@ -16,7 +16,7 @@ import java.util.*;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public final class KineticDebugger {
 	public static BlockPos lastSource;
-	public static List<KineticBlockEntity> cachedKBEPath;
+	public static List<BlockPos> cachedKBEPath;
 	public static void tick(Post ignoredEvent) {
 		if (!CCG.config.outliner.rainbowDebug) return;
 		if (shouldSuppressInfo()) return;
@@ -42,18 +42,18 @@ public final class KineticDebugger {
 	/**
 	 * 更新并缓存当前选中动力方块实体的动力来源链路。
 	 * <p>
-	 * 如果选中的实体发生变化或缓存无效，则会重新构建链表，链表中的每个节点代表一个动力方块实体，
-	 * 顺序为从动力源到当前选中实体。用于后续渲染动力链路。
+	 * 如果选中的实体发生变化或缓存无效，则会重新构建链表，链表中的每个节点代表一个动力方块实体的坐标，
+	 * 顺序为从动力源到当前选中实体。只存坐标避免静态引用持有方块实体（及整个世界）。
 	 *
 	 * @param level 当前客户端世界
 	 * @param kbe   当前选中的动力方块实体
 	 */
 	public static void updateKBEPath(ClientLevel level, @NotNull KineticBlockEntity kbe) {
 		if (kbe.source == lastSource && cachedKBEPath != null) return;
-		var kbePath = new ArrayDeque<KineticBlockEntity>();
+		var kbePath = new ArrayDeque<BlockPos>();
 		var currentBE = kbe;
 		while (currentBE != null) {
-			kbePath.addFirst(currentBE);
+			kbePath.addFirst(currentBE.getBlockPos());
 			if (currentBE.source == null) break;
 			currentBE = level.getBlockEntity(currentBE.source) instanceof KineticBlockEntity kbeSource ? kbeSource : null;
 		}
@@ -63,21 +63,24 @@ public final class KineticDebugger {
 	/**
 	 * 渲染整个动力链路，包括每个节点的包围盒轮廓和节点间的连线。
 	 * <p>
-	 * 仅在节点或连线在视锥体内时才进行渲染，以提升性能。
+	 * 仅在节点或连线在视锥体内时才进行渲染，以提升性能。方块实体按坐标现取，已被破坏或区块卸载时跳过。
 	 *
-	 * @param kbePath 动力链路节点列表（从源到目标）
+	 * @param kbePath 动力链路节点坐标列表（从源到目标）
 	 * @param time    当前时间戳
 	 */
-	public static void renderKineticPath(@NotNull List<KineticBlockEntity> kbePath, long time) {
+	public static void renderKineticPath(@NotNull List<BlockPos> kbePath, long time) {
+		var level = mc.level;
+		if (level == null) return;
 		var frustum = mc.levelRenderer.getFrustum();
 		for (var depth = 0; depth < kbePath.size(); depth++) {
-			var nodeBE = kbePath.get(depth);
+			var blockPos = kbePath.get(depth);
+			if (!(level.getBlockEntity(blockPos) instanceof KineticBlockEntity nodeBE)) continue;
 			// 渲染前判断包围盒是否在视锥体内
 			var rgb = getRainbowColor(depth, time);
 			if (isAABBInFrustum(nodeBE, frustum)) renderOutline(nodeBE, depth, rgb);
 			// 连线渲染时也判断两端是否有一端在视锥体内，否则跳过
 			if (nodeBE.source == null) continue;
-			if (isLineInFrustum(nodeBE.getBlockPos(), nodeBE.source, frustum)) renderKineticLine(nodeBE, depth, rgb);
+			if (isLineInFrustum(blockPos, nodeBE.source, frustum)) renderKineticLine(nodeBE, depth, rgb);
 		}
 	}
 	/**

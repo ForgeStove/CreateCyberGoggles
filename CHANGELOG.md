@@ -1,1 +1,2 @@
-- Fix the issue of visual click misalignment of enum type configuration
+- Attempt to fix rainbow debug memory leak
+- Fix an issue where Thirst would crash when displaying other fluids

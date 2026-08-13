@@ -55,9 +55,8 @@ public enum CCGMods {
 	 * @param toRun 仅在模组已加载时执行
 	 * @return 模组未加载返回 {@code Optional.empty()}，否则返回 supplier 的值
 	 */
-	@SuppressWarnings("unused")
 	public <T> Optional<T> runIfInstalled(Supplier<T> toRun) {
-		if (isLoaded()) return Optional.of(toRun.get());
+		if (isLoaded()) return Optional.ofNullable(toRun.get());
 		return Optional.empty();
 	}
 	/**

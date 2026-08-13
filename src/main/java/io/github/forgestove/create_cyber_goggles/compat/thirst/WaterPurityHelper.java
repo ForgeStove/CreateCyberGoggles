@@ -13,7 +13,7 @@ public class WaterPurityHelper {
 			int purity = WaterPurity.getPurity(fluidStack);
 			var color = getPurityColor(purity);
 			return CCGLang.text(WaterPurity.getPurityText(purity)).space().fluidName(fluidStack).style(color);
-		} catch (Exception e) {
+		} catch (Throwable e) { // 阻止和旧版口渴冲突
 			return null;
 		}
 	}

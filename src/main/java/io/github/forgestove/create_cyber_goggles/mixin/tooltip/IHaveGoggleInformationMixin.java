@@ -28,9 +28,12 @@ public interface IHaveGoggleInformationMixin {
 		for (var i = 0; i < handler.getTanks(); i++) {
 			var fluidStack = handler.getFluidInTank(i);
 			if (fluidStack.isEmpty()) continue;
-			var purify = CCGMods.thirst.runIfInstalled(() -> WaterPurityHelper.getWaterPurity(fluidStack)).orElse(null);
-			if (purify != null) CCGLang.fluidEntry(fluidStack, handler.getTankCapacity(i), purify.component()).forGoggles(tooltip);
-			else CCGLang.fluidEntry(fluidStack, handler.getTankCapacity(i)).forGoggles(tooltip);
+			var capacity = handler.getTankCapacity(i);
+			CCGMods.thirst.runIfInstalled(() -> WaterPurityHelper.getWaterPurity(fluidStack))
+				.ifPresentOrElse(
+					purify -> CCGLang.fluidEntry(fluidStack, capacity, purify.component()).forGoggles(tooltip),
+					() -> CCGLang.fluidEntry(fluidStack, capacity).forGoggles(tooltip)
+				);
 			isEmpty = false;
 		}
 		if (handler.getTanks() > 1) {

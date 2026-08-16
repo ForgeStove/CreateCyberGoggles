@@ -54,6 +54,7 @@
 		"misc.SimpleBackendMixin",
 		"misc.StockKeeperRequestScreenMixin",
 		"misc.SuperGlueSelectionHandlerMixin",
+		"misc.ThresholdSwitchScreenMixin",
 		"misc.TrainHUDMixin",
 		"misc.chainConveyor.CardboardArmorHandlerMixin",
 		"misc.chainConveyor.ChainConveyorConnectionHandlerMixin",

@@ -1,3 +1,1 @@
-- Attempt to fix rainbow debug memory leak
-- Fix an issue where Thirst would crash when displaying other fluids
-- Fix an issue where the fluid abbreviation is in B units when it is less than 1B
+- Added middle-click quick setting support for Stock Pile Switch

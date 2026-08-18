@@ -29,19 +29,23 @@ public final class SequencedAssemblyUtil {
 			}
 			@Override
 			public boolean handleMouseScrolled(double mouseX, double mouseY, double scrollDeltaX, double scrollDeltaY) {
-				if (scrollDeltaY == 0) return false;
-				var state = getState(recipe);
-				var junkCount = getJunkCount(recipe);
-				if (junkCount <= 0) return false;
-				var delta = scrollDeltaY > 0 ? -1 : 1;
-				state[0] = Math.floorMod((int) state[0] + delta, junkCount);
-				state[1] = System.currentTimeMillis();
-				return true;
+				return scrollJunk(recipe, scrollDeltaY);
 			}
 		};
+	}
+	/**
+	 * 滚轮切换副产物（JEI/EMI 共用）。scrollDeltaY > 0 视为向上滚动，返回是否消费了该滚动。
+	 */
+	public static boolean scrollJunk(SequencedAssemblyRecipe recipe, double scrollDeltaY) {
+		if (scrollDeltaY == 0) return false;
+		var junkCount = getJunkCount(recipe);
+		if (junkCount <= 0) return false;
+		var state = getState(recipe);
+		state[0] = Math.floorMod((int) state[0] + (scrollDeltaY > 0 ? -1 : 1), junkCount);
+		state[1] = System.currentTimeMillis();
+		return true;
 	}
 	public static long[] getState(SequencedAssemblyRecipe recipe) {
 		return STATES.computeIfAbsent(recipe, r -> new long[2]);
 	}
 }
-

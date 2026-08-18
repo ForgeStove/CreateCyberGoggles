@@ -9,6 +9,7 @@
 		"compact.appliedEnergistics.MEStorageScreenMixin",
 		"compact.arsNouveau.AbstractStorageTerminalScreenMixin",
 		"compact.emi.EmiRenderHelperMixin",
+		"compact.emi.RecipeScreenMixin",
 		"compact.enchantmentIndustry.BlazeEnchanterBlockEntityMixin",
 		"compact.enchantmentIndustry.BlazeForgerBlockEntityMixin",
 		"compact.fluidlogistics.MechanicalFluidGunBlockEntityMixin",

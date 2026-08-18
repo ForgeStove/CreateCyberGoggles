@@ -1,1 +1,1 @@
-- Added middle-click quick setting support for Stock Pile Switch
+- Add EMI support for Sequenced Assembly scrap display operation

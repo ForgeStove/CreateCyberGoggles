@@ -50,6 +50,7 @@ public final class CCGConfig {
 		public boolean attributeFilter = true;
 		public boolean packageItem = true;
 		public boolean packageEntity = true;
+		public boolean placard = true;
 		public boolean itemEntity = true;
 		public boolean deployer = true;
 		public boolean depot = true;
@@ -90,8 +91,8 @@ public final class CCGConfig {
 		public boolean alwaysShowFriction = false;
 		public boolean liftLimitOfHandleRange = false;
 		public boolean customHandleMoveSublevelKey = false;
-		public boolean alwaysAllowRidingRope = true;
-		public boolean enablePhysicsStaff = false;
+		@WarnCheat public boolean alwaysAllowRidingRope = false;
+		@WarnCheat public boolean enablePhysicsStaff = false;
 		@Category public ForceOverlay forceOverlay = new ForceOverlay();
 		public static class ForceOverlay {
 			public boolean enableForceOverlay = true;
@@ -125,7 +126,7 @@ public final class CCGConfig {
 		public boolean quickRequestActions = true;
 		public boolean redstoneRequesterLargeRequest = false;
 		public boolean removeRequestLimit = true;
-		public boolean removeMechanicalArmLimit = false;
+		@WarnCheat public boolean removeMechanicalArmLimit = false;
 		public boolean infEditBoxLength = false;
 		public boolean removeCardboardOverlay = true;
 		public boolean removeNetheriteFirstPerson = false;
@@ -134,14 +135,14 @@ public final class CCGConfig {
 		public boolean allowDivingBoot = true;
 		public boolean recursiveSchematicScan = true;
 		public boolean fixSchematicName = true;
-		public boolean removeTrainDamage = false;
-		public boolean enableNegativeInfThrottle = false;
+		@WarnCheat public boolean removeTrainDamage = false;
+		@WarnCheat public boolean enableNegativeInfThrottle = false;
 		public boolean forcedBackend = false;
 		public boolean nbtFix = false;
 		public static class ChainConveyor {
-			public boolean alwaysAllowRidingChain = false;
+			@WarnCheat public boolean alwaysAllowRidingChain = false;
 			public boolean preventFalling = false;
-			public boolean enhancedConnection = true;
+			@WarnCheat public boolean enhancedConnection = true;
 			public boolean cardBoardedYourself = false;
 		}
 		public static class Wrench {
@@ -149,10 +150,10 @@ public final class CCGConfig {
 			public boolean betterEncasedPipe = true;
 			public boolean betterChassis = true;
 			public boolean alwaysShowScrollValue = true;
-			public boolean alwaysAllowRotating = true;
 			public boolean leftClickFastDismantle = true;
 			public boolean removeCooldown = true;
-			public boolean enchancedRotationMenu = false;
+			@WarnCheat public boolean alwaysAllowRotating = true;
+			@WarnCheat public boolean enchancedRotationMenu = false;
 		}
 		public static class CreateStackCount {
 			public boolean enableCreateStyleStackCount = false;

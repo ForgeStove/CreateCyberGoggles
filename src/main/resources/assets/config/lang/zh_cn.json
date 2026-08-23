@@ -15,5 +15,6 @@
 	"config.ui.unsupported_type": "不支持的配置类型: ",
 	"config.ui.validator.max": "值不能大于: ",
 	"config.ui.validator.min": "值不能小于: ",
-	"config.ui.validator.multiple_errors": "存在多个错误"
+	"config.ui.validator.multiple_errors": "存在多个错误",
+	"config.ui.warn_cheat.tooltip": "警告：在服务器上可能被视为作弊"
 }

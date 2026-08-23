@@ -4,6 +4,7 @@ import io.github.forgestove.flexconfig.*;
 import io.github.forgestove.flexconfig.api.*;
 import io.github.forgestove.flexconfig.client.Translation;
 import io.github.forgestove.flexconfig.tree.ValueConfigNode.*;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.*;
 
@@ -183,11 +184,16 @@ public record RootConfigNode<C, V>(String modId, ImmutableList<CategoryConfigNod
 			var pathKey = buildPathKey(path);
 			var titleKey = "%s.config.option.%s.%s".formatted(modId, pathKey, valueName);
 			var fullPath = (pathKey.isEmpty() ? "" : pathKey + ".") + valueName;
+			var tooltip = Component.translatable(titleKey + ".tooltip");
+			if (valueField.isAnnotationPresent(WarnCheat.class)) tooltip = tooltip.copy()
+				.append(Component.literal("\n"))
+				.append(Component.translatable("config.ui.warn_cheat.tooltip").withStyle(ChatFormatting.RED));
+			final var finalTooltip = tooltip;
 			categoryBuilder.value(valueBuilder -> valueBuilder.valueType(type)
 				.name(valueName)
 				.path(fullPath)
 				.title(Component.translatable(titleKey))
-				.tooltip(Component.translatable(titleKey + ".tooltip"))
+				.tooltip(finalTooltip)
 				.defaultValue(defaultValue)
 				.colorValue(valueField.getAnnotation(ColorValue.class))
 				.valueReader(makePathValueReader(type, path, valueField))

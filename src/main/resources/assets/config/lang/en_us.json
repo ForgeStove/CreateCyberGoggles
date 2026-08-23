@@ -15,5 +15,6 @@
 	"config.ui.unsupported_type": "Unsupported config type: ",
 	"config.ui.validator.max": "Value cannot be greater than: ",
 	"config.ui.validator.min": "Value cannot be less than: ",
-	"config.ui.validator.multiple_errors": "Multiple errors exist"
+	"config.ui.validator.multiple_errors": "Multiple errors exist",
+	"config.ui.warn_cheat.tooltip": "Warning: May be considered cheating on server"
 }

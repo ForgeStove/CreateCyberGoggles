@@ -15,5 +15,6 @@
 	"config.ui.unsupported_type": "Неподдерживаемый тип конфигурации: ",
 	"config.ui.validator.max": "Значение не может быть больше: ",
 	"config.ui.validator.min": "Значение не может быть меньше: ",
-	"config.ui.validator.multiple_errors": "Имеется несколько ошибок"
+	"config.ui.validator.multiple_errors": "Имеется несколько ошибок",
+	"config.ui.warn_cheat.tooltip": "Внимание: На серверах может быть рассчитан как читы"
 }

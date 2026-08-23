@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 public abstract class PlacardBlockEntityMixin implements ItemRenderable, Self<PlacardBlockEntity> {
 	@Override
 	public ItemStack ccg$getItemStack() {
-		if (!CCG.config.tooltip.packageEntity) return null;
+		if (!CCG.config.tooltip.placard) return null;
 		return thiz().getHeldItem();
 	}
 }

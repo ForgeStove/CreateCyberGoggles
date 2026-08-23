@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.mixin.provider;
+package io.github.forgestove.create_cyber_goggles.mixin.compact.simulated.provider;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import dev.simulated_team.simulated.content.blocks.spring.*;
@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.*;
 
 import java.util.List;
+@Pseudo
 @Mixin(SpringBlockEntity.class)
 public abstract class SpringBlockEntityMixin extends SmartBlockEntity implements IHaveGoggleInformation, Self<SpringBlockEntity> {
 	@Shadow protected LerpedFloat renderLength;

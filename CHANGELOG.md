@@ -1,1 +1,3 @@
-- Add EMI support for Sequenced Assembly scrap display operation
+- Add conveyor belt controller display
+- Fix the issue where controller localization does not display correctly
+- Optimize repeated tooltip localization

@@ -68,7 +68,7 @@ public class ArmInteractionPointHandlerMixin {
 				.lineWidth(1 / 16f)
 				.colored(allClose ? 0x9ede73 : 0xff7171);
 		if (removeLimit) return;
-		var hints = ccg$getRangeHints(pos.getY() - 1);
+		var hints = ccg$getRangeHints(pos.getY());
 		if (hints == null) return;
 		outliner.showCluster("MechanicalArmConnectableRange", hints.getFirst())
 			.withFaceTexture(AllSpecialTextures.THIN_CHECKERED)
@@ -109,7 +109,7 @@ public class ArmInteractionPointHandlerMixin {
 		var points = validPoints.toArray(new BlockPos[0]);
 		for (var x = minX; x <= maxX; x++)
 			for (var z = minZ; z <= maxZ; z++) {
-				var candidate = new BlockPos(x, yLevel, z);
+				var candidate = new BlockPos(x, yLevel - 1, z);
 				var connectable = true;
 				for (var center : points) {
 					var dx = x - center.getX();

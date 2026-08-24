@@ -35,7 +35,7 @@ public abstract class SpringBlockEntityMixin extends SmartBlockEntity implements
 		CCGLang.add(Component.translatable("create_cyber_goggles.tooltip.size").withStyle(ChatFormatting.GRAY))
 			.add(size)
 			.forGoggles(tooltip);
-		CCGLang.add(Component.translatable("create_cyber_goggles.tooltip.spring.isController").withStyle(ChatFormatting.GRAY))
+		CCGLang.add(Component.translatable("create_cyber_goggles.tooltip.isController").withStyle(ChatFormatting.GRAY))
 			.is(thiz().isController())
 			.forGoggles(tooltip);
 		CCGLang.add(Component.translatable("create_cyber_goggles.tooltip.spring.currentLength").withStyle(ChatFormatting.GRAY))

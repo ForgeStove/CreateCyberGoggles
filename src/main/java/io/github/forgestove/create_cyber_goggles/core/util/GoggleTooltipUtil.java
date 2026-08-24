@@ -148,7 +148,7 @@ public final class GoggleTooltipUtil {
 			.forGoggles(tooltip);
 		return true;
 	}
-	public static void beltThroughput(List<Component> tooltip, double itemsPerSecond) {
+	public static void belt(List<Component> tooltip, double itemsPerSecond) {
 		if (itemsPerSecond < 0.1) return;
 		CCGLang.add(translatable("create_cyber_goggles.tooltip.beltThroughput").withStyle(GRAY)).forGoggles(tooltip);
 		CCGLang.text(String.format("%.2f", itemsPerSecond), GOLD).text(" / ", DARK_GRAY).seconds(DARK_GRAY).forGoggles(tooltip, 1);

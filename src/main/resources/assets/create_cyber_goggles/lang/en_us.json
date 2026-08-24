@@ -307,6 +307,7 @@
 	"create_cyber_goggles.tooltip.friction.medium": "Micro-Rough",
 	"create_cyber_goggles.tooltip.inputFluids": "Input Fluids:",
 	"create_cyber_goggles.tooltip.inputItems": "Input Items:",
+	"create_cyber_goggles.tooltip.isController": "Is Controller：",
 	"create_cyber_goggles.tooltip.leftTime": "Left Time:",
 	"create_cyber_goggles.tooltip.mass.medium": "Medium",
 	"create_cyber_goggles.tooltip.outputFluids": "Output Fluids:",
@@ -322,7 +323,6 @@
 	"create_cyber_goggles.tooltip.size.small": "Small",
 	"create_cyber_goggles.tooltip.spring": "Spring State:",
 	"create_cyber_goggles.tooltip.spring.currentLength": "Current Length:",
-	"create_cyber_goggles.tooltip.spring.isController": "Is Controller：",
 	"create_cyber_goggles.tooltip.windState": "Wind State:",
 	"key.categories.create_cyber_goggles": "Create: Cyber Goggles"
 }

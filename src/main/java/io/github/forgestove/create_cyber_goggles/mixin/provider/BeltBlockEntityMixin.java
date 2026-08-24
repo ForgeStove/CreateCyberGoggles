@@ -4,8 +4,9 @@ import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.belt.BeltBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.ItemRenderable;
-import io.github.forgestove.create_cyber_goggles.core.util.GoggleTooltipUtil;
+import io.github.forgestove.create_cyber_goggles.core.util.*;
 import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -41,9 +42,13 @@ public abstract class BeltBlockEntityMixin extends KineticBlockEntity
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		var sup = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
-		if (!CCG.config.goggles.enhancedInfo || getSpeed() == 0) return sup;
+		if (!CCG.config.goggles.enhancedInfo) return sup;
+		CCGLang.add(Component.translatable("create_cyber_goggles.tooltip.isController").withStyle(ChatFormatting.GRAY))
+			.is(thiz().isController())
+			.forGoggles(tooltip);
+		if (getSpeed() == 0) return sup;
 		var controllerBE = thiz().getControllerBE();
-		if (controllerBE != null) GoggleTooltipUtil.beltThroughput(tooltip, ((BeltBlockEntityMixin) (Object) controllerBE).ccg$rate);
+		if (controllerBE != null) GoggleTooltipUtil.belt(tooltip, ((BeltBlockEntityMixin) (Object) controllerBE).ccg$rate);
 		return sup;
 	}
 	@Override

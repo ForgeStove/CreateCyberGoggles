@@ -305,6 +305,7 @@
 	"create_cyber_goggles.tooltip.friction.medium": "Micro-Rough",
 	"create_cyber_goggles.tooltip.inputFluids": "Входные жидкости:",
 	"create_cyber_goggles.tooltip.inputItems": "Входные предметы:",
+	"create_cyber_goggles.tooltip.isController": "Контроллер：",
 	"create_cyber_goggles.tooltip.leftTime": "Оставшееся время:",
 	"create_cyber_goggles.tooltip.mass.medium": "Средний",
 	"create_cyber_goggles.tooltip.outputFluids": "Выходные жидкости:",
@@ -320,7 +321,6 @@
 	"create_cyber_goggles.tooltip.size.small": "Малый",
 	"create_cyber_goggles.tooltip.spring": "Состояние пружины:",
 	"create_cyber_goggles.tooltip.spring.currentLength": "Текущая длина:",
-	"create_cyber_goggles.tooltip.spring.isController": "Контроллер：",
 	"create_cyber_goggles.tooltip.windState": "Состояние ветра：",
 	"key.categories.create_cyber_goggles": "Create: Cyber Goggles"
 }

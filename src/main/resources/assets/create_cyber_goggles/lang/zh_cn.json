@@ -307,6 +307,7 @@
 	"create_cyber_goggles.tooltip.friction.medium": "微糙",
 	"create_cyber_goggles.tooltip.inputFluids": "输入流体：",
 	"create_cyber_goggles.tooltip.inputItems": "输入物品：",
+	"create_cyber_goggles.tooltip.isController": "控制器：",
 	"create_cyber_goggles.tooltip.leftTime": "剩余时间：",
 	"create_cyber_goggles.tooltip.mass.medium": "中等",
 	"create_cyber_goggles.tooltip.outputFluids": "输出流体：",
@@ -322,7 +323,6 @@
 	"create_cyber_goggles.tooltip.size.small": "小",
 	"create_cyber_goggles.tooltip.spring": "弹簧状态：",
 	"create_cyber_goggles.tooltip.spring.currentLength": "当前长度：",
-	"create_cyber_goggles.tooltip.spring.isController": "控制器：",
 	"create_cyber_goggles.tooltip.windState": "风力状态：",
 	"key.categories.create_cyber_goggles": "机械动力：赛博护目镜"
 }

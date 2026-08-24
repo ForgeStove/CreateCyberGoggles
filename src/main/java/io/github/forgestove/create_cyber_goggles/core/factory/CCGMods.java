@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 public enum CCGMods {
 	create,
+	createbigcannons,
 	extra_gauges,
 	fluidlogistics,
 	modernui,

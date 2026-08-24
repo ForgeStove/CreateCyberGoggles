@@ -6,6 +6,7 @@ import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.event.*;
+import io.github.forgestove.create_cyber_goggles.core.factory.CCGMods;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.createmod.catnip.gui.element.GuiGameElement.GuiRenderBuilder;
 import net.createmod.catnip.gui.element.RenderElement;
@@ -14,7 +15,7 @@ import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.*;
 import net.minecraft.world.phys.HitResult.Type;
@@ -131,6 +132,7 @@ public abstract class GoggleOverlayRendererMixin {
 	)
 	private static HitResult keepHitDuringFadeOut(HitResult original) {
 		if (!CCG.config.goggles.enableFadeOut) return original;
+		if (ccg$isHoldingCBCInspectionTool()) return original;
 		if (original instanceof BlockHitResult bhr && bhr.getType() == Type.BLOCK) {
 			if (ccg$hasInfo(bhr)) {
 				ccg$lastHitResult = bhr;
@@ -143,6 +145,18 @@ public abstract class GoggleOverlayRendererMixin {
 		}
 		return !ccg$isFadingOut() || ccg$lastHitResult == null ? null : ccg$lastHitResult;
 	}
+	/**
+	 * 手持 CBC 护甲检查工具时禁用淡出拦截，避免其将普通方块的 hitResult 替换为空/旧目标，
+	 * 从而破坏 CBC 对非机械方块的护甲信息显示
+	 */
+	@Unique
+	private static boolean ccg$isHoldingCBCInspectionTool() {
+		if (!CCGMods.createbigcannons.isLoaded()) return false;
+		if (mc.player == null) return false;
+		var tool = CCGMods.createbigcannons.getItem("block_armor_inspection_tool");
+		if (tool == Items.AIR) return false;
+		return mc.player.getMainHandItem().is(tool) || mc.player.getOffhandItem().is(tool);
+	}
 	@Unique
 	private static boolean ccg$hasInfo(BlockHitResult bhr) {
 		if (mc.level == null) return false;
@@ -153,6 +167,7 @@ public abstract class GoggleOverlayRendererMixin {
 	@Unique
 	private static boolean ccg$isFadingOut() {
 		if (!CCG.config.goggles.enableFadeOut) return false;
+		if (ccg$isHoldingCBCInspectionTool()) return false;
 		var hit = mc.hitResult;
 		if (hit instanceof BlockHitResult bhr && bhr.getType() == Type.BLOCK) {
 			if (ccg$hasInfo(bhr)) return false;

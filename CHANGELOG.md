@@ -2,4 +2,6 @@
 - Add CBC armor inspection tool compatibility
 - Fix misaligned mechanical arm range display
 - Fix the issue where controller localization does not display correctly
+- Fix stock request recipe scroll adjust
+- Complete #79
 - Optimize repeated tooltip localization

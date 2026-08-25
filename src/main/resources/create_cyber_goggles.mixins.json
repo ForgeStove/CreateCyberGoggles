@@ -35,6 +35,7 @@
 		"misc.ArmInteractionPointHandlerMixin",
 		"misc.CardboardArmorStealthOverlayMixin",
 		"misc.ClientSchematicLoaderMixin",
+		"misc.ContinuousOBBColliderMixin",
 		"misc.ContraptionColliderMixin",
 		"misc.ContraptionHandlerClientMixin",
 		"misc.DivingBootsItemMixin",

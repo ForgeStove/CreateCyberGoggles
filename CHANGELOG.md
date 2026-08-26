@@ -1,7 +1,2 @@
-- Add conveyor belt controller display
-- Add CBC armor inspection tool compatibility
-- Fix misaligned mechanical arm range display
-- Fix the issue where controller localization does not display correctly
-- Fix stock request recipe scroll adjust
-- Complete #79
-- Optimize repeated tooltip localization
+- Fix client crashes when the center of the contraption entity precisely coincides with the center of the device's OBB
+- Supplement Russian translation

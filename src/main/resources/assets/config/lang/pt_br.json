@@ -1,0 +1,20 @@
+{
+	"config.ui.cannot_save": "Erro!",
+	"config.ui.color_picker.tooltip": "Escolha a cor",
+	"config.ui.ignore_restart": "Ignorar e continuar",
+	"config.ui.keybinds": "Atalhos do teclado",
+	"config.ui.locked.tooltip": "Este valor de configuração está bloqueado pelo servidor",
+	"config.ui.quit.confirm": "Confirmar",
+	"config.ui.quit.confirm.title": "Descartar alterações?",
+	"config.ui.quit.confirm.warning": "Algumas alterações não foram salvas. Deseja descartá-las?",
+	"config.ui.quit.unsaved": "Descartar alterações",
+	"config.ui.restart_required": "É necessário reiniciar o jogo para que as alterações tenham efeito.",
+	"config.ui.restart_required.title": "Reinicialização Necessária",
+	"config.ui.undo.tooltip": "Desfazer",
+	"config.ui.unlock.tooltip": "Bloquear este valor de configuração no servidor",
+	"config.ui.unsupported_type": "Tipo de configuração não suportado: ",
+	"config.ui.validator.max": "Valor não pode ser maior que: ",
+	"config.ui.validator.min": "Valor não pode ser menor que: ",
+	"config.ui.validator.multiple_errors": "Existem vários erros",
+	"config.ui.warn_cheat.tooltip": "Aviso: Pode ser considerado trapaça no servidor"
+}

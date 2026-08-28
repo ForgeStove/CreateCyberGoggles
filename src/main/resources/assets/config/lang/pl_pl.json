@@ -1,0 +1,20 @@
+{
+	"config.ui.cannot_save": "Błąd!",
+	"config.ui.color_picker.tooltip": "Próbnik kolorów",
+	"config.ui.ignore_restart": "Ignoruj i kontynuuj",
+	"config.ui.keybinds": "Przypisania klawiszy",
+	"config.ui.locked.tooltip": "Ta wartość konfiguracyjna jest zablokowana przez serwer",
+	"config.ui.quit.confirm": "Potwierdź",
+	"config.ui.quit.confirm.title": "Odrzucić zmiany?",
+	"config.ui.quit.confirm.warning": "Masz niezapisane zmiany, na pewno chcesz je odrzucić?",
+	"config.ui.quit.unsaved": "Odrzuć zmiany",
+	"config.ui.restart_required": "Aby zmiany odniosły efekt, wymagany jest restart gry.",
+	"config.ui.restart_required.title": "Wymagane ponowne uruchomienie",
+	"config.ui.undo.tooltip": "Cofnij",
+	"config.ui.unlock.tooltip": "Zablokuj tę wartość konfiguracji na serwerze",
+	"config.ui.unsupported_type": "Nieobsługiwany typ konfiguracji: ",
+	"config.ui.validator.max": "Wartość nie może być większa niż: ",
+	"config.ui.validator.min": "Wartość nie może być mniejsza niż: ",
+	"config.ui.validator.multiple_errors": "Istnieje wiele błędów",
+	"config.ui.warn_cheat.tooltip": "Ostrzeżenie: Może być uznane za oszukiwanie na serwerze"
+}

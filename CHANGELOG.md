@@ -1,2 +1,1 @@
-- Fix client crashes when the center of the contraption entity precisely coincides with the center of the device's OBB
-- Supplement Russian translation
+- Merge translation from crowdin

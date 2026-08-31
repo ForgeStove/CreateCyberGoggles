@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.*;
 import java.util.function.Function;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
-@Mixin(value = ThresholdSwitchScreen.class, remap = false)
+@Mixin(ThresholdSwitchScreen.class)
 public abstract class ThresholdSwitchScreenMixin extends AbstractSimiScreen {
 	@Shadow private ScrollInput offBelow;
 	@Shadow private ScrollInput onAbove;

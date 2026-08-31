@@ -1,2 +1,3 @@
 - Add the onlyOnWithGoggles restriction to forceOverlay
+- Add scroll wheel step compatibility to ThresholdSwitch
 - Change the default value of onlyOnWithGoggles to true

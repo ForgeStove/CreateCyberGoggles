@@ -1,1 +1,2 @@
-- Merge translation from crowdin
+- Add the onlyOnWithGoggles restriction to forceOverlay
+- Change the default value of onlyOnWithGoggles to true

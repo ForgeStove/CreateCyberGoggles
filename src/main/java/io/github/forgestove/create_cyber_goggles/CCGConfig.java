@@ -15,7 +15,7 @@ public final class CCGConfig {
 		@Category(false) public GameMode gameMode = new GameMode();
 		public boolean enhancedInfo = true;
 		public boolean hideStaticKineticInfo = false;
-		public boolean onlyOnWithGoggles = false;
+		public boolean onlyOnWithGoggles = true;
 		public boolean betterStoreInfo = true;
 		public boolean betterFactoryGauge = true;
 		public boolean enableKineticEffect = true;

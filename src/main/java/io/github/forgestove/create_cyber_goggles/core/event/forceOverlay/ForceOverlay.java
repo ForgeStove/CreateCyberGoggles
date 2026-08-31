@@ -35,7 +35,7 @@ public final class ForceOverlay {
 		var player = mc.player;
 		var level = mc.level;
 		var forceOverlay = CCG.config.aeronautics.forceOverlay;
-		if (player == null || level == null || !forceOverlay.enableForceOverlay) {
+		if (player == null || level == null || !forceOverlay.enableForceOverlay || shouldSuppressInfo()) {
 			clear();
 			return;
 		}

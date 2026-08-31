@@ -21,6 +21,7 @@ public final class ForceTooltipOverlay {
 	}
 	private static void render(GuiGraphics gui, DeltaTracker deltaTracker) {
 		if (!CCG.config.aeronautics.forceOverlay.hudPanelEnabled) return;
+		if (shouldSuppressInfo()) return;
 		if (mc.options.hideGui) return;
 		if (!ForceOverlay.hasData()) return;
 		var lines = buildLines();

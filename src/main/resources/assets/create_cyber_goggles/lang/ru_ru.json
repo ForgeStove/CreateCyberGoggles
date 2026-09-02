@@ -149,8 +149,6 @@
 	"create_cyber_goggles.config.option.misc.quickRequestActions.tooltip": "Включить быстрые действия на экранах складского тикера и запрашивателя",
 	"create_cyber_goggles.config.option.misc.recursiveSchematicScan": "Рекурсивное сканирование схематик",
 	"create_cyber_goggles.config.option.misc.recursiveSchematicScan.tooltip": "Включить схематики в подпапках при обновлении списка",
-	"create_cyber_goggles.config.option.misc.redstoneRequesterLargeRequest": "Большие заказы в редстоуновом запрашивателе",
-	"create_cyber_goggles.config.option.misc.redstoneRequesterLargeRequest.tooltip": "Разрешить редстоуновому запрашивателе заказывать более 9 типов предметов\n§cВнимание: эта функция несовместима с большинством модов. Если вы зададите более 9 предметов, редстоуновый запрашиватель не откроется, если функция не включена",
 	"create_cyber_goggles.config.option.misc.removeCardboardOverlay": "Убрать оверлей картонной брони",
 	"create_cyber_goggles.config.option.misc.removeCardboardOverlay.tooltip": "Убрать оверлей картонной брони при приседании",
 	"create_cyber_goggles.config.option.misc.removeMechanicalArmLimit": "Убрать ограничение для механических рук",

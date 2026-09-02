@@ -17,7 +17,7 @@ import org.jetbrains.annotations.*;
 
 import java.util.*;
 /**
- * 让红石请求器支持 JEI 配方转移按钮：按配方格子顺序（从上到下、从左到右）扫描，
+ * 让红石请求器支持 JEI 配方转移按钮：按配方格子顺序（先从左到右再从上到下）扫描，
  * 把连续相同的原料合并成一组，每组填入一个请求槽（数量 = 连续格数），
  * 使动力合成器能按配方顺序正确铺料。
  */
@@ -40,29 +40,17 @@ public class RedstoneRequesterTransferHandler implements IUniversalRecipeTransfe
 		boolean doTransfer
 	) {
 		if (!(object instanceof RecipeHolder<?> recipeHolder)) return null;
-		// 优先用红石请求器的客户端网络库存快照，其次回退精确缓存
-		var summary = container.contentHolder instanceof StockSnapshotHolder holder ? holder.ccg$getStockSnapshot() : null;
-		if (summary == null || summary.getStacks().isEmpty()) summary = container.contentHolder.getAccurateSummary();
-		var hasStock = summary != null && !summary.getStacks().isEmpty();
-		// 按配方 grid 顺序扫描（getIngredients 行优先含空槽），网络库存匹配代表物品，连续同类合并
+		// 按配方 grid 顺序扫描（getIngredients 行优先含空槽），连续同类合并成一组
 		List<BigItemStack> groups = new ArrayList<>();
 		BigItemStack currentGroup = null;
 		for (var ingredient : recipeHolder.value().getIngredients()) {
 			if (ingredient.isEmpty()) continue;
 			ItemStack representative = null;
-			// 网络库存里匹配该原料的物品优先（解决 tag 轮播取到不在库存的物品）
-			if (hasStock) for (var stock : summary.getStacks())
-				if (stock.count > 0 && ingredient.test(stock.stack)) {
-					representative = stock.stack;
-					break;
-				}
+			// 按配方候选填入代表物品（是否部分发送由服务端 allowPartial 决定）
+			var matches = ingredient.getItems();
+			if (matches.length > 0) representative = matches[0];
 			if (representative == null) {
-				// 缺货时仍按配方候选填入，保证请求配置完整（是否部分发送由服务端 allowPartial 决定）
-				var matches = ingredient.getItems();
-				if (matches.length > 0) representative = matches[0];
-			}
-			if (representative == null) {
-				currentGroup = null; // 该格原料既不在网络也不在配方候选 → 断开连续
+				currentGroup = null; // 该格原料无配方候选 → 断开连续
 				continue;
 			}
 			if (currentGroup != null && ItemStack.isSameItemSameComponents(currentGroup.stack, representative)) currentGroup.count++;

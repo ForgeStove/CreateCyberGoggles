@@ -1,1 +1,1 @@
-- Sync 1.21.1 NeoForge
+- Fix [#84](https://github.com/ForgeStove/CreateCyberGoggles/issues/84)

@@ -3,12 +3,13 @@ import com.zurrtum.create.client.foundation.utility.CreateLang;
 import com.zurrtum.create.content.equipment.armor.*;
 import com.zurrtum.create.content.equipment.goggles.GogglesItem;
 import com.zurrtum.create.content.equipment.wrench.WrenchItem;
-import com.zurrtum.create.foundation.fluid.FluidHelper;
 import com.zurrtum.create.infrastructure.fluids.FluidStack;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.api.TooltipOverlayRenderer;
 import io.github.forgestove.create_cyber_goggles.core.gui.*;
 import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
+import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.inventory.tooltip.*;
@@ -79,25 +80,27 @@ public final class ItemTooltip {
 	}
 	private static void fluidContainer(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!CCG.config.tooltip.fluidContainer) return;
-		try (var inventory = FluidHelper.getFluidInventory(stack)) {
-			if (inventory == null || inventory.isEmpty()) return;
-			var entries = new ArrayList<FluidStack>();
-			var capacities = new ArrayList<Integer>();
-			for (var i = 0; i < inventory.size(); i++) {
-				var fluid = inventory.getStack(i);
-				if (fluid.isEmpty()) continue;
-				entries.add(fluid.copy());
-				capacities.add(inventory.getMaxAmount(fluid));
-			}
-			if (entries.isEmpty()) {
-				entries.add(FluidStack.EMPTY);
-				capacities.add(inventory.getMaxAmount(FluidStack.EMPTY));
-			}
-			for (var i = 0; i < entries.size(); i++) {
-				var fluid = entries.get(i);
-				var capacity = i < capacities.size() ? capacities.get(i) : Math.max(1, fluid.getAmount());
-				CCGLang.fluidEntry(fluid, capacity).addTo(1, tooltip);
-			}
+		var context = ContainerItemContext.withConstant(stack);
+		var storage = context.find(FluidStorage.ITEM);
+		if (storage == null) return;
+		var entries = new ArrayList<FluidStack>();
+		var capacities = new ArrayList<Integer>();
+		for (var view : storage) {
+			var fluidVariant = view.getResource();
+			if (fluidVariant.isBlank() || view.getAmount() <= 0) continue;
+			entries.add(new FluidStack(fluidVariant.getFluid(), view.getAmount(), fluidVariant.getComponentsPatch()));
+			capacities.add((int) Math.min(Integer.MAX_VALUE, view.getCapacity()));
+		}
+		if (entries.isEmpty()) {
+			var capacity = 0;
+			for (var view : storage) capacity = Math.max(capacity, (int) Math.min(Integer.MAX_VALUE, view.getCapacity()));
+			entries.add(FluidStack.EMPTY);
+			capacities.add(capacity);
+		}
+		for (var i = 0; i < entries.size(); i++) {
+			var fluid = entries.get(i);
+			var capacity = i < capacities.size() ? capacities.get(i) : Math.max(1, fluid.getAmount());
+			CCGLang.fluidEntry(fluid, capacity).addTo(1, tooltip);
 		}
 	}
 	public static void renderTooltipOverlay(

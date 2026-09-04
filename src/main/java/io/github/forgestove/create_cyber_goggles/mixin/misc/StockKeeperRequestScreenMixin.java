@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
-@Mixin(value = StockKeeperRequestScreen.class, remap = false)
+@Mixin(StockKeeperRequestScreen.class)
 public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContainerScreen<StockKeeperRequestMenu>
 	implements Self<StockKeeperRequestScreen> {
 	@Shadow public List<List<BigItemStack>> displayedItems;

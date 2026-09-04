@@ -15,7 +15,7 @@ public final class CCGConfig {
 		@Category(false) public GameMode gameMode = new GameMode();
 		public boolean enhancedInfo = true;
 		public boolean hideStaticKineticInfo = false;
-		public boolean onlyOnWithGoggles = false;
+		public boolean onlyOnWithGoggles = true;
 		public boolean betterStoreInfo = true;
 		public boolean betterFactoryGauge = true;
 		public boolean enableKineticEffect = true;
@@ -124,7 +124,6 @@ public final class CCGConfig {
 		@Category public CreateStackCount createStackCount = new CreateStackCount();
 		@Category public Jei jei = new Jei();
 		public boolean quickRequestActions = true;
-		public boolean redstoneRequesterLargeRequest = false;
 		public boolean removeRequestLimit = true;
 		@WarnCheat public boolean removeMechanicalArmLimit = false;
 		public boolean infEditBoxLength = false;

@@ -1,7 +1,9 @@
 package io.github.forgestove.create_cyber_goggles.mixin.misc;
+import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.redstone.thresholdSwitch.*;
+import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour.StepContext;
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
@@ -11,9 +13,11 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.*;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
+import java.util.function.Function;
+
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 @Mixin(ThresholdSwitchScreen.class)
 public abstract class ThresholdSwitchScreenMixin extends AbstractSimiScreen {
 	@Shadow private ScrollInput offBelow;
@@ -57,9 +61,34 @@ public abstract class ThresholdSwitchScreenMixin extends AbstractSimiScreen {
 			? Mth.clamp(count * valueStep, blockEntity.currentMinLevel + valueStep, blockEntity.currentMaxLevel)
 			: Mth.clamp(count * valueStep, blockEntity.currentMinLevel, blockEntity.currentMaxLevel - valueStep);
 		input.setState(state);
-		input.onChanged(); // 触发原 calling 自动联动
+		input.onChanged();
 		send(blockEntity.isInverted());
 	}
 	@Shadow
 	protected abstract void send(boolean invert);
+	@WrapOperation(
+		method = "init", at = @At(
+		value = "INVOKE",
+		target = "Lcom/simibubi/create/foundation/gui/widget/ScrollInput;withStepFunction(Ljava/util/function/Function;)"
+			+ "Lcom/simibubi/create/foundation/gui/widget/ScrollInput;"
+	)
+	)
+	private ScrollInput ccg$modifyScrollStep(ScrollInput instance, Function<StepContext, Integer> step, Operation<ScrollInput> original) {
+		if (!CCG.config.misc.quickRequestActions) return original.call(instance, step);
+		Function<StepContext, Integer> modified = sc -> {
+			var amount = getModifiedScrollAmount();
+			var valueStep = getValueStep();
+			if (sc.currentValue / valueStep == 1 && amount > 1) amount--;
+			return amount * valueStep;
+		};
+		return original.call(instance, modified);
+	}
+	/** 覆写 Shift 滚动逻辑 */
+	@Inject(method = "updateInputBoxes", at = @At("TAIL"))
+	private void ccg$alignShiftStep(CallbackInfo ci) {
+		if (!CCG.config.misc.quickRequestActions) return;
+		var valueStep = getValueStep();
+		onAbove.withShiftStep(valueStep);
+		offBelow.withShiftStep(valueStep);
+	}
 }

@@ -20,7 +20,7 @@ import org.joml.*;
 import java.lang.Math;
 import java.util.*;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 /**
  * 为当前目标子层级在世界中渲染力箭头和质心标记。
  */
@@ -31,6 +31,7 @@ public final class ForceOverlayRenderer {
 	public static void render(RenderLevelStageEvent event) {
 		if (event.getStage() != Stage.AFTER_LEVEL) return;
 		if (!CCG.config.aeronautics.forceOverlay.enableForceOverlay) return;
+		if (shouldSuppressInfo()) return;
 		var player = mc.player;
 		var level = mc.level;
 		if (player == null || level == null) return;

@@ -52,6 +52,7 @@ publishMods {
 		accessToken.set(providers.environmentVariable("MODRINTH_TOKEN"))
 		projectId.set("TlQAWQCY")
 		minecraftVersions.add(p("mcVersion"))
+		environment.set(CLIENT_ONLY_SERVER_OPTIONAL)
 		requires("create-fly")
 		optional("modmenu")
 	}
@@ -66,3 +67,4 @@ publishMods {
 	}
 }
 fun p(key: String) = property(key).toString()
+println("Java: ${System.getProperty("java.version")}, JVM: ${System.getProperty("java.vm.version")} (${System.getProperty("java.vendor")}), Arch: ${System.getProperty("os.arch")}")

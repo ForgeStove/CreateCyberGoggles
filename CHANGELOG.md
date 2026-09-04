@@ -1,1 +1,1 @@
-- Fix [#84](https://github.com/ForgeStove/CreateCyberGoggles/issues/84)
+- Fix [#83](https://github.com/ForgeStove/CreateCyberGoggles/issues/83)

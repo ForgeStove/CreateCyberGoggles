@@ -10,7 +10,7 @@ java.withSourcesJar()
 tasks.jar { from("LICENSE") }
 val generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
 	description = "Generate this project metadata from templates."
-	val values = properties.mapValues { it.value.toString() }
+	val values = project.extra.properties.mapValues { it.value.toString() }
 	inputs.properties(values)
 	expand(values)
 	from("src/main/templates")
@@ -19,10 +19,7 @@ val generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
 sourceSets.main.get().resources.srcDir(generateMetadata)
 loom {
 	enableTransitiveAccessWideners = true
-	runs {
-		configureEach { jvmArguments.addAll("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition") }
-		remove(getByName("server"))
-	}
+	runs.configureEach { jvmArguments.addAll("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition") }
 }
 repositories {
 	mavenLocal()
@@ -48,20 +45,22 @@ dependencies {
 }
 publishMods {
 	file.set(tasks.remapJar.get().archiveFile)
-	additionalFiles.from(tasks.named<Jar>("sourcesJar"))
 	changelog.set(file("CHANGELOG.md").readText())
 	type.set(STABLE)
 	version.set(project.version.toString())
 	displayName.set("[${p("loaderCap")}] ${p("modVersion")} for Create ${p("mcVersion")}-${p("createMinVersion")}")
 	modLoaders.addAll(p("loaderCap"), p("loaderOtherCap"))
 	modrinth {
+		additionalFile(tasks.named<Jar>("sourcesJar")) { type.set(SOURCES_JAR) }
 		accessToken.set(providers.environmentVariable("MODRINTH_TOKEN"))
 		projectId.set("TlQAWQCY")
 		minecraftVersions.add(p("mcVersion"))
+		environment.set(CLIENT_ONLY_SERVER_OPTIONAL)
 		requires("create-fly")
 		optional("modmenu")
 	}
 	curseforge {
+		additionalFiles.from(tasks.named<Jar>("sourcesJar"))
 		accessToken.set(providers.environmentVariable("CURSEFORGE_TOKEN"))
 		projectId.set("1233804")
 		minecraftVersions.add(p("mcVersion"))
@@ -71,3 +70,4 @@ publishMods {
 	}
 }
 fun p(key: String) = property(key).toString()
+println("Java: ${System.getProperty("java.version")}, JVM: ${System.getProperty("java.vm.version")} (${System.getProperty("java.vendor")}), Arch: ${System.getProperty("os.arch")}")

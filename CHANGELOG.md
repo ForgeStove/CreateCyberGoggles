@@ -1,1 +1,1 @@
-- Remove redstoneRequesterLargeRequest option because incorrectly modify the server-side.
+- Merge translation from Crowdin

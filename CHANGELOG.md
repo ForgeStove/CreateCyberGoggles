@@ -1,1 +1,1 @@
-- Port to 26.2
+- Fix [#83](https://github.com/ForgeStove/CreateCyberGoggles/issues/83)

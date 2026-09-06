@@ -1,1 +1,5 @@
-- Merge translation from Crowdin
+- Make the Redstone Requester's JEI recipe transfer compatible with the vanilla crafter
+- Add left-click pickup/drag interaction to the Redstone Requester
+- Add an undo button to the Redstone Requester
+- Allow gauges to be moved in any orientation
+- Fix client-side render misalignment after a gauge is rotated

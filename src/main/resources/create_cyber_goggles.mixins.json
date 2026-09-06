@@ -66,6 +66,7 @@
 		"misc.jei.CreateJEIMixin",
 		"misc.jei.CreateRecipeCategoryMixin",
 		"misc.jei.FactoryPanelScreenMixin",
+		"misc.jei.RecipeTransferButtonControllerMixin",
 		"misc.jei.RedstoneRequesterScreenMixin",
 		"misc.jei.StockKeeperRequestScreenMixin",
 		"misc.jei.StockKeeperTransferHandlerMixin",

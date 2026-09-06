@@ -263,6 +263,7 @@
 	"create_cyber_goggles.config.option.tooltip.toolbox.tooltip": "显示工具箱内容",
 	"create_cyber_goggles.config.option.tooltip.wrench": "扳手",
 	"create_cyber_goggles.config.option.tooltip.wrench.tooltip": "显示扳手的额外工具提示信息",
+	"create_cyber_goggles.gui.redstoneRequester.jeiAltHint": "按住 [Alt] 以原版合成器网格填入",
 	"create_cyber_goggles.gui.redstoneRequester.tooManyIngredients": "请求的原料种类过多",
 	"create_cyber_goggles.gui.schematicTable.folderRoot": "根目录 (/)",
 	"create_cyber_goggles.gui.schematicTable.folderSelector": "蓝图文件夹",

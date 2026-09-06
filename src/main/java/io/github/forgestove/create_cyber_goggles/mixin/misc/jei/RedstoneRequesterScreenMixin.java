@@ -1,8 +1,11 @@
 package io.github.forgestove.create_cyber_goggles.mixin.misc.jei;
+import com.simibubi.create.content.logistics.AddressEditBox;
 import com.simibubi.create.content.logistics.redstoneRequester.*;
 import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterMenu.SorterProofSlot;
 import com.simibubi.create.content.logistics.stockTicker.LogisticalStockRequestPacket;
+import com.simibubi.create.foundation.gui.*;
 import com.simibubi.create.foundation.gui.menu.*;
+import com.simibubi.create.foundation.gui.widget.IconButton;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.compat.jei.ScreenReferenced;
 import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
@@ -17,7 +20,7 @@ import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.List;
+import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 @Mixin(RedstoneRequesterScreen.class)
@@ -28,7 +31,18 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 	/** 拖拽槽位覆盖层颜色，复用 JEI GhostIngredientDrag：目标绿（未悬停）与悬停绿（更亮） */
 	@Unique private static final int TARGET_GREEN = 0x4013C90A;
 	@Unique private static final int HOVER_GREEN = 0x804CC919;
+	/** 打开界面时缓存的初始 ghost 槽内容，供撤销恢复 */
+	@Unique private final List<ItemStack> ccg$backupStacks = new ArrayList<>();
+	@Unique private final List<Integer> ccg$backupAmounts = new ArrayList<>();
 	@Shadow private List<Integer> amounts;
+	@Shadow private AddressEditBox addressBox;
+	@Shadow private IconButton allowPartial;
+	@Shadow private IconButton dontAllowPartial;
+	/** 打开界面时缓存的地址与「允许部分请求」开关 */
+	@Unique private String ccg$backupAddress = "";
+	@Unique private boolean ccg$backupAllowPartial;
+	/** 撤销按钮引用，用于动态置灰（无更改时不可用） */
+	@Unique private IconButton ccg$undoButton;
 	/** 抓取式「拿起」：物品与数量已从源槽移除、悬空待放。pickedIndex=-1 表示空闲 */
 	@Unique private ItemStack ccg$picked = ItemStack.EMPTY;
 	@Unique private int ccg$pickedCount = 1;
@@ -50,6 +64,68 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 		// 打开界面时请求一次网络库存，供 JEI 转移按库存选择原料
 		if (CCG.config.misc.jei.redstoneRequesterJEIRequest && requesterMenu.contentHolder != null)
 			CatnipServices.NETWORK.sendToServer(new LogisticalStockRequestPacket(requesterMenu.contentHolder.getBlockPos()));
+	}
+	/** 在「完成」按钮左侧添加撤销按钮：点击恢复到打开界面时的初始内容 */
+	@Inject(method = "init", at = @At("TAIL"))
+	private void addUndoButton(CallbackInfo ci) {
+		var x = getGuiLeft();
+		var y = getGuiTop();
+		var bgWidth = AllGuiTextures.REDSTONE_REQUESTER.getWidth();
+		var bgHeight = AllGuiTextures.REDSTONE_REQUESTER.getHeight();
+		// 此刻 addressBox/allowPartial/ghostInventory 均已初始化，缓存全部初始内容供撤销恢复
+		var menu = thiz().getMenu();
+		ccg$backupStacks.clear();
+		ccg$backupAmounts.clear();
+		for (var i = 0; i < menu.ghostInventory.getSlots(); i++) {
+			ccg$backupStacks.add(menu.ghostInventory.getStackInSlot(i).copy());
+			ccg$backupAmounts.add(amounts.get(i));
+		}
+		ccg$backupAddress = addressBox.getValue();
+		ccg$backupAllowPartial = allowPartial.green;
+		ccg$undoButton = new IconButton(x + bgWidth - 59, y + bgHeight - 25, AllIcons.I_CONFIG_RESET);
+		ccg$undoButton.setToolTip(Component.translatable("config.ui.undo.tooltip"));
+		ccg$undoButton.withCallback(this::ccg$undo);
+		ccg$undoButton.active = false; // 刚打开时无更改，撤销不可用
+		addRenderableWidget(ccg$undoButton);
+	}
+	/** 撤销：恢复打开界面时缓存的 ghost 槽、数量、地址与「允许部分」开关，并清空拖拽/拿起状态 */
+	@Unique
+	private void ccg$undo() {
+		var menu = thiz().getMenu();
+		var ghost = menu.ghostInventory;
+		// 恢复本地 ghost 槽物品，并逐槽同步服务端（更新服务端 ghostInventory，saveData 会重编码 request）
+		for (var i = 0; i < ghost.getSlots(); i++) {
+			var stack = ccg$backupStacks.get(i).copy();
+			ghost.setStackInSlot(i, stack);
+			CatnipServices.NETWORK.sendToServer(new GhostItemSubmitPacket(stack, i));
+		}
+		// 恢复本地数量
+		for (var i = 0; i < amounts.size(); i++)
+			amounts.set(i, ccg$backupAmounts.get(i));
+		// 恢复地址与「允许部分」开关的本地显示
+		addressBox.setValue(ccg$backupAddress);
+		var allow = ccg$backupAllowPartial;
+		allowPartial.green = allow;
+		dontAllowPartial.green = !allow;
+		// 提交地址、allowPartial、数量到服务端。注意：saveData 会压缩掉空槽，
+		// 故数量列表需与「非空槽顺序」对齐（不含空槽），写成压缩后的列表。
+		var compressedAmounts = new ArrayList<Integer>();
+		for (var i = 0; i < ccg$backupStacks.size(); i++)
+			if (!ccg$backupStacks.get(i).isEmpty()) compressedAmounts.add(ccg$backupAmounts.get(i));
+		CatnipServices.NETWORK.sendToServer(new RedstoneRequesterConfigurationPacket(
+			menu.contentHolder.getBlockPos(),
+			ccg$backupAddress,
+			allow,
+			compressedAmounts
+		));
+		// 清空拖拽/拿起状态
+		ccg$picked = ItemStack.EMPTY;
+		ccg$pickedCount = 1;
+		ccg$pickedIndex = -1;
+		ccg$pressSource = -1;
+		ccg$dragging = false;
+		// 撤销完成 → 关闭屏幕，让服务端按新配置收尾
+		onClose();
 	}
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
@@ -176,6 +252,8 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 	 */
 	@Inject(method = "renderForeground", at = @At("TAIL"))
 	private void renderPicked(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
+		// 每帧评估是否有未保存的更改，决定撤销按钮是否可用
+		if (ccg$undoButton != null) ccg$undoButton.active = ccg$isDirty();
 		if (!CCG.config.misc.quickRequestActions || ccg$pickedIndex < 0) return;
 		var x = mouseX - 8;
 		var y = mouseY - 8;
@@ -193,6 +271,17 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 			var hy = topPos + 28;
 			graphics.fill(hx, hy, hx + 16, hy + 16, HOVER_GREEN);
 		}
+	}
+	/** 当前内容是否与打开界面时缓存的初始内容不同（不同则撤销可用） */
+	@Unique
+	private boolean ccg$isDirty() {
+		var menu = thiz().getMenu();
+		for (var i = 0; i < menu.ghostInventory.getSlots(); i++)
+			if (!ItemStack.matches(menu.ghostInventory.getStackInSlot(i), ccg$backupStacks.get(i))) return true;
+		for (var i = 0; i < amounts.size(); i++)
+			if (!Objects.equals(amounts.get(i), ccg$backupAmounts.get(i))) return true;
+		if (!Objects.equals(addressBox.getValue(), ccg$backupAddress)) return true;
+		return allowPartial.green != ccg$backupAllowPartial;
 	}
 	/** 幽灵槽左键按下：拦截避免被 GhostItemMenu 清空。记录按下源和坐标，供拖动判定 */
 	@Unique

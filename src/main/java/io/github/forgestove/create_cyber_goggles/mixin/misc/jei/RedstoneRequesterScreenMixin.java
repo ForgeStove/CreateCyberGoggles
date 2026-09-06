@@ -44,9 +44,12 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 		undo.setToolTip(Component.translatable("config.ui.undo.tooltip"));
 		undo.withCallback(() -> ccg$interactions.undo());
 		addRenderableWidget(undo);
-		// 此刻 addressBox/allowPartial/ghostInventory 均已初始化，缓存全部初始内容供撤销恢复
-		ccg$interactions = new RedstoneRequesterInteractions(thiz());
-		ccg$interactions.init(undo);
+		// 首次进入时创建交互并缓存初始内容供撤销；从其他屏返回/窗口重排再次 init 只重绑按钮，
+		// 不覆盖已缓存的基准（否则被改动过的内容会成为新的存档，撤销丢失最初状态）
+		if (ccg$interactions == null) {
+			ccg$interactions = new RedstoneRequesterInteractions(thiz());
+			ccg$interactions.init(undo);
+		} else ccg$interactions.retarget(undo);
 	}
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {

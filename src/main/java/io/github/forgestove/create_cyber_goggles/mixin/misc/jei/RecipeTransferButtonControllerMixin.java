@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 /**
  * 在 JEI 配方转移按钮的悬停提示里，为红石请求器追加「按住 Alt 以原版方式填入」说明。
  */
+@Pseudo
 @Mixin(RecipeTransferButtonController.class)
 public abstract class RecipeTransferButtonControllerMixin {
 	@Final @Shadow private RecipesGui recipesGui;

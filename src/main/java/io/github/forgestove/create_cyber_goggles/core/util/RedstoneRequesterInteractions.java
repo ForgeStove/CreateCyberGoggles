@@ -46,7 +46,7 @@ public final class RedstoneRequesterInteractions {
 	public RedstoneRequesterInteractions(RedstoneRequesterScreen screen) {
 		this.screen = screen;
 	}
-	/** 缓存打开界面时的初始内容，供撤销恢复；并绑定撤销按钮 */
+	/** 首次进入时缓存初始内容并绑定撤销按钮 */
 	public void init(IconButton undoButton) {
 		this.undoButton = undoButton;
 		var menu = screen.getMenu();
@@ -59,6 +59,13 @@ public final class RedstoneRequesterInteractions {
 		backupAddress = addressBox().getValue();
 		backupAllowPartial = allowPartial().green;
 		undoButton.active = false; // 刚打开时无更改，撤销不可用
+	}
+	/**
+	 * 从其他屏返回或窗口重排再次 init 时只重绑重建的撤销按钮，不得覆盖已缓存的初始内容。
+	 * 注意：不能在此 resetDrag()——pickUp 已把源槽清空、物品暂存 picked，直接重置会让物品凭空丢失。
+	 */
+	public void retarget(IconButton undoButton) {
+		this.undoButton = undoButton;
 	}
 	private List<Integer> amounts() {
 		return accessor().getAmounts();

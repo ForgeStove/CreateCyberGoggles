@@ -1,6 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.mixin.goggles;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.api.SelfKineticInfo;
 import io.github.forgestove.create_cyber_goggles.core.util.GoggleTooltipUtil;
 import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
 import net.minecraft.network.chat.Component;
@@ -17,6 +18,7 @@ public abstract class KineticBlockEntityMixin implements Self<KineticBlockEntity
 		var goggles = CCG.config.goggles;
 		if (!goggles.enhancedInfo) return;
 		var kbe = thiz();
+		if (kbe instanceof SelfKineticInfo) return;
 		var speed = kbe.getTheoreticalSpeed();
 		var hide = !goggles.hideStaticKineticInfo || speed != 0;
 		cir.setReturnValue(hide);

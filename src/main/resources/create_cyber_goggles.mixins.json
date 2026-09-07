@@ -15,6 +15,7 @@
 		"compact.enchantmentIndustry.provider.BlazeEnchanterBlockEntityMixin",
 		"compact.enchantmentIndustry.provider.BlazeForgerBlockEntityMixin",
 		"compact.fluidlogistics.MechanicalFluidGunBlockEntityMixin",
+		"compact.hypertube.HyperEntranceBlockEntityMixin",
 		"compact.obscureTooltips.GuiGraphicsMixin",
 		"compact.simulated.BlockPropertiesTooltipMixin",
 		"compact.simulated.ClientHandleHandlerMixin",

@@ -81,8 +81,6 @@
 	"create_cyber_goggles.config.option.goggles.betterStoreInfo.tooltip": "优化桌布商店信息显示以及操作逻辑",
 	"create_cyber_goggles.config.option.goggles.canRenderOnValueBox": "允许值框出现时渲染",
 	"create_cyber_goggles.config.option.goggles.canRenderOnValueBox.tooltip": "出现值框时允许渲染护目镜工具提示",
-	"create_cyber_goggles.config.option.goggles.dedupTooltipLines": "去重工具提示行",
-	"create_cyber_goggles.config.option.goggles.dedupTooltipLines.tooltip": "移除护目镜工具提示中相邻的重复或近似重复行",
 	"create_cyber_goggles.config.option.goggles.disableInScreenGoggles": "禁用界面内护目镜",
 	"create_cyber_goggles.config.option.goggles.disableInScreenGoggles.tooltip": "任意界面出现时禁用护目镜显示",
 	"create_cyber_goggles.config.option.goggles.enableFadeOut": "启用淡出",

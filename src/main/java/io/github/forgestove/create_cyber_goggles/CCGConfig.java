@@ -21,7 +21,6 @@ public final class CCGConfig {
 		public boolean enableKineticEffect = true;
 		public boolean disableInScreenGoggles = true;
 		public boolean canRenderOnValueBox = false;
-		public boolean dedupTooltipLines = true;
 		public boolean enableFadeOut = true;
 		public boolean preciseNumber = true;
 		@IntRange(min = 0) public int maxFractionDigits = 2;

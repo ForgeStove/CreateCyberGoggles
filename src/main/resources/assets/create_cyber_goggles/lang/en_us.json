@@ -81,8 +81,6 @@
 	"create_cyber_goggles.config.option.goggles.betterStoreInfo.tooltip": "Optimize table cloth store info display and interaction logic",
 	"create_cyber_goggles.config.option.goggles.canRenderOnValueBox": "Render with Value Box",
 	"create_cyber_goggles.config.option.goggles.canRenderOnValueBox.tooltip": "Allow goggle tooltip rendering when value box is visible",
-	"create_cyber_goggles.config.option.goggles.dedupTooltipLines": "Deduplicate Tooltip Lines",
-	"create_cyber_goggles.config.option.goggles.dedupTooltipLines.tooltip": "Remove adjacent duplicate or near-duplicate lines in goggles tooltip",
 	"create_cyber_goggles.config.option.goggles.disableInScreenGoggles": "Disable InScreen Goggles",
 	"create_cyber_goggles.config.option.goggles.disableInScreenGoggles.tooltip": "Disable goggles display when any screen is open",
 	"create_cyber_goggles.config.option.goggles.enableFadeOut": "Enable Fade Out",

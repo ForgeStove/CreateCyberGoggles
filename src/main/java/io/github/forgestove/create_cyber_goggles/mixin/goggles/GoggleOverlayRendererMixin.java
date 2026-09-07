@@ -87,7 +87,6 @@ public abstract class GoggleOverlayRendererMixin {
 		Font font,
 		Operation<Void> original
 	) {
-		if (CCG.config.goggles.dedupTooltipLines) tooltip = GoggleTooltipDedupUtil.dedupAdjacentLines(tooltip);
 		y += ccg$Offset;
 		var hasItemList = false;
 		for (var line : tooltip) {

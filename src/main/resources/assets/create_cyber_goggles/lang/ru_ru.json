@@ -81,8 +81,6 @@
 	"create_cyber_goggles.config.option.goggles.betterStoreInfo.tooltip": "Оптимизировать отображение и логику взаимодействия с информацией о магазине",
 	"create_cyber_goggles.config.option.goggles.canRenderOnValueBox": "Отображение с значением прокрутки",
 	"create_cyber_goggles.config.option.goggles.canRenderOnValueBox.tooltip": "Разрешить отображение подсказки очков, когда значение прокрутки видимо",
-	"create_cyber_goggles.config.option.goggles.dedupTooltipLines": "Удалить дублирующиеся строки подсказки",
-	"create_cyber_goggles.config.option.goggles.dedupTooltipLines.tooltip": "Удалить соседние дублирующиеся или почти дублирующиеся строки в подсказке очков",
 	"create_cyber_goggles.config.option.goggles.disableInScreenGoggles": "Отключить очки на экране",
 	"create_cyber_goggles.config.option.goggles.disableInScreenGoggles.tooltip": "Отключить отображение очков, когда любой экран открыт",
 	"create_cyber_goggles.config.option.goggles.enableFadeOut": "Включить затухание",

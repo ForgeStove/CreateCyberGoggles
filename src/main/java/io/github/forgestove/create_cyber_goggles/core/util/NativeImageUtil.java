@@ -52,13 +52,15 @@ public class NativeImageUtil {
 			if (path.contains("_" + entry.getKey() + "_")) return entry.getValue();
 		return BASE;
 	}
+	@SuppressWarnings("resource")
 	private static int sampleFromBakedModelIcon(ItemStack stack) {
 		var model = mc.getItemRenderer().getModel(stack, mc.level, mc.player, 0);
 		var sprite = model.getParticleIcon(ModelData.EMPTY);
-		try (var contents = sprite.contents()) {
-			var spriteName = contents.name();
-			return sampleTexture(getRes(spriteName.getNamespace(), "textures/" + spriteName.getPath() + ".png"));
-		}
+		// sprite.contents() 返回的是图集共享的 SpriteContents 对象,绝不能 close()——否则会把该精灵底层的
+		// NativeImage 释放掉,等下一个 tick TextureAtlas 上传动画帧时崩在 "Image is not allocated"。
+		// 这里只读 name,不需要持有/关闭它。
+		var spriteName = sprite.contents().name();
+		return sampleTexture(getRes(spriteName.getNamespace(), "textures/" + spriteName.getPath() + ".png"));
 	}
 	private static int clampLuma(int rgb) {
 		var r = rgb >> 16 & 0xFF;

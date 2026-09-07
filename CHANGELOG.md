@@ -1,5 +1,4 @@
-- Make the Redstone Requester's JEI recipe transfer compatible with the vanilla crafter
-- Add left-click pickup/drag interaction to the Redstone Requester
-- Add an undo button to the Redstone Requester
-- Allow gauges to be moved in any orientation
-- Fix client-side render misalignment after a gauge is rotated
+- Add EMI compatibility to the Redstone Requester
+- Fix the Redstone Requester undo button state machine
+- Fix crashes caused by "Image is not allocated" in some cases
+- Remove the duplicate tooltip line deduplication and add an interface to resolve duplicated content

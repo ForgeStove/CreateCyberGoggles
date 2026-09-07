@@ -261,6 +261,7 @@
 	"create_cyber_goggles.config.option.tooltip.toolbox.tooltip": "Показывать содержимое ящика для инструментов",
 	"create_cyber_goggles.config.option.tooltip.wrench": "Гаечный ключ",
 	"create_cyber_goggles.config.option.tooltip.wrench.tooltip": "Показывать дополнительную информацию для гаечного ключа",
+	"create_cyber_goggles.gui.redstoneRequester.jeiAltHint": "Удерживайте [Alt] чтобы заполнить сетку для ванильного крафтера",
 	"create_cyber_goggles.gui.redstoneRequester.tooManyIngredients": "Слишком много видов ингредиентов",
 	"create_cyber_goggles.gui.schematicTable.folderRoot": "Корневой каталог (/)",
 	"create_cyber_goggles.gui.schematicTable.folderSelector": "Выбрать папку",

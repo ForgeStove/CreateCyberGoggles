@@ -5,23 +5,24 @@ plugins {
 base.archivesName.set(p("modName"))
 group = p("modGroupId")
 version = "${p("mcVersion")}-${p("modVersion")}-${p("loaderCap")}"
-java.toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+java.toolchain.languageVersion.set(JavaLanguageVersion.of(p("javaVersion")))
+java.withSourcesJar()
 tasks.jar { from("LICENSE") }
-var generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
-	val values = properties.mapValues { it.value.toString() }
+val generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
+	description = "Generate this project metadata from templates."
+	val values = project.extra.properties.mapValues { it.value.toString() }
 	inputs.properties(values)
 	expand(values)
 	from("src/main/templates")
 	into("build/generated/sources/modMetadata")
 }
 sourceSets.main.get().resources.srcDir(generateMetadata)
-configurations.configureEach { resolutionStrategy.force("net.fabricmc:fabric-loader:${p("fabricLoaderVersion")}") }
 loom {
 	enableTransitiveAccessWideners = true
-	runConfigs.configureEach { ideConfigGenerated(false) }
 	runs {
-		configureEach { vmArgs("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition") }
-		remove(getByName("server"))
+		named("client") { displayName.set("Client") }
+		named("server") { displayName.set("Server") }
+		configureEach { jvmArguments.addAll("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition") }
 	}
 }
 repositories {

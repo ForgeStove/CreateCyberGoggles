@@ -59,6 +59,7 @@
 		"misc.SchematicTableScreenMixin",
 		"misc.SimpleBackendMixin",
 		"misc.StockKeeperRequestScreenMixin",
+		"misc.StockKeeperReplenishEntryMixin",
 		"misc.SuperGlueSelectionHandlerMixin",
 		"misc.ThresholdSwitchScreenMixin",
 		"misc.TrainHUDMixin",

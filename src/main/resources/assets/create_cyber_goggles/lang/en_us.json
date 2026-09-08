@@ -320,6 +320,9 @@
 	"create_cyber_goggles.tooltip.size.small": "Small",
 	"create_cyber_goggles.tooltip.spring": "Spring State:",
 	"create_cyber_goggles.tooltip.spring.currentLength": "Current Length:",
+	"create_cyber_goggles.gui.auto_replenish.title": "Auto Replenish",
+	"create_cyber_goggles.gui.auto_replenish.empty": "Nothing to replenish (no craftable recipe or stock not synced yet)",
+	"create_cyber_goggles.gui.auto_replenish.has_materials": "Materials in stock, craftable",
 	"create_cyber_goggles.tooltip.windState": "Wind State:",
 	"key.categories.create_cyber_goggles": "Create: Cyber Goggles"
 }

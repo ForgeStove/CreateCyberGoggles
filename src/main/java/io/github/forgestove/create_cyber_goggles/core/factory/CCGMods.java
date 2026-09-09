@@ -15,6 +15,7 @@ public enum CCGMods {
 	createbigcannons,
 	extra_gauges,
 	fluidlogistics,
+	jei,
 	modernui,
 	obscure_tooltips,
 	sable,

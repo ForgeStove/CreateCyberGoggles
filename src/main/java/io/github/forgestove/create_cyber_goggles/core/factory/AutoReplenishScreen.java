@@ -36,8 +36,10 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
  * 继承 catnip {@link AbstractSimiScreen}。外观与 Create {@code stock_keeper} 面板一致（同宽 256）：
  * <b>头</b>(Create header) + <b>身体层</b>(Create body 平铺) + <b>底部</b>(返回方块 + 发送长条，发送 hover 用
  * Create 高亮长条)。每组一个配方类型，组尾一个<b>共享地址框</b>（羊皮纸背景，按类型持久化到磁盘）。
- * 每节点显示其产物 + 全部原料（够的绿勾/不足红框）+ 可合成次数；下单与原版一致：
- * 装配类 convertRecipe（9 格 pattern），加工类通用 pattern，orderedStacks=每原料×craftTimes。
+ * 每节点显示其产物 + 全部原料（够的绿勾/不足红框）+ 可合成次数；发送区是<b>全局一块</b>（不分配方类型、
+ * 不分轮次），列出所有待发物品。点发送只发<b>原料齐备</b>的配方——缺料的跳过，等它依赖的产物到货后
+ * 重开界面再发，与发送区显示同源。下单与原版一致：装配类 convertRecipe（9 格 pattern），
+ * 加工类通用 pattern，orderedStacks=每原料×craftTimes。
  *
  * <p>性能：内容预计算成<b>扁平行列表</b>（{@link #rows}），渲染时<b>只画视口内的行</b>，
  * 高度缓存 O(1)，不再逐帧全量重画全部原料。</p>
@@ -66,9 +68,9 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 	private static final int SEND_UP_H = 21;        // 发送物品框：上段高（含第一行物品）
 	private static final int SEND_MID_H = 17;       // 发送物品框：中段高（每多一行加一段）
 	private static final int SEND_DOWN_H = 11;      // 发送物品框：下段高
-	private static final int SEND_GAP = 2;          // 发送物品框：各轮次子块之间的间距
 	private static final int SEND_CELL_W = 17;      // 发送物品框：格宽（= 物品宽，间距 0）
 	private static final int SEND_ITEM_Y = SEND_UP_H - 16;   // 发送物品框：第一行物品的 y 偏移（UP 内靠底）
+	private static final int SEND_LABEL_H = 12;     // 发送区域：各轮次子块标题行高
 	private static final int SCROLL_W = 5;         // 滚动条宽
 	private static final int BODY_TOP = HEADER_H;  // 内容起始(在头下方)
 	// 地址行局部坐标
@@ -80,11 +82,13 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 	private final StockKeeperRequestScreen parent;
 	private final StockTickerBlockEntity blockEntity;
 	private final List<ReplenishGroup> groups;
+	/** 缺失物品（全局一块，mixin 算好）：找不到配方的需求 + 不可合成原料的缺口，数量 = 还差多少个 */
+	private final List<ItemStack> missing;
 	private final List<AddressEditBox> addrBoxes = new ArrayList<>();
 	private final List<String> groupAddress = new ArrayList<>();
 	private final List<Row> rows = new ArrayList<>();
-	/** 每组「将要发送的物品」按 BFS 解析轮次（Node.depth）分块：组 → depth → 物品（同物品合并） */
-	private final List<Map<Integer, List<ItemStack>>> groupSendItems = new ArrayList<>();
+	/** 发送区显示物品：全部待发节点的原料按 {@link Item} 合并（数量 = 单次用量 × 可合成次数），全局一块、不分轮次 */
+	private final List<ItemStack> sendItems = new ArrayList<>();
 	/** 收起的组（按组索引），收起后只画组头（Create 同款 categoryEntry.hidden） */
 	private final Set<Integer> hiddenGroups = new HashSet<>();
 	/** 平滑滚动（Create 同款 LerpedFloat：滚轮按行推进后指数追赶目标值） */
@@ -100,10 +104,16 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 	private int mouseXPos, mouseYPos;   // 本帧鼠标位置（行内悬停判定用）
 	private Node hoveredNode;           // 本帧悬停的配方节点（tooltip 用）
 	private ItemStack hoveredSendItem;  // 本帧悬停的发送物品（tooltip 用）
-	public AutoReplenishScreen(StockKeeperRequestScreen parent, StockTickerBlockEntity blockEntity, List<ReplenishGroup> groups) {
+	public AutoReplenishScreen(
+		StockKeeperRequestScreen parent,
+		StockTickerBlockEntity blockEntity,
+		List<ReplenishGroup> groups,
+		List<ItemStack> missing
+	) {
 		this.parent = parent;
 		this.blockEntity = blockEntity;
 		this.groups = groups;
+		this.missing = missing;
 		// 每类型地址（取进程内缓存，没有则空）
 		for (ReplenishGroup group : groups) groupAddress.add(CACHE_ADDRS.getOrDefault(group.name(), ""));
 		rebuildLayout();
@@ -127,43 +137,39 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 				rows.add(new Row(y, h, RowKind.NODE, gi));
 				y += h;
 			}
-			// 将要发送的物品：每轮解析一个子块（横向固定 9 格），高度为各子块之和
-			var sendH = 0;
-			var sendBlocks = 0;
-			for (List<ItemStack> sub : groupSendItems.get(gi).values()) {
-				int subLines = (sub.size() + NODES_PER_ROW - 1) / NODES_PER_ROW;
-				sendH += SEND_UP_H + SEND_DOWN_H + (subLines - 1) * SEND_MID_H;
-				sendBlocks++;
-			}
-			if (sendBlocks > 1) sendH += (sendBlocks - 1) * SEND_GAP;
-			if (sendH > 0) {
-				rows.add(new Row(y, sendH, RowKind.SEND, gi));
-				y += sendH;
-			}
 			rows.add(new Row(y, ADDR_H, RowKind.ADDR, gi));
 			y += ADDR_H + GROUP_GAP;
 		}
+		// 缺失物品：全局一块（找不到配方的需求 + 不可合成原料的缺口），排在发送区之前
+		if (!missing.isEmpty()) {
+			int missingLines = (missing.size() + NODES_PER_ROW - 1) / NODES_PER_ROW;
+			int missingH = SEND_LABEL_H + SEND_UP_H + SEND_DOWN_H + (missingLines - 1) * SEND_MID_H;
+			rows.add(new Row(y, missingH, RowKind.MISSING, -1));
+			y += missingH;
+		}
+		// 发送区：全局一块（不分配方类型、不分轮次），排在所有组之后
+		if (!sendItems.isEmpty()) {
+			int lines = Math.max(1, (sendItems.size() + NODES_PER_ROW - 1) / NODES_PER_ROW);
+			int sendH = SEND_LABEL_H + SEND_UP_H + SEND_DOWN_H + (lines - 1) * SEND_MID_H;
+			rows.add(new Row(y, sendH, RowKind.SEND, -1));
+			y += sendH;
+		}
 		contentH = y;
 	}
-	/** 汇总每组将要发送的原料，按 BFS 解析轮次分块：同物品合并，数量 = 单次用量 × 可合成次数 */
+	/**
+	 * 汇总待发送的原料：全部节点（{@code craftTimes>0}）的原料按 {@link Item} 合并成<b>一个全局块</b>，
+	 * 不分配方类型、不分轮次，数量 = 单次用量 × 可合成次数。{@link #sendAll()} 从同一批节点取用，
+	 * 显示与实际发送同源。缺失物品由 mixin 算好后经构造函数传入（见 {@link #missing}）。
+	 */
 	private void buildSendItems() {
-		groupSendItems.clear();
-		for (ReplenishGroup g : groups) {
-			Map<Integer, Map<Item, Integer>> byDepth = new TreeMap<>();
+		sendItems.clear();
+		Map<Item, Integer> merged = new LinkedHashMap<>();
+		for (ReplenishGroup g : groups)
 			for (Node n : g.nodes()) {
-				int times = n.craftTimes();
-				if (times <= 0) continue;
-				Map<Item, Integer> merged = byDepth.computeIfAbsent(n.depth(), k -> new LinkedHashMap<>());
-				for (ReplenishEntry e : n.items()) merged.merge(e.material().getItem(), e.per() * times, Integer::sum);
+				if (n.craftTimes() <= 0 || n.items().isEmpty()) continue;
+				for (ReplenishEntry e : n.items()) merged.merge(e.material().getItem(), e.per() * n.craftTimes(), Integer::sum);
 			}
-			Map<Integer, List<ItemStack>> out = new TreeMap<>();
-			byDepth.forEach((depth, merged) -> {
-				List<ItemStack> list = new ArrayList<>(merged.size());
-				merged.forEach((item, count) -> list.add(new ItemStack(item, count)));
-				out.put(depth, list);
-			});
-			groupSendItems.add(out);
-		}
+		merged.forEach((item, count) -> sendItems.add(new ItemStack(item, count)));
 	}
 	@Override
 	protected void init() {
@@ -231,13 +237,24 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 		removed();
 		mc.screen = parent;
 	}
+	/**
+	 * 发送所有<b>原料齐备</b>的节点：任一原料按 craftTimes 的用量在仓库里不够 → 跳过该配方
+	 * （等它依赖的产物到货后重开界面再发）。发送内容与发送区显示的物品同源。
+	 * 装配类走 9 格 pattern（convertRecipe），加工类用通用 pattern，orderedStacks = 每原料 × craftTimes。
+	 */
 	private void sendAll() {
+		// 共享原料按序扣减，避免两个配方都以为同一批库存够用
+		Map<Item, Integer> remaining = new HashMap<>();
 		for (var i = 0; i < groups.size(); i++) {
 			String addr = groupAddress.get(i);
 			for (Node n : groups.get(i).nodes()) {
 				if (n.craftTimes() <= 0 || n.items().isEmpty()) continue;
 				if (addr == null || addr.isBlank()) {
 					CCG.LOGGER.info("ccg autoReplenish: 未填地址, 跳过 {}", n.target().getHoverName().getString());
+					continue;
+				}
+				if (!hasMaterials(n, remaining)) {
+					CCG.LOGGER.info("ccg autoReplenish: 原料不足, 跳过 {}", n.target().getHoverName().getString());
 					continue;
 				}
 				List<BigItemStack> order = new ArrayList<>();
@@ -263,6 +280,22 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 			}
 		}
 		onClose();
+	}
+	/**
+	 * 该配方此刻是否原料齐备：每个原料按 {@code per × craftTimes} 的用量都要有库存。
+	 * 可合成但仓库还没有的中间产物算「不齐」——它得等自己那一轮发完到货后重开界面。
+	 * 齐备才从 {@code remaining} 扣减，避免多个配方重复占用同一批库存。
+	 */
+	private boolean hasMaterials(Node n, Map<Item, Integer> remaining) {
+		var summary = blockEntity.getLastClientsideStockSnapshotAsSummary();
+		if (summary == null) return false;
+		for (ReplenishEntry e : n.items()) {
+			Item item = e.material().getItem();
+			int have = remaining.computeIfAbsent(item, k -> summary.getCountOf(k.getDefaultInstance()));
+			if (have < e.per() * n.craftTimes()) return false;
+		}
+		for (ReplenishEntry e : n.items()) remaining.merge(e.material().getItem(), -e.per() * n.craftTimes(), Integer::sum);
+		return true;
 	}
 	// ---- 几何（窗口局部） ----
 	private static int contentR() {return CONTENT_R - SCROLL_W - 4;}
@@ -345,6 +378,7 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 				case GROUP -> drawGroup(gui, font, r, top);
 				case NODE -> drawNode(gui, r, top);
 				case SEND -> drawSend(gui, r, top);
+				case MISSING -> drawMissing(gui, r, top);
 				case ADDR -> placeAddr(gui, r, top);
 			}
 		}
@@ -399,41 +433,54 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 			drawCount(gui, totalOut, cellX, iconY);
 		}
 	}
-	/** 将要发送的物品：按 BFS 解析轮次分块，每块横向固定 9 格（上段含第一行，每多一行加一段中段，下段收尾） */
+	/** 将要发送的物品：全局一块（不分配方类型、不分轮次），横向固定 9 格 */
 	private void drawSend(GuiGraphics gui, Row r, int top) {
+		drawSendLabel(gui, Component.translatable("create_cyber_goggles.gui.auto_replenish.send_items"), top);
+		drawItemBox(gui, sendItems, top + SEND_LABEL_H);
+	}
+	/** 缺失物品：全局一块，与发送区同款布局 */
+	private void drawMissing(GuiGraphics gui, Row r, int top) {
+		drawSendLabel(gui, Component.translatable("create_cyber_goggles.gui.auto_replenish.missing"), top);
+		drawItemBox(gui, missing, top + SEND_LABEL_H);
+	}
+	/** 发送区域子块标题：组头同款双画阴影 */
+	private static void drawSendLabel(GuiGraphics gui, Component text, int top) {
+		Font font = mc.font;
+		int x = CONTENT_L + 5, y = top + (SEND_LABEL_H - 9) / 2 + 1;
+		gui.drawString(font, text, x + 1, y + 1, 0x4A2D31, false);
+		gui.drawString(font, text, x, y, 0xF8F8EC, false);
+	}
+	/** 画一个发送物品框（UP + MIDDLE×(行数-1) + DOWN）及其中的物品 */
+	private void drawItemBox(GuiGraphics gui, List<ItemStack> items, int blockTop) {
+		int lines = Math.max(1, (items.size() + NODES_PER_ROW - 1) / NODES_PER_ROW);
+		CCGGuiTextures.AUTO_REPLENISH_BOX_UP.render(gui, CONTENT_L, blockTop);
+		int y = blockTop + SEND_UP_H;
+		for (var i = 1; i < lines; i++) {
+			CCGGuiTextures.AUTO_REPLENISH_BOX_MIDDLE.render(gui, CONTENT_L, y);
+			y += SEND_MID_H;
+		}
+		CCGGuiTextures.AUTO_REPLENISH_BOX_DOWN.render(gui, CONTENT_L, y);
 		int x = CONTENT_L + 5;
-		int blockTop = top + 1;
-		for (List<ItemStack> items : groupSendItems.get(r.gi()).values()) {
-			int lines = Math.max(1, (items.size() + NODES_PER_ROW - 1) / NODES_PER_ROW);
-			CCGGuiTextures.AUTO_REPLENISH_BOX_UP.render(gui, CONTENT_L, blockTop);
-			int y = blockTop + SEND_UP_H;
-			for (var i = 1; i < lines; i++) {
-				CCGGuiTextures.AUTO_REPLENISH_BOX_MIDDLE.render(gui, CONTENT_L, y);
-				y += SEND_MID_H;
-			}
-			CCGGuiTextures.AUTO_REPLENISH_BOX_DOWN.render(gui, CONTENT_L, y);
-			for (var i = 0; i < items.size(); i++) {
-				ItemStack stack = items.get(i);
-				int ix = x + i % NODES_PER_ROW * SEND_CELL_W;
-				int iy = blockTop + SEND_ITEM_Y + i / NODES_PER_ROW * SEND_MID_H;
-				// 悬停：与节点图标同款放大（Create renderItemEntry: scaleFromHover += .075f）
-				boolean hov = mouseXPos >= windowXOffset + ix
-					&& mouseXPos < windowXOffset + ix + SEND_CELL_W
-					&& mouseYPos >= windowYOffset + iy
-					&& mouseYPos < windowYOffset + iy + SEND_CELL_W;
-				if (hov) {
-					var pose = gui.pose();
-					pose.pushPose();
-					pose.translate(ix + 8, iy + 8, 0);
-					pose.scale(1.075f, 1.075f, 1);
-					pose.translate(-(ix + 8), -(iy + 8), 0);
-					gui.renderItem(stack, ix, iy);
-					pose.popPose();
-					hoveredSendItem = stack;
-				} else gui.renderItem(stack, ix, iy);
-				drawCount(gui, stack.getCount(), ix, iy);
-			}
-			blockTop += SEND_UP_H + SEND_DOWN_H + (lines - 1) * SEND_MID_H + SEND_GAP;
+		for (var i = 0; i < items.size(); i++) {
+			ItemStack stack = items.get(i);
+			int ix = x + i % NODES_PER_ROW * SEND_CELL_W;
+			int iy = blockTop + SEND_ITEM_Y + i / NODES_PER_ROW * SEND_MID_H;
+			// 悬停：与节点图标同款放大（Create renderItemEntry: scaleFromHover += .075f）
+			boolean hov = mouseXPos >= windowXOffset + ix
+				&& mouseXPos < windowXOffset + ix + SEND_CELL_W
+				&& mouseYPos >= windowYOffset + iy
+				&& mouseYPos < windowYOffset + iy + SEND_CELL_W;
+			if (hov) {
+				var pose = gui.pose();
+				pose.pushPose();
+				pose.translate(ix + 8, iy + 8, 0);
+				pose.scale(1.075f, 1.075f, 1);
+				pose.translate(-(ix + 8), -(iy + 8), 0);
+				gui.renderItem(stack, ix, iy);
+				pose.popPose();
+				hoveredSendItem = stack;
+			} else gui.renderItem(stack, ix, iy);
+			drawCount(gui, stack.getCount(), ix, iy);
 		}
 	}
 	private void placeAddr(GuiGraphics gui, Row r, int top) {
@@ -770,9 +817,10 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 		GROUP,
 		NODE,
 		SEND,
+		MISSING,
 		ADDR
 	}
-	/** 预计算的一行：y=内容相对顶部偏移（含 BODY_TOP 起始），kind=行类型，gi 索引到组数据 */
+	/** 预计算的一行：y=内容相对顶部偏移（含 BODY_TOP 起始），kind=行类型，gi 索引到组数据（全局行 = -1） */
 	private record Row(int y, int h, RowKind kind, int gi) {}
 	/** 底部自绘按钮：正方形返回 / 长条发送（hover 用 Create 高亮） */
 	private static final class CCGButton extends AbstractSimiWidget {

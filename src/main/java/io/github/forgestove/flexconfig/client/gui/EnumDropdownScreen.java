@@ -65,7 +65,7 @@ public final class EnumDropdownScreen extends Screen {
 		pose.pushPose();
 		pose.translate(0, 0, -100);
 		// 将父屏幕绘制为背景
-		parent.render(gui, 0, 0, delta);
+		parent.render(gui, -1, -1, delta);
 		pose.popPose();
 		var dropdownX = dropdownButton.getX();
 		var dropdownY = dropdownY();

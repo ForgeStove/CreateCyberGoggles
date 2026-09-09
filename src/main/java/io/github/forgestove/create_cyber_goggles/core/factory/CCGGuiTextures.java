@@ -13,22 +13,18 @@ public enum CCGGuiTextures implements ScreenElement, TextureSheetSegment {
 	AUTO_REPLENISH_HEADER("auto_replenish", 0, 0, 256, 36),
 	AUTO_REPLENISH_BODY("auto_replenish", 0, 48, 256, 20),
 	AUTO_REPLENISH_FOOTER("auto_replenish", 0, 80, 256, 48),
-	AUTO_REPLENISH_ADDRESS("auto_replenish", 16, 144, 127, 18),
-	AUTO_REPLENISH_BLUEPRINT_00("auto_replenish", 160, 144, 8, 8),
-	AUTO_REPLENISH_BLUEPRINT_10("auto_replenish", 168, 144, 8, 8),
-	AUTO_REPLENISH_BLUEPRINT_20("auto_replenish", 176, 144, 8, 8),
-	AUTO_REPLENISH_BLUEPRINT_01("auto_replenish", 160, 152, 8, 8),
-	AUTO_REPLENISH_BLUEPRINT_11("auto_replenish", 168, 152, 8, 8),
-	AUTO_REPLENISH_BLUEPRINT_21("auto_replenish", 176, 152, 8, 8),
-	AUTO_REPLENISH_BLUEPRINT_02("auto_replenish", 160, 160, 8, 8),
-	AUTO_REPLENISH_BLUEPRINT_12("auto_replenish", 168, 160, 8, 8),
-	AUTO_REPLENISH_BLUEPRINT_22("auto_replenish", 176, 160, 8, 8),
+	AUTO_REPLENISH_ADDRESS("auto_replenish", 0, 144, 256, 18),
+	AUTO_REPLENISH_BLUEPRINT("auto_replenish", 16, 176, 24, 24),
+	AUTO_REPLENISH_BOX_UP("auto_replenish", 48, 176, 162, 21),
+	AUTO_REPLENISH_BOX_MIDDLE("auto_replenish", 48, 197, 162, 17),
+	AUTO_REPLENISH_BOX_DOWN("auto_replenish", 48, 214, 162, 11),
 	;
 	public final ResourceLocation location;
 	private final int width;
 	private final int height;
 	private final int startX;
 	private final int startY;
+	@SuppressWarnings("unused")
 	CCGGuiTextures(String location, int width, int height) {
 		this(location, 0, 0, width, height);
 	}
@@ -36,7 +32,6 @@ public enum CCGGuiTextures implements ScreenElement, TextureSheetSegment {
 		this(CCG.ID, location, startX, startY, width, height);
 	}
 	CCGGuiTextures(String namespace, String location, int startX, int startY, int width, int height) {
-		// 整套 UI 图集位于 textures/gui/sprites/<file> 下（如 sprites/auto_replenish/auto_replenish.png）
 		this.location = getRes(namespace, "textures/gui/sprites/" + location + ".png");
 		this.width = width;
 		this.height = height;
@@ -49,13 +44,13 @@ public enum CCGGuiTextures implements ScreenElement, TextureSheetSegment {
 	}
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void render(GuiGraphics graphics, int x, int y) {
-		graphics.blit(location, x, y, startX, startY, width, height);
+	public void render(GuiGraphics gui, int x, int y) {
+		gui.blit(location, x, y, startX, startY, width, height);
 	}
 	@OnlyIn(Dist.CLIENT)
-	public void render(GuiGraphics graphics, int x, int y, Color c) {
+	public void render(GuiGraphics gui, int x, int y, Color c) {
 		bind();
-		UIRenderHelper.drawColoredTexture(graphics, c, x, y, startX, startY, width, height);
+		UIRenderHelper.drawColoredTexture(gui, c, x, y, startX, startY, width, height);
 	}
 	@Override
 	public int getStartX() {

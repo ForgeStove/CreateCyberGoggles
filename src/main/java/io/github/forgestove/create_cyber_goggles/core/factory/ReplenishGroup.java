@@ -8,8 +8,8 @@ import java.util.List;
  * {@code nodes} = 该类型下所有需合成的物品节点。同类型共用一个地址框（界面组尾），地址按类型持久化。
  */
 public record ReplenishGroup(String name, List<Node> nodes) {
-	/** 一个待合成物品节点：target=产物、wantTimes=目标次数、recipe、craftTimes=可合成次数、items=全部原料 */
-	public record Node(ItemStack target, int wantTimes, Recipe<?> recipe, int craftTimes, List<ReplenishEntry> items) {}
+	/** 一个待合成物品节点：target=产物、wantTimes=目标次数、recipe、craftTimes=可合成次数、items=全部原料、depth=BFS 解析轮次 */
+	public record Node(ItemStack target, int wantTimes, Recipe<?> recipe, int craftTimes, List<ReplenishEntry> items, int depth) {}
 	/** 一种原料：per=单次用量，enough=库存是否 ≥per（够一次配方），craftable=自己可合成（会被继续拆解） */
 	public record ReplenishEntry(ItemStack material, int per, boolean enough, boolean craftable) {}
 }

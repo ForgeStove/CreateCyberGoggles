@@ -4,6 +4,8 @@
 	"package": "io.github.forgestove.create_cyber_goggles.mixin",
 	"client": [
 		"AbstractFilterScreenMixin",
+		"accessor.AddressEditBoxAccessor",
+		"accessor.DestinationSuggestionsAccessor",
 		"accessor.RedstoneRequesterScreenAccessor",
 		"accessor.RotationPropagatorAccessor",
 		"compact.appliedEnergistics.MEStorageScreenMixin",

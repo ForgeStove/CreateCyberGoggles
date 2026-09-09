@@ -133,7 +133,7 @@ public abstract class StockKeeperReplenishEntryMixin extends AbstractSimiContain
 					items.size()
 				);
 				byType.computeIfAbsent(recipe.getType().toString(), k -> new ArrayList<>())
-					.add(new Node(item.copy(), wantTimes, recipe, craftTimes, items));
+					.add(new Node(item.copy(), wantTimes, recipe, craftTimes, items, depth.getOrDefault(key, 0)));
 				// 消耗共享原料：本节点用了多少就从剩余扣掉，后续节点看到的是剩余（可消耗性）
 				if (craftTimes > 0) for (ReplenishEntry e : items) {
 					Item remKey = e.material().getItem();

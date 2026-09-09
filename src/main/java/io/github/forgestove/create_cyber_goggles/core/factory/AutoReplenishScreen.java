@@ -82,8 +82,6 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 	private final StockKeeperRequestScreen parent;
 	private final StockTickerBlockEntity blockEntity;
 	private final List<ReplenishGroup> groups;
-	/** 缺失物品（全局一块，mixin 算好）：找不到配方的需求 + 不可合成原料的缺口，数量 = 还差多少个 */
-	private final List<ItemStack> missing;
 	private final List<AddressEditBox> addrBoxes = new ArrayList<>();
 	private final List<String> groupAddress = new ArrayList<>();
 	private final List<Row> rows = new ArrayList<>();
@@ -104,16 +102,10 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 	private int mouseXPos, mouseYPos;   // 本帧鼠标位置（行内悬停判定用）
 	private Node hoveredNode;           // 本帧悬停的配方节点（tooltip 用）
 	private ItemStack hoveredSendItem;  // 本帧悬停的发送物品（tooltip 用）
-	public AutoReplenishScreen(
-		StockKeeperRequestScreen parent,
-		StockTickerBlockEntity blockEntity,
-		List<ReplenishGroup> groups,
-		List<ItemStack> missing
-	) {
+	public AutoReplenishScreen(StockKeeperRequestScreen parent, StockTickerBlockEntity blockEntity, List<ReplenishGroup> groups) {
 		this.parent = parent;
 		this.blockEntity = blockEntity;
 		this.groups = groups;
-		this.missing = missing;
 		// 每类型地址（取进程内缓存，没有则空）
 		for (ReplenishGroup group : groups) groupAddress.add(CACHE_ADDRS.getOrDefault(group.name(), ""));
 		rebuildLayout();
@@ -137,15 +129,22 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 				rows.add(new Row(y, h, RowKind.NODE, gi));
 				y += h;
 			}
+			// 无法合成的配方（缺料合不出来）：标题 + 同款蓝图横幅，排在可合成节点之后
+			int blockedRows = (g.blocked().size() + NODES_PER_ROW - 1) / NODES_PER_ROW;
+			if (blockedRows > 0) {
+				int h = SEND_LABEL_H + blockedRows * NODE_H + BP_PAD * 2;
+				rows.add(new Row(y, h, RowKind.BLOCKED, gi));
+				y += h;
+			}
+			// 该组缺失的原料：单块，无子分类
+			if (!g.missing().isEmpty()) {
+				int missingLines = (g.missing().size() + NODES_PER_ROW - 1) / NODES_PER_ROW;
+				int missingH = SEND_LABEL_H + SEND_UP_H + SEND_DOWN_H + (missingLines - 1) * SEND_MID_H;
+				rows.add(new Row(y, missingH, RowKind.MISSING, gi));
+				y += missingH;
+			}
 			rows.add(new Row(y, ADDR_H, RowKind.ADDR, gi));
 			y += ADDR_H + GROUP_GAP;
-		}
-		// 缺失物品：全局一块（找不到配方的需求 + 不可合成原料的缺口），排在发送区之前
-		if (!missing.isEmpty()) {
-			int missingLines = (missing.size() + NODES_PER_ROW - 1) / NODES_PER_ROW;
-			int missingH = SEND_LABEL_H + SEND_UP_H + SEND_DOWN_H + (missingLines - 1) * SEND_MID_H;
-			rows.add(new Row(y, missingH, RowKind.MISSING, -1));
-			y += missingH;
 		}
 		// 发送区：全局一块（不分配方类型、不分轮次），排在所有组之后
 		if (!sendItems.isEmpty()) {
@@ -159,7 +158,7 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 	/**
 	 * 汇总待发送的原料：全部节点（{@code craftTimes>0}）的原料按 {@link Item} 合并成<b>一个全局块</b>，
 	 * 不分配方类型、不分轮次，数量 = 单次用量 × 可合成次数。{@link #sendAll()} 从同一批节点取用，
-	 * 显示与实际发送同源。缺失物品由 mixin 算好后经构造函数传入（见 {@link #missing}）。
+	 * 显示与实际发送同源。缺失物品由 mixin 算好后按组携带（见 {@link ReplenishGroup#missing()}）。
 	 */
 	private void buildSendItems() {
 		sendItems.clear();
@@ -377,7 +376,8 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 			switch (r.kind) {
 				case GROUP -> drawGroup(gui, font, r, top);
 				case NODE -> drawNode(gui, r, top);
-				case SEND -> drawSend(gui, r, top);
+				case BLOCKED -> drawNode(gui, r, top);
+				case SEND -> drawSend(gui, top);
 				case MISSING -> drawMissing(gui, r, top);
 				case ADDR -> placeAddr(gui, r, top);
 			}
@@ -400,20 +400,26 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 		gui.drawString(font, name, x + 1, y + 1, 0x4A2D31, false);
 		gui.drawString(font, name, x, y, 0xF8F8EC, false);
 	}
-	/** 一行节点网格：蓝图横幅作整行底，节点图标从左往右排（最多 NODES_PER_ROW 个），悬停弹配方卡 */
+	/** 一行节点网格（可合成 / 无法合成共用）：蓝图横幅作整行底，图标从左往右排，悬停弹配方卡 */
 	private void drawNode(GuiGraphics gui, Row r, int top) {
-		ReplenishGroup g = groups.get(r.gi());
-		List<Node> nodes = g.nodes();
+		boolean blocked = r.kind == RowKind.BLOCKED;
+		List<Node> nodes = blocked ? groups.get(r.gi).blocked() : groups.get(r.gi).nodes();
+		int gridTop = top;
+		if (blocked) {
+			drawSendLabel(gui, Component.translatable("create_cyber_goggles.gui.auto_replenish.blocked"), top);
+			gridTop += SEND_LABEL_H;
+		}
 		// 整组一条蓝图横幅，正好包住该组物品网格（列数 × 行数）
 		int colCount = Math.min(nodes.size(), NODES_PER_ROW);
 		int rowCount = (nodes.size() + NODES_PER_ROW - 1) / NODES_PER_ROW;
-		drawBlueprint(gui, CONTENT_L, top, colCount, rowCount);
+		drawBlueprint(gui, CONTENT_L, gridTop, colCount, rowCount);
 		for (var i = 0; i < nodes.size(); i++) {
 			Node n = nodes.get(i);
+			// 可合成时画实际产出；合不出来时画目标产出（让玩家知道本该产出多少）
 			int craftTimes = n.craftTimes();
-			int totalOut = craftTimes * outPer(n);
+			int totalOut = (craftTimes > 0 ? craftTimes : n.wantTimes()) * outPer(n);
 			int cellX = CONTENT_L + BP_PAD + i % NODES_PER_ROW * CELL_W + 2;
-			int iconY = top + BP_PAD + i / NODES_PER_ROW * NODE_H + 2;   // 16×16 图标在 20×20 格内居中
+			int iconY = gridTop + BP_PAD + i / NODES_PER_ROW * NODE_H + 2;   // 16×16 图标在 20×20 格内居中
 			// 悬停：产物图标略微放大（Create renderItemEntry: scaleFromHover += .075f）
 			boolean hov = mouseXPos >= windowXOffset + cellX
 				&& mouseXPos < windowXOffset + cellX + 18
@@ -434,14 +440,14 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 		}
 	}
 	/** 将要发送的物品：全局一块（不分配方类型、不分轮次），横向固定 9 格 */
-	private void drawSend(GuiGraphics gui, Row r, int top) {
+	private void drawSend(GuiGraphics gui, int top) {
 		drawSendLabel(gui, Component.translatable("create_cyber_goggles.gui.auto_replenish.send_items"), top);
 		drawItemBox(gui, sendItems, top + SEND_LABEL_H);
 	}
-	/** 缺失物品：全局一块，与发送区同款布局 */
+	/** 该组缺失的原料：与发送区同款单块布局 */
 	private void drawMissing(GuiGraphics gui, Row r, int top) {
 		drawSendLabel(gui, Component.translatable("create_cyber_goggles.gui.auto_replenish.missing"), top);
-		drawItemBox(gui, missing, top + SEND_LABEL_H);
+		drawItemBox(gui, groups.get(r.gi).missing(), top + SEND_LABEL_H);
 	}
 	/** 发送区域子块标题：组头同款双画阴影 */
 	private static void drawSendLabel(GuiGraphics gui, Component text, int top) {
@@ -519,11 +525,11 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 		AllGuiTextures.STOCK_KEEPER_REQUEST_SCROLL_BOT.render(gui, barX, baseY + barSize - 5);
 		pose.popPose();
 	}
-	/** 配方类型的本地化名：优先用 JEI 分类标题，其次 `<命名空间>.recipe.<路径>`，最后退回路径 */
+	/** 配方类型的本地化名：优先用 JEI 分类标题，其次 `<命名空间>.recipe.<路径>`，最后退回路径；空名 = 兜底组 */
 	private static Component groupName(ReplenishGroup group) {
 		if (group == null) return Component.empty();
 		String groupName = group.name();
-		if (groupName == null || groupName.isBlank()) return Component.empty();
+		if (groupName == null || groupName.isBlank()) return Component.translatable("create_cyber_goggles.gui.auto_replenish.uncraftable");
 		// 原版配方类型（RecipeType.register）的 toString() 是裸名（无命名空间），补 minecraft: 才能对上 JEI 分类 uid
 		String lookupKey = groupName.indexOf(':') < 0 ? "minecraft:" + groupName : groupName;
 		Component jeiTitle = CCGJeiTitles.get(lookupKey);
@@ -676,7 +682,8 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 	private void renderRecipeCard(GuiGraphics gui, int mouseX, int mouseY, Node n) {
 		var font = mc.font;
 		var items = n.items();
-		int craftTimes = n.craftTimes();
+		// 合不出来的节点 craftTimes=0，用目标次数 wantTimes 显示「本该需要多少」，否则卡片里全是 0
+		int craftTimes = n.craftTimes() > 0 ? n.craftTimes() : n.wantTimes();
 		int totalOut = craftTimes * outPer(n);
 		var rowH = 18;
 		var nameW = 0;
@@ -816,6 +823,7 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 	private enum RowKind {
 		GROUP,
 		NODE,
+		BLOCKED,
 		SEND,
 		MISSING,
 		ADDR

@@ -37,8 +37,6 @@ public abstract class StockKeeperReplenishEntryMixin extends AbstractSimiContain
 	@Unique private Set<Item> ccg$recipeOutputs;
 	@Shadow List<List<ClipboardEntry>> clipboardItem;
 	@Shadow StockTickerBlockEntity blockEntity;
-	/** 缺失物品（全局一块）：找不到配方的需求 + 不可合成原料的缺口，数量 = 还差多少个 */
-	@Unique private List<ItemStack> ccg$missing = List.of();
 	public StockKeeperReplenishEntryMixin(StockKeeperRequestMenu container, Inventory inv, Component title) {
 		super(container, inv, title);
 	}
@@ -49,7 +47,7 @@ public abstract class StockKeeperReplenishEntryMixin extends AbstractSimiContain
 			List<ReplenishGroup> groups = ccg$buildGroups();
 			var summary = blockEntity.getLastClientsideStockSnapshotAsSummary();
 			CCG.LOGGER.info("ccg autoReplenish click: groups={} summary={}", groups.size(), summary == null ? "null" : "ok");
-			mc.setScreen(new AutoReplenishScreen(thiz(), blockEntity, groups, ccg$missing));
+			mc.setScreen(new AutoReplenishScreen(thiz(), blockEntity, groups));
 		});
 		btn.setToolTip(Component.translatable("create_cyber_goggles.gui.auto_replenish.title"));
 		addRenderableWidget(btn);
@@ -79,7 +77,7 @@ public abstract class StockKeeperReplenishEntryMixin extends AbstractSimiContain
 				ItemStack item = itemId.getDefaultInstance();
 				int have = summary.getCountOf(item);
 				if (have >= needed) continue;                       // 库存已够
-				Recipe<?> recipe = ccg$findAnyRecipeFor(item);
+				Recipe<?> recipe = ccg$findAnyRecipeFor(item, summary);
 				if (recipe == null) continue;                       // 原材料
 				List<DraftItem> items = ccg$draftItems(recipe, summary);
 				if (items.isEmpty()) continue;
@@ -102,7 +100,10 @@ public abstract class StockKeeperReplenishEntryMixin extends AbstractSimiContain
 				int delta = want - (prev == null ? 0 : prev);
 				for (DraftItem di : items) {
 					Item matItem = di.material().getItem();
-					if (ccg$findAnyRecipeFor(di.material()) == null) continue;
+					if (ccg$findAnyRecipeFor(di.material(), summary) == null) continue;
+					// 环检测：原料沿依赖图已经能回到本物品，再连这条边就成环（沙子↔砂岩、圆石↔安山岩↔闪长岩），
+					// 环会让需求被反复放大（实测沙子涨到 1165 万）→ 断开这条边，该原料当原材料用库存
+					if (ccg$reaches(drafts, matItem, itemId, new HashSet<>())) continue;
 					pending.merge(matItem, di.per() * delta, Integer::sum);
 				}
 			}
@@ -114,17 +115,19 @@ public abstract class StockKeeperReplenishEntryMixin extends AbstractSimiContain
 		List<Item> deepFirst = new ArrayList<>(drafts.keySet());
 		deepFirst.sort(Comparator.comparingInt((Item i) -> depth.getOrDefault(i, 0)).reversed());
 		// 4) 自底向上：产能上限 cap —— 受缺口需求与原料可获得量双重限制，共享原料按序消耗。
-		//    「可获得量」对可合成原料取它自己的产出池（未算出=0），所以父节点永远不会超过子节点的实际产能。
+		//    「可获得量」= 仓库现有 + 该节点自己新合成出来的产出（所以初始值必须是库存，不能置 0，
+		//    否则「仓库有 3 个 + 还需合成 1 个」这种半库存半合成的情况会被当成只有 1 个可用）。
 		Map<Item, Integer> pool = new HashMap<>();
-		for (Item itemId : drafts.keySet()) pool.put(itemId, 0);
+		for (Item itemId : drafts.keySet()) pool.put(itemId, summary.getCountOf(itemId.getDefaultInstance()));
 		Map<Item, Integer> cap = new HashMap<>();
-		Map<Item, Integer> missing = new LinkedHashMap<>();
+		Map<String, Map<Item, Integer>> missingByType = new LinkedHashMap<>();
 		for (Item itemId : deepFirst) {
 			Draft d = drafts.get(itemId);
 			int times = d.want();
 			Item limited = null;
 			var limitedAvail = 0;
 			var limitedPer = 0;
+			Map<Item, Integer> missing = missingByType.computeIfAbsent(d.recipe().getType().toString(), k -> new LinkedHashMap<>());
 			for (DraftItem di : d.items()) {
 				if (di.per() <= 0) continue;
 				int avail = ccg$avail(pool, di.material(), summary);
@@ -152,11 +155,12 @@ public abstract class StockKeeperReplenishEntryMixin extends AbstractSimiContain
 			pool.merge(itemId, times * d.outPer(), Integer::sum);
 			cap.put(itemId, times);
 		}
-		// 根需求里「找不到配方」（没有节点）却库存不足的物品：直接列入缺失
+		// 根需求里「找不到配方」（没有节点）却库存不足的物品：挂到无类型的兜底组（组名 lang 显示「无法合成」）
 		for (Entry<Item, Integer> e : rootNeed.entrySet()) {
 			if (drafts.containsKey(e.getKey())) continue;
 			int have = summary.getCountOf(e.getKey().getDefaultInstance());
-			if (have < e.getValue()) missing.merge(e.getKey(), e.getValue() - have, Integer::sum);
+			if (have >= e.getValue()) continue;
+			missingByType.computeIfAbsent("", k -> new LinkedHashMap<>()).merge(e.getKey(), e.getValue() - have, Integer::sum);
 		}
 		// 5) 自顶向下：实际合成次数 —— 需求由父节点的实际消耗累加（不再按目标次数虚高），且不超过产能上限
 		Map<Item, Integer> needItems = new HashMap<>();
@@ -179,21 +183,27 @@ public abstract class StockKeeperReplenishEntryMixin extends AbstractSimiContain
 				needItems.merge(matItem, di.per() * t, Integer::sum);
 			}
 		}
-		// 6) 组装节点并按配方类型分组（缺失原料已在步骤 4 统计好，含 craftTimes=0 的节点）
+		// 6) 按配方类型组装：能合成的进 nodes，缺料合不出来的进 blocked（界面单独一行「无法合成的配方」）；
+		//    缺失原料和 blocked 都留在各自的组里，不再全局合并
 		Map<String, List<Node>> byType = new LinkedHashMap<>();
+		Map<String, List<Node>> blockedByType = new LinkedHashMap<>();
 		for (Draft d : drafts.values()) {
 			Item itemId = d.target().getItem();
 			int t = times.getOrDefault(itemId, 0);
 			String type = d.recipe().getType().toString();
-			byType.computeIfAbsent(type, k -> new ArrayList<>());
-			if (t <= 0) continue;
 			List<ReplenishEntry> entries = new ArrayList<>(d.items().size());
 			for (DraftItem di : d.items()) {
 				int stock = summary.getCountOf(di.material());
 				entries.add(new ReplenishEntry(di.material(), di.per(), stock >= di.per(), drafts.containsKey(di.material().getItem())));
 			}
 			int nodeDepth = depth.getOrDefault(itemId, 0);
-			byType.get(type).add(new Node(d.target().copy(), d.want(), d.recipe(), t, entries, nodeDepth));
+			var node = new Node(d.target().copy(), d.want(), d.recipe(), t, entries, nodeDepth);
+			if (t <= 0) {
+				blockedByType.computeIfAbsent(type, k -> new ArrayList<>()).add(node);
+				CCG.LOGGER.info("ccg autoReplenish blocked: {}", d.target().getHoverName().getString());
+				continue;
+			}
+			byType.computeIfAbsent(type, k -> new ArrayList<>()).add(node);
 			CCG.LOGGER.info(
 				"ccg autoReplenish node: {} craft={}/{} depth={}",
 				d.target().getHoverName().getString(),
@@ -202,24 +212,31 @@ public abstract class StockKeeperReplenishEntryMixin extends AbstractSimiContain
 				nodeDepth
 			);
 		}
+		// 有缺失或 blocked 但没节点的类型也要成组（组名 = 配方类型；空串是「无法合成」兜底组）
+		for (String type : missingByType.keySet()) byType.computeIfAbsent(type, k -> new ArrayList<>());
+		for (String type : blockedByType.keySet()) byType.computeIfAbsent(type, k -> new ArrayList<>());
 		List<ReplenishGroup> out = new ArrayList<>();
-		for (Entry<String, List<Node>> e : byType.entrySet()) out.add(new ReplenishGroup(e.getKey(), e.getValue()));
-		List<ItemStack> missingList = new ArrayList<>(missing.size());
-		missing.forEach((item, count) -> missingList.add(new ItemStack(item, count)));
-		ccg$missing = missingList;
-		if (!missingList.isEmpty()) CCG.LOGGER.info("ccg autoReplenish missing: {}", missingList);
+		for (String type : byType.keySet()) {
+			Map<Item, Integer> m = missingByType.getOrDefault(type, Map.of());
+			List<ItemStack> missingList = new ArrayList<>(m.size());
+			m.forEach((item, count) -> missingList.add(new ItemStack(item, count)));
+			out.add(new ReplenishGroup(type, byType.get(type), blockedByType.getOrDefault(type, List.of()), missingList));
+		}
+		missingByType.entrySet().removeIf(e -> e.getValue().isEmpty());   // 日志只留真正有缺口的组
+		if (!missingByType.isEmpty()) CCG.LOGGER.info("ccg autoReplenish missing: {}", missingByType);
 		return out;
 	}
 	@Unique
-	private Recipe<?> ccg$findAnyRecipeFor(ItemStack target) {
+	private Recipe<?> ccg$findAnyRecipeFor(ItemStack target, InventorySummary summary) {
 		if (mc.level == null) return null;
 		Item key = target.getItem();
 		if (ccg$recipeCache.containsKey(key)) return ccg$recipeCache.get(key);
 		var registry = mc.level.registryAccess();
 		Recipe<?> best = null;
-		var bestTier = -1;
-		var bestRaw = -1;
+		var bestStocked = false;
 		var bestOut = 0;
+		var bestRaw = -1;
+		var bestTier = -1;
 		outer:
 		for (RecipeHolder<?> holder : mc.level.getRecipeManager().getRecipes()) {
 			Recipe<?> recipe = holder.value();
@@ -232,34 +249,60 @@ public abstract class StockKeeperReplenishEntryMixin extends AbstractSimiContain
 					CCG.LOGGER.info("    跳过自循环配方 {} (产物 {} 也是原料)", recipe.getType(), target.getHoverName().getString());
 					continue outer;
 				}
-			// 排序优先级：① Create 自带配方（配方 ID 或配方类型属于 create）> 其他；
-			// ② 原料更「基础」（原料里没有配方的越多越基础），否则会选中「1 铁块→9 铁锭」
-			// 这类逆向配方，与「9 铁锭→1 铁块」互锁 → 整条链 cap=0；③ 单次产出最多
-			// （如 1 铁锭→9 铁粒 优于 1 铁锭→1 铁粒）
-			var tier = "create".equals(holder.id().getNamespace()) || recipe.getType().toString().startsWith("create:") ? 1 : 0;
+			// 排序优先级（从高到低）：
+			// ① 原料现在仓库里就有（每个 Ingredient 都能挑到有库存的物品）——比「看起来更基础」重要：
+			//    仓库有铁块时「1 铁块→9 铁锭」应压过「铁马铠粉碎→1 铁锭」；
+			// ② 单次产出最多（效率，如 9 铁锭 优于 1 铁锭、1 铁锭→9 铁粒 优于 1 铁粒）；
+			// ③ 原料更「基础」（原料里没有配方的越多越基础），避免选中「1 铁块→9 铁锭」这类
+			//    逆向配方与「9 铁锭→1 铁块」互锁 → 整条链 cap=0；
+			// ④ Create 自带配方（配方 ID 或配方类型属于 create）
+			var stocked = true;
 			var raw = 0;
 			for (Ingredient ing : recipe.getIngredients()) {
 				if (ing.isEmpty()) continue;
+				var hasStock = false;
 				var craftable = false;
-				for (ItemStack option : ing.getItems())
-					if (ccg$hasRecipe(option)) {
-						craftable = true;
-						break;
-					}
+				for (ItemStack option : ing.getItems()) {
+					if (!hasStock && summary.getCountOf(option) > 0) hasStock = true;
+					if (!craftable && ccg$hasRecipe(option)) craftable = true;
+					if (hasStock && craftable) break;
+				}
+				if (!hasStock) stocked = false;
 				if (!craftable) raw++;
 			}
-			var better = tier > bestTier || tier == bestTier && (raw > bestRaw || raw == bestRaw && result.getCount() > bestOut);
+			var tier = "create".equals(holder.id().getNamespace()) || recipe.getType().toString().startsWith("create:") ? 1 : 0;
+			var better = stocked != bestStocked
+				? stocked
+				: result.getCount() != bestOut ? result.getCount() > bestOut : raw != bestRaw ? raw > bestRaw : tier > bestTier;
 			if (better) {
 				best = recipe;
-				bestTier = tier;
-				bestRaw = raw;
+				bestStocked = stocked;
 				bestOut = result.getCount();
+				bestRaw = raw;
+				bestTier = tier;
 			}
 		}
-		if (best != null)
-			CCG.LOGGER.info("    选中配方 {} 单次产出 {}x (基础原料 {} create={})", best.getType(), bestOut, bestRaw, bestTier > 0);
+		if (best != null) CCG.LOGGER.info(
+			"    选中配方 {} 单次产出 {}x (库存齐 {} 基础 {} create={})",
+			best.getType(),
+			bestOut,
+			bestStocked,
+			bestRaw,
+			bestTier > 0
+		);
 		ccg$recipeCache.put(key, best);
 		return best;
+	}
+	/** 沿已展开的依赖图，from 能否走到 target（能走到说明 from→target 这条边会成环） */
+	@Unique
+	private static boolean ccg$reaches(Map<Item, Draft> drafts, Item from, Item target, Set<Item> visited) {
+		if (from.equals(target)) return true;
+		if (!visited.add(from)) return false;
+		Draft d = drafts.get(from);
+		if (d == null) return false;
+		for (DraftItem di : d.items())
+			if (ccg$reaches(drafts, di.material().getItem(), target, visited)) return true;
+		return false;
 	}
 	/** 该物品是否是某个配方的产物（只查产物表、不递归，用于给原料的「基础度」打分） */
 	@Unique
@@ -320,7 +363,7 @@ public abstract class StockKeeperReplenishEntryMixin extends AbstractSimiContain
 		}
 		return depth;
 	}
-	/** 原料当前可获得量：可合成节点取产出池（未算出=0，绝不误用库存），其余取库存剩余 */
+	/** 原料当前可获得量：pool 里已有该物品就用剩余量（库存 + 已算出的产出 − 已分配），否则取库存 */
 	@Unique
 	private static int ccg$avail(Map<Item, Integer> pool, ItemStack material, InventorySummary summary) {
 		return pool.computeIfAbsent(material.getItem(), k -> summary.getCountOf(k.getDefaultInstance()));

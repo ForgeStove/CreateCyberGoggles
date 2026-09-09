@@ -109,11 +109,13 @@ public abstract class StockKeeperReplenishEntryMixin extends AbstractSimiContain
 						}
 					if (!merged) per.put(pick.copy(), 1);
 				}
-				// 可合成次数 = min(目标次数, 各原料 floor(库存/per))；某原料连一次都不够 → 0（阻止本组）
+				// 可合成次数 = min(目标次数, 各「原材料」floor(库存/per))；
+				// 自己可合成的原料不限制本节点（它会被递归合成，其可用性由它自己的节点处理）
 				int craftTimes = wantTimes;
 				for (Entry<ItemStack, Integer> e : per.entrySet()) {
 					int p = e.getValue();
 					if (p <= 0) continue;
+					if (ccg$isCraftable(e.getKey(), summary)) continue;
 					int cur = remaining.getOrDefault(e.getKey().getItem(), summary.getCountOf(e.getKey()));
 					craftTimes = Math.min(craftTimes, cur / p);
 				}
@@ -121,7 +123,7 @@ public abstract class StockKeeperReplenishEntryMixin extends AbstractSimiContain
 				for (Entry<ItemStack, Integer> e : per.entrySet()) {
 					ItemStack matId = e.getKey().copyWithCount(1);
 					int size = remaining.getOrDefault(e.getKey().getItem(), summary.getCountOf(e.getKey()));
-					items.add(new ReplenishEntry(matId, e.getValue(), size >= e.getValue()));
+					items.add(new ReplenishEntry(matId, e.getValue(), size >= e.getValue(), ccg$isCraftable(matId, summary)));
 				}
 				CCG.LOGGER.info(
 					"  node {} -> craftTimes={}/{} items={}",
@@ -143,7 +145,7 @@ public abstract class StockKeeperReplenishEntryMixin extends AbstractSimiContain
 				}
 				// 该配方要用的原料若可合成，继续拆；防环（一物品只拆一次）+ 限深
 				for (ReplenishEntry e : items) {
-					if (ccg$findAnyRecipeFor(e.material()) == null) continue;
+					if (!e.craftable()) continue;
 					String mkey = e.material().getItem().toString();
 					if (done.contains(mkey)) {
 						CCG.LOGGER.info("    防环/已处理: 不再拆 {}", e.material().getHoverName().getString());
@@ -155,12 +157,13 @@ public abstract class StockKeeperReplenishEntryMixin extends AbstractSimiContain
 						continue;
 					}
 					Item matKey = e.material().getItem();
-					demand.merge(matKey, e.per() * wantTimes, Integer::sum);
+					// 按实际可合成次数(craftTimes)递归，避免为合不了的次数多订原料
+					demand.merge(matKey, e.per() * craftTimes, Integer::sum);
 					depth.put(mkey, myDepth);
 					CCG.LOGGER.info(
 						"    并入需求: {} +{} (现累计 {})",
 						e.material().getHoverName().getString(),
-						e.per() * wantTimes,
+						e.per() * craftTimes,
 						demand.get(matKey)
 					);
 				}
@@ -171,17 +174,67 @@ public abstract class StockKeeperReplenishEntryMixin extends AbstractSimiContain
 			out.add(new ReplenishGroup(e.getKey(), e.getValue()));
 		return out;
 	}
+	@Unique private final Map<Item, Boolean> ccg$craftableCache = new HashMap<>();
+	/**
+	 * 该物品能否「真正合成出来」：有配方，且配方每个原料都能被库存满足、或继续递归合成出来
+	 * （而不是「存在任意配方」——那样 圆石→沙子 之类会让所有东西都判为可合成）。带缓存、防环、限深。
+	 */
+	@Unique
+	private boolean ccg$isCraftable(ItemStack stack, InventorySummary summary) {
+		var cached = ccg$craftableCache.get(stack.getItem());
+		if (cached != null) return cached;
+		var ok = ccg$canCraft(stack, summary, new HashSet<>(), 0);
+		if (ok) ccg$craftableCache.put(stack.getItem(), true);   // 只缓存正向结果，避免环污染
+		return ok;
+	}
+	@Unique
+	private boolean ccg$canCraft(ItemStack target, InventorySummary summary, Set<Item> visiting, int depth) {
+		if (depth > MAX_RECURSION_DEPTH) return false;
+		if (!visiting.add(target.getItem())) return false;      // 环
+		Recipe<?> recipe = ccg$findAnyRecipeFor(target);
+		var ok = recipe != null;
+		if (ok) for (Ingredient ing : recipe.getIngredients()) {
+			if (ing.isEmpty()) continue;
+			ItemStack pick = ccg$pickFromIngredient(ing, summary);
+			if (pick.isEmpty()) {
+				ok = false;
+				break;
+			}
+			if (summary.getCountOf(pick) >= 1) continue;         // 库存有 → 该分支满足
+			if (!ccg$canCraft(pick, summary, visiting, depth + 1)) {
+				ok = false;
+				break;
+			}
+		}
+		visiting.remove(target.getItem());
+		return ok;
+	}
 	@Unique
 	private Recipe<?> ccg$findAnyRecipeFor(ItemStack target) {
 		if (mc.level == null) return null;
 		var registry = mc.level.registryAccess();
+		Recipe<?> best = null;
+		var bestOut = 0;
+		outer:
 		for (RecipeHolder<?> holder : mc.level.getRecipeManager().getRecipes()) {
 			Recipe<?> recipe = holder.value();
 			if (recipe.getIngredients().isEmpty()) continue;
 			ItemStack result = recipe.getResultItem(registry);
-			if (!result.isEmpty() && ItemStack.isSameItemSameComponents(result, target)) return recipe;
+			if (result.isEmpty() || !ItemStack.isSameItemSameComponents(result, target)) continue;
+			// 产物不能同时是自己的原料（自循环配方），跳过
+			for (Ingredient ing : recipe.getIngredients())
+				if (!ing.isEmpty() && ing.test(target)) {
+					CCG.LOGGER.info("    跳过自循环配方 {} (产物 {} 也是原料)", recipe.getType(), target.getHoverName().getString());
+					continue outer;
+				}
+			// 多个配方都能产出同一物品时取单次产出最多的（如 1 铁锭→9 铁粒 优于 1 铁锭→1 铁粒）
+			if (result.getCount() > bestOut) {
+				best = recipe;
+				bestOut = result.getCount();
+			}
 		}
-		return null;
+		if (best != null) CCG.LOGGER.info("    选中配方 {} 单次产出 {}x", best.getType(), bestOut);
+		return best;
 	}
 	@Unique
 	private static ItemStack ccg$pickFromIngredient(Ingredient ing, InventorySummary summary) {

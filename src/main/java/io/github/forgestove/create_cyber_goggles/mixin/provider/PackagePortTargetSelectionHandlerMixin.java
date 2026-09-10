@@ -1,4 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.mixin.provider;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.simibubi.create.AllSpecialTextures;
 import com.simibubi.create.content.logistics.packagePort.PackagePortTargetSelectionHandler;
 import com.simibubi.create.infrastructure.config.AllConfigs;
@@ -9,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.*;
 import net.minecraft.world.phys.HitResult.Type;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -16,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
-@Mixin(PackagePortTargetSelectionHandler.class)
+@Mixin(value = PackagePortTargetSelectionHandler.class, priority = 2000)
 public abstract class PackagePortTargetSelectionHandlerMixin {
 	@Unique private static long ccg$rangeCacheKey = Long.MIN_VALUE;
 	@Unique private static Couple<List<BlockPos>> ccg$cachedRangeHints = Couple.create(ArrayList::new);
@@ -74,5 +76,15 @@ public abstract class PackagePortTargetSelectionHandlerMixin {
 		ccg$rangeCacheKey = key;
 		ccg$cachedRangeHints = hints;
 		return ccg$cachedRangeHints;
+	}
+	@ModifyExpressionValue(
+		method = "validateDiff", at = @At(
+		value = "FIELD",
+		target = "Lcom/simibubi/create/content/logistics/packagePort/PackagePortTargetSelectionHandler;isPostbox:Z",
+		opcode = Opcodes.GETSTATIC
+	)
+	)
+	private static boolean removeDownLimit(boolean original) {
+		return original || CCG.config.misc.removePackagePortDownLimit;
 	}
 }

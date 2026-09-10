@@ -125,6 +125,7 @@ public final class CCGConfig {
 		public boolean quickRequestActions = true;
 		public boolean removeRequestLimit = true;
 		@WarnCheat public boolean removeMechanicalArmLimit = false;
+		@WarnCheat public boolean removePackagePortDownLimit = false;
 		public boolean infEditBoxLength = false;
 		public boolean removeCardboardOverlay = true;
 		public boolean removeNetheriteFirstPerson = false;

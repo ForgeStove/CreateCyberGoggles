@@ -1,4 +1,2 @@
-- Add EMI compatibility to the Redstone Requester
-- Fix the Redstone Requester undo button state machine
-- Fix crashes caused by "Image is not allocated" in some cases
-- Remove the duplicate tooltip line deduplication and add an interface to resolve duplicated content
+- Add a Package Frogport down-limit removal option, allowing Package Frogports to be placed above the target
+- Add Auto Replenish Stock, one-click replenishment from the clipboard list in the Stock Keeper

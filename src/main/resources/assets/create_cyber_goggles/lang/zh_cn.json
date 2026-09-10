@@ -109,6 +109,8 @@
 	"create_cyber_goggles.config.option.goggles.preciseNumber.tooltip": "显示更加精确的数值信息",
 	"create_cyber_goggles.config.option.misc.allowDivingBoot": "允许潜水靴",
 	"create_cyber_goggles.config.option.misc.allowDivingBoot.tooltip": "潜水靴的功能，禁用以使它们像普通的靴子一样",
+	"create_cyber_goggles.config.option.misc.autoReplenishStock": "自动补齐缺货",
+	"create_cyber_goggles.config.option.misc.autoReplenishStock.tooltip": "在仓库管理员的蓝图模式下显示「自动补齐缺货」按钮：按蓝图清单递归展开配方并一键下单",
 	"create_cyber_goggles.config.option.misc.chainConveyor.alwaysAllowRidingChain": "始终允许悬挂锁链",
 	"create_cyber_goggles.config.option.misc.chainConveyor.alwaysAllowRidingChain.tooltip": "无需扳手即可悬挂在锁链传动轮上",
 	"create_cyber_goggles.config.option.misc.chainConveyor.cardBoardedYourself": "自动打包自己",

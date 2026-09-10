@@ -109,6 +109,8 @@
 	"create_cyber_goggles.config.option.goggles.preciseNumber.tooltip": "Display more precise numerical values",
 	"create_cyber_goggles.config.option.misc.allowDivingBoot": "Allow Diving Boots",
 	"create_cyber_goggles.config.option.misc.allowDivingBoot.tooltip": "Diving boots functionality, disable to make them act like normal boots",
+	"create_cyber_goggles.config.option.misc.autoReplenishStock": "Auto Replenish Stock",
+	"create_cyber_goggles.config.option.misc.autoReplenishStock.tooltip": "Show the 'Auto Replenish Stock' button in the stock keeper's schematic mode: recursively expands recipes from the clipboard list and orders them in one click",
 	"create_cyber_goggles.config.option.misc.chainConveyor.alwaysAllowRidingChain": "Always Allow Riding Chain",
 	"create_cyber_goggles.config.option.misc.chainConveyor.alwaysAllowRidingChain.tooltip": "Hang on chain conveyors without needing a wrench",
 	"create_cyber_goggles.config.option.misc.chainConveyor.cardBoardedYourself": "Auto Cardboard Yourself",

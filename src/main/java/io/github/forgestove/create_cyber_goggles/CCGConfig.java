@@ -134,6 +134,7 @@ public final class CCGConfig {
 		public boolean allowDivingBoot = true;
 		public boolean recursiveSchematicScan = true;
 		public boolean fixSchematicName = true;
+		public boolean autoReplenishStock = true;
 		@WarnCheat public boolean removeTrainDamage = false;
 		@WarnCheat public boolean enableNegativeInfThrottle = false;
 		public boolean forcedBackend = false;

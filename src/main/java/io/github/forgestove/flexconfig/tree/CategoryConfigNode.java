@@ -1,5 +1,6 @@
 package io.github.forgestove.flexconfig.tree;
 import com.google.common.collect.ImmutableList;
+import io.github.forgestove.flexconfig.ConfigChangeDispatcher;
 import io.github.forgestove.flexconfig.client.Translation;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.*;
@@ -63,7 +64,12 @@ public final class CategoryConfigNode<C> implements ConfigNode<C> {
 	}
 	@Override
 	public void writeEditingToConfig(C config) {
-		children.forEach(node -> node.writeEditingToConfig(config));
+		ConfigChangeDispatcher.begin();
+		try {
+			children.forEach(node -> node.writeEditingToConfig(config));
+		} finally {
+			ConfigChangeDispatcher.end();   // finally：节点抛异常也不会让派发深度卡住
+		}
 	}
 	public boolean isDefaultExpanded() {
 		return defaultExpanded;

@@ -52,6 +52,7 @@
 		"misc.FontMixin",
 		"misc.ItemCountFontMixin",
 		"misc.ItemInHandRendererMixin",
+		"misc.LibraryMixin",
 		"misc.NbtAccounterMixin",
 		"misc.NetheriteBacktankFirstPersonRendererMixin",
 		"misc.PlayerEnderChestContainerMixin",

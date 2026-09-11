@@ -1,4 +1,5 @@
 package io.github.forgestove.create_cyber_goggles;
+import io.github.forgestove.create_cyber_goggles.core.config.SoundReloadHandler;
 import io.github.forgestove.create_cyber_goggles.core.factory.*;
 import io.github.forgestove.flexconfig.api.*;
 
@@ -139,6 +140,7 @@ public final class CCGConfig {
 		@WarnCheat public boolean enableNegativeInfThrottle = false;
 		public boolean forcedBackend = false;
 		public boolean nbtFix = false;
+		@OnChange(SoundReloadHandler.class) @IntRange(min = 255, max = 8192) public int soundPoolLimit = 255;
 		public static class ChainConveyor {
 			@WarnCheat public boolean alwaysAllowRidingChain = false;
 			public boolean preventFalling = false;

@@ -161,6 +161,8 @@
 	"create_cyber_goggles.config.option.misc.removeRequestLimit.tooltip": "Remove request quantity limit for factory panels and redstone requesters, optimize fast scrolling",
 	"create_cyber_goggles.config.option.misc.removeTrainDamage": "Remove Train Damage",
 	"create_cyber_goggles.config.option.misc.removeTrainDamage.tooltip": "Prevent train collisions from dealing damage to players",
+	"create_cyber_goggles.config.option.misc.soundPoolLimit": "Sound Pool Limit",
+	"create_cyber_goggles.config.option.misc.soundPoolLimit.tooltip": "Number of OpenAL sound sources to request; increasing it mitigates silent failures caused by sound pool overflow",
 	"create_cyber_goggles.config.option.misc.wrench.alwaysAllowRotating": "Always Allow Rotating",
 	"create_cyber_goggles.config.option.misc.wrench.alwaysAllowRotating.tooltip": "Rotate blocks with hotkey without needing a wrench",
 	"create_cyber_goggles.config.option.misc.wrench.alwaysShowScrollValue": "Always Show Scroll Value",

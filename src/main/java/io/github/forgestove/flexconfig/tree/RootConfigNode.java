@@ -6,6 +6,7 @@ import io.github.forgestove.flexconfig.client.Translation;
 import io.github.forgestove.flexconfig.tree.ValueConfigNode.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.neoforged.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.*;
 
 import java.lang.invoke.VarHandle;
@@ -68,7 +69,12 @@ public record RootConfigNode<C, V>(String modId, ImmutableList<CategoryConfigNod
 	}
 	@Override
 	public void writeEditingToConfig(C config) {
-		categories.forEach(node -> node.writeEditingToConfig(config));
+		ConfigChangeDispatcher.begin();
+		try {
+			categories.forEach(node -> node.writeEditingToConfig(config));
+		} finally {
+			ConfigChangeDispatcher.end();   // finally：节点抛异常也不会让派发深度卡住
+		}
 	}
 	@Override
 	@NotNull
@@ -199,7 +205,15 @@ public record RootConfigNode<C, V>(String modId, ImmutableList<CategoryConfigNod
 				.valueReader(makePathValueReader(type, path, valueField))
 				.valueWriter(makePathValueWriter(type, path, valueField))
 				.requiresRestart(valueField.isAnnotationPresent(RequiresRestart.class))
+				.changeCallback(makeChangeCallback(valueField, fullPath))
 				.validator(FieldValidators.validatorFor(type, valueField)));
+		}
+		private @Nullable ConfigChangeCallback makeChangeCallback(Field valueField, String path) {
+			if (FMLEnvironment.dist.isDedicatedServer()) return null;
+			var annotation = valueField.getAnnotation(OnChange.class);
+			if (annotation == null) return null;
+			var type = annotation.value();
+			return (oldValue, newValue) -> ConfigChangeDispatcher.record(type, path, oldValue, newValue);
 		}
 		private @NotNull <V> ValueReader<C, V> makePathValueReader(Class<? extends V> type, @NotNull List<Field> path, Field valueField) {
 			var pathHandles = path.stream().map(FieldAccess::varHandle).toArray(VarHandle[]::new);

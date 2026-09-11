@@ -15,6 +15,7 @@ public final class ValueConfigNode<C, V> implements ConfigNode<C> {
 	private ValueReader<C, V> valueReader;
 	private ValueWriter<C, V> valueWriter;
 	@Nullable private ValueValidator<V> validator;
+	@Nullable private ConfigChangeCallback changeCallback;
 	private V defaultValue;
 	private V editingValue;
 	private CategoryConfigNode<C> category;
@@ -80,7 +81,11 @@ public final class ValueConfigNode<C, V> implements ConfigNode<C> {
 	}
 	@Override
 	public void writeEditingToConfig(C config) {
-		setActiveValue(config, getEditingValue(config));
+		var oldValue = getActiveValue(config);
+		var newValue = getEditingValue(config);
+		setActiveValue(config, newValue);
+		// 值确实变了才通知（editingValue 未被动过时与 active 相等，天然不触发；copy() 不走这里，启动加载也不会触发）
+		if (changeCallback != null && !Objects.equals(oldValue, newValue)) changeCallback.onChange(oldValue, newValue);
 	}
 	public String getPath() {
 		return path;
@@ -101,6 +106,11 @@ public final class ValueConfigNode<C, V> implements ConfigNode<C> {
 	}
 	public interface ValueValidator<V> {
 		@Nullable Component validate(V value);
+	}
+	/** 值变更回调；是否去重/异常隔离由 {@link io.github.forgestove.flexconfig.ConfigChangeDispatcher} 负责 */
+	@FunctionalInterface
+	public interface ConfigChangeCallback {
+		void onChange(Object oldValue, Object newValue);
 	}
 	public static class Builder<C, V> {
 		private ValueConfigNode<C, V> node;
@@ -149,6 +159,10 @@ public final class ValueConfigNode<C, V> implements ConfigNode<C> {
 		}
 		public Builder<C, V> validator(ValueValidator<V> validator) {
 			node.validator = validator;
+			return this;
+		}
+		public Builder<C, V> changeCallback(ConfigChangeCallback changeCallback) {
+			node.changeCallback = changeCallback;
 			return this;
 		}
 		public Builder<C, V> category(CategoryConfigNode<C> category) {

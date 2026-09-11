@@ -1,2 +1,1 @@
-- Add a Package Frogport down-limit removal option, allowing Package Frogports to be placed above the target
-- Add Auto Replenish Stock, one-click replenishment from the clipboard list in the Stock Keeper
+- Add sound pool limit option

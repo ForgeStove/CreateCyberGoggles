@@ -104,8 +104,8 @@ public final class TooltipOverlay {
 		// 物品悬浮框淡入淡出全程停留在该偏移位置
 		if (liftAboveGoggle) y -= tooltipHeight + 10;
 		// 顶部下限固定 16：悬浮框过高导致 height - tooltipHeight - 100 < 16 时不得超顶
-		x = Mth.clamp(x, 0, width - tooltipWidth);
-		y = Mth.clamp(y, 16, Math.max(16, height - tooltipHeight - 100));
+		// 锚点保持鼠标式语义，(12, -12) 偏移由 renderTooltip 施加，故上界需反向补偿；x 无需钳制，由 renderTooltip 钳左上角
+		y = Mth.clamp(y, 16, Math.max(16, height - tooltipHeight - 100 + 12));
 		renderTooltip(gui, itemStack, components, x, y, tooltipWidth, tooltipHeight, back.getRGB(), top.getRGB(), bot.getRGB());
 		pose.popPose();
 	}
@@ -196,13 +196,22 @@ public final class TooltipOverlay {
 		if (components.isEmpty()) return;
 		var width = gui.guiWidth();
 		var height = gui.guiHeight();
-		var positioner = DefaultTooltipPositioner.INSTANCE;
-		// 触发 Pre 事件：面板（renderTooltipPre）与悬浮框共用同一锚点；用 preEvent 位置定位以响应 setY 让位
-		var preEvent = ClientHooks.onRenderTooltipPre(itemStack, gui, x, y, width, height, components, mc.font, positioner);
+		// 触发 Pre 事件：面板（renderTooltipPre）与悬浮框共用同一锚点；入参 x/y 须保持鼠标式语义，renderTooltipPre 会用它推算 overlay 位置
+		var preEvent = ClientHooks.onRenderTooltipPre(
+			itemStack,
+			gui,
+			x,
+			y,
+			width,
+			height,
+			components,
+			mc.font,
+			DefaultTooltipPositioner.INSTANCE
+		);
 		if (preEvent.isCanceled()) return;
-		var tooltipPos = positioner.positionTooltip(width, height, preEvent.getX(), preEvent.getY(), tooltipWidth, tooltipHeight);
-		var tooltipX = tooltipPos.x();
-		var tooltipY = tooltipPos.y();
+		// 固定偏移取代 positioner 的「溢出翻转到右对齐」：该翻转由 tooltipWidth 决定，宽度一变锚点就在左右边缘间跳动
+		var tooltipX = Mth.clamp(preEvent.getX() + 12, 0, Math.max(0, width - tooltipWidth));
+		var tooltipY = Mth.clamp(preEvent.getY() - 12, 0, Math.max(0, height - tooltipHeight));
 		var pose = gui.pose();
 		pose.pushPose();
 		TooltipRenderUtil.renderTooltipBackground(gui, tooltipX, tooltipY, tooltipWidth, tooltipHeight, 400, back, back, top, bot);

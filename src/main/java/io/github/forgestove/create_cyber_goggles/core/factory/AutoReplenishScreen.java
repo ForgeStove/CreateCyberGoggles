@@ -25,6 +25,9 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.*;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.neoforge.client.event.ScreenEvent.CharacterTyped.Pre;
+import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
@@ -76,6 +79,8 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 	// 地址行局部坐标
 	private static final int ADDR_X = CONTENT_L;
 	private static final int ADDR_TEXT_IN = 12;      // 文本左缩进(越过圆环)
+	/** 视口外地址框的停放坐标（不能 setVisible(false) 隐藏，见 {@link #renderWindow} 注释） */
+	private static final int PARKED = -10000;
 	private static final int SUGGESTION_ANCHOR_BASE_Y = -72;
 	private static final int SUGGESTION_MAX_ROWS = 7;    // 下拉最多行数（Create 的 suggestionLineLimit）
 	private static final int SUGGESTION_ROW_H = 12;
@@ -83,6 +88,8 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 	private static final int POPUP_ROW_H = 14;
 	/** 配方卡底部「左键以切换配方」提示行高 */
 	private static final int SWITCH_HINT_H = 11;
+	/** 字符投递钩子是否已注册（事件总线只注册一次，见 {@link #hookCharTyped()}） */
+	private static boolean charHooked;
 	private final StockKeeperRequestScreen parent;
 	private final StockTickerBlockEntity blockEntity;
 	private final List<ReplenishGroup> groups;
@@ -118,6 +125,7 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 		for (ReplenishGroup group : groups) groupAddress.add(CACHE_ADDRS.getOrDefault(group.name(), ""));
 		rebuildLayout();
 		mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1));
+		hookCharTyped();
 	}
 	/** 预计算扁平行列表 + 内容总高（数据不变，一次生成即可，渲染复用） */
 	private void rebuildLayout() {
@@ -163,6 +171,21 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 			y += ADDR_H + GROUP_GAP;
 		}
 		contentH = y;
+	}
+	/**
+	 * 最高优先级把字符投递给<b>当前聚焦的地址框</b>（消费成功才取消事件，顺带不给别的模组抢字符的机会）。
+	 * 焦点直接问屏幕自己（地址框都是 {@code addRenderableWidget} 进去的子组件，点击时 Screen 会 setFocused）。
+	 */
+	private static void hookCharTyped() {
+		if (charHooked) return;
+		charHooked = true;
+		NeoForge.EVENT_BUS.addListener(
+			EventPriority.HIGHEST, (Pre event) -> {
+				if (!(event.getScreen() instanceof AutoReplenishScreen screen)) return;
+				if (!(screen.getFocused() instanceof CCGAddressEditBox box)) return;
+				if (box.charTyped(event.getCodePoint(), event.getModifiers())) event.setCanceled(true);
+			}
+		);
 	}
 	/**
 	 * 汇总待发送的原料：<b>每个配方类型一组</b>，组内节点（{@code craftTimes>0}）的原料按 {@link Item} 合并，
@@ -222,6 +245,64 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 		int w = col == 1 ? BP_TILE : BP_CORNER;
 		int h = row == 1 ? BP_TILE : BP_CORNER;
 		gui.blit(textures.location, x, y, textures.getStartX() + col * BP_CORNER, textures.getStartY() + row * BP_CORNER, w, h);
+	}
+	/** 该配方单次的产出数量（至少 1） */
+	private static int outPer(Recipe<?> recipe) {
+		return mc.level == null ? 1 : Math.max(1, recipe.getResultItem(mc.level.registryAccess()).getCount());
+	}
+	/** Create 样式数量：用 NUMBERS 数字图集(5×8)画在 18×18 槽位右下角（同 StockKeeperRequestScreen#drawItemCount） */
+	private static void drawCount(GuiGraphics gui, int count, int slotX, int slotY) {
+		String text = count >= 1000000
+			? count / 1000000 + "m"
+			: count >= 10000
+				? count / 1000 + "k"
+				: count >= 1000 ? (count * 10 / 1000) / 10f + "k" : count >= 100 ? count + "" : " " + count;
+		if (count >= BigItemStack.INF) text = "+";
+		if (text.isBlank()) return;
+		var numbers = AllGuiTextures.NUMBERS;
+		// 抬高 z 盖在物品之上（renderItem 画在 z=150；Create 同款 190→200）
+		var pose = gui.pose();
+		pose.pushPose();
+		pose.translate(0, 0, 200);
+		var x = (int) Math.floor(-text.length() * 2.5);
+		for (char c : text.toCharArray()) {
+			if (c == ' ') {
+				x += 4;
+				continue;
+			}
+			int xOffset = (c - '0') * 6;
+			int spriteWidth = numbers.getWidth();
+			switch (c) {
+				case '.' -> {
+					spriteWidth = 3;
+					xOffset = 60;
+				}
+				case 'k' -> xOffset = 64;
+				case 'm' -> {
+					spriteWidth = 7;
+					xOffset = 70;
+				}
+				case '+' -> {
+					spriteWidth = 9;
+					xOffset = 84;
+				}
+				default -> {}
+			}
+			gui.blit(
+				numbers.location,
+				slotX + 13 + x,
+				slotY + 9,
+				0,
+				numbers.getStartX() + xOffset,
+				numbers.getStartY(),
+				spriteWidth,
+				numbers.getHeight(),
+				256,
+				256
+			);
+			x += spriteWidth - 1;
+		}
+		pose.popPose();
 	}
 	@Override
 	protected void init() {
@@ -340,6 +421,8 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 		}
 		onClose();
 	}
+	/** 可滚动距离：内容高 − 视口高。contentH 含 BODY_TOP 起始偏移，必须减掉，否则滚到底时末尾留白 */
+	private int maxScroll() {return Math.max(0, contentH - BODY_TOP - viewH);}
 	// ---- 几何（窗口局部） ----
 	private static int contentR() {return CONTENT_R - SCROLL_W - 4;}
 	/**
@@ -367,7 +450,7 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 	public void tick() {
 		// AddressEditBox 非 TickableGuiEventListener，catnip 不自动 tick；显式 tick 以激活剪贴板地址下拉建议(同 Create 仓管)
 		super.tick();
-		for (AddressEditBox box : addrBoxes) box.tick();
+		addrBoxes.forEach(AddressEditBox::tick);
 		scrollAnim.tickChaser();
 		// 逼近目标时直接吸附，避免长期微小抖动（Create 同款 1/16 阈值）
 		if (Math.abs(scrollAnim.getValue() - scrollAnim.getChaseTarget()) < 1 / 16f) scrollAnim.setValue(scrollAnim.getChaseTarget());
@@ -427,8 +510,10 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 			gui.drawString(font, empty, (PANEL_W - font.width(empty)) / 2, BODY_TOP + 4, 0xFFC8B688, false);
 		}
 		int viewBottom = BODY_TOP + viewH;
-		// 每帧先隐藏全部地址框，只对可见行重新定位显示（避免离屏 widget 参与渲染）
-		if (!addrBoxes.isEmpty()) addrBoxes.forEach(b -> b.setVisible(false));
+		// 注意：地址框不能再用 setVisible(false) 裁剪 —— EditBox.canConsumeInput() = visible && active && isFocused
+		// && isEditable，滚出视口就被判为「不可输入」，键盘输入直接被丢（打字没反应）。视口外的框改为挪到屏幕外，
+		// 由内容区 scissor 裁掉，画不进面板。
+		var onScreen = new boolean[addrBoxes.size()];
 		for (Row r : rows) {
 			int top = r.y - clamped;           // 窗口局部 y
 			if (top + r.h <= BODY_TOP) continue; // 整行在视口上方，跳过（不画仍推进 y）
@@ -438,8 +523,21 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 				case NODE, BLOCKED -> drawNode(gui, r, top);
 				case SEND -> drawSend(gui, r, top);
 				case MISSING -> drawMissing(gui, r, top);
-				case ADDR -> placeAddr(gui, r, top);
+				case ADDR -> {
+					onScreen[r.gi()] = true;
+					placeAddr(gui, r, top);
+				}
 			}
+		}
+		// 刚滚出视口的地址框才处理（含下拉锚点），避免每帧重建 SuggestionsList 把滚轮滚到的位置重置成 0
+		for (var i = 0; i < addrBoxes.size(); i++) {
+			if (onScreen[i]) continue;
+			AddressEditBox box = addrBoxes.get(i);
+			if (box.getX() == PARKED) continue;   // 已经在屏幕外，无需重复处理
+			box.setVisible(true);
+			box.setX(PARKED);
+			box.setY(PARKED);
+			refreshSuggestionsAnchor(box);
 		}
 		gui.disableScissor();
 		pose.popPose();
@@ -545,7 +643,6 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 		// 纹理 18 高，行高 20：上边距 2、下边距 0
 		CCGGuiTextures.AUTO_REPLENISH_ADDRESS.render(gui, 0, top + 2);
 		AddressEditBox box = addrBoxes.get(r.gi());
-		box.setVisible(true);
 		box.setX(windowXOffset + ADDR_X + ADDR_TEXT_IN);
 		// 上边距 2（对齐纹理），其中 1px 用于补偿 EditBox 硬编码 8px 字高(实为9px)导致的偏高
 		box.setY(windowYOffset + top + (ADDR_H - 10) / 2 + 2);
@@ -588,7 +685,11 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 		int rows = Math.min(SUGGESTION_MAX_ROWS, accessor.getCurrentSuggestions().size());
 		int listH = rows * SUGGESTION_ROW_H;
 		int anchor = box.getY() - listH < scissorT ? box.getY() + box.getHeight() + listH + 3 : box.getY();
-		accessor.setYOffset(SUGGESTION_ANCHOR_BASE_Y + anchor);
+		int yOffset = SUGGESTION_ANCHOR_BASE_Y + anchor;
+		// 位置没变就别重建：showSuggestions 会 new 一个 SuggestionsList，把用户滚轮滚到的位置(offset)重置成 0，
+		// 表现为「滚轮完全没反应」。只有框位置/行数变了（面板真的在滚）才重建。
+		if (yOffset == accessor.getYOffset()) return;
+		accessor.setYOffset(yOffset);
 		// 聚焦时让下拉贴住新位置（跟随滚动）
 		if (box.isFocused()) suggestions.showSuggestions(false);
 	}
@@ -754,77 +855,6 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 		);
 		pose.popPose();
 	}
-	/** 配方类型的本地化名：优先用 JEI 分类标题，其次 `<命名空间>.recipe.<路径>`，最后退回路径；空名 = 「无法合成」 */
-	private static Component typeName(String typeId) {
-		if (typeId == null || typeId.isBlank()) return Component.translatable("create_cyber_goggles.gui.auto_replenish.uncraftable");
-		// 原版配方类型（RecipeType.register）的 toString() 是裸名（无命名空间），补 minecraft: 才能对上 JEI 分类 uid
-		String lookupKey = typeId.indexOf(':') < 0 ? "minecraft:" + typeId : typeId;
-		Component jeiTitle = CCGJeiTitles.get(lookupKey);
-		if (jeiTitle != null) return jeiTitle;
-		int idx = typeId.indexOf(':');
-		if (idx <= 0) return Component.literal(typeId);
-		String path = typeId.substring(idx + 1);
-		String key = typeId.substring(0, idx) + ".recipe." + path;
-		return Component.translatable(I18n.exists(key) ? key : path);
-	}
-	/** 该配方单次的产出数量（至少 1） */
-	private static int outPer(Recipe<?> recipe) {
-		return mc.level == null ? 1 : Math.max(1, recipe.getResultItem(mc.level.registryAccess()).getCount());
-	}
-	/** Create 样式数量：用 NUMBERS 数字图集(5×8)画在 18×18 槽位右下角（同 StockKeeperRequestScreen#drawItemCount） */
-	private static void drawCount(GuiGraphics gui, int count, int slotX, int slotY) {
-		String text = count >= 1000000
-			? count / 1000000 + "m"
-			: count >= 10000
-				? count / 1000 + "k"
-				: count >= 1000 ? (count * 10 / 1000) / 10f + "k" : count >= 100 ? count + "" : " " + count;
-		if (count >= BigItemStack.INF) text = "+";
-		if (text.isBlank()) return;
-		var numbers = AllGuiTextures.NUMBERS;
-		// 抬高 z 盖在物品之上（renderItem 画在 z=150；Create 同款 190→200）
-		var pose = gui.pose();
-		pose.pushPose();
-		pose.translate(0, 0, 200);
-		var x = (int) Math.floor(-text.length() * 2.5);
-		for (char c : text.toCharArray()) {
-			if (c == ' ') {
-				x += 4;
-				continue;
-			}
-			int xOffset = (c - '0') * 6;
-			int spriteWidth = numbers.getWidth();
-			switch (c) {
-				case '.' -> {
-					spriteWidth = 3;
-					xOffset = 60;
-				}
-				case 'k' -> xOffset = 64;
-				case 'm' -> {
-					spriteWidth = 7;
-					xOffset = 70;
-				}
-				case '+' -> {
-					spriteWidth = 9;
-					xOffset = 84;
-				}
-				default -> {}
-			}
-			gui.blit(
-				numbers.location,
-				slotX + 13 + x,
-				slotY + 9,
-				0,
-				numbers.getStartX() + xOffset,
-				numbers.getStartY(),
-				spriteWidth,
-				numbers.getHeight(),
-				256,
-				256
-			);
-			x += spriteWidth - 1;
-		}
-		pose.popPose();
-	}
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		// 配方切换弹窗优先：点面板内应用该配方，点面板外或非左键都关掉
@@ -886,7 +916,7 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 	/** 切换配方后重建整棵树：mixin 按新的配方选择重算，再换一个同款界面（地址缓存是静态的，不会丢） */
 	private void rebuildAll() {
 		var tree = (CCGReplenishTree) parent;
-		AutoReplenishScreen next = new AutoReplenishScreen(parent, blockEntity, tree.ccg$buildGroups());
+		var next = new AutoReplenishScreen(parent, blockEntity, tree.ccg$buildGroups());
 		next.restoreScroll = scroll;   // 别让切换配方把滚动条弹回顶部（新屏幕 init 里按新内容 clamp）
 		mc.setScreen(next);
 	}
@@ -902,8 +932,6 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 		popupX = Mth.clamp((int) mouseX + 10, 0, Math.max(0, window.getGuiScaledWidth() - popupW));
 		popupY = Mth.clamp((int) mouseY + 10, 0, Math.max(0, window.getGuiScaledHeight() - popupH));
 	}
-	/** 可滚动距离：内容高 − 视口高。contentH 含 BODY_TOP 起始偏移，必须减掉，否则滚到底时末尾留白 */
-	private int maxScroll() {return Math.max(0, contentH - BODY_TOP - viewH);}
 	private boolean overScrollbar(double mouseX, double mouseY) {
 		return mouseX >= scrollX()
 			&& mouseX < scrollX() + SCROLL_W
@@ -914,6 +942,19 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 		int thumb = thumbHeight();
 		int maxThumbTop = scrollTrackHeight() - thumb;
 		return scrollTrackTop() + (maxScroll() == 0 ? 0 : (int) (scrollAnim.getValue(partialTick) / maxScroll() * maxThumbTop));
+	}
+	/** 配方类型的本地化名：优先用 JEI 分类标题，其次 `<命名空间>.recipe.<路径>`，最后退回路径；空名 = 「无法合成」 */
+	private static Component typeName(String typeId) {
+		if (typeId == null || typeId.isBlank()) return Component.translatable("create_cyber_goggles.gui.auto_replenish.uncraftable");
+		// 原版配方类型（RecipeType.register）的 toString() 是裸名（无命名空间），补 minecraft: 才能对上 JEI 分类 uid
+		String lookupKey = typeId.indexOf(':') < 0 ? "minecraft:" + typeId : typeId;
+		Component jeiTitle = CCGJeiTitles.get(lookupKey);
+		if (jeiTitle != null) return jeiTitle;
+		int idx = typeId.indexOf(':');
+		if (idx <= 0) return Component.literal(typeId);
+		String path = typeId.substring(idx + 1);
+		String key = typeId.substring(0, idx) + ".recipe." + path;
+		return Component.translatable(I18n.exists(key) ? key : path);
 	}
 	private int scrollX() {return windowXOffset + CONTENT_R - SCROLL_W - 4;}
 	private int scrollTrackTop() {return windowYOffset + BODY_TOP;}
@@ -956,7 +997,8 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 	}
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-		// 先交给子控件（地址框建议列表等）处理
+		// 聚焦地址框的下拉建议优先吃滚轮（显式投递，别等 super 的 focused 转发）
+		if (getFocused() instanceof AddressEditBox box && box.mouseScrolled(mouseX, mouseY, scrollX, scrollY)) return true;
 		if (super.mouseScrolled(mouseX, mouseY, scrollX, scrollY)) return true;
 		if (overScrollbar(mouseX, mouseY)) return true;
 		// Create 同款：滚轮按行推进 + 指数追赶，实现平滑滚动

@@ -10,5 +10,7 @@ public interface DestinationSuggestionsAccessor {
 	@Accessor
 	List<Suggestion> getCurrentSuggestions();
 	@Accessor
+	int getYOffset();
+	@Accessor
 	void setYOffset(int yOffset);
 }

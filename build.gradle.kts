@@ -33,8 +33,6 @@ neoForge {
 			programArgument("--nogui")
 		}
 		configureEach {
-			systemProperty("mixin.debug.verbose", "true")
-			systemProperty("mixin.debug.export", "true")
 			systemProperty("terminal.jline", "true")
 			jvmArgument("-XX:+IgnoreUnrecognizedVMOptions")
 			jvmArgument("-XX:+AllowEnhancedClassRedefinition")
@@ -72,10 +70,8 @@ dependencies {
 	implementation("dev.ryanhcode.sable-companion:sable-companion-common-${p("mcVersion")}:${p("sableCompanionVersion")}") { isTransitive = false }
 	implementation("foundry.veil:veil-${p("loader")}-${p("mcVersion")}:${p("veilVersion")}")
 	//endregion
-	//region Create Enchantment Industry
 	compileOnly("maven.modrinth:create-enchantment-industry:${p("ceiVersion")}")
 	compileOnly("maven.modrinth:create-dragons-plus:${p("dragonPlusVersion")}")
-	//endregion
 	compileOnly("maven.modrinth:createfluidlogistic:${p("fluidlogisticVersion")}")
 	compileOnly("maven.modrinth:createphantom:${p("phantomVersion")}")
 	compileOnly("maven.modrinth:create-mobile-packages:${p("mcVersion")}-${p("mobilePackagesVersion")}")

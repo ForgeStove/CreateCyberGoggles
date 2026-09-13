@@ -1,5 +1,4 @@
 package io.github.forgestove.create_cyber_goggles.mixin.compact.appliedEnergistics;
-import appeng.client.gui.me.common.MEStorageScreen;
 import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.ItemCountFontUtil;
@@ -7,7 +6,8 @@ import net.minecraft.client.gui.*;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 @Pseudo
-@Mixin(MEStorageScreen.class)
+@SuppressWarnings("UnresolvedMixinReference")
+@Mixin(targets = "appeng.client.gui.me.common.MEStorageScreen")
 public class MEStorageScreenMixin {
 	@WrapOperation(
 		method = "renderSlot", at = @At(

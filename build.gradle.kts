@@ -27,10 +27,20 @@ neoForge {
 	}
 	runs {
 		create("client").client()
-		create("server").server()
+		create("server") {
+			server()
+			gameDirectory.set(file("run/server"))
+			programArgument("--nogui")
+		}
 		configureEach {
+			systemProperty("mixin.debug.verbose", "true")
+			systemProperty("mixin.debug.export", "true")
 			systemProperty("terminal.jline", "true")
-			jvmArguments.addAll("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition", "-javaagent:${mixinAgent.files.first().toPath()}")
+			jvmArgument("-XX:+IgnoreUnrecognizedVMOptions")
+			jvmArgument("-XX:+AllowEnhancedClassRedefinition")
+			jvmArgument("-javaagent:${mixinAgent.files.first().toPath()}")
+			// jvmArgument("-XX:-OmitStackTraceInFastThrow") // uncomment when you get exceptions with null messages etc
+			// jvmArgument("-XX:+UnlockCommercialFeatures") // uncomment for profiling
 		}
 	}
 	accessTransformers.publish(file("src/main/resources/META-INF/accesstransformer.cfg"))
@@ -45,6 +55,7 @@ repositories {
 	maven("https://maven.blamejared.com") // JEI, Veil, Ars Nouveau
 	maven("https://maven.terraformersmc.com") // EMI
 	maven("https://api.modrinth.com/maven") { content { includeGroup("maven.modrinth") } } // Modrinth
+	maven("https://dl.zznty.ru/maven") // Create Factory Abstractions
 }
 dependencies {
 	//region Create
@@ -65,12 +76,15 @@ dependencies {
 	compileOnly("maven.modrinth:create-enchantment-industry:${p("ceiVersion")}")
 	compileOnly("maven.modrinth:create-dragons-plus:${p("dragonPlusVersion")}")
 	//endregion
-	implementation("maven.modrinth:createfluidlogistic:${p("fluidlogisticVersion")}")
+	compileOnly("maven.modrinth:createfluidlogistic:${p("fluidlogisticVersion")}")
+	compileOnly("maven.modrinth:createphantom:${p("phantomVersion")}")
+	compileOnly("maven.modrinth:create-mobile-packages:${p("mcVersion")}-${p("mobilePackagesVersion")}")
+	compileOnly("ru.zznty:create_factory_abstractions-${p("mcVersion")}:${p("factoryAbstractionsVersion")}") { isTransitive = false }
 	implementation("mezz.jei:jei-${p("mcVersion")}-${p("loader")}:${p("jeiVersion")}")
 	compileOnly("dev.emi:emi-${p("loader")}:${p("emiVersion")}+${p("mcVersion")}")
-	compileOnly("maven.modrinth:sophisticated-core:${p("mcVersion")}-${p("sophisticatedCoreVersion")}")
+//	compileOnly("maven.modrinth:sophisticated-core:${p("mcVersion")}-${p("sophisticatedCoreVersion")}")
+//	compileOnly("org.appliedenergistics:appliedenergistics2:${p("appliedenergisticsVersion")}")
 	compileOnly("com.hollingsworth.ars_nouveau:ars_nouveau-${p("mcVersion")}:${p("arsNouveauVersion")}") { isTransitive = false }
-	compileOnly("org.appliedenergistics:appliedenergistics2:${p("appliedenergisticsVersion")}")
 	compileOnly("maven.modrinth:thirst-was-reclaimed:${p("mcVersion")}-${p("thirstVersion")}")
 	runtimeOnly("maven.modrinth:jade:${p("jadeVersion")}+${p("loader")}")
 	add("additionalRuntimeClasspath", mixinAgentNotation)

@@ -1,6 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.core.factory;
 import com.simibubi.create.content.logistics.*;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelScreen;
+import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.stockTicker.*;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrderWithCrafts.CraftingEntry;
 import com.simibubi.create.foundation.gui.*;
@@ -12,10 +13,10 @@ import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.animation.LerpedFloat.Chaser;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.gui.widget.AbstractSimiWidget;
-import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -35,7 +36,8 @@ import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 /**
- * 「自动补齐缺货」独立覆盖层 GUI（宿主 = Create {@link StockKeeperRequestScreen}，右下角触发进入）。
+ * 「自动补齐缺货」独立覆盖层 GUI（宿主屏幕提供 {@link CCGReplenishTree} 能力，由其右下角触发进入；
+ * 现有的宿主 = Create 仓管方块、CMP 便携仓储管理员、phantom 可调便携仓储管理员）。
  * 继承 catnip {@link AbstractSimiScreen}。外观与 Create {@code stock_keeper} 面板一致（同宽 256）：
  * <b>头</b>(Create header) + <b>身体层</b>(Create body 平铺) + <b>底部</b>(返回方块 + 发送长条，发送 hover 用
  * Create 高亮长条)。每组一个配方类型，组尾一个<b>共享地址框</b>（羊皮纸背景，按类型持久化到磁盘）。
@@ -90,8 +92,8 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 	private static final int SWITCH_HINT_H = 11;
 	/** 字符投递钩子是否已注册（事件总线只注册一次，见 {@link #hookCharTyped()}） */
 	private static boolean charHooked;
-	private final StockKeeperRequestScreen parent;
-	private final StockTickerBlockEntity blockEntity;
+	private final Screen parent;
+	private final CCGReplenishTree host;
 	private final List<ReplenishGroup> groups;
 	private final List<AddressEditBox> addrBoxes = new ArrayList<>();
 	private final List<String> groupAddress = new ArrayList<>();
@@ -117,9 +119,9 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 	private Node recipePopup;           // 正在切换配方的节点（null = 弹窗未打开）
 	private int popupX, popupY, popupW, popupH;   // 弹窗矩形（渲染时算，点击命中检测用）
 	private int hoveredPopupRow = -1;   // 弹窗内鼠标所在行（-1 = 不在弹窗上），供悬浮配方卡用
-	public AutoReplenishScreen(StockKeeperRequestScreen parent, StockTickerBlockEntity blockEntity, List<ReplenishGroup> groups) {
+	public AutoReplenishScreen(Screen parent, CCGReplenishTree host, List<ReplenishGroup> groups) {
 		this.parent = parent;
-		this.blockEntity = blockEntity;
+		this.host = host;
 		this.groups = groups;
 		// 每类型地址（取进程内缓存，没有则空）
 		for (ReplenishGroup group : groups) groupAddress.add(CACHE_ADDRS.getOrDefault(group.name(), ""));
@@ -385,6 +387,7 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 	private void sendAll() {
 		// 共享原料按序扣减，避免两个配方都以为同一批库存够用
 		Map<Item, Integer> remaining = new HashMap<>();
+		var summary = host.ccg$summary();   // 宿主的快照可能是现算的，整轮只取一次
 		for (var i = 0; i < groups.size(); i++) {
 			String addr = groupAddress.get(i);
 			for (Node n : groups.get(i).nodes()) {
@@ -393,7 +396,7 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 					CCG.LOGGER.debug("ccg autoReplenish: 未填地址, 跳过 {}", n.target().getHoverName().getString());
 					continue;
 				}
-				if (!hasMaterials(n, remaining)) {
+				if (!hasMaterials(n, remaining, summary)) {
 					CCG.LOGGER.debug("ccg autoReplenish: 原料不足, 跳过 {}", n.target().getHoverName().getString());
 					continue;
 				}
@@ -416,7 +419,7 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 					n.wantTimes(),
 					order
 				);
-				CatnipServices.NETWORK.sendToServer(new PackageOrderRequestPacket(blockEntity.getBlockPos(), packet, addr, false));
+				host.ccg$sendOrder(packet, addr);
 			}
 		}
 		onClose();
@@ -430,8 +433,7 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 	 * 可合成但仓库还没有的中间产物算「不齐」——它得等自己那一轮发完到货后重开界面。
 	 * 齐备才从 {@code remaining} 扣减，避免多个配方重复占用同一批库存。
 	 */
-	private boolean hasMaterials(Node n, Map<Item, Integer> remaining) {
-		var summary = blockEntity.getLastClientsideStockSnapshotAsSummary();
+	private boolean hasMaterials(Node n, Map<Item, Integer> remaining, InventorySummary summary) {
 		if (summary == null) return false;
 		for (ReplenishEntry e : n.items()) {
 			Item item = e.material().getItem();
@@ -863,7 +865,7 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 			if (button == 0 && mouseX >= popupX && mouseX < popupX + popupW && mouseY >= popupY && mouseY < popupY + popupH) {
 				var row = (int) ((mouseY - popupY - 3) / POPUP_ROW_H);
 				if (row >= 0 && row < candidates.size()) {
-					((CCGReplenishTree) parent).ccg$setRecipeChoice(recipePopup.target().getItem(), candidates.get(row).holder().id());
+					host.ccg$setRecipeChoice(recipePopup.target().getItem(), candidates.get(row).holder().id());
 					recipePopup = null;
 					rebuildAll();
 					return true;
@@ -915,8 +917,7 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 	}
 	/** 切换配方后重建整棵树：mixin 按新的配方选择重算，再换一个同款界面（地址缓存是静态的，不会丢） */
 	private void rebuildAll() {
-		var tree = (CCGReplenishTree) parent;
-		var next = new AutoReplenishScreen(parent, blockEntity, tree.ccg$buildGroups());
+		var next = new AutoReplenishScreen(parent, host, host.ccg$buildGroups());
 		next.restoreScroll = scroll;   // 别让切换配方把滚动条弹回顶部（新屏幕 init 里按新内容 clamp）
 		mc.setScreen(next);
 	}

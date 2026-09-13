@@ -1,5 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
+import com.mojang.logging.LogUtils;
 import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import io.github.forgestove.create_cyber_goggles.CCG;
@@ -25,11 +26,13 @@ import net.neoforged.neoforge.client.ClientHooks;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public final class TooltipOverlay {
+	private static final Logger LOGGER = LogUtils.getLogger();
 	public static float hoverTicks;
 	private static ItemStack lastItemStack = ItemStack.EMPTY;
 	private static boolean liftAboveGoggle;
@@ -63,7 +66,7 @@ public final class TooltipOverlay {
 			if (getBlockEntity() instanceof ItemRenderable ir) return orEmpty(ir.ccg$getItemStack());
 			if (getEntity() instanceof ItemRenderable ir) return orEmpty(ir.ccg$getItemStack());
 		} catch (Throwable e) {
-			CCG.LOGGER.error("Failed to get item stack", e);
+			LOGGER.error("Failed to get item stack", e);
 		}
 		return ItemStack.EMPTY;
 	}

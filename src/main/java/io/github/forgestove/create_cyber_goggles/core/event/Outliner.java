@@ -1,10 +1,12 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
+import com.mojang.logging.LogUtils;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.OutlineRenderable;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.client.event.ClientTickEvent.Post;
 import org.jetbrains.annotations.*;
+import org.slf4j.Logger;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -12,6 +14,7 @@ import java.util.Map.Entry;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public final class Outliner {
 	public static final Map<BlockEntity, Integer> cachedBE = new Object2IntOpenHashMap<>();
+	private static final Logger LOGGER = LogUtils.getLogger();
 	public static void tick(Post ignoredEvent) {
 		if (!CCG.config.outliner.renderAnalogBox) return;
 		if (shouldSuppressInfo()) return;
@@ -22,7 +25,7 @@ public final class Outliner {
 		try {
 			cachedBE.entrySet().removeIf(Outliner::render);
 		} catch (Throwable throwable) {
-			CCG.LOGGER.error(throwable.getLocalizedMessage(), throwable);
+			LOGGER.error(throwable.getLocalizedMessage(), throwable);
 		}
 	}
 	private static boolean render(@NotNull Entry<BlockEntity, Integer> entry) {

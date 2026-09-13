@@ -1,5 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
 import com.mojang.datafixers.util.Either;
+import com.mojang.logging.LogUtils;
 import com.simibubi.create.content.equipment.armor.*;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import com.simibubi.create.content.equipment.wrench.WrenchItem;
@@ -17,12 +18,14 @@ import net.neoforged.neoforge.client.event.RenderTooltipEvent.*;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.fluids.*;
 import org.jetbrains.annotations.*;
+import org.slf4j.Logger;
 
 import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public final class ItemTooltip {
 	public final static List<TooltipRenderer> OVERLAY_RENDERERS = new ArrayList<>();
+	private static final Logger LOGGER = LogUtils.getLogger();
 	static {
 		var annoName = AutoTooltipRenderer.class.getName();
 		ModList.get().getAllScanData().forEach(scanData -> scanData.getAnnotations().forEach(annoData -> {
@@ -31,7 +34,7 @@ public final class ItemTooltip {
 				if (TooltipRenderer.class.isAssignableFrom(clazz))
 					OVERLAY_RENDERERS.add((TooltipRenderer) clazz.getDeclaredConstructor().newInstance());
 			} catch (Exception e) {
-				CCG.LOGGER.error("Unable to load tooltip renderer: {}", annoData.memberName(), e);
+				LOGGER.error("Unable to load tooltip renderer: {}", annoData.memberName(), e);
 			}
 		}));
 	}
@@ -102,12 +105,7 @@ public final class ItemTooltip {
 			if (!(element.left().orElse(null) instanceof Component comp)) continue;
 			var fluid = TooltipComponentUtil.peekFluidEntry(comp);
 			if (fluid == null) continue;
-			var preferred = ClientFluidEntryTooltipComponent.preferredBarWidth(
-				mc.font,
-				fluid.fluid(),
-				fluid.capacityMb(),
-				fluid.label()
-			);
+			var preferred = ClientFluidEntryTooltipComponent.preferredBarWidth(mc.font, fluid.fluid(), fluid.capacityMb(), fluid.label());
 			if (preferred > sharedBarWidth) sharedBarWidth = preferred;
 		}
 		// 第二遍：消费 marker 并原地替换（marker 与文本混行时剩余文本保留，UI 独立成行插入）

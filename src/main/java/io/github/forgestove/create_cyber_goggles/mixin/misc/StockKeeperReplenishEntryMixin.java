@@ -40,7 +40,7 @@ public abstract class StockKeeperReplenishEntryMixin extends AbstractSimiContain
 		btn.withCallback(() -> {
 			List<ReplenishGroup> groups = ccg$buildGroups();
 			var summary = ccg$summary();
-			CCG.LOGGER.debug("ccg autoReplenish click: groups={} summary={}", groups.size(), summary == null ? "null" : "ok");
+			CCG.LOGGER.debug("AutoReplenish click: groups={} summary={}", groups.size(), summary == null ? "null" : "ok");
 			mc.setScreen(new AutoReplenishScreen(thiz(), this, groups));
 		});
 		btn.setToolTip(Component.translatable("create_cyber_goggles.gui.auto_replenish.title"));
@@ -54,13 +54,13 @@ public abstract class StockKeeperReplenishEntryMixin extends AbstractSimiContain
 	}
 	@Unique
 	@Override
-	public void ccg$setRecipeChoice(Item item, ResourceLocation recipeId) {
-		ReplenishPlanner.setRecipeChoice(item, recipeId);
+	public InventorySummary ccg$summary() {
+		return blockEntity.getLastClientsideStockSnapshotAsSummary();
 	}
 	@Unique
 	@Override
-	public InventorySummary ccg$summary() {
-		return blockEntity.getLastClientsideStockSnapshotAsSummary();
+	public void ccg$setRecipeChoice(Item item, ResourceLocation recipeId) {
+		ReplenishPlanner.setRecipeChoice(item, recipeId);
 	}
 	@Unique
 	@Override

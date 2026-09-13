@@ -40,23 +40,23 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 @Mixin(TunablePortableTickerScreen.class)
 public abstract class TunablePortableTickerScreenMixin extends AbstractSimiContainerScreen<TunablePortableTickerMenu>
 	implements Self<TunablePortableTickerScreen>, CCGReplenishTree {
-	@Shadow private int activeChannel;
-	@Shadow private UUID activeSessionNetwork;
-	@Shadow private List<BigItemStack> lastSeenStacks;
-	@Shadow public List<BigItemStack> itemsToOrder;
-	/** 蓝图模式待填单（等库存到位；只填一次，之后不覆盖玩家手改的订单） */
-	@Unique private boolean ccg$schematicPending;
 	/**
 	 * 正在打开本覆盖层。宿主的 {@code removed()} 会调 {@code ClientScreenStorage.close()} 清空库存缓存，
 	 * 而被覆盖层顶掉也算一次 removed（Minecraft 切屏时对旧屏调用）→ 关闭覆盖层后宿主不会再 init，
-	 * 库存要等 100 tick 才重新请求，期间界面显示「仓储无内容」。标记这一次不清缓存。
+	 * 库存要等 100 tick 才重新请求，期间显示「仓储无内容」。标记这一次不清缓存。
 	 */
 	@Unique private static boolean ccg$overlayOpening;
+	@Shadow public List<BigItemStack> itemsToOrder;
+	@Shadow private int activeChannel;
+	@Shadow private UUID activeSessionNetwork;
+	@Shadow private List<BigItemStack> lastSeenStacks;
+	/** 蓝图模式待填单（等库存到位；只填一次，之后不覆盖玩家手改的订单） */
+	@Unique private boolean ccg$schematicPending;
 	public TunablePortableTickerScreenMixin(TunablePortableTickerMenu menu, Inventory playerInventory, Component title) {
 		super(menu, playerInventory, title);
 	}
 	@Inject(method = "init", at = @At("TAIL"))
-	private void ccg$portableReplenishInit(CallbackInfo ci) {
+	private void portableReplenishInit(CallbackInfo ci) {
 		if (ReplenishPlanner.clipboardOf(mc.player) == null) return;   // 主手/副手没拿剪贴板蓝图 → 两个功能都不启用
 		ccg$schematicPending = true;                                   // 蓝图模式：等库存到位后照单填单
 		if (!CCG.config.misc.autoReplenishStock) return;
@@ -65,12 +65,25 @@ public abstract class TunablePortableTickerScreenMixin extends AbstractSimiConta
 		var btn = new IconButton(leftPos + imageWidth - 10, topPos + 8, AllIcons.I_ADD);
 		btn.withCallback(() -> {
 			List<ReplenishGroup> groups = ccg$buildGroups();
-			CCG.LOGGER.debug("ccg autoReplenish click: groups={} summary={}", groups.size(), lastSeenStacks == null ? "null" : "ok");
+			CCG.LOGGER.debug("AutoReplenish click: groups={} summary={}", groups.size(), lastSeenStacks == null ? "null" : "ok");
 			ccg$overlayOpening = true;   // 本次切屏会调宿主的 removed()，别让它清掉库存缓存
 			mc.setScreen(new AutoReplenishScreen(thiz(), this, groups));
 		});
 		btn.setToolTip(Component.translatable("create_cyber_goggles.gui.auto_replenish.title"));
 		addRenderableWidget(btn);
+	}
+	/** {@link CCGReplenishTree}：界面切换配方后要重新构建整棵树 */
+	@Unique
+	@Override
+	public List<ReplenishGroup> ccg$buildGroups() {
+		return ReplenishPlanner.build(ReplenishPlanner.clipboardOf(mc.player), ccg$summary());
+	}
+	@Unique
+	@Override
+	public InventorySummary ccg$summary() {
+		var summary = new InventorySummary();
+		if (lastSeenStacks != null) summary.addAllBigItemStacks(lastSeenStacks);
+		return summary;
 	}
 	@WrapOperation(
 		method = "removed", at = @At(
@@ -89,7 +102,7 @@ public abstract class TunablePortableTickerScreenMixin extends AbstractSimiConta
 	 * 物品按 {@code min(清单数量, 库存)} 铺进订单列表。只做一次，之后玩家手改的订单不会被覆盖。
 	 */
 	@Inject(method = "containerTick", at = @At("TAIL"))
-	private void ccg$applySchematicOrder(CallbackInfo ci) {
+	private void applySchematicOrder(CallbackInfo ci) {
 		if (!ccg$schematicPending) return;
 		var summary = ccg$summary();
 		if (summary != null && summary.isEmpty()) return;   // 库存还没到，下一 tick 再看
@@ -98,13 +111,7 @@ public abstract class TunablePortableTickerScreenMixin extends AbstractSimiConta
 		if (orders.isEmpty()) return;
 		itemsToOrder.clear();
 		itemsToOrder.addAll(orders);
-		CCG.LOGGER.debug("ccg schematicList: 便携界面按剪贴板清单填单 {} 项", orders.size());
-	}
-	/** {@link CCGReplenishTree}：界面切换配方后要重新构建整棵树 */
-	@Unique
-	@Override
-	public List<ReplenishGroup> ccg$buildGroups() {
-		return ReplenishPlanner.build(ReplenishPlanner.clipboardOf(mc.player), ccg$summary());
+		CCG.LOGGER.debug("SchematicList: 便携界面按剪贴板清单填单 {} 项", orders.size());
 	}
 	@Unique
 	@Override
@@ -113,16 +120,9 @@ public abstract class TunablePortableTickerScreenMixin extends AbstractSimiConta
 	}
 	@Unique
 	@Override
-	public InventorySummary ccg$summary() {
-		var summary = new InventorySummary();
-		if (lastSeenStacks != null) summary.addAllBigItemStacks(lastSeenStacks);
-		return summary;
-	}
-	@Unique
-	@Override
 	public void ccg$sendOrder(PackageOrderWithCrafts order, String address) {
 		if (activeSessionNetwork == null) {   // 未绑定物流网络：宿主自己的发送路径同样会跳过
-			CCG.LOGGER.debug("ccg autoReplenish: 可调便携仓储管理员未绑定网络, 跳过发送");
+			CCG.LOGGER.debug("可调便携仓储管理员未绑定网络, 跳过发送");
 			return;
 		}
 		CatnipServices.NETWORK.sendToServer(new TunablePortableTickerSendOrderPacket(

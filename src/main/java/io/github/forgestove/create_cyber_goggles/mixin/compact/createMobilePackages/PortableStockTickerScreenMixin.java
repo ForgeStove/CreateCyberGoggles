@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import ru.zznty.create_factory_abstractions.generic.support.*;
 
-import java.util.*;
+import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 /**
@@ -45,7 +45,7 @@ public abstract class PortableStockTickerScreenMixin extends AbstractSimiContain
 		super(menu, playerInventory, title);
 	}
 	@Inject(method = "init", at = @At("TAIL"))
-	private void ccg$portableReplenishInit(CallbackInfo ci) {
+	private void portableReplenishInit(CallbackInfo ci) {
 		if (ReplenishPlanner.clipboardOf(mc.player) == null) return;   // 主手/副手没拿剪贴板蓝图 → 两个功能都不启用
 		ccg$schematicPending = true;                                   // 蓝图模式：等库存到位后照单填单
 		if (!CCG.config.misc.autoReplenishStock) return;
@@ -53,27 +53,11 @@ public abstract class PortableStockTickerScreenMixin extends AbstractSimiContain
 		var btn = new IconButton(leftPos + imageWidth - 10, topPos + 20, AllIcons.I_ADD);
 		btn.withCallback(() -> {
 			List<ReplenishGroup> groups = ccg$buildGroups();
-			CCG.LOGGER.debug("ccg autoReplenish click: groups={} summary={}", groups.size(), ccg$summary() == null ? "null" : "ok");
+			CCG.LOGGER.debug("AutoReplenish click: groups={} summary={}", groups.size(), ccg$summary() == null ? "null" : "ok");
 			mc.setScreen(new AutoReplenishScreen(thiz(), this, groups));
 		});
 		btn.setToolTip(Component.translatable("create_cyber_goggles.gui.auto_replenish.title"));
 		addRenderableWidget(btn);
-	}
-	/**
-	 * 蓝图模式（Create {@code requestSchematicList()} 的同义）：等第一份非空库存到位，把清单里仓库有的
-	 * 物品按 {@code min(清单数量, 库存)} 铺进订单列表。只做一次，之后玩家手改的订单不会被覆盖。
-	 */
-	@Inject(method = "containerTick", at = @At("TAIL"))
-	private void ccg$applySchematicOrder(CallbackInfo ci) {
-		if (!ccg$schematicPending) return;
-		var summary = ccg$summary();
-		if (summary != null && summary.isEmpty()) return;   // 库存还没到，下一 tick 再看
-		ccg$schematicPending = false;
-		var orders = ReplenishPlanner.schematicOrders(ReplenishPlanner.clipboardOf(mc.player), summary);
-		if (orders.isEmpty()) return;
-		itemsToOrder.clear();
-		itemsToOrder.addAll(orders.stream().map(BigGenericStack::of).toList());
-		CCG.LOGGER.debug("ccg schematicList: 便携界面按剪贴板清单填单 {} 项", orders.size());
 	}
 	/** {@link CCGReplenishTree}：界面切换配方后要重新构建整棵树 */
 	@Unique
@@ -83,13 +67,29 @@ public abstract class PortableStockTickerScreenMixin extends AbstractSimiContain
 	}
 	@Unique
 	@Override
-	public void ccg$setRecipeChoice(Item item, ResourceLocation recipeId) {
-		ReplenishPlanner.setRecipeChoice(item, recipeId);
+	public InventorySummary ccg$summary() {
+		return thiz().stockSnapshot().asSummary();
+	}
+	/**
+	 * 蓝图模式（Create {@code requestSchematicList()} 的同义）：等第一份非空库存到位，把清单里仓库有的
+	 * 物品按 {@code min(清单数量, 库存)} 铺进订单列表。只做一次，之后玩家手改的订单不会被覆盖。
+	 */
+	@Inject(method = "containerTick", at = @At("TAIL"))
+	private void applySchematicOrder(CallbackInfo ci) {
+		if (!ccg$schematicPending) return;
+		var summary = ccg$summary();
+		if (summary != null && summary.isEmpty()) return;   // 库存还没到，下一 tick 再看
+		ccg$schematicPending = false;
+		var orders = ReplenishPlanner.schematicOrders(ReplenishPlanner.clipboardOf(mc.player), summary);
+		if (orders.isEmpty()) return;
+		itemsToOrder.clear();
+		itemsToOrder.addAll(orders.stream().map(BigGenericStack::of).toList());
+		CCG.LOGGER.debug("SchematicList: 便携界面按剪贴板清单填单 {} 项", orders.size());
 	}
 	@Unique
 	@Override
-	public InventorySummary ccg$summary() {
-		return thiz().stockSnapshot().asSummary();
+	public void ccg$setRecipeChoice(Item item, ResourceLocation recipeId) {
+		ReplenishPlanner.setRecipeChoice(item, recipeId);
 	}
 	@Unique
 	@Override

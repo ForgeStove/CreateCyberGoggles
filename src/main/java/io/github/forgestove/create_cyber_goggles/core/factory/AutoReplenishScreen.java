@@ -1,11 +1,11 @@
 package io.github.forgestove.create_cyber_goggles.core.factory;
+import com.mojang.logging.LogUtils;
 import com.simibubi.create.content.logistics.*;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelScreen;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.stockTicker.*;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrderWithCrafts.CraftingEntry;
 import com.simibubi.create.foundation.gui.*;
-import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.compat.jei.CCGJeiTitles;
 import io.github.forgestove.create_cyber_goggles.core.factory.ReplenishGroup.*;
 import io.github.forgestove.create_cyber_goggles.mixin.accessor.*;
@@ -31,6 +31,7 @@ import net.neoforged.neoforge.client.event.ScreenEvent.CharacterTyped.Pre;
 import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
+import org.slf4j.Logger;
 
 import java.util.*;
 
@@ -50,6 +51,7 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
  * 高度缓存 O(1)，不再逐帧全量重画全部原料。</p>
  */
 public class AutoReplenishScreen extends AbstractSimiScreen {
+	private static final Logger LOGGER = LogUtils.getLogger();
 	/** 地址缓存：仅进程内有效（关掉游戏即清空），键为组键（配方类型） */
 	private static final Map<String, String> CACHE_ADDRS = new LinkedHashMap<>();
 	// 面板几何（与 Create stock_keeper 同宽）
@@ -60,7 +62,7 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 	// 内容(行/地址框/滚动条/底部按钮)必须对齐到这个棕色区域，否则会溢出到透明边。
 	private static final int CONTENT_L = 36;
 	private static final int CONTENT_R = 228;
-	private static final int NODE_H = 20;          // 节点行高(图标18 + 上下各1 → 行间 2，与左右间距一致)
+	private static final int NODE_H = 20;          // 节点行高
 	private static final int BP_CORNER = 8;        // 蓝图角块边长（保持原 8px 像素密度）
 	private static final int BP_TILE = 4;          // 蓝图边/中的平铺单位（整除物品格 20，任意行列数都不裁切）
 	private static final int BP_PAD = 2;         // 蓝图左右内边距（受滚动条限制：9 列时宽 184 = contentW()）
@@ -380,7 +382,7 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 		mc.screen = parent;
 	}
 	/**
-	 * 发送所有<b>原料齐备</b>的节点：任一原料按 craftTimes 的用量在仓库里不够 → 跳过该配方
+	 * 发送所有<b>原料齐备</b>的节点：任意原料按 craftTimes 的用量在仓库里不够 → 跳过该配方
 	 * （等它依赖的产物到货后重开界面再发）。发送内容与发送区显示的物品同源。
 	 * 装配类走 9 格 pattern（convertRecipe），加工类用通用 pattern，orderedStacks = 每原料 × craftTimes。
 	 */
@@ -393,11 +395,11 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 			for (Node n : groups.get(i).nodes()) {
 				if (n.craftTimes() <= 0 || n.items().isEmpty()) continue;
 				if (addr == null || addr.isBlank()) {
-					CCG.LOGGER.debug("ccg autoReplenish: 未填地址, 跳过 {}", n.target().getHoverName().getString());
+					LOGGER.debug("未填地址, 跳过 {}", n.target().getHoverName().getString());
 					continue;
 				}
 				if (!hasMaterials(n, remaining, summary)) {
-					CCG.LOGGER.debug("ccg autoReplenish: 原料不足, 跳过 {}", n.target().getHoverName().getString());
+					LOGGER.debug("原料不足, 跳过 {}", n.target().getHoverName().getString());
 					continue;
 				}
 				List<BigItemStack> order = new ArrayList<>();
@@ -411,8 +413,8 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 					new PackageOrder(order),
 					List.of(new CraftingEntry(new PackageOrder(pattern), n.craftTimes()))
 				);
-				CCG.LOGGER.debug(
-					"ccg autoReplenish send: {} addr={} craft={}/{} order={}",
+				LOGGER.debug(
+					"Send: {} addr={} craft={}/{} order={}",
 					n.target().getHoverName().getString(),
 					addr,
 					n.craftTimes(),

@@ -1,15 +1,16 @@
 package io.github.forgestove.create_cyber_goggles.core.factory;
+import com.mojang.logging.LogUtils;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.equipment.clipboard.ClipboardEntry;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
-import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.factory.ReplenishGroup.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.*;
+import org.slf4j.Logger;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -26,10 +27,7 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
  * 取 min(需求次数, 产能上限) 作为最终 craftTimes。共享原料按序消耗。只读。
  */
 public final class ReplenishPlanner {
-	/**
-	 * 同物品多配方时的类型取舍顺序（越靠前越优先）。表内的类型 > 其他 Create 类型 > 非 Create 类型，
-	 * 表里没列出的走默认档位，所以新增类型不会互相挤掉。
-	 */
+	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final List<String> TYPE_ORDER = List.of(
 		"create:crushing",        // 粉碎优于研磨
 		"create:milling",
@@ -76,11 +74,13 @@ public final class ReplenishPlanner {
 			for (ClipboardEntry entry : page)
 				if (!entry.icon.isEmpty() && entry.itemAmount > 0) want.merge(entry.icon.getItem(), entry.itemAmount, Integer::sum);
 		List<BigItemStack> out = new ArrayList<>(want.size());
-		want.forEach((item, amount) -> {
+		for (Entry<Item, Integer> entry : want.entrySet()) {
+			Item item = entry.getKey();
+			Integer amount = entry.getValue();
 			int have = summary.getCountOf(item.getDefaultInstance());
-			if (have <= 0) return;
+			if (have <= 0) continue;
 			out.add(new BigItemStack(item.getDefaultInstance(), Math.min(amount, have)));
-		});
+		}
 		return out;
 	}
 	/** 该物品指定用哪个配方（null = 恢复自动选优）。选择不缓存，下次构建即生效 */
@@ -127,8 +127,8 @@ public final class ReplenishPlanner {
 				drafts.put(itemId, new Draft(item, recipe, outPer, want, needed - have, items));
 				spreadWant.put(itemId, want);
 				progressed = true;
-				CCG.LOGGER.debug(
-					"ccg autoReplenish expand: {} need={} have={} → want={} (单次产出 {})",
+				LOGGER.debug(
+					"AutoReplenish expand: {} need={} have={} → want={} (单次产出 {})",
 					item.getHoverName().getString(),
 					needed,
 					have,
@@ -192,8 +192,8 @@ public final class ReplenishPlanner {
 					missing.merge(di.material().getItem(), need - avail, Integer::sum);
 			}
 			times = Math.max(0, times);
-			if (limited != null) CCG.LOGGER.debug(
-				"ccg autoReplenish cap: {} 受限于 {} (可用 {} / 每次 {}) → cap={}",
+			if (limited != null) LOGGER.debug(
+				"AutoReplenish cap: {} 受限于 {} (可用 {} / 每次 {}) → cap={}",
 				d.target().getHoverName().getString(),
 				limited.getDefaultInstance().getHoverName().getString(),
 				limitedAvail,
@@ -252,17 +252,11 @@ public final class ReplenishPlanner {
 			var node = new Node(d.target().copy(), d.want(), d.recipe(), t, entries, nodeDepth, candidateCards(d.target(), summary));
 			if (t <= 0) {
 				blockedByType.computeIfAbsent(type, k -> new ArrayList<>()).add(node);
-				CCG.LOGGER.debug("ccg autoReplenish blocked: {}", d.target().getHoverName().getString());
+				LOGGER.debug("Blocked: {}", d.target().getHoverName().getString());
 				continue;
 			}
 			byType.computeIfAbsent(type, k -> new ArrayList<>()).add(node);
-			CCG.LOGGER.debug(
-				"ccg autoReplenish node: {} craft={}/{} depth={}",
-				d.target().getHoverName().getString(),
-				t,
-				d.want(),
-				nodeDepth
-			);
+			LOGGER.debug("Node: {} craft={}/{} depth={}", d.target().getHoverName().getString(), t, d.want(), nodeDepth);
 		}
 		// 有缺失或 blocked 但没节点的类型也要成组（组名 = 配方类型；空串是「无法合成」兜底组）
 		for (String type : missingByType.keySet()) byType.computeIfAbsent(type, k -> new ArrayList<>());
@@ -275,7 +269,7 @@ public final class ReplenishPlanner {
 			out.add(new ReplenishGroup(type, byType.get(type), blockedByType.getOrDefault(type, List.of()), missingList));
 		}
 		missingByType.entrySet().removeIf(e -> e.getValue().isEmpty());   // 日志只留真正有缺口的组
-		if (!missingByType.isEmpty()) CCG.LOGGER.debug("ccg autoReplenish missing: {}", missingByType);
+		if (!missingByType.isEmpty()) LOGGER.debug("AutoReplenish missing: {}", missingByType);
 		return out;
 	}
 	/** 缓存归属检查：换存档或重载数据包后 RecipeManager 会变，候选与产物表必须重建 */
@@ -412,7 +406,7 @@ public final class ReplenishPlanner {
 			// 产物不能同时是自己的原料（自循环配方），跳过
 			for (Ingredient ing : recipe.getIngredients())
 				if (!ing.isEmpty() && ing.test(target)) {
-					CCG.LOGGER.debug("    跳过自循环配方 {} (产物 {} 也是原料)", recipe.getType(), target.getHoverName().getString());
+					LOGGER.debug("跳过自循环配方 {} (产物 {} 也是原料)", recipe.getType(), target.getHoverName().getString());
 					continue outer;
 				}
 			// 排序优先级（从高到低）：
@@ -448,7 +442,7 @@ public final class ReplenishPlanner {
 			.thenComparing(c -> -c.raw()));
 		List<RecipeHolder<?>> out = new ArrayList<>(found.size());
 		found.forEach(c -> out.add(c.holder()));
-		if (!out.isEmpty()) CCG.LOGGER.debug("    候选配方 {} 个，首选 {}", out.size(), out.getFirst().value().getType());
+		if (!out.isEmpty()) LOGGER.debug("候选配方 {} 个，首选 {}", out.size(), out.getFirst().value().getType());
 		return out;
 	}
 	/**
@@ -468,11 +462,11 @@ public final class ReplenishPlanner {
 		List<RecipeHolder<?>> candidates = candidates(target, summary);
 		for (RecipeHolder<?> holder : candidates)
 			if (!createsCycle(holder.value(), key, drafts)) {
-				CCG.LOGGER.debug("    选中配方 {} (候选 {} 个)", holder.value().getType(), candidates.size());
+				LOGGER.debug("选中配方 {} (候选 {} 个)", holder.value().getType(), candidates.size());
 				return holder.value();
 			}
 		if (!candidates.isEmpty())
-			CCG.LOGGER.debug("    候选配方全部成环，{} 按原材料处理 (候选 {} 个)", target.getHoverName().getString(), candidates.size());
+			LOGGER.debug("候选配方全部成环，{} 按原材料处理 (候选 {} 个)", target.getHoverName().getString(), candidates.size());
 		return null;
 	}
 	/** 该物品是否是某个配方的产物（只查产物表、不递归，用于给原料的「基础度」打分） */

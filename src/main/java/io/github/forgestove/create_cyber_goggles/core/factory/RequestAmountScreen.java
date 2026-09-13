@@ -1,8 +1,8 @@
 package io.github.forgestove.create_cyber_goggles.core.factory;
+import com.mojang.logging.LogUtils;
 import com.simibubi.create.content.logistics.box.PackageStyles;
 import com.simibubi.create.foundation.gui.*;
 import com.simibubi.create.foundation.gui.widget.IconButton;
-import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.gui.element.GuiGameElement;
@@ -17,11 +17,13 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
+import org.slf4j.Logger;
 
 import java.util.function.Consumer;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class RequestAmountScreen extends AbstractSimiScreen {
+	private static final Logger LOGGER = LogUtils.getLogger();
 	private final Screen parentScreen;
 	private final ItemStack stack;
 	private final int initial;
@@ -60,7 +62,7 @@ public class RequestAmountScreen extends AbstractSimiScreen {
 			try {
 				if (Long.parseLong(text) > max) amountInput.setValue(Integer.toString(max));
 			} catch (NumberFormatException e) {
-				CCG.LOGGER.warn(e.getLocalizedMessage(), e);
+				LOGGER.warn(e.getLocalizedMessage(), e);
 			}
 		});
 		amountInput.setBordered(false);
@@ -82,7 +84,7 @@ public class RequestAmountScreen extends AbstractSimiScreen {
 		try {
 			return Integer.parseInt(amount);
 		} catch (NumberFormatException e) {
-			CCG.LOGGER.warn(e.getLocalizedMessage(), e);
+			LOGGER.warn(e.getLocalizedMessage(), e);
 			return 1;
 		}
 	}

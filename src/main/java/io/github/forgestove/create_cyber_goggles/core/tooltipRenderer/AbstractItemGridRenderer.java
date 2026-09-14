@@ -19,7 +19,9 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public abstract class AbstractItemGridRenderer implements TooltipRenderer {
 	public static final int PAD = 4;
 	private static final ResourceLocation CONTAINER_BACKGROUND = getMCRes("textures/gui/container/generic_54.png");
-	private static final int PANEL_TEX = 256, PANEL_EDGE = 4, PANEL_SRC_W = 176, PANEL_SRC_H = 222;
+	private static final int PANEL_TEX = 256;
+	private static final int PANEL_SRC_W = 176;
+	private static final int PANEL_SRC_H = 222;
 	private static PanelRect cachedRect;
 	private static String cachedPackId;
 	public static void renderItemGrid(
@@ -63,7 +65,7 @@ public abstract class AbstractItemGridRenderer implements TooltipRenderer {
 	}
 	public static void renderPanel(GuiGraphics gui, int width, int height) {
 		var rect = getPanelRect();
-		var e = PANEL_EDGE;
+		var e = PAD;
 		var mw = Math.max(0, width - e * 2);
 		var mh = Math.max(0, height - e * 2);
 		var x0 = rect.x0();
@@ -147,8 +149,6 @@ public abstract class AbstractItemGridRenderer implements TooltipRenderer {
 	) {
 		gui.blit(CONTAINER_BACKGROUND, x, y, dstW, dstH, srcU, srcV, srcW, srcH, rect.texW(), rect.texH());
 	}
-	@Override
-	public abstract boolean supports(ItemStack stack);
 	@Override
 	public int width(ItemStack stack) {
 		var data = getData(stack);

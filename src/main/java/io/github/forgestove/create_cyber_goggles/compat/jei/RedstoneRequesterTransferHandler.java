@@ -50,9 +50,9 @@ public class RedstoneRequesterTransferHandler implements IUniversalRecipeTransfe
 		var slots = container.ghostInventory.getSlots();
 		if (groups.size() > slots)
 			return new RecipeTransferErrorTooltip(Component.translatable("create_cyber_goggles.gui.redstoneRequester.tooManyIngredients"));
-		// 不实际转移时返回 COSMETIC 错误：只在转移按钮悬浮提示里追加 Alt 说明，按钮仍可用
+		// 不实际转移时返回 COSMETIC 错误
 		if (!doTransfer) return AltHintError.INSTANCE;
-		// 填入请求槽并同步服务端（每格物品 count=1，数量由 amounts 决定，避免与 amounts 渲染叠加假数量）
+		// 填入请求槽并同步服务端
 		for (var i = 0; i < slots; i++) {
 			var group = i < groups.size() ? groups.get(i) : null;
 			var stack = group != null ? group.stack.copyWithCount(1) : ItemStack.EMPTY;
@@ -73,7 +73,7 @@ public class RedstoneRequesterTransferHandler implements IUniversalRecipeTransfe
 		List<BigItemStack> groups = new ArrayList<>();
 		for (var ingredient : recipe.getIngredients()) {
 			if (ingredient.isEmpty()) {
-				groups.add(null); // 空位占槽留空
+				groups.add(null);
 				continue;
 			}
 			var matches = ingredient.getItems();

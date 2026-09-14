@@ -19,12 +19,6 @@ import net.minecraft.world.item.crafting.*;
 import org.jetbrains.annotations.*;
 
 import java.util.*;
-/**
- * 让红石请求器支持 JEI 配方转移按钮，可用 Alt 切换填入方式：
- * 默认（动力合成器）——按配方格子顺序（先从左到右再从上到下）扫描，空位跳过，
- * 连续同类合并成一组（数量 = 连续格数），批量请求原料供动力合成器铺料；
- * 按住 Alt（原版合成器）——按 3x3 格子位置逐格填入，空位留空，每格数量固定 1，保留配方形状。
- */
 public class RedstoneRequesterTransferHandler implements IUniversalRecipeTransferHandler<RedstoneRequesterMenu> {
 	@Override
 	public @NotNull Class<? extends RedstoneRequesterMenu> getContainerClass() {
@@ -46,7 +40,7 @@ public class RedstoneRequesterTransferHandler implements IUniversalRecipeTransfe
 		if (!(object instanceof RecipeHolder<?> recipeHolder)) return null;
 		// 按住 Alt 以原版合成器方式填入，否则默认以动力合成器方式填入
 		var recipe = recipeHolder.value();
-		var groups = Screen.hasAltDown() ? vanillaStyleGroups(recipe) : mechanicalStyleGroups(recipe);
+		var groups = Screen.hasAltDown() ? vanillaStyleGroups(recipe, maxTransfer) : mechanicalStyleGroups(recipe);
 		var slots = container.ghostInventory.getSlots();
 		if (groups.size() > slots)
 			return new RecipeTransferErrorTooltip(Component.translatable("create_cyber_goggles.gui.redstoneRequester.tooManyIngredients"));
@@ -68,9 +62,9 @@ public class RedstoneRequesterTransferHandler implements IUniversalRecipeTransfe
 		}
 		return null;
 	}
-	/** 原版合成器方式：按配方格子逐格填入（行优先），空位用 null 占位留空，每格数量固定为 1 */
-	private static List<BigItemStack> vanillaStyleGroups(Recipe<?> recipe) {
+	private static List<BigItemStack> vanillaStyleGroups(Recipe<?> recipe, boolean maxTransfer) {
 		List<BigItemStack> groups = new ArrayList<>();
+		var count = maxTransfer ? 64 : 1;
 		for (var ingredient : recipe.getIngredients()) {
 			if (ingredient.isEmpty()) {
 				groups.add(null);
@@ -81,11 +75,10 @@ public class RedstoneRequesterTransferHandler implements IUniversalRecipeTransfe
 				groups.add(null);
 				continue;
 			}
-			groups.add(new BigItemStack(matches[0].copyWithCount(1), 1));
+			groups.add(new BigItemStack(matches[0].copyWithCount(1), count));
 		}
 		return groups;
 	}
-	/** 动力合成器方式：连续同类合并成一组（数量 = 连续格数），空位只跳过不打断连续 */
 	private static List<BigItemStack> mechanicalStyleGroups(Recipe<?> recipe) {
 		List<BigItemStack> groups = new ArrayList<>();
 		BigItemStack currentGroup = null;
@@ -97,15 +90,13 @@ public class RedstoneRequesterTransferHandler implements IUniversalRecipeTransfe
 				continue;
 			}
 			var representative = matches[0];
-			if (currentGroup != null && ItemStack.isSameItemSameComponents(currentGroup.stack, representative)) currentGroup.count++;
-			else {
+			if (currentGroup == null || !ItemStack.isSameItemSameComponents(currentGroup.stack, representative)) {
 				currentGroup = new BigItemStack(representative.copyWithCount(1), 1);
 				groups.add(currentGroup);
-			}
+			} else currentGroup.count++;
 		}
 		return groups;
 	}
-	/** COSMETIC 错误：只在转移按钮悬浮提示里追加 Alt 说明，既不阻止转移也不画高亮 */
 	private static final class AltHintError implements IRecipeTransferError {
 		private static final AltHintError INSTANCE = new AltHintError();
 		@Override
@@ -114,17 +105,12 @@ public class RedstoneRequesterTransferHandler implements IUniversalRecipeTransfe
 		}
 		@Override
 		public int getButtonHighlightColor() {
-			return 0; // COSMETIC 默认会画橙色高亮，置 0 关闭
+			return 0; // 禁用默认的高亮
 		}
 		@Override
 		public void getTooltip(ITooltipBuilder tooltip) {
 			tooltip.add(Component.translatable("jei.tooltip.transfer"));
-			tooltip.add(Component.translatable("create_cyber_goggles.gui.redstoneRequester.jeiHint")
-				.withStyle(ChatFormatting.DARK_GRAY));
-		}
-		@Override
-		public int getMissingCountHint() {
-			return 0; // 与原先「无错误」时的取值一致，避免影响 JEI 的配方排序
+			tooltip.add(Component.translatable("create_cyber_goggles.gui.redstoneRequester.jeiHint").withStyle(ChatFormatting.DARK_GRAY));
 		}
 	}
 }

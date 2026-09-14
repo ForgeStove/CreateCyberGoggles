@@ -8,13 +8,9 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
----
-
 ## Overview
 
 **Create: Cyber Goggles** is a client-side mod for [**Create**](https://modrinth.com/mod/create), providing modular assistance features.
-
----
 
 ## Features
 
@@ -57,8 +53,6 @@ All features can be toggled individually in the config.
 - Create-style stack count, blueprint name fix, recursive blueprint scan, infinite edit-box length
 - Quick request actions, JEI recipe transfer for stock keeper and redstone requester, preview filter, show stress network
 - A few stability fixes (e.g. NBT crash)
-
----
 
 ## Versions
 

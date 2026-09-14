@@ -1,3 +1,1 @@
-- Add auto-replenish compact for CreatePhantom and CreateMobilePackages
-- Fix the issue where the TooltipOverlay is incorrectly offset after adding an offset
-- Fix the issue where the address bar cannot correctly edit in auto-replenishment
+- Fix #92

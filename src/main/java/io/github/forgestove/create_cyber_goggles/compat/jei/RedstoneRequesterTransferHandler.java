@@ -4,10 +4,12 @@ import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.redstoneRequester.*;
 import com.simibubi.create.foundation.gui.menu.GhostItemSubmitPacket;
 import io.github.forgestove.create_cyber_goggles.mixin.accessor.RedstoneRequesterScreenAccessor;
+import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.transfer.*;
 import mezz.jei.library.transfer.RecipeTransferErrorTooltip;
 import net.createmod.catnip.platform.CatnipServices;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -48,7 +50,8 @@ public class RedstoneRequesterTransferHandler implements IUniversalRecipeTransfe
 		var slots = container.ghostInventory.getSlots();
 		if (groups.size() > slots)
 			return new RecipeTransferErrorTooltip(Component.translatable("create_cyber_goggles.gui.redstoneRequester.tooManyIngredients"));
-		if (!doTransfer) return null;
+		// 不实际转移时返回 COSMETIC 错误：只在转移按钮悬浮提示里追加 Alt 说明，按钮仍可用
+		if (!doTransfer) return AltHintError.INSTANCE;
 		// 填入请求槽并同步服务端（每格物品 count=1，数量由 amounts 决定，避免与 amounts 渲染叠加假数量）
 		for (var i = 0; i < slots; i++) {
 			var group = i < groups.size() ? groups.get(i) : null;
@@ -101,5 +104,27 @@ public class RedstoneRequesterTransferHandler implements IUniversalRecipeTransfe
 			}
 		}
 		return groups;
+	}
+	/** COSMETIC 错误：只在转移按钮悬浮提示里追加 Alt 说明，既不阻止转移也不画高亮 */
+	private static final class AltHintError implements IRecipeTransferError {
+		private static final AltHintError INSTANCE = new AltHintError();
+		@Override
+		public @NotNull Type getType() {
+			return Type.COSMETIC;
+		}
+		@Override
+		public int getButtonHighlightColor() {
+			return 0; // COSMETIC 默认会画橙色高亮，置 0 关闭
+		}
+		@Override
+		public void getTooltip(ITooltipBuilder tooltip) {
+			tooltip.add(Component.translatable("jei.tooltip.transfer"));
+			tooltip.add(Component.translatable("create_cyber_goggles.gui.redstoneRequester.jeiAltHint")
+				.withStyle(ChatFormatting.DARK_GRAY));
+		}
+		@Override
+		public int getMissingCountHint() {
+			return 0; // 与原先「无错误」时的取值一致，避免影响 JEI 的配方排序
+		}
 	}
 }

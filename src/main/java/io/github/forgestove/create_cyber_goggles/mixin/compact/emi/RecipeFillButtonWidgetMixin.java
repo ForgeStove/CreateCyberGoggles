@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.*;
 /**
  * 为 EMI 配方转移按钮（「+」）追加「按住 Alt 以原版方式填入」提示，与 JEI 侧
- * {@code RecipeTransferButtonControllerMixin} 对应。转移逻辑经 JemiRecipeHandler
+ * {@code RedstoneRequesterTransferHandler.AltHintError}（COSMETIC 错误）对应。转移逻辑经 JemiRecipeHandler
  * 桥接到 RedstoneRequesterTransferHandler，Alt 切换在原版/动力合成器方式间已生效。
  */
 @Pseudo

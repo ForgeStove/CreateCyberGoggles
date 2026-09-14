@@ -25,7 +25,7 @@ public abstract class RecipeFillButtonWidgetMixin {
 		if (screen == null || !(screen.getMenu() instanceof RedstoneRequesterMenu)) return;
 		var tooltip = new ArrayList<>(cir.getReturnValue());
 		tooltip.add(ClientTooltipComponent.create(EmiPort.ordered(Component.translatable(
-			"create_cyber_goggles.gui.redstoneRequester.jeiAltHint").withStyle(ChatFormatting.DARK_GRAY))));
+			"create_cyber_goggles.gui.redstoneRequester.jeiHint").withStyle(ChatFormatting.DARK_GRAY))));
 		cir.setReturnValue(tooltip);
 	}
 }

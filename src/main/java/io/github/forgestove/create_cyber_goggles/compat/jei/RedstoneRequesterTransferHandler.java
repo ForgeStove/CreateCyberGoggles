@@ -119,7 +119,7 @@ public class RedstoneRequesterTransferHandler implements IUniversalRecipeTransfe
 		@Override
 		public void getTooltip(ITooltipBuilder tooltip) {
 			tooltip.add(Component.translatable("jei.tooltip.transfer"));
-			tooltip.add(Component.translatable("create_cyber_goggles.gui.redstoneRequester.jeiAltHint")
+			tooltip.add(Component.translatable("create_cyber_goggles.gui.redstoneRequester.jeiHint")
 				.withStyle(ChatFormatting.DARK_GRAY));
 		}
 		@Override

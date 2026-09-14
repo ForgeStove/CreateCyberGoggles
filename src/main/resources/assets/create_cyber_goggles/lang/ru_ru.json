@@ -270,7 +270,7 @@
 	"create_cyber_goggles.gui.auto_replenish.switch_recipe": "Клик левой кнопкой мыши для переключения рецепта",
 	"create_cyber_goggles.gui.auto_replenish.title": "Автопополнение",
 	"create_cyber_goggles.gui.auto_replenish.uncraftable": "Несоздаваемое ",
-	"create_cyber_goggles.gui.redstoneRequester.jeiAltHint": "Удерживайте [Alt] чтобы заполнить сетку для ванильного крафтера",
+	"create_cyber_goggles.gui.redstoneRequester.jeiHint": "Удерживайте [Alt] чтобы заполнить сетку для ванильного крафтера",
 	"create_cyber_goggles.gui.redstoneRequester.tooManyIngredients": "Слишком много видов ингредиентов",
 	"create_cyber_goggles.gui.schematicTable.folderRoot": "Корневой каталог (/)",
 	"create_cyber_goggles.gui.schematicTable.folderSelector": "Выбрать папку",

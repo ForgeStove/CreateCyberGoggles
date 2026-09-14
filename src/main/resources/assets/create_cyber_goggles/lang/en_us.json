@@ -275,7 +275,7 @@
 	"create_cyber_goggles.gui.auto_replenish.switch_recipe": "Left-click to switch recipe",
 	"create_cyber_goggles.gui.auto_replenish.title": "Auto Replenish",
 	"create_cyber_goggles.gui.auto_replenish.uncraftable": "Uncraftable",
-	"create_cyber_goggles.gui.redstoneRequester.jeiAltHint": "Hold [Alt] to fill by vanilla crafting grid",
+	"create_cyber_goggles.gui.redstoneRequester.jeiHint": "Hold [Alt] to fill by vanilla crafting grid",
 	"create_cyber_goggles.gui.redstoneRequester.tooManyIngredients": "Too many ingredient types",
 	"create_cyber_goggles.gui.schematicTable.folderRoot": "Root (/)",
 	"create_cyber_goggles.gui.schematicTable.folderSelector": "Schematic Folder",

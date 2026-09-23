@@ -9,7 +9,6 @@ import java.util.function.*;
  * <p>纯 Java 实现（不引用 MC 类，便于单元测试），由 {@link GoggleTooltip} 持有实例并做类型适配。</p>
  */
 final class GoggleTooltipRegistry<C> {
-	record Entry<C>(String id, @Nullable Function<C, Boolean> action) {}
 	private final String nativeId;
 	private final String builtinPrefix;
 	private final BiConsumer<String, @Nullable Throwable> warner;
@@ -17,7 +16,7 @@ final class GoggleTooltipRegistry<C> {
 	private final Set<String> warned = ConcurrentHashMap.newKeySet();
 	GoggleTooltipRegistry(String nativeId, String builtinNamespace, BiConsumer<String, @Nullable Throwable> warner) {
 		this.nativeId = nativeId;
-		this.builtinPrefix = builtinNamespace + ":";
+		builtinPrefix = builtinNamespace + ":";
 		this.warner = warner;
 	}
 	void register(Class<?> target, String id, @Nullable Function<C, Boolean> action) {
@@ -28,11 +27,13 @@ final class GoggleTooltipRegistry<C> {
 		}
 		list.add(new Entry<>(id, action));
 	}
+	private static <C> int indexOf(List<Entry<C>> list, String id) {
+		for (var i = 0; i < list.size(); i++)
+			if (list.get(i).id().equals(id)) return i;
+		return -1;
+	}
 	void registerBefore(Class<?> target, String anchorId, String id, Function<C, Boolean> action) {
 		insert(target, anchorId, id, action, false);
-	}
-	void registerAfter(Class<?> target, String anchorId, String id, Function<C, Boolean> action) {
-		insert(target, anchorId, id, action, true);
 	}
 	private void insert(Class<?> target, String anchorId, String id, Function<C, Boolean> action, boolean after) {
 		var list = entries.computeIfAbsent(target, key -> new CopyOnWriteArrayList<>());
@@ -47,6 +48,9 @@ final class GoggleTooltipRegistry<C> {
 			return;
 		}
 		list.add(after ? anchor + 1 : anchor, new Entry<>(id, action));
+	}
+	void registerAfter(Class<?> target, String anchorId, String id, Function<C, Boolean> action) {
+		insert(target, anchorId, id, action, true);
 	}
 	boolean dispatch(C context, Class<?> actualClass, @Nullable BooleanSupplier nativeFallback) {
 		var list = lookup(actualClass);
@@ -74,9 +78,5 @@ final class GoggleTooltipRegistry<C> {
 		}
 		return null;
 	}
-	private static <C> int indexOf(List<Entry<C>> list, String id) {
-		for (var i = 0; i < list.size(); i++)
-			if (list.get(i).id().equals(id)) return i;
-		return -1;
-	}
+	record Entry<C>(String id, @Nullable Function<C, Boolean> action) {}
 }

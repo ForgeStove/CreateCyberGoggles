@@ -1,8 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.mixin.compact.emi;
 import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterScreen;
 import dev.emi.emi.api.EmiApi;
-import dev.emi.emi.api.recipe.handler.EmiCraftContext.Destination;
-import dev.emi.emi.api.recipe.handler.EmiCraftContext.Type;
+import dev.emi.emi.api.recipe.handler.EmiCraftContext.*;
 import dev.emi.emi.registry.EmiRecipeFiller;
 import dev.emi.emi.screen.EmiScreenManager;
 import net.minecraft.client.gui.screens.Screen;

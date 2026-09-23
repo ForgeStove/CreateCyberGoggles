@@ -1,7 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.factory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.*;
 
 import java.util.List;
 /**

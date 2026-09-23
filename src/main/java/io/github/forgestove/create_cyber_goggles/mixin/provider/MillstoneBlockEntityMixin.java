@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 
-import java.util.*;
+import java.util.List;
 @Mixin(MillstoneBlockEntity.class)
 public abstract class MillstoneBlockEntityMixin extends KineticBlockEntity
 	implements IHaveGoggleInformation, ItemRenderable, Self<MillstoneBlockEntity> {

@@ -9,15 +9,15 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 @Mixin(value = FactoryPanelBlockEntity.class, remap = false)
 public abstract class FactoryPanelBlockEntityMixin implements OutlineRenderable, Self<FactoryPanelBlockEntity> {
+	@Unique private AttachFace ccg$lastFace;
+	@Unique private Direction ccg$lastFacing;
 	@Override
 	public void ccg$render() {
 		var thiz = thiz();
@@ -56,8 +56,6 @@ public abstract class FactoryPanelBlockEntityMixin implements OutlineRenderable,
 	public int ccg$getRenderDelay() {
 		return 0;
 	}
-	@Unique private AttachFace ccg$lastFace;
-	@Unique private Direction ccg$lastFacing;
 	/** 方向变化时清 lastShape：rotate 转向只改 blockState 不广播 Redraw，故在 getShape 前自愈缓存，保证碰撞/渲染用新方向重算 */
 	@Inject(method = "getShape", at = @At("HEAD"))
 	private void ccg$recomputeShapeIfFacingChanged(CallbackInfoReturnable<VoxelShape> cir) {

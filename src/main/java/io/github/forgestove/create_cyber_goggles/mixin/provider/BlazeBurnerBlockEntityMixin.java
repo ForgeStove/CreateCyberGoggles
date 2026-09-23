@@ -12,8 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 @Mixin(BlazeBurnerBlockEntity.class)
-public abstract class BlazeBurnerBlockEntityMixin
-	implements IHaveGoggleInformation, BurnerTooltipData, Self<BlazeBurnerBlockEntity> {
+public abstract class BlazeBurnerBlockEntityMixin implements IHaveGoggleInformation, BurnerTooltipData, Self<BlazeBurnerBlockEntity> {
 	@Shadow public boolean isCreative;
 	@Shadow protected int remainingBurnTime;
 	@Shadow protected FuelType activeFuel;

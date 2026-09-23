@@ -7,7 +7,7 @@ import com.simibubi.create.infrastructure.config.AllConfigs;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.event.*;
 import io.github.forgestove.create_cyber_goggles.core.factory.CCGMods;
-import io.github.forgestove.create_cyber_goggles.core.util.*;
+import io.github.forgestove.create_cyber_goggles.core.util.TooltipComponentUtil;
 import net.createmod.catnip.gui.element.GuiGameElement.GuiRenderBuilder;
 import net.createmod.catnip.gui.element.RenderElement;
 import net.createmod.catnip.outliner.Outliner.OutlineEntry;

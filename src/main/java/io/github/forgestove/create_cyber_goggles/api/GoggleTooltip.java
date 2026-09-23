@@ -1,5 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.api;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.GoggleTooltipRegistry;
 import io.github.forgestove.create_cyber_goggles.core.factory.CCGMods;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;

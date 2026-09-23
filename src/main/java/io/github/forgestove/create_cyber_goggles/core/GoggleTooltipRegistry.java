@@ -1,4 +1,5 @@
-package io.github.forgestove.create_cyber_goggles.api;
+package io.github.forgestove.create_cyber_goggles.core;
+import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -6,20 +7,21 @@ import java.util.concurrent.*;
 import java.util.function.*;
 /**
  * 护目镜悬浮内容条目注册表核心。
- * <p>纯 Java 实现（不引用 MC 类，便于单元测试），由 {@link GoggleTooltip} 持有实例并做类型适配。</p>
+ * <p>纯 Java 实现（不引用 MC 类，便于单元测试），由 {@code GoggleTooltip} 持有实例并做类型适配。</p>
  */
-final class GoggleTooltipRegistry<C> {
+@Internal
+public final class GoggleTooltipRegistry<C> {
 	private final String nativeId;
 	private final String builtinPrefix;
 	private final BiConsumer<String, @Nullable Throwable> warner;
 	private final Map<Class<?>, List<Entry<C>>> entries = new ConcurrentHashMap<>();
 	private final Set<String> warned = ConcurrentHashMap.newKeySet();
-	GoggleTooltipRegistry(String nativeId, String builtinNamespace, BiConsumer<String, @Nullable Throwable> warner) {
+	public GoggleTooltipRegistry(String nativeId, String builtinNamespace, BiConsumer<String, @Nullable Throwable> warner) {
 		this.nativeId = nativeId;
 		builtinPrefix = builtinNamespace + ":";
 		this.warner = warner;
 	}
-	void register(Class<?> target, String id, @Nullable Function<C, Boolean> action) {
+	public void register(Class<?> target, String id, @Nullable Function<C, Boolean> action) {
 		var list = entries.computeIfAbsent(target, key -> new CopyOnWriteArrayList<>());
 		if (indexOf(list, id) >= 0) {
 			warner.accept("Duplicate goggle tooltip entry " + id + " for " + target.getName(), null);
@@ -32,7 +34,7 @@ final class GoggleTooltipRegistry<C> {
 			if (list.get(i).id().equals(id)) return i;
 		return -1;
 	}
-	void registerBefore(Class<?> target, String anchorId, String id, Function<C, Boolean> action) {
+	public void registerBefore(Class<?> target, String anchorId, String id, Function<C, Boolean> action) {
 		insert(target, anchorId, id, action, false);
 	}
 	private void insert(Class<?> target, String anchorId, String id, Function<C, Boolean> action, boolean after) {
@@ -49,10 +51,10 @@ final class GoggleTooltipRegistry<C> {
 		}
 		list.add(after ? anchor + 1 : anchor, new Entry<>(id, action));
 	}
-	void registerAfter(Class<?> target, String anchorId, String id, Function<C, Boolean> action) {
+	public void registerAfter(Class<?> target, String anchorId, String id, Function<C, Boolean> action) {
 		insert(target, anchorId, id, action, true);
 	}
-	boolean dispatch(C context, Class<?> actualClass, @Nullable BooleanSupplier nativeFallback) {
+	public boolean dispatch(C context, Class<?> actualClass, @Nullable BooleanSupplier nativeFallback) {
 		var list = lookup(actualClass);
 		if (list == null) return nativeFallback != null && nativeFallback.getAsBoolean();
 		var added = false;

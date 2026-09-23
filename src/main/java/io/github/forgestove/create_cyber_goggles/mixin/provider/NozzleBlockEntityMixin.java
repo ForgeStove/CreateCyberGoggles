@@ -2,10 +2,9 @@ package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.simibubi.create.AllSpecialTextures;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.fan.NozzleBlockEntity;
-import io.github.forgestove.create_cyber_goggles.api.OutlineRenderable;
+import io.github.forgestove.create_cyber_goggles.api.*;
 import io.github.forgestove.create_cyber_goggles.core.event.Outliner;
-import io.github.forgestove.create_cyber_goggles.core.util.GoggleTooltipUtil;
-import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
+import io.github.forgestove.create_cyber_goggles.core.util.contract.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.*;
@@ -14,12 +13,21 @@ import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.outliner;
 @Mixin(NozzleBlockEntity.class)
-public abstract class NozzleBlockEntityMixin implements IHaveGoggleInformation, OutlineRenderable, Self<NozzleBlockEntity> {
+public abstract class NozzleBlockEntityMixin
+	implements IHaveGoggleInformation, OutlineRenderable, NozzleTooltipData, Self<NozzleBlockEntity> {
 	@Shadow private boolean pushing;
 	@Shadow private float range;
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		return GoggleTooltipUtil.fan(tooltip, pushing, range / 2F);
+		return GoggleTooltip.dispatch(thiz(), tooltip, isPlayerSneaking, null);
+	}
+	@Override
+	public boolean ccg$getPushing() {
+		return pushing;
+	}
+	@Override
+	public float ccg$getRange() {
+		return range;
 	}
 	@Override
 	public void ccg$render() {

@@ -3,8 +3,8 @@ import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity.FuelType;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.GoggleTooltipUtil;
-import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
+import io.github.forgestove.create_cyber_goggles.api.GoggleTooltip;
+import io.github.forgestove.create_cyber_goggles.core.util.contract.*;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
@@ -12,13 +12,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 @Mixin(BlazeBurnerBlockEntity.class)
-public abstract class BlazeBurnerBlockEntityMixin implements IHaveGoggleInformation, Self<BlazeBurnerBlockEntity> {
+public abstract class BlazeBurnerBlockEntityMixin
+	implements IHaveGoggleInformation, BurnerTooltipData, Self<BlazeBurnerBlockEntity> {
 	@Shadow public boolean isCreative;
 	@Shadow protected int remainingBurnTime;
 	@Shadow protected FuelType activeFuel;
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		return GoggleTooltipUtil.burner(tooltip, remainingBurnTime, isCreative, activeFuel);
+		return GoggleTooltip.dispatch(thiz(), tooltip, isPlayerSneaking, null);
+	}
+	@Override
+	public int ccg$getRemainingBurnTime() {
+		return remainingBurnTime;
+	}
+	@Override
+	public FuelType ccg$getActiveFuel() {
+		return activeFuel;
 	}
 	@Inject(method = "tick", at = @At("HEAD"))
 	public void tick(CallbackInfo ci) {

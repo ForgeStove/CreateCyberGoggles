@@ -5,7 +5,6 @@ import com.simibubi.create.content.schematics.cannon.SchematicannonBlockEntity;
 import com.simibubi.create.content.schematics.cannon.SchematicannonBlockEntity.State;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.*;
-import io.github.forgestove.create_cyber_goggles.core.util.GoggleTooltipUtil;
 import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -19,7 +18,7 @@ public abstract class SchematicannonBlockEntityMixin
 	implements IHaveGoggleInformation, ItemRenderable, OutlineRenderable, Self<SchematicannonBlockEntity> {
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		return GoggleTooltipUtil.cannon(tooltip, thiz());
+		return GoggleTooltip.dispatch(thiz(), tooltip, isPlayerSneaking, null);
 	}
 	@Override
 	public ItemStack ccg$getItemStack() {

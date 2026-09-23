@@ -3,9 +3,8 @@ import com.simibubi.create.AllSpecialTextures;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.fan.EncasedFanBlockEntity;
-import io.github.forgestove.create_cyber_goggles.api.OutlineRenderable;
+import io.github.forgestove.create_cyber_goggles.api.*;
 import io.github.forgestove.create_cyber_goggles.core.event.Outliner;
-import io.github.forgestove.create_cyber_goggles.core.util.GoggleTooltipUtil;
 import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -25,10 +24,7 @@ public abstract class EncasedFanBlockEntityMixin extends KineticBlockEntity
 	}
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		var airCurrent = thiz().getAirCurrent();
-		var thiz = GoggleTooltipUtil.fan(tooltip, airCurrent.pushing, airCurrent.maxDistance);
-		var sup = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
-		return thiz || sup;
+		return GoggleTooltip.dispatch(thiz(), tooltip, isPlayerSneaking, () -> super.addToGoggleTooltip(tooltip, isPlayerSneaking));
 	}
 	@Override
 	public void ccg$render() {

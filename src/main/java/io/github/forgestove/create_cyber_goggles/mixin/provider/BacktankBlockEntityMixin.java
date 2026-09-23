@@ -4,8 +4,8 @@ import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.equipment.armor.BacktankBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.GoggleTooltipUtil;
-import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
+import io.github.forgestove.create_cyber_goggles.api.GoggleTooltip;
+import io.github.forgestove.create_cyber_goggles.core.util.contract.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -17,7 +17,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 @Mixin(BacktankBlockEntity.class)
-public abstract class BacktankBlockEntityMixin extends KineticBlockEntity implements IHaveGoggleInformation, Self<BacktankBlockEntity> {
+public abstract class BacktankBlockEntityMixin extends KineticBlockEntity
+	implements IHaveGoggleInformation, BacktankTooltipData, Self<BacktankBlockEntity> {
 	@Unique public int ccg$leftTick;
 	@Unique public int ccg$prevAirLevel;
 	@Shadow public int airLevel;
@@ -28,9 +29,15 @@ public abstract class BacktankBlockEntityMixin extends KineticBlockEntity implem
 	}
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		var thiz = GoggleTooltipUtil.backtank(tooltip, thiz(), capacityEnchantLevel, ccg$leftTick);
-		var sup = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
-		return thiz || sup;
+		return GoggleTooltip.dispatch(thiz(), tooltip, isPlayerSneaking, () -> super.addToGoggleTooltip(tooltip, isPlayerSneaking));
+	}
+	@Override
+	public int ccg$getCapacityEnchantLevel() {
+		return capacityEnchantLevel;
+	}
+	@Override
+	public int ccg$getLeftTick() {
+		return ccg$leftTick;
 	}
 	@Inject(method = "tick", at = @At(value = "RETURN", ordinal = 3))
 	public void tick(CallbackInfo ci, @Local(name = "max") int max) {

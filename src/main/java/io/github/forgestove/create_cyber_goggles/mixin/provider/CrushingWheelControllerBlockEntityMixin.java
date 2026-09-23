@@ -2,8 +2,7 @@ package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.crusher.CrushingWheelControllerBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.api.ItemRenderable;
-import io.github.forgestove.create_cyber_goggles.core.util.GoggleTooltipUtil;
+import io.github.forgestove.create_cyber_goggles.api.*;
 import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -16,7 +15,7 @@ public abstract class CrushingWheelControllerBlockEntityMixin
 	implements IHaveGoggleInformation, ItemRenderable, Self<CrushingWheelControllerBlockEntity> {
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		return GoggleTooltipUtil.crushingController(tooltip, thiz());
+		return GoggleTooltip.dispatch(thiz(), tooltip, isPlayerSneaking, null);
 	}
 	@Override
 	public ItemStack ccg$getItemStack() {

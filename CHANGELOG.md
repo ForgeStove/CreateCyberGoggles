@@ -1,1 +1,1 @@
-- Fix #92
+- Merge [#98](https://github.com/ForgeStove/CreateCyberGoggles/pull/98), [#99](https://github.com/ForgeStove/CreateCyberGoggles/pull/99)

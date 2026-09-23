@@ -2,11 +2,8 @@ package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.belt.BeltBlockEntity;
-import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.api.ItemRenderable;
-import io.github.forgestove.create_cyber_goggles.core.util.*;
-import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
-import net.minecraft.ChatFormatting;
+import io.github.forgestove.create_cyber_goggles.api.*;
+import io.github.forgestove.create_cyber_goggles.core.util.contract.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -19,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.*;
 @Mixin(BeltBlockEntity.class)
 public abstract class BeltBlockEntityMixin extends KineticBlockEntity
-	implements IHaveGoggleInformation, ItemRenderable, Self<BeltBlockEntity> {
+	implements IHaveGoggleInformation, ItemRenderable, BeltTooltipData, Self<BeltBlockEntity> {
 	@Unique public final Deque<Integer> ccg$itemHistory = new ArrayDeque<>();
 	@Unique public double ccg$rate;
 	@Unique public int ccg$lastTotalItems;
@@ -41,15 +38,11 @@ public abstract class BeltBlockEntityMixin extends KineticBlockEntity
 	}
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		var sup = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
-		if (!CCG.config.goggles.enhancedInfo) return sup;
-		CCGLang.add(Component.translatable("create_cyber_goggles.tooltip.isController").withStyle(ChatFormatting.GRAY))
-			.is(thiz().isController())
-			.forGoggles(tooltip);
-		if (getSpeed() == 0) return sup;
-		var controllerBE = thiz().getControllerBE();
-		if (controllerBE != null) GoggleTooltipUtil.belt(tooltip, ((BeltBlockEntityMixin) (Object) controllerBE).ccg$rate);
-		return sup;
+		return GoggleTooltip.dispatch(thiz(), tooltip, isPlayerSneaking, () -> super.addToGoggleTooltip(tooltip, isPlayerSneaking));
+	}
+	@Override
+	public double ccg$getRate() {
+		return ccg$rate;
 	}
 	@Override
 	public ItemStack ccg$getItemStack() {

@@ -6,7 +6,6 @@ import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.event.*;
-import io.github.forgestove.create_cyber_goggles.core.factory.CCGMods;
 import io.github.forgestove.create_cyber_goggles.core.util.TooltipComponentUtil;
 import net.createmod.catnip.gui.element.GuiGameElement.GuiRenderBuilder;
 import net.createmod.catnip.gui.element.RenderElement;
@@ -15,7 +14,8 @@ import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.*;
+import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.*;
 import net.minecraft.world.phys.HitResult.Type;
@@ -29,7 +29,11 @@ import java.util.*;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 @Mixin(GoggleOverlayRenderer.class)
 public abstract class GoggleOverlayRendererMixin {
+	@Unique private static final int ccg$FADE_TICKS = 24;
 	@Unique private static HitResult ccg$lastHitResult;
+	@Unique private static int ccg$fadeTicks;
+	/** 本帧是否用旧目标顶替了 hitResult。与 {@link #ccg$fadeTicks} 区分：倒计时在"正看向有信息的目标"时也会被压满 */
+	@Unique private static boolean ccg$fading;
 	@Unique private static int ccg$Offset;
 	@Inject(method = "renderOverlay", at = @At("HEAD"), cancellable = true)
 	private static void renderOverlay(CallbackInfo ci) {
@@ -131,57 +135,58 @@ public abstract class GoggleOverlayRendererMixin {
 	)
 	private static HitResult keepHitDuringFadeOut(HitResult original) {
 		if (!CCG.config.goggles.enableFadeOut) return original;
-		if (ccg$isHoldingCBCInspectionTool()) return original;
-		if (original instanceof BlockHitResult bhr && bhr.getType() == Type.BLOCK) {
-			if (ccg$hasInfo(bhr)) {
-				ccg$lastHitResult = bhr;
-				return original;
-			}
-		} else if (original instanceof EntityHitResult ehr && ehr.getEntity() instanceof IHaveCustomOverlayIcon) {
-			//放置在地面的实现目镜信息接口的实体
-			ccg$lastHitResult = ehr;
-			return original;
+		if (ccg$hasInfo(original)) { // 当前目标有覆盖层信息：记住它，供失焦后继续渲染
+			ccg$lastHitResult = original;
+			ccg$fadeTicks = ccg$FADE_TICKS;
+			ccg$fading = false;
+			return original; // 淡入仍交给 Create 的 hoverTicks 驱动
 		}
-		return !ccg$isFadingOut() || ccg$lastHitResult == null ? null : ccg$lastHitResult;
-	}
-	/**
-	 * 手持 CBC 护甲检查工具时禁用淡出拦截，避免其将普通方块的 hitResult 替换为空/旧目标，
-	 * 从而破坏 CBC 对非机械方块的护甲信息显示
-	 */
-	@Unique
-	private static boolean ccg$isHoldingCBCInspectionTool() {
-		if (!CCGMods.createbigcannons.isLoaded()) return false;
-		if (mc.player == null) return false;
-		var tool = CCGMods.createbigcannons.getItem("block_armor_inspection_tool");
-		if (tool == Items.AIR) return false;
-		return mc.player.getMainHandItem().is(tool) || mc.player.getOffhandItem().is(tool);
-	}
-	@Unique
-	private static boolean ccg$hasInfo(BlockHitResult bhr) {
-		if (mc.level == null) return false;
-		var blockPos = bhr.getBlockPos();
-		return mc.level.getBlockEntity(blockPos) instanceof IHaveCustomOverlayIcon || mc.level.getBlockState(blockPos)
-			.getBlock() instanceof IProxyHoveringInformation;
+		if (ccg$lastHitResult != null && ccg$fadeTicks > 0) {
+			if (!ccg$fading) // 刚失焦：从当前淡化进度接续，避免淡出开始时突跳到全不透明
+				ccg$fadeTicks = Math.min(ccg$fadeTicks, GoggleOverlayRenderer.hoverTicks);
+			else ccg$fadeTicks = Math.max(0, ccg$fadeTicks - 3);
+			if (ccg$fadeTicks > 0) {
+				ccg$fading = true;
+				return ccg$lastHitResult;
+			}
+			GoggleOverlayRenderer.hoverTicks = 0; // 淡出结束，交回真实目标并从 0 重新淡入
+		}
+		ccg$lastHitResult = null;
+		ccg$fading = false;
+		return original;
 	}
 	@Unique
-	private static boolean ccg$isFadingOut() {
-		if (!CCG.config.goggles.enableFadeOut) return false;
-		if (ccg$isHoldingCBCInspectionTool()) return false;
-		var hit = mc.hitResult;
+	private static boolean ccg$hasInfo(HitResult hit) {
 		if (hit instanceof BlockHitResult bhr && bhr.getType() == Type.BLOCK) {
-			if (ccg$hasInfo(bhr)) return false;
-		} else if (hit instanceof EntityHitResult ehr && ehr.getEntity() instanceof IHaveCustomOverlayIcon) return false;
-		return GoggleOverlayRenderer.hoverTicks > 0; // 无有效 tooltip 且之前有渲染 → 淡出
+			if (mc.level == null) return false;
+			var blockPos = bhr.getBlockPos();
+			return mc.level.getBlockEntity(blockPos) instanceof IHaveCustomOverlayIcon || mc.level.getBlockState(blockPos)
+				.getBlock() instanceof IProxyHoveringInformation;
+		}
+		//放置在地面的实现目镜信息接口的实体
+		return hit instanceof EntityHitResult ehr && ehr.getEntity() instanceof IHaveCustomOverlayIcon;
 	}
 	@ModifyExpressionValue(method = "renderOverlay", at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z", ordinal = 1))
 	private static boolean suppressEmptyCheckDuringFadeOut(boolean original) {
 		return !CCG.config.goggles.enableFadeOut ? original : original && !ccg$isFadingOut();
 	}
+	/**
+	 * 淡出状态自持：不能用 Create 的 {@code hoverTicks} 判断（会被第三方注入扰动，普通方块上也会 +1），
+	 * 也不能只看倒计时是否被压满（正看向有信息的目标时同样是满的）
+	 */
+	@Unique
+	private static boolean ccg$isFadingOut() {
+		return CCG.config.goggles.enableFadeOut && ccg$fading;
+	}
 	@WrapOperation(method = "renderOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;clamp(FFF)F"))
 	private static float wrapFadeClamp(float value, float min, float max, Operation<Float> original) {
 		if (!CCG.config.goggles.enableFadeOut) return original.call(value, min, max);
-		if (ccg$isFadingOut()) GoggleOverlayRenderer.hoverTicks = Math.max(0, GoggleOverlayRenderer.hoverTicks - 3);
-		else if (GoggleOverlayRenderer.hoverTicks > 24) GoggleOverlayRenderer.hoverTicks = 24;
+		if (ccg$isFadingOut()) {
+			// 淡出期间 Create 看到的仍是旧目标，它的 hoverTicks 会一直涨，淡化值改由我们的倒计时直接给出
+			GoggleOverlayRenderer.hoverTicks = ccg$fadeTicks;
+			return Mth.clamp(ccg$fadeTicks / (float) ccg$FADE_TICKS, min, max);
+		}
+		if (GoggleOverlayRenderer.hoverTicks > ccg$FADE_TICKS) GoggleOverlayRenderer.hoverTicks = ccg$FADE_TICKS;
 		return original.call(value, min, max);
 	}
 }

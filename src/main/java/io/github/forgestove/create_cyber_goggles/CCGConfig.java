@@ -87,6 +87,7 @@ public final class CCGConfig {
 		public boolean rainbowDebug = false;
 	}
 	public static class Aeronautics {
+		public boolean navigationDistance = true;
 		public boolean alwaysShowMass = true;
 		public boolean alwaysShowFriction = false;
 		public boolean liftLimitOfHandleRange = false;

@@ -6,6 +6,8 @@ import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import com.simibubi.create.content.equipment.wrench.WrenchItem;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.*;
+import io.github.forgestove.create_cyber_goggles.compat.simulated.NavigationDistanceHelper;
+import io.github.forgestove.create_cyber_goggles.core.factory.CCGMods;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientFluidEntryTooltipComponent;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientFluidEntryTooltipComponent.FluidEntryTooltipComponent;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
@@ -48,6 +50,7 @@ public final class ItemTooltip {
 		divingBoots(stack, tooltip);
 		wrench(stack, tooltip);
 		fluidContainer(stack, tooltip);
+		navigationDistance(stack, tooltip);
 	}
 	private static void goggles(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!CCG.config.tooltip.goggles) return;
@@ -96,6 +99,13 @@ public final class ItemTooltip {
 			var capacity = i < capacities.size() ? capacities.get(i) : Math.max(1, fluid.getAmount());
 			CCGLang.fluidEntry(fluid, capacity).addTo(1, tooltip);
 		}
+	}
+	/** simulated 导航物：容器/仓储界面里也能看到目标离玩家多远，便于挑哪个导航物 */
+	private static void navigationDistance(@NotNull ItemStack stack, List<Component> tooltip) {
+		if (!CCG.config.aeronautics.navigationDistance) return;
+		// 用 lambda 而不是方法引用：方法引用会让 invokedynamic 立刻解析 simulated 的类，未装该模组时会 NoClassDefFoundError
+		CCGMods.simulated.runIfInstalled(() -> NavigationDistanceHelper.line(stack))
+			.ifPresent(line -> tooltip.add(1, line));
 	}
 	public static void gatherComponents(@NotNull GatherComponents event) {
 		var elements = event.getTooltipElements();

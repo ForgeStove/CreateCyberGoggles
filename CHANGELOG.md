@@ -1,2 +1,1 @@
-- Fix issue with tooltip fading out
-- Complete #97
+- Fix [#102](https://github.com/ForgeStove/CreateCyberGoggles/issues/102)

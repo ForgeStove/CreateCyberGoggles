@@ -22,10 +22,6 @@ import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 import java.util.Optional;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.getCCGRes;
-/**
- * CCG 内建护目镜悬浮内容条目的自注册引导。
- * <p>在 common 入口 {@link CCG} 构造时调用；provider 均双端安全（服务端 Jade 收集路径会走到）。</p>
- */
 public final class CCGGoggleEntries {
 	public static void register() {
 		GoggleTooltip.register(

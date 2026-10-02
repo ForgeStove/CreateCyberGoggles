@@ -1,4 +1,5 @@
 package io.github.forgestove.create_cyber_goggles;
+import io.github.forgestove.create_cyber_goggles.core.CCGGoggleEntries;
 import io.github.forgestove.create_cyber_goggles.core.event.*;
 import io.github.forgestove.create_cyber_goggles.core.event.drafting.*;
 import io.github.forgestove.create_cyber_goggles.core.event.forceOverlay.*;
@@ -13,6 +14,7 @@ import static io.github.forgestove.create_cyber_goggles.CCG.ID;
 @Mod(value = ID, dist = Dist.CLIENT)
 public class CCGClient {
 	public CCGClient(ModContainer container) {
+		CCGGoggleEntries.register();
 		var mod = container.getEventBus();
 		assert mod != null;
 		mod.addListener(CCGKey::register);

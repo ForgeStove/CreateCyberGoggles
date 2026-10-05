@@ -49,7 +49,6 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 	@Unique private Rect2i ccg$previewArea;
 	@Unique private SchematicExportButton ccg$exportButton;
 	@Unique private boolean ccg$shiftWasDownOnInit, ccg$ctrlWasDownOnInit;
-	@Unique private boolean ccg$exportTooltipBuilt, ccg$exportTooltipShiftState;
 	protected SchematicTableScreenMixin(SchematicTableMenu container, Inventory inv, Component title) {
 		super(container, inv, title);
 	}
@@ -110,6 +109,8 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 	private void ccg$initExportButton() {
 		ccg$exportButton = new SchematicExportButton(leftPos + 206, topPos + 1, AllIcons.I_CONFIG_SAVE);
 		ccg$exportButton.withCallback(this::ccg$exportSchematicImage);
+		// 窗口尺寸变化会重建按钮，此时新按钮的 tooltip 为空，须立即补上
+		ccg$updateExportTooltip();
 		addRenderableWidget(ccg$exportButton);
 	}
 	@Unique
@@ -198,16 +199,19 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 		var leftRoom = Math.max(0, occupiedLeft - CCG$PANEL_GAP - CCG$SCREEN_MARGIN);
 		var aboveRoom = Math.max(0, occupiedTop - CCG$PANEL_GAP - CCG$SCREEN_MARGIN);
 		int px, py;
-		if (leftRoom >= panelW) {
+		// 左侧放得下完整面板，或上方连最小高度都没有 → 贴左（宽度不足时按空隙收窄）
+		if (leftRoom >= panelW || aboveRoom < minPanelH) {
+			panelW = Math.min(panelW, leftRoom);
 			px = occupiedLeft - CCG$PANEL_GAP - panelW;
 			py = ccg$clamp(topPos, screenH - CCG$SCREEN_MARGIN - panelH);
-		} else if (aboveRoom >= minPanelH) {
+		} else {
+			// 界面上方的宽扁条（高度不足时按空隙压低）
 			panelW = 204;
 			occupiedLeft -= 54;
 			panelH = Math.min(panelH, aboveRoom);
 			px = ccg$clamp((occupiedLeft + occupiedRight - panelW) / 2, screenW - CCG$SCREEN_MARGIN - panelW);
 			py = occupiedTop - CCG$PANEL_GAP - panelH;
-		} else return null;
+		}
 		return new Rect2i(px, py, panelW, panelH);
 	}
 	@Unique
@@ -289,28 +293,41 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 		if (originalText.isEmpty()) return;
 		schematicsLabel.text = Component.literal(SchematicLang.truncate(mc.font, originalText, schematicsArea.getWidth() - 5));
 	}
-	/** 提示行需跟随 Shift 实时变化，故仅在按键状态改变时重建 */
+	/** 提示行跟随 Shift / Ctrl 实时变化，故每次刷新都整份重建 */
 	@Unique
 	private void ccg$updateExportTooltip() {
 		if (ccg$exportButton == null) return;
-		var shift = ccg$shiftToggled();
-		if (ccg$exportTooltipBuilt && shift == ccg$exportTooltipShiftState) return;
-		ccg$exportTooltipBuilt = true;
-		ccg$exportTooltipShiftState = shift;
 		var image = CCG.config.schematic.image;
-		var width = shift ? image.alternateWidth : image.defaultWidth;
-		var altWidth = shift ? image.defaultWidth : image.alternateWidth;
-		ccg$exportButton.setToolTipLines(List.of(
-			SchematicLang.translatable("gui.schematicTable.exportButton.title"),
-			SchematicLang.translatable("gui.schematicTable.exportButton.resolution", width)
+		var shift = ccg$shiftToggled();
+		var ctrl = ccg$ctrlToggled();
+		var lines = new ArrayList<Component>();
+		lines.add(SchematicLang.translatable("gui.schematicTable.exportButton.title").withColor(SchematicLang.DARK_BLUE));
+		var resolution = SchematicLang.translatable("gui.schematicTable.exportButton.resolution")
+			.withStyle(ChatFormatting.GRAY)
+			.append(Component.literal(String.valueOf(shift ? image.alternateWidth : image.defaultWidth)).withColor(SchematicLang.LIGHT_BLUE));
+		if (!shift) resolution.append(SchematicLang.translatable(
+				"gui.schematicTable.exportButton.resolutionHint",
+				Component.literal("Shift").withStyle(ChatFormatting.GRAY),
+				image.alternateWidth
+			)
+			.withStyle(ChatFormatting.DARK_GRAY));
+		lines.add(resolution);
+		// 沿用预览朝向时角度直接取自预览面板，等轴方向无从选择，故不显示这一行
+		if (!image.usePreviewRotation || !CCG.config.schematic.preview.previewEnabled) {
+			var direction = SchematicLang.translatable("gui.schematicTable.exportButton.direction")
 				.withStyle(ChatFormatting.GRAY)
 				.append(SchematicLang.translatable(
-						"gui.schematicTable.exportButton.resolutionHint",
-						Component.literal("Shift").withStyle(ChatFormatting.WHITE),
-						altWidth
-					)
-					.withStyle(ChatFormatting.DARK_GRAY)),
-			SchematicLang.translatable("gui.schematicTable.exportButton.saveHint").withStyle(ChatFormatting.DARK_GRAY)
-		));
+					ctrl ? "gui.schematicTable.exportButton.direction.left" : "gui.schematicTable.exportButton.direction.right"
+				).withColor(SchematicLang.LIGHT_BLUE));
+			if (!ctrl) direction.append(SchematicLang.translatable(
+					"gui.schematicTable.exportButton.directionHint",
+					Component.literal("Ctrl").withStyle(ChatFormatting.GRAY)
+				)
+				.withStyle(ChatFormatting.DARK_GRAY));
+			lines.add(direction);
+		}
+		lines.add(Component.literal(" "));
+		lines.add(SchematicLang.translatable("gui.schematicTable.exportButton.saveHint").withStyle(ChatFormatting.GRAY));
+		ccg$exportButton.setToolTipLines(lines);
 	}
 }

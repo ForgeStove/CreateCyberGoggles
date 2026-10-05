@@ -16,6 +16,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
@@ -202,12 +203,13 @@ public class SchematicPreviewPanel {
 				return;
 			}
 			var fakeSchematicLevel = new SchematicLevel(level);
+			// random 须在当前线程现造（同 SchematicImageRenderer）：层级的 random 属于构造它的线程
 			template.placeInWorld(
 				fakeSchematicLevel,
 				BlockPos.ZERO,
 				BlockPos.ZERO,
 				new StructurePlaceSettings(),
-				fakeSchematicLevel.getRandom(),
+				RandomSource.create(),
 				Block.UPDATE_CLIENTS
 			);
 			for (var be : fakeSchematicLevel.getBlockEntities()) be.setLevel(fakeSchematicLevel);

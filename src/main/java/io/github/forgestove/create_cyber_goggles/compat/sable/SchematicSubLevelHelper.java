@@ -6,7 +6,7 @@ import dev.ryanhcode.sable.neoforge.mixinterface.compatibility.create.schematics
 import net.createmod.catnip.levelWrappers.SchematicLevel;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
+import net.minecraft.util.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -37,13 +37,14 @@ public final class SchematicSubLevelHelper {
 		var targetSubLevels = ((SchematicLevelExtension) target).sable$getSubLevels();
 		for (var subLevelTemplate : subLevelTemplates) {
 			var subLevel = new SchematicLevel(level);
+			// random 须在当前线程现造：level 的 random 属于它的创建线程，c2me 会把跨线程使用判为错误
 			subLevelTemplate.template()
 				.placeInWorld(
 					subLevel,
 					BlockPos.ZERO,
 					BlockPos.ZERO,
 					new StructurePlaceSettings(),
-					level.getRandom(),
+					RandomSource.create(),
 					Block.UPDATE_CLIENTS
 				);
 			targetSubLevels.add(new SchematicSubLevel(
@@ -67,12 +68,7 @@ public final class SchematicSubLevelHelper {
 	 * <p>
 	 * 须在 {@code SchematicRenderer#render} 之后、{@code buffers.draw()} 之前调用，以保证位姿一致。
 	 */
-	public static void renderBlockEntities(
-		PoseStack ms,
-		SuperRenderTypeBuffer buffers,
-		SchematicLevel mainLevel,
-		float partialTicks
-	) {
+	public static void renderBlockEntities(PoseStack ms, SuperRenderTypeBuffer buffers, SchematicLevel mainLevel, float partialTicks) {
 		var subLevels = ((SchematicLevelExtension) mainLevel).sable$getSubLevels();
 		if (subLevels.isEmpty()) return;
 		for (var subLevel : subLevels) {

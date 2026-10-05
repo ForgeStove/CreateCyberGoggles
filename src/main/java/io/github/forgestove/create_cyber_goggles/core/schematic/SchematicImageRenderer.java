@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -49,12 +50,14 @@ public final class SchematicImageRenderer {
 		SchematicLevel schematicLevel,
 		Level level
 	) {
+		// random 只用于给战利品箱播种（StructureTemplate#placeInWorld 里的 LootTableSeed），
+		// 必须在当前线程现造：SchematicLevel 的 random 属于构造它的渲染线程，c2me 会把跨线程使用判为错误
 		template.placeInWorld(
 			schematicLevel,
 			BlockPos.ZERO,
 			BlockPos.ZERO,
 			new StructurePlaceSettings(),
-			schematicLevel.random,
+			RandomSource.create(),
 			Block.UPDATE_CLIENTS
 		);
 		// sable 子维度不在本模板的方块表中，须单独展开为渲染层级

@@ -41,6 +41,17 @@ All features can be toggled individually in the config.
 
 - Analog box and connection lines, configurable colors and delayed render
 
+**Schematic**:
+
+- 3D preview: a rotatable, zoomable preview of the selected schematic next to the Schematic Table
+- Tooltip preview: hold Alt while hovering a schematic item
+- Export render: one-click render of a schematic to a PNG (1024 by default, hold Shift for 2048), with configurable orientation and
+  antialiasing, fluids included
+- Sable support: with [sable](https://modrinth.com/mod/sable) installed, sub-levels (ships) in the schematic are previewed and
+  rendered as well
+- Export command: `/ccg schematic export <file> [width] [orientation] [antialiasing]`
+- Truncate long schematic names so they no longer overflow the scroll box
+
 **Aeronautics**:
 
 - Always show mass and friction
@@ -74,5 +85,5 @@ This project uses some code derived from the following mods:
 - [ShulkerBoxTooltip](https://github.com/MisterPeModder/ShulkerBoxTooltip)
 - [Schematician](https://github.com/Alex-Guha/schematician)
 - [O123456789](https://github.com/catboybinary/O123456789)
-- [Create: Schematic Preview](https://github.com/titlo10/Create-Schematic-Preview) by titlo10 (MIT) — the schematic 3D preview panel
-- [Create: Blueprinted](https://github.com/salem-5/Create-Blueprinted) by swzo and EvieTheOwl (MIT) — rendering schematics to PNG images
+- [Create: Schematic Preview](https://github.com/titlo10/Create-Schematic-Preview)
+- [Create: Blueprinted](https://github.com/salem-5/Create-Blueprinted)

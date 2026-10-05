@@ -40,6 +40,15 @@
 
 - 渲染模拟盒与连接线，可以配置颜色与延时渲染时长
 
+**蓝图**：
+
+- 3D 预览：在蓝图桌旁显示所选蓝图的可旋转、可缩放预览
+- 提示框预览：按住 Alt 悬停蓝图物品时，在提示框里显示 3D 预览
+- 导出渲染图：一键把蓝图渲染成 PNG（默认 1024，按住 Shift 用 2048），可配置朝向与抗锯齿倍率、渲染流体
+- Sable 支持：装有 [sable](https://modrinth.com/mod/sable) 时，蓝图里的子维度（飞船）也会一并预览与渲染
+- 导出命令：`/ccg schematic export <文件名> [宽度] [朝向] [抗锯齿倍率]`
+- 截断过长的蓝图文件名，避免溢出滚动框
+
 **航空学**：
 
 - 始终显示方块质量、摩擦力
@@ -72,5 +81,5 @@
 - [ShulkerBoxTooltip](https://github.com/MisterPeModder/ShulkerBoxTooltip)
 - [Schematician](https://github.com/Alex-Guha/schematician)
 - [O123456789](https://github.com/catboybinary/O123456789)
-- [Create: Schematic Preview](https://github.com/titlo10/Create-Schematic-Preview)（作者 titlo10，MIT）—— 蓝图 3D 预览面板
-- [Create: Blueprinted](https://github.com/salem-5/Create-Blueprinted)（作者 swzo、EvieTheOwl，MIT）—— 蓝图渲染成 PNG 图片
+- [Create: Schematic Preview](https://github.com/titlo10/Create-Schematic-Preview)
+- [Create: Blueprinted](https://github.com/salem-5/Create-Blueprinted)

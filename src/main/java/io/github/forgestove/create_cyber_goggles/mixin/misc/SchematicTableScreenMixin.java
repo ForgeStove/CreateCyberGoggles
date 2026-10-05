@@ -66,7 +66,7 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 	// region 文件夹选择器
 	@Unique
 	private void ccg$initFolderSelector() {
-		if (!CCG.config.misc.recursiveSchematicScan) return;
+		if (!CCG.config.schematic.recursiveSchematicScan) return;
 		var x = leftPos;
 		var y = topPos + 2;
 		ccg$folders = SchematicFolderUtil.listSelectableFolders();
@@ -115,7 +115,7 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 	}
 	@Unique
 	private void ccg$rebuildSchematicList() {
-		if (!CCG.config.misc.recursiveSchematicScan) return;
+		if (!CCG.config.schematic.recursiveSchematicScan) return;
 		var schematicSender = CreateClient.SCHEMATIC_SENDER;
 		schematicSender.refresh();
 		var availableSchematics = schematicSender.getAvailableSchematics();
@@ -152,7 +152,7 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 	}
 	@Unique
 	private void ccg$refreshFoldersAndFiles() {
-		if (!CCG.config.misc.recursiveSchematicScan) return;
+		if (!CCG.config.schematic.recursiveSchematicScan) return;
 		ccg$folders = SchematicFolderUtil.listSelectableFolders();
 		var selectedFolder = SchematicFolderUtil.getSelectedFolder();
 		if (!selectedFolder.isEmpty() && !ccg$folders.contains(selectedFolder)) {
@@ -283,7 +283,7 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 		}
 		ccg$updateExportTooltip();
 	}
-	/** 文件名过长会溢出滚动框，此处截断并补省略号。*/
+	/** 文件名过长会溢出滚动框，此处截断并补省略号。 */
 	@Inject(method = "renderBg", at = @At("HEAD"))
 	private void truncateSchematicName(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY, CallbackInfo ci) {
 		if (!CCG.config.schematic.truncateSchematicName) return;

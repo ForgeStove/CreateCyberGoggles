@@ -47,7 +47,7 @@ public abstract class ClientSchematicLoaderMixin implements Self<ClientSchematic
 	}
 	@Inject(method = "refresh", at = @At("HEAD"), cancellable = true)
 	private void refreshFromSelectedFolderOnly(CallbackInfo ci) {
-		if (!CCG.config.misc.recursiveSchematicScan) return;
+		if (!CCG.config.schematic.recursiveSchematicScan) return;
 		FilesHelper.createFolderIfMissing(CreatePaths.SCHEMATICS_DIR);
 		var availableSchematics = thiz().getAvailableSchematics();
 		availableSchematics.clear();

@@ -91,6 +91,8 @@ public final class CCGConfig {
 		@Category public Preview preview = new Preview();
 		@Category public Image image = new Image();
 		public boolean truncateSchematicName = true;
+		public boolean fixSchematicName = true;
+		public boolean recursiveSchematicScan = true;
 		public static class Preview {
 			public boolean previewEnabled = true;
 			public boolean tooltipPreview = true;
@@ -157,8 +159,6 @@ public final class CCGConfig {
 		public boolean preventSelectionDiscard = true;
 		public boolean preventAutoCloseFilter = false;
 		public boolean allowDivingBoot = true;
-		public boolean recursiveSchematicScan = true;
-		public boolean fixSchematicName = true;
 		public boolean autoReplenishStock = true;
 		@WarnCheat public boolean removeTrainDamage = false;
 		@WarnCheat public boolean enableNegativeInfThrottle = false;

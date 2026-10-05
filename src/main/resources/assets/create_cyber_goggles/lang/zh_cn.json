@@ -270,7 +270,7 @@
 	"create_cyber_goggles.config.option.tooltip.wrench": "扳手",
 	"create_cyber_goggles.config.option.tooltip.wrench.tooltip": "显示扳手的额外工具提示信息",
 	"create_cyber_goggles.gui.auto_replenish.blocked": "无法合成的配方",
-	"create_cyber_goggles.gui.auto_replenish.empty": "暂无可用配方，或库存尚未同步",
+	"create_cyber_goggles.gui.auto_replenish.empty": "没有可补充的物品（暂无可用配方，或库存尚未同步）",
 	"create_cyber_goggles.gui.auto_replenish.has_materials": "原料充足，可直接合成",
 	"create_cyber_goggles.gui.auto_replenish.missing": "缺失物品",
 	"create_cyber_goggles.gui.auto_replenish.send_items": "将发送的物品",

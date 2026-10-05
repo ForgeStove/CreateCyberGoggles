@@ -4,6 +4,7 @@ import io.github.forgestove.create_cyber_goggles.core.event.*;
 import io.github.forgestove.create_cyber_goggles.core.event.drafting.*;
 import io.github.forgestove.create_cyber_goggles.core.event.forceOverlay.*;
 import io.github.forgestove.create_cyber_goggles.core.factory.*;
+import io.github.forgestove.create_cyber_goggles.core.schematic.*;
 import io.github.forgestove.create_cyber_goggles.core.util.EnderChestTooltipUtil;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModContainer;
@@ -24,6 +25,7 @@ public class CCGClient {
 		mod.addListener(ClientItemListTooltipComponent::register);
 		mod.addListener(ClientFluidEntryTooltipComponent::register);
 		mod.addListener(ClientFluidListTooltipComponent::register);
+		mod.addListener(ClientSchematicPreviewTooltipComponent::register);
 		mod.addListener(DraftingShaders::register);
 		CCGMods.simulated.executeIfInstalled(() -> mod.addListener(ForceTooltipOverlay::register));
 		var game = NeoForge.EVENT_BUS;
@@ -42,6 +44,9 @@ public class CCGClient {
 		game.addListener(TipOverlay::tick);
 		game.addListener(DraftingViewHandler::render);
 		game.addListener(EnderChestTooltipUtil::clear);
+		game.addListener(ImageActionProgress::onClientTick);
+		game.addListener(SchematicPreviewInput::onMouseScrolled);
+		game.addListener(SchematicCommands::register);
 		CCGMods.simulated.executeIfInstalled(() -> {
 			game.addListener(ForceOverlay::tick);
 			game.addListener(ForceOverlayRenderer::render);

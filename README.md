@@ -74,3 +74,5 @@ This project uses some code derived from the following mods:
 - [ShulkerBoxTooltip](https://github.com/MisterPeModder/ShulkerBoxTooltip)
 - [Schematician](https://github.com/Alex-Guha/schematician)
 - [O123456789](https://github.com/catboybinary/O123456789)
+- [Create: Schematic Preview](https://github.com/titlo10/Create-Schematic-Preview) by titlo10 (MIT) — the schematic 3D preview panel
+- [Create: Blueprinted](https://github.com/salem-5/Create-Blueprinted) by swzo and EvieTheOwl (MIT) — rendering schematics to PNG images

@@ -1,42 +1,82 @@
 package io.github.forgestove.create_cyber_goggles.mixin.misc;
 import com.simibubi.create.CreateClient;
 import com.simibubi.create.content.schematics.table.*;
-import com.simibubi.create.foundation.gui.AllIcons;
+import com.simibubi.create.foundation.gui.*;
 import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import com.simibubi.create.foundation.gui.widget.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.schematic.*;
+import io.github.forgestove.create_cyber_goggles.core.schematic.SchematicRenderSettings.Orientation;
 import io.github.forgestove.create_cyber_goggles.core.util.SchematicFolderUtil;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.*;
-import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.*;
+import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.*;
 
 import java.nio.file.Paths;
-import java.util.List;
+import java.util.*;
+
+import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
+/**
+ * 蓝图桌界面的全部本模组增强：
+ * <ul>
+ * <li>递归扫描的文件夹选择器（原有）</li>
+ * <li>旁挂的 3D 预览面板 —— 来自 Create: Schematic Preview（titlo10, MIT）</li>
+ * <li>一键导出渲染图按钮与长文件名截断 —— 来自 Create: Blueprinted（MIT）</li>
+ * </ul>
+ */
 @Mixin(SchematicTableScreen.class)
-public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScreen<SchematicTableMenu> {
+public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScreen<SchematicTableMenu> implements SchematicPreviewAccess {
+	@Unique private static final int CCG$PANEL_GAP = 4;
+	@Unique private static final int CCG$SCREEN_MARGIN = 6;
+	@Unique private static final int CCG$MIN_PANEL_SIZE = 60;
+	@Shadow protected AllGuiTextures background;
 	@Shadow private ScrollInput schematicsArea;
 	@Shadow private IconButton folderButton;
 	@Shadow private IconButton refreshButton;
 	@Shadow private Label schematicsLabel;
+	@Shadow private List<Rect2i> extraAreas;
 	@Shadow @Final private Component availableSchematicsTitle;
 	@Unique private SelectionScrollInput ccg$folderArea;
 	@Unique private Label ccg$folderLabel;
 	@Unique private IconButton ccg$folderPickerButton;
 	@Unique private List<String> ccg$folders = List.of();
+	@Unique private SchematicPreviewPanel ccg$panel;
+	@Unique private Rect2i ccg$previewArea;
+	@Unique private SchematicExportButton ccg$exportButton;
+	@Unique private boolean ccg$shiftWasDownOnInit, ccg$ctrlWasDownOnInit;
+	@Unique private boolean ccg$exportTooltipBuilt, ccg$exportTooltipShiftState;
 	protected SchematicTableScreenMixin(SchematicTableMenu container, Inventory inv, Component title) {
 		super(container, inv, title);
 	}
+	@Inject(method = "init", at = @At("HEAD"))
+	private void captureModifiersOnInit(CallbackInfo ci) {
+		ccg$shiftWasDownOnInit = hasShiftDown();
+		ccg$ctrlWasDownOnInit = hasControlDown();
+	}
 	@Inject(method = "init", at = @At("RETURN"))
-	private void initFolderSelector(CallbackInfo ci) {
+	private void initExtras(CallbackInfo ci) {
+		ccg$initFolderSelector();
+		ccg$initPreviewPanel();
+		ccg$initExportButton();
+	}
+	// region 文件夹选择器
+	@Unique
+	private void ccg$initFolderSelector() {
 		if (!CCG.config.misc.recursiveSchematicScan) return;
 		var x = leftPos;
 		var y = topPos + 2;
 		ccg$folders = SchematicFolderUtil.listSelectableFolders();
-		List<? extends Component> folderOptions = ccg$folders.stream()
+		var folderOptions = ccg$folders.stream()
 			.map(folder -> folder.isEmpty()
-				? Component.translatable("create_cyber_goggles.gui.schematicTable.folderRoot")
+				? (Component) Component.translatable("create_cyber_goggles.gui.schematicTable.folderRoot")
 				: Component.literal(folder))
 			.toList();
 		ccg$folderLabel = new Label(x + 51, y + 26, CommonComponents.EMPTY).withShadow();
@@ -60,16 +100,30 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 		addRenderableWidget(ccg$folderPickerButton);
 		refreshButton.withCallback(this::ccg$refreshFoldersAndFiles);
 	}
+	// endregion
+	// region 3D 预览面板
+	@Unique
+	private void ccg$initPreviewPanel() {
+		ccg$panel = new SchematicPreviewPanel();
+		ccg$previewArea = ccg$calculatePreviewArea();
+	}
+	// endregion
+	// region 导出渲染图
+	@Unique
+	private void ccg$initExportButton() {
+		ccg$exportButton = new SchematicExportButton(leftPos + 206, topPos + 1, AllIcons.I_CONFIG_SAVE);
+		ccg$exportButton.withCallback(this::ccg$exportSchematicImage);
+		addRenderableWidget(ccg$exportButton);
+	}
 	@Unique
 	private void ccg$rebuildSchematicList() {
 		if (!CCG.config.misc.recursiveSchematicScan) return;
 		var schematicSender = CreateClient.SCHEMATIC_SENDER;
 		schematicSender.refresh();
 		var availableSchematics = schematicSender.getAvailableSchematics();
-		List<? extends Component> displaySchematics = availableSchematics.stream().map(component -> {
+		var displaySchematics = availableSchematics.stream().map(component -> {
 			var value = component.getString().replace('\\', '/');
-			var fileName = Paths.get(value).getFileName().toString();
-			return Component.literal(fileName);
+			return (Component) Component.literal(Paths.get(value).getFileName().toString());
 		}).toList();
 		if (schematicsArea != null) removeWidget(schematicsArea);
 		if (!availableSchematics.isEmpty()) {
@@ -108,9 +162,9 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 			selectedFolder = "";
 		}
 		if (ccg$folderArea != null) {
-			List<? extends Component> folderOptions = ccg$folders.stream()
+			var folderOptions = ccg$folders.stream()
 				.map(folder -> folder.isEmpty()
-					? Component.translatable("create_cyber_goggles.gui.schematicTable.folderRoot")
+					? (Component) Component.translatable("create_cyber_goggles.gui.schematicTable.folderRoot")
 					: Component.literal(folder))
 				.toList();
 			ccg$folderArea.forOptions(folderOptions);
@@ -119,12 +173,147 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 		}
 		ccg$rebuildSchematicList();
 	}
+	/** 优先贴左侧与界面的空隙，其次贴上方；两侧都塞不下就不显示 */
+	@Unique
+	private Rect2i ccg$calculatePreviewArea() {
+		if (!CCG.config.schematic.preview.previewEnabled) return null;
+		var self = (SchematicTableScreen) (Object) this;
+		var window = mc.getWindow();
+		var screenW = window.getGuiScaledWidth();
+		var screenH = window.getGuiScaledHeight();
+		var availableW = screenW - CCG$SCREEN_MARGIN * 2;
+		var availableH = screenH - CCG$SCREEN_MARGIN * 2;
+		var panelW = Math.clamp(availableW, 1, CCG.config.schematic.preview.sidePanelWidth);
+		var panelH = Math.clamp(availableH, 1, CCG.config.schematic.preview.maxHeight);
+		var minPanelH = Math.min(CCG$MIN_PANEL_SIZE, panelH);
+		var leftPos = self.getGuiLeft();
+		var topPos = self.getGuiTop();
+		var occupiedLeft = leftPos;
+		var occupiedTop = topPos;
+		var occupiedRight = leftPos + background.getWidth();
+		var occupiedBottom = topPos + background.getHeight() + 4 + AllGuiTextures.PLAYER_INVENTORY.getHeight();
+		for (var area : extraAreas) {
+			occupiedLeft = Math.min(occupiedLeft, area.getX());
+			occupiedTop = Math.min(occupiedTop, area.getY());
+			occupiedRight = Math.max(occupiedRight, area.getX() + area.getWidth());
+			occupiedBottom = Math.max(occupiedBottom, area.getY() + area.getHeight());
+		}
+		var leftRoom = Math.max(0, occupiedLeft - CCG$PANEL_GAP - CCG$SCREEN_MARGIN);
+		var aboveRoom = Math.max(0, occupiedTop - CCG$PANEL_GAP - CCG$SCREEN_MARGIN);
+		int px, py;
+		if (leftRoom >= panelW) {
+			px = occupiedLeft - CCG$PANEL_GAP - panelW;
+			py = ccg$clamp(topPos, screenH - CCG$SCREEN_MARGIN - panelH);
+		} else if (aboveRoom >= minPanelH) {
+			panelW = 204;
+			occupiedLeft -= 54;
+			panelH = Math.min(panelH, aboveRoom);
+			px = ccg$clamp((occupiedLeft + occupiedRight - panelW) / 2, screenW - CCG$SCREEN_MARGIN - panelW);
+			py = occupiedTop - CCG$PANEL_GAP - panelH;
+		} else return null;
+		return new Rect2i(px, py, panelW, panelH);
+	}
+	@Unique
+	private void ccg$exportSchematicImage() {
+		if (schematicsArea == null) return;
+		SchematicImageUtil.getSchematicNameFromIndex(schematicsArea.getState()).ifPresent(fileName -> {
+			Player player = Minecraft.getInstance().player;
+			if (player == null) return;
+			var settings = SchematicRenderSettings.builder()
+				.imageWidth(ccg$shiftToggled() ? CCG.config.schematic.image.alternateWidth : CCG.config.schematic.image.defaultWidth)
+				.orientation(ccg$orientation());
+			mc.setScreen(null);
+			new SchematicImageHandler(fileName, player.createCommandSourceStack(), settings).export();
+		});
+	}
+	@Unique
+	private int ccg$clamp(int value, int max) {
+		return max < CCG$SCREEN_MARGIN ? CCG$SCREEN_MARGIN : Mth.clamp(value, CCG$SCREEN_MARGIN, max);
+	}
+	/** 打开界面之后才按下的修饰键才算数，避免「打开时就按着」被误判成切换 */
+	@Unique
+	private boolean ccg$shiftToggled() {
+		return hasShiftDown() && !ccg$shiftWasDownOnInit;
+	}
+	/** 预览面板已载入且开启「沿用预览朝向」时用面板角度，否则用等轴视角 */
+	@Unique
+	private Orientation ccg$orientation() {
+		if (CCG.config.schematic.image.usePreviewRotation && ccg$panel != null) return new Orientation(ccg$panel.yaw(), ccg$panel.pitch());
+		return ccg$ctrlToggled() ? Orientation.ISOMETRIC_LEFT : Orientation.ISOMETRIC_RIGHT;
+	}
+	@Unique
+	private boolean ccg$ctrlToggled() {
+		return hasControlDown() && !ccg$ctrlWasDownOnInit;
+	}
+	@Override
+	public SchematicPreviewPanel ccg$getPreviewPanel() {
+		return ccg$panel;
+	}
+	@Inject(method = "renderBg", at = @At("TAIL"))
+	private void renderPreviewPanel(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY, CallbackInfo ci) {
+		ccg$previewArea = ccg$calculatePreviewArea();
+		if (ccg$previewArea == null || ccg$panel == null) return;
+		if (schematicsArea != null)
+			SchematicImageUtil.getSchematicNameFromIndex(schematicsArea.getState()).ifPresent(ccg$panel::setSelected);
+		var window = mc.getWindow().getWindow();
+		var leftDown = GLFW.glfwGetMouseButton(window, GLFW.GLFW_MOUSE_BUTTON_LEFT) == GLFW.GLFW_PRESS;
+		ccg$panel.updateMouse(mouseX, mouseY, leftDown);
+		ccg$panel.render(graphics, ccg$previewArea.getX(), ccg$previewArea.getY(), ccg$previewArea.getWidth(),
+			ccg$previewArea.getHeight());
+	}
+	@Inject(method = "getExtraAreas", at = @At("RETURN"), cancellable = true)
+	private void includePreviewAreas(CallbackInfoReturnable<List<Rect2i>> cir) {
+		var areas = new ArrayList<>(cir.getReturnValue());
+		if (ccg$previewArea != null) areas.add(ccg$previewArea);
+		if (ccg$exportButton != null) areas.add(new Rect2i(
+			ccg$exportButton.getX(),
+			ccg$exportButton.getY(),
+			ccg$exportButton.getWidth(),
+			ccg$exportButton.getHeight()
+		));
+		cir.setReturnValue(List.copyOf(areas));
+	}
+	// endregion
 	@Inject(method = "containerTick", at = @At("TAIL"))
-	private void keepFileListHiddenWhenFolderPickerOpen(CallbackInfo ci) {
-		if (!CCG.config.misc.recursiveSchematicScan) return;
+	private void containerTickTail(CallbackInfo ci) {
 		if (ccg$folderArea != null && ccg$folderArea.visible) {
 			if (schematicsArea != null) schematicsArea.visible = false;
 			if (schematicsLabel != null) schematicsLabel.visible = false;
 		}
+		ccg$updateSchematicsLabelText();
+		ccg$updateExportTooltip();
+	}
+	/** 文件名过长会溢出滚动框，这里截断并补省略号 */
+	@Unique
+	private void ccg$updateSchematicsLabelText() {
+		if (!CCG.config.schematic.truncateSchematicName) return;
+		if (schematicsArea == null || schematicsLabel == null || schematicsLabel.text == null) return;
+		var originalText = schematicsLabel.text.getString();
+		if (originalText.isEmpty()) return;
+		schematicsLabel.text = Component.literal(SchematicLang.truncate(mc.font, originalText, schematicsArea.getWidth() - 5));
+	}
+	/** 提示行要跟随 Shift 实时变化，所以只在按键状态真的变了时重建 */
+	@Unique
+	private void ccg$updateExportTooltip() {
+		if (ccg$exportButton == null) return;
+		var shift = ccg$shiftToggled();
+		if (ccg$exportTooltipBuilt && shift == ccg$exportTooltipShiftState) return;
+		ccg$exportTooltipBuilt = true;
+		ccg$exportTooltipShiftState = shift;
+		var image = CCG.config.schematic.image;
+		var width = shift ? image.alternateWidth : image.defaultWidth;
+		var altWidth = shift ? image.defaultWidth : image.alternateWidth;
+		ccg$exportButton.setToolTipLines(List.of(
+			SchematicLang.translatable("gui.schematicTable.exportButton.title"),
+			SchematicLang.translatable("gui.schematicTable.exportButton.resolution", width)
+				.withStyle(ChatFormatting.GRAY)
+				.append(SchematicLang.translatable(
+						"gui.schematicTable.exportButton.resolutionHint",
+						Component.literal("Shift").withStyle(ChatFormatting.WHITE),
+						altWidth
+					)
+					.withStyle(ChatFormatting.DARK_GRAY)),
+			SchematicLang.translatable("gui.schematicTable.exportButton.saveHint").withStyle(ChatFormatting.DARK_GRAY)
+		));
 	}
 }

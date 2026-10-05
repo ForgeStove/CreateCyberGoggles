@@ -10,6 +10,7 @@ public final class CCGConfig {
 	@Category public Tooltip tooltip = new Tooltip();
 	@Category public Overlay overlay = new Overlay();
 	@Category public Outliner outliner = new Outliner();
+	@Category public Schematic schematic = new Schematic();
 	@Category @Condition("simulated") public Aeronautics aeronautics = new Aeronautics();
 	@Category public Misc misc = new Misc();
 	public static class Goggles {
@@ -85,6 +86,28 @@ public final class CCGConfig {
 		@ColorValue public int outColor = 0xDDC166;
 		@ColorValue public int inColor = 0x7FCDE0;
 		public boolean rainbowDebug = false;
+	}
+	public static class Schematic {
+		@Category public Preview preview = new Preview();
+		@Category public Image image = new Image();
+		public boolean truncateSchematicName = true;
+		public static class Preview {
+			public boolean previewEnabled = true;
+			public boolean tooltipPreview = true;
+			@IntRange(min = 1) public int maxBlockVolume = 216000;
+			@IntRange(min = 48, max = 512) public int sidePanelWidth = 156;
+			@IntRange(min = 48, max = 512) public int maxHeight = 156;
+			@IntRange(min = 0, max = 5000) public int loadDelayMs = 400;
+			@FloatRange(min = 0.5F, max = 3F) public float defaultZoom = 1.25F;
+			@FloatRange(min = -180F, max = 180F) public float defaultYaw = 45F;
+			@FloatRange(min = -90F, max = 90F) public float defaultPitch = 30F;
+		}
+		public static class Image {
+			@IntRange(min = 64, max = 8192) public int defaultWidth = 1024;
+			@IntRange(min = 64, max = 8192) public int alternateWidth = 2048;
+			@IntRange(min = 1, max = 4) public int defaultAntialiasing = 2;
+			public boolean usePreviewRotation = true;
+		}
 	}
 	public static class Aeronautics {
 		public boolean navigationDistance = true;

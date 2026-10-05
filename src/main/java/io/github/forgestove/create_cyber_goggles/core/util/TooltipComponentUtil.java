@@ -3,6 +3,7 @@ import io.github.forgestove.create_cyber_goggles.core.factory.ClientFluidEntryTo
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientFluidListTooltipComponent.FluidListTooltipComponent;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientItemEntryTooltipComponent.ItemEntryTooltipComponent;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientItemListTooltipComponent.ItemListTooltipComponent;
+import io.github.forgestove.create_cyber_goggles.core.factory.ClientSchematicPreviewTooltipComponent.SchematicPreviewTooltip;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import org.jetbrains.annotations.*;
@@ -13,6 +14,7 @@ public final class TooltipComponentUtil {
 	public static final IdentityHashMap<Component, ItemEntryTooltipComponent> ITEM_ENTRY_MAP = new IdentityHashMap<>();
 	public static final IdentityHashMap<Component, FluidListTooltipComponent> FLUID_LIST_MAP = new IdentityHashMap<>();
 	public static final IdentityHashMap<Component, FluidEntryTooltipComponent> FLUID_ENTRY_MAP = new IdentityHashMap<>();
+	public static final IdentityHashMap<Component, SchematicPreviewTooltip> SCHEMATIC_PREVIEW_MAP = new IdentityHashMap<>();
 	private static int spacesOnlyCount(@NotNull Component component) {
 		var text = component.getString();
 		if (text.isEmpty()) return 0;
@@ -68,6 +70,8 @@ public final class TooltipComponentUtil {
 	 * 解决 marker 与普通文本混行时整行替换导致同行文本丢失的问题：剩余文本单独成行渲染，UI 独立成行。
 	 */
 	public static @Nullable MarkerSplit consumeMarker(@NotNull Component line) {
+		var preview = removeMarker(line, SCHEMATIC_PREVIEW_MAP);
+		if (preview != null) return buildSplit(line, preview.data(), preview.marker());
 		var item = removeMarker(line, ITEM_ENTRY_MAP);
 		if (item != null)
 			return buildSplit(line, new ItemEntryTooltipComponent(item.data().stack(), item.indent(), item.data().label()), item.marker());

@@ -1,6 +1,8 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
 import com.mojang.datafixers.util.Either;
 import com.mojang.logging.LogUtils;
+import com.simibubi.create.AllDataComponents;
+import com.simibubi.create.AllItems;
 import com.simibubi.create.content.equipment.armor.*;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import com.simibubi.create.content.equipment.wrench.WrenchItem;
@@ -10,8 +12,11 @@ import io.github.forgestove.create_cyber_goggles.compat.simulated.NavigationDist
 import io.github.forgestove.create_cyber_goggles.core.factory.CCGMods;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientFluidEntryTooltipComponent;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientFluidEntryTooltipComponent.FluidEntryTooltipComponent;
+import io.github.forgestove.create_cyber_goggles.core.factory.ClientSchematicPreviewTooltipComponent.SchematicPreviewTooltip;
+import io.github.forgestove.create_cyber_goggles.core.schematic.SchematicLang;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
@@ -51,6 +56,32 @@ public final class ItemTooltip {
 		wrench(stack, tooltip);
 		fluidContainer(stack, tooltip);
 		navigationDistance(stack, tooltip);
+		schematicPreview(stack, tooltip);
+	}
+	private static final int PREVIEW_MIN_SIZE = 48;
+	private static final int PREVIEW_EDGE_PADDING = 16;
+	private static final int PREVIEW_TEXT_HEIGHT = 48;
+	/**
+	 * 蓝图物品：按住 Alt 时在 tooltip 里挂一个 3D 预览块，否则只给一行按键提示。
+	 * 预览块走 marker 机制（{@link TooltipComponentUtil#SCHEMATIC_PREVIEW_MAP}），
+	 * 由 {@link #gatherComponents} 换成真正的 UI 组件。
+	 */
+	private static void schematicPreview(@NotNull ItemStack stack, List<Component> tooltip) {
+		var preview = CCG.config.schematic.preview;
+		if (!preview.previewEnabled || !preview.tooltipPreview) return;
+		if (!AllItems.SCHEMATIC.isIn(stack) || !stack.has(AllDataComponents.SCHEMATIC_FILE)) return;
+		var fileName = stack.get(AllDataComponents.SCHEMATIC_FILE);
+		if (fileName == null || fileName.isBlank()) return;
+		if (!Screen.hasAltDown()) {
+			tooltip.add(SchematicLang.translatable("gui.schematicPreview.holdAlt", Component.literal("Alt").withStyle(ChatFormatting.GRAY))
+				.withStyle(ChatFormatting.DARK_GRAY));
+			return;
+		}
+		var marker = Component.empty();
+		var width = Mth.clamp(mc.getWindow().getGuiScaledWidth() - PREVIEW_EDGE_PADDING, PREVIEW_MIN_SIZE, preview.sidePanelWidth);
+		var height = Mth.clamp(mc.getWindow().getGuiScaledHeight() - PREVIEW_TEXT_HEIGHT, PREVIEW_MIN_SIZE, preview.maxHeight);
+		TooltipComponentUtil.SCHEMATIC_PREVIEW_MAP.put(marker, new SchematicPreviewTooltip(fileName, width, height));
+		tooltip.add(marker);
 	}
 	private static void goggles(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!CCG.config.tooltip.goggles) return;
@@ -104,8 +135,7 @@ public final class ItemTooltip {
 	private static void navigationDistance(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!CCG.config.aeronautics.navigationDistance) return;
 		// 用 lambda 而不是方法引用：方法引用会让 invokedynamic 立刻解析 simulated 的类，未装该模组时会 NoClassDefFoundError
-		CCGMods.simulated.runIfInstalled(() -> NavigationDistanceHelper.line(stack))
-			.ifPresent(line -> tooltip.add(1, line));
+		CCGMods.simulated.runIfInstalled(() -> NavigationDistanceHelper.line(stack)).ifPresent(line -> tooltip.add(1, line));
 	}
 	public static void gatherComponents(@NotNull GatherComponents event) {
 		var elements = event.getTooltipElements();

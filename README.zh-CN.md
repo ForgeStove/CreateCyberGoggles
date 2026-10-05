@@ -72,3 +72,5 @@
 - [ShulkerBoxTooltip](https://github.com/MisterPeModder/ShulkerBoxTooltip)
 - [Schematician](https://github.com/Alex-Guha/schematician)
 - [O123456789](https://github.com/catboybinary/O123456789)
+- [Create: Schematic Preview](https://github.com/titlo10/Create-Schematic-Preview)（作者 titlo10，MIT）—— 蓝图 3D 预览面板
+- [Create: Blueprinted](https://github.com/salem-5/Create-Blueprinted)（作者 swzo、EvieTheOwl，MIT）—— 蓝图渲染成 PNG 图片

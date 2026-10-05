@@ -1,16 +1,22 @@
 package io.github.forgestove.create_cyber_goggles.compat.sable;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.simibubi.create.foundation.render.BlockEntityRenderHelper;
 import dev.ryanhcode.sable.neoforge.mixinterface.compatibility.create.schematics.*;
 import dev.ryanhcode.sable.neoforge.mixinterface.compatibility.create.schematics.SchematicLevelExtension.SchematicSubLevel;
 import net.createmod.catnip.levelWrappers.SchematicLevel;
+import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.templatesystem.*;
 import org.joml.*;
 
 import java.lang.Math;
+import java.util.ArrayList;
+import java.util.BitSet;
 /**
  * sable 子维度（sublevel）的渲染支持。
  * <p>
@@ -55,6 +61,51 @@ public final class SchematicSubLevelHelper {
 	/** 主层级上是否挂了子维度 */
 	public static boolean hasSubLevels(SchematicLevel level) {
 		return !((SchematicLevelExtension) level).sable$getSubLevels().isEmpty();
+	}
+	/**
+	 * 补画子维度的方块实体。
+	 * <p>
+	 * sable 的 {@code SchematicRendererMixin} 只对子维度的方块做模型 tesselate，方块实体完全没管；主层级那套
+	 * 是 Create 的 {@code SchematicRenderer} 按自己构造时抓到的列表画的，扫不到子维度。所以这里按各自位姿补一遍
+	 * —— 顺带把 {@code RenderShape} 不是 MODEL 的方块（箱子、告示牌那类纯实体渲染的）也捞回来了，
+	 * 因为那些根本不会走 sable 的模型分支。
+	 * <p>
+	 * 必须在 {@code SchematicRenderer#render} 之后、{@code buffers.draw()} 之前调用，位姿与模型渲染保持一致。
+	 */
+	public static void renderBlockEntities(
+		PoseStack ms,
+		SuperRenderTypeBuffer buffers,
+		SchematicLevel mainLevel,
+		float partialTicks
+	) {
+		var subLevels = ((SchematicLevelExtension) mainLevel).sable$getSubLevels();
+		if (subLevels.isEmpty()) return;
+		for (var subLevel : subLevels) {
+			SchematicLevel level = subLevel.level();
+			var blockEntities = new ArrayList<BlockEntity>();
+			for (var blockEntity : level.getRenderedBlockEntities()) blockEntities.add(blockEntity);
+			if (blockEntities.isEmpty()) continue;
+			var shouldRender = new BitSet(blockEntities.size());
+			shouldRender.set(0, blockEntities.size());
+			ms.pushPose();
+			ms.translate(subLevel.position().x, subLevel.position().y, subLevel.position().z);
+			ms.mulPose(new Quaternionf(subLevel.orientation()));
+			// realLevel 传子层级而不是真正的 ClientLevel：Create 自己也传虚拟层级，
+			// 这样 Flywheel 的 skipVanillaRender 才不生效（它对真 ClientLevel 会把有 visual 的 BE 跳过，
+			// 而蓝图里的 BE 没有 visual 可画，跳过就什么都不剩了）
+			BlockEntityRenderHelper.renderBlockEntities(
+				blockEntities,
+				shouldRender,
+				new BitSet(),
+				null,
+				level,
+				ms,
+				null,
+				buffers,
+				partialTicks
+			);
+			ms.popPose();
+		}
 	}
 	/**
 	 * 主层级包围盒与各子层级包围盒（按各自位姿变换后）的并集，供取景用。

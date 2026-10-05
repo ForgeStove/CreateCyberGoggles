@@ -173,6 +173,8 @@ public final class SchematicImageRenderer {
 			SuperRenderTypeBuffer buffers = DefaultSuperRenderTypeBuffer.getInstance();
 			var renderer = new SchematicRenderer(schematicLevel);
 			renderer.render(poseStack, buffers);
+			// sable 只画了子维度的方块模型，方块实体要自己补（且必须在 buffers.draw() 之前）
+			SchematicImageUtil.renderSubLevelBlockEntities(poseStack, buffers, schematicLevel);
 			renderFluids(poseStack, buffers);
 			buffers.draw();
 			poseStack.popPose();

@@ -39,6 +39,7 @@ public class SchematicPreviewPanel {
 	private long pendingSince;
 	private State state = State.NONE;
 	private SchematicRenderer renderer;
+	private SchematicLevel schematicLevel;
 	private BoundingBox frame = new BoundingBox(BlockPos.ZERO);
 	private float yaw = CCG.config.schematic.preview.defaultYaw;
 	private float pitch = CCG.config.schematic.preview.defaultPitch;
@@ -58,12 +59,14 @@ public class SchematicPreviewPanel {
 		state = State.LOADING;
 		currentFile = null;
 		renderer = null;
+		schematicLevel = null;
 		resetView();
 	}
 	public void clear() {
 		currentFile = null;
 		pendingFile = null;
 		renderer = null;
+		schematicLevel = null;
 		state = State.NONE;
 	}
 	/** 视角与缩放复位到配置的默认值 */
@@ -117,7 +120,7 @@ public class SchematicPreviewPanel {
 		graphics.fill(x, y, x + BORDER, y + h, FRAME_COLOR);
 		graphics.fill(x + w - BORDER, y, x + w, y + h, FRAME_COLOR);
 		var mc = Minecraft.getInstance();
-		if (state == State.OK && renderer != null) renderPreview(graphics, innerX, innerY, innerW, innerH);
+		if (state == State.OK && renderer != null && schematicLevel != null) renderPreview(graphics, innerX, innerY, innerW, innerH);
 		else drawCenteredStatus(graphics, mc, innerX, innerY, innerW, innerH);
 	}
 	private void tickLoad() {
@@ -164,6 +167,8 @@ public class SchematicPreviewPanel {
 		);
 		SuperRenderTypeBuffer buffer = DefaultSuperRenderTypeBuffer.getInstance();
 		renderer.render(ms, buffer);
+		// sable 只画了子维度的方块模型，方块实体要自己补（且必须在 buffer.draw() 之前）
+		SchematicImageUtil.renderSubLevelBlockEntities(ms, buffer, schematicLevel);
 		buffer.draw();
 		ms.popPose();
 		RenderSystem.disableDepthTest();
@@ -212,10 +217,12 @@ public class SchematicPreviewPanel {
 			// 取景用包围盒而不是模板尺寸：子维度是整艘船，可能远超主模板的框
 			frame = SchematicImageUtil.frameBounds(fakeSchematicLevel);
 			renderer = new SchematicRenderer(fakeSchematicLevel);
+			schematicLevel = fakeSchematicLevel;
 			state = State.OK;
 		} catch (Exception e) {
 			CCG.LOGGER.warn("Failed to build schematic preview for '{}'", fileName, e);
 			renderer = null;
+			schematicLevel = null;
 			state = State.FAILED;
 		}
 	}
@@ -231,7 +238,7 @@ public class SchematicPreviewPanel {
 			multiBlock.setController(adjustedController);
 		}
 	}
-	private enum State {
+	public enum State {
 		NONE,
 		LOADING,
 		OK,

@@ -1,11 +1,14 @@
 package io.github.forgestove.create_cyber_goggles.core.schematic;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.*;
 import com.simibubi.create.content.schematics.SchematicItem;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.compat.sable.SchematicSubLevelHelper;
 import io.github.forgestove.create_cyber_goggles.core.factory.CCGMods;
+import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.levelWrappers.SchematicLevel;
+import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
@@ -46,6 +49,19 @@ public final class SchematicImageUtil {
 	/** 主层级上是否挂了 sable 子维度；未装 sable 恒为 false */
 	public static boolean hasSubLevels(SchematicLevel level) {
 		return CCGMods.sable.runIfInstalled(() -> SchematicSubLevelHelper.hasSubLevels(level)).orElse(false);
+	}
+	/**
+	 * 补画 sable 子维度的方块实体；未装 sable 时什么也不做。
+	 * <p>
+	 * 必须在 {@code SchematicRenderer#render} 之后、{@code buffers.draw()} 之前调用，位姿才与模型渲染一致。
+	 */
+	public static void renderSubLevelBlockEntities(PoseStack ms, SuperRenderTypeBuffer buffers, SchematicLevel level) {
+		CCGMods.sable.executeIfInstalled(() -> SchematicSubLevelHelper.renderBlockEntities(
+			ms,
+			buffers,
+			level,
+			AnimationTickHolder.getPartialTicks()
+		));
 	}
 	/** 取景包围盒：装了 sable 时把子维度一并算进去（它们的位置可能在主模板包围盒之外） */
 	public static BoundingBox frameBounds(SchematicLevel level) {

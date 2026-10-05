@@ -167,7 +167,7 @@ public class SchematicPreviewPanel {
 		);
 		SuperRenderTypeBuffer buffer = DefaultSuperRenderTypeBuffer.getInstance();
 		renderer.render(ms, buffer);
-		// sable 只画了子维度的方块模型，方块实体要自己补（且必须在 buffer.draw() 之前）
+		// sable 只绘制子维度的方块模型，方块实体需另行补画，且须在 buffer.draw() 之前
 		SchematicImageUtil.renderSubLevelBlockEntities(ms, buffer, schematicLevel);
 		buffer.draw();
 		ms.popPose();
@@ -212,9 +212,9 @@ public class SchematicPreviewPanel {
 			);
 			for (var be : fakeSchematicLevel.getBlockEntities()) be.setLevel(fakeSchematicLevel);
 			fixControllerBlockEntities(fakeSchematicLevel);
-			// sable 的子维度不在这份模板的方块表里，得单独展开成渲染层级，否则预览里它们是空的
+			// sable 子维度不在本模板的方块表中，须单独展开为渲染层级
 			SchematicImageUtil.attachSubLevels(template, fakeSchematicLevel, level);
-			// 取景用包围盒而不是模板尺寸：子维度是整艘船，可能远超主模板的框
+			// 取景使用包围盒而非模板尺寸：子维度为整艘船，可能远超主模板范围
 			frame = SchematicImageUtil.frameBounds(fakeSchematicLevel);
 			renderer = new SchematicRenderer(fakeSchematicLevel);
 			schematicLevel = fakeSchematicLevel;

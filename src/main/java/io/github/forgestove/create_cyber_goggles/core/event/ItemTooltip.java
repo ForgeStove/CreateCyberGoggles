@@ -61,13 +61,12 @@ public final class ItemTooltip {
 	private static final int PREVIEW_MIN_SIZE = 48;
 	private static final int PREVIEW_EDGE_PADDING = 16;
 	private static final int PREVIEW_TEXT_HEIGHT = 48;
-	/** 插在「物品名 + 蓝图文件名」之后（索引 0、1 是这两行），与参考实现一致 */
 	private static final int PREVIEW_TOOLTIP_INDEX = 1;
 	/**
-	 * 蓝图物品：按住 Alt 时在 tooltip 里挂一个 3D 预览块，否则只给一行按键提示。
+	 * 蓝图物品：常驻一行按键提示，按住 Alt 时在其下方追加一个 3D 预览块。
 	 * <p>
 	 * 预览块走 marker 机制（{@link TooltipComponentUtil#SCHEMATIC_PREVIEW_MAP}），由
-	 * {@link #gatherComponents} 换成真正的 UI 组件 —— 因为 marker 是原地替换，插在哪一行就显示在哪一行。
+	 * {@link #gatherComponents} 替换为实际 UI 组件；marker 为原地替换，插入位置即显示位置。
 	 */
 	private static void schematicPreview(@NotNull ItemStack stack, List<Component> tooltip) {
 		var preview = CCG.config.schematic.preview;
@@ -77,7 +76,7 @@ public final class ItemTooltip {
 		if (fileName == null || fileName.isBlank()) return;
 		var alt = Screen.hasAltDown();
 		var index = Math.min(PREVIEW_TOOLTIP_INDEX, tooltip.size());
-		// 提示行常驻，按住 Alt 只是在它下方多出一个预览块
+		// 提示行常驻，按住 Alt 时在其下方追加预览块
 		tooltip.add(index, SchematicLang.translatable(
 				"gui.schematicPreview.holdAlt",
 				Component.literal("Alt").withStyle(alt ? ChatFormatting.WHITE : ChatFormatting.GRAY)

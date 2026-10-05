@@ -25,12 +25,9 @@ import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 /**
- * 蓝图桌界面的全部本模组增强：
- * <ul>
- * <li>递归扫描的文件夹选择器（原有）</li>
- * <li>旁挂的 3D 预览面板 —— 来自 Create: Schematic Preview（titlo10, MIT）</li>
- * <li>一键导出渲染图按钮与长文件名截断 —— 来自 Create: Blueprinted（MIT）</li>
- * </ul>
+ * 蓝图桌界面的本模组增强：递归扫描文件夹选择器（原有）、旁挂 3D 预览面板
+ * （来自 Create: Schematic Preview，titlo10，MIT）、导出渲染图按钮与长文件名截断
+ * （来自 Create: Blueprinted，MIT）。
  */
 @Mixin(SchematicTableScreen.class)
 public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScreen<SchematicTableMenu> implements SchematicPreviewAccess {
@@ -173,7 +170,7 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 		}
 		ccg$rebuildSchematicList();
 	}
-	/** 优先贴左侧与界面的空隙，其次贴上方；两侧都塞不下就不显示 */
+	/** 优先贴左侧与界面的空隙，其次贴上方的空隙；两处均放不下则不显示 */
 	@Unique
 	private Rect2i ccg$calculatePreviewArea() {
 		if (!CCG.config.schematic.preview.previewEnabled) return null;
@@ -230,12 +227,12 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 	private int ccg$clamp(int value, int max) {
 		return max < CCG$SCREEN_MARGIN ? CCG$SCREEN_MARGIN : Mth.clamp(value, CCG$SCREEN_MARGIN, max);
 	}
-	/** 打开界面之后才按下的修饰键才算数，避免「打开时就按着」被误判成切换 */
+	/** 仅在界面打开后按下的修饰键计为切换，避免打开时已按住的键被误判 */
 	@Unique
 	private boolean ccg$shiftToggled() {
 		return hasShiftDown() && !ccg$shiftWasDownOnInit;
 	}
-	/** 预览面板已载入且开启「沿用预览朝向」时用面板角度，否则用等轴视角 */
+	/** 预览面板已载入且启用「沿用预览朝向」时取面板角度，否则用等轴视角 */
 	@Unique
 	private Orientation ccg$orientation() {
 		if (CCG.config.schematic.image.usePreviewRotation && ccg$panel != null) return new Orientation(ccg$panel.yaw(), ccg$panel.pitch());
@@ -283,7 +280,7 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 		ccg$updateSchematicsLabelText();
 		ccg$updateExportTooltip();
 	}
-	/** 文件名过长会溢出滚动框，这里截断并补省略号 */
+	/** 文件名过长会溢出滚动框，此处截断并补省略号 */
 	@Unique
 	private void ccg$updateSchematicsLabelText() {
 		if (!CCG.config.schematic.truncateSchematicName) return;
@@ -292,7 +289,7 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 		if (originalText.isEmpty()) return;
 		schematicsLabel.text = Component.literal(SchematicLang.truncate(mc.font, originalText, schematicsArea.getWidth() - 5));
 	}
-	/** 提示行要跟随 Shift 实时变化，所以只在按键状态真的变了时重建 */
+	/** 提示行需跟随 Shift 实时变化，故仅在按键状态改变时重建 */
 	@Unique
 	private void ccg$updateExportTooltip() {
 		if (ccg$exportButton == null) return;

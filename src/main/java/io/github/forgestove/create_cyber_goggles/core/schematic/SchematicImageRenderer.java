@@ -57,10 +57,10 @@ public final class SchematicImageRenderer {
 			schematicLevel.random,
 			Block.UPDATE_CLIENTS
 		);
-		// sable 的子维度不在这份模板的方块表里，得单独展开成渲染层级，否则图里它们是空的
+		// sable 子维度不在本模板的方块表中，须单独展开为渲染层级
 		SchematicImageUtil.attachSubLevels(template, schematicLevel, level);
-		// 不能因为 placeInWorld 返回 false 就当成空图：sable 的飞船整艘都是子维度，
-		// 主模板里一个方块都没有，内容全在子层级里
+		// 不能因 placeInWorld 返回 false 即视为空图：sable 飞船整体位于子维度中，
+		// 主模板不含任何方块，内容全部在子层级内
 		if (schematicLevel.getBlockMap().isEmpty() && !SchematicImageUtil.hasSubLevels(schematicLevel)) return Optional.empty();
 		var fluidPositions = new ArrayList<BlockPos>();
 		for (var blockEntry : schematicLevel.getBlockMap().entrySet()) {
@@ -173,7 +173,7 @@ public final class SchematicImageRenderer {
 			SuperRenderTypeBuffer buffers = DefaultSuperRenderTypeBuffer.getInstance();
 			var renderer = new SchematicRenderer(schematicLevel);
 			renderer.render(poseStack, buffers);
-			// sable 只画了子维度的方块模型，方块实体要自己补（且必须在 buffers.draw() 之前）
+			// sable 只绘制子维度的方块模型，方块实体需另行补画，且须在 buffers.draw() 之前
 			SchematicImageUtil.renderSubLevelBlockEntities(poseStack, buffers, schematicLevel);
 			renderFluids(poseStack, buffers);
 			buffers.draw();
@@ -217,7 +217,7 @@ public final class SchematicImageRenderer {
 		var b = (argb & 0xFF) / 255F;
 		return new float[]{r, g, b, a};
 	}
-	/** Create 的蓝图渲染器会跳过流体，这里按位置补渲一遍 */
+	/** Create 的蓝图渲染器会跳过流体，此处按位置补渲一遍 */
 	private void renderFluids(PoseStack poseStack, SuperRenderTypeBuffer buffers) {
 		if (fluidPositions.isEmpty()) return;
 		BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
@@ -228,7 +228,7 @@ public final class SchematicImageRenderer {
 			FluidState fluid = state.getFluidState();
 			if (fluid.isEmpty()) continue;
 			RenderType layer = ItemBlockRenderTypes.getRenderLayer(fluid);
-			// 流体模型坐标取区块内局部坐标，这里把区块原点补上
+			// 流体模型使用区块内局部坐标，此处补上区块原点
 			fluidConsumer.prepare(
 				buffers.getBuffer(layer),
 				pose,

@@ -39,21 +39,21 @@ public final class SchematicImageUtil {
 		return SchematicItem.loadSchematic(client.level, blueprint);
 	}
 	/**
-	 * 把蓝图里的 sable 子维度展开成渲染层级挂到 {@code level} 上；未装 sable 时什么也不做。
+	 * 把蓝图中的 sable 子维度展开成渲染层级挂到 {@code level} 上；未安装 sable 时不做任何处理。
 	 * <p>
-	 * 用 lambda 而不是方法引用：方法引用会在连接 invokedynamic 时就解析 sable 的类，未装该模组时 NoClassDefFoundError。
+	 * 须用 lambda 而非方法引用：方法引用在连接 invokedynamic 时即解析 sable 的类，未安装该模组会抛 NoClassDefFoundError。
 	 */
 	public static void attachSubLevels(StructureTemplate template, SchematicLevel target, Level level) {
 		CCGMods.sable.executeIfInstalled(() -> SchematicSubLevelHelper.attachSubLevels(template, target, level));
 	}
-	/** 主层级上是否挂了 sable 子维度；未装 sable 恒为 false */
+	/** 主层级上是否挂有 sable 子维度；未安装 sable 恒为 false */
 	public static boolean hasSubLevels(SchematicLevel level) {
 		return CCGMods.sable.runIfInstalled(() -> SchematicSubLevelHelper.hasSubLevels(level)).orElse(false);
 	}
 	/**
-	 * 补画 sable 子维度的方块实体；未装 sable 时什么也不做。
+	 * 补画 sable 子维度的方块实体；未安装 sable 时不做任何处理。
 	 * <p>
-	 * 必须在 {@code SchematicRenderer#render} 之后、{@code buffers.draw()} 之前调用，位姿才与模型渲染一致。
+	 * 须在 {@code SchematicRenderer#render} 之后、{@code buffers.draw()} 之前调用，以保证位姿与模型渲染一致。
 	 */
 	public static void renderSubLevelBlockEntities(PoseStack ms, SuperRenderTypeBuffer buffers, SchematicLevel level) {
 		CCGMods.sable.executeIfInstalled(() -> SchematicSubLevelHelper.renderBlockEntities(
@@ -63,11 +63,11 @@ public final class SchematicImageUtil {
 			AnimationTickHolder.getPartialTicks()
 		));
 	}
-	/** 取景包围盒：装了 sable 时把子维度一并算进去（它们的位置可能在主模板包围盒之外） */
+	/** 取景包围盒：安装 sable 时将子维度一并计入（其位置可能超出主模板包围盒） */
 	public static BoundingBox frameBounds(SchematicLevel level) {
 		return CCGMods.sable.runIfInstalled(() -> SchematicSubLevelHelper.frameBounds(level)).orElseGet(level::getBounds);
 	}
-	/** 取蓝图列表里第 index 项的文件名；越界返回空。每帧都会调用，故不记日志 */
+	/** 取蓝图列表第 index 项的文件名；越界返回空。每帧调用，故不记日志 */
 	public static Optional<String> getSchematicNameFromIndex(int schematicIndex) {
 		var availableSchematics = CreateClient.SCHEMATIC_SENDER.getAvailableSchematics();
 		if (schematicIndex < 0 || schematicIndex >= availableSchematics.size()) return Optional.empty();

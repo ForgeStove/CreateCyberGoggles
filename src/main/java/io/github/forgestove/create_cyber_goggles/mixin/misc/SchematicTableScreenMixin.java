@@ -281,17 +281,17 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 			if (schematicsArea != null) schematicsArea.visible = false;
 			if (schematicsLabel != null) schematicsLabel.visible = false;
 		}
-		ccg$updateSchematicsLabelText();
 		ccg$updateExportTooltip();
 	}
-	/** 文件名过长会溢出滚动框，此处截断并补省略号 */
-	@Unique
-	private void ccg$updateSchematicsLabelText() {
+	/** 文件名过长会溢出滚动框，此处截断并补省略号。*/
+	@Inject(method = "renderBg", at = @At("HEAD"))
+	private void truncateSchematicName(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY, CallbackInfo ci) {
 		if (!CCG.config.schematic.truncateSchematicName) return;
 		if (schematicsArea == null || schematicsLabel == null || schematicsLabel.text == null) return;
 		var originalText = schematicsLabel.text.getString();
 		if (originalText.isEmpty()) return;
-		schematicsLabel.text = Component.literal(SchematicLang.truncate(mc.font, originalText, schematicsArea.getWidth() - 5));
+		var truncated = SchematicLang.truncate(mc.font, originalText, schematicsArea.getWidth() - 5);
+		if (!truncated.equals(originalText)) schematicsLabel.text = Component.literal(truncated);
 	}
 	/** 提示行跟随 Shift / Ctrl 实时变化，故每次刷新都整份重建 */
 	@Unique
@@ -304,21 +304,21 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 		lines.add(SchematicLang.translatable("gui.schematicTable.exportButton.title").withColor(SchematicLang.DARK_BLUE));
 		var resolution = SchematicLang.translatable("gui.schematicTable.exportButton.resolution")
 			.withStyle(ChatFormatting.GRAY)
-			.append(Component.literal(String.valueOf(shift ? image.alternateWidth : image.defaultWidth)).withColor(SchematicLang.LIGHT_BLUE));
+			.append(Component.literal(String.valueOf(shift ? image.alternateWidth : image.defaultWidth))
+				.withColor(SchematicLang.LIGHT_BLUE));
 		if (!shift) resolution.append(SchematicLang.translatable(
-				"gui.schematicTable.exportButton.resolutionHint",
-				Component.literal("Shift").withStyle(ChatFormatting.GRAY),
-				image.alternateWidth
-			)
-			.withStyle(ChatFormatting.DARK_GRAY));
+			"gui.schematicTable.exportButton.resolutionHint",
+			Component.literal("Shift").withStyle(ChatFormatting.GRAY),
+			image.alternateWidth
+		).withStyle(ChatFormatting.DARK_GRAY));
 		lines.add(resolution);
 		// 沿用预览朝向时角度直接取自预览面板，等轴方向无从选择，故不显示这一行
 		if (!image.usePreviewRotation || !CCG.config.schematic.preview.previewEnabled) {
 			var direction = SchematicLang.translatable("gui.schematicTable.exportButton.direction")
 				.withStyle(ChatFormatting.GRAY)
-				.append(SchematicLang.translatable(
-					ctrl ? "gui.schematicTable.exportButton.direction.left" : "gui.schematicTable.exportButton.direction.right"
-				).withColor(SchematicLang.LIGHT_BLUE));
+				.append(SchematicLang.translatable(ctrl
+					? "gui.schematicTable.exportButton.direction.left"
+					: "gui.schematicTable.exportButton.direction.right").withColor(SchematicLang.LIGHT_BLUE));
 			if (!ctrl) direction.append(SchematicLang.translatable(
 					"gui.schematicTable.exportButton.directionHint",
 					Component.literal("Ctrl").withStyle(ChatFormatting.GRAY)

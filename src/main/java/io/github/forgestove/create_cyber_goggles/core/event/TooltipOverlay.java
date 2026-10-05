@@ -10,6 +10,8 @@ import io.github.forgestove.create_cyber_goggles.core.factory.ClientFluidEntryTo
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientFluidListTooltipComponent.FluidListTooltipComponent;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientItemEntryTooltipComponent.ItemEntryTooltipComponent;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientItemListTooltipComponent.ItemListTooltipComponent;
+import io.github.forgestove.create_cyber_goggles.core.factory.ClientSchematicPreviewTooltipComponent;
+import io.github.forgestove.create_cyber_goggles.core.factory.ClientSchematicPreviewTooltipComponent.SchematicPreviewTooltip;
 import io.github.forgestove.create_cyber_goggles.core.factory.TooltipTheme.Theme;
 import io.github.forgestove.create_cyber_goggles.core.util.TooltipComponentUtil;
 import net.createmod.catnip.gui.element.BoxElement;
@@ -179,6 +181,7 @@ public final class TooltipOverlay {
 					components.add(new ClientItemListTooltipComponent(new ItemListTooltipComponent(items, indent, maxColumns)));
 				case FluidListTooltipComponent(var fluids, var indent, var maxColumns) ->
 					components.add(new ClientFluidListTooltipComponent(new FluidListTooltipComponent(fluids, indent, maxColumns)));
+				case SchematicPreviewTooltip preview -> components.add(new ClientSchematicPreviewTooltipComponent(preview));
 				case FormattedCharSequence text -> components.add(ClientTooltipComponent.create(text));
 				default -> {}
 			}

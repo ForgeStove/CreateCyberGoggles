@@ -17,7 +17,7 @@ public final class ClientSchematicPreviewTooltipComponent implements ClientToolt
 	public static void register(@NotNull RegisterClientTooltipComponentFactoriesEvent event) {
 		event.register(SchematicPreviewTooltip.class, ClientSchematicPreviewTooltipComponent::new);
 	}
-	private ClientSchematicPreviewTooltipComponent(SchematicPreviewTooltip preview) {
+	public ClientSchematicPreviewTooltipComponent(SchematicPreviewTooltip preview) {
 		this.preview = preview;
 	}
 	@Override

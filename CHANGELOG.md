@@ -1,1 +1,2 @@
-- Add 3D schematic preview: a rotatable, zoomable panel next to the Schematic Table, plus an Alt-hover preview in schematic item tooltips
+- Fix [#100](https://github.com/ForgeStove/CreateCyberGoggles/issues/100)
+- Change configuration structure

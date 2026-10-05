@@ -61,10 +61,13 @@ public final class ItemTooltip {
 	private static final int PREVIEW_MIN_SIZE = 48;
 	private static final int PREVIEW_EDGE_PADDING = 16;
 	private static final int PREVIEW_TEXT_HEIGHT = 48;
+	/** 插在「物品名 + 蓝图文件名」之后（索引 0、1 是这两行），与参考实现一致 */
+	private static final int PREVIEW_TOOLTIP_INDEX = 1;
 	/**
 	 * 蓝图物品：按住 Alt 时在 tooltip 里挂一个 3D 预览块，否则只给一行按键提示。
-	 * 预览块走 marker 机制（{@link TooltipComponentUtil#SCHEMATIC_PREVIEW_MAP}），
-	 * 由 {@link #gatherComponents} 换成真正的 UI 组件。
+	 * <p>
+	 * 预览块走 marker 机制（{@link TooltipComponentUtil#SCHEMATIC_PREVIEW_MAP}），由
+	 * {@link #gatherComponents} 换成真正的 UI 组件 —— 因为 marker 是原地替换，插在哪一行就显示在哪一行。
 	 */
 	private static void schematicPreview(@NotNull ItemStack stack, List<Component> tooltip) {
 		var preview = CCG.config.schematic.preview;
@@ -72,16 +75,20 @@ public final class ItemTooltip {
 		if (!AllItems.SCHEMATIC.isIn(stack) || !stack.has(AllDataComponents.SCHEMATIC_FILE)) return;
 		var fileName = stack.get(AllDataComponents.SCHEMATIC_FILE);
 		if (fileName == null || fileName.isBlank()) return;
-		if (!Screen.hasAltDown()) {
-			tooltip.add(SchematicLang.translatable("gui.schematicPreview.holdAlt", Component.literal("Alt").withStyle(ChatFormatting.GRAY))
-				.withStyle(ChatFormatting.DARK_GRAY));
-			return;
-		}
+		var alt = Screen.hasAltDown();
+		var index = Math.min(PREVIEW_TOOLTIP_INDEX, tooltip.size());
+		// 提示行常驻，按住 Alt 只是在它下方多出一个预览块
+		tooltip.add(index, SchematicLang.translatable(
+				"gui.schematicPreview.holdAlt",
+				Component.literal("Alt").withStyle(alt ? ChatFormatting.WHITE : ChatFormatting.GRAY)
+			)
+			.withStyle(ChatFormatting.DARK_GRAY));
+		if (!alt) return;
 		var marker = Component.empty();
 		var width = Mth.clamp(mc.getWindow().getGuiScaledWidth() - PREVIEW_EDGE_PADDING, PREVIEW_MIN_SIZE, preview.sidePanelWidth);
 		var height = Mth.clamp(mc.getWindow().getGuiScaledHeight() - PREVIEW_TEXT_HEIGHT, PREVIEW_MIN_SIZE, preview.maxHeight);
 		TooltipComponentUtil.SCHEMATIC_PREVIEW_MAP.put(marker, new SchematicPreviewTooltip(fileName, width, height));
-		tooltip.add(marker);
+		tooltip.add(index + 1, marker);
 	}
 	private static void goggles(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!CCG.config.tooltip.goggles) return;

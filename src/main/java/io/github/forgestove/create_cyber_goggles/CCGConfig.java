@@ -100,7 +100,7 @@ public final class CCGConfig {
 			@IntRange(min = 48, max = 512) public int sidePanelWidth = 156;
 			@IntRange(min = 48, max = 512) public int maxHeight = 156;
 			@IntRange(min = 0, max = 5000) public int loadDelayMs = 0;
-			@FloatRange(min = 0.5F, max = 3F) public float defaultZoom = 1.25F;
+			@FloatRange(min = 0.5F, max = 3F) public float defaultZoom = 1F;
 			@FloatRange(min = -180F, max = 180F) public float defaultYaw = 45F;
 			@FloatRange(min = -90F, max = 90F) public float defaultPitch = 30F;
 		}

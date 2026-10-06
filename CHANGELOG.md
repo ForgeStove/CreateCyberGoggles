@@ -1,2 +1,2 @@
-- Fix [#100](https://github.com/ForgeStove/CreateCyberGoggles/issues/100)
-- Change configuration structure
+- Optimize fill interaction
+- Change the default preview zoom

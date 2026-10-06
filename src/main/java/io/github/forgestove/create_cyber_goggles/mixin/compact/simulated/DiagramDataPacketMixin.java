@@ -1,11 +1,12 @@
 package io.github.forgestove.create_cyber_goggles.mixin.compact.simulated;
 import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramDataPacket;
+import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.event.forceOverlay.ForceDataCache;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 /**
- * 拦截接收到的 {@link DiagramDataPacket}，将力数据缓存供世界内覆盖层使用，
+ * 捕获接收到的 {@link DiagramDataPacket}，将力数据缓存供世界内覆盖层使用，
  * 无论图解界面是否打开。
  */
 @Pseudo
@@ -17,6 +18,7 @@ public abstract class DiagramDataPacketMixin {
 		remap = false
 	)
 	private static void handle(DiagramDataPacket packet, CallbackInfo ci) {
+		if (!CCG.config.aeronautics.forceOverlay.enableForceOverlay) return;
 		ForceDataCache.set(packet);
 	}
 }

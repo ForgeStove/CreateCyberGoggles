@@ -1,19 +1,16 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
 import com.mojang.datafixers.util.Either;
 import com.mojang.logging.LogUtils;
-import com.simibubi.create.AllDataComponents;
-import com.simibubi.create.AllItems;
+import com.simibubi.create.*;
 import com.simibubi.create.content.equipment.armor.*;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import com.simibubi.create.content.equipment.wrench.WrenchItem;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.*;
 import io.github.forgestove.create_cyber_goggles.compat.simulated.NavigationDistanceHelper;
-import io.github.forgestove.create_cyber_goggles.core.factory.CCGMods;
-import io.github.forgestove.create_cyber_goggles.core.factory.ClientFluidEntryTooltipComponent;
+import io.github.forgestove.create_cyber_goggles.core.factory.*;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientFluidEntryTooltipComponent.FluidEntryTooltipComponent;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientSchematicPreviewTooltipComponent.SchematicPreviewTooltip;
-import io.github.forgestove.create_cyber_goggles.core.schematic.SchematicLang;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
@@ -33,6 +30,10 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public final class ItemTooltip {
 	public final static List<TooltipRenderer> OVERLAY_RENDERERS = new ArrayList<>();
 	private static final Logger LOGGER = LogUtils.getLogger();
+	private static final int PREVIEW_MIN_SIZE = 48;
+	private static final int PREVIEW_EDGE_PADDING = 16;
+	private static final int PREVIEW_TEXT_HEIGHT = 48;
+	private static final int PREVIEW_TOOLTIP_INDEX = 1;
 	static {
 		var annoName = AutoTooltipRenderer.class.getName();
 		ModList.get().getAllScanData().forEach(scanData -> scanData.getAnnotations().forEach(annoData -> {
@@ -57,37 +58,6 @@ public final class ItemTooltip {
 		fluidContainer(stack, tooltip);
 		navigationDistance(stack, tooltip);
 		schematicPreview(stack, tooltip);
-	}
-	private static final int PREVIEW_MIN_SIZE = 48;
-	private static final int PREVIEW_EDGE_PADDING = 16;
-	private static final int PREVIEW_TEXT_HEIGHT = 48;
-	private static final int PREVIEW_TOOLTIP_INDEX = 1;
-	/**
-	 * 蓝图物品：常驻一行按键提示，按住 Alt 时在其下方追加一个 3D 预览块。
-	 * <p>
-	 * 预览块走 marker 机制（{@link TooltipComponentUtil#SCHEMATIC_PREVIEW_MAP}），由
-	 * {@link #gatherComponents} 替换为实际 UI 组件；marker 为原地替换，插入位置即显示位置。
-	 */
-	private static void schematicPreview(@NotNull ItemStack stack, List<Component> tooltip) {
-		var preview = CCG.config.schematic.preview;
-		if (!preview.previewEnabled || !preview.tooltipPreview) return;
-		if (!AllItems.SCHEMATIC.isIn(stack) || !stack.has(AllDataComponents.SCHEMATIC_FILE)) return;
-		var fileName = stack.get(AllDataComponents.SCHEMATIC_FILE);
-		if (fileName == null || fileName.isBlank()) return;
-		var alt = Screen.hasAltDown();
-		var index = Math.min(PREVIEW_TOOLTIP_INDEX, tooltip.size());
-		// 提示行常驻，按住 Alt 时在其下方追加预览块
-		tooltip.add(index, SchematicLang.translatable(
-				"gui.schematicPreview.holdAlt",
-				Component.literal("Alt").withStyle(alt ? ChatFormatting.WHITE : ChatFormatting.GRAY)
-			)
-			.withStyle(ChatFormatting.DARK_GRAY));
-		if (!alt) return;
-		var marker = Component.empty();
-		var width = Mth.clamp(mc.getWindow().getGuiScaledWidth() - PREVIEW_EDGE_PADDING, PREVIEW_MIN_SIZE, preview.sidePanelWidth);
-		var height = Mth.clamp(mc.getWindow().getGuiScaledHeight() - PREVIEW_TEXT_HEIGHT, PREVIEW_MIN_SIZE, preview.maxHeight);
-		TooltipComponentUtil.SCHEMATIC_PREVIEW_MAP.put(marker, new SchematicPreviewTooltip(fileName, width, height));
-		tooltip.add(index + 1, marker);
 	}
 	private static void goggles(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!CCG.config.tooltip.goggles) return;
@@ -142,6 +112,32 @@ public final class ItemTooltip {
 		if (!CCG.config.aeronautics.navigationDistance) return;
 		// 用 lambda 而不是方法引用：方法引用会让 invokedynamic 立刻解析 simulated 的类，未装该模组时会 NoClassDefFoundError
 		CCGMods.simulated.runIfInstalled(() -> NavigationDistanceHelper.line(stack)).ifPresent(line -> tooltip.add(1, line));
+	}
+	/**
+	 * 蓝图物品：常驻一行按键提示，按住 Alt 时在其下方追加一个 3D 预览块。
+	 * <p>
+	 * 预览块走 marker 机制（{@link TooltipComponentUtil#SCHEMATIC_PREVIEW_MAP}），由
+	 * {@link #gatherComponents} 替换为实际 UI 组件；marker 为原地替换，插入位置即显示位置。
+	 */
+	private static void schematicPreview(@NotNull ItemStack stack, List<Component> tooltip) {
+		var preview = CCG.config.schematic.preview;
+		if (!preview.previewEnabled || !preview.tooltipPreview) return;
+		if (!AllItems.SCHEMATIC.isIn(stack) || !stack.has(AllDataComponents.SCHEMATIC_FILE)) return;
+		var fileName = stack.get(AllDataComponents.SCHEMATIC_FILE);
+		if (fileName == null || fileName.isBlank()) return;
+		var alt = Screen.hasAltDown();
+		var index = Math.min(PREVIEW_TOOLTIP_INDEX, tooltip.size());
+		// 提示行常驻，按住 Alt 时在其下方追加预览块
+		tooltip.add(
+			index,
+			CCGKey.hint(Component.translatable("create_cyber_goggles.gui.schematicPreview.altHint", CCGKey.keyName("Alt", alt)))
+		);
+		if (!alt) return;
+		var marker = Component.empty();
+		var width = Mth.clamp(mc.getWindow().getGuiScaledWidth() - PREVIEW_EDGE_PADDING, PREVIEW_MIN_SIZE, preview.sidePanelWidth);
+		var height = Mth.clamp(mc.getWindow().getGuiScaledHeight() - PREVIEW_TEXT_HEIGHT, PREVIEW_MIN_SIZE, preview.maxHeight);
+		TooltipComponentUtil.SCHEMATIC_PREVIEW_MAP.put(marker, new SchematicPreviewTooltip(fileName, width, height));
+		tooltip.add(index + 1, marker);
 	}
 	public static void gatherComponents(@NotNull GatherComponents event) {
 		var elements = event.getTooltipElements();

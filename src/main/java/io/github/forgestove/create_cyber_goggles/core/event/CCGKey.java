@@ -74,4 +74,12 @@ public enum CCGKey {
 	public static @NotNull Component getFancyName(@NotNull KeyMapping keyMapping) {
 		return keyMapping.getKey().getDisplayName().copy().withStyle(keyMapping.isDown() ? ChatFormatting.GREEN : ChatFormatting.GRAY);
 	}
+	/** 键位提示行统一整行暗灰；键名用 {@link #keyName} 传给 {@code Component.translatable} */
+	public static @NotNull Component hint(@NotNull Component text) {
+		return text.copy().withStyle(ChatFormatting.DARK_GRAY);
+	}
+	/** 键名，按下时亮、松开时暗 */
+	public static @NotNull Component keyName(@NotNull String name, boolean down) {
+		return Component.literal(name).withStyle(down ? ChatFormatting.WHITE : ChatFormatting.GRAY);
+	}
 }

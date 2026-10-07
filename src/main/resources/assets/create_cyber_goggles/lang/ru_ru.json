@@ -126,7 +126,7 @@
 	"create_cyber_goggles.config.option.misc.enableNegativeInfThrottle": "Разрешить отрицательную бесконечность на тяге",
 	"create_cyber_goggles.config.option.misc.enableNegativeInfThrottle.tooltip": "Разрешить отрицательную бесконечность на тяге поезда",
 	"create_cyber_goggles.config.option.misc.forcedBackend": "Принудительный бэкенд отрисовки",
-	"create_cyber_goggles.config.option.misc.forcedBackend.tooltip": "Принудительно использовать определённый бэкенд отрисовки, может решить проблемы с производительностью или совместимостью на некоторых системах",
+	"create_cyber_goggles.config.option.misc.forcedBackend.tooltip": "Принудительно включить рендер-бэкенд Flywheel (конфликтует с шейдерами; включайте, только если понимаете, что делаете)",
 	"create_cyber_goggles.config.option.misc.infEditBoxLength": "Бесконечная длина поля ввода",
 	"create_cyber_goggles.config.option.misc.infEditBoxLength.tooltip": "Бесконечная длина поля ввода (2^31 - 1)",
 	"create_cyber_goggles.config.option.misc.jei.allowLargeCrafting": "Включить показ больших крафтов",

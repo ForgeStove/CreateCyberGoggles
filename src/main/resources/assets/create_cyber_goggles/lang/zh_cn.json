@@ -322,7 +322,7 @@
 	"create_cyber_goggles.gui.schematicPreview.empty": "空蓝图",
 	"create_cyber_goggles.gui.schematicPreview.failed": "加载失败",
 	"create_cyber_goggles.gui.schematicPreview.altHint": "按住 [%s] 预览",
-	"create_cyber_goggles.gui.schematicPreview.loading": "加载中…",
+	"create_cyber_goggles.gui.schematicPreview.loading": "加载中……",
 	"create_cyber_goggles.gui.schematicPreview.none": "请选择一个蓝图",
 	"create_cyber_goggles.gui.schematicPreview.too_large": "蓝图过大",
 	"create_cyber_goggles.gui.schematicTable.exportButton.direction": "等轴朝向：",

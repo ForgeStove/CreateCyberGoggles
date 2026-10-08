@@ -10,6 +10,7 @@
 	"config.ui.quit.unsaved": "Discard Changes",
 	"config.ui.restart_required": "A game restart is required for the changes to take effect.",
 	"config.ui.restart_required.title": "Restart Required",
+	"config.ui.restart_required.world": "A world reload is required for the changes to take effect.",
 	"config.ui.undo.tooltip": "Undo",
 	"config.ui.unlock.tooltip": "Lock this config value on the server",
 	"config.ui.unsupported_type": "Unsupported config type: ",

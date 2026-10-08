@@ -79,7 +79,7 @@ public final class KeybindValueConfigEntry<C> extends ValueConfigEntry<C, Key> i
 		boolean hovering,
 		float delta
 	) {
-		bindButton.active = !isLocked();
+		bindButton.active = !isReadOnly();
 		renderGui(gui, y, x, width, mouseX, mouseY, delta, undoButton, resetButton, bindButton);
 	}
 	@Override

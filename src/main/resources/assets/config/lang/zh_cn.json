@@ -10,6 +10,7 @@
 	"config.ui.quit.unsaved": "放弃更改",
 	"config.ui.restart_required": "需要重启游戏才能使更改生效。",
 	"config.ui.restart_required.title": "需要重启",
+	"config.ui.restart_required.world": "需要重新进入世界才能使更改生效。",
 	"config.ui.undo.tooltip": "撤销",
 	"config.ui.unlock.tooltip": "在服务器上锁定此配置值",
 	"config.ui.unsupported_type": "不支持的配置类型: ",

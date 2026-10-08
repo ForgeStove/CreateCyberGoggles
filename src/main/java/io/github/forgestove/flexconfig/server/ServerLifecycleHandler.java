@@ -6,12 +6,14 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEven
 import net.neoforged.neoforge.event.server.*;
 /** 处理配置锁管理的服务器生命周期事件。 */
 public final class ServerLifecycleHandler {
-	/** 服务器启动时：为每个已注册模组从磁盘加载锁定存储。 */
+	/** 服务器启动时：为每份「可锁定」的配置（非 SERVER 型）从磁盘加载锁定存储。 */
 	public static void onServerStarting(ServerStartingEvent event) {
-		ConfigRegistry.getRegisteredModIds().forEach(modId -> {
-			var lockStore = new ServerConfigLockStore(event.getServer(), modId);
+		ConfigRegistry.getRegisteredFileKeys().forEach(key -> {
+			if (!ConfigRegistry.isLockable(key)) return;
+			var lockStore = new ServerConfigLockStore(event.getServer(), key.modId(), key.fileName());
 			lockStore.load();
-			ConfigNetwork.setLockStore(modId, lockStore);
+			ConfigNetwork.setLockStore(key, lockStore);
+			ServerLockApplier.applyAll(key, lockStore);
 		});
 	}
 	/** 服务器停止时：将所有模组的锁定存储保存到磁盘。 */
@@ -25,5 +27,6 @@ public final class ServerLifecycleHandler {
 		// 仅向安装了此模组的客户端发送 — 否则NeoForge会抛出异常。
 		if (!player.connection.hasChannel(ConfigSyncPayload.TYPE)) return;
 		ConfigNetwork.sendLocksToPlayer(player);
+		ConfigNetwork.sendServerConfigsToPlayer(player);
 	}
 }

@@ -79,10 +79,10 @@ public final class ColorValueConfigEntry<C> extends ValueConfigEntry<C, Integer>
 		boolean hovering,
 		float delta
 	) {
-		var locked = isLocked();
-		previewWidget.active = !locked;
-		inputField.active = !locked;
-		pickerButton.active = !locked;
+		var readOnly = isReadOnly();
+		previewWidget.active = !readOnly;
+		inputField.active = !readOnly;
+		pickerButton.active = !readOnly;
 		renderGui(gui, y, x, width, mouseX, mouseY, delta, lockButton, undoButton, resetButton, pickerButton, inputField, previewWidget);
 	}
 }

@@ -25,6 +25,7 @@ public final class EntryTypeRegistry {
 		register(String.class, StringValueConfigEntry::new);
 		register(Key.class, KeybindValueConfigEntry::new);
 		register(Point.class, PointValueConfigEntry::new);
+		register(List.class, ListValueConfigEntry::new);
 	}
 	@SuppressWarnings("unchecked")
 	public static <C, V> void register(

@@ -19,6 +19,12 @@ public final class Translation {
 	public static final Component QUIT_CONFIRM_WARNING = Component.translatable("config.ui.quit.confirm.warning");
 	public static final Component RESTART_REQUIRED_LABEL = Component.translatable("config.ui.restart_required");
 	public static final Component RESTART_REQUIRED_TITLE = Component.translatable("config.ui.restart_required.title");
+	/** 只需重载世界时的提示；缺失翻译时退回英文。 */
+	public static final Component RESTART_REQUIRED_WORLD = Component.translatableWithFallback(
+		"config.ui.restart_required.world",
+		"A world reload is required for the changes to take effect."
+	);
+	public static final Component RETURN_TO_MENU = Component.translatable("menu.returnToMenu");
 	public static final Component QUIT_GAME = Component.translatable("menu.quit");
 	public static final Component IGNORE_RESTART_LABEL = Component.translatable("config.ui.ignore_restart");
 	public static final Component COLOR_PICKER_LABEL = Component.literal("🎨");

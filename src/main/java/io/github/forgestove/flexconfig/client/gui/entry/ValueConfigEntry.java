@@ -1,4 +1,5 @@
 package io.github.forgestove.flexconfig.client.gui.entry;
+import io.github.forgestove.flexconfig.FileKey;
 import io.github.forgestove.flexconfig.client.*;
 import io.github.forgestove.flexconfig.client.gui.ConfigCategoryTab;
 import io.github.forgestove.flexconfig.tree.ValueConfigNode;
@@ -59,31 +60,36 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 		return errorTooltip;
 	}
 	public void resetToDefault() {
-		if (isLocked()) return;
+		if (isReadOnly()) return;
 		var path = node.getPath();
-		var pending = ClientLockManager.getPendingLock(path);
-		if (pending != Boolean.FALSE) ClientLockManager.clearPendingLock(path);
+		var pending = ClientLockManager.getPendingLock(fileKey(), path);
+		if (pending != Boolean.FALSE) ClientLockManager.clearPendingLock(fileKey(), path);
 		node.resetToDefault();
 		tab.screen.refresh();
 	}
 	public void resetToActive() {
 		var path = node.getPath();
-		var pending = ClientLockManager.getPendingLock(path);
-		if (pending != Boolean.FALSE) ClientLockManager.clearPendingLock(path);
+		var pending = ClientLockManager.getPendingLock(fileKey(), path);
+		if (pending != Boolean.FALSE) ClientLockManager.clearPendingLock(fileKey(), path);
 		node.resetToActive(tab.config);
 		tab.screen.refresh();
+	}
+	/** 本条目所属的配置文件。 */
+	private FileKey fileKey() {
+		return new FileKey(tab.screen.root.modId(), tab.screen.root.fileName());
 	}
 	/** 切换待处理的锁定状态（延迟至保存时执行）。 */
 	private void onLockToggle() {
 		var path = node.getPath();
 		var shouldLock = !isLocked(); // effective state, considering pending
-		ClientLockManager.setPendingLock(path, shouldLock);
+		ClientLockManager.setPendingLock(fileKey(), path, shouldLock);
 		tab.screen.refresh();
 	}
 	private boolean canLock() {
 		return ClientUtil.mc.player != null && ClientUtil.mc.player.hasPermissions(2);
 	}
 	private boolean shouldShowLockButton() {
+		if (!tab.screen.isLockable()) return false;   // SERVER 型不接受锁定
 		if (ClientUtil.mc.player == null) return false;
 		if (ClientUtil.mc.isSingleplayer()) return false;
 		return ClientLockManager.hasReceivedSync();
@@ -98,9 +104,13 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 	 */
 	public boolean isLocked() {
 		var path = node.getPath();
-		var pending = ClientLockManager.getPendingLock(path);
+		var pending = ClientLockManager.getPendingLock(fileKey(), path);
 		if (pending != null) return pending;
-		return ClientLockManager.isLocked(tab.screen.root.modId(), path);
+		return ClientLockManager.isLocked(fileKey(), path);
+	}
+	/** 本条目的值是否不可修改：被锁定，或该配置文件在客户端本就不可编辑（远端服务器上的 SERVER 型）。 */
+	public boolean isReadOnly() {
+		return isLocked() || !tab.screen.isEditable();
 	}
 	public V getValue() {
 		return node.getEditingValue(tab.config);
@@ -126,11 +136,12 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 	@Override
 	public void refresh() {
 		var locked = isLocked();
-		var hasPendingLock = Boolean.TRUE.equals(ClientLockManager.getPendingLock(node.getPath()));
-		resetButton.active = !locked && !node.isDefaultValue(tab.config);
-		undoButton.active = !locked && !node.isActiveValue(tab.config);
+		var readOnly = isReadOnly();
+		var hasPendingLock = Boolean.TRUE.equals(ClientLockManager.getPendingLock(fileKey(), node.getPath()));
+		resetButton.active = !readOnly && !node.isDefaultValue(tab.config);
+		undoButton.active = !readOnly && !node.isActiveValue(tab.config);
 		validationError = node.validate(tab.config);
-		hasChanged = hasPendingLock || !locked && !node.isActiveValue(tab.config);
+		hasChanged = hasPendingLock || !readOnly && !node.isActiveValue(tab.config);
 		tooltipWithError = getTooltipWithError();
 		lockButton.visible = shouldShowLockButton();
 		lockButton.active = lockButton.visible && canLock();
@@ -155,6 +166,7 @@ public abstract class ValueConfigEntry<C, V> extends ConfigEntry {
 		var indent = getIndent();
 		var label = ConfigCategoryTab.styleAsState(this.label, hasError(), hasChanged);
 		if (isLocked()) label = label.copy().withStyle(ChatFormatting.GRAY, ChatFormatting.STRIKETHROUGH);
+		else if (!tab.screen.isEditable()) label = label.copy().withStyle(ChatFormatting.GRAY);
 		gui.drawString(ClientUtil.mc.font, label.getVisualOrderText(), x + indent, y + 5, -1, false);
 		var right = x + width;
 		for (var widget : widgets) {

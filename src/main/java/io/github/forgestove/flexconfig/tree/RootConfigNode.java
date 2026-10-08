@@ -12,16 +12,12 @@ import org.jetbrains.annotations.*;
 import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.Map.Entry;
-public record RootConfigNode<C, V>(String modId, ImmutableList<CategoryConfigNode<C>> categories) implements ConfigNode<C> {
-	@Contract(pure = true)
-	private RootConfigNode(ImmutableList<CategoryConfigNode<C>> categories, String modId) {
-		this(modId, categories);
-	}
+public record RootConfigNode<C, V>(String modId, String fileName, ImmutableList<CategoryConfigNode<C>> categories)
+	implements ConfigNode<C> {
 	@SuppressWarnings("unchecked")
-	@Contract("_, _ -> new")
-	public static <C, V> @NotNull RootConfigNode<C, V> create(C defaultConfig, String modId) {
-		return (RootConfigNode<C, V>) new Builder<>(defaultConfig, modId).build();
+	@Contract("_, _, _, _ -> new")
+	public static <C, V> @NotNull RootConfigNode<C, V> create(C defaultConfig, String modId, String fileName, ConfigType type) {
+		return (RootConfigNode<C, V>) new Builder<>(defaultConfig, modId, fileName, type).build();
 	}
 	@Contract(value = " -> new", pure = true)
 	public @NotNull Component getTitle() {
@@ -40,9 +36,16 @@ public record RootConfigNode<C, V>(String modId, ImmutableList<CategoryConfigNod
 	public void resetToActive(C config) {
 		categories.forEach(category -> category.resetToActive(config));
 	}
+	@Nullable
 	@Override
-	public boolean restartRequired(C config) {
-		return categories.stream().anyMatch(categoryConfigNode -> categoryConfigNode.restartRequired(config));
+	public RestartType restartType(C config) {
+		RestartType worst = null;
+		for (var category : categories) {
+			var type = category.restartType(config);
+			if (type == RestartType.GAME) return RestartType.GAME;   // 取最重的一档
+			if (type == RestartType.WORLD) worst = RestartType.WORLD;
+		}
+		return worst;
 	}
 	@Override
 	public boolean isDefaultValue(C config) {
@@ -66,6 +69,23 @@ public record RootConfigNode<C, V>(String modId, ImmutableList<CategoryConfigNod
 	@Override
 	public void copy(C from, C to) {
 		categories.forEach(node -> node.copy(from, to));
+	}
+	@Override
+	public void copyForRuntime(C from, C to) {
+		categories.forEach(node -> node.copyForRuntime(from, to));
+	}
+	@Override
+	public void flushPending(C to) {
+		categories.forEach(node -> node.flushPending(to));
+	}
+	@Override
+	public void applyRestart(C saved, C active, RestartType restartType) {
+		ConfigChangeDispatcher.begin();
+		try {
+			categories.forEach(node -> node.applyRestart(saved, active, restartType));
+		} finally {
+			ConfigChangeDispatcher.end();   // finally：节点抛异常也不会让派发深度卡住
+		}
 	}
 	@Override
 	public void writeEditingToConfig(C config) {
@@ -101,45 +121,35 @@ public record RootConfigNode<C, V>(String modId, ImmutableList<CategoryConfigNod
 	}
 	private static class Builder<C> {
 		private final String modId;
+		private final String fileName;
+		private final ConfigType type;
 		private C defaultConfig;
-		private Builder(C defaultConfig, String modId) {
+		private Builder(C defaultConfig, String modId, String fileName, ConfigType type) {
 			this.defaultConfig = defaultConfig;
 			this.modId = modId;
+			this.fileName = fileName;
+			this.type = type;
 		}
 		private static boolean evaluatePathCondition(@NotNull List<Field> path) {
 			for (var field : path)
 				if (!ConfigCondition.evaluate(field)) return false;
 			return true;
 		}
-		@Contract("_ -> param1")
-		private static Field[] sortedFields(Field @NotNull [] fields) {
-			var indices = new HashMap<String, Integer>();
-			for (var i = 0; i < fields.length; i++) indices.put(fields[i].getName(), i);
-			Arrays.sort(
-				fields,
-				Comparator.comparingInt((Field f) -> f.isAnnotationPresent(Order.class) ? f.getAnnotation(Order.class).value() : 0)
-					.thenComparingInt(f -> indices.get(f.getName()))
-			);
-			return fields;
-		}
 		@NotNull
 		public RootConfigNode<C, ?> build() {
-			var configClass = defaultConfig.getClass();
-			var categories = Arrays.stream(configClass.getFields())
+			var categories = Arrays.stream(FieldAccess.collectOrderedFields(defaultConfig.getClass()))
 				.filter(field -> field.isAnnotationPresent(Category.class))
 				.filter(ConfigCondition::evaluate)
-				.map(field -> Map.entry(field.isAnnotationPresent(Order.class) ? field.getAnnotation(Order.class).value() : 0, field))
-				.sorted(Comparator.comparingInt(Entry::getKey))
-				.map(pair -> createCategoryNode(pair.getValue()))
+				.map(this::createCategoryNode)
 				.collect(ImmutableList.toImmutableList());
 			defaultConfig = null;
-			return new RootConfigNode<>(categories, modId);
+			return new RootConfigNode<>(modId, fileName, categories);
 		}
 		private CategoryConfigNode<C> createCategoryNode(Field categoryField) {
 			var defaultCategory = FieldAccess.getFieldValue(categoryField, defaultConfig);
 			var categoryBuilder = CategoryConfigNode.<C>builder()
 				.title(Component.translatable(modId + ".config.category." + categoryField.getName()));
-			for (var valueField : sortedFields(categoryField.getType().getDeclaredFields()))
+			for (var valueField : FieldAccess.collectOrderedFields(categoryField.getType()))
 				if (valueField.isAnnotationPresent(Category.class)) {
 					if (!ConfigCondition.evaluate(valueField)) continue;
 					var subBuilder = createSubCategoryNode(List.of(categoryField), valueField);
@@ -158,7 +168,7 @@ public record RootConfigNode<C, V>(String modId, ImmutableList<CategoryConfigNod
 			var builder = CategoryConfigNode.<C>builder()
 				.title(Component.translatable(modId + ".config.category." + pathKey))
 				.defaultExpanded(annotation.value());
-			for (var valueField : sortedFields(subCategoryField.getType().getDeclaredFields()))
+			for (var valueField : FieldAccess.collectOrderedFields(subCategoryField.getType()))
 				if (valueField.isAnnotationPresent(Category.class)) {
 					if (!ConfigCondition.evaluate(valueField)) continue;
 					if (!evaluatePathCondition(path)) continue;
@@ -185,7 +195,8 @@ public record RootConfigNode<C, V>(String modId, ImmutableList<CategoryConfigNod
 			if (!ConfigCondition.evaluate(valueField)) return;
 			if (!evaluatePathCondition(path)) return;
 			var defaultValue = FieldAccess.getFieldValue(valueField, defaultCategory);
-			var type = defaultValue.getClass();
+			var type = FieldAccess.boxed(valueField.getType());
+			var elementType = FieldAccess.elementType(valueField);
 			var valueName = valueField.getName();
 			var pathKey = buildPathKey(path);
 			var titleKey = "%s.config.option.%s.%s".formatted(modId, pathKey, valueName);
@@ -202,11 +213,26 @@ public record RootConfigNode<C, V>(String modId, ImmutableList<CategoryConfigNod
 				.tooltip(finalTooltip)
 				.defaultValue(defaultValue)
 				.colorValue(valueField.getAnnotation(ColorValue.class))
+				.elementType(elementType)
 				.valueReader(makePathValueReader(type, path, valueField))
 				.valueWriter(makePathValueWriter(type, path, valueField))
-				.requiresRestart(valueField.isAnnotationPresent(RequiresRestart.class))
+				.restartType(restartTypeOf(valueField))
 				.changeCallback(makeChangeCallback(valueField, fullPath))
 				.validator(FieldValidators.validatorFor(type, valueField)));
+		}
+		/** 读取 {@link RequiresRestart} 声明的重启级别并校验它适用于本配置类型；未标注返回 {@code null}。 */
+		private @Nullable RestartType restartTypeOf(Field field) {
+			var annotation = field.getAnnotation(RequiresRestart.class);
+			if (annotation == null) return null;
+			var restartType = annotation.value();
+			if (!restartType.isValid(type)) throw new IllegalArgumentException(
+				"Option '%s' of %s config %s declares restart type %s, which cannot be used for that config type".formatted(
+					field.getName(),
+					type,
+					fileName,
+					restartType
+				));
+			return restartType;
 		}
 		private @Nullable ConfigChangeCallback makeChangeCallback(Field valueField, String path) {
 			if (FMLEnvironment.dist.isDedicatedServer()) return null;

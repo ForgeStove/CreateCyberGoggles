@@ -13,7 +13,7 @@ import java.awt.Point;
 import java.io.StringReader;
 import java.util.*;
 /**
- * 追踪服务端锁定的配置项。
+ * 追踪服务端锁定的配置项，以 (模组 ID, 配置文件名) 为维度。
  * <p>
  * 在服务端发送 {@link ConfigSyncPayload} 时更新。
  * 锁定前备份原始值，断开连接或解锁时恢复。
@@ -22,14 +22,23 @@ import java.util.*;
  */
 public final class ClientLockManager {
 	private static final Logger LOGGER = LogUtils.getLogger();
-	private static final Map<String, Boolean> pendingLocks = new HashMap<>();
-	private static final Map<String, Map<String, String>> lockedConfigsByMod = new HashMap<>();
-	private static final Map<String, Object> originalValues = new HashMap<>();
+	/** 待发送的锁定操作（延迟至保存时执行）。 */
+	private static final Map<LockKey, Boolean> pendingLocks = new LinkedHashMap<>();
+	/** 文件 → (配置路径 → 服务端确认的锁定值字符串)。 */
+	private static final Map<FileKey, Map<String, String>> lockedConfigs = new HashMap<>();
+	/** 锁定前的原值，解锁或断开时恢复。 */
+	private static final Map<LockKey, Object> originalValues = new HashMap<>();
+	/** 服务端下发的原始 TOML，供外部重载后重新叠加锁定时复用。 */
+	private static final Map<FileKey, CommentedConfig> syncedConfigs = new HashMap<>();
 	private static boolean receivedSync = false;
+	/** 定位一条配置项的键：哪份文件的哪个路径。 */
+	private record LockKey(FileKey file, String path) {}
 	/** 更新服务端锁定的配置：解析 TOML → 用 ConfigSerializer 获取类型化值 → 应用锁定。 */
-	public static void setLocks(String modId, String tomlContent) {
+	public static void setLocks(String modId, String fileName, String tomlContent) {
 		// 忽略玩家已断开连接后的延迟包
 		if (ClientUtil.mc.getConnection() == null && !ClientUtil.mc.isSingleplayer()) return;
+		var key = new FileKey(modId, fileName);
+		if (!ConfigRegistry.isLockable(key)) return;
 		receivedSync = true;
 		// 解析 TOML
 		CommentedConfig tomlConfig;
@@ -42,10 +51,37 @@ public final class ClientLockManager {
 		// 提取扁平路径→值映射（用于锁定追踪和 revert）
 		var newLocks = new HashMap<String, String>();
 		collectPaths(tomlConfig, "", newLocks);
-		// 使用 ConfigSerializer 获取类型化配置实例
-		var handler = ConfigRegistry.getHandler(modId).cast();
+		var handler = ConfigRegistry.getHandler(key).cast();
 		var root = handler.getConfigTree();
-		if (root == null) return;
+		var config = handler.getConfig();
+		// 恢复此文件上已被移除的锁定
+		var oldLocks = lockedConfigs.getOrDefault(key, Map.of());
+		for (var oldEntry : oldLocks.entrySet()) {
+			if (newLocks.containsKey(oldEntry.getKey())) continue;
+			var original = originalValues.remove(new LockKey(key, oldEntry.getKey()));
+			if (original == null) continue;
+			var node = root.getValueNode(oldEntry.getKey());
+			if (node == null) continue;
+			ConfigRegistry.applyLockedValue(key, node, original);
+			node.resetToActive(config);
+		}
+		// 备份加锁前的原值（只记第一次，之后重复同步不改基线）
+		for (var path : newLocks.keySet()) {
+			var node = root.getValueNode(path);
+			if (node == null) continue;
+			originalValues.putIfAbsent(new LockKey(key, path), node.getActiveValue(config));
+		}
+		lockedConfigs.put(key, newLocks);
+		syncedConfigs.put(key, tomlConfig);
+		reapply(key);
+	}
+	/** 配置文件被外部重载后，重新叠加服务端锁定的值。 */
+	public static void reapply(FileKey key) {
+		var lockedPaths = lockedConfigs.get(key);
+		var tomlConfig = syncedConfigs.get(key);
+		if (lockedPaths == null || lockedPaths.isEmpty() || tomlConfig == null || !ConfigRegistry.isLockable(key)) return;
+		var handler = ConfigRegistry.getHandler(key).cast();
+		var root = handler.getConfigTree();
 		Object instance;
 		try {
 			instance = handler.getSerializer().deserializeFrom(tomlConfig);
@@ -53,33 +89,15 @@ public final class ClientLockManager {
 			LOGGER.error(e.getMessage());
 			return;
 		}
-		// 恢复此模组已移除的锁定
-		var oldLocks = lockedConfigsByMod.getOrDefault(modId, Collections.emptyMap());
-		for (var oldEntry : oldLocks.entrySet()) {
-			if (newLocks.containsKey(oldEntry.getKey())) continue;
-			var original = originalValues.remove(modIdKey(modId, oldEntry.getKey()));
-			if (original == null) continue;
-			var node = root.getValueNode(oldEntry.getKey());
-			if (node != null) ConfigRegistry.applyLockedValue(modId, node, original);
+		var config = handler.getConfig();
+		for (var path : lockedPaths.keySet()) {
+			var node = root.getValueNode(path);
 			if (node == null) continue;
-			node.resetToActive(handler.getConfig());
-		}
-		// 备份并应用锁定
-		for (var entry : newLocks.entrySet()) {
-			var node = root.getValueNode(entry.getKey());
-			if (node == null) continue;
-			if (!originalValues.containsKey(modIdKey(modId, entry.getKey()))) {
-				var config = handler.getConfig();
-				if (config == null) continue;
-				originalValues.put(modIdKey(modId, entry.getKey()), node.getActiveValue(config));
-			}
 			var typedValue = node.getActiveValue(instance);
-			if (typedValue != null) {
-				ConfigRegistry.applyLockedValue(modId, node, typedValue);
-				node.resetToActive(handler.getConfig());
-			}
+			if (typedValue == null) continue;
+			ConfigRegistry.applyLockedValue(key, node, typedValue);
+			node.resetToActive(config);
 		}
-		lockedConfigsByMod.put(modId, newLocks);
 	}
 	/** 递归遍历 CommentedConfig，收集扁平路径→字符串值映射。 */
 	private static void collectPaths(CommentedConfig config, String prefix, Map<String, String> result) {
@@ -93,15 +111,16 @@ public final class ClientLockManager {
 	}
 	// -- 待处理的锁定操作（延迟至保存时发送） --
 	@Nullable
-	public static Boolean getPendingLock(String configId) {
-		return pendingLocks.get(configId);
+	public static Boolean getPendingLock(FileKey file, String configId) {
+		return pendingLocks.get(new LockKey(file, configId));
 	}
-	public static void setPendingLock(String configId, boolean shouldLock) {
-		if (!pendingLocks.containsKey(configId)) pendingLocks.put(configId, shouldLock);
-		else pendingLocks.remove(configId);
+	public static void setPendingLock(FileKey file, String configId, boolean shouldLock) {
+		var key = new LockKey(file, configId);
+		if (!pendingLocks.containsKey(key)) pendingLocks.put(key, shouldLock);
+		else pendingLocks.remove(key);
 	}
-	public static void clearPendingLock(String configId) {
-		pendingLocks.remove(configId);
+	public static void clearPendingLock(FileKey file, String configId) {
+		pendingLocks.remove(new LockKey(file, configId));
 	}
 	public static boolean hasPendingLocks() {
 		return !pendingLocks.isEmpty();
@@ -109,32 +128,30 @@ public final class ClientLockManager {
 	public static void clearPendingLocks() {
 		pendingLocks.clear();
 	}
-	public static void flushPendingLocks(String modId) {
+	/** 把所有待处理的锁定/解锁请求发送给服务端。 */
+	public static void flushPendingLocks() {
 		if (pendingLocks.isEmpty()) return;
 		if (ClientUtil.mc.player == null) {
 			pendingLocks.clear();
 			return;
 		}
-		var root = ConfigRegistry.getRootConfigNode(modId);
-		for (var entry : pendingLocks.entrySet()) {
-			var configId = entry.getKey();
-			var shouldLock = entry.getValue();
+		for (var entry : new ArrayList<>(pendingLocks.entrySet())) {
+			var key = entry.getKey();
+			if (!ConfigRegistry.isLockable(key.file())) continue;
 			String value;
-			if (shouldLock) value = getCurrentValueAsString(modId, root, configId);
+			if (entry.getValue()) value = getCurrentValueAsString(key.file(), key.path());
 			else {
 				value = "";
-				updateOriginalValue(modId, root, configId);
+				updateOriginalValue(key.file(), key.path());
 			}
-			PacketDistributor.sendToServer(new ConfigLockPayload(modId, configId, value));
+			PacketDistributor.sendToServer(new ConfigLockPayload(key.file().modId(), key.file().fileName(), key.path(), value));
 		}
 		pendingLocks.clear();
 	}
-	private static @NotNull String getCurrentValueAsString(String modId, @Nullable RootConfigNode<Object, Object> root, String configId) {
-		if (root == null) return "";
-		var node = root.getValueNode(configId);
-		if (node == null) return "";
-		var config = ConfigRegistry.getActiveConfig(modId);
-		if (config == null) return "";
+	private static @NotNull String getCurrentValueAsString(FileKey file, String configId) {
+		var node = ConfigRegistry.getRootConfigNode(file).getValueNode(configId);
+		var config = ConfigRegistry.getActiveConfig(file);
+		if (node == null || config == null) return "";
 		var value = node.getActiveValue(config);
 		return switch (value) {
 			case null -> "";
@@ -144,31 +161,26 @@ public final class ClientLockManager {
 			default -> value.toString();
 		};
 	}
-	@SuppressWarnings("unchecked")
-	private static void updateOriginalValue(String modId, @Nullable RootConfigNode<?, ?> root, String configId) {
-		if (root == null) return;
-		var node = root.getValueNode(configId);
-		if (node == null) return;
-		var config = ConfigRegistry.getActiveConfig(modId);
-		if (config == null) return;
-		originalValues.put(modIdKey(modId, configId), ((ValueConfigNode<Object, Object>) node).getActiveValue(config));
-	}
-	private static String modIdKey(String modId, String configId) {
-		return modId + ":" + configId;
+	private static void updateOriginalValue(FileKey file, String configId) {
+		var node = ConfigRegistry.getRootConfigNode(file).getValueNode(configId);
+		var config = ConfigRegistry.getActiveConfig(file);
+		if (node == null || config == null) return;
+		originalValues.put(new LockKey(file, configId), node.getActiveValue(config));
 	}
 	// -- 查询方法 --
 	public static boolean hasReceivedSync() {
 		return receivedSync;
 	}
 	public static void clear() {
-		ConfigRegistry.getRegisteredModIds().forEach(ConfigRegistry::resetToSaved);
+		ConfigRegistry.getRegisteredFileKeys().forEach(ConfigRegistry::resetToSaved);
 		originalValues.clear();
-		lockedConfigsByMod.clear();
+		lockedConfigs.clear();
+		syncedConfigs.clear();
 		pendingLocks.clear();
 		receivedSync = false;
 	}
-	public static boolean isLocked(String modId, String configId) {
-		var modLocks = lockedConfigsByMod.get(modId);
-		return modLocks != null && modLocks.containsKey(configId);
+	public static boolean isLocked(FileKey file, String configId) {
+		var fileLocks = lockedConfigs.get(file);
+		return fileLocks != null && fileLocks.containsKey(configId);
 	}
 }

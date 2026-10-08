@@ -47,7 +47,7 @@ public abstract class CapturableValueConfigEntry<C, V> extends ValueConfigEntry<
 		var serialized = handler.getTriggerKeybind(path);
 		handler.setTriggerKeybind(
 			path, serialized, () -> {
-				if (isLocked()) return;
+				if (isReadOnly()) return;
 				valueChanger.run();
 				node.writeEditingToConfig(tab.config);
 				tab.screen.saveByKeybind();
@@ -57,8 +57,8 @@ public abstract class CapturableValueConfigEntry<C, V> extends ValueConfigEntry<
 	@Override
 	public void refresh() {
 		super.refresh();
-		var locked = isLocked();
-		keybindButton.active = !locked;
+		var readOnly = isReadOnly();
+		keybindButton.active = !readOnly;
 		var keybind = getCurrentKeybind();
 		var keyText = keybind.getDisplayName().copy().withStyle(state.color());
 		if (capturing) keybindButton.setMessage(Component.literal("> ").append(keyText).append(" <"));
@@ -67,12 +67,12 @@ public abstract class CapturableValueConfigEntry<C, V> extends ValueConfigEntry<
 		else keybindButton.setTooltip(null);
 		// 撤销：keybind 与初始快照不同
 		var currentSerialized = getCurrentKeybindSerialized();
-		if (!Objects.equals(currentSerialized, initialKeybindSerialized) && !locked) {
+		if (!Objects.equals(currentSerialized, initialKeybindSerialized) && !readOnly) {
 			hasChanged = true;
 			undoButton.active = true;
 		}
 		// 重置：keybind 不为默认（null）时启用
-		if (currentSerialized != null && !locked) resetButton.active = true;
+		if (currentSerialized != null && !readOnly) resetButton.active = true;
 	}
 	/** 获取当前绑定快捷键。 */
 	private EntryKeybind getCurrentKeybind() {
@@ -104,7 +104,7 @@ public abstract class CapturableValueConfigEntry<C, V> extends ValueConfigEntry<
 		float delta
 	) {
 		var valueWidget = getValueWidget();
-		valueWidget.active = !isLocked();
+		valueWidget.active = !isReadOnly();
 		renderGui(gui, y, x, width, mouseX, mouseY, delta, lockButton, undoButton, resetButton, keybindButton, valueWidget);
 	}
 	/** 子类实现：返回值控件（valueButton、dropdownButton 等），用于 render。 */
@@ -190,7 +190,7 @@ public abstract class CapturableValueConfigEntry<C, V> extends ValueConfigEntry<
 	}
 	@Override
 	public void resetToDefault() {
-		if (isLocked()) {
+		if (isReadOnly()) {
 			tab.screen.getHandler().setTriggerKeybind(node.getPath(), null, null);
 			tab.screen.refresh();
 			return;

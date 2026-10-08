@@ -1,6 +1,7 @@
 package io.github.forgestove.flexconfig.tree;
 import com.google.common.collect.ImmutableList;
 import io.github.forgestove.flexconfig.ConfigChangeDispatcher;
+import io.github.forgestove.flexconfig.api.RestartType;
 import io.github.forgestove.flexconfig.client.Translation;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.*;
@@ -31,10 +32,16 @@ public final class CategoryConfigNode<C> implements ConfigNode<C> {
 	public void resetToActive(C config) {
 		children.forEach(child -> child.resetToActive(config));
 	}
+	@Nullable
 	@Override
-	public boolean restartRequired(C config) {
-		for (var node : children) if (node.restartRequired(config)) return true;
-		return false;
+	public RestartType restartType(C config) {
+		RestartType worst = null;
+		for (var node : children) {
+			var type = node.restartType(config);
+			if (type == RestartType.GAME) return RestartType.GAME;   // 取最重的一档
+			if (type == RestartType.WORLD) worst = RestartType.WORLD;
+		}
+		return worst;
 	}
 	@Override
 	public boolean isDefaultValue(C config) {
@@ -61,6 +68,23 @@ public final class CategoryConfigNode<C> implements ConfigNode<C> {
 	@Override
 	public void copy(C from, C to) {
 		children.forEach(node -> node.copy(from, to));
+	}
+	@Override
+	public void copyForRuntime(C from, C to) {
+		children.forEach(node -> node.copyForRuntime(from, to));
+	}
+	@Override
+	public void flushPending(C to) {
+		children.forEach(node -> node.flushPending(to));
+	}
+	@Override
+	public void applyRestart(C saved, C active, RestartType restartType) {
+		ConfigChangeDispatcher.begin();
+		try {
+			children.forEach(node -> node.applyRestart(saved, active, restartType));
+		} finally {
+			ConfigChangeDispatcher.end();   // finally：节点抛异常也不会让派发深度卡住
+		}
 	}
 	@Override
 	public void writeEditingToConfig(C config) {

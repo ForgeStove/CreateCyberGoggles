@@ -1,6 +1,9 @@
 package io.github.forgestove.flexconfig.client.gui;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import io.github.forgestove.flexconfig.ConfigHandler;
+import io.github.forgestove.flexconfig.FileKey;
+import io.github.forgestove.flexconfig.api.ConfigType;
+import io.github.forgestove.flexconfig.api.RestartType;
 import io.github.forgestove.flexconfig.client.*;
 import io.github.forgestove.flexconfig.client.gui.api.CaptureHandler;
 import io.github.forgestove.flexconfig.client.gui.entry.ConfigEntry;
@@ -11,6 +14,7 @@ import net.minecraft.client.gui.components.tabs.*;
 import net.minecraft.client.gui.layouts.*;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.*;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.*;
 
@@ -98,7 +102,7 @@ public final class ConfigScreen<C, V> extends Screen {
 			.defaultValue(mapping.getDefaultKey())
 			.valueReader(config -> mapping.getKey())
 			.valueWriter((config, valueKey) -> mapping.setKey(valueKey))
-			.requiresRestart(false)));
+			.restartType(null)));
 		return builder.build();
 	}
 	private void initTabLayout() {
@@ -127,19 +131,41 @@ public final class ConfigScreen<C, V> extends Screen {
 		));
 	}
 	private Component getSaveLabel(boolean hasEntryError) {
-		return validate() == null && !hasEntryError ? Translation.SAVE_LABEL : Translation.CANNOT_SAVE_LABEL;
+		return isEditable() && validate() == null && !hasEntryError ? Translation.SAVE_LABEL : Translation.CANNOT_SAVE_LABEL;
 	}
 	public void saveAndQuit() {
-		var restartRequired = root.restartRequired(config);
+		if (!isEditable()) return;
+		var restartType = root.restartType(config);
 		root.writeEditingToConfig(config);
 		if (keybindCategory != null) keybindCategory.writeEditingToConfig(config);
 		var mc = ClientUtil.mc;
 		mc.options.save();
 		handler.save(config);
-		ClientLockManager.flushPendingLocks(root.modId());
-		handler.saveTriggerKeybinds();
+		ClientLockManager.flushPendingLocks();
 		savedTriggerKeybinds = new LinkedHashMap<>(handler.getAllTriggerKeybinds());
-		mc.setScreen(restartRequired ? new ConfirmScreen(
+		mc.setScreen(restartScreen(restartType));
+	}
+	/**
+	 * 按所需的重启级别给出后续界面。
+	 * 只需重载世界时提供「返回标题界面」，需要重启游戏时才提供「退出游戏」。
+	 */
+	private Screen restartScreen(@Nullable RestartType restartType) {
+		if (restartType == null) return parent;
+		var mc = ClientUtil.mc;
+		if (restartType == RestartType.WORLD) {
+			if (mc.level == null) return parent;   // 不在世界里，没有可重载的世界
+			return new ConfirmScreen(
+				confirmed -> {
+					if (confirmed) mc.disconnect();
+					else mc.setScreen(parent);
+				},
+				Translation.RESTART_REQUIRED_TITLE,
+				Translation.RESTART_REQUIRED_WORLD,
+				mc.isLocalServer() ? Translation.RETURN_TO_MENU : CommonComponents.GUI_DISCONNECT,
+				Translation.IGNORE_RESTART_LABEL
+			);
+		}
+		return new ConfirmScreen(
 			confirmed -> {
 				if (confirmed) mc.stop();
 				else mc.setScreen(parent);
@@ -148,7 +174,7 @@ public final class ConfigScreen<C, V> extends Screen {
 			Translation.RESTART_REQUIRED_LABEL,
 			Translation.QUIT_GAME,
 			Translation.IGNORE_RESTART_LABEL
-		) : parent);
+		);
 	}
 	@Override
 	protected void repositionElements() {
@@ -179,7 +205,7 @@ public final class ConfigScreen<C, V> extends Screen {
 	public void refresh() {
 		tabs.forEach(ConfigCategoryTab::refresh);
 		var hasEntryError = tabs.stream().anyMatch(ConfigCategoryTab::hasEntryError);
-		saveButton.active = !isActiveValue() && validate() == null && !hasEntryError;
+		saveButton.active = isEditable() && !isActiveValue() && validate() == null && !hasEntryError;
 		cancelButton.setMessage(getCancelLabel());
 		saveButton.setMessage(getSaveLabel(hasEntryError));
 	}
@@ -195,10 +221,32 @@ public final class ConfigScreen<C, V> extends Screen {
 	}
 	/** 由全局快捷键触发调用：将已由 entry 写入配置的值持久化到磁盘。 */
 	public void saveByKeybind() {
+		if (!isEditable()) return;
 		handler.save(config);
 	}
 	public ConfigHandler<C, V> getHandler() {
 		return handler;
+	}
+	/** 界面正在编辑的配置文件；热重载会跳过它们，免得冲掉未保存的编辑。 */
+	public Set<FileKey> editedFiles() {
+		return Set.of(new FileKey(root.modId(), root.fileName()));
+	}
+	/** 本界面所显示的配置是否支持服务端锁定（SERVER 型由服务端权威下发，不需要锁定）。 */
+	public boolean isLockable() {
+		return handler.getType() != ConfigType.SERVER;
+	}
+	/**
+	 * 本界面所显示的配置是否可编辑。
+	 * <p>
+	 * 远端连服、或单人存档已对局域网开放时，SERVER 型由服务端权威，客户端不可改（与官方一致）。
+	 * 单人未开放时客户端就是服务端，可编辑。
+	 */
+	public boolean isEditable() {
+		if (handler.getType() != ConfigType.SERVER) return true;
+		var mc = ClientUtil.mc;
+		if (!mc.isSingleplayer()) return false;
+		var server = mc.getSingleplayerServer();
+		return server == null || !server.isPublished();
 	}
 	public void onEntryCaptureChanged(CaptureHandler entry, boolean capturing) {
 		capturingEntry = capturing ? entry : null;

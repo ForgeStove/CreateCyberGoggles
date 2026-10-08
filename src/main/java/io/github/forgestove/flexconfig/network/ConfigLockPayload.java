@@ -5,12 +5,14 @@ import net.minecraft.network.codec.*;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.*;
-/** C2S数据包：管理员客户端发送针对特定配置条目的锁定/解锁请求。 */
-public record ConfigLockPayload(String modId, String configId, String value) implements CustomPacketPayload {
+/** C2S数据包：管理员客户端发送针对特定配置文件内某个条目的锁定/解锁请求。 */
+public record ConfigLockPayload(String modId, String fileName, String configId, String value) implements CustomPacketPayload {
 	public static final Type<ConfigLockPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(FlexConfig.ID, "config_lock"));
 	public static final StreamCodec<FriendlyByteBuf, ConfigLockPayload> STREAM_CODEC = StreamCodec.composite(
 		ByteBufCodecs.STRING_UTF8,
 		ConfigLockPayload::modId,
+		ByteBufCodecs.STRING_UTF8,
+		ConfigLockPayload::fileName,
 		ByteBufCodecs.STRING_UTF8,
 		ConfigLockPayload::configId,
 		ByteBufCodecs.STRING_UTF8,

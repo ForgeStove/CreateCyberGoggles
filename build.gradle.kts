@@ -47,6 +47,12 @@ neoForge {
 repositories {
 	mavenLocal()
 	mavenCentral()
+	ivy {
+		name = "FlexConfigReleases"
+		url = uri("https://github.com/ForgeStove/FlexConfig/releases/download")
+		patternLayout { artifact("[revision]/[artifact]-[revision](-[classifier]).jar") }
+		metadataSources { artifact() }
+	}
 	maven("https://maven.createmod.net") // Create, Ponder, Flywheel
 	maven("https://mvn.devos.one/snapshots") // Registrate
 	maven("https://maven.ryanhcode.dev/releases") // Aeronautics
@@ -56,6 +62,7 @@ repositories {
 	maven("https://dl.zznty.ru/maven") // Create Factory Abstractions
 }
 dependencies {
+	implementation("io.github.forgestove:FlexConfig:1.21.1-1.0.0-NeoForge")?.let { jarJar(it) }
 	//region Create
 	implementation("com.simibubi.create:create-${p("mcVersion")}:${p("createVersion")}") { isTransitive = false }
 	implementation("dev.engine-room.flywheel:flywheel-${p("loader")}-${p("mcVersion")}:${p("flywheelVersion")}")

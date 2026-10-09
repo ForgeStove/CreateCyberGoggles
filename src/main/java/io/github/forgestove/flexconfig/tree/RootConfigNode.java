@@ -12,8 +12,9 @@ import org.jetbrains.annotations.*;
 import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;
 import java.util.*;
-public record RootConfigNode<C, V>(String modId, String fileName, ImmutableList<CategoryConfigNode<C>> categories)
-	implements ConfigNode<C> {
+public record RootConfigNode<C, V>(
+	String modId, String fileName, ImmutableList<CategoryConfigNode<C>> categories, ImmutableList<String> translationKeys
+) implements ConfigNode<C> {
 	@SuppressWarnings("unchecked")
 	@Contract("_, _, _, _ -> new")
 	public static <C, V> @NotNull RootConfigNode<C, V> create(C defaultConfig, String modId, String fileName, ConfigType type) {
@@ -123,6 +124,8 @@ public record RootConfigNode<C, V>(String modId, String fileName, ImmutableList<
 		private final String modId;
 		private final String fileName;
 		private final ConfigType type;
+		/** 构建过程中收集到的全部翻译键，供开发期检查缺失。 */
+		private final ImmutableList.Builder<String> translationKeys = ImmutableList.builder();
 		private C defaultConfig;
 		private Builder(C defaultConfig, String modId, String fileName, ConfigType type) {
 			this.defaultConfig = defaultConfig;
@@ -143,12 +146,13 @@ public record RootConfigNode<C, V>(String modId, String fileName, ImmutableList<
 				.map(this::createCategoryNode)
 				.collect(ImmutableList.toImmutableList());
 			defaultConfig = null;
-			return new RootConfigNode<>(modId, fileName, categories);
+			return new RootConfigNode<>(modId, fileName, categories, translationKeys.build());
 		}
 		private CategoryConfigNode<C> createCategoryNode(Field categoryField) {
 			var defaultCategory = FieldAccess.getFieldValue(categoryField, defaultConfig);
-			var categoryBuilder = CategoryConfigNode.<C>builder()
-				.title(Component.translatable(modId + ".config.category." + categoryField.getName()));
+			var categoryKey = modId + ".config.category." + categoryField.getName();
+			translationKeys.add(categoryKey);
+			var categoryBuilder = CategoryConfigNode.<C>builder().title(Component.translatable(categoryKey));
 			for (var valueField : FieldAccess.collectOrderedFields(categoryField.getType()))
 				if (valueField.isAnnotationPresent(Category.class)) {
 					if (!ConfigCondition.evaluate(valueField)) continue;
@@ -165,9 +169,9 @@ public record RootConfigNode<C, V>(String modId, String fileName, ImmutableList<
 			var defaultSubCategory = FieldAccess.getFieldValue(subCategoryField, defaultParent);
 			var annotation = subCategoryField.getAnnotation(Category.class);
 			var pathKey = buildPathKey(path);
-			var builder = CategoryConfigNode.<C>builder()
-				.title(Component.translatable(modId + ".config.category." + pathKey))
-				.defaultExpanded(annotation.value());
+			var categoryKey = modId + ".config.category." + pathKey;
+			translationKeys.add(categoryKey);
+			var builder = CategoryConfigNode.<C>builder().title(Component.translatable(categoryKey)).defaultExpanded(annotation.value());
 			for (var valueField : FieldAccess.collectOrderedFields(subCategoryField.getType()))
 				if (valueField.isAnnotationPresent(Category.class)) {
 					if (!ConfigCondition.evaluate(valueField)) continue;
@@ -200,6 +204,11 @@ public record RootConfigNode<C, V>(String modId, String fileName, ImmutableList<
 			var valueName = valueField.getName();
 			var pathKey = buildPathKey(path);
 			var titleKey = "%s.config.option.%s.%s".formatted(modId, pathKey, valueName);
+			translationKeys.add(titleKey);
+			translationKeys.add(titleKey + ".tooltip");
+			// 枚举值的显示键：<modId>.config.enum.<枚举类名>.<常量名>
+			if (type.isEnum()) for (var constant : type.getEnumConstants())
+				translationKeys.add("%s.config.enum.%s.%s".formatted(modId, type.getSimpleName(), ((Enum<?>) constant).name()));
 			var fullPath = (pathKey.isEmpty() ? "" : pathKey + ".") + valueName;
 			var tooltip = Component.translatable(titleKey + ".tooltip");
 			if (valueField.isAnnotationPresent(WarnCheat.class)) tooltip = tooltip.copy()

@@ -7,6 +7,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.fml.ModList;
+import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.fml.loading.LoadingModList;
@@ -33,6 +34,10 @@ public final class NeoForgePlatform implements Platform {
 	@Override
 	public boolean isClient() {
 		return FMLEnvironment.dist.isClient();
+	}
+	@Override
+	public boolean isDevelopmentEnvironment() {
+		return !FMLLoader.isProduction();
 	}
 	@Override
 	public @Nullable String modDisplayName(String modId) {

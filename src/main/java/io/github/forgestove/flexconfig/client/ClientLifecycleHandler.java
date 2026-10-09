@@ -5,6 +5,8 @@ import io.github.forgestove.flexconfig.FileKey;
 import io.github.forgestove.flexconfig.api.ConfigType;
 import io.github.forgestove.flexconfig.client.gui.ConfigEditBox;
 import io.github.forgestove.flexconfig.client.gui.ConfigScreen;
+import io.github.forgestove.flexconfig.platform.Platform;
+import net.minecraft.client.resources.language.I18n;
 
 import java.util.*;
 /**
@@ -16,13 +18,30 @@ public final class ClientLifecycleHandler {
 	private static final Map<String, Boolean> PREVIOUS_STATES = new HashMap<>();
 	/** 热重载轮询计数。 */
 	private static int watchTicks;
+	/** 已扫描过翻译键的语言。 */
+	private static String scannedLanguage;
 	/** 每客户端 tick 调用一次：快捷键触发 + 非 SERVER 型配置的外部改动热重载。 */
 	public static void tick() {
+		checkTranslations();
 		watchConfigFiles();
 		if (ClientUtil.mc.screen != null) return;
 		var window = ClientUtil.mc.getWindow().getWindow();
 		// 快捷键可能挂在模组的任意一份配置上，按文件遍历
 		ConfigRegistry.getRegisteredFileKeys().forEach(key -> ConfigRegistry.getHandler(key).tickTriggerKeybinds(window, PREVIOUS_STATES));
+	}
+	/**
+	 * 语言资源就绪后，扫一遍全部已注册配置的翻译键（每种语言一次，切换语言会重扫）。
+	 * <p>
+	 * 用 vanilla 的 {@code menu.singleplayer} 当就绪探针——资源加载完成前 {@code I18n.exists}
+	 * 对所有键都返回 false，直接扫会误报几百条。
+	 */
+	private static void checkTranslations() {
+		if (!Platform.get().isDevelopmentEnvironment()) return;
+		if (!I18n.exists("menu.singleplayer")) return;
+		var language = ClientUtil.mc.getLanguageManager().getSelected();
+		if (language.equals(scannedLanguage)) return;
+		scannedLanguage = language;
+		ConfigRegistry.getRegisteredFileKeys().forEach(key -> TranslationChecker.check(ConfigRegistry.getRootConfigNode(key)));
 	}
 	/** 非 SERVER 型配置的外部改动热重载（SERVER 型归服务端 tick 处理）。 */
 	private static void watchConfigFiles() {

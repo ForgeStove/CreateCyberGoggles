@@ -26,6 +26,8 @@ public interface Platform {
 	boolean isModLoaded(String modId);
 	/** 是否为客户端（与专用服务器相对）。 */
 	boolean isClient();
+	/** 是否处于开发环境（用于只在开发期生效的检查，例如缺失翻译键告警）。 */
+	boolean isDevelopmentEnvironment();
 	/** 模组显示名；该模组未加载时返回 {@code null}。 */
 	@Nullable String modDisplayName(String modId);
 	/** 把配置界面挂到「模组列表」的入口（NeoForge 用 {@code IConfigScreenFactory}，Fabric 用 ModMenu）。 */

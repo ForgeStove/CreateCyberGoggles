@@ -1,5 +1,5 @@
 package io.github.forgestove.flexconfig.api;
-import net.neoforged.fml.loading.LoadingModList;
+import io.github.forgestove.flexconfig.platform.Platform;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -23,7 +23,7 @@ public interface ConfigCondition {
 	 */
 	static boolean evaluate(Condition condition) {
 		var mod = condition.value();
-		if (!mod.isEmpty() && LoadingModList.get().getModFileById(mod) == null) return false;
+		if (!mod.isEmpty() && !Platform.get().isModLoaded(mod)) return false;
 		return Arrays.stream(condition.condition()).allMatch(ConfigCondition::evaluate);
 	}
 	/**

@@ -1,9 +1,9 @@
 package io.github.forgestove.flexconfig;
 import com.mojang.logging.LogUtils;
 import io.github.forgestove.flexconfig.api.ConfigType;
+import io.github.forgestove.flexconfig.platform.Platform;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
-import net.neoforged.fml.loading.FMLPaths;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -20,7 +20,7 @@ public final class ConfigNaming {
 	}
 	/** 全局配置目录（{@code config/}）下的完整路径。 */
 	public static Path configDirPath(String fileName) {
-		return FMLPaths.CONFIGDIR.get().resolve(fileName);
+		return Platform.get().configDir().resolve(fileName);
 	}
 	/**
 	 * 解析该配置的读取路径。

@@ -4,8 +4,8 @@ import com.electronwill.nightconfig.toml.TomlParser;
 import com.mojang.logging.LogUtils;
 import io.github.forgestove.flexconfig.*;
 import io.github.forgestove.flexconfig.network.*;
+import io.github.forgestove.flexconfig.platform.Platform;
 import io.github.forgestove.flexconfig.tree.*;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.*;
 import org.slf4j.Logger;
 
@@ -144,7 +144,7 @@ public final class ClientLockManager {
 				value = "";
 				updateOriginalValue(key.file(), key.path());
 			}
-			PacketDistributor.sendToServer(new ConfigLockPayload(key.file().modId(), key.file().fileName(), key.path(), value));
+			Platform.get().sendToServer(new ConfigLockPayload(key.file().modId(), key.file().fileName(), key.path(), value));
 		}
 		pendingLocks.clear();
 	}

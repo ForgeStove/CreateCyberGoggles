@@ -9,7 +9,7 @@ import com.electronwill.nightconfig.toml.TomlWriter;
 import com.mojang.logging.LogUtils;
 import io.github.forgestove.flexconfig.api.*;
 import io.github.forgestove.flexconfig.client.Translation;
-import net.neoforged.fml.loading.FMLEnvironment;
+import io.github.forgestove.flexconfig.platform.Platform;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -309,7 +309,7 @@ public final class ConfigSerializer<C> {
 	}
 	private String translate(String key) {
 		// Translation 依赖客户端 I18n，专用服务端触碰会加载 client-only 类；服务端不生成注释即可
-		if (translationPrefix == null || FMLEnvironment.dist.isDedicatedServer()) return null;
+		if (translationPrefix == null || !Platform.get().isClient()) return null;
 		key = "%s.%s".formatted(translationPrefix, key);
 		return Translation.getString(key);
 	}

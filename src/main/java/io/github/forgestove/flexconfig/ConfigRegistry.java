@@ -1,10 +1,9 @@
 package io.github.forgestove.flexconfig;
 import io.github.forgestove.flexconfig.api.*;
 import io.github.forgestove.flexconfig.client.ConfigScreenFactory;
+import io.github.forgestove.flexconfig.platform.Platform;
 import io.github.forgestove.flexconfig.tree.*;
 import net.minecraft.server.MinecraftServer;
-import net.neoforged.fml.ModList;
-import net.neoforged.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -58,9 +57,10 @@ public final class ConfigRegistry {
 	public static String getModId(@NotNull Class<?> configClass) {
 		return requireAnnotation(configClass).value();
 	}
+	/** 客户端上把配置入口挂到模组列表：只有一份配置时直接打开，多份则先进入选择界面。 */
 	private static void initConfigScreenForClient(String modId) {
-		if (FMLEnvironment.dist.isDedicatedServer()) return;
-		ModList.get().getModContainerById(modId).ifPresent(container -> ConfigScreenFactory.initConfigScreen(container, modId));
+		if (!Platform.get().isClient()) return;
+		Platform.get().registerConfigScreen(modId, () -> ConfigScreenFactory.createConfigScreen(modId));
 	}
 	// ========== 按 modId（主配置）访问 ==========
 	/** 获取该模组的「主」配置处理器（CLIENT → COMMON → SERVER 优先）。 */

@@ -3,10 +3,10 @@ import com.google.common.collect.ImmutableList;
 import io.github.forgestove.flexconfig.*;
 import io.github.forgestove.flexconfig.api.*;
 import io.github.forgestove.flexconfig.client.Translation;
+import io.github.forgestove.flexconfig.platform.Platform;
 import io.github.forgestove.flexconfig.tree.ValueConfigNode.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.neoforged.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.*;
 
 import java.lang.invoke.VarHandle;
@@ -235,7 +235,7 @@ public record RootConfigNode<C, V>(String modId, String fileName, ImmutableList<
 			return restartType;
 		}
 		private @Nullable ConfigChangeCallback makeChangeCallback(Field valueField, String path) {
-			if (FMLEnvironment.dist.isDedicatedServer()) return null;
+			if (!Platform.get().isClient()) return null;
 			var annotation = valueField.getAnnotation(OnChange.class);
 			if (annotation == null) return null;
 			var type = annotation.value();

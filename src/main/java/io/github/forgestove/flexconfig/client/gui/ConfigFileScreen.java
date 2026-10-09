@@ -1,12 +1,12 @@
 package io.github.forgestove.flexconfig.client.gui;
 import io.github.forgestove.flexconfig.ConfigHandler;
 import io.github.forgestove.flexconfig.client.ClientUtil;
+import io.github.forgestove.flexconfig.platform.Platform;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.neoforged.fml.ModList;
 import org.jetbrains.annotations.*;
 
 import java.util.List;
@@ -29,10 +29,8 @@ public final class ConfigFileScreen extends Screen {
 		parent = ClientUtil.mc.screen;
 	}
 	private static Component title(String modId) {
-		return ModList.get()
-			.getModContainerById(modId)
-			.map(container -> Component.literal(container.getModInfo().getDisplayName()))
-			.orElse(Component.literal(modId));
+		var displayName = Platform.get().modDisplayName(modId);
+		return Component.literal(displayName != null ? displayName : modId);
 	}
 	@Override
 	protected void init() {

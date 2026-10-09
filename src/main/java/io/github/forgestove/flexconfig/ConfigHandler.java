@@ -5,8 +5,8 @@ import io.github.forgestove.flexconfig.api.*;
 import io.github.forgestove.flexconfig.client.ConfigScreenFactory;
 import io.github.forgestove.flexconfig.client.gui.factory.EntryKeybind;
 import io.github.forgestove.flexconfig.tree.RootConfigNode;
+import io.github.forgestove.flexconfig.platform.Platform;
 import net.minecraft.server.MinecraftServer;
-import net.neoforged.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.*;
 import org.slf4j.Logger;
 
@@ -56,7 +56,7 @@ public final class ConfigHandler<C, V> {
 	private boolean loadsAtRegistration() {
 		return switch (type) {
 			case SERVER -> false;
-			case CLIENT -> FMLEnvironment.dist.isClient();
+			case CLIENT -> Platform.get().isClient();
 			case COMMON -> true;
 		};
 	}

@@ -51,7 +51,7 @@ public class RequestAmountScreen extends AbstractSimiScreen {
 		super.init();
 		var confirmButton = new IconButton(x + 185, y + 55, AllIcons.I_CONFIRM);
 		confirmButton.withCallback(this::apply);
-		confirmButton.setToolTip(Component.translatable("config.ui.quit.confirm"));
+		confirmButton.setToolTip(Component.translatable("flexconfig.quit.confirm"));
 		var cancelButton = new IconButton(x + 155, y + 55, AllIcons.I_CONFIG_BACK);
 		cancelButton.withCallback(this::onClose);
 		cancelButton.setToolTip(Component.translatable("gui.cancel"));

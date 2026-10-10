@@ -3,5 +3,3 @@ preserve_hierarchy: true
 files:
   - source: /src/main/resources/assets/create_cyber_goggles/lang/en_us.json
     translation: /src/main/resources/assets/create_cyber_goggles/lang/%locale_with_underscore%.json
-  - source: /src/main/resources/assets/config/lang/en_us.json
-    translation: /src/main/resources/assets/config/lang/%locale_with_underscore%.json

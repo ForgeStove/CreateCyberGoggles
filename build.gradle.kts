@@ -2,9 +2,9 @@ plugins {
 	id("net.neoforged.moddev") version "+"
 	id("me.modmuss50.mod-publish-plugin") version "+"
 }
-base.archivesName.set(p("modName"))
+base.archivesName.set(p("modId"))
 group = p("modGroupId")
-version = "${p("mcVersion")}-${p("modVersion")}-${p("loaderCap")}"
+version = "${p("mcVersion")}-${p("modVersion")}-${p("loader")}"
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(p("javaVersion")))
 java.withSourcesJar()
 tasks.jar { from("LICENSE") }
@@ -48,7 +48,6 @@ repositories {
 	mavenLocal()
 	mavenCentral()
 	ivy {
-		name = "FlexConfigReleases"
 		url = uri("https://github.com/ForgeStove/FlexConfig/releases/download")
 		patternLayout { artifact("[revision]/[artifact]-[revision](-[classifier]).jar") }
 		metadataSources { artifact() }
@@ -62,7 +61,7 @@ repositories {
 	maven("https://dl.zznty.ru/maven") // Create Factory Abstractions
 }
 dependencies {
-	implementation("io.github.forgestove:FlexConfig:1.21.1-1.0.0-NeoForge")?.let { jarJar(it) }
+	implementation("io.github.forgestove:flexconfig:${p("mcVersion")}-${p("flexConfigVersion")}-${p("loader")}")?.let { jarJar(it) }
 	//region Create
 	implementation("com.simibubi.create:create-${p("mcVersion")}:${p("createVersion")}") { isTransitive = false }
 	implementation("dev.engine-room.flywheel:flywheel-${p("loader")}-${p("mcVersion")}:${p("flywheelVersion")}")

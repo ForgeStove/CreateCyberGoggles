@@ -1,2 +1,0 @@
-- Optimize fill interaction
-- Change the default preview zoom

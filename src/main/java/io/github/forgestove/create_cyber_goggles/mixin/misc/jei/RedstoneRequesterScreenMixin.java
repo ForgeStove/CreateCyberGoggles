@@ -41,7 +41,7 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 		var bgWidth = AllGuiTextures.REDSTONE_REQUESTER.getWidth();
 		var bgHeight = AllGuiTextures.REDSTONE_REQUESTER.getHeight();
 		var undo = new IconButton(x + bgWidth - 59, y + bgHeight - 25, AllIcons.I_CONFIG_RESET);
-		undo.setToolTip(Component.translatable("config.ui.undo.tooltip"));
+		undo.setToolTip(Component.translatable("flexconfig.undo.tooltip"));
 		undo.withCallback(() -> ccg$interactions.undo());
 		addRenderableWidget(undo);
 		// 首次进入时创建交互并缓存初始内容供撤销；从其他屏返回/窗口重排再次 init 只重绑按钮，

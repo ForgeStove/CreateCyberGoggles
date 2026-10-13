@@ -6,6 +6,7 @@ import dev.ryanhcode.sable.api.physics.force.ForceGroups;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
 import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.event.forceOverlay.ForceClusterer.Cluster;
 import io.github.forgestove.create_cyber_goggles.core.factory.*;
 import net.minecraft.client.Camera;
 import net.minecraft.client.gui.Font.DisplayMode;
@@ -15,6 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage;
+import org.jetbrains.annotations.Nullable;
 import org.joml.*;
 
 import java.lang.Math;
@@ -28,6 +30,16 @@ public final class ForceOverlayRenderer {
 	private static final ResourceLocation GRAVITY_KEY = CCGMods.sable.rl("gravity");
 	private static final double COM_HALF = 0.08, TAIL_SPHERE_PER_BBOX = 0.005, MAX_TAIL_SPHERE_RADIUS = 0.08, CONE_LEN_PER_LENGTH = 0.1,
 		CONE_RADIUS_PER_LEN = 0.4, SHAFT_RADIUS_PER_CONE = 0.35, CONE_RADIUS_PER_TAIL = 1.5, SHAFT_RADIUS_PER_TAIL = 1.0;
+	// 几何分段数，以及复用的手写数组（避免每帧/每图元分配）
+	private static final int CONE_SEGMENTS = 10, SPHERE_PHI = 4, SPHERE_THETA = 8;
+	private static final double[] CONE_CX = new double[CONE_SEGMENTS + 1], CONE_CY = new double[CONE_SEGMENTS + 1], CONE_CZ = new double[
+		CONE_SEGMENTS
+			+ 1];
+	private static final double[] SPHERE_SIN_PHI = new double[SPHERE_PHI + 1], SPHERE_COS_PHI = new double[SPHERE_PHI + 1];
+	private static final double[] SPHERE_SIN_THETA = new double[SPHERE_THETA + 1], SPHERE_COS_THETA = new double[SPHERE_THETA + 1];
+	// 世界标签缓存：仅在簇数据引用变化时重建（否则每帧重建 Component 会持续制造垃圾）
+	private static @Nullable Map<ResourceLocation, List<Cluster>> labelSource;
+	private static List<Label> labelCache = List.of();
 	public static void render(RenderLevelStageEvent event) {
 		if (event.getStage() != Stage.AFTER_LEVEL) return;
 		if (!CCG.config.aeronautics.forceOverlay.enableForceOverlay) return;
@@ -203,6 +215,8 @@ public final class ForceOverlayRenderer {
 		if (!config.useWorldLabels) return;
 		var clusters = ForceOverlay.smoothedClusters();
 		if (clusters == null || clusters.isEmpty()) return;
+		var labels = labelsFor(clusters);
+		if (labels.isEmpty()) return;
 		var font = mc.font;
 		var camPos = camera.getPosition();
 		var renderPose = clientSubLevel.renderPose();
@@ -215,67 +229,32 @@ public final class ForceOverlayRenderer {
 		poseStack.last().pose().identity();
 		poseStack.last().normal().identity();
 		var textScaleF = (float) (0.01 * scale * config.worldLabelScale);
-		// 采集：计算每个标签的世界坐标
-		record Entry(Component text, Vector3d worldPos) {}
-		List<Entry> entries = new ArrayList<>();
-		clusters.forEach((key, value) -> {
-			if (!shouldShowForceGroup(key)) return;
-			var group = ForceGroups.REGISTRY.get(key);
-			if (group == null) return;
-			var groupColor = group.color();
-			for (var cluster : value) {
-				var mag = cluster.force().length();
-				if (mag < 1e-6) continue;
-				var groupName = group.name().getString();
-				var valueStr = String.format(Locale.ROOT, "%.1f", mag);
-				var text = Component.empty()
-					.append(Component.literal(groupName).withStyle(Style.EMPTY.withColor(TextColor.fromRgb(groupColor))))
-					.append(Component.literal("：").withStyle(Style.EMPTY.withColor(TextColor.fromRgb(0xB0B0B0))))
-					.append(Component.literal(valueStr + " N").withStyle(Style.EMPTY.withColor(TextColor.fromRgb(0xFFFFFF))));
-				var forceDir = new Vector3d(cluster.force()).div(mag);
-				var local = new Vector3d(
-					cluster.pos().x() - rotationPoint.x() - forceDir.x * 0.5,
-					cluster.pos().y() - rotationPoint.y() + labelOffsetY - forceDir.y * 0.5,
-					cluster.pos().z() - rotationPoint.z() - forceDir.z * 0.5
-				);
-				var worldDir = subOrient.transform(new Vector3d(local));
-				entries.add(new Entry(
-					text,
-					new Vector3d(
-						subPos.x() + worldDir.x - camPos.x(),
-						subPos.y() + worldDir.y - camPos.y(),
-						subPos.z() + worldDir.z - camPos.z()
-					)
-				));
-			}
-		});
-		if (entries.isEmpty()) {
-			poseStack.popPose();
-			return;
-		}
 		var cameraRot = new Quaternionf(camera.rotation());
+		var local = new Vector3d();
+		var world = new Vector3d();
 		// 背景
 		var fillConsumer = bufferSource.getBuffer(CCGRenderTypes.OVERLAY_FILL);
-		for (var e : entries) {
-			var halfW = font.width(e.text) / 2f;
+		for (var l : labels) {
+			labelWorldPos(l, rotationPoint, labelOffsetY, subPos, subOrient, camPos, local, world);
 			poseStack.pushPose();
-			poseStack.translate(e.worldPos.x(), e.worldPos.y(), e.worldPos.z());
+			poseStack.translate(world.x, world.y, world.z);
 			poseStack.mulPose(cameraRot);
 			poseStack.scale(textScaleF, -textScaleF, textScaleF);
-			drawLabelBg(poseStack.last(), fillConsumer, halfW);
+			drawLabelBg(poseStack.last(), fillConsumer, l.width / 2f);
 			poseStack.popPose();
 		}
 		bufferSource.endBatch(CCGRenderTypes.OVERLAY_FILL);
 		// 文字
 		RenderSystem.disableCull();
-		for (var e : entries) {
-			var halfW = font.width(e.text) / 2;
+		for (var l : labels) {
+			labelWorldPos(l, rotationPoint, labelOffsetY, subPos, subOrient, camPos, local, world);
 			poseStack.pushPose();
-			poseStack.translate(e.worldPos.x(), e.worldPos.y(), e.worldPos.z());
+			poseStack.translate(world.x, world.y, world.z);
 			poseStack.mulPose(cameraRot);
 			poseStack.scale(textScaleF, -textScaleF, textScaleF);
+			var halfW = l.width / 2;
 			font.drawInBatch(
-				e.text,
+				l.text,
 				-halfW,
 				1,
 				0xFFFFFF,
@@ -415,15 +394,14 @@ public final class ForceOverlayRenderer {
 		float g,
 		float b
 	) {
-		var segments = 10;
 		var baseX = tipX - dx * length;
 		var baseY = tipY - dy * length;
 		var baseZ = tipZ - dz * length;
-		var cx = new double[segments + 1];
-		var cy = new double[segments + 1];
-		var cz = new double[segments + 1];
-		for (var i = 0; i <= segments; i++) {
-			var angle = Math.PI * 2.0 * i / segments;
+		var cx = CONE_CX;
+		var cy = CONE_CY;
+		var cz = CONE_CZ;
+		for (var i = 0; i <= CONE_SEGMENTS; i++) {
+			var angle = Math.PI * 2.0 * i / CONE_SEGMENTS;
 			var c = Math.cos(angle);
 			var s = Math.sin(angle);
 			cx[i] = baseX + (perp1.x * c + perp2.x * s) * radius;
@@ -431,7 +409,7 @@ public final class ForceOverlayRenderer {
 			cz[i] = baseZ + (perp1.z * c + perp2.z * s) * radius;
 		}
 		var pose = poseStack.last();
-		for (var i = 0; i < segments; i++) {
+		for (var i = 0; i < CONE_SEGMENTS; i++) {
 			triangle(pose, consumer, tipX, tipY, tipZ, cx[i], cy[i], cz[i], cx[i + 1], cy[i + 1], cz[i + 1], r, g, b);
 			triangle(pose, consumer, baseX, baseY, baseZ, cx[i + 1], cy[i + 1], cz[i + 1], cx[i], cy[i], cz[i], r, g, b);
 		}
@@ -447,26 +425,26 @@ public final class ForceOverlayRenderer {
 		float g,
 		float b
 	) {
-		var sinPhi = new double[4 + 1];
-		var cosPhi = new double[4 + 1];
-		for (var j = 0; j <= 4; j++) {
-			var phi = -Math.PI / 2.0 + Math.PI * j / 4;
+		var sinPhi = SPHERE_SIN_PHI;
+		var cosPhi = SPHERE_COS_PHI;
+		for (var j = 0; j <= SPHERE_PHI; j++) {
+			var phi = -Math.PI / 2.0 + Math.PI * j / SPHERE_PHI;
 			sinPhi[j] = Math.sin(phi);
 			cosPhi[j] = Math.cos(phi);
 		}
-		var sinTheta = new double[8 + 1];
-		var cosTheta = new double[8 + 1];
-		for (var i = 0; i <= 8; i++) {
-			var theta = Math.PI * 2.0 * i / 8;
+		var sinTheta = SPHERE_SIN_THETA;
+		var cosTheta = SPHERE_COS_THETA;
+		for (var i = 0; i <= SPHERE_THETA; i++) {
+			var theta = Math.PI * 2.0 * i / SPHERE_THETA;
 			sinTheta[i] = Math.sin(theta);
 			cosTheta[i] = Math.cos(theta);
 		}
-		for (var j = 0; j < 4; j++) {
+		for (var j = 0; j < SPHERE_PHI; j++) {
 			var y0 = sinPhi[j] * radius;
 			var y1 = sinPhi[j + 1] * radius;
 			var r0 = cosPhi[j] * radius;
 			var r1 = cosPhi[j + 1] * radius;
-			for (var i = 0; i < 8; i++) {
+			for (var i = 0; i < SPHERE_THETA; i++) {
 				var x00 = cosTheta[i] * r0;
 				var z00 = sinTheta[i] * r0;
 				var x01 = cosTheta[i + 1] * r0;
@@ -479,6 +457,51 @@ public final class ForceOverlayRenderer {
 				triangle(pose, consumer, cx + x00, cy + y0, cz + z00, cx + x11, cy + y1, cz + z11, cx + x01, cy + y0, cz + z01, r, g, b);
 			}
 		}
+	}
+	/** 仅在簇数据引用变化时重建标签文本，避免每帧分配 Component / 格式化字符串。 */
+	private static List<Label> labelsFor(Map<ResourceLocation, List<Cluster>> clusters) {
+		if (clusters == labelSource) return labelCache;
+		var font = mc.font;
+		List<Label> out = new ArrayList<>();
+		clusters.forEach((key, value) -> {
+			if (!shouldShowForceGroup(key)) return;
+			var group = ForceGroups.REGISTRY.get(key);
+			if (group == null) return;
+			var groupColor = group.color();
+			var groupName = group.name().getString();
+			for (var cluster : value) {
+				var mag = cluster.force().length();
+				if (mag < 1e-6) continue;
+				var text = Component.empty()
+					.append(Component.literal(groupName).withStyle(Style.EMPTY.withColor(TextColor.fromRgb(groupColor))))
+					.append(Component.literal("：").withStyle(Style.EMPTY.withColor(TextColor.fromRgb(0xB0B0B0))))
+					.append(Component.literal(String.format(Locale.ROOT, "%.1f", mag) + " N")
+						.withStyle(Style.EMPTY.withColor(TextColor.fromRgb(0xFFFFFF))));
+				out.add(new Label(text, font.width(text), new Vector3d(cluster.pos()), new Vector3d(cluster.force()).div(mag)));
+			}
+		});
+		labelSource = clusters;
+		labelCache = out;
+		return out;
+	}
+	/** 计算单个标签的世界坐标（相对于相机）。 */
+	private static void labelWorldPos(
+		Label l,
+		Vector3dc rotationPoint,
+		double labelOffsetY,
+		Vector3dc subPos,
+		Quaternionf subOrient,
+		Vec3 camPos,
+		Vector3d local,
+		Vector3d world
+	) {
+		local.set(
+			l.pos.x() - rotationPoint.x() - l.forceDir.x * 0.5,
+			l.pos.y() - rotationPoint.y() + labelOffsetY - l.forceDir.y * 0.5,
+			l.pos.z() - rotationPoint.z() - l.forceDir.z * 0.5
+		);
+		subOrient.transform(local, world);
+		world.set(subPos.x() + world.x - camPos.x, subPos.y() + world.y - camPos.y, subPos.z() + world.z - camPos.z);
 	}
 	/** 绘制面板风格的背景 + 边框，与 Create GUI 面板样式一致（四角空、左/右边框上下各缩 1px）。 */
 	private static void drawLabelBg(Pose pose, VertexConsumer consumer, float halfW) {
@@ -530,6 +553,8 @@ public final class ForceOverlayRenderer {
 		consumer.addVertex(m, x2, y2, 0).setColor(r, g, b, a);
 		consumer.addVertex(m, x1, y2, 0).setColor(r, g, b, a);
 	}
+	/** 已缓存的世界标签：文本与字体宽度只在簇数据变化时重建。 */
+	private record Label(Component text, int width, Vector3d pos, Vector3d forceDir) {}
 	private record ArrowDraw(
 		double bx,
 		double by,

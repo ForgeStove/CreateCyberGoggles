@@ -50,6 +50,8 @@
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.heartbeatIntervalTicks.tooltip": "Ticks between force data requests to the server",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.hudPanelEnabled": "Enable HUD Panel",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.hudPanelEnabled.tooltip": "Show a HUD panel with mass and force magnitudes",
+	"create_cyber_goggles.config.option.aeronautics.forceOverlay.maxClustersPerGroup": "Max Clusters Per Force Group",
+	"create_cyber_goggles.config.option.aeronautics.forceOverlay.maxClustersPerGroup.tooltip": "Upper bound on arrows rendered per force group (higher = more detail, more cost)",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.minArrowLength": "Min Arrow Length",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.minArrowLength.tooltip": "Minimum arrow length in block units",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.minOverlayPixelSize": "Min Overlay Pixel Size",

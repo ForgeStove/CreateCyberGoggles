@@ -1,13 +1,15 @@
 package io.github.forgestove.create_cyber_goggles.core.event.forceOverlay;
 import dev.ryanhcode.sable.api.physics.force.ForceGroups;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.event.forceOverlay.ForceClusterer.Cluster;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.*;
 import net.minecraft.network.chat.*;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.*;
 
 import java.util.*;
 
@@ -16,6 +18,10 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
  * HUD 提示框，显示当前目标子层级的总质量和每个力组的净力大小。
  */
 public final class ForceTooltipOverlay {
+	// 缓存：仅在簇数据引用或质量变化时重建行，避免每帧分配
+	private static @Nullable Map<ResourceLocation, List<Cluster>> linesSource;
+	private static double linesMass = Double.NaN;
+	private static List<Component> linesCache = List.of();
 	public static void register(@NotNull RegisterGuiLayersEvent event) {
 		event.registerAbove(VanillaGuiLayers.HOTBAR, getCCGRes("force_tooltip"), ForceTooltipOverlay::render);
 	}
@@ -29,16 +35,16 @@ public final class ForceTooltipOverlay {
 		drawHud(gui, mc.font, lines);
 	}
 	private static List<Component> buildLines() {
-		List<Component> lines = new ArrayList<>();
+		var clusters = ForceOverlay.smoothedClusters();
 		var mass = ForceOverlay.currentMass();
+		if (clusters == linesSource && mass == linesMass) return linesCache;
+		List<Component> lines = new ArrayList<>();
 		lines.add(labeledLine(
 			Component.translatable("create_cyber_goggles.hud.forceOverlay.mass"),
 			0xCCCCCC,
 			Component.translatable("create_cyber_goggles.hud.forceOverlay.massValue", formatScalar(mass))
 		));
-		var clusters = ForceOverlay.smoothedClusters();
-		if (clusters == null) return lines;
-		for (var entry : clusters.entrySet()) {
+		if (clusters != null) for (var entry : clusters.entrySet()) {
 			var group = ForceGroups.REGISTRY.get(entry.getKey());
 			if (group == null) continue;
 			double netMagnitude = 0;
@@ -50,6 +56,9 @@ public final class ForceTooltipOverlay {
 				Component.translatable("create_cyber_goggles.hud.forceOverlay.forceValue", formatScalar(netMagnitude))
 			));
 		}
+		linesSource = clusters;
+		linesMass = mass;
+		linesCache = lines;
 		return lines;
 	}
 	private static void drawHud(GuiGraphics gui, Font font, List<Component> lines) {

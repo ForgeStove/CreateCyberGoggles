@@ -94,6 +94,7 @@ public final class ForceOverlay {
 		Map<ForceGroup, List<PointForce>> rawForces
 	) {
 		var angleThreshold = CCG.config.aeronautics.forceOverlay.clusterAngleRadians;
+		var maxClusters = CCG.config.aeronautics.forceOverlay.maxClustersPerGroup;
 		var alpha = CCG.config.aeronautics.forceOverlay.smoothingFactor;
 		Map<ResourceLocation, List<Cluster>> next = new Object2ObjectOpenHashMap<>();
 		for (var e : rawForces.entrySet()) {
@@ -102,7 +103,7 @@ public final class ForceOverlay {
 			var forces = e.getValue();
 			if (forces.isEmpty()) continue;
 			// 始终进行聚类——即使是单个力也能从位置混合中受益
-			var rawClusters = ForceClusterer.cluster(forces, angleThreshold);
+			var rawClusters = ForceClusterer.cluster(forces, angleThreshold, maxClusters);
 			if (rawClusters.isEmpty()) continue;
 			// 与之前的聚类进行混合（指数移动平均）
 			List<Cluster> prev = smoothedClusters != null ? smoothedClusters.getOrDefault(key, List.of()) : List.of();

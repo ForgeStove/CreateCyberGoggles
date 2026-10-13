@@ -50,6 +50,8 @@
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.heartbeatIntervalTicks.tooltip": "向服务器请求力数据的游戏刻间隔",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.hudPanelEnabled": "启用HUD面板",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.hudPanelEnabled.tooltip": "显示包含质量和力大小的HUD面板",
+	"create_cyber_goggles.config.option.aeronautics.forceOverlay.maxClustersPerGroup": "每力组最大簇数",
+	"create_cyber_goggles.config.option.aeronautics.forceOverlay.maxClustersPerGroup.tooltip": "每个力组渲染的箭头数量上限（越大细节越多，开销越高）",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.minArrowLength": "最小箭头长度",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.minArrowLength.tooltip": "以方块为单位的最小箭头长度",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.minOverlayPixelSize": "最小覆盖层像素大小",

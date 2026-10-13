@@ -127,6 +127,7 @@ public final class CCGConfig {
 			public boolean useWorldLabels = true;
 			@DoubleRange(min = 0, max = 10) public double worldLabelScale = 1.0;
 			@DoubleRange(min = 0) public double clusterAngleRadians = 0.1;
+			@IntRange(min = 1, max = 512) public int maxClustersPerGroup = 128;
 			@DoubleRange(min = 0, max = 1) public double smoothingFactor = 0.5;
 			@DoubleRange(min = 0, max = 1) public double gravityArrowFraction = 0.5;
 			@DoubleRange(min = 1) public double arrowSaturation = 3;

@@ -1,6 +1,6 @@
 plugins {
 	id("net.neoforged.moddev") version "+"
-	id("me.modmuss50.mod-publish-plugin") version "+"
+	id("me.modmuss50.mod-publish-plugin") version "2.2.1"
 }
 base.archivesName.set(p("modId"))
 group = p("modGroupId")

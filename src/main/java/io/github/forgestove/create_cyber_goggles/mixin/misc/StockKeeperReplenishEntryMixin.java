@@ -20,11 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
-/**
- * 在 Create {@link StockKeeperRequestScreen} 右下角加「自动补齐缺货」。
- * 需求来源 = 剪贴板目标成品（{@link ClipboardEntry} icon+itemAmount），求解交给与宿主无关的
- * {@link ReplenishPlanner}；本 mixin 只提供宿主能力（库存快照 {@link StockTickerBlockEntity}、发订单通道）。
- */
+/** 在 Create {@link StockKeeperRequestScreen} 右下角加「自动补齐缺货」入口；需求取自剪贴板，求解交给 {@link ReplenishPlanner}。 */
 @Mixin(StockKeeperRequestScreen.class)
 public abstract class StockKeeperReplenishEntryMixin extends AbstractSimiContainerScreen<StockKeeperRequestMenu>
 	implements Self<StockKeeperRequestScreen>, CCGReplenishTree {
@@ -46,7 +42,6 @@ public abstract class StockKeeperReplenishEntryMixin extends AbstractSimiContain
 		btn.setToolTip(Component.translatable("create_cyber_goggles.gui.auto_replenish.title"));
 		addRenderableWidget(btn);
 	}
-	/** {@link CCGReplenishTree}：界面切换配方后要重新构建整棵树 */
 	@Unique
 	@Override
 	public List<ReplenishGroup> ccg$buildGroups() {

@@ -22,34 +22,25 @@ import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 /**
- * 给 CMP 的便携仓储管理员（{@link PortableStockTickerScreen}）补上两个功能，
- * 都只在<b>主手（其次副手）拿着 Create 剪贴板</b>时启用——便携界面走快捷键打开、物品不必占手，
- * 所以与 Create 仓管的「手持剪贴板蓝图模式」同源：
- * <ul>
- * <li><b>蓝图模式</b>：打开后等第一份库存到位，按 Create {@code requestSchematicList()} 的语义
- *     把清单里仓库有的物品照单填进订单列表（不递归配方）；</li>
- * <li><b>自动补齐缺货</b>按钮（受 {@code misc.autoReplenishStock} 控制）：递归到原材料，求解交给
- *     与宿主无关的 {@link ReplenishPlanner}。</li>
- * </ul>
- * <p>宿主能力：库存快照 = 宿主公开的 {@code stockSnapshot()}（CFA 泛型库存，{@code asSummary()} 直接给出
- * Create 的 {@link InventorySummary}）；发订单 = 宿主自己的 {@link SendPackage}（服务端再广播给物流网络）。</p>
+ * 给 CMP 的便携仓储管理员（{@link PortableStockTickerScreen}）补两个功能，都只在主手（其次副手）拿着 Create 剪贴板时启用：
+ * 蓝图模式（等库存到位后按 {@code requestSchematicList()} 的语义照单填单，不递归配方）与自动补齐缺货按钮
+ * （受 {@code misc.autoReplenishStock} 控制，递归到原材料，求解交给 {@link ReplenishPlanner}）。
  */
 @Pseudo
 @Mixin(PortableStockTickerScreen.class)
 public abstract class PortableStockTickerScreenMixin extends AbstractSimiContainerScreen<PortableStockTickerMenu>
 	implements Self<PortableStockTickerScreen>, CCGReplenishTree {
 	@Shadow public List<BigGenericStack> itemsToOrder;
-	/** 蓝图模式待填单（等库存到位；只填一次，之后不覆盖玩家手改的订单） */
+	/** 蓝图模式待填单；只填一次，之后不覆盖玩家手改的订单。 */
 	@Unique private boolean ccg$schematicPending;
 	public PortableStockTickerScreenMixin(PortableStockTickerMenu menu, Inventory playerInventory, Component title) {
 		super(menu, playerInventory, title);
 	}
 	@Inject(method = "init", at = @At("TAIL"))
 	private void portableReplenishInit(CallbackInfo ci) {
-		if (ReplenishPlanner.clipboardOf(mc.player) == null) return;   // 主手/副手没拿剪贴板蓝图 → 两个功能都不启用
-		ccg$schematicPending = true;                                   // 蓝图模式：等库存到位后照单填单
+		if (ReplenishPlanner.clipboardOf(mc.player) == null) return; // 没拿剪贴板则两个功能都不启用
+		ccg$schematicPending = true;
 		if (!CCG.config.misc.autoReplenishStock) return;
-		// 与 Create 仓管按钮像素级对齐（那边是 leftPos + imageWidth - 10, topPos + 20）
 		var btn = new IconButton(leftPos + imageWidth - 10, topPos + 20, AllIcons.I_ADD);
 		btn.withCallback(() -> {
 			List<ReplenishGroup> groups = ccg$buildGroups();
@@ -59,7 +50,6 @@ public abstract class PortableStockTickerScreenMixin extends AbstractSimiContain
 		btn.setToolTip(Component.translatable("create_cyber_goggles.gui.auto_replenish.title"));
 		addRenderableWidget(btn);
 	}
-	/** {@link CCGReplenishTree}：界面切换配方后要重新构建整棵树 */
 	@Unique
 	@Override
 	public List<ReplenishGroup> ccg$buildGroups() {
@@ -70,15 +60,12 @@ public abstract class PortableStockTickerScreenMixin extends AbstractSimiContain
 	public InventorySummary ccg$summary() {
 		return thiz().stockSnapshot().asSummary();
 	}
-	/**
-	 * 蓝图模式（Create {@code requestSchematicList()} 的同义）：等第一份非空库存到位，把清单里仓库有的
-	 * 物品按 {@code min(清单数量, 库存)} 铺进订单列表。只做一次，之后玩家手改的订单不会被覆盖。
-	 */
+	/** 蓝图模式：等第一份非空库存到位，把清单里仓库有的物品按 min(清单数量, 库存) 铺进订单列表，只做一次。 */
 	@Inject(method = "containerTick", at = @At("TAIL"))
 	private void applySchematicOrder(CallbackInfo ci) {
 		if (!ccg$schematicPending) return;
 		var summary = ccg$summary();
-		if (summary != null && summary.isEmpty()) return;   // 库存还没到，下一 tick 再看
+		if (summary != null && summary.isEmpty()) return;
 		ccg$schematicPending = false;
 		var orders = ReplenishPlanner.schematicOrders(ReplenishPlanner.clipboardOf(mc.player), summary);
 		if (orders.isEmpty()) return;

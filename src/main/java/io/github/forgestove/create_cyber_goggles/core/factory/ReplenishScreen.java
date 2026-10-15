@@ -37,60 +37,45 @@ import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 /**
- * 「自动补齐缺货」独立覆盖层 GUI（宿主屏幕提供 {@link CCGReplenishTree} 能力，由其右下角触发进入；
- * 现有的宿主 = Create 仓管方块、CMP 便携仓储管理员、phantom 可调便携仓储管理员）。
- * 继承 catnip {@link AbstractSimiScreen}。外观与 Create {@code stock_keeper} 面板一致（同宽 256）：
- * <b>头</b>(Create header) + <b>身体层</b>(Create body 平铺) + <b>底部</b>(返回方块 + 发送长条，发送 hover 用
- * Create 高亮长条)。每组一个配方类型，组尾一个<b>共享地址框</b>（羊皮纸背景，按类型持久化到磁盘）。
- * 每节点显示其产物 + 全部原料（够的绿勾/不足红框）+ 可合成次数；缺失原料区与发送物品区<b>各在所属组内</b>
- * 各占一块（组尾地址框之前），只列本组物品。点发送只发<b>原料齐备</b>的配方——缺料的跳过，等它依赖的产物到货后
- * 重开界面再发，与发送区显示同源。下单与原版一致：装配类 convertRecipe（9 格 pattern），
- * 加工类通用 pattern，orderedStacks=每原料×craftTimes。
- *
- * <p>性能：内容预计算成<b>扁平行列表</b>（{@link #rows}），渲染时<b>只画视口内的行</b>，
- * 高度缓存 O(1)，不再逐帧全量重画全部原料。</p>
+ * 「自动补齐缺货」独立覆盖层 GUI，宿主屏幕提供 {@link CCGReplenishTree} 能力。
+ * 内容预计算成 {@link #rows} 扁平行列表，渲染时只画视口内的行。
  */
 public class ReplenishScreen extends AbstractSimiScreen {
 	private static final Logger LOGGER = LogUtils.getLogger();
-	/** 地址缓存：仅进程内有效（关掉游戏即清空），键为组键（配方类型） */
+	/** 组键 → 地址，仅进程内有效。 */
 	private static final Map<String, String> CACHE_ADDRS = new LinkedHashMap<>();
-	// 面板几何（与 Create stock_keeper 同宽）
 	private static final int PANEL_W = 256;
 	private static final int HEADER_H = 16;
-	private static final int FOOTER_H = 47;  // 用户 band3 底部背景高(棕色+灰边+烘好的方块/长条)
-	// Create stock_keeper 块的棕色面板内容是居中内嵌的（两侧带灰色金属边栏）：x=33..223。
-	// 内容(行/地址框/滚动条/底部按钮)必须对齐到这个棕色区域，否则会溢出到透明边。
+	private static final int FOOTER_H = 47; // 底部纹理高度
+	// 内容位于面板中央的棕色内嵌区（两侧为灰色金属边栏），必须对齐，否则溢出到透明边。
 	private static final int CONTENT_L = 36;
 	private static final int CONTENT_R = 228;
-	private static final int NODE_H = 20;          // 节点行高
-	private static final int BP_PAD = 2;         // 蓝图左右内边距（受滚动条限制：9 列时宽 184 = contentW()）
-	private static final int NODES_PER_ROW = 9;    // 节点网格每行最多 9 个
-	private static final int CELL_W = 20;          // 网格单元宽(18 图标 + 2 间距)
-	private static final int GROUP_H = 20;         // 组头行高
-	private static final int GROUP_INDENT = 3;     // 组头（三角+文字）整体右移量
-	private static final int ADDR_H = 20;          // 地址框行高（羊皮纸纹理 18 + 上边距 2，下边距 0）
-	private static final int GROUP_GAP = 0;         // 组间距
-	private static final int SEND_UP_H = 21;        // 发送物品框：上段高（含第一行物品）
-	private static final int SEND_MID_H = 17;       // 发送物品框：中段高（每多一行加一段）
-	private static final int SEND_DOWN_H = 11;      // 发送物品框：下段高
-	private static final int SEND_CELL_W = 17;      // 发送物品框：格宽（= 物品宽，间距 0）
-	private static final int SEND_ITEM_Y = SEND_UP_H - 16;   // 发送物品框：第一行物品的 y 偏移（UP 内靠底）
-	private static final int SEND_LABEL_H = 12;     // 发送区域：各轮次子块标题行高
-	private static final int SCROLL_W = 5;         // 滚动条宽
-	private static final int BODY_TOP = HEADER_H;  // 内容起始(在头下方)
-	// 地址行局部坐标
+	private static final int NODE_H = 20;
+	private static final int BP_PAD = 2; // 9 列时宽度正好等于内容宽
+	private static final int NODES_PER_ROW = 9;
+	private static final int CELL_W = 20;
+	private static final int GROUP_H = 20;
+	private static final int GROUP_INDENT = 3;
+	private static final int ADDR_H = 20; // 纹理高 18 + 上边距 2
+	private static final int GROUP_GAP = 0;
+	private static final int SEND_UP_H = 21; // 九宫格上段
+	private static final int SEND_MID_H = 17; // 九宫格中段，每多一行加一段
+	private static final int SEND_DOWN_H = 11; // 九宫格下段
+	private static final int SEND_CELL_W = 17; // 格宽 = 物品宽，间距 0
+	private static final int SEND_ITEM_Y = SEND_UP_H - 16; // 第一行物品在 UP 段内靠底
+	private static final int SEND_LABEL_H = 12;
+	private static final int SCROLL_W = 5;
+	private static final int BODY_TOP = HEADER_H;
 	private static final int ADDR_X = CONTENT_L;
-	private static final int ADDR_TEXT_IN = 12;      // 文本左缩进(越过圆环)
-	/** 视口外地址框的停放坐标（不能 setVisible(false) 隐藏，见 {@link #renderWindow} 注释） */
+	private static final int ADDR_TEXT_IN = 12; // 文本左移量，避开左端圆环
+	/** 视口外地址框的停放坐标。 */
 	private static final int PARKED = -10000;
 	private static final int SUGGESTION_ANCHOR_BASE_Y = -72;
-	private static final int SUGGESTION_MAX_ROWS = 7;    // 下拉最多行数（Create 的 suggestionLineLimit）
+	private static final int SUGGESTION_MAX_ROWS = 7;
 	private static final int SUGGESTION_ROW_H = 12;
-	/** 候选配方在弹窗里的一行高度 */
 	private static final int POPUP_ROW_H = 14;
-	/** 配方卡底部「左键以切换配方」提示行高 */
 	private static final int SWITCH_HINT_H = 11;
-	/** 字符投递钩子是否已注册（事件总线只注册一次，见 {@link #hookCharTyped()}） */
+	/** 字符投递钩子是否已注册。 */
 	private static boolean charHooked;
 	private final Screen parent;
 	private final CCGReplenishTree host;
@@ -98,38 +83,36 @@ public class ReplenishScreen extends AbstractSimiScreen {
 	private final List<AddressEditBox> addrBoxes = new ArrayList<>();
 	private final List<String> groupAddress = new ArrayList<>();
 	private final List<Row> rows = new ArrayList<>();
-	/** 发送区显示物品：每组一块（与 {@link #groups} 同索引），该组待发节点的原料按 {@link Item} 合并（数量 = 单次用量 × 可合成次数） */
+	/** 每组待发送的原料，按 {@link Item} 合并，数量 = 单次用量 × 可合成次数。 */
 	private final List<List<ItemStack>> sendItems = new ArrayList<>();
-	/** 收起的组（按组索引），收起后只画组头（Create 同款 categoryEntry.hidden） */
+	/** 已收起的组索引。 */
 	private final Set<Integer> hiddenGroups = new HashSet<>();
-	/** 平滑滚动（Create 同款 LerpedFloat：滚轮按行推进后指数追赶目标值） */
 	private final LerpedFloat scrollAnim = LerpedFloat.linear().startWithValue(0);
-	/** 内容区裁剪范围（绝对屏幕坐标），供 {@link CCGAddressEditBox} 裁剪自身渲染 */
+	/** 内容区裁剪范围，绝对屏幕坐标。 */
 	int scissorL, scissorT, scissorR, scissorB;
-	private int contentH;        // 内容总高（缓存，O(1)）
-	private int panelH;          // 面板总高（init 时算）
-	private int viewH;           // 可视内容高（= 滚动轨道高）
+	private int contentH;
+	private int panelH;
+	private int viewH;
 	private int scroll;
-	private int restoreScroll = -1;   // 重建界面（切换配方）时要恢复的滚动位置；-1 = 从顶部开始
+	private int restoreScroll = -1; // 重建界面后恢复的滚动位置，-1 表示顶部
 	private boolean scrollDragging;
 	private double scrollDragOffset;
-	private int mouseXPos, mouseYPos;   // 本帧鼠标位置（行内悬停判定用）
-	private Node hoveredNode;           // 本帧悬停的配方节点（tooltip 用）
-	private ItemStack hoveredSendItem;  // 本帧悬停的发送物品（tooltip 用）
-	private Node recipePopup;           // 正在切换配方的节点（null = 弹窗未打开）
-	private int popupX, popupY, popupW, popupH;   // 弹窗矩形（渲染时算，点击命中检测用）
-	private int hoveredPopupRow = -1;   // 弹窗内鼠标所在行（-1 = 不在弹窗上），供悬浮配方卡用
+	private int mouseXPos, mouseYPos;
+	private Node hoveredNode;
+	private ItemStack hoveredSendItem;
+	private Node recipePopup; // 正在切换配方的节点，null 表示弹窗未打开
+	private int popupX, popupY, popupW, popupH; // 弹窗矩形，渲染时计算
+	private int hoveredPopupRow = -1; // 弹窗内悬停行，-1 表示不在弹窗上
 	public ReplenishScreen(Screen parent, CCGReplenishTree host, List<ReplenishGroup> groups) {
 		this.parent = parent;
 		this.host = host;
 		this.groups = groups;
-		// 每类型地址（取进程内缓存，没有则空）
 		for (ReplenishGroup group : groups) groupAddress.add(CACHE_ADDRS.getOrDefault(group.name(), ""));
 		rebuildLayout();
 		mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1));
 		hookCharTyped();
 	}
-	/** 预计算扁平行列表 + 内容总高（数据不变，一次生成即可，渲染复用） */
+	/** 预计算扁平行列表与内容总高。 */
 	private void rebuildLayout() {
 		buildSendItems();
 		rows.clear();
@@ -138,30 +121,27 @@ public class ReplenishScreen extends AbstractSimiScreen {
 			ReplenishGroup g = groups.get(gi);
 			rows.add(new Row(y, GROUP_H, RowKind.GROUP, gi));
 			y += GROUP_H;
-			if (hiddenGroups.contains(gi)) continue;   // 收起：跳过组内所有行
-			// 节点整合成网格：同类型从左往右，每行最多 NODES_PER_ROW 个，超出换行；
-			// 整组只占一个行条目（高度 = 行数 × NODE_H），由 drawNode 画一条竖向扩展的蓝图横幅
+			if (hiddenGroups.contains(gi)) continue;
+			// 节点排成网格；整组只占一个行条目，高度随行数扩展。
 			int nodeRows = (g.nodes().size() + NODES_PER_ROW - 1) / NODES_PER_ROW;
 			if (nodeRows > 0) {
 				int h = nodeRows * NODE_H + BP_PAD * 2;
 				rows.add(new Row(y, h, RowKind.NODE, gi));
 				y += h;
 			}
-			// 无法合成的配方（缺料合不出来）：标题 + 同款蓝图横幅，排在可合成节点之后
+			// 无法合成的配方排在可合成节点之后
 			int blockedRows = (g.blocked().size() + NODES_PER_ROW - 1) / NODES_PER_ROW;
 			if (blockedRows > 0) {
 				int h = SEND_LABEL_H + blockedRows * NODE_H + BP_PAD * 2;
 				rows.add(new Row(y, h, RowKind.BLOCKED, gi));
 				y += h;
 			}
-			// 该组缺失的原料：单块，无子分类
 			if (!g.missing().isEmpty()) {
 				int missingLines = (g.missing().size() + NODES_PER_ROW - 1) / NODES_PER_ROW;
 				int missingH = SEND_LABEL_H + SEND_UP_H + SEND_DOWN_H + (missingLines - 1) * SEND_MID_H;
 				rows.add(new Row(y, missingH, RowKind.MISSING, gi));
 				y += missingH;
 			}
-			// 该组待发送的原料：单块，跟在缺失之后（地址框仍是组尾）
 			List<ItemStack> send = sendItems.get(gi);
 			if (!send.isEmpty()) {
 				int sendLines = Math.max(1, (send.size() + NODES_PER_ROW - 1) / NODES_PER_ROW);
@@ -174,10 +154,7 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		}
 		contentH = y;
 	}
-	/**
-	 * 最高优先级把字符投递给<b>当前聚焦的地址框</b>（消费成功才取消事件，顺带不给别的模组抢字符的机会）。
-	 * 焦点直接问屏幕自己（地址框都是 {@code addRenderableWidget} 进去的子组件，点击时 Screen 会 setFocused）。
-	 */
+	/** 以最高优先级把字符投递给聚焦的地址框，消费成功才取消事件。 */
 	private static void hookCharTyped() {
 		if (charHooked) return;
 		charHooked = true;
@@ -189,11 +166,7 @@ public class ReplenishScreen extends AbstractSimiScreen {
 			}
 		);
 	}
-	/**
-	 * 汇总待发送的原料：<b>每个配方类型一组</b>，组内节点（{@code craftTimes>0}）的原料按 {@link Item} 合并，
-	 * 数量 = 单次用量 × 可合成次数。{@link #sendAll()} 从同一批节点取用，显示与实际发送同源。
-	 * 缺失物品由 mixin 算好后按组携带（见 {@link ReplenishGroup#missing()}）。
-	 */
+	/** 按配方类型汇总待发送的原料，与 {@link #sendAll()} 同源。 */
 	private void buildSendItems() {
 		sendItems.clear();
 		for (ReplenishGroup g : groups) {
@@ -207,30 +180,23 @@ public class ReplenishScreen extends AbstractSimiScreen {
 			sendItems.add(items);
 		}
 	}
-	/** 发送区域子块标题：组头同款双画阴影 */
 	private static void drawSendLabel(GuiGraphics gui, Component text, int top) {
 		Font font = mc.font;
 		int x = CONTENT_L + 5, y = top + (SEND_LABEL_H - 9) / 2 + 1;
 		gui.drawString(font, text, x + 1, y + 1, 0x4A2D31, false);
 		gui.drawString(font, text, x, y, 0xF8F8EC, false);
 	}
-	/** 组名：就是配方类型的本地化名；空名 = 兜底组 */
 	private static Component groupName(ReplenishGroup group) {
 		return group == null ? Component.empty() : typeName(group.name());
 	}
-	/**
-	 * 蓝图横幅：九宫格精灵（角 8、边与中心平铺 8，切法见 {@code blueprint.png.mcmeta}），
-	 * 4 角固定、边与中心平铺。尺寸 = 物品格数 × 格子尺寸 + 内边距，任意行列数都不裁切。
-	 */
 	@SuppressWarnings("SameParameterValue")
 	private static void drawBlueprint(GuiGraphics g, int x, int y, int cols, int rows) {
 		CCGGuiTextures.BLUEPRINT.render(g, x, y, cols * CELL_W + BP_PAD * 2, rows * NODE_H + BP_PAD * 2);
 	}
-	/** 该配方单次的产出数量（至少 1） */
 	private static int outPer(Recipe<?> recipe) {
 		return mc.level == null ? 1 : Math.max(1, recipe.getResultItem(mc.level.registryAccess()).getCount());
 	}
-	/** Create 样式数量：用 NUMBERS 数字图集(5×8)画在 18×18 槽位右下角（同 StockKeeperRequestScreen#drawItemCount） */
+	/** 用 NUMBERS 图集把数量画在槽位右下角。 */
 	private static void drawCount(GuiGraphics gui, int count, int slotX, int slotY) {
 		String text = count >= 1000000
 			? count / 1000000 + "m"
@@ -240,7 +206,7 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		if (count >= BigItemStack.INF) text = "+";
 		if (text.isBlank()) return;
 		var numbers = AllGuiTextures.NUMBERS;
-		// 抬高 z 盖在物品之上（renderItem 画在 z=150；Create 同款 190→200）
+		// 抬高 z 以盖住物品（物品画在 z=150）
 		var pose = gui.pose();
 		pose.pushPose();
 		pose.translate(0, 0, 200);
@@ -286,9 +252,9 @@ public class ReplenishScreen extends AbstractSimiScreen {
 	}
 	@Override
 	protected void init() {
-		// resize 会重跑 init：Screen 已清空 widgets，这里同步清掉旧引用，否则 placeAddr 会拿到不在 widgets 里的旧框（无法交互）
+		// 清掉旧引用：resize 重跑 init 时 Screen 已清空 widgets，残留的旧框无法交互
 		addrBoxes.clear();
-		// contentH 已含 BODY_TOP(=HEADER_H)，不能再加一次，否则视口比内容高 16px（滚到底时末尾留白）
+		// contentH 已含 BODY_TOP，不再重复相加
 		int needed = Math.max(80, contentH + FOOTER_H);
 		int screenH = mc.getWindow().getGuiScaledHeight();
 		panelH = Math.min(screenH - 18, needed);
@@ -297,28 +263,25 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		var window = mc.getWindow();
 		setWindowOffset((window.getGuiScaledWidth() - PANEL_W) / 2, (window.getGuiScaledHeight() - panelH) / 2);
 		super.init();
-		// 每组（类型）一个共享地址框（按类型持久化；羊皮纸背景，左缩进越过圆环）
-		// 对齐 Create 写法：localAddress 不传(建议用剪贴板#条目)，用 setValue 种入上次地址
-		// 框宽收窄一截，让 AddressEditBox 右挂的剪贴板提示图标左移(图标在 getX()+width+4)
+		// 宽度收窄，给右挂的剪贴板图标留位
 		int boxW = contentW() - ADDR_TEXT_IN - 24;
 		for (var i = 0; i < groups.size(); i++) {
-			// anchorToBottom=true：剪贴板地址下拉建议显示在地址框上方（同 Create 仓管）
+			// anchorToBottom：下拉建议显示在框上方
 			var box = new CCGAddressEditBox(this, mc.font, windowXOffset + ADDR_X + ADDR_TEXT_IN, windowYOffset + BODY_TOP, boxW, 10,
 				true);
 			box.setTextColor(0xFF714A40);
-			box.setTextShadow(false); // 地址输入文字不渲染阴影(NeoForge textShadow)
+			box.setTextShadow(false);
 			box.setValue(groupAddress.get(i));
 			int idx = i;
 			String key = groups.get(i).name();
 			box.setResponder(text -> {
 				groupAddress.set(idx, text);
-				CACHE_ADDRS.put(key, text);   // 仅进程内缓存
+				CACHE_ADDRS.put(key, text);
 			});
 			addrBoxes.add(box);
 			addRenderableWidget(box);
 		}
-		// 底部按钮：叠在 band3 烘好的按钮上（透明底不重复画，仅补给交互：hover 高亮+tooltip / 图标 / 文字）
-		// band3 内方块(image x135..151,y87..104) 与长条(x161..235,y87..104)，bg_footer 画在 x16
+		// 按钮画在底部纹理烘好的按钮之上，只补交互与前景
 		addRenderableWidget(new CCGButton(
 			windowXOffset + 135,
 			windowYOffset + panelH - FOOTER_H + 7,
@@ -343,7 +306,7 @@ public class ReplenishScreen extends AbstractSimiScreen {
 			Component.translatable("create.gui.stock_keeper.send"),
 			this::sendAll
 		).tooltip(Component.translatable("create.gui.stock_keeper.send")));
-		// 切换配方重建时恢复原滚动位置：此时 contentH/viewH 都已算好，按新内容 clamp（新配方节点数可能不同）
+		// 恢复滚动位置：此时 contentH/viewH 已算好，按新内容 clamp
 		if (restoreScroll >= 0) {
 			scroll = Mth.clamp(restoreScroll, 0, maxScroll());
 			scrollAnim.setValue(scroll);
@@ -357,15 +320,11 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		removed();
 		mc.screen = parent;
 	}
-	/**
-	 * 发送所有<b>原料齐备</b>的节点：任意原料按 craftTimes 的用量在仓库里不够 → 跳过该配方
-	 * （等它依赖的产物到货后重开界面再发）。发送内容与发送区显示的物品同源。
-	 * 装配类走 9 格 pattern（convertRecipe），加工类用通用 pattern，orderedStacks = 每原料 × craftTimes。
-	 */
+	/** 发送所有原料齐备的节点，内容与发送区同源。 */
 	private void sendAll() {
-		// 共享原料按序扣减，避免两个配方都以为同一批库存够用
+		// 按序扣减共享原料，避免两个配方同时认为库存够用
 		Map<Item, Integer> remaining = new HashMap<>();
-		var summary = host.ccg$summary();   // 宿主的快照可能是现算的，整轮只取一次
+		var summary = host.ccg$summary(); // 快照可能是现算的，整轮只取一次
 		for (var i = 0; i < groups.size(); i++) {
 			String addr = groupAddress.get(i);
 			for (Node n : groups.get(i).nodes()) {
@@ -402,15 +361,11 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		}
 		onClose();
 	}
-	/** 可滚动距离：内容高 − 视口高。contentH 含 BODY_TOP 起始偏移，必须减掉，否则滚到底时末尾留白 */
+	/** 可滚动距离：内容高 − 视口高；contentH 含 BODY_TOP 偏移，须减去。 */
 	private int maxScroll() {return Math.max(0, contentH - BODY_TOP - viewH);}
 	// ---- 几何（窗口局部） ----
 	private static int contentR() {return CONTENT_R - SCROLL_W - 4;}
-	/**
-	 * 该配方此刻是否原料齐备：每个原料按 {@code per × craftTimes} 的用量都要有库存。
-	 * 可合成但仓库还没有的中间产物算「不齐」——它得等自己那一轮发完到货后重开界面。
-	 * 齐备才从 {@code remaining} 扣减，避免多个配方重复占用同一批库存。
-	 */
+	/** 判断原料是否齐备；齐备才从 remaining 扣减。 */
 	private boolean hasMaterials(Node n, Map<Item, Integer> remaining, InventorySummary summary) {
 		if (summary == null) return false;
 		for (ReplenishEntry e : n.items()) {
@@ -428,17 +383,15 @@ public class ReplenishScreen extends AbstractSimiScreen {
 	}
 	@Override
 	public void tick() {
-		// AddressEditBox 非 TickableGuiEventListener，catnip 不自动 tick；显式 tick 以激活剪贴板地址下拉建议(同 Create 仓管)
+		// AddressEditBox 非 TickableGuiEventListener，需显式 tick 才能激活下拉建议
 		super.tick();
 		addrBoxes.forEach(AddressEditBox::tick);
 		scrollAnim.tickChaser();
-		// 逼近目标时直接吸附，避免长期微小抖动（Create 同款 1/16 阈值）
+		// 逼近目标时直接吸附，避免微小抖动
 		if (Math.abs(scrollAnim.getValue() - scrollAnim.getChaseTarget()) < 1 / 16f) scrollAnim.setValue(scrollAnim.getChaseTarget());
 	}
-	/** Create 蓝图横幅：左端(10) + 中端(4×n) + 右端(10)，高 25（待合成物品的蓝图框） */
 	@Override
 	protected void renderMenuBackground(@NotNull GuiGraphics gui, int x, int y, int width, int height) {}
-	/** 蓝图横幅（竖向可扩展）：顶 3px + 中间 18px 平铺 + 底 4px；横向 左10 + 中4×n + 右10 */
 	@Override
 	protected void renderWindowBackground(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
 		var pose = gui.pose();
@@ -452,14 +405,13 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		} finally {
 			mc.screen = current;
 		}
-		// 压暗父屏，让内嵌面板的透明边看起来像 Create 的菜单遮罩
 		gui.fill(0, 0, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight(), 0x66_101010);
 		pose.popPose();
 		pose.pushPose();
 		pose.translate(windowXOffset, windowYOffset, 0);
 		CCGGuiTextures.HEADER.render(gui, 0, 0);
 		int bodyEnd = panelH - FOOTER_H;
-		// 纵向平铺（tile），末块不足由引擎裁切
+		// 纵向平铺
 		if (bodyEnd > HEADER_H) CCGGuiTextures.BODY.render(gui, 0, HEADER_H, PANEL_W, bodyEnd - HEADER_H);
 		CCGGuiTextures.FOOTER.render(gui, 0, bodyEnd);
 		pose.popPose();
@@ -477,7 +429,6 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		Font font = mc.font;
 		Component title = Component.translatable("create_cyber_goggles.gui.auto_replenish.title");
 		gui.drawString(font, title, (PANEL_W - font.width(title)) / 2, 4, 0xFF4A3728, false);
-		// 可视窗口区（窗口局部）：[BODY_TOP, BODY_TOP + viewH)
 		int scissorBottom = windowYOffset + BODY_TOP + Math.max(1, viewH);
 		scissorL = windowXOffset + CONTENT_L;
 		scissorT = windowYOffset + BODY_TOP;
@@ -489,14 +440,12 @@ public class ReplenishScreen extends AbstractSimiScreen {
 			gui.drawString(font, empty, (PANEL_W - font.width(empty)) / 2, BODY_TOP + 4, 0xFFC8B688, false);
 		}
 		int viewBottom = BODY_TOP + viewH;
-		// 注意：地址框不能再用 setVisible(false) 裁剪 —— EditBox.canConsumeInput() = visible && active && isFocused
-		// && isEditable，滚出视口就被判为「不可输入」，键盘输入直接被丢（打字没反应）。视口外的框改为挪到屏幕外，
-		// 由内容区 scissor 裁掉，画不进面板。
+		// 地址框不能用 setVisible(false) 裁剪：不可见时 EditBox.canConsumeInput() 为假，键盘输入会被丢；滚出视口时改为挪到 PARKED。
 		var onScreen = new boolean[addrBoxes.size()];
 		for (Row r : rows) {
-			int top = r.y - clamped;           // 窗口局部 y
-			if (top + r.h <= BODY_TOP) continue; // 整行在视口上方，跳过（不画仍推进 y）
-			if (top >= viewBottom) break;       // 之后都在视口下方，剩余无需处理
+			int top = r.y - clamped;
+			if (top + r.h <= BODY_TOP) continue;
+			if (top >= viewBottom) break;
 			switch (r.kind) {
 				case GROUP -> drawGroup(gui, font, r, top);
 				case NODE, BLOCKED -> drawNode(gui, r, top);
@@ -508,11 +457,11 @@ public class ReplenishScreen extends AbstractSimiScreen {
 				}
 			}
 		}
-		// 刚滚出视口的地址框才处理（含下拉锚点），避免每帧重建 SuggestionsList 把滚轮滚到的位置重置成 0
+		// 只处理刚滚出视口的框：每帧重建 SuggestionsList 会把列表滚动位置重置为 0
 		for (var i = 0; i < addrBoxes.size(); i++) {
 			if (onScreen[i]) continue;
 			AddressEditBox box = addrBoxes.get(i);
-			if (box.getX() == PARKED) continue;   // 已经在屏幕外，无需重复处理
+			if (box.getX() == PARKED) continue;
 			box.setVisible(true);
 			box.setX(PARKED);
 			box.setY(PARKED);
@@ -524,17 +473,16 @@ public class ReplenishScreen extends AbstractSimiScreen {
 	}
 	private void drawGroup(GuiGraphics gui, Font font, Row r, int top) {
 		int gx = CONTENT_L + GROUP_INDENT;
-		// 左侧展开/关闭三角（Create 同款纹理：收起用 HIDDEN、展开用 SHOWN），文字右移让位
+		// 收起/展开三角
 		(
 			hiddenGroups.contains(r.gi()) ? AllGuiTextures.STOCK_KEEPER_CATEGORY_HIDDEN : AllGuiTextures.STOCK_KEEPER_CATEGORY_SHOWN
 		).render(gui, gx, top + (GROUP_H - 8) / 2);
-		// 组头：只有类型名，无背景框；文本上下居中；阴影用 Create 双画法（深色右下 1px + 前景原位）
+		// 阴影用深色右下偏移 1px 的双画法
 		var name = groupName(groups.get(r.gi()));
 		int x = gx + 10, y = top + (GROUP_H - 9) / 2 + 1;
 		gui.drawString(font, name, x + 1, y + 1, 0x4A2D31, false);
 		gui.drawString(font, name, x, y, 0xF8F8EC, false);
 	}
-	/** 一行节点网格（可合成 / 无法合成共用）：蓝图横幅作整行底，图标从左往右排，悬停弹配方卡 */
 	private void drawNode(GuiGraphics gui, Row r, int top) {
 		boolean blocked = r.kind == RowKind.BLOCKED;
 		List<Node> nodes = blocked ? groups.get(r.gi).blocked() : groups.get(r.gi).nodes();
@@ -543,18 +491,17 @@ public class ReplenishScreen extends AbstractSimiScreen {
 			drawSendLabel(gui, Component.translatable("create_cyber_goggles.gui.auto_replenish.blocked"), top);
 			gridTop += SEND_LABEL_H;
 		}
-		// 整组一条蓝图横幅，正好包住该组物品网格（列数 × 行数）
 		int colCount = Math.min(nodes.size(), NODES_PER_ROW);
 		int rowCount = (nodes.size() + NODES_PER_ROW - 1) / NODES_PER_ROW;
 		drawBlueprint(gui, CONTENT_L, gridTop, colCount, rowCount);
 		for (var i = 0; i < nodes.size(); i++) {
 			Node n = nodes.get(i);
-			// 可合成时画实际产出；合不出来时画目标产出（让玩家知道本该产出多少）
+			// 合不出来时画目标产出
 			int craftTimes = n.craftTimes();
 			int totalOut = (craftTimes > 0 ? craftTimes : n.wantTimes()) * outPer(n.recipe());
 			int cellX = CONTENT_L + BP_PAD + i % NODES_PER_ROW * CELL_W + 2;
-			int iconY = gridTop + BP_PAD + i / NODES_PER_ROW * NODE_H + 2;   // 16×16 图标在 20×20 格内居中
-			// 悬停：产物图标略微放大（Create renderItemEntry: scaleFromHover += .075f）
+			int iconY = gridTop + BP_PAD + i / NODES_PER_ROW * NODE_H + 2; // 16×16 图标在 20×20 格内居中
+			// 悬停时略微放大
 			boolean hov = mouseXPos >= windowXOffset + cellX
 				&& mouseXPos < windowXOffset + cellX + 18
 				&& mouseYPos >= windowYOffset + iconY
@@ -569,36 +516,26 @@ public class ReplenishScreen extends AbstractSimiScreen {
 				pose.popPose();
 				hoveredNode = n;
 			} else gui.renderItem(n.target(), cellX, iconY);
-			// 产出总数画在产物图标上（Create NUMBERS 样式；= 合成次数 × 单次产出）
 			drawCount(gui, totalOut, cellX, iconY);
 		}
 	}
-	/** 该组将要发送的物品：每组一块，横向固定 9 格 */
 	private void drawSend(GuiGraphics gui, Row r, int top) {
 		drawSendLabel(gui, Component.translatable("create_cyber_goggles.gui.auto_replenish.send_items"), top);
 		drawItemBox(gui, sendItems.get(r.gi()), top + SEND_LABEL_H);
 	}
-	/** 该组缺失的原料：与发送区同款单块布局 */
 	private void drawMissing(GuiGraphics gui, Row r, int top) {
 		drawSendLabel(gui, Component.translatable("create_cyber_goggles.gui.auto_replenish.missing"), top);
 		drawItemBox(gui, groups.get(r.gi).missing(), top + SEND_LABEL_H);
 	}
-	/** 画一个发送物品框（竖向九宫格：上 21 + 中平铺 17×(行数-1) + 下 11）及其中的物品 */
 	private void drawItemBox(GuiGraphics gui, List<ItemStack> items, int blockTop) {
 		int lines = Math.max(1, (items.size() + NODES_PER_ROW - 1) / NODES_PER_ROW);
-		CCGGuiTextures.BOX.render(
-			gui,
-			CONTENT_L,
-			blockTop,
-			CCGGuiTextures.BOX.width(),
-			SEND_UP_H + (lines - 1) * SEND_MID_H + SEND_DOWN_H
-		);
+		CCGGuiTextures.BOX.render(gui, CONTENT_L, blockTop, CCGGuiTextures.BOX.width(),
+			SEND_UP_H + (lines - 1) * SEND_MID_H + SEND_DOWN_H);
 		int x = CONTENT_L + 5;
 		for (var i = 0; i < items.size(); i++) {
 			ItemStack stack = items.get(i);
 			int ix = x + i % NODES_PER_ROW * SEND_CELL_W;
 			int iy = blockTop + SEND_ITEM_Y + i / NODES_PER_ROW * SEND_MID_H;
-			// 悬停：与节点图标同款放大（Create renderItemEntry: scaleFromHover += .075f）
 			boolean hov = mouseXPos >= windowXOffset + ix
 				&& mouseXPos < windowXOffset + ix + SEND_CELL_W
 				&& mouseYPos >= windowYOffset + iy
@@ -617,17 +554,14 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		}
 	}
 	private void placeAddr(GuiGraphics gui, Row r, int top) {
-		// 羊皮纸地址框(九宫格可拉伸) + 其上放置可输入 widget（左缩进越过圆环）
-		//		gui.blitSprite(sprite("address_box"), ADDR_X, top, contentW(), ADDR_H);
-		// 纹理 18 高，行高 20：上边距 2、下边距 0
 		CCGGuiTextures.ADDRESS.render(gui, 0, top + 2);
 		AddressEditBox box = addrBoxes.get(r.gi());
 		box.setX(windowXOffset + ADDR_X + ADDR_TEXT_IN);
-		// 上边距 2（对齐纹理），其中 1px 用于补偿 EditBox 硬编码 8px 字高(实为9px)导致的偏高
+		// 1px 补偿 EditBox 按 8px 字高（实为 9px）定位导致的偏高
 		box.setY(windowYOffset + top + (ADDR_H - 10) / 2 + 2);
-		// 地址框在滚动内容里，需让剪贴板下拉的 yOffset 跟随当前 boxY（Create 是固定框不滚，这里每次 reposition 刷新）
+		// 地址框在滚动内容里，下拉锚点需跟随 boxY
 		refreshSuggestionsAnchor(box);
-		// 暗色"包裹地址"占位：值空且未聚焦时（Create 同款：drawString 斜体 0xCDBCA8）
+		// 空值且未聚焦时画占位提示
 		if (box.getValue().isBlank() && !box.isFocused()) {
 			Font font = mc.font;
 			Component hint = Component.translatable("create.gui.stock_keeper.package_address").copy().withStyle(ChatFormatting.ITALIC);
@@ -637,8 +571,8 @@ public class ReplenishScreen extends AbstractSimiScreen {
 	private void renderScrollbar(GuiGraphics gui, float partialTick) {
 		int barX = scrollX();
 		int barSize = thumbHeight();
-		if (barSize >= scrollTrackHeight() - 2) return; // 内容不足，无需滚动条
-		// 整根条随滚动平移（Create 做法：通道+上下端+中握）
+		if (barSize >= scrollTrackHeight() - 2) return;
+		// 整条随滚动平移
 		var pose = gui.pose();
 		pose.pushPose();
 		pose.translate(0, thumbTop(partialTick) - scrollTrackTop(), 0);
@@ -651,37 +585,30 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		AllGuiTextures.STOCK_KEEPER_REQUEST_SCROLL_BOT.render(gui, barX, baseY + barSize - 5);
 		pose.popPose();
 	}
-	/**
-	 * 让地址框的剪贴板下拉锚点(yOffset)跟随当前 boxY：Create 是固定框不滚，这里在滚动后刷新。
-	 * yOffset 创建时按初始位置冻结，需用反射更新为 `-72 + box.getY()`(anchorToBottom=true)。
-	 */
+	/** 让下拉锚点跟随地址框当前的 y 位置。 */
 	private void refreshSuggestionsAnchor(AddressEditBox box) {
 		var suggestions = ((AddressEditBoxAccessor) box).getDestinationSuggestions();
 		if (suggestions == null) return;
-		// 朝上会顶出内容区时改为朝下：anchorToBottom 恒为 true（列表自 yPos 向上排），
-		// 把 yPos 抬到框下方足够远处，列表整体就落到框下面；行数取实际建议条数
+		// anchorToBottom 恒为 true（列表自 yPos 向上排），顶出内容区时把 yPos 抬到框下方，列表即落到框下面。
 		var accessor = (DestinationSuggestionsAccessor) suggestions;
 		int rows = Math.min(SUGGESTION_MAX_ROWS, accessor.getCurrentSuggestions().size());
 		int listH = rows * SUGGESTION_ROW_H;
 		int anchor = box.getY() - listH < scissorT ? box.getY() + box.getHeight() + listH + 3 : box.getY();
 		int yOffset = SUGGESTION_ANCHOR_BASE_Y + anchor;
-		// 位置没变就别重建：showSuggestions 会 new 一个 SuggestionsList，把用户滚轮滚到的位置(offset)重置成 0，
-		// 表现为「滚轮完全没反应」。只有框位置/行数变了（面板真的在滚）才重建。
+		// 位置未变则不重建：showSuggestions 会新建 SuggestionsList，把列表滚动位置重置为 0。
 		if (yOffset == accessor.getYOffset()) return;
 		accessor.setYOffset(yOffset);
-		// 聚焦时让下拉贴住新位置（跟随滚动）
 		if (box.isFocused()) suggestions.showSuggestions(false);
 	}
 	@Override
 	protected void renderWindowForeground(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
-		// 配方切换弹窗打开时它是唯一浮层：底下的地址框提示/节点卡/物品 tooltip 一律不画，
-		// 否则会穿过弹窗显示（弹窗是浮层，底下的悬停判定照样成立）→ 与弹窗、候选卡叠在一起
+		// 弹窗打开时是唯一浮层：其余悬停提示会穿透显示，故一概不画。
 		if (recipePopup != null) {
 			renderRecipePopup(gui);
 			renderPopupRecipeCard(gui);
 			return;
 		}
-		// 悬停空地址框时提示（Create restocker 同款 4 行：深蓝标题+灰则明+深灰斜体"左键点击编辑"）
+		// 悬停空地址框时提示
 		for (AddressEditBox box : addrBoxes)
 			if (box.visible && box.getValue().isBlank() && !box.isFocused() && box.isMouseOver(mouseX, mouseY)) {
 				gui.renderComponentTooltip(
@@ -697,11 +624,10 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		if (hoveredNode != null) renderNodeCard(gui, mouseX, mouseY, hoveredNode);
 		if (hoveredSendItem != null) gui.renderTooltip(mc.font, hoveredSendItem, mouseX, mouseY);
 	}
-	/** 配方切换弹窗：列出该产物的全部候选配方（已在数据侧排好序），点一行即切换并重算整棵树；悬停某行弹该配方的配方卡 */
+	/** 配方切换弹窗：列出候选配方，点一行即切换。 */
 	private void renderRecipePopup(GuiGraphics gui) {
 		var font = mc.font;
 		var candidates = recipePopup.candidates();
-		// 鼠标落在哪一行（供 renderPopupRecipeCard 用）
 		hoveredPopupRow = -1;
 		if (mouseXPos >= popupX
 			&& mouseXPos < popupX + popupW
@@ -712,15 +638,15 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		}
 		var pose = gui.pose();
 		pose.pushPose();
-		pose.translate(0, 0, 400);   // 盖住列表物品(z=150)/数字(z=200)/配方卡(z=300)
+		pose.translate(0, 0, 400); // 盖住物品(z=150)、数字(z=200)、配方卡(z=300)
 		TooltipRenderUtil.renderTooltipBackground(gui, popupX, popupY, popupW, popupH, 0);
 		var current = recipePopup.recipe();
 		for (var i = 0; i < candidates.size(); i++) {
 			Recipe<?> recipe = candidates.get(i).holder().value();
 			int y = popupY + 3 + i * POPUP_ROW_H;
-			// 悬停行高亮（不常亮当前配方：当前配方只靠文字颜色区分，避免和悬停态混淆）
+			// 悬停行高亮；当前配方只用文字颜色区分
 			if (i == hoveredPopupRow) gui.fill(popupX + 3, y, popupX + popupW - 3, y + POPUP_ROW_H - 1, 0x40_FFFFFF);
-			// 文字左对齐，竖直居行（行高 14 - 字高 9 → 上边距 2）；当前配方金色，其余白色
+			// 当前配方金色，其余白色
 			gui.drawString(
 				font,
 				typeName(recipe.getType().toString()),
@@ -732,13 +658,13 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		}
 		pose.popPose();
 	}
-	/** 弹窗内悬浮某行：按配方卡样式显示该候选配方（次数口径与节点卡一致），z 再抬一层盖住弹窗 */
+	/** 弹窗内悬停行显示候选配方卡。 */
 	private void renderPopupRecipeCard(GuiGraphics gui) {
 		if (hoveredPopupRow < 0) return;
 		CandidateCard card = recipePopup.candidates().get(hoveredPopupRow);
 		var pose = gui.pose();
 		pose.pushPose();
-		pose.translate(0, 0, 500);   // 弹窗在 z=400，卡片内部再抬 300 → 共 800
+		pose.translate(0, 0, 500); // 抬到弹窗(z=400)之上
 		renderRecipeCard(
 			gui,
 			mouseXPos,
@@ -751,7 +677,7 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		);
 		pose.popPose();
 	}
-	/** 配方节点卡：次数取「实际可合成次数」，合不出来时退回目标次数（否则卡片里全是 0） */
+	/** 节点卡：可合成时取可合成次数，否则退回目标次数。 */
 	private void renderNodeCard(GuiGraphics gui, int mouseX, int mouseY, Node n) {
 		renderRecipeCard(
 			gui,
@@ -764,10 +690,7 @@ public class ReplenishScreen extends AbstractSimiScreen {
 			n.candidates().size() > 1
 		);
 	}
-	/**
-	 * 悬停配方卡：左侧逐行列出原料(图标+名称+总需求) → 箭头 → 产物；底色用原版 tooltip 样式，跟随鼠标并夹在屏幕内。
-	 * 节点卡与弹窗内的候选卡共用此方法（样式与次数口径完全一致），只是传入的配方与原料清单不同。
-	 */
+	/** 配方卡：左侧原料清单，右侧箭头与产物，跟随鼠标并夹在屏幕内。 */
 	private void renderRecipeCard(
 		GuiGraphics gui,
 		int mouseX,
@@ -787,43 +710,36 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		Component outName = target.getHoverName();
 		int outNameW = font.width(outName);
 		int cardW = 3 + listW + 6 + 42 + 6 + 16 + 6 + outNameW + 3;
-		// 内容高（左侧原料行/右侧产物取高者）；有多个候选配方时底部再留一行提示的位置
+		// 左列原料与右侧产物取高者，可切换时底部再留一行提示
 		int contentH = 3 + Math.max(items.size() * rowH, 18) + 3;
 		int cardH = contentH + (switchable ? SWITCH_HINT_H : 0);
 		var window = mc.getWindow();
 		int cardX = Mth.clamp(mouseX + 12, 0, Math.max(0, window.getGuiScaledWidth() - cardW));
 		int cardY = Mth.clamp(mouseY + 12, 0, Math.max(0, window.getGuiScaledHeight() - cardH));
-		// 抬到列表物品(renderItem z=150)/数字(z=200)之上，否则被盖住
+		// 抬到物品与数字之上
 		var pose = gui.pose();
 		pose.pushPose();
 		pose.translate(0, 0, 300);
-		// 原版 tooltip 底（渐变 + 边框）
 		TooltipRenderUtil.renderTooltipBackground(gui, cardX, cardY, cardW, cardH, 0);
-		// 左侧：逐行原料（勾选框 + 图标 + 名称 + 总需求数量）
 		for (var i = 0; i < items.size(); i++) {
 			ReplenishEntry e = items.get(i);
 			int y = cardY + 3 + i * rowH;
-			// 勾选框（同列表：□ 空心方块 + 够料时叠 ✔ 绿勾）
+			// 空心方块，够料时叠绿勾
 			gui.drawString(font, "□", cardX + 3, y + 5, e.enough() ? 0x668D7F6B : 0xFF8D7F6B, false);
 			if (e.enough()) gui.drawString(font, "✔", cardX + 3, y + 4, 0xFF31B25D, false);
 			gui.renderItem(e.material(), cardX + 13, y + 1);
-			// 充足=绿 / 不足=红
-			// 够=绿；不够但自己可合成（会被继续拆解）=黄；不够且是原材料=红
+			// 够=绿，不够但可合成=黄，不够且为原材料=红
 			int color = e.enough() ? 0xFF55FF55 : e.craftable() ? 0xFFFFD700 : 0xFFFF5555;
 			gui.drawString(font, e.material().getHoverName(), cardX + 33, y + 5, color, true);
 			drawCount(gui, e.per() * craftTimes, cardX + 13, y + 1);
 		}
-		// 右侧：箭头 + 产物
 		int midY = cardY + contentH / 2;
 		int arrowX = cardX + 3 + listW + 6;
 		AllGuiTextures.JEI_ARROW.render(gui, arrowX, midY - 5);
 		int outX = arrowX + 42 + 6;
-		// 产物（无背景框）
 		gui.renderItem(target, outX, midY - 8);
-		// 产物名称；产出数量（合成次数 × 单次产出）用 NUMBERS 图集画在图标右下角
 		gui.drawString(font, outName, outX + 20, midY - 5, 0xFFFFFFFF, true);
 		drawCount(gui, totalOut, outX, midY - 8);
-		// 有多个候选配方时提示可以点开切换
 		if (switchable) gui.drawString(
 			font,
 			Component.translatable("create_cyber_goggles.gui.auto_replenish.switch_recipe"),
@@ -836,7 +752,7 @@ public class ReplenishScreen extends AbstractSimiScreen {
 	}
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		// 配方切换弹窗优先：点面板内应用该配方，点面板外或非左键都关掉
+		// 弹窗优先：点面板内应用，点面板外或非左键关闭
 		if (recipePopup != null) {
 			var candidates = recipePopup.candidates();
 			if (button == 0 && mouseX >= popupX && mouseX < popupX + popupW && mouseY >= popupY && mouseY < popupY + popupH) {
@@ -851,7 +767,7 @@ public class ReplenishScreen extends AbstractSimiScreen {
 			recipePopup = null;
 			return true;
 		}
-		// 点配方节点图标：弹出候选配方列表（只有一个候选就没必要弹）
+		// 点节点图标弹出候选配方列表
 		if (button == 0 && hoveredNode != null && hoveredNode.candidates().size() > 1) {
 			recipePopup = hoveredNode;
 			openRecipePopup(mouseX, mouseY);
@@ -862,7 +778,7 @@ public class ReplenishScreen extends AbstractSimiScreen {
 			scrollDragOffset = mouseY - thumbTop(1);
 			return true;
 		}
-		// 组头三角：切换展开/收起（Create 同款：命中分类头行即切换 + 播放音效）
+		// 点组头三角切换展开/收起
 		if (button == 0) {
 			int clamped = Mth.clamp((int) scrollAnim.getValue(1), 0, maxScroll());
 			int iconX = windowXOffset + CONTENT_L + GROUP_INDENT;
@@ -876,14 +792,13 @@ public class ReplenishScreen extends AbstractSimiScreen {
 				if (!hiddenGroups.remove(gi)) hiddenGroups.add(gi);
 				mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.ITEM_FRAME_ROTATE_ITEM, 1.5f));
 				rebuildLayout();
-				// 收起后内容变短，滚动值可能越界
 				scroll = Mth.clamp(scroll, 0, maxScroll());
 				scrollAnim.setValue(scroll);
 				scrollAnim.updateChaseTarget(scroll);
 				return true;
 			}
 		}
-		// 点击地址框外取消聚焦（Create 同款：框点到自己/被消费则保持，否则失焦）
+		// 点到地址框外则取消聚焦
 		for (AddressEditBox box : addrBoxes) {
 			if (!box.isFocused()) continue;
 			boolean result = box.mouseClicked(mouseX, mouseY, button);
@@ -892,13 +807,13 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		}
 		return super.mouseClicked(mouseX, mouseY, button);
 	}
-	/** 切换配方后重建整棵树：mixin 按新的配方选择重算，再换一个同款界面（地址缓存是静态的，不会丢） */
+	/** 按新的配方选择重建整棵树，换成同款新界面。 */
 	private void rebuildAll() {
 		var next = new ReplenishScreen(parent, host, host.ccg$buildGroups());
-		next.restoreScroll = scroll;   // 别让切换配方把滚动条弹回顶部（新屏幕 init 里按新内容 clamp）
+		next.restoreScroll = scroll; // 继承当前滚动位置
 		mc.setScreen(next);
 	}
-	/** 打开配方切换弹窗：位置在点击处算一次并固定（不跟随鼠标），之后只画不管位置 */
+	/** 按点击位置计算并固定弹窗矩形。 */
 	private void openRecipePopup(double mouseX, double mouseY) {
 		var candidates = recipePopup.candidates();
 		var font = mc.font;
@@ -921,10 +836,10 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		int maxThumbTop = scrollTrackHeight() - thumb;
 		return scrollTrackTop() + (maxScroll() == 0 ? 0 : (int) (scrollAnim.getValue(partialTick) / maxScroll() * maxThumbTop));
 	}
-	/** 配方类型的本地化名：优先用 JEI 分类标题，其次 `<命名空间>.recipe.<路径>`，最后退回路径；空名 = 「无法合成」 */
+	/** 配方类型的本地化名：JEI 分类标题 → 命名空间.recipe.路径 → 路径。 */
 	private static Component typeName(String typeId) {
 		if (typeId == null || typeId.isBlank()) return Component.translatable("create_cyber_goggles.gui.auto_replenish.uncraftable");
-		// 原版配方类型（RecipeType.register）的 toString() 是裸名（无命名空间），补 minecraft: 才能对上 JEI 分类 uid
+		// 原版配方类型无命名空间，补 minecraft: 才对得上 JEI 分类 uid
 		String lookupKey = typeId.indexOf(':') < 0 ? "minecraft:" + typeId : typeId;
 		Component jeiTitle = CCGJeiTitles.get(lookupKey);
 		if (jeiTitle != null) return jeiTitle;
@@ -937,7 +852,7 @@ public class ReplenishScreen extends AbstractSimiScreen {
 	private int scrollX() {return windowXOffset + CONTENT_R - SCROLL_W - 4;}
 	private int scrollTrackTop() {return windowYOffset + BODY_TOP;}
 	private int scrollTrackHeight() {return Math.max(1, viewH);}
-	/** Create 比例滚动条拇指高：barSize = Max(5, floor(视口/总内容 × (视口-2)))，总内容 = maxScroll + 视口 */
+	/** 按视口与内容比例计算拇指高。 */
 	private int thumbHeight() {
 		int viewport = scrollTrackHeight();
 		int total = Math.max(viewport, maxScroll() + viewport);
@@ -958,7 +873,7 @@ public class ReplenishScreen extends AbstractSimiScreen {
 			}
 			var top = (int) Mth.clamp(mouseY - scrollDragOffset, scrollTrackTop(), scrollTrackTop() + maxThumbTop);
 			scroll = (int) ((float) (top - scrollTrackTop()) / maxThumbTop * maxScroll);
-			// 拖动直接跟手：必须同步追赶目标，否则 tickChaser 会把值拉回滚轮留下的旧目标（抽搐）
+			// 必须同步追赶目标，否则 tickChaser 会把值拉回旧目标
 			scrollAnim.setValue(scroll);
 			scrollAnim.updateChaseTarget(scroll);
 			return true;
@@ -975,11 +890,11 @@ public class ReplenishScreen extends AbstractSimiScreen {
 	}
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-		// 聚焦地址框的下拉建议优先吃滚轮（显式投递，别等 super 的 focused 转发）
+		// 下拉建议优先吃滚轮，需显式投递
 		if (getFocused() instanceof AddressEditBox box && box.mouseScrolled(mouseX, mouseY, scrollX, scrollY)) return true;
 		if (super.mouseScrolled(mouseX, mouseY, scrollX, scrollY)) return true;
 		if (overScrollbar(mouseX, mouseY)) return true;
-		// Create 同款：滚轮按行推进 + 指数追赶，实现平滑滚动
+		// 滚轮按行推进 + 指数追赶
 		var direction = (int) (Math.ceil(Math.abs(scrollY)) * -Math.signum(scrollY));
 		scroll = Mth.clamp((int) scrollAnim.getChaseTarget() + direction * NODE_H, 0, maxScroll());
 		scrollAnim.chase(scroll, 0.5, Chaser.EXP);
@@ -988,7 +903,7 @@ public class ReplenishScreen extends AbstractSimiScreen {
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
 		if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
-			if (recipePopup != null) recipePopup = null;   // 弹窗开着时先关弹窗，再按一次才返回
+			if (recipePopup != null) recipePopup = null; // 弹窗开着时先关弹窗
 			else onClose();
 			return true;
 		}
@@ -1002,15 +917,15 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		MISSING,
 		ADDR
 	}
-	/** 预计算的一行：y=内容相对顶部偏移（含 BODY_TOP 起始），kind=行类型，gi 索引到组数据 */
+	/** 预计算的一行；y 含 BODY_TOP 起始偏移，gi 索引到组数据。 */
 	private record Row(int y, int h, RowKind kind, int gi) {}
-	/** 底部自绘按钮：正方形返回 / 长条发送（hover 用 Create 高亮） */
+	/** 底部按钮：返回方块与发送长条。 */
 	private static final class CCGButton extends AbstractSimiWidget {
-		private final ResourceLocation bg;      // 普通状态背景精灵
-		private final AllGuiTextures hover;     // 可空：悬停高亮纹理(Create BUTTON_HOVER / SEND_HOVER)
-		private final boolean hoverNative;      // 高亮是否按原生尺寸居中(发送条 SEND_HOVER 防箭头畸变)
-		private final AllIcons innerIcon;       // 可空：内部图标(返回箭头)
-		private final Component label;          // 可空：文字(发送)
+		private final ResourceLocation bg;
+		private final AllGuiTextures hover;
+		private final boolean hoverNative; // 按原生尺寸居中，避免拉伸畸变
+		private final AllIcons innerIcon;
+		private final Component label;
 		CCGButton(
 			int x,
 			int y,
@@ -1031,7 +946,6 @@ public class ReplenishScreen extends AbstractSimiScreen {
 			this.label = label;
 			withCallback(action);
 		}
-		/** 悬停提示（同 Create IconButton 的 setToolTip） */
 		CCGButton tooltip(Component text) {
 			toolTip.clear();
 			toolTip.add(text);
@@ -1040,7 +954,7 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		@Override
 		public void doRender(@NotNull GuiGraphics gui, int mx, int my, float pt) {
 			if (isHovered() && hover != null) if (hoverNative) {
-				// 高亮(SEND_HOVER 80x20)按原生尺寸居中叠加，避免拉伸导致箭头畸变
+				// 按原生尺寸居中叠加，避免拉伸畸变
 				int hw = hover.getWidth(), hh = hover.getHeight();
 				gui.blit(
 					hover.location,
@@ -1054,10 +968,8 @@ public class ReplenishScreen extends AbstractSimiScreen {
 			} else gui.blit(hover.location, getX(), getY(), hover.getStartX(), hover.getStartY(), getWidth(), getHeight());
 			else if (bg != null) gui.blitSprite(bg, getX(), getY(), getWidth(), getHeight());
 			if (innerIcon != null) innerIcon.render(gui, getX() + (getWidth() - 16) / 2, getY() + (getHeight() - 16) / 2);
-			// 发送条右端有箭头，文字左对齐防止重叠
 			if (label != null) {
 				int tw = mc.font.width(label);
-				// 文字居中 + 深灰 0x252525（同 Create 仓管发送按钮）
 				gui.drawString(mc.font, label, getX() + (getWidth() - tw) / 2, getY() + (getHeight() - 9) / 2 + 1, 0x252525, false);
 			}
 		}

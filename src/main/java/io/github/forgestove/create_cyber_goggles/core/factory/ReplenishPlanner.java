@@ -18,38 +18,30 @@ import java.util.Map.Entry;
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 /**
  * 「自动补齐缺货」的配方树求解核心，与宿主界面无关：输入剪贴板蓝图清单 + 仓库库存快照，
- * 输出按配方类型分组的 {@link ReplenishGroup} 列表。宿主只需提供库存快照与发订单通道
- * （见 {@link CCGReplenishTree}），界面由 {@link ReplenishScreen} 统一渲染。
- * <p><b>递归到原材料</b>，三阶段求解，保证发出的配方原料一定齐备：
- * ① 自顶向下展开依赖图（一物品一节点：选配方时避开会让依赖闭合的候选，「铁锭↔铁块」这类互逆
- * 只取一个方向、另一个当原材料）；② 自底向上算「产能上限」——父节点的可合成次数
- * 受<b>子节点实际产出</b>限制（不再把可合成原料当无限制）；③ 自顶向下按父的实际消耗分配需求，
- * 取 min(需求次数, 产能上限) 作为最终 craftTimes。共享原料按序消耗。只读。
+ * 输出按配方类型分组的 {@link ReplenishGroup} 列表。递归到原材料，三阶段求解（自顶向下展开依赖图 →
+ * 自底向上算产能上限 → 自顶向下按父的实际消耗分配需求），保证发出的配方原料一定齐备。
  */
 public final class ReplenishPlanner {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final List<String> TYPE_ORDER = List.of(
-		"create:crushing",        // 粉碎优于研磨
+		"create:crushing",
 		"create:milling",
-		"create:cutting",         // 切削优于原版切石
+		"create:cutting",
 		"create:pressing",
 		"create:compacting",
 		"create:mixing",
 		"create:splashing",
 		"create:haunting",
-		"create:deploying",       // 机械手部署优于手动物品应用
+		"create:deploying",
 		"create:item_application"
 	);
-	/** 玩家手动指定的配方（物品 → 配方 ID），进程内有效；键为物品，同物品的所有节点一起换 */
+	/** 玩家手动指定的配方，进程内有效；键为物品，同物品的所有节点一起换。 */
 	private static final Map<Item, ResourceLocation> RECIPE_CHOICES = new HashMap<>();
-	/** 候选配方与产物表缓存：绑定到 RecipeManager，换存档或数据包重载后自动重建 */
+	/** 候选配方与产物表缓存，绑定到 RecipeManager，换存档或数据包重载后重建。 */
 	private static Object cacheOwner;
 	private static Map<Item, List<RecipeHolder<?>>> candidatesCache = new HashMap<>();
 	private static Set<Item> recipeOutputs;
-	/**
-	 * 主手优先、其次副手读取 Create 剪贴板里的蓝图清单。
-	 * 与 Create {@code StockKeeperRequestScreen} 的剪贴板模式同源：整页没有任何物品条目则视为没有清单。
-	 */
+	/** 主手优先、其次副手读取剪贴板蓝图清单；整页没有任何物品条目则视为没有清单。 */
 	public static List<List<ClipboardEntry>> clipboardOf(Player player) {
 		if (player == null) return null;
 		for (var hand : new InteractionHand[]{InteractionHand.MAIN_HAND, InteractionHand.OFF_HAND}) {
@@ -62,11 +54,7 @@ public final class ReplenishPlanner {
 		}
 		return null;
 	}
-	/**
-	 * 「蓝图模式」的照单请求：把剪贴板清单里<b>仓库现有</b>的物品按 {@code min(清单数量, 库存)} 铺成订单，
-	 * 与 Create 仓管的 {@code requestSchematicList()} 同义（同物品跨页/跨行先合并成一条）。
-	 * 仓库一个都没有 → 返回空列表（调用方应视为「无可请求」而不是反复重算）。
-	 */
+	/** 把剪贴板清单里仓库现有的物品按 {@code min(清单数量, 库存)} 铺成订单，同物品跨页合并。 */
 	public static List<BigItemStack> schematicOrders(List<List<ClipboardEntry>> clipboard, InventorySummary summary) {
 		if (clipboard == null || summary == null) return List.of();
 		Map<Item, Integer> want = new LinkedHashMap<>();
@@ -83,28 +71,22 @@ public final class ReplenishPlanner {
 		}
 		return out;
 	}
-	/** 该物品指定用哪个配方（null = 恢复自动选优）。选择不缓存，下次构建即生效 */
+	/** 指定该物品用哪个配方，null 恢复自动选优；不缓存，下次构建生效。 */
 	public static void setRecipeChoice(Item item, ResourceLocation recipeId) {
 		if (recipeId == null) RECIPE_CHOICES.remove(item);
 		else RECIPE_CHOICES.put(item, recipeId);
 	}
-	/**
-	 * 构建整棵依赖树。{@code clipboard} 为剪贴板分页清单，{@code summary} 为宿主当前的仓库快照；
-	 * 任一为空或没有可补的条目 → 返回空列表。
-	 */
+	/** 构建整棵依赖树；入参为空或没有可补条目时返回空列表。 */
 	public static List<ReplenishGroup> build(List<List<ClipboardEntry>> clipboard, InventorySummary summary) {
 		if (summary == null || mc.level == null || clipboard == null) return List.of();
 		ensureCacheOwner();
-		// 1) 根需求（裸 Item 键：ItemStack 的 equals 含 count/组件，同物品会被判成多个键）
+		// 裸 Item 键：ItemStack 的 equals 含 count 与组件，同物品会被拆成多个键
 		Map<Item, Integer> rootNeed = new LinkedHashMap<>();
 		for (List<ClipboardEntry> page : clipboard)
 			for (ClipboardEntry entry : page)
 				if (!entry.icon.isEmpty() && entry.itemAmount > 0) rootNeed.merge(entry.icon.getItem(), entry.itemAmount, Integer::sum);
 		if (rootNeed.isEmpty()) return List.of();
-		// 2) 自顶向下展开依赖图：一物品一节点，缺多少记在 shortfall。
-		//    需求单调递增——同一物品可能先以较小需求建了节点，之后又被另一个父节点加需求，
-		//    所以按「上次传播时的 want」做差量补发（不能用已展开标记挡住，否则后到的需求会丢）。
-		//    环会让需求不断放大，用轮次上限兜底。
+		// 自顶向下展开依赖图：一物品一节点，缺多少记在 shortfall；需求会被多个父节点追加，故按「上次传播的 want」差量补发，环用轮次上限兜底
 		Map<Item, Draft> drafts = new LinkedHashMap<>();
 		Map<Item, Integer> pending = new LinkedHashMap<>(rootNeed);
 		Map<Item, Integer> spreadWant = new HashMap<>();
@@ -115,15 +97,15 @@ public final class ReplenishPlanner {
 				if (needed <= 0) continue;
 				ItemStack item = itemId.getDefaultInstance();
 				int have = summary.getCountOf(item);
-				if (have >= needed) continue;                       // 库存已够
+				if (have >= needed) continue;
 				Recipe<?> recipe = findAnyRecipeFor(item, summary, drafts);
-				if (recipe == null) continue;                       // 原材料
+				if (recipe == null) continue;
 				List<DraftItem> items = draftItems(recipe, summary);
 				if (items.isEmpty()) continue;
 				int outPer = Math.max(1, recipe.getResultItem(mc.level.registryAccess()).getCount());
 				int want = (needed - have + outPer - 1) / outPer;
 				Integer prev = spreadWant.get(itemId);
-				if (prev != null && prev == want) continue;         // 需求没变，已传播过
+				if (prev != null && prev == want) continue;
 				drafts.put(itemId, new Draft(item, recipe, outPer, want, needed - have, items));
 				spreadWant.put(itemId, want);
 				progressed = true;
@@ -135,33 +117,28 @@ public final class ReplenishPlanner {
 					want,
 					outPer
 				);
-				// 只补差额，避免重复累加
+
 				int delta = want - (prev == null ? 0 : prev);
 				for (DraftItem di : items) {
 					Item matItem = di.material().getItem();
 					if (!hasRecipe(di.material())) continue;
-					// 兜底环检测：原料沿依赖图已经能回到本物品，再连这条边就成环（沙子↔砂岩、圆石↔安山岩↔闪长岩），
-					// 环会让需求被反复放大（实测沙子涨到 1165 万）。正常情况配方选择（findAnyRecipeFor）
-					// 已避开成环配方，这里只兜手动指定配方等漏网情形 → 断开该边，原料当原材料用库存
+					// 兜底环检测：成环会让需求被反复放大，故断开该边；正常选配方已避环，这里只兜手动指定等漏网情形
 					if (reaches(drafts, matItem, itemId, new HashSet<>())) continue;
 					pending.merge(matItem, di.per() * delta, Integer::sum);
 				}
 			}
 			if (!progressed) break;
 		}
-		// 注意：drafts 为空也要继续走完——剪贴板里的物品全都没有配方时，它们必须出现在缺失列表里
-		// 3) 最长路径深度：保证「父 < 子」，深度倒序即「子先父后」的拓扑序
+		// drafts 为空也要继续：没有配方的物品必须出现在缺失列表里
+		// 最长路径深度，保证父 < 子；深度倒序即「子先父后」的拓扑序
 		Map<Item, Integer> depth = depths(drafts, rootNeed.keySet());
 		List<Item> deepFirst = new ArrayList<>(drafts.keySet());
 		deepFirst.sort(Comparator.comparingInt((Item i) -> depth.getOrDefault(i, 0)).reversed());
-		// 4) 自底向上：产能上限 cap —— 受缺口需求与原料可获得量双重限制，共享原料按序消耗。
-		//    「可获得量」= 仓库现有 + 该节点自己新合成出来的产出（所以初始值必须是库存，不能置 0，
-		//    否则「仓库有 3 个 + 还需合成 1 个」这种半库存半合成的情况会被当成只有 1 个可用）。
+		// 产能上限 cap 取 min(缺口需求, 原料可获得量)，共享原料按序消耗；可获得量含仓库现有 + 自身新合成产出，故初始值取库存而非 0
 		Map<Item, Integer> pool = new HashMap<>();
 		for (Item itemId : drafts.keySet()) pool.put(itemId, summary.getCountOf(itemId.getDefaultInstance()));
 		Map<Item, Integer> cap = new HashMap<>();
-		// 每个节点处理时各原料的「拿到手时够不够一次配方」：界面上的勾选框与 blocked 判定必须同源，
-		// 否则会出现「原料全是绿勾却躺在无法合成里」（仓库有货，但已经被排在前面的节点预留走了）
+		// 各原料「拿到手时够不够一次配方」：勾选框与 blocked 判定必须同源，否则会出现原料全绿勾却躺在无法合成里
 		Map<Item, List<Boolean>> enoughByNode = new HashMap<>();
 		Map<String, Map<Item, Integer>> missingByType = new LinkedHashMap<>();
 		for (Item itemId : deepFirst) {
@@ -186,7 +163,7 @@ public final class ReplenishPlanner {
 					limitedAvail = avail;
 					limitedPer = di.per();
 				}
-				// 缺失原料：不可合成（无节点）且扣掉前面节点消耗后仍不够目标次数 → 记缺口
+				// 不可合成且扣掉前面节点消耗后仍不够 → 记缺口
 				int need = di.per() * d.want();
 				if (!drafts.containsKey(di.material().getItem()) && avail < need)
 					missing.merge(di.material().getItem(), need - avail, Integer::sum);
@@ -204,14 +181,14 @@ public final class ReplenishPlanner {
 			pool.merge(itemId, times * d.outPer(), Integer::sum);
 			cap.put(itemId, times);
 		}
-		// 根需求里「找不到配方」（没有节点）却库存不足的物品：挂到无类型的兜底组（组名 lang 显示「无法合成」）
+		// 找不到配方却库存不足的根需求物品挂到兜底组（类型空串）
 		for (Entry<Item, Integer> e : rootNeed.entrySet()) {
 			if (drafts.containsKey(e.getKey())) continue;
 			int have = summary.getCountOf(e.getKey().getDefaultInstance());
 			if (have >= e.getValue()) continue;
 			missingByType.computeIfAbsent("", k -> new LinkedHashMap<>()).merge(e.getKey(), e.getValue() - have, Integer::sum);
 		}
-		// 5) 自顶向下：实际合成次数 —— 需求由父节点的实际消耗累加（不再按目标次数虚高），且不超过产能上限
+		// 实际合成次数：需求由父节点实际消耗累加，且不超过产能上限
 		Map<Item, Integer> needItems = new HashMap<>();
 		for (Entry<Item, Integer> e : rootNeed.entrySet()) {
 			Draft d = drafts.get(e.getKey());
@@ -232,15 +209,14 @@ public final class ReplenishPlanner {
 				needItems.merge(matItem, di.per() * t, Integer::sum);
 			}
 		}
-		// 6) 按配方类型组装：能合成的进 nodes，缺料合不出来的进 blocked（界面单独一行「无法合成的配方」）；
-		//    缺失原料和 blocked 都留在各自的组里，不再全局合并
+		// 按配方类型组装：能合成的进 nodes，缺料合不出来的进 blocked；缺失原料留在各自的组里
 		Map<String, List<Node>> byType = new LinkedHashMap<>();
 		Map<String, List<Node>> blockedByType = new LinkedHashMap<>();
 		for (Draft d : drafts.values()) {
 			Item itemId = d.target().getItem();
 			int t = times.getOrDefault(itemId, 0);
 			String type = d.recipe().getType().toString();
-			// enough 用步骤 4 里「拿到手时的可用量」判定，保证和 blocked 同源
+			// enough 用拿到手时的可用量判定，与 blocked 同源
 			List<Boolean> flags = enoughByNode.getOrDefault(itemId, List.of());
 			List<ReplenishEntry> entries = new ArrayList<>(d.items().size());
 			for (var i = 0; i < d.items().size(); i++) {
@@ -258,7 +234,7 @@ public final class ReplenishPlanner {
 			byType.computeIfAbsent(type, k -> new ArrayList<>()).add(node);
 			LOGGER.debug("Node: {} craft={}/{} depth={}", d.target().getHoverName().getString(), t, d.want(), nodeDepth);
 		}
-		// 有缺失或 blocked 但没节点的类型也要成组（组名 = 配方类型；空串是「无法合成」兜底组）
+		// 有缺失或 blocked 但没节点的类型也要成组
 		for (String type : missingByType.keySet()) byType.computeIfAbsent(type, k -> new ArrayList<>());
 		for (String type : blockedByType.keySet()) byType.computeIfAbsent(type, k -> new ArrayList<>());
 		List<ReplenishGroup> out = new ArrayList<>();
@@ -268,11 +244,11 @@ public final class ReplenishPlanner {
 			m.forEach((item, count) -> missingList.add(new ItemStack(item, count)));
 			out.add(new ReplenishGroup(type, byType.get(type), blockedByType.getOrDefault(type, List.of()), missingList));
 		}
-		missingByType.entrySet().removeIf(e -> e.getValue().isEmpty());   // 日志只留真正有缺口的组
+		missingByType.entrySet().removeIf(e -> e.getValue().isEmpty());
 		if (!missingByType.isEmpty()) LOGGER.debug("AutoReplenish missing: {}", missingByType);
 		return out;
 	}
-	/** 缓存归属检查：换存档或重载数据包后 RecipeManager 会变，候选与产物表必须重建 */
+	/** 换存档或重载数据包后 RecipeManager 会变，候选与产物表必须重建。 */
 	private static void ensureCacheOwner() {
 		var manager = mc.level == null ? null : mc.level.getRecipeManager();
 		if (manager == cacheOwner) return;
@@ -280,10 +256,7 @@ public final class ReplenishPlanner {
 		candidatesCache = new HashMap<>();
 		recipeOutputs = null;
 	}
-	/**
-	 * 该配方是否会让 target 依赖回自己：原料沿已展开的依赖图能走回 target 即闭合。
-	 * 不在图里的原料必然走不回（{@link #reaches} 只沿图内的边），直接跳过。
-	 */
+	/** 该配方是否会让 target 依赖回自己：原料沿已展开的依赖图能走回 target 即闭合。 */
 	private static boolean createsCycle(Recipe<?> recipe, Item target, Map<Item, Draft> drafts) {
 		if (drafts.isEmpty()) return false;
 		for (Ingredient ing : recipe.getIngredients()) {
@@ -293,7 +266,7 @@ public final class ReplenishPlanner {
 		}
 		return false;
 	}
-	/** 沿已展开的依赖图，from 能否走到 target（能走到说明 from→target 这条边会成环） */
+	/** 沿已展开的依赖图判断 from 能否走到 target。 */
 	private static boolean reaches(Map<Item, Draft> drafts, Item from, Item target, Set<Item> visited) {
 		if (from.equals(target)) return true;
 		if (!visited.add(from)) return false;
@@ -303,7 +276,7 @@ public final class ReplenishPlanner {
 			if (reaches(drafts, di.material().getItem(), target, visited)) return true;
 		return false;
 	}
-	/** 单个配方的原料清单：同物品多槽累加 per，material 统一数量 1 */
+	/** 单个配方的原料清单，同物品多槽累加 per。 */
 	private static List<DraftItem> draftItems(Recipe<?> recipe, InventorySummary summary) {
 		Map<ItemStack, Integer> per = new LinkedHashMap<>();
 		for (Ingredient ing : recipe.getIngredients()) {
@@ -323,7 +296,7 @@ public final class ReplenishPlanner {
 		per.forEach((stack, count) -> out.add(new DraftItem(stack.copyWithCount(1), count)));
 		return out;
 	}
-	/** 最长路径深度（父恒 < 子）；环会让深度持续增长，用 guard 兜底 */
+	/** 最长路径深度（父恒小于子）；环会让深度持续增长，用轮次上限兜底。 */
 	private static Map<Item, Integer> depths(Map<Item, Draft> drafts, Set<Item> roots) {
 		Map<Item, Integer> depth = new HashMap<>();
 		for (Item root : roots)
@@ -346,11 +319,11 @@ public final class ReplenishPlanner {
 		}
 		return depth;
 	}
-	/** 原料当前可获得量：pool 里已有该物品就用剩余量（库存 + 已算出的产出 − 已分配），否则取库存 */
+	/** 原料当前可获得量：pool 有则取剩余量，否则取库存。 */
 	private static int avail(Map<Item, Integer> pool, ItemStack material, InventorySummary summary) {
 		return pool.computeIfAbsent(material.getItem(), k -> summary.getCountOf(k.getDefaultInstance()));
 	}
-	/** 扣减已消耗的原料（调用前必先 {@link #avail} 初始化过，避免 merge 出负值） */
+	/** 扣减已消耗的原料；调用前须先经 {@link #avail} 初始化，否则会 merge 出负值。 */
 	private static void consume(Map<Item, Integer> pool, ItemStack material, int amount) {
 		if (amount <= 0) return;
 		pool.merge(material.getItem(), -amount, Integer::sum);
@@ -368,21 +341,18 @@ public final class ReplenishPlanner {
 		ItemStack[] items = ing.getItems();
 		return items.length > 0 ? items[0] : ItemStack.EMPTY;
 	}
-	/** 该物品的候选配方（带缓存）：{@link #findAnyRecipeFor} 与界面弹窗共用同一份列表 */
+	/** 该物品的候选配方，带缓存；{@link #findAnyRecipeFor} 与界面弹窗共用。 */
 	private static List<RecipeHolder<?>> candidates(ItemStack target, InventorySummary summary) {
 		return candidatesCache.computeIfAbsent(target.getItem(), k -> candidatesFor(target, summary));
 	}
-	/** 候选配方 + 各自单次的原料清单（界面弹窗里悬浮某行时按配方卡样式显示） */
+	/** 候选配方 + 各自单次的原料清单。 */
 	private static List<CandidateCard> candidateCards(ItemStack target, InventorySummary summary) {
 		List<RecipeHolder<?>> holders = candidates(target, summary);
 		List<CandidateCard> out = new ArrayList<>(holders.size());
 		for (RecipeHolder<?> holder : holders) out.add(new CandidateCard(holder, entriesFor(holder.value(), summary)));
 		return out;
 	}
-	/**
-	 * 某个配方单次的原料清单：{@code enough} 只能按「仓库库存 ≥ 单次用量」判——候选配方没参与主求解，
-	 * 拿不到「拿到手时的可用量」；{@code craftable} 同节点，用产物表判断。
-	 */
+	/** 候选配方单次的原料清单：{@code enough} 只能按「仓库库存 ≥ 单次用量」判，候选配方没参与主求解、拿不到拿到手时的可用量。 */
 	private static List<ReplenishEntry> entriesFor(Recipe<?> recipe, InventorySummary summary) {
 		List<DraftItem> items = draftItems(recipe, summary);
 		List<ReplenishEntry> out = new ArrayList<>(items.size());
@@ -390,7 +360,7 @@ public final class ReplenishPlanner {
 			out.add(new ReplenishEntry(di.material(), di.per(), summary.getCountOf(di.material()) >= di.per(), hasRecipe(di.material())));
 		return out;
 	}
-	/** 该物品的全部候选配方，已按优先级排好序（界面点节点也用这个列表让玩家切换） */
+	/** 该物品的全部候选配方，已按优先级排序。 */
 	public static List<RecipeHolder<?>> candidatesFor(ItemStack target, InventorySummary summary) {
 		if (mc.level == null) return List.of();
 		var registry = mc.level.registryAccess();
@@ -399,24 +369,15 @@ public final class ReplenishPlanner {
 		for (RecipeHolder<?> holder : mc.level.getRecipeManager().getRecipes()) {
 			Recipe<?> recipe = holder.value();
 			if (recipe.getIngredients().isEmpty()) continue;
-			// 产物按 Item 比即可（忽略组件）：Create 的加工配方产物常带组件，用
-			// isSameItemSameComponents 会把「同一物品的其他类型配方」整批漏掉，候选列表里只剩同类
+			// 产物按 Item 比即可：Create 的加工配方产物常带组件，用 isSameItemSameComponents 会把同物品的其他类型配方整批漏掉
 			ItemStack result = recipe.getResultItem(registry);
 			if (result.isEmpty() || result.getItem() != target.getItem()) continue;
-			// 产物不能同时是自己的原料（自循环配方），跳过
 			for (Ingredient ing : recipe.getIngredients())
 				if (!ing.isEmpty() && ing.test(target)) {
 					LOGGER.debug("跳过自循环配方 {} (产物 {} 也是原料)", recipe.getType(), target.getHoverName().getString());
 					continue outer;
 				}
-			// 排序优先级（从高到低）：
-			// ① 原料现在仓库里就有（每个 Ingredient 都能挑到有库存的物品）——比「看起来更基础」重要：
-			//    仓库有铁块时「1 铁块→9 铁锭」应压过「铁马铠粉碎→1 铁锭」；
-			// ② 配方类型的取舍顺序 TYPE_ORDER（数值越小越优先）：切削 > 原版切石、
-			//    粉碎 > 研磨、机械手部署 > 手动物品应用；表外的 Create 类型次之，非 Create 最后；
-			// ③ 单次产出最多（效率，如 9 铁锭 优于 1 铁锭、1 铁锭→9 铁粒 优于 1 铁粒）；
-			// ④ 原料更「基础」（原料里没有配方的越多越基础），避免选中「1 铁块→9 铁锭」这类
-			//    逆向配方与「9 铁锭→1 铁块」互锁 → 整条链 cap=0
+			// 排序：原料有库存 > 配方类型优先级(TYPE_ORDER) > 单次产出多 > 原料更基础（避免选中互锁的逆向配方）
 			var stocked = true;
 			var raw = 0;
 			for (Ingredient ing : recipe.getIngredients()) {
@@ -445,19 +406,14 @@ public final class ReplenishPlanner {
 		if (!out.isEmpty()) LOGGER.debug("候选配方 {} 个，首选 {}", out.size(), out.getFirst().value().getType());
 		return out;
 	}
-	/**
-	 * 选中的配方：玩家手动指定优先；否则按候选顺序取<b>第一个不引入环</b>的
-	 * （如已展开「铁块 ← 9 铁锭」，铁锭再走「1 铁块 → 9 铁锭」就闭合，改选熔炼等不成环的候选）。
-	 * 全部候选都会成环 → 返回 null，该物品按<b>原材料</b>处理（只用库存、不进依赖图），
-	 * 这样「铁锭↔铁块」这类互逆配方只会取一个方向，另一个当缺料显示，不会两边互相发订单抵消。
-	 */
+	/** 玩家手动指定优先，否则取第一个不引入环的候选；全部成环时返回 null，该物品按原材料处理（只用库存、不进依赖图）。 */
 	private static Recipe<?> findAnyRecipeFor(ItemStack target, InventorySummary summary, Map<Item, Draft> drafts) {
 		if (mc.level == null) return null;
 		Item key = target.getItem();
 		var chosen = RECIPE_CHOICES.get(key);
 		if (chosen != null) {
 			var forced = mc.level.getRecipeManager().byKey(chosen).map(RecipeHolder::value).orElse(null);
-			if (forced != null) return forced;   // 手动指定：尊重玩家选择，不避环（由断环兜底）
+			if (forced != null) return forced; // 手动指定不避环，由断环兜底
 		}
 		List<RecipeHolder<?>> candidates = candidates(target, summary);
 		for (RecipeHolder<?> holder : candidates)
@@ -469,7 +425,7 @@ public final class ReplenishPlanner {
 			LOGGER.debug("候选配方全部成环，{} 按原材料处理 (候选 {} 个)", target.getHoverName().getString(), candidates.size());
 		return null;
 	}
-	/** 该物品是否是某个配方的产物（只查产物表、不递归，用于给原料的「基础度」打分） */
+	/** 该物品是否是某个配方的产物；只查产物表、不递归。 */
 	private static boolean hasRecipe(ItemStack target) {
 		if (recipeOutputs == null) {
 			recipeOutputs = new HashSet<>();
@@ -482,10 +438,9 @@ public final class ReplenishPlanner {
 		}
 		return recipeOutputs.contains(target.getItem());
 	}
-	/** 候选配方的排序键 */
 	private record Candidate(boolean stocked, int rank, int out, int raw, RecipeHolder<?> holder) {}
-	/** 展开期的一个待定节点：want=目标合成次数，shortfall=缺口个数，items=原料清单 */
+	/** 展开期的待定节点；want=目标合成次数，shortfall=缺口个数。 */
 	private record Draft(ItemStack target, Recipe<?> recipe, int outPer, int want, int shortfall, List<DraftItem> items) {}
-	/** 一种原料：material 数量恒为 1，per=单次用量 */
+	/** 一种原料；material 数量恒为 1，per=单次用量。 */
 	private record DraftItem(ItemStack material, int per) {}
 }

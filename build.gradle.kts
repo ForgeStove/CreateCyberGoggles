@@ -13,8 +13,8 @@ val generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
 	val values = project.extra.properties.mapValues { it.value.toString() }
 	inputs.properties(values)
 	expand(values)
-	from("src/main/templates")
-	into("build/generated/sources/modMetadata")
+	from(layout.projectDirectory.dir("src/main/templates"))
+	into(layout.buildDirectory.dir("generated/sources/modMetadata"))
 }
 sourceSets.main.get().resources.srcDir(generateMetadata)
 val mixinAgentNotation = "dev.vfyjxf:mixin-hotswap-agent:${p("mixinAgentVersion")}"
@@ -117,5 +117,5 @@ publishMods {
 		optional("create-aeronautics")
 	}
 }
-fun p(key: String) = property(key).toString()
+fun p(key: String) = extra[key].toString()
 println("Java: ${System.getProperty("java.version")}, JVM: ${System.getProperty("java.vm.version")} (${System.getProperty("java.vendor")}), Arch: ${System.getProperty("os.arch")}")

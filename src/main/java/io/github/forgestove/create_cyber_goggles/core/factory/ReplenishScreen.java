@@ -50,7 +50,7 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
  * <p>性能：内容预计算成<b>扁平行列表</b>（{@link #rows}），渲染时<b>只画视口内的行</b>，
  * 高度缓存 O(1)，不再逐帧全量重画全部原料。</p>
  */
-public class AutoReplenishScreen extends AbstractSimiScreen {
+public class ReplenishScreen extends AbstractSimiScreen {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	/** 地址缓存：仅进程内有效（关掉游戏即清空），键为组键（配方类型） */
 	private static final Map<String, String> CACHE_ADDRS = new LinkedHashMap<>();
@@ -63,8 +63,6 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 	private static final int CONTENT_L = 36;
 	private static final int CONTENT_R = 228;
 	private static final int NODE_H = 20;          // 节点行高
-	private static final int BP_CORNER = 8;        // 蓝图角块边长（保持原 8px 像素密度）
-	private static final int BP_TILE = 4;          // 蓝图边/中的平铺单位（整除物品格 20，任意行列数都不裁切）
 	private static final int BP_PAD = 2;         // 蓝图左右内边距（受滚动条限制：9 列时宽 184 = contentW()）
 	private static final int NODES_PER_ROW = 9;    // 节点网格每行最多 9 个
 	private static final int CELL_W = 20;          // 网格单元宽(18 图标 + 2 间距)
@@ -121,7 +119,7 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 	private Node recipePopup;           // 正在切换配方的节点（null = 弹窗未打开）
 	private int popupX, popupY, popupW, popupH;   // 弹窗矩形（渲染时算，点击命中检测用）
 	private int hoveredPopupRow = -1;   // 弹窗内鼠标所在行（-1 = 不在弹窗上），供悬浮配方卡用
-	public AutoReplenishScreen(Screen parent, CCGReplenishTree host, List<ReplenishGroup> groups) {
+	public ReplenishScreen(Screen parent, CCGReplenishTree host, List<ReplenishGroup> groups) {
 		this.parent = parent;
 		this.host = host;
 		this.groups = groups;
@@ -185,7 +183,7 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 		charHooked = true;
 		NeoForge.EVENT_BUS.addListener(
 			EventPriority.HIGHEST, (Pre event) -> {
-				if (!(event.getScreen() instanceof AutoReplenishScreen screen)) return;
+				if (!(event.getScreen() instanceof ReplenishScreen screen)) return;
 				if (!(screen.getFocused() instanceof CCGAddressEditBox box)) return;
 				if (box.charTyped(event.getCodePoint(), event.getModifiers())) event.setCanceled(true);
 			}
@@ -221,34 +219,12 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 		return group == null ? Component.empty() : typeName(group.name());
 	}
 	/**
-	 * 蓝图横幅：3×3 图集（角 {@link #BP_CORNER}、边/中平铺单位 {@link #BP_TILE}），4 角固定、边与中心平铺。
-	 * 尺寸 = 物品格数 × 格子尺寸 + 内边距，平铺单位整除物品格 20，任意行列数都不裁切。
+	 * 蓝图横幅：九宫格精灵（角 8、边与中心平铺 8，切法见 {@code blueprint.png.mcmeta}），
+	 * 4 角固定、边与中心平铺。尺寸 = 物品格数 × 格子尺寸 + 内边距，任意行列数都不裁切。
 	 */
 	@SuppressWarnings("SameParameterValue")
 	private static void drawBlueprint(GuiGraphics g, int x, int y, int cols, int rows) {
-		int w = cols * CELL_W + BP_PAD * 2, h = rows * NODE_H + BP_PAD * 2;
-		int iw = w - BP_CORNER * 2, ih = h - BP_CORNER * 2;
-		blitTile(g, x, y, 0, 0);
-		blitTile(g, x + w - BP_CORNER, y, 2, 0);
-		blitTile(g, x, y + h - BP_CORNER, 0, 2);
-		blitTile(g, x + w - BP_CORNER, y + h - BP_CORNER, 2, 2);
-		for (var d = 0; d < iw; d += BP_TILE) {
-			blitTile(g, x + BP_CORNER + d, y, 1, 0);
-			blitTile(g, x + BP_CORNER + d, y + h - BP_CORNER, 1, 2);
-		}
-		for (var d = 0; d < ih; d += BP_TILE) {
-			blitTile(g, x, y + BP_CORNER + d, 0, 1);
-			blitTile(g, x + w - BP_CORNER, y + BP_CORNER + d, 2, 1);
-		}
-		for (var dy = 0; dy < ih; dy += BP_TILE)
-			for (var dx = 0; dx < iw; dx += BP_TILE) blitTile(g, x + BP_CORNER + dx, y + BP_CORNER + dy, 1, 1);
-	}
-	/** 画蓝图图集中的一块（col/row 为 0..2，各自占 8×8 的格）；中间行列的块是 {@link #BP_TILE}，其余是 {@link #BP_CORNER} */
-	private static void blitTile(GuiGraphics gui, int x, int y, int col, int row) {
-		var textures = CCGGuiTextures.AUTO_REPLENISH_BLUEPRINT;
-		int w = col == 1 ? BP_TILE : BP_CORNER;
-		int h = row == 1 ? BP_TILE : BP_CORNER;
-		gui.blit(textures.location, x, y, textures.getStartX() + col * BP_CORNER, textures.getStartY() + row * BP_CORNER, w, h);
+		CCGGuiTextures.BLUEPRINT.render(g, x, y, cols * CELL_W + BP_PAD * 2, rows * NODE_H + BP_PAD * 2);
 	}
 	/** 该配方单次的产出数量（至少 1） */
 	private static int outPer(Recipe<?> recipe) {
@@ -481,12 +457,11 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 		pose.popPose();
 		pose.pushPose();
 		pose.translate(windowXOffset, windowYOffset, 0);
-		CCGGuiTextures.AUTO_REPLENISH_HEADER.render(gui, 0, 0);
-		var body = CCGGuiTextures.AUTO_REPLENISH_BODY;
+		CCGGuiTextures.HEADER.render(gui, 0, 0);
 		int bodyEnd = panelH - FOOTER_H;
-		for (int y = HEADER_H; y < bodyEnd; y += 20)
-			gui.blit(body.location, 0, y, body.getStartX(), body.getStartY(), PANEL_W, Math.min(20, bodyEnd - y));
-		CCGGuiTextures.AUTO_REPLENISH_FOOTER.render(gui, 0, bodyEnd);
+		// 纵向平铺（tile），末块不足由引擎裁切
+		if (bodyEnd > HEADER_H) CCGGuiTextures.BODY.render(gui, 0, HEADER_H, PANEL_W, bodyEnd - HEADER_H);
+		CCGGuiTextures.FOOTER.render(gui, 0, bodyEnd);
 		pose.popPose();
 	}
 	@Override
@@ -608,16 +583,16 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 		drawSendLabel(gui, Component.translatable("create_cyber_goggles.gui.auto_replenish.missing"), top);
 		drawItemBox(gui, groups.get(r.gi).missing(), top + SEND_LABEL_H);
 	}
-	/** 画一个发送物品框（UP + MIDDLE×(行数-1) + DOWN）及其中的物品 */
+	/** 画一个发送物品框（竖向九宫格：上 21 + 中平铺 17×(行数-1) + 下 11）及其中的物品 */
 	private void drawItemBox(GuiGraphics gui, List<ItemStack> items, int blockTop) {
 		int lines = Math.max(1, (items.size() + NODES_PER_ROW - 1) / NODES_PER_ROW);
-		CCGGuiTextures.AUTO_REPLENISH_BOX_UP.render(gui, CONTENT_L, blockTop);
-		int y = blockTop + SEND_UP_H;
-		for (var i = 1; i < lines; i++) {
-			CCGGuiTextures.AUTO_REPLENISH_BOX_MIDDLE.render(gui, CONTENT_L, y);
-			y += SEND_MID_H;
-		}
-		CCGGuiTextures.AUTO_REPLENISH_BOX_DOWN.render(gui, CONTENT_L, y);
+		CCGGuiTextures.BOX.render(
+			gui,
+			CONTENT_L,
+			blockTop,
+			CCGGuiTextures.BOX.width(),
+			SEND_UP_H + (lines - 1) * SEND_MID_H + SEND_DOWN_H
+		);
 		int x = CONTENT_L + 5;
 		for (var i = 0; i < items.size(); i++) {
 			ItemStack stack = items.get(i);
@@ -645,7 +620,7 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 		// 羊皮纸地址框(九宫格可拉伸) + 其上放置可输入 widget（左缩进越过圆环）
 		//		gui.blitSprite(sprite("address_box"), ADDR_X, top, contentW(), ADDR_H);
 		// 纹理 18 高，行高 20：上边距 2、下边距 0
-		CCGGuiTextures.AUTO_REPLENISH_ADDRESS.render(gui, 0, top + 2);
+		CCGGuiTextures.ADDRESS.render(gui, 0, top + 2);
 		AddressEditBox box = addrBoxes.get(r.gi());
 		box.setX(windowXOffset + ADDR_X + ADDR_TEXT_IN);
 		// 上边距 2（对齐纹理），其中 1px 用于补偿 EditBox 硬编码 8px 字高(实为9px)导致的偏高
@@ -919,7 +894,7 @@ public class AutoReplenishScreen extends AbstractSimiScreen {
 	}
 	/** 切换配方后重建整棵树：mixin 按新的配方选择重算，再换一个同款界面（地址缓存是静态的，不会丢） */
 	private void rebuildAll() {
-		var next = new AutoReplenishScreen(parent, host, host.ccg$buildGroups());
+		var next = new ReplenishScreen(parent, host, host.ccg$buildGroups());
 		next.restoreScroll = scroll;   // 别让切换配方把滚动条弹回顶部（新屏幕 init 里按新内容 clamp）
 		mc.setScreen(next);
 	}

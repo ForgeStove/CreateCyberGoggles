@@ -19,7 +19,7 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 /**
  * 「自动补齐缺货」的配方树求解核心，与宿主界面无关：输入剪贴板蓝图清单 + 仓库库存快照，
  * 输出按配方类型分组的 {@link ReplenishGroup} 列表。宿主只需提供库存快照与发订单通道
- * （见 {@link CCGReplenishTree}），界面由 {@link AutoReplenishScreen} 统一渲染。
+ * （见 {@link CCGReplenishTree}），界面由 {@link ReplenishScreen} 统一渲染。
  * <p><b>递归到原材料</b>，三阶段求解，保证发出的配方原料一定齐备：
  * ① 自顶向下展开依赖图（一物品一节点：选配方时避开会让依赖闭合的候选，「铁锭↔铁块」这类互逆
  * 只取一个方向、另一个当原材料）；② 自底向上算「产能上限」——父节点的可合成次数

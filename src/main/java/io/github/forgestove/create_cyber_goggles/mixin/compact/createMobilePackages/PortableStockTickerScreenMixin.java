@@ -54,7 +54,7 @@ public abstract class PortableStockTickerScreenMixin extends AbstractSimiContain
 		btn.withCallback(() -> {
 			List<ReplenishGroup> groups = ccg$buildGroups();
 			CCG.LOGGER.debug("AutoReplenish click: groups={} summary={}", groups.size(), ccg$summary() == null ? "null" : "ok");
-			mc.setScreen(new AutoReplenishScreen(thiz(), this, groups));
+			mc.setScreen(new ReplenishScreen(thiz(), this, groups));
 		});
 		btn.setToolTip(Component.translatable("create_cyber_goggles.gui.auto_replenish.title"));
 		addRenderableWidget(btn);

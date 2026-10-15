@@ -67,7 +67,7 @@ public abstract class TunablePortableTickerScreenMixin extends AbstractSimiConta
 			List<ReplenishGroup> groups = ccg$buildGroups();
 			CCG.LOGGER.debug("AutoReplenish click: groups={} summary={}", groups.size(), lastSeenStacks == null ? "null" : "ok");
 			ccg$overlayOpening = true;   // 本次切屏会调宿主的 removed()，别让它清掉库存缓存
-			mc.setScreen(new AutoReplenishScreen(thiz(), this, groups));
+			mc.setScreen(new ReplenishScreen(thiz(), this, groups));
 		});
 		btn.setToolTip(Component.translatable("create_cyber_goggles.gui.auto_replenish.title"));
 		addRenderableWidget(btn);

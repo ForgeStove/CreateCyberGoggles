@@ -1,6 +1,6 @@
 plugins {
-	id("net.neoforged.moddev") version "+"
-	id("me.modmuss50.mod-publish-plugin") version "2.2.1"
+	id("net.neoforged.moddev") version "2.0.148" // https://plugins.gradle.org/m2/net/neoforged/moddev/net.neoforged.moddev.gradle.plugin/maven-metadata.xml
+	id("me.modmuss50.mod-publish-plugin") version "2.2.1" // https://plugins.gradle.org/m2/me/modmuss50/mod-publish-plugin/me.modmuss50.mod-publish-plugin.gradle.plugin/maven-metadata.xml
 }
 base.archivesName.set(p("modId"))
 group = p("modGroupId")

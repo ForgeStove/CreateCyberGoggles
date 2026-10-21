@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: publish-mods
@@ -19,15 +19,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Get Java Version
-        id: java_version
-        run: echo "version=$(grep '^javaVersion=' gradle.properties | cut -d'=' -f2)" >> $GITHUB_OUTPUT
-
       - name: Setup Java
         uses: actions/setup-java@v6
         with:
           distribution: temurin
-          java-version: ${{ steps.java_version.outputs.version }}
+          java-version: 25
           cache: gradle
 
       - name: Setup Gradle
@@ -36,11 +32,7 @@ jobs:
       - name: Grant execute permission to gradlew
         run: chmod +x ./gradlew
 
-      - name: Build Mod
-        run: ./gradlew build
-
-      - name: Publish via Gradle
+      - name: Publish Mods
+        run: ./gradlew publishMods
         env:
-          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
-          CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
-        run: ./gradlew --no-daemon publishMods
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -50,6 +50,8 @@
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.heartbeatIntervalTicks.tooltip": "Промежуток между принудительными запросами данных на сервер",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.hudPanelEnabled": "Включить панель HUD",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.hudPanelEnabled.tooltip": "Панель HUD с величинами массы и силы",
+	"create_cyber_goggles.config.option.aeronautics.forceOverlay.maxClustersPerGroup": "Максимальное количество кластеров на группу сил",
+	"create_cyber_goggles.config.option.aeronautics.forceOverlay.maxClustersPerGroup.tooltip": "Верхний предел стрелок, отображаемых на группу сил (выше = больше деталей, выше нагрузка)",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.minArrowLength": "Минимальная длина стрелки",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.minArrowLength.tooltip": "Минимальная длина стрелки в блоках",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.minOverlayPixelSize": "Минимальный размер оверлея в пикселях",

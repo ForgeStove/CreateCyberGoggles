@@ -78,7 +78,7 @@ dependencies {
 	//endregion
 	compileOnly("maven.modrinth:create-enchantment-industry:${p("ceiVersion")}")
 	compileOnly("maven.modrinth:create-dragons-plus:${p("dragonPlusVersion")}")
-	compileOnly("maven.modrinth:createfluidlogistic:${p("fluidlogisticVersion")}")
+	compileOnly("maven.modrinth:createfluidlogistic:${p("fluidlogisticVersion")}-mc${p("mcVersion")}")
 	compileOnly("maven.modrinth:createphantom:${p("phantomVersion")}")
 	compileOnly("maven.modrinth:create-mobile-packages:${p("mcVersion")}-${p("mobilePackagesVersion")}")
 	compileOnly("ru.zznty:create_factory_abstractions-${p("mcVersion")}:${p("factoryAbstractionsVersion")}") { isTransitive = false }

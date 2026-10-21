@@ -6,7 +6,7 @@ import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.tableCloth.TableClothBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.TableClothUtil;
-import io.github.forgestove.flexconfig.client.ConfigScreenFactory;
+import io.github.forgestove.flexconfig.client.FlexConfigScreenFactory;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.sounds.SoundEvents;
@@ -27,7 +27,7 @@ public final class KeyInput {
 	private static void openConfigScreen() {
 		if (!CCGKey.openConfig.isDown()) return;
 		if (isInGUI()) return;
-		mc.setScreen(ConfigScreenFactory.createConfigScreen(CCG.ID));
+		mc.setScreen(FlexConfigScreenFactory.createConfigScreen(CCG.ID));
 	}
 	private static void previewFilterScreen() {
 		if (!CCGKey.previewFilter.isDown()) return;

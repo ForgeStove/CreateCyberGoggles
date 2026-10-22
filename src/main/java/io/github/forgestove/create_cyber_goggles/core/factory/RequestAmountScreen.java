@@ -1,9 +1,10 @@
 package io.github.forgestove.create_cyber_goggles.core.factory;
-import com.mojang.logging.LogUtils;
 import com.simibubi.create.content.logistics.box.PackageStyles;
 import com.simibubi.create.foundation.gui.*;
 import com.simibubi.create.foundation.gui.widget.IconButton;
+import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
+import io.github.forgestove.create_cyber_goggles.core.util.ExpressionParser;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.minecraft.client.Minecraft;
@@ -17,13 +18,11 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
-import org.slf4j.Logger;
 
 import java.util.function.Consumer;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public class RequestAmountScreen extends AbstractSimiScreen {
-	private static final Logger LOGGER = LogUtils.getLogger();
 	private final Screen parentScreen;
 	private final ItemStack stack;
 	private final int initial;
@@ -56,14 +55,13 @@ public class RequestAmountScreen extends AbstractSimiScreen {
 		cancelButton.withCallback(this::onClose);
 		cancelButton.setToolTip(Component.translatable("gui.cancel"));
 		amountInput = new EditBox(mc.font, x + 44, y + 28, 129, 9, stack.getHoverName());
-		amountInput.setFilter(value -> value.chars().allMatch(Character::isDigit));
+		amountInput.setFilter(CCG.config.misc.expressionInput
+			? ExpressionParser::isAllowed
+			: value -> value.chars().allMatch(Character::isDigit));
 		amountInput.setResponder(text -> {
 			if (text.isEmpty()) return;
-			try {
-				if (Long.parseLong(text) > max) amountInput.setValue(Integer.toString(max));
-			} catch (NumberFormatException e) {
-				LOGGER.warn(e.getLocalizedMessage(), e);
-			}
+			var value = ExpressionParser.evaluate(text);
+			if (value != null && value > max) amountInput.setValue(Integer.toString(max));
 		});
 		amountInput.setBordered(false);
 		amountInput.setValue(initial > 1 ? Integer.toString(Mth.clamp(initial, 0, max)) : "");
@@ -71,22 +69,16 @@ public class RequestAmountScreen extends AbstractSimiScreen {
 		addRenderableWidgets(confirmButton, cancelButton, amountInput);
 	}
 	protected void apply() {
-		var amount = Mth.clamp(toInt(amountInput.getValue()), 0, max);
-		onApply.accept(amount);
+		var text = amountInput.getValue();
+		var value = text.isEmpty() ? Long.valueOf(1) : ExpressionParser.evaluate(text);
+		if (value == null) return;
+		onApply.accept((int) Mth.clamp(value, 0L, max));
 		onClose();
 	}
 	@Override
 	public void onClose() {
 		removed();
 		mc.screen = parentScreen;
-	}
-	protected static int toInt(String amount) {
-		try {
-			return Integer.parseInt(amount);
-		} catch (NumberFormatException e) {
-			LOGGER.warn(e.getLocalizedMessage(), e);
-			return 1;
-		}
 	}
 	@Override
 	public void resize(@NotNull Minecraft minecraft, int width, int height) {
@@ -96,7 +88,9 @@ public class RequestAmountScreen extends AbstractSimiScreen {
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
 		if (amountInput.isHoveredOrFocused()) {
-			var amount = Mth.clamp(toInt(amountInput.getValue()) + (long) (getModifiedScrollAmount() * scrollY), 0L, max);
+			var current = ExpressionParser.evaluate(amountInput.getValue());
+			var base = current == null ? 0L : current;
+			var amount = Mth.clamp(base + (long) (getModifiedScrollAmount() * scrollY), 0L, max);
 			amountInput.setValue(Long.toString(amount));
 		}
 		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
@@ -125,6 +119,7 @@ public class RequestAmountScreen extends AbstractSimiScreen {
 		pose.pushPose();
 		pose.translate(windowXOffset, windowYOffset, 0);
 		if (amountInput.getValue().isEmpty()) gui.drawString(mc.font, String.valueOf(max), 44, 28, 0x808080, false);
+		if (CCG.config.misc.expressionInput) renderPreview(gui);
 		GuiGameElement.of(stack).at(16, 24).render(gui);
 		var title = CCGLang.itemName(stack).component();
 		gui.drawString(mc.font, title, (210 - mc.font.width(title)) / 2, 4, 0x303030, false);
@@ -132,6 +127,17 @@ public class RequestAmountScreen extends AbstractSimiScreen {
 		pose.popPose();
 		if (mouseX >= windowXOffset + 16 && mouseX < windowXOffset + 32 && mouseY >= windowYOffset + 24 && mouseY < windowYOffset + 40)
 			gui.renderComponentTooltip(mc.font, getTooltipFromItem(mc, stack), mouseX, mouseY);
+	}
+	/** 输入含运算符时在右侧显示求值结果 */
+	private void renderPreview(GuiGraphics gui) {
+		var text = amountInput.getValue();
+		if (text.isEmpty() || text.chars().allMatch(Character::isDigit)) return;
+		var value = ExpressionParser.evaluate(text);
+		if (value == null) return;
+		var preview = "= " + value;
+		var x = 44 + 129 - mc.font.width(preview);
+		if (x < 44 + mc.font.width(text) + 4) return;
+		gui.drawString(mc.font, preview, x, 28, 0x808080, false);
 	}
 	@Override
 	protected void renderMenuBackground(@NotNull GuiGraphics gui, int x, int y, int width, int height) {}

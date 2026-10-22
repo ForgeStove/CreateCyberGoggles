@@ -7,6 +7,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollVa
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
+import io.github.forgestove.create_cyber_goggles.core.factory.MultiplyAllWidget;
 import io.github.forgestove.create_cyber_goggles.core.factory.RequestAmountScreen;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.minecraft.util.Mth;
@@ -90,5 +91,31 @@ public abstract class ThresholdSwitchScreenMixin extends AbstractSimiScreen {
 		var valueStep = getValueStep();
 		onAbove.withShiftStep(valueStep);
 		offBelow.withShiftStep(valueStep);
+	}
+	@Inject(method = "init", at = @At("TAIL"))
+	private void ccg$addMultiplier(CallbackInfo ci) {
+		if (!CCG.config.misc.multiplyAllValues) return;
+		var widget = new MultiplyAllWidget(guiLeft + 35, guiTop + 81, this::ccg$multiplyAll);
+		addRenderableWidget(widget.field());
+		addRenderableWidget(widget.button());
+	}
+	@Unique
+	private void ccg$multiplyAll(double factor) {
+		var valueStep = Math.max(1, getValueStep());
+		var min = blockEntity.currentMinLevel;
+		var max = blockEntity.currentMaxLevel;
+		var off = ccg$scaleLevel(offBelow.getState(), factor, min, max - valueStep, valueStep);
+		var on = ccg$scaleLevel(onAbove.getState(), factor, min + valueStep, max, valueStep);
+		if (on < off + valueStep) on = Math.min(max, off + valueStep);
+		offBelow.setState(Math.min(off, on - valueStep));
+		onAbove.setState(on);
+		offBelow.onChanged();
+		onAbove.onChanged();
+		send(blockEntity.isInverted());
+	}
+	@Unique
+	private static int ccg$scaleLevel(int value, double factor, int min, int max, int step) {
+		var scaled = MultiplyAllWidget.scale(value, factor, min, max);
+		return Mth.clamp(Math.round((float) scaled / step) * step, min, max);
 	}
 }

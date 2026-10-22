@@ -151,6 +151,8 @@ public final class CCGConfig {
 		@Category public CreateStackCount createStackCount = new CreateStackCount();
 		@Category public Jei jei = new Jei();
 		public boolean quickRequestActions = true;
+		public boolean expressionInput = true;
+		public boolean multiplyAllValues = true;
 		public boolean removeRequestLimit = true;
 		@WarnCheat public boolean removeMechanicalArmLimit = false;
 		@WarnCheat public boolean removePackagePortDownLimit = false;

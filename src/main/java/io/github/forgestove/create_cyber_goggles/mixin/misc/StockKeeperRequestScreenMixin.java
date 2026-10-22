@@ -9,6 +9,7 @@ import com.simibubi.create.content.logistics.stockTicker.*;
 import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
+import io.github.forgestove.create_cyber_goggles.core.factory.MultiplyAllWidget;
 import io.github.forgestove.create_cyber_goggles.core.factory.RequestAmountScreen;
 import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
 import net.createmod.catnip.data.*;
@@ -18,7 +19,7 @@ import net.minecraft.world.entity.player.*;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.*;
 
 import java.util.List;
 import java.util.function.Function;
@@ -29,10 +30,29 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 	implements Self<StockKeeperRequestScreen> {
 	@Shadow public List<List<BigItemStack>> displayedItems;
 	@Shadow @Final int cols;
+	@Shadow int windowHeight;
 	@Shadow StockTickerBlockEntity blockEntity;
 	@Shadow @Final Couple<Integer> noneHovered;
 	public StockKeeperRequestScreenMixin(StockKeeperRequestMenu container, Inventory inv, Component title) {
 		super(container, inv, title);
+	}
+	@Inject(method = "init", at = @At("TAIL"))
+	private void ccg$addMultiplier(CallbackInfo ci) {
+		if (!CCG.config.misc.multiplyAllValues) return;
+		var widget = new MultiplyAllWidget(getGuiLeft() + 24, getGuiTop() + windowHeight - 24, this::ccg$multiplyAll);
+		addRenderableWidget(widget.field());
+		addRenderableWidget(widget.button());
+	}
+	/** 物品订单与合成订单都乘倍数，各自截断到库存/材料上限 */
+	@Unique
+	private void ccg$multiplyAll(double factor) {
+		var thiz = thiz();
+		for (var entry : thiz.itemsToOrder)
+			entry.count = MultiplyAllWidget.scale(entry.count, factor, 1, ccg$getAvailableMax(entry));
+		for (var cbis : List.copyOf(thiz.recipesToOrder)) {
+			var target = MultiplyAllWidget.scale(cbis.count, factor, 0, ccg$getMaxCraftable(cbis));
+			if (target != cbis.count) thiz.requestCraftable(cbis, target - cbis.count);
+		}
 	}
 	@WrapOperation(
 		method = "mouseScrolled", at = @At(

@@ -7,7 +7,9 @@ import com.simibubi.create.foundation.gui.widget.IconButton;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.compat.jei.ScreenReferenced;
 import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
+import io.github.forgestove.create_cyber_goggles.core.factory.MultiplyAllWidget;
 import io.github.forgestove.create_cyber_goggles.core.util.RedstoneRequesterInteractions;
+import io.github.forgestove.create_cyber_goggles.mixin.accessor.RedstoneRequesterScreenAccessor;
 import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.client.gui.GuiGraphics;
@@ -50,6 +52,22 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 			ccg$interactions = new RedstoneRequesterInteractions(thiz());
 			ccg$interactions.init(undo);
 		} else ccg$interactions.retarget(undo);
+	}
+	@Inject(method = "init", at = @At("TAIL"))
+	private void addMultiplier(CallbackInfo ci) {
+		if (!CCG.config.misc.multiplyAllValues) return;
+		var widget = new MultiplyAllWidget(getGuiLeft() + 50, getGuiTop() + 97, this::ccg$multiplyAll);
+		addRenderableWidget(widget.field());
+		addRenderableWidget(widget.button());
+	}
+	/** 非空槽的数量统一乘倍数，上限与原版滚动一致 */
+	@Unique
+	private void ccg$multiplyAll(double factor) {
+		var amounts = ((RedstoneRequesterScreenAccessor) thiz()).getAmounts();
+		var ghost = thiz().getMenu().ghostInventory;
+		var max = CCG.config.misc.removeRequestLimit ? Integer.MAX_VALUE : 256;
+		for (var i = 0; i < amounts.size(); i++)
+			if (!ghost.getStackInSlot(i).isEmpty()) amounts.set(i, MultiplyAllWidget.scale(amounts.get(i), factor, 1, max));
 	}
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {

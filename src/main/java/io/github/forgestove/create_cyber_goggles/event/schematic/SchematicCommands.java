@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.schematic;
+package io.github.forgestove.create_cyber_goggles.event.schematic;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.*;
 import com.mojang.brigadier.context.CommandContext;
@@ -10,7 +10,7 @@ import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 
 import java.util.concurrent.CompletableFuture;
 
-import static io.github.forgestove.create_cyber_goggles.schematic.SchematicRenderSettings.*;
+import static io.github.forgestove.create_cyber_goggles.event.schematic.SchematicRenderSettings.*;
 import static net.minecraft.commands.Commands.*;
 /**
  * 客户端命令 {@code /ccg schematic export <文件名> [宽度] [朝向] [抗锯齿倍率]}。

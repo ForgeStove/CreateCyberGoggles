@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.schematic;
+package io.github.forgestove.create_cyber_goggles.event.schematic;
 import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.widget.*;
 import io.github.forgestove.create_cyber_goggles.util.*;

@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.factory;
-import io.github.forgestove.create_cyber_goggles.schematic.SchematicPreviewPanel;
+import io.github.forgestove.create_cyber_goggles.event.schematic.SchematicPreviewPanel;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;

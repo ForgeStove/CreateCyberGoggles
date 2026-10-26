@@ -1,8 +1,8 @@
-package io.github.forgestove.create_cyber_goggles.schematic;
+package io.github.forgestove.create_cyber_goggles.event.schematic;
 import com.simibubi.create.foundation.gui.AllIcons;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.CCGConfig.Schematic.Image;
-import io.github.forgestove.create_cyber_goggles.schematic.SchematicRenderSettings.*;
+import io.github.forgestove.create_cyber_goggles.event.schematic.SchematicRenderSettings.*;
 import io.github.forgestove.create_cyber_goggles.util.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;

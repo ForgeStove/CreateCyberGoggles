@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.schematic;
+package io.github.forgestove.create_cyber_goggles.event.schematic;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import net.createmod.catnip.gui.element.ScreenElement;
 import net.minecraft.network.chat.Component;

@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.schematic;
+package io.github.forgestove.create_cyber_goggles.event.schematic;
 import com.mojang.blaze3d.pipeline.*;
 import com.mojang.blaze3d.platform.GlStateManager.*;
 import com.mojang.blaze3d.platform.*;
@@ -7,7 +7,7 @@ import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
 import com.simibubi.create.content.schematics.client.SchematicRenderer;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.schematic.SchematicRenderSettings.Orientation;
+import io.github.forgestove.create_cyber_goggles.event.schematic.SchematicRenderSettings.Orientation;
 import net.createmod.catnip.levelWrappers.SchematicLevel;
 import net.createmod.catnip.render.*;
 import net.minecraft.client.Minecraft;

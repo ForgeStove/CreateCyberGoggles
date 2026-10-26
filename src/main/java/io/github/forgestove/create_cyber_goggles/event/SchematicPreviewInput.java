@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.event;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.schematic.*;
+import io.github.forgestove.create_cyber_goggles.event.schematic.*;
 import net.neoforged.neoforge.client.event.ScreenEvent.MouseScrolled.Pre;
 /**
  * 拦截落在蓝图桌 3D 预览面板范围内的滚轮事件，用于缩放。

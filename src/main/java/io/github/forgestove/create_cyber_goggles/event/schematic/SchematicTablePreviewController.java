@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.schematic;
+package io.github.forgestove.create_cyber_goggles.event.schematic;
 import com.mojang.blaze3d.platform.Window;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.client.Minecraft;

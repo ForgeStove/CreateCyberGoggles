@@ -1,7 +1,7 @@
-package io.github.forgestove.create_cyber_goggles.schematic;
+package io.github.forgestove.create_cyber_goggles.event.schematic;
 import com.mojang.blaze3d.platform.NativeImage;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.schematic.SchematicRenderSettings.Builder;
+import io.github.forgestove.create_cyber_goggles.event.schematic.SchematicRenderSettings.Builder;
 import io.github.forgestove.create_cyber_goggles.util.CCGLang;
 import net.createmod.catnip.levelWrappers.SchematicLevel;
 import net.minecraft.client.Minecraft;
@@ -17,8 +17,8 @@ import java.io.*;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
 
-import static io.github.forgestove.create_cyber_goggles.schematic.SchematicImageRenderer.downsample;
-import static io.github.forgestove.create_cyber_goggles.schematic.SchematicImageUtil.onRenderThread;
+import static io.github.forgestove.create_cyber_goggles.event.schematic.SchematicImageRenderer.downsample;
+import static io.github.forgestove.create_cyber_goggles.event.schematic.SchematicImageUtil.onRenderThread;
 /**
  * 一次「蓝图 → PNG」渲染的编排：后台烘焙 → 渲染线程离屏渲染 → 降采样 → 写盘，
  * 全程不阻塞游戏线程，进度通过 {@link ImageActionProgress} 显示在动作栏。

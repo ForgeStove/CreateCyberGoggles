@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.schematic;
+package io.github.forgestove.create_cyber_goggles.event.schematic;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.createmod.catnip.theme.Color;
 /**

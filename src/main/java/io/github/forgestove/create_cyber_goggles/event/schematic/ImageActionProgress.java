@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.schematic;
+package io.github.forgestove.create_cyber_goggles.event.schematic;
 import io.github.forgestove.create_cyber_goggles.util.CCGLang;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.*;

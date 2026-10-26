@@ -6,8 +6,8 @@ import dev.ryanhcode.sable.sublevel.SubLevel;
 import dev.simulated_team.simulated.content.physics_staff.PhysicsStaffClientHandler;
 import dev.simulated_team.simulated.content.physics_staff.PhysicsStaffClientHandler.ClientDragSession;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
-import io.github.forgestove.create_cyber_goggles.core.util.ItemSwapUtil;
+import io.github.forgestove.create_cyber_goggles.event.CCGKey;
+import io.github.forgestove.create_cyber_goggles.util.ItemSwapUtil;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
+import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.mc;
 @Pseudo
 @Mixin(PhysicsStaffClientHandler.class)
 public abstract class PhysicsStaffClientHandlerMixin {

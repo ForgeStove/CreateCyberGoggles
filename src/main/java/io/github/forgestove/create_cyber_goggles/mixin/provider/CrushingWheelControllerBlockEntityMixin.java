@@ -4,7 +4,7 @@ import com.simibubi.create.content.kinetics.crusher.CrushingWheelControllerBlock
 import com.simibubi.create.content.processing.recipe.ProcessingInventory;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.*;
-import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
+import io.github.forgestove.create_cyber_goggles.util.contract.Self;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;

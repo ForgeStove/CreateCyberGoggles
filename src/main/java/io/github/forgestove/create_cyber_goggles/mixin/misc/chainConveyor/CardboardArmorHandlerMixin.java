@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
+import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.*;
 @Mixin(CardboardArmorHandler.class)
 public abstract class CardboardArmorHandlerMixin {
 	@Inject(method = "testForStealth", at = @At("HEAD"), cancellable = true)

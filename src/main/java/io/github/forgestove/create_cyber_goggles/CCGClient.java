@@ -1,11 +1,10 @@
 package io.github.forgestove.create_cyber_goggles;
-import io.github.forgestove.create_cyber_goggles.core.CCGGoggleEntries;
-import io.github.forgestove.create_cyber_goggles.core.event.*;
-import io.github.forgestove.create_cyber_goggles.core.event.drafting.*;
-import io.github.forgestove.create_cyber_goggles.core.event.forceOverlay.*;
-import io.github.forgestove.create_cyber_goggles.core.factory.*;
-import io.github.forgestove.create_cyber_goggles.core.schematic.*;
-import io.github.forgestove.create_cyber_goggles.core.util.EnderChestTooltipUtil;
+import io.github.forgestove.create_cyber_goggles.event.*;
+import io.github.forgestove.create_cyber_goggles.event.drafting.*;
+import io.github.forgestove.create_cyber_goggles.event.forceOverlay.*;
+import io.github.forgestove.create_cyber_goggles.factory.*;
+import io.github.forgestove.create_cyber_goggles.schematic.*;
+import io.github.forgestove.create_cyber_goggles.util.EnderChestTooltipUtil;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;

@@ -1,12 +1,12 @@
 package io.github.forgestove.create_cyber_goggles.mixin.misc;
 import com.simibubi.create.content.contraptions.ContraptionHandlerClient;
-import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
+import io.github.forgestove.create_cyber_goggles.event.CCGKey;
 import net.neoforged.neoforge.client.event.InputEvent.InteractionKeyMappingTriggered;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
+import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.mc;
 @Mixin(ContraptionHandlerClient.class)
 public abstract class ContraptionHandlerClientMixin {
 	@Inject(method = "rightClickingOnContraptionsGetsHandledLocally", at = @At("HEAD"), cancellable = true)

@@ -3,7 +3,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import dev.ryanhcode.sable.mixinterface.block_properties.BlockStateExtension;
 import dev.simulated_team.simulated.client.BlockPropertiesTooltip;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
+import io.github.forgestove.create_cyber_goggles.util.CCGLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.*;
 import net.minecraft.world.item.BlockItem;

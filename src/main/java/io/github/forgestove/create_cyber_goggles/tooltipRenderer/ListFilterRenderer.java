@@ -1,0 +1,31 @@
+package io.github.forgestove.create_cyber_goggles.tooltipRenderer;
+import com.simibubi.create.*;
+import com.simibubi.create.foundation.item.ItemHelper;
+import com.simibubi.create.foundation.mixin.accessor.ItemStackHandlerAccessor;
+import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.api.AutoTooltipRenderer;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
+import net.neoforged.neoforge.items.ItemStackHandler;
+import org.jetbrains.annotations.Nullable;
+@AutoTooltipRenderer
+public class ListFilterRenderer extends AbstractItemGridRenderer {
+	@Override
+	public boolean supports(ItemStack stack) {
+		return CCG.config.tooltip.listFilter && stack.is(AllItems.FILTER);
+	}
+	@Override
+	public @Nullable OverlayData buildItemGrid(ItemStack stack) {
+		var accessor = (ItemStackHandlerAccessor) getFilterItemHandler(stack);
+		NonNullList<ItemStack> stacks = accessor.create$getStacks();
+		boolean allEmpty = stacks.stream().allMatch(ItemStack::isEmpty);
+		return allEmpty ? null : new OverlayData(stacks, 9);
+	}
+	public ItemStackHandler getFilterItemHandler(ItemStack stack) {
+		var newInv = new ItemStackHandler(18);
+		ItemContainerContents contents = stack.getOrDefault(AllDataComponents.FILTER_ITEMS, ItemContainerContents.EMPTY);
+		ItemHelper.fillItemStackHandler(contents, newInv);
+		return newInv;
+	}
+}

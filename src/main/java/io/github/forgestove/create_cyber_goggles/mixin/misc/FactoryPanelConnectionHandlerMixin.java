@@ -5,7 +5,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.simibubi.create.content.logistics.factoryBoard.*;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlock.PanelSlot;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.FactoryPanelUtil;
+import io.github.forgestove.create_cyber_goggles.util.FactoryPanelUtil;
 import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
+import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.mc;
 @Mixin(FactoryPanelConnectionHandler.class)
 public abstract class FactoryPanelConnectionHandlerMixin {
 	@Shadow static FactoryPanelPosition validRelocationTarget;

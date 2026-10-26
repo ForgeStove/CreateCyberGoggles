@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.text.NumberFormat;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.isServer;
+import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.isServer;
 @Mixin(LangNumberFormat.class)
 public abstract class LangNumberFormatMixin {
 	@Inject(method = "format", at = @At("HEAD"), cancellable = true)

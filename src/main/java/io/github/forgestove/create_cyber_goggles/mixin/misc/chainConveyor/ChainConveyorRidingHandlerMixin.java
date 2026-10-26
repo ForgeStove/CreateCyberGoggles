@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.function.Predicate;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
+import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.*;
 @Mixin(ChainConveyorRidingHandler.class)
 public abstract class ChainConveyorRidingHandlerMixin {
 	@WrapOperation(

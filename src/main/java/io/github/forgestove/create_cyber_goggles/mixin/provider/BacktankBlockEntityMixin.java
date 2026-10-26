@@ -5,7 +5,7 @@ import com.simibubi.create.content.equipment.armor.BacktankBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.GoggleTooltip;
-import io.github.forgestove.create_cyber_goggles.core.util.contract.*;
+import io.github.forgestove.create_cyber_goggles.util.contract.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;

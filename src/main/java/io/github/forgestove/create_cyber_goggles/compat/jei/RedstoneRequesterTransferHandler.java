@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.compat.jei;
 import com.simibubi.create.AllMenuTypes;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterMenu;
-import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
+import io.github.forgestove.create_cyber_goggles.util.CCGLang;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.transfer.*;

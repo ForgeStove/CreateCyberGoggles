@@ -5,7 +5,7 @@ import dev.emi.emi.EmiPort;
 import dev.emi.emi.api.recipe.*;
 import dev.emi.emi.api.recipe.handler.*;
 import dev.emi.emi.api.stack.*;
-import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
+import io.github.forgestove.create_cyber_goggles.util.CCGLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Font.DisplayMode;

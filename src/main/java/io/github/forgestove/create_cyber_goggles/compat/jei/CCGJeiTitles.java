@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.compat.jei;
 import com.simibubi.create.compat.jei.CreateJEI;
-import io.github.forgestove.create_cyber_goggles.core.factory.CCGMods;
+import io.github.forgestove.create_cyber_goggles.factory.CCGMods;
 import mezz.jei.api.recipe.*;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.runtime.IJeiRuntime;

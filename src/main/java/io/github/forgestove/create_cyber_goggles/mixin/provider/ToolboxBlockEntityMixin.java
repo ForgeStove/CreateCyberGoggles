@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.simibubi.create.content.equipment.toolbox.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.ItemRenderable;
-import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
+import io.github.forgestove.create_cyber_goggles.util.contract.Self;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;

@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.mixin.compact.appliedEnergistics;
 import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.ItemCountFontUtil;
+import io.github.forgestove.create_cyber_goggles.util.ItemCountFontUtil;
 import net.minecraft.client.gui.*;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;

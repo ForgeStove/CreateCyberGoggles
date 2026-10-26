@@ -4,7 +4,7 @@ import com.simibubi.create.content.processing.recipe.ProcessingOutput;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.*;
+import io.github.forgestove.create_cyber_goggles.util.*;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.recipe.IFocusGroup;
@@ -23,8 +23,8 @@ import org.spongepowered.asm.mixin.injection.callback.*;
 
 import java.util.*;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
-import static io.github.forgestove.create_cyber_goggles.core.util.SequencedAssemblyUtil.*;
+import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.mc;
+import static io.github.forgestove.create_cyber_goggles.util.SequencedAssemblyUtil.*;
 import static net.minecraft.network.chat.Component.literal;
 @Mixin(CreateRecipeCategory.class)
 public abstract class CreateRecipeCategoryMixin<T extends Recipe<?>> implements IRecipeCategory<RecipeHolder<T>> {

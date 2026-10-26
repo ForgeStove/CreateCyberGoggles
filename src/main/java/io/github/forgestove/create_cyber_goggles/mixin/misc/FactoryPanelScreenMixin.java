@@ -4,10 +4,10 @@ import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelScreen;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
-import io.github.forgestove.create_cyber_goggles.core.factory.*;
-import io.github.forgestove.create_cyber_goggles.core.util.AmountUtil;
-import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
+import io.github.forgestove.create_cyber_goggles.event.CCGKey;
+import io.github.forgestove.create_cyber_goggles.factory.*;
+import io.github.forgestove.create_cyber_goggles.util.AmountUtil;
+import io.github.forgestove.create_cyber_goggles.util.contract.Self;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.*;
 
 import java.util.List;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
+import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.*;
 @Mixin(FactoryPanelScreen.class)
 public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen implements Self<FactoryPanelScreen> {
 	@Shadow private boolean restocker;

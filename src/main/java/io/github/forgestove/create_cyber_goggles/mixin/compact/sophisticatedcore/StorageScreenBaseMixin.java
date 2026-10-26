@@ -1,13 +1,13 @@
 package io.github.forgestove.create_cyber_goggles.mixin.compact.sophisticatedcore;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.ItemCountFontUtil;
+import io.github.forgestove.create_cyber_goggles.util.ItemCountFontUtil;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
+import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.mc;
 @Pseudo
 @Mixin(targets = "net.p3pp3rf1y.sophisticatedcore.client.gui.StorageScreenBase")
 public class StorageScreenBaseMixin {

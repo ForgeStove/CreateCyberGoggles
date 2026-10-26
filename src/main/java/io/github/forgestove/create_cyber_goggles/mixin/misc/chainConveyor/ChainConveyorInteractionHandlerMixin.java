@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorInteractionHandler.*;
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
+import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.*;
 @Mixin(ChainConveyorInteractionHandler.class)
 public abstract class ChainConveyorInteractionHandlerMixin {
 	@Inject(method = "isActive", at = @At("HEAD"), cancellable = true)

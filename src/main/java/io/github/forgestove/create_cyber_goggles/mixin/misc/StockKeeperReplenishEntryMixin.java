@@ -6,9 +6,9 @@ import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.factory.*;
-import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
-import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
+import io.github.forgestove.create_cyber_goggles.factory.*;
+import io.github.forgestove.create_cyber_goggles.util.CCGLang;
+import io.github.forgestove.create_cyber_goggles.util.contract.Self;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
+import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.mc;
 /** 在 Create {@link StockKeeperRequestScreen} 右下角加「自动补齐缺货」入口；需求取自剪贴板，求解交给 {@link ReplenishPlanner}。 */
 @Mixin(StockKeeperRequestScreen.class)
 public abstract class StockKeeperReplenishEntryMixin extends AbstractSimiContainerScreen<StockKeeperRequestMenu>

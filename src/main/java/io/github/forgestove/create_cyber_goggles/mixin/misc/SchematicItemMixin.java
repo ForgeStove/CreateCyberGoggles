@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.mixin.misc;
 import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.simibubi.create.content.schematics.SchematicItem;
 import com.simibubi.create.foundation.utility.CreatePaths;
-import io.github.forgestove.create_cyber_goggles.core.util.SchematicFolderUtil;
+import io.github.forgestove.create_cyber_goggles.util.SchematicFolderUtil;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 

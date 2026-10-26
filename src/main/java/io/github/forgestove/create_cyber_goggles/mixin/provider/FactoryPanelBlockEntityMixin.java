@@ -4,7 +4,7 @@ import com.simibubi.create.content.logistics.factoryBoard.*;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelBlock.PanelSlot;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.OutlineRenderable;
-import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
+import io.github.forgestove.create_cyber_goggles.util.contract.Self;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.*;
 import net.minecraft.world.level.Level;
@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.EnumMap;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
+import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.*;
 @Mixin(value = FactoryPanelBlockEntity.class, remap = false)
 public abstract class FactoryPanelBlockEntityMixin implements OutlineRenderable, Self<FactoryPanelBlockEntity> {
 	@Unique private AttachFace ccg$lastFace;

@@ -4,7 +4,7 @@ import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import com.simibubi.create.foundation.gui.widget.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.schematic.*;
+import io.github.forgestove.create_cyber_goggles.schematic.*;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.*;
@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.*;
 
 import java.util.*;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
+import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.mc;
 /**
  * 蓝图桌界面的本模组增强：递归扫描文件夹选择器（原有）、旁挂 3D 预览面板
  * （来自 Create: Schematic Preview，titlo10，MIT）、导出渲染图按钮与长文件名截断

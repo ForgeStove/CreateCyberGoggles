@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.simibubi.create.content.logistics.depot.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.*;
-import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
+import io.github.forgestove.create_cyber_goggles.util.contract.Self;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.core.*;
@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.*;
 import org.spongepowered.asm.mixin.*;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
+import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.*;
 @Mixin(EjectorBlockEntity.class)
 public abstract class EjectorBlockEntityMixin implements ItemRenderable, OutlineRenderable, Self<EjectorBlockEntity> {
 	@Shadow DepotBehaviour depotBehaviour;

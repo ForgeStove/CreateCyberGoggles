@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.mixin.compact.simulated;
 import dev.simulated_team.simulated.network.packets.contraption_diagram.DiagramDataPacket;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.event.forceOverlay.ForceDataCache;
+import io.github.forgestove.create_cyber_goggles.event.forceOverlay.ForceDataCache;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;

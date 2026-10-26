@@ -7,7 +7,7 @@ import net.minecraft.world.item.*;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.isServer;
+import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.isServer;
 @Mixin(ValueSettingsInputHandler.class)
 public abstract class ValueSettingsInputHandlerMixin {
 	@WrapOperation(

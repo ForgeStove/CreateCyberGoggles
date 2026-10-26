@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.simibubi.create.AllSpecialTextures;
 import com.simibubi.create.content.kinetics.mechanicalArm.*;
 import io.github.forgestove.create_cyber_goggles.api.*;
-import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
+import io.github.forgestove.create_cyber_goggles.util.contract.Self;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.*;
 
 import java.util.List;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.outliner;
+import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.outliner;
 @Mixin(ArmBlockEntity.class)
 public abstract class ArmBlockEntityMixin implements ItemRenderable, OutlineRenderable, Self<ArmBlockEntity> {
 	@Shadow ItemStack heldItem;

@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.*;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
+import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.*;
 @Mixin(value = PackagePortTargetSelectionHandler.class, priority = 2000)
 public abstract class PackagePortTargetSelectionHandlerMixin {
 	@Unique private static long ccg$rangeCacheKey = Long.MIN_VALUE;

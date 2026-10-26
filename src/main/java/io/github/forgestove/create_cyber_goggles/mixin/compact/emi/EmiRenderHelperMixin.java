@@ -2,13 +2,13 @@ package io.github.forgestove.create_cyber_goggles.mixin.compact.emi;
 import dev.emi.emi.EmiRenderHelper;
 import dev.emi.emi.runtime.EmiDrawContext;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.ItemCountFontUtil;
+import io.github.forgestove.create_cyber_goggles.util.ItemCountFontUtil;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
+import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.mc;
 @Pseudo
 @Mixin(EmiRenderHelper.class)
 public class EmiRenderHelperMixin {

@@ -1,6 +1,5 @@
 package io.github.forgestove.create_cyber_goggles;
-import io.github.forgestove.create_cyber_goggles.core.config.SoundReloadHandler;
-import io.github.forgestove.create_cyber_goggles.core.factory.*;
+import io.github.forgestove.create_cyber_goggles.factory.*;
 import io.github.forgestove.flexconfig.api.*;
 
 import java.awt.Point;

@@ -1,0 +1,85 @@
+package io.github.forgestove.create_cyber_goggles.event;
+import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.factory.CCGMods;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.network.chat.Component;
+import net.neoforged.jarjar.nio.util.Lazy;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import org.jetbrains.annotations.NotNull;
+import org.lwjgl.glfw.GLFW;
+
+import static com.mojang.blaze3d.platform.InputConstants.*;
+import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.mc;
+public enum CCGKey {
+	clickPenetrate(Type.KEYSYM, KEY_LCONTROL),
+	clipboardPageScroll(Type.KEYSYM, KEY_LCONTROL),
+	correctionSublevel(Type.KEYSYM, KEY_LCONTROL, CCGMods.simulated),
+	handleMoveSublevel(Type.KEYSYM, KEY_LCONTROL, CCGMods.simulated),
+	interactOpposite(Type.KEYSYM, KEY_TAB),
+	openConfig(Type.KEYSYM, KEY_BACKSLASH),
+	previewFilter,
+	showHoneyGlue(CCGMods.simulated),
+	showStress(Type.KEYSYM, KEY_LSHIFT),
+	showSuperGlue,
+	stockRequestSelectAll(Type.KEYSYM, KEY_LALT),
+	stockRequestSetter(Type.MOUSE, MOUSE_BUTTON_MIDDLE),
+	toggleItemOverlay(Type.KEYSYM, KEY_LCONTROL),
+	usePhysicsStaff(CCGMods.simulated),
+	useSchematic;
+	public final Lazy<KeyMapping> keyMapping;
+	private final CCGMods requiredMod;
+	CCGKey() {
+		this(UNKNOWN, null);
+	}
+	CCGKey(@NotNull Key key, CCGMods requiredMod) {
+		this.requiredMod = requiredMod;
+		keyMapping = Lazy.of(new KeyMapping(
+			CCG.ID + ".key." + name(),
+			key.getType(),
+			key.getValue(),
+			"key.categories.create_cyber_goggles"
+		));
+	}
+	CCGKey(@NotNull CCGMods requiredMod) {
+		this(UNKNOWN, requiredMod);
+	}
+	CCGKey(@NotNull Type type, int key) {
+		this(type.getOrCreate(key), null);
+	}
+	CCGKey(@NotNull Type type, int key, CCGMods requiredMod) {
+		this(type.getOrCreate(key), requiredMod);
+	}
+	public static void register(RegisterKeyMappingsEvent event) {
+		for (CCGKey key : values()) if (key.shouldRegister()) event.register(key.keyMapping.get());
+	}
+	public boolean shouldRegister() {
+		return requiredMod == null || requiredMod.isLoaded();
+	}
+	public boolean isDown() {
+		Key key = getKey();
+		if (key.equals(UNKNOWN)) return false;
+		long window = mc.getWindow().getWindow();
+		return switch (key.getType()) {
+			case MOUSE -> GLFW.glfwGetMouseButton(window, key.getValue()) == GLFW.GLFW_PRESS;
+			case KEYSYM, SCANCODE -> isKeyDown(window, key.getValue());
+		};
+	}
+	public @NotNull Key getKey() {
+		return keyMapping.get().getKey();
+	}
+	public @NotNull Component getFancyName() {
+		return getFancyName(keyMapping.get());
+	}
+	public static @NotNull Component getFancyName(@NotNull KeyMapping keyMapping) {
+		return keyMapping.getKey().getDisplayName().copy().withStyle(keyMapping.isDown() ? ChatFormatting.GREEN : ChatFormatting.GRAY);
+	}
+	/** 键位提示行统一整行暗灰；键名用 {@link #keyName} 传给 {@code Component.translatable} */
+	public static @NotNull Component hint(@NotNull Component text) {
+		return text.copy().withStyle(ChatFormatting.DARK_GRAY);
+	}
+	/** 键名，按下时亮、松开时暗 */
+	public static @NotNull Component keyName(@NotNull String name, boolean down) {
+		return Component.literal(name).withStyle(down ? ChatFormatting.WHITE : ChatFormatting.GRAY);
+	}
+}

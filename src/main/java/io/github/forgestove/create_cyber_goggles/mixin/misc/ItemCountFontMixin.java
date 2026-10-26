@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.mixin.misc;
 import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.llamalad7.mixinextras.sugar.Local;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.ItemCountFontUtil;
+import io.github.forgestove.create_cyber_goggles.util.ItemCountFontUtil;
 import net.minecraft.client.gui.*;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;

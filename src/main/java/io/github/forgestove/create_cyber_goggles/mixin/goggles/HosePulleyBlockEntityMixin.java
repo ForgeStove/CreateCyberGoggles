@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.mixin.goggles;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.simibubi.create.content.fluids.hosePulley.HosePulleyBlockEntity;
 import com.simibubi.create.foundation.fluid.SmartFluidTank;
-import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
+import io.github.forgestove.create_cyber_goggles.util.CCGLang;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;

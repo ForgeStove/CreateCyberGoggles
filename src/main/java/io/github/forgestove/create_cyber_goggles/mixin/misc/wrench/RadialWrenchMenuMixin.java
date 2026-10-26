@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.mixin.misc.wrench;
 import com.simibubi.create.content.contraptions.wrench.RadialWrenchMenu;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.WrenchMenuUtil;
+import io.github.forgestove.create_cyber_goggles.util.WrenchMenuUtil;
 import net.createmod.catnip.registry.RegisteredObjectsHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -16,7 +16,7 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import static com.simibubi.create.content.contraptions.wrench.RadialWrenchMenu.BLOCK_BLACKLIST;
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
+import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.mc;
 @Mixin(RadialWrenchMenu.class)
 public abstract class RadialWrenchMenuMixin {
 	@Inject(method = "tryCreateFor", at = @At("HEAD"), cancellable = true)

@@ -1,0 +1,49 @@
+package io.github.forgestove.create_cyber_goggles.event;
+import com.mojang.logging.LogUtils;
+import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.api.OutlineRenderable;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.neoforged.neoforge.client.event.ClientTickEvent.Post;
+import org.jetbrains.annotations.*;
+import org.slf4j.Logger;
+
+import java.util.Map;
+import java.util.Map.Entry;
+
+import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.*;
+public final class Outliner {
+	public static final Map<BlockEntity, Integer> cachedBE = new Object2IntOpenHashMap<>();
+	private static final Logger LOGGER = LogUtils.getLogger();
+	public static void tick(Post ignoredEvent) {
+		if (!CCG.config.outliner.renderAnalogBox) return;
+		if (shouldSuppressInfo()) return;
+		if (mc.isPaused() || isInGUI()) return;
+		BlockEntity be = getBlockEntity();
+		if (be instanceof OutlineRenderable or) cachedBE.put(be, or.ccg$getRenderDelay());
+		if (cachedBE.isEmpty()) return;
+		try {
+			cachedBE.entrySet().removeIf(Outliner::render);
+		} catch (Throwable throwable) {
+			LOGGER.error(throwable.getLocalizedMessage(), throwable);
+		}
+	}
+	private static boolean render(@NotNull Entry<BlockEntity, Integer> entry) {
+		int nextDelay = entry.getValue() - 1;
+		entry.setValue(nextDelay);
+		BlockEntity be = entry.getKey();
+		if (!be.isRemoved() && be instanceof OutlineRenderable or) or.ccg$render();
+		return nextDelay <= 0;
+	}
+	@Contract(pure = true)
+	public static int getColor(boolean pushing) {
+		return pushing ? CCG.config.outliner.outColor : CCG.config.outliner.inColor;
+	}
+	public static double getOffsetScale(int i, int numberOfFlowBoxes) {
+		return (System.currentTimeMillis() + i * (3000D / numberOfFlowBoxes)) % 3000 / 3000.0;
+	}
+	@Contract(pure = true)
+	public static int getNumberOfFlowBoxes(float range) {
+		return (int) (Math.log(range) + 1);
+	}
+}

@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.mixin.compact.enchantmentIndustry.provider;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
+import io.github.forgestove.create_cyber_goggles.util.CCGLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.*;

@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.mixin.compact.simulated.provider;
 import dev.simulated_team.simulated.content.blocks.portable_engine.PortableEngineBlockEntity;
 import io.github.forgestove.create_cyber_goggles.api.ItemRenderable;
-import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
+import io.github.forgestove.create_cyber_goggles.util.contract.Self;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.*;
 @Pseudo

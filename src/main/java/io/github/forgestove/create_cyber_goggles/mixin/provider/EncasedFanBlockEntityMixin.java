@@ -4,8 +4,8 @@ import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.fan.*;
 import io.github.forgestove.create_cyber_goggles.api.*;
-import io.github.forgestove.create_cyber_goggles.core.event.Outliner;
-import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
+import io.github.forgestove.create_cyber_goggles.event.Outliner;
+import io.github.forgestove.create_cyber_goggles.util.contract.Self;
 import net.minecraft.core.*;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.network.chat.Component;
@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.Mixin;
 
 import java.util.List;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.outliner;
+import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.outliner;
 @Mixin(EncasedFanBlockEntity.class)
 public abstract class EncasedFanBlockEntityMixin extends KineticBlockEntity
 	implements IHaveGoggleInformation, OutlineRenderable, Self<EncasedFanBlockEntity> {

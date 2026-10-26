@@ -9,9 +9,9 @@ import com.simibubi.create.foundation.gui.widget.IconButton;
 import com.yision.phantom.item.ticker.*;
 import com.yision.phantom.network.ticker.TunablePortableTickerSendOrderPacket;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.factory.*;
-import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
-import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
+import io.github.forgestove.create_cyber_goggles.factory.*;
+import io.github.forgestove.create_cyber_goggles.util.CCGLang;
+import io.github.forgestove.create_cyber_goggles.util.contract.Self;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.*;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
+import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.mc;
 /**
  * 给 phantom 的可调便携仓储管理员（{@link TunablePortableTickerScreen}）补两个功能，都只在主手（其次副手）拿着 Create 剪贴板时启用：
  * 蓝图模式（等库存到位后按 {@code requestSchematicList()} 的语义照单填单，不递归配方）与自动补齐缺货按钮

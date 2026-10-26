@@ -3,13 +3,13 @@ import com.simibubi.create.AllSpecialTextures;
 import com.yision.fluidlogistics.content.equipment.mechanicalFluidGun.MechanicalFluidGunBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.OutlineRenderable;
-import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
+import io.github.forgestove.create_cyber_goggles.util.contract.Self;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.*;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.outliner;
+import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.outliner;
 @Pseudo
 @Mixin(MechanicalFluidGunBlockEntity.class)
 public abstract class MechanicalFluidGunBlockEntityMixin implements OutlineRenderable, Self<MechanicalFluidGunBlockEntity> {

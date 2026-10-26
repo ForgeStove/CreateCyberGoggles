@@ -4,7 +4,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.simibubi.create.content.logistics.redstoneRequester.*;
 import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.AmountUtil;
+import io.github.forgestove.create_cyber_goggles.util.AmountUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.*;
 
 import java.util.List;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.getModifiedScrollAmount;
+import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.getModifiedScrollAmount;
 @Mixin(RedstoneRequesterScreen.class)
 public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainerScreen<RedstoneRequesterMenu> {
 	public RedstoneRequesterScreenMixin(RedstoneRequesterMenu container, Inventory inv, Component title) {

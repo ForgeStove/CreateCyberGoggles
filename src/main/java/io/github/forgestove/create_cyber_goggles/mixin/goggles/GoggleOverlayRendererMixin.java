@@ -6,8 +6,8 @@ import com.simibubi.create.api.equipment.goggles.*;
 import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.event.*;
-import io.github.forgestove.create_cyber_goggles.core.util.TooltipComponentUtil;
+import io.github.forgestove.create_cyber_goggles.event.*;
+import io.github.forgestove.create_cyber_goggles.util.TooltipComponentUtil;
 import net.createmod.catnip.gui.element.GuiGameElement.GuiRenderBuilder;
 import net.createmod.catnip.gui.element.RenderElement;
 import net.createmod.catnip.outliner.Outliner.OutlineEntry;
@@ -28,7 +28,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.*;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
+import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.*;
 @Mixin(GoggleOverlayRenderer.class)
 public abstract class GoggleOverlayRendererMixin {
 	@Unique private static final int ccg$FADE_TICKS = 24;

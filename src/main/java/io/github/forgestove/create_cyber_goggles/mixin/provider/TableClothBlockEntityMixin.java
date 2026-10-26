@@ -2,8 +2,8 @@ package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.simibubi.create.content.logistics.tableCloth.TableClothBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.ItemRenderable;
-import io.github.forgestove.create_cyber_goggles.core.util.TableClothUtil;
-import io.github.forgestove.create_cyber_goggles.core.util.contract.*;
+import io.github.forgestove.create_cyber_goggles.util.TableClothUtil;
+import io.github.forgestove.create_cyber_goggles.util.contract.*;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.*;
 

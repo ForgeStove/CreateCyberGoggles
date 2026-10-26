@@ -6,8 +6,8 @@ import com.simibubi.create.content.redstone.thresholdSwitch.*;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour.StepContext;
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
-import io.github.forgestove.create_cyber_goggles.core.factory.*;
+import io.github.forgestove.create_cyber_goggles.event.CCGKey;
+import io.github.forgestove.create_cyber_goggles.factory.*;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.*;
 
 import java.util.function.Function;
 
-import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
+import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.*;
 @Mixin(ThresholdSwitchScreen.class)
 public abstract class ThresholdSwitchScreenMixin extends AbstractSimiScreen {
 	@Shadow private ScrollInput offBelow;

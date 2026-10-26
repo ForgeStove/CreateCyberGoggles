@@ -4,7 +4,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import dev.simulated_team.simulated.content.blocks.handle.ClientHandleHandler;
 import dev.simulated_team.simulated.util.hold_interaction.BlockHoldInteraction;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
+import io.github.forgestove.create_cyber_goggles.event.CCGKey;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;

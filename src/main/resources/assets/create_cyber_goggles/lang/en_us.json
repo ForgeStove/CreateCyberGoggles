@@ -137,7 +137,7 @@
 	"create_cyber_goggles.config.option.misc.enableNegativeInfThrottle": "Enable Negative Infinity Throttle",
 	"create_cyber_goggles.config.option.misc.enableNegativeInfThrottle.tooltip": "Allow train throttle to scroll past the normal minimum limit",
 	"create_cyber_goggles.config.option.misc.expressionInput": "Expression Input",
-	"create_cyber_goggles.config.option.misc.expressionInput.tooltip": "Allow typing arithmetic expressions (e.g. 5x2x4 or (5+3)x2) in quantity input boxes",
+	"create_cyber_goggles.config.option.misc.expressionInput.tooltip": "Allow typing arithmetic expressions in quantity input boxes",
 	"create_cyber_goggles.config.option.misc.forcedBackend": "Force Flywheel Backend",
 	"create_cyber_goggles.config.option.misc.forcedBackend.tooltip": "Force enable Flywheel rendering backend (conflicts with shaders, unless you know what you're doing)",
 	"create_cyber_goggles.config.option.misc.infEditBoxLength": "Infinite Edit Box Length",

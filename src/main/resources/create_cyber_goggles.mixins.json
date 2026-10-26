@@ -6,6 +6,7 @@
 		"AbstractFilterScreenMixin",
 		"accessor.AddressEditBoxAccessor",
 		"accessor.DestinationSuggestionsAccessor",
+		"accessor.IconButtonAccessor",
 		"accessor.RedstoneRequesterScreenAccessor",
 		"accessor.RotationPropagatorAccessor",
 		"compact.appliedEnergistics.MEStorageScreenMixin",

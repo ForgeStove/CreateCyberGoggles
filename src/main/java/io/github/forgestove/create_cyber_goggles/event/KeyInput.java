@@ -1,17 +1,15 @@
 package io.github.forgestove.create_cyber_goggles.event;
-import com.mojang.datafixers.util.Function3;
 import com.simibubi.create.*;
 import com.simibubi.create.content.equipment.clipboard.*;
-import com.simibubi.create.content.logistics.filter.*;
 import com.simibubi.create.content.logistics.tableCloth.TableClothBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.api.FilterPreview;
 import io.github.forgestove.create_cyber_goggles.util.TableClothUtil;
 import io.github.forgestove.flexconfig.client.FlexConfigScreenFactory;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.*;
 import net.neoforged.neoforge.client.event.InputEvent.*;
 
@@ -19,14 +17,6 @@ import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.*;
 public final class KeyInput {
-	public static final Map<Item, Function3<Integer, Inventory, ItemStack, Screen>> ITEM_FUNCTION_3_MAP = Map.of(
-		AllItems.FILTER.get(),
-		(id, inv, stack) -> new FilterScreen(FilterMenu.create(id, inv, stack), inv, stack.getHoverName()),
-		AllItems.ATTRIBUTE_FILTER.get(),
-		(id, inv, stack) -> new AttributeFilterScreen(AttributeFilterMenu.create(id, inv, stack), inv, stack.getHoverName()),
-		AllItems.PACKAGE_FILTER.get(),
-		(id, inv, stack) -> new PackageFilterScreen(PackageFilterMenu.create(id, inv, stack), inv, stack.getHoverName())
-	);
 	public static int scrollDeltaY;
 	public static void key(Key ignoredEvent) {
 		openConfigScreen();
@@ -41,13 +31,12 @@ public final class KeyInput {
 		if (!CCGKey.previewFilter.isDown()) return;
 		if (mc.player == null) return;
 		ItemStack itemStack = getSelectedFilter();
-		if (itemStack == null || !(itemStack.getItem() instanceof FilterItem)) return;
-		Function3<Integer, Inventory, ItemStack, Screen> function = ITEM_FUNCTION_3_MAP.get(itemStack.getItem());
-		if (function == null) {
+		if (itemStack == null) return;
+		Screen screen = FilterPreview.create(-1, mc.player.getInventory(), itemStack.copy());
+		if (screen == null) {
 			mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.NOTE_BLOCK_BASS, 0.5F));
 			return;
 		}
-		Screen screen = function.apply(-1, mc.player.getInventory(), itemStack);
 		mc.tell(() -> mc.setScreen(screen));
 		mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1));
 	}

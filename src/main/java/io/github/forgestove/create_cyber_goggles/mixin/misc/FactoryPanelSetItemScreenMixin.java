@@ -3,8 +3,8 @@ import com.simibubi.create.content.logistics.factoryBoard.*;
 import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import com.simibubi.create.foundation.gui.widget.IconButton;
-import com.simibubi.create.foundation.utility.CreateLang;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGCreateLang;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import org.spongepowered.asm.mixin.Mixin;
@@ -28,13 +28,13 @@ public abstract class FactoryPanelSetItemScreenMixin extends AbstractSimiContain
 			FactoryPanelConnectionHandler.startConnection(behaviour);
 			mc.setScreen(null);
 		});
-		newInputButton.setToolTip(CreateLang.translate("gui.factory_panel.connect_input").component());
+		newInputButton.setToolTip(CCGCreateLang.translate("gui.factory_panel.connect_input").component());
 		var relocateButton = new IconButton(x + 26, y + 63, AllIcons.I_MOVE_GAUGE);
 		relocateButton.withCallback(() -> {
 			FactoryPanelConnectionHandler.startRelocating(behaviour);
 			mc.setScreen(null);
 		});
-		relocateButton.setToolTip(CreateLang.translate("gui.factory_panel.relocate").component());
+		relocateButton.setToolTip(CCGCreateLang.translate("gui.factory_panel.relocate").component());
 		addRenderableWidget(newInputButton);
 		addRenderableWidget(relocateButton);
 	}

@@ -1,13 +1,13 @@
 package io.github.forgestove.create_cyber_goggles.core.schematic;
 import com.mojang.blaze3d.pipeline.*;
+import com.mojang.blaze3d.platform.GlStateManager.*;
 import com.mojang.blaze3d.platform.*;
-import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
-import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
 import com.simibubi.create.content.schematics.client.SchematicRenderer;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.schematic.SchematicRenderSettings.Orientation;
 import net.createmod.catnip.levelWrappers.SchematicLevel;
 import net.createmod.catnip.render.*;
 import net.minecraft.client.Minecraft;
@@ -26,6 +26,7 @@ import org.joml.*;
 
 import java.lang.Math;
 import java.util.*;
+import java.util.Map.Entry;
 /**
  * 把一份蓝图离屏渲染成 {@link NativeImage}：正交投影 + 按包围盒自适应取景 + 流体补渲。
  * <p>
@@ -66,9 +67,9 @@ public final class SchematicImageRenderer {
 		// 主模板不含任何方块，内容全部在子层级内
 		if (schematicLevel.getBlockMap().isEmpty() && !SchematicImageUtil.hasSubLevels(schematicLevel)) return Optional.empty();
 		var fluidPositions = new ArrayList<BlockPos>();
-		for (var blockEntry : schematicLevel.getBlockMap().entrySet()) {
-			var pos = blockEntry.getKey();
-			var state = blockEntry.getValue();
+		for (Entry<BlockPos, BlockState> blockEntry : schematicLevel.getBlockMap().entrySet()) {
+			BlockPos pos = blockEntry.getKey();
+			BlockState state = blockEntry.getValue();
 			if (!state.isAir() && !state.getFluidState().isEmpty()) fluidPositions.add(pos.immutable());
 		}
 		return Optional.of(new SchematicImageRenderer(schematicLevel, fluidPositions));
@@ -76,27 +77,27 @@ public final class SchematicImageRenderer {
 	/** 按 factor×factor 方块做 alpha 加权平均降采样（超采样抗锯齿） */
 	public static NativeImage downsample(NativeImage source, int factor) {
 		try (source) {
-			var outW = Math.max(1, source.getWidth() / factor);
-			var outH = Math.max(1, source.getHeight() / factor);
+			int outW = Math.max(1, source.getWidth() / factor);
+			int outH = Math.max(1, source.getHeight() / factor);
 			var out = new NativeImage(outW, outH, false);
-			var samples = factor * factor;
+			int samples = factor * factor;
 			try {
 				for (var y = 0; y < outH; y++)
 					for (var x = 0; x < outW; x++) {
 						long aSum = 0, c0 = 0, c1 = 0, c2 = 0;
 						for (var dy = 0; dy < factor; dy++)
 							for (var dx = 0; dx < factor; dx++) {
-								var p = source.getPixelRGBA(x * factor + dx, y * factor + dy);
-								var a = p >>> 24 & 0xFF;
+								int p = source.getPixelRGBA(x * factor + dx, y * factor + dy);
+								int a = p >>> 24 & 0xFF;
 								aSum += a;
 								c0 += (long) (p & 0xFF) * a;
 								c1 += (long) (p >> 8 & 0xFF) * a;
 								c2 += (long) (p >> 16 & 0xFF) * a;
 							}
 						var a = (int) (aSum / samples);
-						var r0 = aSum == 0 ? 0 : (int) (c0 / aSum);
-						var r1 = aSum == 0 ? 0 : (int) (c1 / aSum);
-						var r2 = aSum == 0 ? 0 : (int) (c2 / aSum);
+						int r0 = aSum == 0 ? 0 : (int) (c0 / aSum);
+						int r1 = aSum == 0 ? 0 : (int) (c1 / aSum);
+						int r2 = aSum == 0 ? 0 : (int) (c2 / aSum);
 						out.setPixelRGBA(x, y, a << 24 | r2 << 16 | r1 << 8 | r0);
 					}
 				return out;
@@ -106,6 +107,13 @@ public final class SchematicImageRenderer {
 			}
 		}
 	}
+	private static float[] unpackArgb(int argb) {
+		float a = (argb >> 24 & 0xFF) / 255F;
+		float r = (argb >> 16 & 0xFF) / 255F;
+		float g = (argb >> 8 & 0xFF) / 255F;
+		float b = (argb & 0xFF) / 255F;
+		return new float[]{r, g, b, a};
+	}
 	public @NotNull NativeImage render(SchematicRenderSettings settings) {
 		RenderSystem.assertOnRenderThread();
 		BoundingBox bounds = SchematicImageUtil.frameBounds(schematicLevel);
@@ -114,45 +122,45 @@ public final class SchematicImageRenderer {
 		float centerX = (minX + maxX) / 2F, centreY = (minY + maxY) / 2F, centreZ = (minZ + maxZ) / 2F;
 		float hx = (maxX - minX) / 2F, hy = (maxY - minY) / 2F, hz = (maxZ - minZ) / 2F;
 		var rot = new Matrix4f();
-		var orientation = settings.orientation();
+		Orientation orientation = settings.orientation();
 		rot.rotateX((float) Math.toRadians(orientation.pitch()));
 		rot.rotateY((float) Math.toRadians(orientation.yaw()));
 		rot.rotateZ((float) Math.toRadians(orientation.roll()));
 		// 旋转后 8 个包围盒角点在屏幕平面上的最大投影，决定取景尺寸
 		float maxPX = 0F, maxPY = 0F;
-		for (var sx = -1; sx <= 1; sx += 2)
-			for (var sy = -1; sy <= 1; sy += 2)
-				for (var sz = -1; sz <= 1; sz += 2) {
-					var v = rot.transformPosition(new Vector3f(sx * hx, sy * hy, sz * hz));
+		for (int sx = -1; sx <= 1; sx += 2)
+			for (int sy = -1; sy <= 1; sy += 2)
+				for (int sz = -1; sz <= 1; sz += 2) {
+					Vector3f v = rot.transformPosition(new Vector3f(sx * hx, sy * hy, sz * hz));
 					maxPX = Math.max(maxPX, Math.abs(v.x()));
 					maxPY = Math.max(maxPY, Math.abs(v.y()));
 				}
-		var projW = Math.max(1e-3F, 2F * maxPX);
-		var projH = Math.max(1e-3F, 2F * maxPY);
-		var targetWidth = settings.imageWidth();
-		var scale = Math.max(1, targetWidth - MARGIN_PX * 2) / projW;
-		var needW = Math.round(projW * scale) + MARGIN_PX * 2;
-		var needH = Math.round(projH * scale) + MARGIN_PX * 2;
+		float projW = Math.max(1e-3F, 2F * maxPX);
+		float projH = Math.max(1e-3F, 2F * maxPY);
+		int targetWidth = settings.imageWidth();
+		float scale = Math.max(1, targetWidth - MARGIN_PX * 2) / projW;
+		int needW = Math.round(projW * scale) + MARGIN_PX * 2;
+		int needH = Math.round(projH * scale) + MARGIN_PX * 2;
 		return renderCore(settings, scale, needW, needH, new Vector3f(centerX, centreY, centreZ));
 	}
 	private @NotNull NativeImage renderCore(SchematicRenderSettings settings, float scale, int needW, int needH, Vector3f centerPos) {
-		var mc = Minecraft.getInstance();
-		var maxSupported = Math.min(MAX_FB_SIZE, RenderSystem.maxSupportedTextureSize());
+		Minecraft mc = Minecraft.getInstance();
+		int maxSupported = Math.min(MAX_FB_SIZE, RenderSystem.maxSupportedTextureSize());
 		if (needW > maxSupported || needH > maxSupported) {
-			var cap = (float) maxSupported / Math.max(needW, needH);
+			float cap = (float) maxSupported / Math.max(needW, needH);
 			scale *= cap;
 			needW = Math.min(needW, maxSupported);
 			needH = Math.min(needH, maxSupported);
 		}
 		ensureTarget(needW, needH);
 		var prevProjection = new Matrix4f(RenderSystem.getProjectionMatrix());
-		var prevSorting = RenderSystem.getVertexSorting();
+		VertexSorting prevSorting = RenderSystem.getVertexSorting();
 		try {
-			var bg = unpackArgb(settings.backgroundColor().getRGB());
+			float[] bg = unpackArgb(settings.backgroundColor().getRGB());
 			renderTarget.setClearColor(bg[0], bg[1], bg[2], bg[3]);
 			renderTarget.clear(Minecraft.ON_OSX);
 			renderTarget.bindWrite(true);
-			var projection = new Matrix4f().setOrtho(
+			Matrix4f projection = new Matrix4f().setOrtho(
 				-targetW / 2F,
 				targetW / 2F,
 				-targetH / 2F,
@@ -168,7 +176,7 @@ public final class SchematicImageRenderer {
 			RenderSystem.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 			Lighting.setupLevel();
 			poseStack.scale(scale, scale, scale);
-			var orientation = settings.orientation();
+			Orientation orientation = settings.orientation();
 			poseStack.mulPose(Axis.XP.rotationDegrees(orientation.pitch()));
 			poseStack.mulPose(Axis.YP.rotationDegrees(orientation.yaw()));
 			if (orientation.roll() != 0F) poseStack.mulPose(Axis.ZP.rotationDegrees(orientation.roll()));
@@ -206,19 +214,12 @@ public final class SchematicImageRenderer {
 	}
 	private void ensureTarget(int needW, int needH) {
 		if (renderTarget != null && targetW >= needW && targetH >= needH) return;
-		var newW = Math.max(targetW, needW);
-		var newH = Math.max(targetH, needH);
+		int newW = Math.max(targetW, needW);
+		int newH = Math.max(targetH, needH);
 		if (renderTarget != null) renderTarget.destroyBuffers();
 		renderTarget = new TextureTarget(newW, newH, true, Minecraft.ON_OSX);
 		targetW = newW;
 		targetH = newH;
-	}
-	private static float[] unpackArgb(int argb) {
-		var a = (argb >> 24 & 0xFF) / 255F;
-		var r = (argb >> 16 & 0xFF) / 255F;
-		var g = (argb >> 8 & 0xFF) / 255F;
-		var b = (argb & 0xFF) / 255F;
-		return new float[]{r, g, b, a};
 	}
 	/** Create 的蓝图渲染器会跳过流体，此处按位置补渲一遍 */
 	private void renderFluids(PoseStack poseStack, SuperRenderTypeBuffer buffers) {
@@ -226,7 +227,7 @@ public final class SchematicImageRenderer {
 		BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
 		Matrix4f pose = poseStack.last().pose();
 		Matrix3f normal = poseStack.last().normal();
-		for (var pos : fluidPositions) {
+		for (BlockPos pos : fluidPositions) {
 			BlockState state = schematicLevel.getBlockState(pos);
 			FluidState fluid = state.getFluidState();
 			if (fluid.isEmpty()) continue;

@@ -34,15 +34,15 @@ public final class NavigationDistanceHelper {
 		var resolved = resolve(target, stack, level);
 		if (resolved == null) return null;
 		if (!resolved.sameDimension())
-			return Component.translatable("create_cyber_goggles.tooltip.navigationDistance.otherDimension").withStyle(ChatFormatting.GRAY);
+			return CCGLang.translate("tooltip.navigationDistance.otherDimension", ChatFormatting.GRAY).component();
 		// 玩家可能站在飞船（sublevel）里，坐标须先投影到世界系，否则算出来的是飞船局部坐标
 		var playerPos = Sable.HELPER.projectOutOfSubLevel(level, JOMLConversion.toJOML(player.position()));
 		var distance = playerPos.distance(resolved.pos().x, resolved.pos().y, resolved.pos().z);
-		return Component.translatable(
-				"create_cyber_goggles.tooltip.navigationDistance",
-				CCGLang.number(Mth.ceil(distance), ChatFormatting.GOLD).component()
-			)
-			.withStyle(ChatFormatting.GRAY);
+		return CCGLang.translate(
+			"tooltip.navigationDistance",
+			ChatFormatting.GRAY,
+			CCGLang.number(Mth.ceil(distance), ChatFormatting.GOLD).component()
+		).component();
 	}
 	private static @Nullable Resolved resolve(NavigationTarget target, ItemStack stack, ClientLevel level) {
 		if (target instanceof CompassNavigationTarget) return new Resolved(true, compassTarget(stack, level));

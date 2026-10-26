@@ -1,6 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.compat.jei;
 import com.simibubi.create.AllMenuTypes;
 import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterMenu;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.transfer.*;
@@ -38,7 +39,7 @@ public class RedstoneRequesterTransferHandler implements IUniversalRecipeTransfe
 		var reps = representatives(recipeHolder.value());
 		var groups = Screen.hasAltDown() ? vanillaStyleGroups(reps, maxTransfer) : mechanicalStyleGroups(reps, maxTransfer);
 		if (groups.size() > slotCount(container))
-			return new RecipeTransferErrorTooltip(Component.translatable("create_cyber_goggles.gui.redstoneRequester.tooManyIngredients"));
+			return new RecipeTransferErrorTooltip(CCGLang.translateDirect("gui.redstoneRequester.tooManyIngredients"));
 		// 不实际转移时返回 COSMETIC 错误
 		if (!doTransfer) return AltHintError.INSTANCE;
 		applyGroups(container, groups);

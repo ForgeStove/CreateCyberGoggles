@@ -5,6 +5,7 @@ import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.compat.thirst.WaterPurityHelper;
 import io.github.forgestove.create_cyber_goggles.core.factory.CCGMods;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGCreateLang;
 import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -23,7 +24,7 @@ public interface IHaveGoggleInformationMixin {
 	) {
 		if (!CCG.config.tooltip.fluidContainer) return original.call(tooltip, isPlayerSneaking, handler);
 		if (handler == null || handler.getTanks() == 0) return original.call(tooltip, isPlayerSneaking, handler);
-		CCGLang.add(Component.translatable("create.gui.goggles.fluid_container")).forGoggles(tooltip);
+		CCGCreateLang.translate("gui.goggles.fluid_container").forGoggles(tooltip);
 		var isEmpty = true;
 		for (var i = 0; i < handler.getTanks(); i++) {
 			var fluidStack = handler.getFluidInTank(i);

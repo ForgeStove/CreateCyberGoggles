@@ -38,9 +38,9 @@ public final class SequencedAssemblyUtil {
 	 */
 	public static boolean scrollJunk(SequencedAssemblyRecipe recipe, double scrollDeltaY) {
 		if (scrollDeltaY == 0) return false;
-		var junkCount = getJunkCount(recipe);
+		int junkCount = getJunkCount(recipe);
 		if (junkCount <= 0) return false;
-		var state = getState(recipe);
+		long[] state = getState(recipe);
 		state[0] = Math.floorMod((int) state[0] + (scrollDeltaY > 0 ? -1 : 1), junkCount);
 		state[1] = System.currentTimeMillis();
 		return true;

@@ -10,6 +10,7 @@ import io.github.forgestove.create_cyber_goggles.mixin.accessor.RedstoneRequeste
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.client.gui.*;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.items.ItemStackHandler;
 
 import java.util.*;
 
@@ -44,7 +45,7 @@ public final class RedstoneRequesterInteractions {
 	/** 缓存初始内容并绑定撤销按钮。 */
 	public void init(IconButton undoButton) {
 		this.undoButton = undoButton;
-		var menu = screen.getMenu();
+		RedstoneRequesterMenu menu = screen.getMenu();
 		backupStacks.clear();
 		backupAmounts.clear();
 		for (var i = 0; i < menu.ghostInventory.getSlots(); i++) {
@@ -73,18 +74,18 @@ public final class RedstoneRequesterInteractions {
 	}
 	/** 恢复到打开界面时的状态并关闭界面。 */
 	public void undo() {
-		var menu = screen.getMenu();
-		var ghost = menu.ghostInventory;
+		RedstoneRequesterMenu menu = screen.getMenu();
+		ItemStackHandler ghost = menu.ghostInventory;
 		for (var i = 0; i < ghost.getSlots(); i++) {
-			var stack = backupStacks.get(i).copy();
+			ItemStack stack = backupStacks.get(i).copy();
 			ghost.setStackInSlot(i, stack);
 			CatnipServices.NETWORK.sendToServer(new GhostItemSubmitPacket(stack, i));
 		}
-		var amounts = amounts();
+		List<Integer> amounts = amounts();
 		for (var i = 0; i < amounts.size(); i++)
 			amounts.set(i, backupAmounts.get(i));
 		addressBox().setValue(backupAddress);
-		var allow = backupAllowPartial;
+		boolean allow = backupAllowPartial;
 		allowPartial().green = allow;
 		dontAllowPartial().green = !allow;
 		// 服务端 saveData 会压缩空槽，数量列表需按非空槽顺序提交
@@ -115,8 +116,8 @@ public final class RedstoneRequesterInteractions {
 		if (undoButton != null) undoButton.active = isDirty();
 	}
 	private boolean isDirty() {
-		var menu = screen.getMenu();
-		var amounts = amounts();
+		RedstoneRequesterMenu menu = screen.getMenu();
+		List<Integer> amounts = amounts();
 		for (var i = 0; i < menu.ghostInventory.getSlots(); i++)
 			if (!ItemStack.matches(menu.ghostInventory.getStackInSlot(i), backupStacks.get(i))) return true;
 		for (var i = 0; i < amounts.size(); i++)
@@ -128,7 +129,7 @@ public final class RedstoneRequesterInteractions {
 	public boolean onPress(double mouseX, double mouseY) {
 		// 手持真实物品时点幽灵槽 → 交给上层正常放置
 		if (!screen.getMenu().getCarried().isEmpty()) return false;
-		var ghostIndex = hoveredGhostIndex();
+		int ghostIndex = hoveredGhostIndex();
 		// 抓起中点非幽灵槽 → 放回源槽并拦截
 		if (ghostIndex < 0) {
 			if (pickedIndex >= 0) {
@@ -152,11 +153,11 @@ public final class RedstoneRequesterInteractions {
 	/** 松开：同槽拿起、跨槽换位、非幽灵槽取消。 */
 	public boolean onRelease() {
 		if (pressSource < 0) return false;
-		var releaseIndex = hoveredGhostIndex();
+		int releaseIndex = hoveredGhostIndex();
 		if (dragging) if (releaseIndex >= 0) drop(releaseIndex);
 		else putBack();
 		else if (releaseIndex == pressSource) {
-			var stack = ghostStack(pressSource);
+			ItemStack stack = ghostStack(pressSource);
 			if (!stack.isEmpty()) pickUp(pressSource);
 		} else if (releaseIndex >= 0) swapSlots(pressSource, releaseIndex);
 		pressSource = -1;
@@ -166,8 +167,8 @@ public final class RedstoneRequesterInteractions {
 	/** 位移超过阈值后进入拖动，源槽物品跟随指针。 */
 	public boolean onDrag(double mouseX, double mouseY) {
 		if (pressSource < 0 || dragging) return false;
-		var dx = mouseX - pressX;
-		var dy = mouseY - pressY;
+		double dx = mouseX - pressX;
+		double dy = mouseY - pressY;
 		if (dx * dx + dy * dy >= DRAG_THRESHOLD * DRAG_THRESHOLD) {
 			dragging = true;
 			pickUp(pressSource);
@@ -191,18 +192,18 @@ public final class RedstoneRequesterInteractions {
 	/** 绘制悬空物品与源槽高亮。 */
 	public void renderPicked(GuiGraphics graphics, Font font, int mouseX, int mouseY) {
 		if (pickedIndex < 0) return;
-		var x = mouseX - 8;
-		var y = mouseY - 8;
+		int x = mouseX - 8;
+		int y = mouseY - 8;
 		graphics.renderItem(picked, x, y);
 		graphics.renderItemDecorations(font, picked, x, y, pickedCount + "");
 		if (!dragging) return;
-		var sx = screen.getGuiLeft() + 27 + pickedIndex * 20;
-		var sy = screen.getGuiTop() + 28;
+		int sx = screen.getGuiLeft() + 27 + pickedIndex * 20;
+		int sy = screen.getGuiTop() + 28;
 		graphics.fill(sx, sy, sx + 16, sy + 16, TARGET_GREEN);
-		var hoverIndex = hoveredGhostIndex();
+		int hoverIndex = hoveredGhostIndex();
 		if (hoverIndex >= 0 && hoverIndex != pickedIndex) {
-			var hx = screen.getGuiLeft() + 27 + hoverIndex * 20;
-			var hy = screen.getGuiTop() + 28;
+			int hx = screen.getGuiLeft() + 27 + hoverIndex * 20;
+			int hy = screen.getGuiTop() + 28;
 			graphics.fill(hx, hy, hx + 16, hy + 16, HOVER_GREEN);
 		}
 	}
@@ -214,10 +215,10 @@ public final class RedstoneRequesterInteractions {
 	/** 按住 stockRequestSetter 点击幽灵槽时打开数量设置。 */
 	public boolean openPopupForHoveredSlot() {
 		if (!(screen.getSlotUnderMouse() instanceof SorterProofSlot ghostSlot)) return false;
-		var index = ghostSlot.getSlotIndex();
-		var stack = ghostSlot.getItem();
+		int index = ghostSlot.getSlotIndex();
+		ItemStack stack = ghostSlot.getItem();
 		if (stack.isEmpty()) return false;
-		var amounts = amounts();
+		List<Integer> amounts = amounts();
 		mc.setScreen(new RequestAmountScreen(
 			screen,
 			stack,
@@ -235,9 +236,9 @@ public final class RedstoneRequesterInteractions {
 	}
 	/** 放下：与目标槽交换并结束拿起。 */
 	private void drop(int dst) {
-		var dstStack = ghostStack(dst);
-		var dstCount = amounts().get(dst);
-		var srcIndex = pickedIndex;
+		ItemStack dstStack = ghostStack(dst);
+		Integer dstCount = amounts().get(dst);
+		int srcIndex = pickedIndex;
 		setGhostSlot(dst, picked);
 		amounts().set(dst, pickedCount);
 		if (!dstStack.isEmpty()) {
@@ -248,8 +249,8 @@ public final class RedstoneRequesterInteractions {
 	}
 	/** 放到目标槽并拿起其原物品（换手）。 */
 	private void dropToHand(int dst) {
-		var dstStack = ghostStack(dst);
-		var dstCount = amounts().get(dst);
+		ItemStack dstStack = ghostStack(dst);
+		Integer dstCount = amounts().get(dst);
 		setGhostSlot(dst, picked);
 		amounts().set(dst, pickedCount);
 		if (dstStack.isEmpty()) resetDrag();
@@ -260,12 +261,12 @@ public final class RedstoneRequesterInteractions {
 		}
 	}
 	private void swapSlots(int src, int dst) {
-		var ghost = screen.getMenu().ghostInventory;
-		var srcStack = ghost.getStackInSlot(src);
-		var dstStack = ghost.getStackInSlot(dst);
-		var amounts = amounts();
-		var srcAmount = amounts.get(src);
-		var dstAmount = amounts.get(dst);
+		ItemStackHandler ghost = screen.getMenu().ghostInventory;
+		ItemStack srcStack = ghost.getStackInSlot(src);
+		ItemStack dstStack = ghost.getStackInSlot(dst);
+		List<Integer> amounts = amounts();
+		Integer srcAmount = amounts.get(src);
+		Integer dstAmount = amounts.get(dst);
 		setGhostSlot(src, dstStack);
 		setGhostSlot(dst, srcStack);
 		amounts.set(src, dstAmount);

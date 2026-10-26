@@ -50,7 +50,7 @@ public final class ClientFluidEntryTooltipComponent implements ClientTooltipComp
 		boolean showCapacity,
 		@Nullable Component label
 	) {
-		if (fluid.isEmpty()) return CCGLang.add(Component.translatable("create_cyber_goggles.tooltip.empty"))
+		if (fluid.isEmpty()) return CCGLang.translate("tooltip.empty")
 			.space()
 			.text(AmountUtil.formatFluidAmount(capacityMb))
 			.component();

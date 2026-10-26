@@ -1,5 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.core.schematic;
+import com.demonwav.mcdev.annotations.Translatable;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.*;
 /**
@@ -11,11 +13,8 @@ public final class SchematicLang {
 	public static final int LIGHT_GREEN = 0x8DD58F;
 	public static final int ERROR_DARKER = 0xDA4A54;
 	public static final int ERROR_PRIMARY = 0xE4656E;
-	public static MutableComponent error(String path, Object... args) {
-		return translatable("error." + path, args).withColor(ERROR_DARKER);
-	}
-	public static MutableComponent translatable(String path, Object... args) {
-		return Component.translatable(CCG.ID + "." + path, args);
+	public static MutableComponent error(@Translatable(prefix = CCG.ID + ".error.", foldMethod = true) String path, Object... args) {
+		return CCGLang.translateDirect("error." + path, args).withColor(ERROR_DARKER);
 	}
 	/** 超出宽度时截断并补省略号 */
 	public static String truncate(Font font, String text, int maxWidth) {

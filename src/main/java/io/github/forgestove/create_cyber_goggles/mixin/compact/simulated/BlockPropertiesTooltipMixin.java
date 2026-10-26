@@ -3,6 +3,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import dev.ryanhcode.sable.mixinterface.block_properties.BlockStateExtension;
 import dev.simulated_team.simulated.client.BlockPropertiesTooltip;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.*;
 import net.minecraft.world.item.BlockItem;
@@ -21,7 +22,7 @@ public abstract class BlockPropertiesTooltipMixin {
 		@Local(name = "mass") double mass
 	) {
 		if (!CCG.config.aeronautics.alwaysShowMass) return;
-		var comp = Component.translatable("create_cyber_goggles.tooltip.mass.medium");
+		var comp = CCGLang.translateDirect("tooltip.mass.medium");
 		if (showNumbers) comp.append(formatValue("simulated.unit.mass", mass).withStyle(ChatFormatting.DARK_GRAY));
 		cir.setReturnValue(comp);
 	}
@@ -38,7 +39,7 @@ public abstract class BlockPropertiesTooltipMixin {
 		@Local(name = "friction") double friction
 	) {
 		if (!CCG.config.aeronautics.alwaysShowFriction) return;
-		var comp = Component.translatable("create_cyber_goggles.tooltip.friction.medium");
+		var comp = CCGLang.translateDirect("tooltip.friction.medium");
 		if (showNumbers) comp.append(formatValue("simulated.unit.friction", friction).withStyle(ChatFormatting.DARK_GRAY));
 		cir.setReturnValue(comp);
 	}

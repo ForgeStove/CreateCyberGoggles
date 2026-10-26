@@ -1,15 +1,19 @@
 package io.github.forgestove.create_cyber_goggles.core.util;
 import com.mojang.blaze3d.platform.NativeImage;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.FastColor.ABGR32;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.*;
 import net.neoforged.neoforge.client.model.data.ModelData;
 
 import java.awt.Color;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
@@ -41,46 +45,46 @@ public class NativeImageUtil {
 		return new Color(ITEM_COLOR_CACHE.computeIfAbsent(stack.getItem(), item -> sampleItemTextureColor(stack)));
 	}
 	public static int sampleItemTextureColor(ItemStack stack) {
-		var sampled = sampleFromItemIdColor(stack);
+		int sampled = sampleFromItemIdColor(stack);
 		if (sampled == BASE) sampled = sampleFromBakedModelIcon(stack);
 		return clampLuma(sampled);
 	}
 	private static int sampleFromItemIdColor(ItemStack stack) {
-		var id = BuiltInRegistries.ITEM.getKey(stack.getItem());
-		var path = "_" + id.getPath().toLowerCase(Locale.ROOT).replace('-', '_') + "_";
-		for (var entry : ID_COLOR_MAP.entrySet())
+		ResourceLocation id = BuiltInRegistries.ITEM.getKey(stack.getItem());
+		String path = "_" + id.getPath().toLowerCase(Locale.ROOT).replace('-', '_') + "_";
+		for (Entry<String, Integer> entry : ID_COLOR_MAP.entrySet())
 			if (path.contains("_" + entry.getKey() + "_")) return entry.getValue();
 		return BASE;
 	}
 	@SuppressWarnings("resource")
 	private static int sampleFromBakedModelIcon(ItemStack stack) {
-		var model = mc.getItemRenderer().getModel(stack, mc.level, mc.player, 0);
-		var sprite = model.getParticleIcon(ModelData.EMPTY);
+		BakedModel model = mc.getItemRenderer().getModel(stack, mc.level, mc.player, 0);
+		TextureAtlasSprite sprite = model.getParticleIcon(ModelData.EMPTY);
 		// sprite.contents() 返回的是图集共享的 SpriteContents 对象,绝不能 close()——否则会把该精灵底层的
 		// NativeImage 释放掉,等下一个 tick TextureAtlas 上传动画帧时崩在 "Image is not allocated"。
 		// 这里只读 name,不需要持有/关闭它。
-		var spriteName = sprite.contents().name();
+		ResourceLocation spriteName = sprite.contents().name();
 		return sampleTexture(getRes(spriteName.getNamespace(), "textures/" + spriteName.getPath() + ".png"));
 	}
 	private static int clampLuma(int rgb) {
-		var r = rgb >> 16 & 0xFF;
-		var g = rgb >> 8 & 0xFF;
-		var b = rgb & 0xFF;
-		var luma = 0.299F * r + 0.587F * g + 0.114F * b;
+		int r = rgb >> 16 & 0xFF;
+		int g = rgb >> 8 & 0xFF;
+		int b = rgb & 0xFF;
+		float luma = 0.299F * r + 0.587F * g + 0.114F * b;
 		if (luma <= 0F) return BASE;
 		if (luma >= MIN_LUMA && luma <= MAX_LUMA) return rgb;
-		var target = Mth.clamp(luma < MIN_LUMA ? MIN_LUMA : MAX_LUMA, 0F, 255F);
-		var scale = target / luma;
-		var outR = Mth.clamp((int) (r * scale), 0, 255);
-		var outG = Mth.clamp((int) (g * scale), 0, 255);
-		var outB = Mth.clamp((int) (b * scale), 0, 255);
+		float target = Mth.clamp(luma < MIN_LUMA ? MIN_LUMA : MAX_LUMA, 0F, 255F);
+		float scale = target / luma;
+		int outR = Mth.clamp((int) (r * scale), 0, 255);
+		int outG = Mth.clamp((int) (g * scale), 0, 255);
+		int outB = Mth.clamp((int) (b * scale), 0, 255);
 		return outR << 16 | outG << 8 | outB;
 	}
 	private static int sampleTexture(ResourceLocation texture) {
-		var optionalResource = mc.getResourceManager().getResource(texture);
+		Optional<Resource> optionalResource = mc.getResourceManager().getResource(texture);
 		if (optionalResource.isEmpty()) return BASE;
-		var resource = optionalResource.get();
-		try (var stream = resource.open(); var image = NativeImage.read(stream)) {
+		Resource resource = optionalResource.get();
+		try (InputStream stream = resource.open(); NativeImage image = NativeImage.read(stream)) {
 			return dominantColor(image);
 		} catch (IOException ignored) {
 			return BASE;
@@ -92,15 +96,15 @@ public class NativeImageUtil {
 		long totalG = 0;
 		long totalB = 0;
 		long samples = 0;
-		var stepX = Math.max(1, image.getWidth() / 24);
-		var stepY = Math.max(1, image.getHeight() / 24);
+		int stepX = Math.max(1, image.getWidth() / 24);
+		int stepY = Math.max(1, image.getHeight() / 24);
 		for (var y = 0; y < image.getHeight(); y += stepY)
 			for (var x = 0; x < image.getWidth(); x += stepX) {
-				var pixel = image.getPixelRGBA(x, y);
+				int pixel = image.getPixelRGBA(x, y);
 				if (ABGR32.alpha(pixel) < 16) continue;
-				var r = ABGR32.red(pixel);
-				var g = ABGR32.green(pixel);
-				var b = ABGR32.blue(pixel);
+				int r = ABGR32.red(pixel);
+				int g = ABGR32.green(pixel);
+				int b = ABGR32.blue(pixel);
 				// 跳过过暗像素（阴影/轮廓），避免拉低平均色导致整体偏深
 				if (0.299F * r + 0.587F * g + 0.114F * b < 50F) continue;
 				totalR += r;

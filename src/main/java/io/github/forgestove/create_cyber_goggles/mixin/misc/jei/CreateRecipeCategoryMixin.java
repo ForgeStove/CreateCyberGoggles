@@ -3,6 +3,8 @@ import com.simibubi.create.compat.jei.category.CreateRecipeCategory;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGCreateLang;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.recipe.IFocusGroup;
@@ -46,9 +48,9 @@ public abstract class CreateRecipeCategoryMixin<T extends Recipe<?>> implements 
 		float totalWeight = 0;
 		for (var i = 1; i < recipe.resultPool.size(); i++) totalWeight += recipe.resultPool.get(i).getChance();
 		List<Component> tooltip = new ArrayList<>();
-		tooltip.add(translatable("create.recipe.assembly.junk"));
+		tooltip.add(CCGCreateLang.translateDirect("recipe.assembly.junk"));
 		tooltip.add(ccg$chanceComponent(1 - recipe.getOutputChance()));
-		tooltip.add(translatable("create_cyber_goggles.tooltip.sequencedAssembly.scrollCycle").withStyle(ChatFormatting.DARK_GRAY));
+		tooltip.add(CCGLang.translate("tooltip.sequencedAssembly.scrollCycle", ChatFormatting.DARK_GRAY).component());
 		for (var i = 0; i < junkCount; i++) {
 			var out = recipe.resultPool.get(i + 1);
 			var line = literal(i == (int) state[0] ? "> " : "  ").append(out.getStack()
@@ -72,7 +74,7 @@ public abstract class CreateRecipeCategoryMixin<T extends Recipe<?>> implements 
 	@Unique
 	private static MutableComponent ccg$chanceComponent(float chance) {
 		var number = chance * 100 % 1 == 0 ? String.valueOf((int) (chance * 100)) : String.format("%.2f", chance * 100);
-		return translatable("create.recipe.processing.chance", number).withStyle(ChatFormatting.GOLD);
+		return CCGCreateLang.translateDirect("recipe.processing.chance", number).withStyle(ChatFormatting.GOLD);
 	}
 	@Inject(
 		method = "draw(Lnet/minecraft/world/item/crafting/RecipeHolder;Lmezz/jei/api/gui/ingredient/IRecipeSlotsView;"

@@ -6,7 +6,8 @@ import com.simibubi.create.foundation.blockEntity.behaviour.ValueBox;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.ItemRenderable;
-import net.createmod.catnip.outliner.Outliner;
+import net.createmod.catnip.outliner.*;
+import net.createmod.catnip.outliner.Outliner.OutlineEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -16,17 +17,18 @@ import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket.Action;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.*;
 import net.minecraft.world.phys.HitResult.Type;
-import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.*;
 import net.neoforged.fml.util.thread.EffectiveSide;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.*;
 
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Stream;
 public final class CCGUtil {
 	public static final Minecraft mc = Minecraft.getInstance();
@@ -50,7 +52,7 @@ public final class CCGUtil {
 	/** @return 当前选中的{@link BlockEntity}实例，如果没有选中或类型不匹配则返回{@code null} */
 	public static @Nullable BlockEntity getBlockEntity() {
 		if (mc.level == null) return null;
-		var result = getBlockHitResult();
+		BlockHitResult result = getBlockHitResult();
 		if (result == null || result.getType() == Type.MISS) return null;
 		return mc.level.getBlockEntity(result.getBlockPos());
 	}
@@ -68,7 +70,7 @@ public final class CCGUtil {
 	/** @return 当前选中的{@link Block}实例，如果没有选中或类型不匹配则返回{@code null} */
 	public static @Nullable Block getBlock() {
 		if (mc.level == null) return null;
-		var result = getBlockHitResult();
+		BlockHitResult result = getBlockHitResult();
 		if (result == null || result.getType() == Type.MISS) return null;
 		return mc.level.getBlockState(result.getBlockPos()).getBlock();
 	}
@@ -79,7 +81,7 @@ public final class CCGUtil {
 	}
 	/** @return 当前帧的{@link HitResult} */
 	private static HitResult getCurrentHitResult() {
-		var currentTick = mc.level != null ? getRealtimeDeltaTicks() : 0;
+		float currentTick = mc.level != null ? getRealtimeDeltaTicks() : 0;
 		if (lastRealtimeTick == currentTick && cachedHitResult != null) return cachedHitResult;
 		cachedHitResult = mc.hitResult;
 		lastRealtimeTick = currentTick;
@@ -90,35 +92,35 @@ public final class CCGUtil {
 	}
 	/** @return 选中的{@link Entity}实例，如果没有选中或类型不匹配则返回{@code null} */
 	public static @Nullable Entity getEntity() {
-		var result = getEntityHitResult();
+		EntityHitResult result = getEntityHitResult();
 		return result != null ? result.getEntity() : null;
 	}
 	/** @return 当前的{@link EntityHitResult}，如果不是实体命中则返回 {@code null} */
 	@Contract(pure = true)
 	public static @Nullable EntityHitResult getEntityHitResult() {
-		var hitResult = getCurrentHitResult();
+		HitResult hitResult = getCurrentHitResult();
 		if (hitResult instanceof EntityHitResult result && result.getType() != Type.MISS) return result;
 		return raycastEntityHitResult(hitResult);
 	}
 	private static @Nullable EntityHitResult raycastEntityHitResult(@Nullable HitResult hitResult) {
 		if (mc.level == null) return null;
-		var camera = mc.getCameraEntity();
+		Entity camera = mc.getCameraEntity();
 		if (camera == null) return null;
-		var delta = getRealtimeDeltaTicks();
-		var start = camera.getEyePosition(delta);
-		var view = camera.getViewVector(delta);
+		float delta = getRealtimeDeltaTicks();
+		Vec3 start = camera.getEyePosition(delta);
+		Vec3 view = camera.getViewVector(delta);
 		if (mc.player == null) return null;
-		var reach = mc.player.entityInteractionRange();
+		double reach = mc.player.entityInteractionRange();
 		if (hitResult != null && hitResult.getType() != Type.MISS) reach = Math.min(reach, start.distanceTo(hitResult.getLocation()));
-		var end = start.add(view.scale(reach));
-		var searchBox = camera.getBoundingBox().expandTowards(view.scale(reach)).inflate(1.0D);
+		Vec3 end = start.add(view.scale(reach));
+		AABB searchBox = camera.getBoundingBox().expandTowards(view.scale(reach)).inflate(1.0D);
 		EntityHitResult selectedHitResult = null;
-		var minDistanceSqr = reach * reach;
-		for (var entity : mc.level.getEntities(camera, searchBox, CCGUtil::canOverlayPickEntity)) {
-			var bounds = entity.getBoundingBox().inflate(entity.getPickRadius());
-			var hitPos = bounds.clip(start, end);
+		double minDistanceSqr = reach * reach;
+		for (Entity entity : mc.level.getEntities(camera, searchBox, CCGUtil::canOverlayPickEntity)) {
+			AABB bounds = entity.getBoundingBox().inflate(entity.getPickRadius());
+			Optional<Vec3> hitPos = bounds.clip(start, end);
 			if (hitPos.isEmpty()) continue;
-			var distanceSqr = start.distanceToSqr(hitPos.get());
+			double distanceSqr = start.distanceToSqr(hitPos.get());
 			if (distanceSqr >= minDistanceSqr) continue;
 			selectedHitResult = new EntityHitResult(entity, hitPos.get());
 			minDistanceSqr = distanceSqr;
@@ -150,26 +152,26 @@ public final class CCGUtil {
 	public static @Nullable ItemStack getSelectedFilter() {
 		if (isInGUI()) {
 			if (!(mc.screen instanceof AbstractContainerScreen<?> screen)) return null;
-			var slot = screen.getSlotUnderMouse();
+			Slot slot = screen.getSlotUnderMouse();
 			return slot == null ? null : slot.getItem();
 		}
-		var result = getBlockHitResult();
-		var sbe = getBlockEntity(SmartBlockEntity.class);
+		BlockHitResult result = getBlockHitResult();
+		SmartBlockEntity sbe = getBlockEntity(SmartBlockEntity.class);
 		if (sbe == null || result == null) return null;
-		var behaviour = sbe.getBehaviour(FilteringBehaviour.TYPE);
+		FilteringBehaviour behaviour = sbe.getBehaviour(FilteringBehaviour.TYPE);
 		return behaviour == null ? null : behaviour.getFilter(result.getDirection());
 	}
 	/** @return 该位置方块的{@link AABB}包围盒，若无法获取则返回{@link Shapes#block()}的包围盒 */
 	public static @NotNull AABB getBounds(BlockPos blockPos) {
 		if (mc.level == null) return Shapes.block().bounds();
-		var shape = mc.level.getBlockState(blockPos).getShape(mc.level, blockPos);
+		VoxelShape shape = mc.level.getBlockState(blockPos).getShape(mc.level, blockPos);
 		return (shape.isEmpty() ? Shapes.block() : shape).bounds().move(blockPos);
 	}
 	/** @return 如果存在激活的{@link ValueBox}则返回{@code true}，否则返回{@code false} */
 	public static boolean hasActivedValueBox() {
-		for (var entry : outliner.getOutlines().values()) {
+		for (OutlineEntry entry : outliner.getOutlines().values()) {
 			if (!entry.isAlive()) continue;
-			var outline = entry.getOutline();
+			Outline outline = entry.getOutline();
 			if (outline instanceof ValueBox valueBox && !valueBox.isPassive) return true;
 		}
 		return false;
@@ -180,7 +182,7 @@ public final class CCGUtil {
 	/** 检测本地玩家是否穿着全套纸板盔甲并且不在飞行状态 */
 	public static boolean testForStealth() {
 		if (mc.player == null) return false;
-		var allMatch = Stream.of(EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET)
+		boolean allMatch = Stream.of(EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET)
 			.allMatch(slot -> mc.player.getItemBySlot(slot).getItem() instanceof CardboardArmorItem);
 		return CCG.config.misc.chainConveyor.cardBoardedYourself && !mc.player.getAbilities().flying && allMatch;
 	}
@@ -198,15 +200,15 @@ public final class CCGUtil {
 	}
 	/** 混合两种RGB颜色，取各通道平均值，忽略透明度 */
 	public static int blendColors(int c1, int c2) {
-		var r1 = c1 >> 16 & 0xFF;
-		var g1 = c1 >> 8 & 0xFF;
-		var b1 = c1 & 0xFF;
-		var r2 = c2 >> 16 & 0xFF;
-		var g2 = c2 >> 8 & 0xFF;
-		var b2 = c2 & 0xFF;
-		var r = (r1 + r2) / 2;
-		var g = (g1 + g2) / 2;
-		var b = (b1 + b2) / 2;
+		int r1 = c1 >> 16 & 0xFF;
+		int g1 = c1 >> 8 & 0xFF;
+		int b1 = c1 & 0xFF;
+		int r2 = c2 >> 16 & 0xFF;
+		int g2 = c2 >> 8 & 0xFF;
+		int b2 = c2 & 0xFF;
+		int r = (r1 + r2) / 2;
+		int g = (g1 + g2) / 2;
+		int b = (b1 + b2) / 2;
 		return r << 16 | g << 8 | b;
 	}
 	public static int getModifiedScrollAmount() {

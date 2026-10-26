@@ -8,6 +8,8 @@ import com.simibubi.create.content.logistics.stockTicker.PackageOrderWithCrafts.
 import com.simibubi.create.foundation.gui.*;
 import io.github.forgestove.create_cyber_goggles.compat.jei.CCGJeiTitles;
 import io.github.forgestove.create_cyber_goggles.core.factory.ReplenishGroup.*;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGCreateLang;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import io.github.forgestove.create_cyber_goggles.mixin.accessor.*;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.animation.LerpedFloat.Chaser;
@@ -303,9 +305,9 @@ public class ReplenishScreen extends AbstractSimiScreen {
 			AllGuiTextures.STOCK_KEEPER_REQUEST_SEND_HOVER,
 			true,
 			null,
-			Component.translatable("create.gui.stock_keeper.send"),
+			CCGCreateLang.translateDirect("gui.stock_keeper.send"),
 			this::sendAll
-		).tooltip(Component.translatable("create.gui.stock_keeper.send")));
+		).tooltip(CCGCreateLang.translateDirect("gui.stock_keeper.send")));
 		// 恢复滚动位置：此时 contentH/viewH 已算好，按新内容 clamp
 		if (restoreScroll >= 0) {
 			scroll = Mth.clamp(restoreScroll, 0, maxScroll());
@@ -427,7 +429,7 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		pose.pushPose();
 		pose.translate(windowXOffset, windowYOffset, 0);
 		Font font = mc.font;
-		Component title = Component.translatable("create_cyber_goggles.gui.auto_replenish.title");
+		Component title = CCGLang.translateDirect("gui.auto_replenish.title");
 		gui.drawString(font, title, (PANEL_W - font.width(title)) / 2, 4, 0xFF4A3728, false);
 		int scissorBottom = windowYOffset + BODY_TOP + Math.max(1, viewH);
 		scissorL = windowXOffset + CONTENT_L;
@@ -436,7 +438,7 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		scissorB = scissorBottom;
 		gui.enableScissor(scissorL, scissorT, scissorR, scissorB);
 		if (groups.isEmpty()) {
-			Component empty = Component.translatable("create_cyber_goggles.gui.auto_replenish.empty");
+			Component empty = CCGLang.translateDirect("gui.auto_replenish.empty");
 			gui.drawString(font, empty, (PANEL_W - font.width(empty)) / 2, BODY_TOP + 4, 0xFFC8B688, false);
 		}
 		int viewBottom = BODY_TOP + viewH;
@@ -488,7 +490,7 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		List<Node> nodes = blocked ? groups.get(r.gi).blocked() : groups.get(r.gi).nodes();
 		int gridTop = top;
 		if (blocked) {
-			drawSendLabel(gui, Component.translatable("create_cyber_goggles.gui.auto_replenish.blocked"), top);
+			drawSendLabel(gui, CCGLang.translateDirect("gui.auto_replenish.blocked"), top);
 			gridTop += SEND_LABEL_H;
 		}
 		int colCount = Math.min(nodes.size(), NODES_PER_ROW);
@@ -520,11 +522,11 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		}
 	}
 	private void drawSend(GuiGraphics gui, Row r, int top) {
-		drawSendLabel(gui, Component.translatable("create_cyber_goggles.gui.auto_replenish.send_items"), top);
+		drawSendLabel(gui, CCGLang.translateDirect("gui.auto_replenish.send_items"), top);
 		drawItemBox(gui, sendItems.get(r.gi()), top + SEND_LABEL_H);
 	}
 	private void drawMissing(GuiGraphics gui, Row r, int top) {
-		drawSendLabel(gui, Component.translatable("create_cyber_goggles.gui.auto_replenish.missing"), top);
+		drawSendLabel(gui, CCGLang.translateDirect("gui.auto_replenish.missing"), top);
 		drawItemBox(gui, groups.get(r.gi).missing(), top + SEND_LABEL_H);
 	}
 	private void drawItemBox(GuiGraphics gui, List<ItemStack> items, int blockTop) {
@@ -564,7 +566,7 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		// 空值且未聚焦时画占位提示
 		if (box.getValue().isBlank() && !box.isFocused()) {
 			Font font = mc.font;
-			Component hint = Component.translatable("create.gui.stock_keeper.package_address").copy().withStyle(ChatFormatting.ITALIC);
+			Component hint = CCGCreateLang.translateDirect("gui.stock_keeper.package_address").withStyle(ChatFormatting.ITALIC);
 			gui.drawString(font, hint, box.getX() - windowXOffset, box.getY() - windowYOffset, 0xFFCDBCA8, false);
 		}
 	}
@@ -613,8 +615,8 @@ public class ReplenishScreen extends AbstractSimiScreen {
 			if (box.visible && box.getValue().isBlank() && !box.isFocused() && box.isMouseOver(mouseX, mouseY)) {
 				gui.renderComponentTooltip(
 					mc.font, List.of(
-						Component.translatable("create.gui.factory_panel.restocker_address").withStyle(s -> s.withColor(0x5391E1)),
-						Component.translatable("create.gui.schedule.lmb_edit")
+						CCGCreateLang.translateDirect("gui.factory_panel.restocker_address").withStyle(s -> s.withColor(0x5391E1)),
+						CCGCreateLang.translateDirect("gui.schedule.lmb_edit")
 							.withStyle(ChatFormatting.DARK_GRAY)
 							.withStyle(ChatFormatting.ITALIC)
 					), mouseX, mouseY
@@ -742,7 +744,7 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		drawCount(gui, totalOut, outX, midY - 8);
 		if (switchable) gui.drawString(
 			font,
-			Component.translatable("create_cyber_goggles.gui.auto_replenish.switch_recipe"),
+			CCGLang.translateDirect("gui.auto_replenish.switch_recipe"),
 			cardX + 4,
 			cardY + contentH,
 			0xFFAAAAAA,
@@ -838,7 +840,7 @@ public class ReplenishScreen extends AbstractSimiScreen {
 	}
 	/** 配方类型的本地化名：JEI 分类标题 → 命名空间.recipe.路径 → 路径。 */
 	private static Component typeName(String typeId) {
-		if (typeId == null || typeId.isBlank()) return Component.translatable("create_cyber_goggles.gui.auto_replenish.uncraftable");
+		if (typeId == null || typeId.isBlank()) return CCGLang.translateDirect("gui.auto_replenish.uncraftable");
 		// 原版配方类型无命名空间，补 minecraft: 才对得上 JEI 分类 uid
 		String lookupKey = typeId.indexOf(':') < 0 ? "minecraft:" + typeId : typeId;
 		Component jeiTitle = CCGJeiTitles.get(lookupKey);

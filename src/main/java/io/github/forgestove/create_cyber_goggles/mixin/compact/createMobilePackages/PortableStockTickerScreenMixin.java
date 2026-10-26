@@ -7,6 +7,7 @@ import com.simibubi.create.foundation.gui.widget.IconButton;
 import de.theidler.create_mobile_packages.items.portable_stock_ticker.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.factory.*;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.network.chat.Component;
@@ -47,7 +48,7 @@ public abstract class PortableStockTickerScreenMixin extends AbstractSimiContain
 			CCG.LOGGER.debug("AutoReplenish click: groups={} summary={}", groups.size(), ccg$summary() == null ? "null" : "ok");
 			mc.setScreen(new ReplenishScreen(thiz(), this, groups));
 		});
-		btn.setToolTip(Component.translatable("create_cyber_goggles.gui.auto_replenish.title"));
+		btn.setToolTip(CCGLang.translateDirect("gui.auto_replenish.title"));
 		addRenderableWidget(btn);
 	}
 	@Unique

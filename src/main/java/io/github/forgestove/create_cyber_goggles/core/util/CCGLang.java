@@ -1,18 +1,46 @@
 package io.github.forgestove.create_cyber_goggles.core.util;
-import com.simibubi.create.foundation.utility.CreateLang;
+import com.demonwav.mcdev.annotations.Translatable;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientFluidEntryTooltipComponent.FluidEntryTooltipComponent;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientFluidListTooltipComponent.FluidListTooltipComponent;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientItemEntryTooltipComponent.ItemEntryTooltipComponent;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientItemListTooltipComponent.ItemListTooltipComponent;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.*;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.*;
 
 import java.util.List;
 public class CCGLang {
+	public static @NotNull MutableComponent translateDirect(
+		@Translatable(prefix = CCG.ID + '.', foldMethod = true) String path,
+		Object... args
+	) {
+		return Component.translatable(CCG.ID + "." + path, args);
+	}
+	public static @NotNull CCGLangBuilder translate(@Translatable(prefix = CCG.ID + '.', foldMethod = true) String langKey) {
+		return builder().translate(langKey);
+	}
+	public static @NotNull CCGLangBuilder translate(
+		@Translatable(prefix = CCG.ID + '.', foldMethod = true) String langKey,
+		ChatFormatting format
+	) {
+		return builder().translate(langKey, format);
+	}
+	public static @NotNull CCGLangBuilder translate(
+		@Translatable(prefix = CCG.ID + '.', foldMethod = true) String langKey,
+		Object... args
+	) {
+		return builder().translate(langKey, args);
+	}
+	public static @NotNull CCGLangBuilder translate(
+		@Translatable(prefix = CCG.ID + '.') String langKey,
+		ChatFormatting format,
+		Object... args
+	) {
+		return builder().translate(langKey, format, args);
+	}
 	public static @NotNull CCGLangBuilder add(Component component) {
 		return builder().add(component);
 	}
@@ -71,13 +99,13 @@ public class CCGLang {
 	}
 	@SuppressWarnings("unused")
 	public static @NotNull CCGLangBuilder seconds() {
-		return builder().add(CreateLang.translate("generic.unit.seconds").component());
+		return builder().add(CCGCreateLang.translate("generic.unit.seconds").component());
 	}
 	public static @NotNull CCGLangBuilder itemEntry(@NotNull ItemStack stack) {
 		return itemEntry(stack, itemName(stack).component().copy());
 	}
 	public static @NotNull CCGLangBuilder itemEntry(@NotNull ItemStack stack, @NotNull Component label) {
-		var marker = Component.empty();
+		MutableComponent marker = Component.empty();
 		TooltipComponentUtil.ITEM_ENTRY_MAP.put(marker, new ItemEntryTooltipComponent(stack.copy(), 0, label.copy()));
 		return builder().add(marker);
 	}
@@ -85,8 +113,8 @@ public class CCGLang {
 		return builder().add(stack.getHoverName().copy().setStyle(stack.getDisplayName().getStyle()));
 	}
 	public static @NotNull CCGLangBuilder itemList(@NotNull List<ItemStack> items, int maxColumns) {
-		var marker = Component.empty();
-		var copied = items.stream().map(ItemStack::copy).toList();
+		MutableComponent marker = Component.empty();
+		List<ItemStack> copied = items.stream().map(ItemStack::copy).toList();
 		TooltipComponentUtil.ITEM_LIST_MAP.put(marker, new ItemListTooltipComponent(copied, 0, maxColumns));
 		return builder().add(marker);
 	}
@@ -94,7 +122,7 @@ public class CCGLang {
 		return fluidEntry(fluid, capacityMb, null);
 	}
 	public static @NotNull CCGLangBuilder fluidEntry(@NotNull FluidStack fluid, int capacityMb, @Nullable Component label) {
-		var marker = Component.empty();
+		MutableComponent marker = Component.empty();
 		TooltipComponentUtil.FLUID_ENTRY_MAP.put(
 			marker,
 			new FluidEntryTooltipComponent(fluid.copy(), 0, Math.max(1, capacityMb), 0, label)
@@ -103,8 +131,8 @@ public class CCGLang {
 	}
 	@SuppressWarnings("unused")
 	public static @NotNull CCGLangBuilder fluidList(@NotNull List<FluidStack> fluids, int maxColumns) {
-		var marker = Component.empty();
-		var copied = fluids.stream().map(FluidStack::copy).toList();
+		MutableComponent marker = Component.empty();
+		List<FluidStack> copied = fluids.stream().map(FluidStack::copy).toList();
 		TooltipComponentUtil.FLUID_LIST_MAP.put(marker, new FluidListTooltipComponent(copied, 0, maxColumns));
 		return builder().add(marker);
 	}

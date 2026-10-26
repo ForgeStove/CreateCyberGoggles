@@ -1,4 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.core.schematic;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.*;
 import net.minecraft.world.entity.player.Player;
@@ -41,8 +42,8 @@ public enum ImageActionProgress {
 		PROGRESS_STATE.set(new ProgressState(BAKING, fileName));
 	}
 	public static void setState(ImageActionProgress progress) {
-		var progressState = PROGRESS_STATE.get();
-		var fileName = progressState.fileName;
+		ProgressState progressState = PROGRESS_STATE.get();
+		String fileName = progressState.fileName;
 		if (fileName == null) throw new NullPointerException("Failed to set intermediary progress state. Image file name cannot be null.");
 		if (progress.type == Type.INTERMEDIATE) PROGRESS_STATE.set(new ProgressState(progress, fileName));
 		else PROGRESS_STATE.set(new ProgressState(progress, fileName, now() + LINGER_MILLIS));
@@ -54,8 +55,8 @@ public enum ImageActionProgress {
 		PROGRESS_STATE.set(INACTIVE_STATE);
 	}
 	public static void onClientTick(Post ignoredEvent) {
-		var state = PROGRESS_STATE.get();
-		var progress = state.progress;
+		ProgressState state = PROGRESS_STATE.get();
+		ImageActionProgress progress = state.progress;
 		Player player = Minecraft.getInstance().player;
 		if (progress == INACTIVE) return;
 		if (progress.type != Type.INTERMEDIATE && now() >= state.clearAt) {
@@ -65,13 +66,13 @@ public enum ImageActionProgress {
 		if (player != null) player.displayClientMessage(buildMessage(state), true);
 	}
 	private static Component buildMessage(ProgressState state) {
-		var progress = state.progress;
-		var clamped = Math.clamp(progress.fraction, 0F, 1F);
-		var filled = Math.round(clamped * BAR_SEGMENTS);
+		ImageActionProgress progress = state.progress;
+		float clamped = Math.clamp(progress.fraction, 0F, 1F);
+		int filled = Math.round(clamped * BAR_SEGMENTS);
 		var bar = new StringBuilder();
 		for (var i = 0; i < BAR_SEGMENTS; i++) bar.append(i < filled ? '█' : '▒');
-		var failed = progress.type == Type.FAIL;
-		var message = SchematicLang.translatable(progress.messageKey, state.fileName)
+		boolean failed = progress.type == Type.FAIL;
+		MutableComponent message = CCGLang.translateDirect(progress.messageKey, state.fileName)
 			.withColor(failed ? SchematicLang.ERROR_DARKER : SchematicLang.DARK_BLUE)
 			.append(Component.literal(" " + bar).withStyle(Style.EMPTY.withColor(progress.barColor)));
 		if (!failed) message.append(Component.literal(" " + Math.round(clamped * 100F) + "%").withColor(SchematicLang.LIGHT_BLUE));

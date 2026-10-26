@@ -7,6 +7,7 @@ import com.mojang.math.Axis;
 import com.simibubi.create.content.schematics.client.SchematicRenderer;
 import com.simibubi.create.foundation.blockEntity.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.levelWrappers.SchematicLevel;
 import net.createmod.catnip.render.*;
@@ -15,14 +16,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.*;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
+import net.minecraft.util.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
-
-import java.util.Locale;
+import net.minecraft.world.level.levelgen.structure.templatesystem.*;
 /**
  * 蓝图 3D 预览面板，可拖拽旋转、滚轮缩放。
  * <p>
@@ -102,8 +101,8 @@ public class SchematicPreviewPanel {
 		zoom = Mth.clamp(zoom * (scrollDelta > 0 ? 1.1F : 1F / 1.1F), 0.25F, 5F);
 	}
 	public void render(GuiGraphics graphics, int x, int y, int w, int h) {
-		var cols = Math.max(1, (w - 2 * BORDER) / CHECKER_SIZE);
-		var rows = Math.max(1, (h - 2 * BORDER) / CHECKER_SIZE);
+		int cols = Math.max(1, (w - 2 * BORDER) / CHECKER_SIZE);
+		int rows = Math.max(1, (h - 2 * BORDER) / CHECKER_SIZE);
 		w = cols * CHECKER_SIZE + 2 * BORDER;
 		h = rows * CHECKER_SIZE + 2 * BORDER;
 		lastX = x;
@@ -111,42 +110,42 @@ public class SchematicPreviewPanel {
 		lastW = w;
 		lastH = h;
 		tickLoad();
-		var innerX = x + BORDER;
-		var innerY = y + BORDER;
-		var innerW = w - 2 * BORDER;
-		var innerH = h - 2 * BORDER;
+		int innerX = x + BORDER;
+		int innerY = y + BORDER;
+		int innerW = w - 2 * BORDER;
+		int innerH = h - 2 * BORDER;
 		drawCheckerboard(graphics, innerX, innerY, innerW, innerH);
 		graphics.fill(x, y, x + w, y + BORDER, FRAME_COLOR);
 		graphics.fill(x, y + h - BORDER, x + w, y + h, FRAME_COLOR);
 		graphics.fill(x, y, x + BORDER, y + h, FRAME_COLOR);
 		graphics.fill(x + w - BORDER, y, x + w, y + h, FRAME_COLOR);
-		var mc = Minecraft.getInstance();
+		Minecraft mc = Minecraft.getInstance();
 		if (state == State.OK && renderer != null && schematicLevel != null) renderPreview(graphics, innerX, innerY, innerW, innerH);
 		else drawCenteredStatus(graphics, mc, innerX, innerY, innerW, innerH);
 	}
 	private void tickLoad() {
-		var loadDelay = CCG.config.schematic.preview.loadDelayMs;
+		int loadDelay = CCG.config.schematic.preview.loadDelayMs;
 		if (pendingFile != null && Util.getMillis() - pendingSince >= loadDelay) build(pendingFile);
 	}
 	/** 棋盘格底：让半透明/镂空的方块结构有可辨识的衬底 */
 	private void drawCheckerboard(GuiGraphics graphics, int x, int y, int w, int h) {
-		var cols = (w + CHECKER_SIZE - 1) / CHECKER_SIZE;
-		var rows = (h + CHECKER_SIZE - 1) / CHECKER_SIZE;
+		int cols = (w + CHECKER_SIZE - 1) / CHECKER_SIZE;
+		int rows = (h + CHECKER_SIZE - 1) / CHECKER_SIZE;
 		for (var row = 0; row < rows; row++)
 			for (var col = 0; col < cols; col++) {
-				var cx = x + col * CHECKER_SIZE;
-				var cy = y + row * CHECKER_SIZE;
-				var cw = Math.min(CHECKER_SIZE, x + w - cx);
-				var ch = Math.min(CHECKER_SIZE, y + h - cy);
+				int cx = x + col * CHECKER_SIZE;
+				int cy = y + row * CHECKER_SIZE;
+				int cw = Math.min(CHECKER_SIZE, x + w - cx);
+				int ch = Math.min(CHECKER_SIZE, y + h - cy);
 				graphics.fill(cx, cy, cx + cw, cy + ch, (row + col & 1) == 0 ? CHECKER_LIGHT : CHECKER_DARK);
 			}
 	}
 	private void renderPreview(GuiGraphics graphics, int x, int y, int w, int h) {
-		var centerX = x + w / 2.0F;
-		var centerY = y + h / 2.0F;
-		var maxDim = Math.max(1, Math.max(frame.getXSpan(), Math.max(frame.getYSpan(), frame.getZSpan())));
-		var fit = Math.min(w, h) * 0.6F;
-		var scale = fit / maxDim * zoom;
+		float centerX = x + w / 2.0F;
+		float centerY = y + h / 2.0F;
+		int maxDim = Math.max(1, Math.max(frame.getXSpan(), Math.max(frame.getYSpan(), frame.getZSpan())));
+		float fit = Math.min(w, h) * 0.6F;
+		float scale = fit / maxDim * zoom;
 		graphics.enableScissor(x, y, x + w, y + h);
 		graphics.flush();
 		PoseStack ms = graphics.pose();
@@ -178,11 +177,11 @@ public class SchematicPreviewPanel {
 		graphics.disableScissor();
 	}
 	private void drawCenteredStatus(GuiGraphics graphics, Minecraft mc, int x, int y, int w, int h) {
-		var text = state.getComponent();
+		Component text = state.getComponent();
 		graphics.drawString(mc.font, text, x + (w - mc.font.width(text)) / 2, y + h / 2 - 4, 0xFFFFFFFF);
 	}
 	private void build(String fileName) {
-		var mc = Minecraft.getInstance();
+		Minecraft mc = Minecraft.getInstance();
 		Level level = mc.level;
 		if (level == null || mc.player == null) {
 			state = State.FAILED;
@@ -191,13 +190,13 @@ public class SchematicPreviewPanel {
 		currentFile = fileName;
 		pendingFile = null;
 		try {
-			var template = SchematicImageUtil.loadTemplateFromSchematicName(fileName);
-			var templateSize = template.getSize();
+			StructureTemplate template = SchematicImageUtil.loadTemplateFromSchematicName(fileName);
+			Vec3i templateSize = template.getSize();
 			if (templateSize.equals(Vec3i.ZERO)) {
 				state = State.EMPTY;
 				return;
 			}
-			var volume = (long) templateSize.getX() * templateSize.getY() * templateSize.getZ();
+			long volume = (long) templateSize.getX() * templateSize.getY() * templateSize.getZ();
 			if (volume > CCG.config.schematic.preview.maxBlockVolume) {
 				state = State.TOO_LARGE;
 				return;
@@ -212,7 +211,7 @@ public class SchematicPreviewPanel {
 				RandomSource.create(),
 				Block.UPDATE_CLIENTS
 			);
-			for (var be : fakeSchematicLevel.getBlockEntities()) be.setLevel(fakeSchematicLevel);
+			for (BlockEntity be : fakeSchematicLevel.getBlockEntities()) be.setLevel(fakeSchematicLevel);
 			fixControllerBlockEntities(fakeSchematicLevel);
 			// sable 子维度不在本模板的方块表中，须单独展开为渲染层级
 			SchematicImageUtil.attachSubLevels(template, fakeSchematicLevel, level);
@@ -230,12 +229,12 @@ public class SchematicPreviewPanel {
 	}
 	/** 蓝图放置后多方块控制器的"最后已知位置"停留在世界坐标，需要按偏移量修正回虚拟层级，否则模型渲染错位 */
 	private void fixControllerBlockEntities(SchematicLevel schematicLevel) {
-		for (var blockEntity : schematicLevel.getBlockEntities()) {
+		for (BlockEntity blockEntity : schematicLevel.getBlockEntities()) {
 			if (!(blockEntity instanceof IMultiBlockEntityContainer multiBlock)) continue;
-			var lastKnownPos = multiBlock.getLastKnownPos();
-			var currentPos = blockEntity.getBlockPos();
+			BlockPos lastKnownPos = multiBlock.getLastKnownPos();
+			BlockPos currentPos = blockEntity.getBlockPos();
 			if (lastKnownPos == null || multiBlock.isController() || lastKnownPos.equals(currentPos)) continue;
-			var adjustedController = multiBlock.getController().offset(currentPos.subtract(lastKnownPos));
+			BlockPos adjustedController = multiBlock.getController().offset(currentPos.subtract(lastKnownPos));
 			if (multiBlock instanceof SmartBlockEntity smartBlockEntity) smartBlockEntity.markVirtual();
 			multiBlock.setController(adjustedController);
 		}
@@ -247,12 +246,15 @@ public class SchematicPreviewPanel {
 		EMPTY,
 		TOO_LARGE,
 		FAILED;
-		private final Component component;
-		State() {
-			component = Component.translatable(CCG.ID + ".gui.schematicPreview." + toString().toLowerCase(Locale.ENGLISH));
-		}
 		public Component getComponent() {
-			return component;
+			return switch (this) {
+				case NONE -> CCGLang.translateDirect("gui.schematicPreview.none");
+				case LOADING -> CCGLang.translateDirect("gui.schematicPreview.loading");
+				case OK -> CCGLang.translateDirect("gui.schematicPreview.ok");
+				case EMPTY -> CCGLang.translateDirect("gui.schematicPreview.empty");
+				case TOO_LARGE -> CCGLang.translateDirect("gui.schematicPreview.too_large");
+				case FAILED -> CCGLang.translateDirect("gui.schematicPreview.failed");
+			};
 		}
 	}
 }

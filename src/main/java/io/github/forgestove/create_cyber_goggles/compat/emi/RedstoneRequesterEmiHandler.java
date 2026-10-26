@@ -1,9 +1,11 @@
 package io.github.forgestove.create_cyber_goggles.compat.emi;
+import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterMenu;
 import dev.emi.emi.EmiPort;
 import dev.emi.emi.api.recipe.*;
 import dev.emi.emi.api.recipe.handler.*;
-import dev.emi.emi.api.stack.EmiStack;
+import dev.emi.emi.api.stack.*;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Font.DisplayMode;
@@ -11,7 +13,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -23,6 +24,20 @@ import java.util.*;
 import static io.github.forgestove.create_cyber_goggles.compat.RedstoneRequesterFill.*;
 public final class RedstoneRequesterEmiHandler implements EmiRecipeHandler<RedstoneRequesterMenu> {
 	public static final RedstoneRequesterEmiHandler INSTANCE = new RedstoneRequesterEmiHandler();
+	/** 空位为 {@link ItemStack#EMPTY}，有原料但无候选项为 {@code null} */
+	private static List<ItemStack> toRepresentatives(EmiRecipe recipe) {
+		List<ItemStack> reps = new ArrayList<>();
+		for (EmiIngredient input : recipe.getInputs()) {
+			List<EmiStack> stacks = input.getEmiStacks();
+			if (stacks.isEmpty()) {
+				reps.add(ItemStack.EMPTY);
+				continue;
+			}
+			ItemStack stack = stacks.getFirst().getItemStack();
+			reps.add(stack.isEmpty() ? null : stack);
+		}
+		return reps;
+	}
 	@Override
 	public EmiPlayerInventory getInventory(AbstractContainerScreen<RedstoneRequesterMenu> screen) {
 		List<EmiStack> list = new ArrayList<>();
@@ -39,38 +54,26 @@ public final class RedstoneRequesterEmiHandler implements EmiRecipeHandler<Redst
 		return !recipe.getInputs().isEmpty();
 	}
 	@Override
+	public boolean canCraft(EmiRecipe recipe, EmiCraftContext<RedstoneRequesterMenu> context) {
+		return vanillaStyleGroups(toRepresentatives(recipe), false).size() <= slotCount(context.getScreenHandler());
+	}
+	@Override
 	public boolean craft(EmiRecipe recipe, EmiCraftContext<RedstoneRequesterMenu> context) {
-		var reps = toRepresentatives(recipe);
-		var maxTransfer = context.getAmount() > 1;
-		var groups = Screen.hasAltDown() ? vanillaStyleGroups(reps, maxTransfer) : mechanicalStyleGroups(reps, maxTransfer);
-		var container = context.getScreenHandler();
+		List<ItemStack> reps = toRepresentatives(recipe);
+		boolean maxTransfer = context.getAmount() > 1;
+		List<BigItemStack> groups = Screen.hasAltDown() ? vanillaStyleGroups(reps, maxTransfer) : mechanicalStyleGroups(reps, maxTransfer);
+		RedstoneRequesterMenu container = context.getScreenHandler();
 		if (groups.size() > slotCount(container)) return false;
 		applyGroups(container, groups);
 		return true;
 	}
-	/** 空位为 {@link ItemStack#EMPTY}，有原料但无候选项为 {@code null} */
-	private static List<ItemStack> toRepresentatives(EmiRecipe recipe) {
-		List<ItemStack> reps = new ArrayList<>();
-		for (var input : recipe.getInputs()) {
-			var stacks = input.getEmiStacks();
-			if (stacks.isEmpty()) {
-				reps.add(ItemStack.EMPTY);
-				continue;
-			}
-			var stack = stacks.getFirst().getItemStack();
-			reps.add(stack.isEmpty() ? null : stack);
-		}
-		return reps;
-	}
 	@Override
 	public List<ClientTooltipComponent> getTooltip(EmiRecipe recipe, EmiCraftContext<RedstoneRequesterMenu> context) {
-		if (!canCraft(recipe, context)) return List.of(ClientTooltipComponent.create(EmiPort.ordered(Component.translatable(
-			"create_cyber_goggles.gui.redstoneRequester.tooManyIngredients").withStyle(ChatFormatting.RED))));
+		if (!canCraft(recipe, context)) return List.of(ClientTooltipComponent.create(EmiPort.ordered(CCGLang.translate(
+			"gui.redstoneRequester.tooManyIngredients",
+			ChatFormatting.RED
+		).component())));
 		return List.of(new AltHintTooltip(0), new AltHintTooltip(1));
-	}
-	@Override
-	public boolean canCraft(EmiRecipe recipe, EmiCraftContext<RedstoneRequesterMenu> context) {
-		return vanillaStyleGroups(toRepresentatives(recipe), false).size() <= slotCount(context.getScreenHandler());
 	}
 	/**
 	 * EMI 在构造 {@code RecipeFillButtonWidget} 时就把 tooltip 缓存了下来，普通 Component 会定格在那一刻的按键状态；

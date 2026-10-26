@@ -2,6 +2,7 @@ package io.github.forgestove.create_cyber_goggles.core.event.forceOverlay;
 import dev.ryanhcode.sable.api.physics.force.ForceGroups;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.event.forceOverlay.ForceClusterer.Cluster;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.*;
@@ -40,9 +41,9 @@ public final class ForceTooltipOverlay {
 		if (clusters == linesSource && mass == linesMass) return linesCache;
 		List<Component> lines = new ArrayList<>();
 		lines.add(labeledLine(
-			Component.translatable("create_cyber_goggles.hud.forceOverlay.mass"),
+			CCGLang.translateDirect("hud.forceOverlay.mass"),
 			0xCCCCCC,
-			Component.translatable("create_cyber_goggles.hud.forceOverlay.massValue", formatScalar(mass))
+			CCGLang.translateDirect("hud.forceOverlay.massValue", formatScalar(mass))
 		));
 		if (clusters != null) for (var entry : clusters.entrySet()) {
 			var group = ForceGroups.REGISTRY.get(entry.getKey());
@@ -53,7 +54,7 @@ public final class ForceTooltipOverlay {
 			lines.add(labeledLine(
 				group.name(),
 				0xFF000000 | group.color(),
-				Component.translatable("create_cyber_goggles.hud.forceOverlay.forceValue", formatScalar(netMagnitude))
+				CCGLang.translateDirect("hud.forceOverlay.forceValue", formatScalar(netMagnitude))
 			));
 		}
 		linesSource = clusters;

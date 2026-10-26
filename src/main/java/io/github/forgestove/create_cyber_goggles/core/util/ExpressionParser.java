@@ -8,13 +8,13 @@ public final class ExpressionParser {
 		return c >= '0' && c <= '9' || c == '.' || "+-*/xX×÷() ".indexOf(c) >= 0;
 	}
 	public static Long evaluate(String text) {
-		var value = evaluateDouble(text);
+		Double value = evaluateDouble(text);
 		return value == null ? null : Math.round(value);
 	}
 	/** 保留小数，供倍数这类不要求整数的场景使用 */
 	public static Double evaluateDouble(String text) {
 		if (text == null || text.isBlank()) return null;
-		var value = new Parser(text).parse();
+		double value = new Parser(text).parse();
 		if (Double.isNaN(value) || Double.isInfinite(value)) return null;
 		return value;
 	}
@@ -24,31 +24,28 @@ public final class ExpressionParser {
 		private Parser(String text) {
 			this.text = text;
 		}
+		private static boolean isDigit(char c) {
+			return c >= '0' && c <= '9';
+		}
 		private double parse() {
-			var value = expression();
+			double value = expression();
 			skipSpaces();
 			return index == text.length() ? value : Double.NaN;
 		}
 		private double expression() {
-			var value = term();
-			while (true) {
-				if (consume('+')) value += term();
-				else if (consume('-')) value -= term();
-				else break;
-			}
-			return value;
+			double value = term();
+			while (true) if (consume('+')) value += term();
+			else if (consume('-')) value -= term();
+			else return value;
 		}
 		private double term() {
-			var value = unary();
-			while (true) {
-				if (consume('*') || consume('x') || consume('X') || consume('×')) value *= unary();
-				else if (consume('/') || consume('÷')) {
-					var divisor = unary();
-					if (divisor == 0) return Double.NaN;
-					value /= divisor;
-				} else break;
-			}
-			return value;
+			double value = unary();
+			while (true) if (consume('*') || consume('x') || consume('X') || consume('×')) value *= unary();
+			else if (consume('/') || consume('÷')) {
+				double divisor = unary();
+				if (divisor == 0) return Double.NaN;
+				value /= divisor;
+			} else return value;
 		}
 		private double unary() {
 			if (consume('+')) return unary();
@@ -57,10 +54,10 @@ public final class ExpressionParser {
 		}
 		private double primary() {
 			if (consume('(')) {
-				var value = expression();
+				double value = expression();
 				return consume(')') ? value : Double.NaN;
 			}
-			var start = index;
+			int start = index;
 			while (index < text.length() && (isDigit(text.charAt(index)) || text.charAt(index) == '.')) index++;
 			if (start == index) return Double.NaN;
 			try {
@@ -77,9 +74,6 @@ public final class ExpressionParser {
 		}
 		private void skipSpaces() {
 			while (index < text.length() && text.charAt(index) == ' ') index++;
-		}
-		private static boolean isDigit(char c) {
-			return c >= '0' && c <= '9';
 		}
 	}
 }

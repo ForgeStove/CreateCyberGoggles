@@ -334,6 +334,7 @@
 	"create_cyber_goggles.gui.schematicPreview.failed": "Failed to load",
 	"create_cyber_goggles.gui.schematicPreview.loading": "Loading…",
 	"create_cyber_goggles.gui.schematicPreview.none": "Select a schematic",
+	"create_cyber_goggles.gui.schematicPreview.ok": "Ready",
 	"create_cyber_goggles.gui.schematicPreview.too_large": "Schematic too large",
 	"create_cyber_goggles.gui.schematicTable.exportButton.direction": "Orientation:",
 	"create_cyber_goggles.gui.schematicTable.exportButton.direction.left": "Left",

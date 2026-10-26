@@ -2,6 +2,7 @@ package io.github.forgestove.create_cyber_goggles.core.schematic;
 import com.mojang.blaze3d.platform.NativeImage;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.schematic.SchematicRenderSettings.Builder;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import net.createmod.catnip.levelWrappers.SchematicLevel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -38,7 +39,7 @@ public class SchematicImageHandler {
 	private static final Component EMPTY_IMAGE_BAKE = SchematicLang.error("schematicImage.emptyImageBake");
 	private static final Component CONVERT_AND_VALIDATE_FAILED = SchematicLang.error("schematicImage.convertAndValidateFailed");
 	private static final Component TIMED_OUT = SchematicLang.error("schematicImage.timedOut", RENDER_TIMEOUT_SECS);
-	private static final Component CLICK_TO_OPEN_EXPORT = SchematicLang.translatable("command.schematicExport.clickToOpen");
+	private static final Component CLICK_TO_OPEN_EXPORT = CCGLang.translateDirect("command.schematicExport.clickToOpen");
 	private final CommandSourceStack source;
 	private final String schematicName;
 	private final Builder settingsBuilder;
@@ -97,7 +98,7 @@ public class SchematicImageHandler {
 			return;
 		}
 		client.execute(() -> {
-			var finalMessage = SchematicLang.translatable("command.schematicExport.success")
+			var finalMessage = CCGLang.translateDirect("command.schematicExport.success")
 				.withColor(SchematicLang.LIGHT_BLUE)
 				.append(Component.literal(outputFile.toString())
 					.withStyle(Style.EMPTY.withColor(SchematicLang.DARK_BLUE)

@@ -89,6 +89,7 @@ dependencies {
 	compileOnly("com.hollingsworth.ars_nouveau:ars_nouveau-${p("mcVersion")}:${p("arsNouveauVersion")}") { isTransitive = false }
 	compileOnly("maven.modrinth:thirst-was-reclaimed:${p("mcVersion")}-${p("thirstVersion")}")
 	runtimeOnly("maven.modrinth:jade:${p("jadeVersion")}+${p("loader")}")
+	compileOnly("com.demonwav.mcdev:annotations:2.1.0")
 	add("additionalRuntimeClasspath", mixinAgentNotation)
 }
 publishMods {

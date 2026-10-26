@@ -10,6 +10,7 @@ import com.yision.phantom.item.ticker.*;
 import com.yision.phantom.network.ticker.TunablePortableTickerSendOrderPacket;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.factory.*;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.network.chat.Component;
@@ -59,7 +60,7 @@ public abstract class TunablePortableTickerScreenMixin extends AbstractSimiConta
 			ccg$overlayOpening = true; // 本次切屏会调宿主的 removed()，别清库存缓存
 			mc.setScreen(new ReplenishScreen(thiz(), this, groups));
 		});
-		btn.setToolTip(Component.translatable("create_cyber_goggles.gui.auto_replenish.title"));
+		btn.setToolTip(CCGLang.translateDirect("gui.auto_replenish.title"));
 		addRenderableWidget(btn);
 	}
 	@Unique

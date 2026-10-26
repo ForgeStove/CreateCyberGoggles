@@ -5,12 +5,14 @@ import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
 import io.github.forgestove.create_cyber_goggles.core.factory.CCGMods;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.mc;
 public class ItemSwapUtil {
@@ -27,16 +29,16 @@ public class ItemSwapUtil {
 	}
 	public static void tick() {
 		if (mc.screen != null) return;
-		var player = mc.player;
+		LocalPlayer player = mc.player;
 		if (player == null) return;
-		var inventory = player.getInventory();
+		Inventory inventory = player.getInventory();
 		CCGKey pressedKey = null;
 		var anyHotkeyHeld = false;
-		for (var entry : getHotkeyItems().entrySet()) {
-			var key = entry.getKey();
-			var isDown = key.isDown();
+		for (Entry<CCGKey, ItemStack> entry : getHotkeyItems().entrySet()) {
+			CCGKey key = entry.getKey();
+			boolean isDown = key.isDown();
 			if (isDown) anyHotkeyHeld = true;
-			var prevDown = wasDown.getOrDefault(key, false);
+			Boolean prevDown = wasDown.getOrDefault(key, false);
 			wasDown.put(key, isDown);
 			if (isDown && !prevDown) pressedKey = key;
 		}
@@ -46,11 +48,11 @@ public class ItemSwapUtil {
 		} else if (swapped && !anyHotkeyHeld) releaseSwap(inventory);
 	}
 	private static Map<CCGKey, ItemStack> getHotkeyItems() {
-		var items = getDefaultItems();
+		LinkedHashMap<CCGKey, ItemStack> items = getDefaultItems();
 		var result = new LinkedHashMap<CCGKey, ItemStack>();
-		for (var entry : items.entrySet()) {
-			var key = entry.getKey();
-			var stack = entry.getValue();
+		for (Entry<CCGKey, ItemStack> entry : items.entrySet()) {
+			CCGKey key = entry.getKey();
+			ItemStack stack = entry.getValue();
 			if (key != null && !stack.isEmpty()) result.put(key, stack);
 		}
 		return result;
@@ -62,10 +64,10 @@ public class ItemSwapUtil {
 			if (mc.player != null) mc.player.connection.send(new ServerboundSetCarriedItemPacket(swappedHandSlot));
 		} else if (swappedOriginSlot >= 0) {
 			// 背包交换 —— 通过容器点击数据包换回（完全同步）
-			var player = mc.player;
+			LocalPlayer player = mc.player;
 			if (player != null) {
-				var container = player.containerMenu;
-				var currentMainHand = inventory.getItem(swappedHandSlot);
+				AbstractContainerMenu container = player.containerMenu;
+				ItemStack currentMainHand = inventory.getItem(swappedHandSlot);
 				var changedSlots = new Int2ObjectOpenHashMap<ItemStack>();
 				changedSlots.put(swappedOriginSlot, currentMainHand);
 				changedSlots.put(36 + swappedHandSlot, preSwapMainHand);
@@ -79,7 +81,7 @@ public class ItemSwapUtil {
 					changedSlots
 				));
 			}
-			var currentMainHand = inventory.getItem(swappedHandSlot);
+			ItemStack currentMainHand = inventory.getItem(swappedHandSlot);
 			inventory.setItem(swappedHandSlot, preSwapMainHand);
 			inventory.setItem(swappedOriginSlot, currentMainHand);
 		} else // 本地生成 —— 恢复原始物品（仅客户端）
@@ -92,10 +94,10 @@ public class ItemSwapUtil {
 		preSwapMainHand = ItemStack.EMPTY;
 	}
 	private static void pressSwap(ItemStack target, boolean isCreative, Inventory inventory) {
-		var handSlot = inventory.selected;
-		var current = inventory.getItem(handSlot);
+		int handSlot = inventory.selected;
+		ItemStack current = inventory.getItem(handSlot);
 		if (ItemStack.isSameItemSameComponents(current, target)) return;
-		var offhand = inventory.offhand.getFirst();
+		ItemStack offhand = inventory.offhand.getFirst();
 		if (ItemStack.isSameItemSameComponents(offhand, target)) return;
 		preSwapMainHand = current;
 		swappedHandSlot = handSlot;
@@ -112,10 +114,10 @@ public class ItemSwapUtil {
 		// 2) 主背包 —— 通过容器点击数据包交换（完全同步）
 		for (var i = 9; i < inventory.items.size(); i++) {
 			if (!ItemStack.isSameItemSameComponents(inventory.getItem(i), target)) continue;
-			var player = mc.player;
+			LocalPlayer player = mc.player;
 			if (player != null) {
-				var container = player.containerMenu;
-				var targetItem = inventory.getItem(i);
+				AbstractContainerMenu container = player.containerMenu;
+				ItemStack targetItem = inventory.getItem(i);
 				var changedSlots = new Int2ObjectOpenHashMap<ItemStack>();
 				changedSlots.put(i, preSwapMainHand);
 				changedSlots.put(36 + handSlot, targetItem);

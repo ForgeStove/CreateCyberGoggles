@@ -8,6 +8,7 @@ import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGCreateLang;
 import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
 import net.createmod.catnip.data.Pair;
 import net.minecraft.network.chat.Component;
@@ -147,7 +148,7 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 			ccg$plainRequest = !ccg$plainRequest;
 			button.green = !ccg$plainRequest;
 		});
-		button.setToolTip(Component.translatable("create.gui.factory_panel.activate_crafting"));
+		button.setToolTip(CCGCreateLang.translateDirect("gui.factory_panel.activate_crafting"));
 		addRenderableWidget(button);
 	}
 }

@@ -3,6 +3,7 @@ import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import io.github.forgestove.create_cyber_goggles.core.util.ExpressionParser;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.minecraft.client.Minecraft;
@@ -35,7 +36,7 @@ public class MultiplyScreen extends AbstractSimiScreen {
 	/** 各界面统一用这个按钮打开弹窗 */
 	public static IconButton createButton(int x, int y, DoubleConsumer onApply) {
 		var button = new IconButton(x, y, AllIcons.I_MTD_CLOSE);
-		button.setToolTip(Component.translatable("create_cyber_goggles.gui.multiplier.tooltip"));
+		button.setToolTip(CCGLang.translateDirect("gui.multiplier.tooltip"));
 		button.withCallback(() -> mc.setScreen(new MultiplyScreen(mc.screen, onApply)));
 		return button;
 	}
@@ -107,7 +108,7 @@ public class MultiplyScreen extends AbstractSimiScreen {
 		var pose = gui.pose();
 		pose.pushPose();
 		pose.translate(windowXOffset, windowYOffset, 0);
-		var title = Component.translatable("create_cyber_goggles.gui.multiplier.title");
+		var title = CCGLang.translateDirect("gui.multiplier.title");
 		gui.drawString(mc.font, title, (210 - mc.font.width(title)) / 2, 4, 0x303030, false);
 		AllIcons.I_MTD_CLOSE.render(gui, 16, 24);
 		pose.popPose();

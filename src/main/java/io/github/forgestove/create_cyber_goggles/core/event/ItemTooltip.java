@@ -68,7 +68,7 @@ public final class ItemTooltip {
 	private static void backtank(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!CCG.config.tooltip.backtank) return;
 		if (!(stack.getItem() instanceof BacktankItem)) return;
-		CCGLang.add(Component.translatable("create.gui.goggles.fluid_container.capacity").withStyle(ChatFormatting.GRAY))
+		CCGLang.add(CCGCreateLang.translateDirect("gui.goggles.fluid_container.capacity").withStyle(ChatFormatting.GRAY))
 			.fraction(BacktankUtil.getAir(stack), BacktankUtil.maxAir(stack))
 			.addTo(1, tooltip);
 	}
@@ -80,7 +80,7 @@ public final class ItemTooltip {
 	private static void wrench(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!CCG.config.tooltip.wrench) return;
 		if (!(stack.getItem() instanceof WrenchItem)) return;
-		CCGLang.add(Component.translatable("create_cyber_goggles.config.option.misc.wrench.leftClickFastDismantle"))
+		CCGLang.translate("config.option.misc.wrench.leftClickFastDismantle")
 			.space()
 			.enabled(CCG.config.misc.wrench.leftClickFastDismantle)
 			.addTo(1, tooltip);
@@ -130,7 +130,7 @@ public final class ItemTooltip {
 		// 提示行常驻，按住 Alt 时在其下方追加预览块
 		tooltip.add(
 			index,
-			CCGKey.hint(Component.translatable("create_cyber_goggles.gui.schematicPreview.altHint", CCGKey.keyName("Alt", alt)))
+			CCGKey.hint(CCGLang.translateDirect("gui.schematicPreview.altHint", CCGKey.keyName("Alt", alt)))
 		);
 		if (!alt) return;
 		var marker = Component.empty();

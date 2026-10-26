@@ -1,4 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.util;
+import com.demonwav.mcdev.annotations.Translatable;
+import io.github.forgestove.create_cyber_goggles.CCG;
 import joptsimple.internal.Strings;
 import net.createmod.catnip.lang.LangNumberFormat;
 import net.minecraft.ChatFormatting;
@@ -23,11 +25,32 @@ public class CCGLangBuilder {
 	public CCGLangBuilder(String namespace) {
 		this.namespace = namespace;
 	}
+	static int getIndents(Font font, int defaultIndents) {
+		int spaceWidth = font.width(" ");
+		if (DEFAULT_SPACE_WIDTH == spaceWidth) return defaultIndents;
+		return Mth.ceil(DEFAULT_SPACE_WIDTH * defaultIndents / spaceWidth);
+	}
 	public CCGLangBuilder space() {
 		return text(" ");
 	}
 	public CCGLangBuilder text(String literalText) {
 		return add(Component.literal(literalText));
+	}
+	public CCGLangBuilder translate(@Translatable(prefix = CCG.ID + '.', foldMethod = true) String langKey) {
+		return add(Component.translatable(namespace + "." + langKey));
+	}
+	public CCGLangBuilder translate(@Translatable(prefix = CCG.ID + '.', foldMethod = true) String langKey, ChatFormatting format) {
+		return add(Component.translatable(namespace + "." + langKey).withStyle(format));
+	}
+	public CCGLangBuilder translate(@Translatable(prefix = CCG.ID + '.', foldMethod = true) String langKey, Object... args) {
+		return add(Component.translatable(namespace + "." + langKey, args));
+	}
+	public CCGLangBuilder translate(
+		@Translatable(prefix = CCG.ID + '.', foldMethod = true) String langKey,
+		ChatFormatting format,
+		Object... args
+	) {
+		return add(Component.translatable(namespace + "." + langKey, args).withStyle(format));
 	}
 	public CCGLangBuilder add(MutableComponent customComponent) {
 		if (customComponent.getStyle().isEmpty()) customComponent.withStyle(WHITE);
@@ -35,10 +58,10 @@ public class CCGLangBuilder {
 		return this;
 	}
 	public CCGLangBuilder seconds() {
-		return add(Component.translatable("create.generic.unit.seconds"));
+		return add(CCGCreateLang.translateDirect("generic.unit.seconds"));
 	}
 	public CCGLangBuilder seconds(ChatFormatting... formats) {
-		return add(Component.translatable("create.generic.unit.seconds").withStyle(formats));
+		return add(CCGCreateLang.translateDirect("generic.unit.seconds").withStyle(formats));
 	}
 	public CCGLangBuilder text(String literalText, int color) {
 		return add(Component.literal(literalText).withStyle(style -> style.withColor(color)));
@@ -74,14 +97,12 @@ public class CCGLangBuilder {
 		return text(String.valueOf(number), formats);
 	}
 	public CCGLangBuilder is(boolean is) {
-		return add(is
-			? Component.translatable("create_cyber_goggles.message.is").withStyle(GREEN)
-			: Component.translatable("create_cyber_goggles.message.not").withStyle(RED));
+		return add(is ? CCGLang.translateDirect("message.is").withStyle(GREEN) : CCGLang.translateDirect("message.not").withStyle(RED));
 	}
 	public CCGLangBuilder enabled(boolean enabled) {
 		return add(enabled
-			? Component.translatable("create_cyber_goggles.message.enabled").withStyle(GREEN)
-			: Component.translatable("create_cyber_goggles.message.disabled").withStyle(RED));
+			? CCGLang.translateDirect("message.enabled").withStyle(GREEN)
+			: CCGLang.translateDirect("message.disabled").withStyle(RED));
 	}
 	public CCGLangBuilder progress(float progress, int totalBars) {
 		var filledBars = (int) (Mth.clamp(progress, 0, 1) * totalBars);
@@ -106,7 +127,7 @@ public class CCGLangBuilder {
 	public CCGLangBuilder style(ChatFormatting... formats) {
 		if (component == null) return this;
 		component = component.withStyle(formats);
-		var siblings = component.getSiblings();
+		List<Component> siblings = component.getSiblings();
 		siblings.replaceAll(c -> c.copy().withStyle(formats));
 		return this;
 	}
@@ -156,11 +177,6 @@ public class CCGLangBuilder {
 	}
 	public CCGLangBuilder add(CCGLangBuilder builder) {
 		return add(builder.component());
-	}
-	static int getIndents(Font font, int defaultIndents) {
-		var spaceWidth = font.width(" ");
-		if (DEFAULT_SPACE_WIDTH == spaceWidth) return defaultIndents;
-		return Mth.ceil(DEFAULT_SPACE_WIDTH * defaultIndents / spaceWidth);
 	}
 	public void forGoggles(int index, List<? super MutableComponent> tooltip) {
 		forGoggles(index, tooltip, 0);

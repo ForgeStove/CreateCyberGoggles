@@ -12,11 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Pseudo
 @Mixin(DiagramDataPacket.class)
 public abstract class DiagramDataPacketMixin {
-	@Inject(
-		method = "handle(Ldev/simulated_team/simulated/network/packets/contraption_diagram/DiagramDataPacket;)V",
-		at = @At("TAIL"),
-		remap = false
-	)
+	@Inject(method = "handle(Ldev/simulated_team/simulated/network/packets/contraption_diagram/DiagramDataPacket;)V", at = @At("TAIL"))
 	private static void handle(DiagramDataPacket packet, CallbackInfo ci) {
 		if (!CCG.config.aeronautics.forceOverlay.enableForceOverlay) return;
 		ForceDataCache.set(packet);

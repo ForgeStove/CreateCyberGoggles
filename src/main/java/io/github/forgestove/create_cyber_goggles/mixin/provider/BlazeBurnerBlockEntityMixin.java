@@ -1,10 +1,9 @@
 package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity;
-import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity.FuelType;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.GoggleTooltip;
-import io.github.forgestove.create_cyber_goggles.core.util.contract.*;
+import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
@@ -12,28 +11,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 @Mixin(BlazeBurnerBlockEntity.class)
-public abstract class BlazeBurnerBlockEntityMixin implements IHaveGoggleInformation, BurnerTooltipData, Self<BlazeBurnerBlockEntity> {
-	@Shadow public boolean isCreative;
+public abstract class BlazeBurnerBlockEntityMixin implements IHaveGoggleInformation, Self<BlazeBurnerBlockEntity> {
 	@Shadow protected int remainingBurnTime;
-	@Shadow protected FuelType activeFuel;
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		return GoggleTooltip.dispatch(thiz(), tooltip, isPlayerSneaking, null);
-	}
-	@Override
-	public int ccg$getRemainingBurnTime() {
-		return remainingBurnTime;
-	}
-	@Override
-	public FuelType ccg$getActiveFuel() {
-		return activeFuel;
+		return GoggleTooltip.dispatch(tooltip, thiz(), isPlayerSneaking, null);
 	}
 	@Inject(method = "tick", at = @At("HEAD"))
 	public void tick(CallbackInfo ci) {
 		if (!CCG.config.goggles.enhancedInfo) return;
-		var level = thiz().getLevel();
+		BlazeBurnerBlockEntity thiz = thiz();
+		var level = thiz.getLevel();
 		if (level == null || !level.isClientSide) return;
-		if (isCreative) return;
-		if (remainingBurnTime > 0) remainingBurnTime--;
+		if (thiz.isCreative) return;
+		if (thiz.getRemainingBurnTime() > 0) remainingBurnTime--;
 	}
 }

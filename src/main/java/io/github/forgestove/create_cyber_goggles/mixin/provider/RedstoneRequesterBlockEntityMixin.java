@@ -11,6 +11,6 @@ import java.util.List;
 public abstract class RedstoneRequesterBlockEntityMixin implements IHaveGoggleInformation, Self<RedstoneRequesterBlockEntity> {
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		return GoggleTooltip.dispatch(thiz(), tooltip, isPlayerSneaking, null);
+		return GoggleTooltip.dispatch(tooltip, thiz(), isPlayerSneaking, null);
 	}
 }

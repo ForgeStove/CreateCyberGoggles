@@ -5,7 +5,7 @@ import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelScreen;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
-import io.github.forgestove.create_cyber_goggles.core.factory.MultiplyAllWidget;
+import io.github.forgestove.create_cyber_goggles.core.factory.MultiplyScreen;
 import io.github.forgestove.create_cyber_goggles.core.factory.RequestAmountScreen;
 import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
 import net.createmod.catnip.gui.AbstractSimiScreen;
@@ -48,16 +48,14 @@ public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen impleme
 	@Inject(method = "init", at = @At("TAIL"))
 	private void ccg$addMultiplier(CallbackInfo ci) {
 		if (!CCG.config.misc.multiplyAllValues) return;
-		var widget = new MultiplyAllWidget(guiLeft + 31, guiTop + (restocker ? 69 : 89), this::ccg$multiplyAll);
-		addRenderableWidget(widget.field());
-		addRenderableWidget(widget.button());
+		addRenderableWidget(MultiplyScreen.createButton(guiLeft + 31, guiTop + (restocker ? 67 : 87), this::ccg$multiplyAll));
 	}
 	@Unique
 	private void ccg$multiplyAll(double factor) {
 		var max = CCG.config.misc.removeRequestLimit ? Integer.MAX_VALUE : 64;
-		if (!outputConfig.stack.isEmpty()) outputConfig.count = MultiplyAllWidget.scale(outputConfig.count, factor, 1, max);
+		if (!outputConfig.stack.isEmpty()) outputConfig.count = MultiplyScreen.scale(outputConfig.count, factor, 1, max);
 		for (var stack : inputConfig)
-			if (!stack.stack.isEmpty()) stack.count = MultiplyAllWidget.scale(stack.count, factor, 1, max);
+			if (!stack.stack.isEmpty()) stack.count = MultiplyScreen.scale(stack.count, factor, 1, max);
 	}
 	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
 	public void openPopup(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {

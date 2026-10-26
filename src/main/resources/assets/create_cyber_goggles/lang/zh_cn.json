@@ -322,6 +322,7 @@
 	"create_cyber_goggles.gui.auto_replenish.switch_recipe": "左键以切换配方",
 	"create_cyber_goggles.gui.auto_replenish.title": "自动补齐缺货",
 	"create_cyber_goggles.gui.auto_replenish.uncraftable": "无法合成",
+	"create_cyber_goggles.gui.multiplier.title": "倍数",
 	"create_cyber_goggles.gui.multiplier.tooltip": "将本界面所有数值乘以输入倍数",
 	"create_cyber_goggles.gui.redstoneRequester.altHint": "按住 [%s] 以原版合成器网格填入",
 	"create_cyber_goggles.gui.redstoneRequester.shiftHint": "按住 [%s] 以 64 倍数量填入",

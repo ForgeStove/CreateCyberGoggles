@@ -19,7 +19,7 @@ public abstract class NozzleBlockEntityMixin
 	@Shadow private float range;
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		return GoggleTooltip.dispatch(thiz(), tooltip, isPlayerSneaking, null);
+		return GoggleTooltip.dispatch(tooltip, thiz(), isPlayerSneaking, null);
 	}
 	@Override
 	public boolean ccg$getPushing() {

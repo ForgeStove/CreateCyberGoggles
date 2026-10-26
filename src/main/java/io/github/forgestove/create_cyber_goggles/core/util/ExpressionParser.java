@@ -8,10 +8,15 @@ public final class ExpressionParser {
 		return c >= '0' && c <= '9' || c == '.' || "+-*/xX×÷() ".indexOf(c) >= 0;
 	}
 	public static Long evaluate(String text) {
+		var value = evaluateDouble(text);
+		return value == null ? null : Math.round(value);
+	}
+	/** 保留小数，供倍数这类不要求整数的场景使用 */
+	public static Double evaluateDouble(String text) {
 		if (text == null || text.isBlank()) return null;
 		var value = new Parser(text).parse();
 		if (Double.isNaN(value) || Double.isInfinite(value)) return null;
-		return Math.round(value);
+		return value;
 	}
 	private static final class Parser {
 		private final String text;

@@ -19,7 +19,7 @@ import java.util.List;
 @Mixin(BacktankBlockEntity.class)
 public abstract class BacktankBlockEntityMixin extends KineticBlockEntity
 	implements IHaveGoggleInformation, BacktankTooltipData, Self<BacktankBlockEntity> {
-	@Unique public int ccg$leftTick;
+	@Unique private int ccg$leftTick;
 	@Unique public int ccg$prevAirLevel;
 	@Shadow public int airLevel;
 	@Shadow public int airLevelTimer;
@@ -29,7 +29,7 @@ public abstract class BacktankBlockEntityMixin extends KineticBlockEntity
 	}
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		return GoggleTooltip.dispatch(thiz(), tooltip, isPlayerSneaking, () -> super.addToGoggleTooltip(tooltip, isPlayerSneaking));
+		return GoggleTooltip.dispatch(tooltip, thiz(), isPlayerSneaking, () -> super.addToGoggleTooltip(tooltip, isPlayerSneaking));
 	}
 	@Override
 	public int ccg$getCapacityEnchantLevel() {

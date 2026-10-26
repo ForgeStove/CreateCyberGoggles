@@ -13,17 +13,18 @@ import java.util.function.*;
 /**
  * 护目镜悬浮内容（goggle tooltip）条目注册表。
  * <p>
- * CCG 对 {@code addToGoggleTooltip} 的覆写不再独占内容，改为调度此处注册的条目：
- * 第三方模组可按「目标方块实体 + 命名锚点」插入自己的整段内容，与 CCG 内建条目共存。
+ * 条目以「目标方块实体类型 + 条目 id」登记，由 {@link #dispatch} 按注册顺序执行；
+ * {@link #NATIVE} 占位标记目标类型原生内容的执行位置。
  * </p>
- * 注册请在 common 端初始化时完成，且 provider 需保持双端安全（Jade 等服务端收集路径也会走到）。
- * 条目只允许追加内容，不要清空或截断 tooltip。CCG 的配置开关只门控 CCG 自己的条目，不门控第三方条目。
- * 命名空间为 {@code create_cyber_goggles} 的条目视为 CCG 内建，不做异常隔离；其余条目逐个 try/catch，
- * 抛异常时 WARN 一次并继续，不会拖垮其他条目。
+ * <p>
+ * 条目只能向 tooltip 追加内容，不得清空或替换已有元素；CCG 配置开关仅控制内建条目。
+ * {@code create_cyber_goggles} 命名空间视为内建条目，异常直接向调用方传播；其余条目捕获后跳过，
+ * 同一 id 仅记录一次 WARN。
+ * </p>
  */
 @SuppressWarnings("unused")
 public final class GoggleTooltip {
-	/** 保留占位条目 id：仅代表「Create 原生内容在此位置」，dispatch 走到此处时调用 mixin 传入的原生回调。 */
+	/** 占位条目 id：标记目标类型原生内容的执行位置。 */
 	public static final ResourceLocation NATIVE = CCGMods.create.rl("native");
 	private static final GoggleTooltipRegistry<Context> REGISTRY = new GoggleTooltipRegistry<>(
 		NATIVE.toString(), CCG.ID, (message, t) -> {
@@ -31,58 +32,65 @@ public final class GoggleTooltip {
 		else CCG.LOGGER.warn(message, t);
 	}
 	);
-	/** 把内容条目追加到目标悬浮窗末尾（最常用）。 */
-	public static void register(Class<? extends BlockEntity> target, ResourceLocation id, Provider provider) {
-		REGISTRY.register(target, check(id), wrap(provider));
+	/** 在目标类型的条目列表末尾追加条目。 */
+	public static <T extends BlockEntity> void register(Class<T> target, ResourceLocation id, Provider<? super T> provider) {
+		REGISTRY.register(target, check(id), wrap(target, provider));
+	}
+	/** 在目标类型的条目列表末尾追加不关心 Shift 状态的条目。 */
+	public static <T extends BlockEntity> void register(Class<T> target, ResourceLocation id, SimpleProvider<? super T> provider) {
+		Objects.requireNonNull(provider, "provider");
+		register(target, id, (tooltip, be, sneaking) -> provider.add(tooltip, be));
 	}
 	private static String check(ResourceLocation id) {
 		if (id.equals(NATIVE)) throw new IllegalArgumentException(NATIVE + " is a reserved placeholder id");
 		return id.toString();
 	}
-	private static Function<Context, Boolean> wrap(Provider provider) {
+	private static <T extends BlockEntity> Function<Context, Boolean> wrap(Class<T> target, Provider<? super T> provider) {
 		Objects.requireNonNull(provider, "provider");
-		return context -> provider.add(context.be(), context.tooltip(), context.isPlayerSneaking());
+		return context -> provider.add(context.tooltip(), target.cast(context.be()), context.isPlayerSneaking());
 	}
-	/** 把内容条目插入到指定锚点条目之前（锚点不存在则退化为末尾追加并 WARN）。 */
-	public static void registerBefore(
-		Class<? extends BlockEntity> target,
+	/** 在指定锚点条目之前插入；锚点不存在时追加到末尾并记录 WARN。 */
+	public static <T extends BlockEntity> void registerBefore(
+		Class<T> target,
 		ResourceLocation anchorId,
 		ResourceLocation id,
-		Provider provider
+		Provider<? super T> provider
 	) {
-		REGISTRY.registerBefore(target, anchorId.toString(), check(id), wrap(provider));
+		REGISTRY.registerBefore(target, anchorId.toString(), check(id), wrap(target, provider));
 	}
-	/** 把内容条目插入到指定锚点条目之后（锚点不存在则退化为末尾追加并 WARN）。 */
-	public static void registerAfter(
-		Class<? extends BlockEntity> target,
+	/** 在指定锚点条目之后插入；锚点不存在时追加到末尾并记录 WARN。 */
+	public static <T extends BlockEntity> void registerAfter(
+		Class<T> target,
 		ResourceLocation anchorId,
 		ResourceLocation id,
-		Provider provider
+		Provider<? super T> provider
 	) {
-		REGISTRY.registerAfter(target, anchorId.toString(), check(id), wrap(provider));
+		REGISTRY.registerAfter(target, anchorId.toString(), check(id), wrap(target, provider));
 	}
-	/** 内部用：在目标条目列表末尾注册 {@link #NATIVE} 占位，仅供 CCG 自注册引导调用。 */
+	/** 内部用：为指定类型注册 {@link #NATIVE} 占位。 */
 	@Internal
 	public static void registerNative(Class<? extends BlockEntity> target) {
 		REGISTRY.register(target, NATIVE.toString(), null);
 	}
-	/**
-	 * 内部用：mixin 覆写体内的调度入口。按注册顺序执行条目，{@link #NATIVE} 占位处调用
-	 * nativeFallback（可为 null）；返回值为 nativeFallback 结果与任一条目返回值的或。
-	 */
+	/** 内部用：mixin 覆写体内的分发入口，仅限客户端调用；{@link #NATIVE} 处调用 {@code nativeFallback}。 */
 	@Internal
 	public static boolean dispatch(
-		BlockEntity be,
 		List<Component> tooltip,
+		BlockEntity be,
 		boolean isPlayerSneaking,
 		@Nullable BooleanSupplier nativeFallback
 	) {
-		return REGISTRY.dispatch(new Context(be, tooltip, isPlayerSneaking), be.getClass(), nativeFallback);
+		return REGISTRY.dispatch(new Context(tooltip, be, isPlayerSneaking), be.getClass(), nativeFallback);
 	}
 	@FunctionalInterface
-	public interface Provider {
-		/** 往悬浮窗追加内容；返回 true 表示添加了内容。 */
-		boolean add(BlockEntity be, List<Component> tooltip, boolean isPlayerSneaking);
+	public interface Provider<T extends BlockEntity> {
+		/** 向 tooltip 追加内容；返回 {@code true} 表示添加了内容。 */
+		boolean add(List<Component> tooltip, T be, boolean isPlayerSneaking);
 	}
-	private record Context(BlockEntity be, List<Component> tooltip, boolean isPlayerSneaking) {}
+	@FunctionalInterface
+	public interface SimpleProvider<T extends BlockEntity> {
+		/** 向 tooltip 追加内容；返回 {@code true} 表示添加了内容。 */
+		boolean add(List<Component> tooltip, T be);
+	}
+	private record Context(List<Component> tooltip, BlockEntity be, boolean isPlayerSneaking) {}
 }

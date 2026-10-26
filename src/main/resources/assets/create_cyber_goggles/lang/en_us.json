@@ -322,6 +322,7 @@
 	"create_cyber_goggles.gui.auto_replenish.switch_recipe": "Left-click to switch recipe",
 	"create_cyber_goggles.gui.auto_replenish.title": "Auto Replenish",
 	"create_cyber_goggles.gui.auto_replenish.uncraftable": "Uncraftable",
+	"create_cyber_goggles.gui.multiplier.title": "Multiplier",
 	"create_cyber_goggles.gui.multiplier.tooltip": "Multiply all values by the entered factor",
 	"create_cyber_goggles.gui.redstoneRequester.altHint": "Hold [%s] to fill by vanilla crafting grid",
 	"create_cyber_goggles.gui.redstoneRequester.shiftHint": "Hold [%s] to fill with 64x the amount",

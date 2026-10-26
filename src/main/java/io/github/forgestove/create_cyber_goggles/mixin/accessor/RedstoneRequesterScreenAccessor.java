@@ -8,16 +8,12 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 import java.util.List;
 @Mixin(RedstoneRequesterScreen.class)
 public interface RedstoneRequesterScreenAccessor {
-	/** 红石请求器界面每格的请求数量 */
 	@Accessor
 	List<Integer> getAmounts();
-	/** 请求地址输入框 */
 	@Accessor
 	AddressEditBox getAddressBox();
-	/** 「允许部分请求」开关按钮 */
 	@Accessor
 	IconButton getAllowPartial();
-	/** 「禁止部分请求」开关按钮 */
 	@Accessor
 	IconButton getDontAllowPartial();
 }

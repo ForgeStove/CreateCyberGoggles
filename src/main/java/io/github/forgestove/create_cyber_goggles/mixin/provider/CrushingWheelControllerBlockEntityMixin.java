@@ -15,7 +15,7 @@ public abstract class CrushingWheelControllerBlockEntityMixin
 	implements IHaveGoggleInformation, ItemRenderable, Self<CrushingWheelControllerBlockEntity> {
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		return GoggleTooltip.dispatch(thiz(), tooltip, isPlayerSneaking, null);
+		return GoggleTooltip.dispatch(tooltip, thiz(), isPlayerSneaking, null);
 	}
 	@Override
 	public ItemStack ccg$getItemStack() {

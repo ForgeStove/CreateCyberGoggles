@@ -5,7 +5,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(AddressEditBox.class)
 public interface AddressEditBoxAccessor {
-	/** 地址输入框右挂的剪贴板/站点下拉建议 */
 	@Accessor
 	DestinationSuggestions getDestinationSuggestions();
 }

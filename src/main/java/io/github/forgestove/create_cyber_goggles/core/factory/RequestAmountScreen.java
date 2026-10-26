@@ -1,10 +1,11 @@
 package io.github.forgestove.create_cyber_goggles.core.factory;
+import com.mojang.blaze3d.platform.Window;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.content.logistics.box.PackageStyles;
 import com.simibubi.create.foundation.gui.*;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
-import io.github.forgestove.create_cyber_goggles.core.util.ExpressionParser;
+import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.minecraft.client.Minecraft;
@@ -12,7 +13,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.*;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
@@ -43,9 +44,9 @@ public class RequestAmountScreen extends AbstractSimiScreen {
 	protected void init() {
 		int popupWidth = 218, POPUPHEIGHT = 79;
 		setWindowSize(popupWidth, POPUPHEIGHT);
-		var window = mc.getWindow();
-		var x = (window.getGuiScaledWidth() - popupWidth) / 2;
-		var y = (window.getGuiScaledHeight() - POPUPHEIGHT) / 2;
+		Window window = mc.getWindow();
+		int x = (window.getGuiScaledWidth() - popupWidth) / 2;
+		int y = (window.getGuiScaledHeight() - POPUPHEIGHT) / 2;
 		setWindowOffset(x, y);
 		super.init();
 		var confirmButton = new IconButton(x + 185, y + 55, AllIcons.I_CONFIRM);
@@ -60,7 +61,7 @@ public class RequestAmountScreen extends AbstractSimiScreen {
 			: value -> value.chars().allMatch(Character::isDigit));
 		amountInput.setResponder(text -> {
 			if (text.isEmpty()) return;
-			var value = ExpressionParser.evaluate(text);
+			Long value = ExpressionParser.evaluate(text);
 			if (value != null && value > max) amountInput.setValue(Integer.toString(max));
 		});
 		amountInput.setBordered(false);
@@ -68,12 +69,21 @@ public class RequestAmountScreen extends AbstractSimiScreen {
 		amountInput.setFocused(true);
 		addRenderableWidgets(confirmButton, cancelButton, amountInput);
 	}
-	protected void apply() {
-		var text = amountInput.getValue();
-		var value = text.isEmpty() ? Long.valueOf(1) : ExpressionParser.evaluate(text);
-		if (value == null) return;
-		onApply.accept((int) Mth.clamp(value, 0L, max));
-		onClose();
+	@Override
+	protected void renderWindowBackground(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+		PoseStack pose = gui.pose();
+		pose.pushPose();
+		pose.translate(0, 0, -500);
+		Screen currentScreen = mc.screen;
+		mc.screen = parentScreen;
+		parentScreen.renderBackground(gui, -1, -1, partialTick);
+		parentScreen.render(gui, -1, -1, partialTick);
+		mc.screen = currentScreen;
+		pose.popPose();
+		pose.pushPose();
+		pose.translate(windowXOffset, windowYOffset, 0);
+		AllGuiTextures.PACKAGE_FILTER.render(gui, 0, 0);
+		pose.popPose();
 	}
 	@Override
 	public void onClose() {
@@ -86,14 +96,19 @@ public class RequestAmountScreen extends AbstractSimiScreen {
 		super.resize(minecraft, width, height);
 	}
 	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-		if (amountInput.isHoveredOrFocused()) {
-			var current = ExpressionParser.evaluate(amountInput.getValue());
-			var base = current == null ? 0L : current;
-			var amount = Mth.clamp(base + (long) (getModifiedScrollAmount() * scrollY), 0L, max);
-			amountInput.setValue(Long.toString(amount));
-		}
-		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+	protected void renderWindow(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+		PoseStack pose = gui.pose();
+		pose.pushPose();
+		pose.translate(windowXOffset, windowYOffset, 0);
+		if (amountInput.getValue().isEmpty()) gui.drawString(mc.font, String.valueOf(max), 44, 28, 0x808080, false);
+		if (CCG.config.misc.expressionInput) renderPreview(gui);
+		GuiGameElement.of(stack).at(16, 24).render(gui);
+		MutableComponent title = CCGLang.itemName(stack).component();
+		gui.drawString(mc.font, title, (210 - mc.font.width(title)) / 2, 4, 0x303030, false);
+		GuiGameElement.of(packageBox).scale(3).at(215, 35, 0).render(gui);
+		pose.popPose();
+		if (mouseX >= windowXOffset + 16 && mouseX < windowXOffset + 32 && mouseY >= windowYOffset + 24 && mouseY < windowYOffset + 40)
+			gui.renderComponentTooltip(mc.font, getTooltipFromItem(mc, stack), mouseX, mouseY);
 	}
 	@Override
 	public boolean charTyped(char codePoint, int modifiers) {
@@ -113,48 +128,34 @@ public class RequestAmountScreen extends AbstractSimiScreen {
 		}
 		return amountInput.keyPressed(keyCode, scanCode, modifiers);
 	}
-	@Override
-	protected void renderWindow(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
-		var pose = gui.pose();
-		pose.pushPose();
-		pose.translate(windowXOffset, windowYOffset, 0);
-		if (amountInput.getValue().isEmpty()) gui.drawString(mc.font, String.valueOf(max), 44, 28, 0x808080, false);
-		if (CCG.config.misc.expressionInput) renderPreview(gui);
-		GuiGameElement.of(stack).at(16, 24).render(gui);
-		var title = CCGLang.itemName(stack).component();
-		gui.drawString(mc.font, title, (210 - mc.font.width(title)) / 2, 4, 0x303030, false);
-		GuiGameElement.of(packageBox).scale(3).at(215, 35, 0).render(gui);
-		pose.popPose();
-		if (mouseX >= windowXOffset + 16 && mouseX < windowXOffset + 32 && mouseY >= windowYOffset + 24 && mouseY < windowYOffset + 40)
-			gui.renderComponentTooltip(mc.font, getTooltipFromItem(mc, stack), mouseX, mouseY);
-	}
-	/** 输入含运算符时在右侧显示求值结果 */
-	private void renderPreview(GuiGraphics gui) {
-		var text = amountInput.getValue();
-		if (text.isEmpty() || text.chars().allMatch(Character::isDigit)) return;
-		var value = ExpressionParser.evaluate(text);
+	protected void apply() {
+		String text = amountInput.getValue();
+		Long value = text.isEmpty() ? Long.valueOf(1) : ExpressionParser.evaluate(text);
 		if (value == null) return;
-		var preview = "= " + value;
-		var x = 44 + 129 - mc.font.width(preview);
-		if (x < 44 + mc.font.width(text) + 4) return;
-		gui.drawString(mc.font, preview, x, 28, 0x808080, false);
+		onApply.accept((int) Mth.clamp(value, 0L, max));
+		onClose();
+	}
+	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+		if (amountInput.isHoveredOrFocused()) {
+			Long current = ExpressionParser.evaluate(amountInput.getValue());
+			long base = current == null ? 0L : current;
+			long amount = Mth.clamp(base + (long) (getModifiedScrollAmount() * scrollY), 0L, max);
+			amountInput.setValue(Long.toString(amount));
+		}
+		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
 	}
 	@Override
 	protected void renderMenuBackground(@NotNull GuiGraphics gui, int x, int y, int width, int height) {}
-	@Override
-	protected void renderWindowBackground(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
-		var pose = gui.pose();
-		pose.pushPose();
-		pose.translate(0, 0, -500);
-		var currentScreen = mc.screen;
-		mc.screen = parentScreen;
-		parentScreen.renderBackground(gui, -1, -1, partialTick);
-		parentScreen.render(gui, -1, -1, partialTick);
-		mc.screen = currentScreen;
-		pose.popPose();
-		pose.pushPose();
-		pose.translate(windowXOffset, windowYOffset, 0);
-		AllGuiTextures.PACKAGE_FILTER.render(gui, 0, 0);
-		pose.popPose();
+	/** 输入含运算符时在右侧显示求值结果 */
+	private void renderPreview(GuiGraphics gui) {
+		String text = amountInput.getValue();
+		if (text.isEmpty() || text.chars().allMatch(Character::isDigit)) return;
+		Long value = ExpressionParser.evaluate(text);
+		if (value == null) return;
+		String preview = "= " + value;
+		int x = 44 + 129 - mc.font.width(preview);
+		if (x < 44 + mc.font.width(text) + 4) return;
+		gui.drawString(mc.font, preview, x, 28, 0x808080, false);
 	}
 }

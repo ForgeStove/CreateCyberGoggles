@@ -22,7 +22,7 @@ public abstract class BlockPropertiesTooltipMixin {
 		@Local(name = "mass") double mass
 	) {
 		if (!CCG.config.aeronautics.alwaysShowMass) return;
-		var comp = CCGLang.translateDirect("tooltip.mass.medium");
+		MutableComponent comp = CCGLang.translateDirect("tooltip.mass.medium");
 		if (showNumbers) comp.append(formatValue("simulated.unit.mass", mass).withStyle(ChatFormatting.DARK_GRAY));
 		cir.setReturnValue(comp);
 	}
@@ -39,7 +39,7 @@ public abstract class BlockPropertiesTooltipMixin {
 		@Local(name = "friction") double friction
 	) {
 		if (!CCG.config.aeronautics.alwaysShowFriction) return;
-		var comp = CCGLang.translateDirect("tooltip.friction.medium");
+		MutableComponent comp = CCGLang.translateDirect("tooltip.friction.medium");
 		if (showNumbers) comp.append(formatValue("simulated.unit.friction", friction).withStyle(ChatFormatting.DARK_GRAY));
 		cir.setReturnValue(comp);
 	}

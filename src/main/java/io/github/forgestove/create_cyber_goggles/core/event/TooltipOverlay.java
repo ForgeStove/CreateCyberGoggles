@@ -1,31 +1,34 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
-import com.mojang.blaze3d.vertex.ByteBufferBuilder;
+import com.mojang.blaze3d.vertex.*;
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
-import com.simibubi.create.infrastructure.config.AllConfigs;
+import com.simibubi.create.infrastructure.config.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.CCGConfig.Overlay;
 import io.github.forgestove.create_cyber_goggles.api.ItemRenderable;
 import io.github.forgestove.create_cyber_goggles.core.factory.*;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientFluidEntryTooltipComponent.FluidEntryTooltipComponent;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientFluidListTooltipComponent.FluidListTooltipComponent;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientItemEntryTooltipComponent.ItemEntryTooltipComponent;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientItemListTooltipComponent.ItemListTooltipComponent;
-import io.github.forgestove.create_cyber_goggles.core.factory.ClientSchematicPreviewTooltipComponent;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientSchematicPreviewTooltipComponent.SchematicPreviewTooltip;
 import io.github.forgestove.create_cyber_goggles.core.factory.TooltipTheme.Theme;
 import io.github.forgestove.create_cyber_goggles.core.util.TooltipComponentUtil;
+import io.github.forgestove.create_cyber_goggles.core.util.TooltipComponentUtil.MarkerSplit;
 import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.*;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.*;
 import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.ClientHooks;
-import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
+import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.event.RenderTooltipEvent.Pre;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -49,7 +52,7 @@ public final class TooltipOverlay {
 			return;
 		}
 		if (!CCG.config.goggles.canRenderOnValueBox && hasActivedValueBox()) return;
-		var itemStack = toRenderItemStack();
+		ItemStack itemStack = toRenderItemStack();
 		if (itemStack.isEmpty()) {
 			if (CCG.config.goggles.enableFadeOut && hoverTicks > 0) {
 				hoverTicks = Math.max(0, hoverTicks - getRealtimeDeltaTicks() * 2);
@@ -74,35 +77,40 @@ public final class TooltipOverlay {
 	}
 	public static void renderItemStack(@NotNull GuiGraphics gui, @NotNull ItemStack itemStack) {
 		if (itemStack.isEmpty()) return;
-		var pose = gui.pose();
+		PoseStack pose = gui.pose();
 		pose.pushPose();
-		var overlay = CCG.config.overlay;
-		var cfg = AllConfigs.client();
-		var theme = getTheme();
-		var back = theme.backColor();
-		var top = theme.topColor();
-		var bot = theme.botColor();
-		var fade = Mth.clamp(hoverTicks / 8F, 0, 1);
+		Overlay overlay = CCG.config.overlay;
+		CClient cfg = AllConfigs.client();
+		Theme theme = getTheme();
+		Color back = theme.backColor();
+		Color top = theme.topColor();
+		Color bot = theme.botColor();
+		float fade = Mth.clamp(hoverTicks / 8F, 0, 1);
 		if (fade < 1) {
 			pose.translate(Math.pow(1 - fade, 3) * Math.signum(cfg.overlayOffsetX.get() + 0.5D) * 8, 0, 0);
 			back.scaleAlpha(fade);
 			top.scaleAlpha(fade);
 			bot.scaleAlpha(fade);
 		}
-		var width = gui.guiWidth();
-		var height = gui.guiHeight();
-		var x = width / 2 + cfg.overlayOffsetX.get() + overlay.overlayPos.x;
-		var y = height / 2 + cfg.overlayOffsetY.get() + overlay.overlayPos.y;
+		int width = gui.guiWidth();
+		int height = gui.guiHeight();
+		int x = width / 2 + cfg.overlayOffsetX.get() + overlay.overlayPos.x;
+		int y = height / 2 + cfg.overlayOffsetY.get() + overlay.overlayPos.y;
 		if (overlay.tooltipFlagType == null) overlay.tooltipFlagType = TooltipFlagType.Default;
-		var tooltipLines = itemStack.getTooltipLines(TooltipContext.of(mc.level), mc.player, overlay.tooltipFlagType.getFlag());
-		var components = buildTooltipComponents(tooltipLines, width - x - 16, true);
+		List<Component> tooltipLines = itemStack.getTooltipLines(TooltipContext.of(mc.level), mc.player,
+			overlay.tooltipFlagType.getFlag());
+		List<ClientTooltipComponent> components = buildTooltipComponents(tooltipLines, width - x - 16, true);
 		// tooltipLines 可能为空（部分物品无 tooltip 行），此时 components 为空，需用 add 而非 set
-		var itemEntryComponent = ClientTooltipComponent.create(new ItemEntryTooltipComponent(itemStack, 0, itemStack.getHoverName()));
+		ClientTooltipComponent itemEntryComponent = ClientTooltipComponent.create(new ItemEntryTooltipComponent(
+			itemStack,
+			0,
+			itemStack.getHoverName()
+		));
 		if (components.isEmpty()) components.add(itemEntryComponent);
 		else components.set(0, itemEntryComponent);
 		var tooltipWidth = 0;
 		var tooltipHeight = 0;
-		for (var component : components) {
+		for (ClientTooltipComponent component : components) {
 			tooltipWidth = Math.max(tooltipWidth, component.getWidth(mc.font));
 			tooltipHeight += component.getHeight();
 		}
@@ -115,19 +123,19 @@ public final class TooltipOverlay {
 		pose.popPose();
 	}
 	public static @NotNull Theme getTheme() {
-		var overlay = CCG.config.overlay;
-		var useCCGCustom = overlay.useCustomColor;
+		Overlay overlay = CCG.config.overlay;
+		boolean useCCGCustom = overlay.useCustomColor;
 		if (!useCCGCustom) {
 			if (overlay.tooltipTheme == null) overlay.tooltipTheme = TooltipTheme.Default;
-			var theme = overlay.tooltipTheme.theme;
+			Theme theme = overlay.tooltipTheme.theme;
 			if (theme != null) return theme;
-			var cfg = AllConfigs.client();
-			var useCreateCustom = cfg.overlayCustomColor.get();
-			var back = useCreateCustom
+			CClient cfg = AllConfigs.client();
+			Boolean useCreateCustom = cfg.overlayCustomColor.get();
+			Color back = useCreateCustom
 				? new Color(cfg.overlayBackgroundColor.get())
 				: BoxElement.COLOR_VANILLA_BACKGROUND.scaleAlpha(0.75F);
-			var top = useCreateCustom ? new Color(cfg.overlayBorderColorTop.get()) : BoxElement.COLOR_VANILLA_BORDER.getFirst().copy();
-			var bot = useCreateCustom ? new Color(cfg.overlayBorderColorBot.get()) : BoxElement.COLOR_VANILLA_BORDER.getSecond().copy();
+			Color top = useCreateCustom ? new Color(cfg.overlayBorderColorTop.get()) : BoxElement.COLOR_VANILLA_BORDER.getFirst().copy();
+			Color bot = useCreateCustom ? new Color(cfg.overlayBorderColorBot.get()) : BoxElement.COLOR_VANILLA_BORDER.getSecond().copy();
 			return new Theme(back, top, bot);
 		}
 		return new Theme(overlay.backgroundColor, overlay.borderTopColor, overlay.borderBottomColor);
@@ -137,14 +145,14 @@ public final class TooltipOverlay {
 		int maxWidth,
 		boolean firstLinePadding
 	) {
-		var effectiveMaxWidth = maxWidth > 0 ? maxWidth : Integer.MAX_VALUE;
+		int effectiveMaxWidth = maxWidth > 0 ? maxWidth : Integer.MAX_VALUE;
 		var parsed = new ArrayList<>();
 		for (var i = 0; i < tooltipLines.size(); i++) {
-			var line = tooltipLines.get(i);
-			var split = TooltipComponentUtil.consumeMarker(line);
+			Component line = tooltipLines.get(i);
+			MarkerSplit split = TooltipComponentUtil.consumeMarker(line);
 			if (split != null) {
 				// marker 与普通文本混行：剩余文本单独成行，UI 独立成行
-				var remaining = split.remaining();
+				Component remaining = split.remaining();
 				if (remaining != null) parsed.addAll(mc.font.split(remaining, effectiveMaxWidth));
 				parsed.add(split.data());
 				continue;
@@ -153,9 +161,9 @@ public final class TooltipOverlay {
 			parsed.addAll(mc.font.split(line, effectiveMaxWidth));
 		}
 		var sharedBarWidth = 0;
-		for (var value : parsed) {
+		for (Object value : parsed) {
 			if (!(value instanceof FluidEntryTooltipComponent fluidEntry)) continue;
-			var preferred = ClientFluidEntryTooltipComponent.preferredBarWidth(
+			int preferred = ClientFluidEntryTooltipComponent.preferredBarWidth(
 				mc.font,
 				fluidEntry.fluid(),
 				fluidEntry.capacityMb(),
@@ -164,7 +172,7 @@ public final class TooltipOverlay {
 			if (preferred > sharedBarWidth) sharedBarWidth = preferred;
 		}
 		var components = new ArrayList<ClientTooltipComponent>(parsed.size());
-		for (var value : parsed)
+		for (Object value : parsed)
 			switch (value) {
 				case ClientTooltipComponent client -> components.add(client);
 				case FluidEntryTooltipComponent fluidEntry ->
@@ -200,10 +208,10 @@ public final class TooltipOverlay {
 		int bot
 	) {
 		if (components.isEmpty()) return;
-		var width = gui.guiWidth();
-		var height = gui.guiHeight();
+		int width = gui.guiWidth();
+		int height = gui.guiHeight();
 		// 触发 Pre 事件：面板（renderTooltipPre）与悬浮框共用同一锚点；入参 x/y 须保持鼠标式语义，renderTooltipPre 会用它推算 overlay 位置
-		var preEvent = ClientHooks.onRenderTooltipPre(
+		Pre preEvent = ClientHooks.onRenderTooltipPre(
 			itemStack,
 			gui,
 			x,
@@ -216,26 +224,26 @@ public final class TooltipOverlay {
 		);
 		if (preEvent.isCanceled()) return;
 		// 固定偏移取代 positioner 的「溢出翻转到右对齐」：该翻转由 tooltipWidth 决定，宽度一变锚点就在左右边缘间跳动
-		var tooltipX = Mth.clamp(preEvent.getX() + 12, 0, Math.max(0, width - tooltipWidth));
-		var tooltipY = Mth.clamp(preEvent.getY() - 12, 0, Math.max(0, height - tooltipHeight));
-		var pose = gui.pose();
+		int tooltipX = Mth.clamp(preEvent.getX() + 12, 0, Math.max(0, width - tooltipWidth));
+		int tooltipY = Mth.clamp(preEvent.getY() - 12, 0, Math.max(0, height - tooltipHeight));
+		PoseStack pose = gui.pose();
 		pose.pushPose();
 		TooltipRenderUtil.renderTooltipBackground(gui, tooltipX, tooltipY, tooltipWidth, tooltipHeight, 400, back, back, top, bot);
 		pose.translate(0, 0, 400);
 		// 用独立BufferSource渲染文字并立即提交(防止后续renderImage干扰文字shader state)，再单独循环渲染所有图片
 		try (var bbBuilder = new ByteBufferBuilder(256)) {
-			var textBuffer = MultiBufferSource.immediate(bbBuilder);
-			var textY = tooltipY;
+			BufferSource textBuffer = MultiBufferSource.immediate(bbBuilder);
+			int textY = tooltipY;
 			for (var i = 0; i < components.size(); i++) {
-				var component = components.get(i);
+				ClientTooltipComponent component = components.get(i);
 				component.renderText(mc.font, tooltipX, textY, pose.last().pose(), textBuffer);
 				textY += component.getHeight() + (i == 0 ? 2 : 0);
 			}
 			textBuffer.endBatch();
 		}
-		var textY = tooltipY;
+		int textY = tooltipY;
 		for (var i = 0; i < components.size(); i++) {
-			var component = components.get(i);
+			ClientTooltipComponent component = components.get(i);
 			component.renderImage(mc.font, tooltipX, textY, gui);
 			textY += component.getHeight() + (i == 0 ? 2 : 0);
 		}

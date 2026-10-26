@@ -2,15 +2,21 @@ package io.github.forgestove.create_cyber_goggles.core.event.forceOverlay;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.blaze3d.vertex.PoseStack.Pose;
-import dev.ryanhcode.sable.api.physics.force.ForceGroups;
+import dev.ryanhcode.sable.api.physics.force.*;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
-import dev.ryanhcode.sable.sublevel.ClientSubLevel;
-import io.github.forgestove.create_cyber_goggles.CCG;
+import dev.ryanhcode.sable.companion.math.*;
+import dev.ryanhcode.sable.sublevel.*;
+import io.github.forgestove.create_cyber_goggles.*;
+import io.github.forgestove.create_cyber_goggles.CCGConfig.Aeronautics;
 import io.github.forgestove.create_cyber_goggles.core.event.forceOverlay.ForceClusterer.Cluster;
 import io.github.forgestove.create_cyber_goggles.core.factory.*;
 import net.minecraft.client.Camera;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Font.DisplayMode;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
@@ -44,23 +50,23 @@ public final class ForceOverlayRenderer {
 		if (event.getStage() != Stage.AFTER_LEVEL) return;
 		if (!CCG.config.aeronautics.forceOverlay.enableForceOverlay) return;
 		if (shouldSuppressInfo()) return;
-		var player = mc.player;
-		var level = mc.level;
+		LocalPlayer player = mc.player;
+		ClientLevel level = mc.level;
 		if (player == null || level == null) return;
-		var camera = event.getCamera();
+		Camera camera = event.getCamera();
 		Matrix4fc modelViewMatrix = event.getModelViewMatrix();
-		var bufferSource = mc.renderBuffers().bufferSource();
-		var targetId = ForceOverlay.currentTarget();
+		BufferSource bufferSource = mc.renderBuffers().bufferSource();
+		UUID targetId = ForceOverlay.currentTarget();
 		if (targetId == null) return;
 		SubLevelContainer container = SubLevelContainer.getContainer(level);
 		if (container == null) return;
-		var raw = container.getSubLevel(targetId);
+		SubLevel raw = container.getSubLevel(targetId);
 		if (!(raw instanceof ClientSubLevel clientSubLevel)) return;
-		var renderPose = clientSubLevel.renderPose();
-		var renderPos = renderPose.position();
-		var rotationPoint = renderPose.rotationPoint();
-		var camPos = camera.getPosition();
-		var mvStack = RenderSystem.getModelViewStack();
+		Pose3dc renderPose = clientSubLevel.renderPose();
+		Vector3dc renderPos = renderPose.position();
+		Vector3dc rotationPoint = renderPose.rotationPoint();
+		Vec3 camPos = camera.getPosition();
+		Matrix4fStack mvStack = RenderSystem.getModelViewStack();
 		mvStack.pushMatrix();
 		mvStack.set(modelViewMatrix);
 		RenderSystem.applyModelViewMatrix();
@@ -70,12 +76,12 @@ public final class ForceOverlayRenderer {
 			poseStack.translate(renderPos.x() - camPos.x, renderPos.y() - camPos.y, renderPos.z() - camPos.z);
 			// 应用子层级旋转
 			poseStack.mulPose(new Quaternionf(renderPose.orientation()));
-			var scale = overlayPixelScale(renderPos, camPos);
-			var hasData = ForceOverlay.hasData();
+			double scale = overlayPixelScale(renderPos, camPos);
+			boolean hasData = ForceOverlay.hasData();
 			// 渲染质心标记（始终渲染，即使没有数据）
 			if (CCG.config.aeronautics.forceOverlay.showCenterOfMass) {
-				var fillType = CCGRenderTypes.OVERLAY_FILL;
-				var consumer = bufferSource.getBuffer(fillType);
+				RenderType fillType = CCGRenderTypes.OVERLAY_FILL;
+				VertexConsumer consumer = bufferSource.getBuffer(fillType);
 				float r, g, b;
 				if (hasData) {
 					r = 0.75f;
@@ -101,24 +107,24 @@ public final class ForceOverlayRenderer {
 	}
 	// ---- 工具方法 ----
 	private static double overlayPixelScale(Vector3dc renderPos, Vec3 camPos) {
-		var minPx = CCG.config.aeronautics.forceOverlay.minOverlayPixelSize;
+		double minPx = CCG.config.aeronautics.forceOverlay.minOverlayPixelSize;
 		if (minPx <= 0) return 1.0;
-		var viewportHeight = mc.getWindow().getHeight();
+		int viewportHeight = mc.getWindow().getHeight();
 		if (viewportHeight <= 0) return 1.0;
-		var dx = renderPos.x() - camPos.x;
-		var dy = renderPos.y() - camPos.y;
-		var dz = renderPos.z() - camPos.z;
-		var distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+		double dx = renderPos.x() - camPos.x;
+		double dy = renderPos.y() - camPos.y;
+		double dz = renderPos.z() - camPos.z;
+		double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
 		if (distance <= 0) return 1.0;
 		int fovDeg = mc.options.fov().get();
-		var worldPerPixel = 2.0 * distance * Math.tan(Math.toRadians(fovDeg) * 0.5) / viewportHeight;
-		var minWorldEdge = minPx * worldPerPixel;
+		double worldPerPixel = 2.0 * distance * Math.tan(Math.toRadians(fovDeg) * 0.5) / viewportHeight;
+		double minWorldEdge = minPx * worldPerPixel;
 		var nominalEdge = 0.16;
 		return Math.max(1.0, minWorldEdge / nominalEdge);
 	}
 	// ---- 图元渲染器 ----
 	private static void quadCube(PoseStack poseStack, VertexConsumer consumer, double half, float r, float g, float b) {
-		var pose = poseStack.last();
+		Pose pose = poseStack.last();
 		var n = (float) -half;
 		var p = (float) half;
 		// 立方体六个面的四边形
@@ -137,37 +143,37 @@ public final class ForceOverlayRenderer {
 		ClientSubLevel clientSubLevel,
 		double scale
 	) {
-		var config = CCG.config.aeronautics.forceOverlay;
-		var gravityFraction = config.gravityArrowFraction;
-		var saturation = config.arrowSaturation;
-		var minLen = config.minArrowLength;
-		var clusters = ForceOverlay.smoothedClusters();
+		Aeronautics.ForceOverlay config = CCG.config.aeronautics.forceOverlay;
+		double gravityFraction = config.gravityArrowFraction;
+		double saturation = config.arrowSaturation;
+		double minLen = config.minArrowLength;
+		Map<ResourceLocation, List<Cluster>> clusters = ForceOverlay.smoothedClusters();
 		if (clusters == null || clusters.isEmpty()) return;
-		var gravityClusters = clusters.get(GRAVITY_KEY);
+		List<Cluster> gravityClusters = clusters.get(GRAVITY_KEY);
 		if (gravityClusters == null || gravityClusters.isEmpty()) return;
-		var gravityMagnitude = gravityClusters.getFirst().force().length();
+		double gravityMagnitude = gravityClusters.getFirst().force().length();
 		if (gravityMagnitude < 1e-6) return;
-		var bbox = clientSubLevel.boundingBox();
-		var bboxHeight = bbox.maxY() - bbox.minY();
+		BoundingBox3dc bbox = clientSubLevel.boundingBox();
+		double bboxHeight = bbox.maxY() - bbox.minY();
 		if (bboxHeight <= 0) return;
-		var gravityArrowLen = bboxHeight * gravityFraction;
-		var bboxMaxExtent = Math.max(bbox.maxX() - bbox.minX(), Math.max(bboxHeight, bbox.maxZ() - bbox.minZ()));
-		var tailSphereRadius = Math.min(MAX_TAIL_SPHERE_RADIUS * scale, bboxMaxExtent * TAIL_SPHERE_PER_BBOX * scale);
-		var maxConeRadius = tailSphereRadius * CONE_RADIUS_PER_TAIL;
-		var maxShaftRadius = tailSphereRadius * SHAFT_RADIUS_PER_TAIL;
-		var maxShapeLength = maxConeRadius / 0.04;
+		double gravityArrowLen = bboxHeight * gravityFraction;
+		double bboxMaxExtent = Math.max(bbox.maxX() - bbox.minX(), Math.max(bboxHeight, bbox.maxZ() - bbox.minZ()));
+		double tailSphereRadius = Math.min(MAX_TAIL_SPHERE_RADIUS * scale, bboxMaxExtent * TAIL_SPHERE_PER_BBOX * scale);
+		double maxConeRadius = tailSphereRadius * CONE_RADIUS_PER_TAIL;
+		double maxShaftRadius = tailSphereRadius * SHAFT_RADIUS_PER_TAIL;
+		double maxShapeLength = maxConeRadius / 0.04;
 		// 构建箭头绘制
 		List<ArrowDraw> arrows = new ArrayList<>();
 		clusters.forEach((key, value) -> {
 			if (!shouldShowForceGroup(key)) return;
-			var group = ForceGroups.REGISTRY.get(key);
+			ForceGroup group = ForceGroups.REGISTRY.get(key);
 			if (group == null) return;
-			var color = group.color();
-			var r = (float) (color >> 16 & 0xFF) / 255.0f;
-			var g = (float) (color >> 8 & 0xFF) / 255.0f;
-			var b = (float) (color & 0xFF) / 255.0f;
-			for (var cluster : value) {
-				var arrow = buildArrow(
+			int color = group.color();
+			float r = (float) (color >> 16 & 0xFF) / 255.0f;
+			float g = (float) (color >> 8 & 0xFF) / 255.0f;
+			float b = (float) (color & 0xFF) / 255.0f;
+			for (Cluster cluster : value) {
+				ArrowDraw arrow = buildArrow(
 					cluster.pos(),
 					cluster.force(),
 					rotationPoint,
@@ -184,17 +190,17 @@ public final class ForceOverlayRenderer {
 		});
 		if (arrows.isEmpty()) return;
 		// 渲染所有箭头
-		var triType = CCGRenderTypes.OVERLAY_TRIANGLES;
-		var triConsumer = bufferSource.getBuffer(triType);
-		var pose = poseStack.last();
-		for (var a : arrows) {
-			var shapeLen = Math.min(a.length, maxShapeLength);
-			var coneLen = Math.max(0.09, shapeLen * CONE_LEN_PER_LENGTH);
-			var coneRadius = Math.min(maxConeRadius, coneLen * CONE_RADIUS_PER_LEN);
-			var shaftRadius = Math.min(maxShaftRadius, coneRadius * SHAFT_RADIUS_PER_CONE);
-			var shaftEndX = a.tx - a.dirX * coneLen;
-			var shaftEndY = a.ty - a.dirY * coneLen;
-			var shaftEndZ = a.tz - a.dirZ * coneLen;
+		RenderType triType = CCGRenderTypes.OVERLAY_TRIANGLES;
+		VertexConsumer triConsumer = bufferSource.getBuffer(triType);
+		Pose pose = poseStack.last();
+		for (ArrowDraw a : arrows) {
+			double shapeLen = Math.min(a.length, maxShapeLength);
+			double coneLen = Math.max(0.09, shapeLen * CONE_LEN_PER_LENGTH);
+			double coneRadius = Math.min(maxConeRadius, coneLen * CONE_RADIUS_PER_LEN);
+			double shaftRadius = Math.min(maxShaftRadius, coneRadius * SHAFT_RADIUS_PER_CONE);
+			double shaftEndX = a.tx - a.dirX * coneLen;
+			double shaftEndY = a.ty - a.dirY * coneLen;
+			double shaftEndZ = a.tz - a.dirZ * coneLen;
 			cylinder(pose, triConsumer, a.bx, a.by, a.bz, shaftEndX, shaftEndY, shaftEndZ, a.perp1, a.perp2, shaftRadius, a.r, a.g, a.b);
 			cone(poseStack, triConsumer, a.tx, a.ty, a.tz, a.dirX, a.dirY, a.dirZ, a.perp1, a.perp2, coneLen, coneRadius, a.r, a.g, a.b);
 			sphere(pose, triConsumer, a.bx, a.by, a.bz, tailSphereRadius, a.r, a.g, a.b);
@@ -211,19 +217,19 @@ public final class ForceOverlayRenderer {
 		double scale,
 		Camera camera
 	) {
-		var config = CCG.config.aeronautics.forceOverlay;
+		Aeronautics.ForceOverlay config = CCG.config.aeronautics.forceOverlay;
 		if (!config.useWorldLabels) return;
-		var clusters = ForceOverlay.smoothedClusters();
+		Map<ResourceLocation, List<Cluster>> clusters = ForceOverlay.smoothedClusters();
 		if (clusters == null || clusters.isEmpty()) return;
-		var labels = labelsFor(clusters);
+		List<Label> labels = labelsFor(clusters);
 		if (labels.isEmpty()) return;
-		var font = mc.font;
-		var camPos = camera.getPosition();
-		var renderPose = clientSubLevel.renderPose();
-		var subPos = renderPose.position();
+		Font font = mc.font;
+		Vec3 camPos = camera.getPosition();
+		Pose3dc renderPose = clientSubLevel.renderPose();
+		Vector3dc subPos = renderPose.position();
 		var subOrient = new Quaternionf(renderPose.orientation());
-		var bbox = clientSubLevel.boundingBox();
-		var labelOffsetY = (bbox.maxY() - bbox.minY()) * 0.015;
+		BoundingBox3dc bbox = clientSubLevel.boundingBox();
+		double labelOffsetY = (bbox.maxY() - bbox.minY()) * 0.015;
 		// 保存子层级变换、重置为世界空间
 		poseStack.pushPose();
 		poseStack.last().pose().identity();
@@ -233,8 +239,8 @@ public final class ForceOverlayRenderer {
 		var local = new Vector3d();
 		var world = new Vector3d();
 		// 背景
-		var fillConsumer = bufferSource.getBuffer(CCGRenderTypes.OVERLAY_FILL);
-		for (var l : labels) {
+		VertexConsumer fillConsumer = bufferSource.getBuffer(CCGRenderTypes.OVERLAY_FILL);
+		for (Label l : labels) {
 			labelWorldPos(l, rotationPoint, labelOffsetY, subPos, subOrient, camPos, local, world);
 			poseStack.pushPose();
 			poseStack.translate(world.x, world.y, world.z);
@@ -246,13 +252,13 @@ public final class ForceOverlayRenderer {
 		bufferSource.endBatch(CCGRenderTypes.OVERLAY_FILL);
 		// 文字
 		RenderSystem.disableCull();
-		for (var l : labels) {
+		for (Label l : labels) {
 			labelWorldPos(l, rotationPoint, labelOffsetY, subPos, subOrient, camPos, local, world);
 			poseStack.pushPose();
 			poseStack.translate(world.x, world.y, world.z);
 			poseStack.mulPose(cameraRot);
 			poseStack.scale(textScaleF, -textScaleF, textScaleF);
-			var halfW = l.width / 2;
+			int halfW = l.width / 2;
 			font.drawInBatch(
 				l.text,
 				-halfW,
@@ -296,8 +302,8 @@ public final class ForceOverlayRenderer {
 		consumer.addVertex(pose, x4, y4, z4).setColor(r, g, b, 1F);
 	}
 	private static boolean shouldShowForceGroup(ResourceLocation key) {
-		var namespace = key.getNamespace();
-		var path = key.getPath();
+		String namespace = key.getNamespace();
+		String path = key.getPath();
 		// 仅根据配置过滤 sable 力组；未知组始终显示
 		if (!"sable".equals(namespace)) return true;
 		return switch (path) {
@@ -324,24 +330,24 @@ public final class ForceOverlayRenderer {
 		float g,
 		float b
 	) {
-		var magnitude = forceVec.length();
+		double magnitude = forceVec.length();
 		if (magnitude < 1e-6) return null;
-		var ratio = magnitude / gravityMagnitude;
+		double ratio = magnitude / gravityMagnitude;
 		// 饱和映射，使巨大力量不会产生无限长的箭头
-		var visualRatio = ratio <= 1.0 ? ratio : saturation * ratio / (saturation + ratio - 1.0);
-		var length = Math.max(minLen, visualRatio * gravityArrowLen);
-		var dir = new Vector3d(forceVec).div(magnitude);
+		double visualRatio = ratio <= 1.0 ? ratio : saturation * ratio / (saturation + ratio - 1.0);
+		double length = Math.max(minLen, visualRatio * gravityArrowLen);
+		Vector3d dir = new Vector3d(forceVec).div(magnitude);
 		// 力点在局部子层级坐标中（相对于旋转点）
-		var bx = forcePoint.x() - rotationPoint.x();
-		var by = forcePoint.y() - rotationPoint.y();
-		var bz = forcePoint.z() - rotationPoint.z();
-		var tx = bx + dir.x * length;
-		var ty = by + dir.y * length;
-		var tz = bz + dir.z * length;
+		double bx = forcePoint.x() - rotationPoint.x();
+		double by = forcePoint.y() - rotationPoint.y();
+		double bz = forcePoint.z() - rotationPoint.z();
+		double tx = bx + dir.x * length;
+		double ty = by + dir.y * length;
+		double tz = bz + dir.z * length;
 		// 构建圆柱体/圆锥体的垂直基向量
-		var ref = Math.abs(dir.y) < 0.9 ? new Vector3d(0, 1, 0) : new Vector3d(1, 0, 0);
-		var perp1 = new Vector3d(dir).cross(ref).normalize();
-		var perp2 = new Vector3d(dir).cross(perp1).normalize();
+		Vector3d ref = Math.abs(dir.y) < 0.9 ? new Vector3d(0, 1, 0) : new Vector3d(1, 0, 0);
+		Vector3d perp1 = new Vector3d(dir).cross(ref).normalize();
+		Vector3d perp2 = new Vector3d(dir).cross(perp1).normalize();
 		return new ArrowDraw(bx, by, bz, tx, ty, tz, dir.x, dir.y, dir.z, perp1, perp2, length, r, g, b);
 	}
 	private static void cylinder(
@@ -361,18 +367,18 @@ public final class ForceOverlayRenderer {
 		float b
 	) {
 		for (var i = 0; i < 6; i++) {
-			var a0 = Math.PI * 2.0 * i / 6;
-			var a1 = Math.PI * 2.0 * (i + 1) / 6;
-			var c0 = Math.cos(a0) * radius;
-			var s0 = Math.sin(a0) * radius;
-			var c1 = Math.cos(a1) * radius;
-			var s1 = Math.sin(a1) * radius;
-			var ox0 = perp1.x * c0 + perp2.x * s0;
-			var oy0 = perp1.y * c0 + perp2.y * s0;
-			var oz0 = perp1.z * c0 + perp2.z * s0;
-			var ox1 = perp1.x * c1 + perp2.x * s1;
-			var oy1 = perp1.y * c1 + perp2.y * s1;
-			var oz1 = perp1.z * c1 + perp2.z * s1;
+			double a0 = Math.PI * 2.0 * i / 6;
+			double a1 = Math.PI * 2.0 * (i + 1) / 6;
+			double c0 = Math.cos(a0) * radius;
+			double s0 = Math.sin(a0) * radius;
+			double c1 = Math.cos(a1) * radius;
+			double s1 = Math.sin(a1) * radius;
+			double ox0 = perp1.x * c0 + perp2.x * s0;
+			double oy0 = perp1.y * c0 + perp2.y * s0;
+			double oz0 = perp1.z * c0 + perp2.z * s0;
+			double ox1 = perp1.x * c1 + perp2.x * s1;
+			double oy1 = perp1.y * c1 + perp2.y * s1;
+			double oz1 = perp1.z * c1 + perp2.z * s1;
 			triangle(pose, consumer, x0 + ox0, y0 + oy0, z0 + oz0, x1 + ox0, y1 + oy0, z1 + oz0, x1 + ox1, y1 + oy1, z1 + oz1, r, g, b);
 			triangle(pose, consumer, x0 + ox0, y0 + oy0, z0 + oz0, x1 + ox1, y1 + oy1, z1 + oz1, x0 + ox1, y0 + oy1, z0 + oz1, r, g, b);
 		}
@@ -394,21 +400,21 @@ public final class ForceOverlayRenderer {
 		float g,
 		float b
 	) {
-		var baseX = tipX - dx * length;
-		var baseY = tipY - dy * length;
-		var baseZ = tipZ - dz * length;
-		var cx = CONE_CX;
-		var cy = CONE_CY;
-		var cz = CONE_CZ;
+		double baseX = tipX - dx * length;
+		double baseY = tipY - dy * length;
+		double baseZ = tipZ - dz * length;
+		double[] cx = CONE_CX;
+		double[] cy = CONE_CY;
+		double[] cz = CONE_CZ;
 		for (var i = 0; i <= CONE_SEGMENTS; i++) {
-			var angle = Math.PI * 2.0 * i / CONE_SEGMENTS;
-			var c = Math.cos(angle);
-			var s = Math.sin(angle);
+			double angle = Math.PI * 2.0 * i / CONE_SEGMENTS;
+			double c = Math.cos(angle);
+			double s = Math.sin(angle);
 			cx[i] = baseX + (perp1.x * c + perp2.x * s) * radius;
 			cy[i] = baseY + (perp1.y * c + perp2.y * s) * radius;
 			cz[i] = baseZ + (perp1.z * c + perp2.z * s) * radius;
 		}
-		var pose = poseStack.last();
+		Pose pose = poseStack.last();
 		for (var i = 0; i < CONE_SEGMENTS; i++) {
 			triangle(pose, consumer, tipX, tipY, tipZ, cx[i], cy[i], cz[i], cx[i + 1], cy[i + 1], cz[i + 1], r, g, b);
 			triangle(pose, consumer, baseX, baseY, baseZ, cx[i + 1], cy[i + 1], cz[i + 1], cx[i], cy[i], cz[i], r, g, b);
@@ -425,34 +431,34 @@ public final class ForceOverlayRenderer {
 		float g,
 		float b
 	) {
-		var sinPhi = SPHERE_SIN_PHI;
-		var cosPhi = SPHERE_COS_PHI;
+		double[] sinPhi = SPHERE_SIN_PHI;
+		double[] cosPhi = SPHERE_COS_PHI;
 		for (var j = 0; j <= SPHERE_PHI; j++) {
-			var phi = -Math.PI / 2.0 + Math.PI * j / SPHERE_PHI;
+			double phi = -Math.PI / 2.0 + Math.PI * j / SPHERE_PHI;
 			sinPhi[j] = Math.sin(phi);
 			cosPhi[j] = Math.cos(phi);
 		}
-		var sinTheta = SPHERE_SIN_THETA;
-		var cosTheta = SPHERE_COS_THETA;
+		double[] sinTheta = SPHERE_SIN_THETA;
+		double[] cosTheta = SPHERE_COS_THETA;
 		for (var i = 0; i <= SPHERE_THETA; i++) {
-			var theta = Math.PI * 2.0 * i / SPHERE_THETA;
+			double theta = Math.PI * 2.0 * i / SPHERE_THETA;
 			sinTheta[i] = Math.sin(theta);
 			cosTheta[i] = Math.cos(theta);
 		}
 		for (var j = 0; j < SPHERE_PHI; j++) {
-			var y0 = sinPhi[j] * radius;
-			var y1 = sinPhi[j + 1] * radius;
-			var r0 = cosPhi[j] * radius;
-			var r1 = cosPhi[j + 1] * radius;
+			double y0 = sinPhi[j] * radius;
+			double y1 = sinPhi[j + 1] * radius;
+			double r0 = cosPhi[j] * radius;
+			double r1 = cosPhi[j + 1] * radius;
 			for (var i = 0; i < SPHERE_THETA; i++) {
-				var x00 = cosTheta[i] * r0;
-				var z00 = sinTheta[i] * r0;
-				var x01 = cosTheta[i + 1] * r0;
-				var z01 = sinTheta[i + 1] * r0;
-				var x10 = cosTheta[i] * r1;
-				var z10 = sinTheta[i] * r1;
-				var x11 = cosTheta[i + 1] * r1;
-				var z11 = sinTheta[i + 1] * r1;
+				double x00 = cosTheta[i] * r0;
+				double z00 = sinTheta[i] * r0;
+				double x01 = cosTheta[i + 1] * r0;
+				double z01 = sinTheta[i + 1] * r0;
+				double x10 = cosTheta[i] * r1;
+				double z10 = sinTheta[i] * r1;
+				double x11 = cosTheta[i + 1] * r1;
+				double z11 = sinTheta[i + 1] * r1;
 				triangle(pose, consumer, cx + x00, cy + y0, cz + z00, cx + x10, cy + y1, cz + z10, cx + x11, cy + y1, cz + z11, r, g, b);
 				triangle(pose, consumer, cx + x00, cy + y0, cz + z00, cx + x11, cy + y1, cz + z11, cx + x01, cy + y0, cz + z01, r, g, b);
 			}
@@ -461,18 +467,18 @@ public final class ForceOverlayRenderer {
 	/** 仅在簇数据引用变化时重建标签文本，避免每帧分配 Component / 格式化字符串。 */
 	private static List<Label> labelsFor(Map<ResourceLocation, List<Cluster>> clusters) {
 		if (clusters == labelSource) return labelCache;
-		var font = mc.font;
+		Font font = mc.font;
 		List<Label> out = new ArrayList<>();
 		clusters.forEach((key, value) -> {
 			if (!shouldShowForceGroup(key)) return;
-			var group = ForceGroups.REGISTRY.get(key);
+			ForceGroup group = ForceGroups.REGISTRY.get(key);
 			if (group == null) return;
-			var groupColor = group.color();
-			var groupName = group.name().getString();
-			for (var cluster : value) {
-				var mag = cluster.force().length();
+			int groupColor = group.color();
+			String groupName = group.name().getString();
+			for (Cluster cluster : value) {
+				double mag = cluster.force().length();
 				if (mag < 1e-6) continue;
-				var text = Component.empty()
+				MutableComponent text = Component.empty()
 					.append(Component.literal(groupName).withStyle(Style.EMPTY.withColor(TextColor.fromRgb(groupColor))))
 					.append(Component.literal("：").withStyle(Style.EMPTY.withColor(TextColor.fromRgb(0xB0B0B0))))
 					.append(Component.literal(String.format(Locale.ROOT, "%.1f", mag) + " N")
@@ -505,9 +511,9 @@ public final class ForceOverlayRenderer {
 	}
 	/** 绘制面板风格的背景 + 边框，与 Create GUI 面板样式一致（四角空、左/右边框上下各缩 1px）。 */
 	private static void drawLabelBg(Pose pose, VertexConsumer consumer, float halfW) {
-		var m = pose.pose();
-		var x = -halfW;
-		var width = 2 * halfW;
+		Matrix4f m = pose.pose();
+		float x = -halfW;
+		float width = 2 * halfW;
 		var y = 1f;
 		var height = 9f;
 		// 颜色参照 GUI：BG=0xC6C6C6, DARK=0x555555

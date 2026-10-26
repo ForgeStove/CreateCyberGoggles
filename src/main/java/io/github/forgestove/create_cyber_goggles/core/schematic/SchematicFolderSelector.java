@@ -50,7 +50,7 @@ public class SchematicFolderSelector {
 	}
 	public void refresh() {
 		folders = SchematicFolderUtil.listSelectableFolders();
-		var selectedFolder = SchematicFolderUtil.getSelectedFolder();
+		String selectedFolder = SchematicFolderUtil.getSelectedFolder();
 		if (!selectedFolder.isEmpty() && !folders.contains(selectedFolder)) {
 			SchematicFolderUtil.setSelectedFolder("");
 			selectedFolder = "";

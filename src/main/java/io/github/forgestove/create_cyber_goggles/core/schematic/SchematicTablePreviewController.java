@@ -1,4 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.core.schematic;
+import com.mojang.blaze3d.platform.Window;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -35,22 +36,22 @@ public class SchematicTablePreviewController {
 			area = null;
 			return;
 		}
-		var window = Minecraft.getInstance().getWindow();
-		var screenWidth = window.getGuiScaledWidth();
-		var screenHeight = window.getGuiScaledHeight();
-		var panelWidth = Math.clamp(screenWidth - SCREEN_MARGIN * 2, 1, CCG.config.schematic.preview.sidePanelWidth);
-		var panelHeight = Math.clamp(screenHeight - SCREEN_MARGIN * 2, 1, CCG.config.schematic.preview.maxHeight);
-		var minPanelHeight = Math.min(MIN_PANEL_SIZE, panelHeight);
-		var occupiedLeft = guiLeft;
-		var occupiedTop = guiTop;
-		var occupiedRight = guiLeft + backgroundWidth;
-		for (var extra : extraAreas) {
+		Window window = Minecraft.getInstance().getWindow();
+		int screenWidth = window.getGuiScaledWidth();
+		int screenHeight = window.getGuiScaledHeight();
+		int panelWidth = Math.clamp(screenWidth - SCREEN_MARGIN * 2, 1, CCG.config.schematic.preview.sidePanelWidth);
+		int panelHeight = Math.clamp(screenHeight - SCREEN_MARGIN * 2, 1, CCG.config.schematic.preview.maxHeight);
+		int minPanelHeight = Math.min(MIN_PANEL_SIZE, panelHeight);
+		int occupiedLeft = guiLeft;
+		int occupiedTop = guiTop;
+		int occupiedRight = guiLeft + backgroundWidth;
+		for (Rect2i extra : extraAreas) {
 			occupiedLeft = Math.min(occupiedLeft, extra.getX());
 			occupiedTop = Math.min(occupiedTop, extra.getY());
 			occupiedRight = Math.max(occupiedRight, extra.getX() + extra.getWidth());
 		}
-		var leftRoom = Math.max(0, occupiedLeft - PANEL_GAP - SCREEN_MARGIN);
-		var aboveRoom = Math.max(0, occupiedTop - PANEL_GAP - SCREEN_MARGIN);
+		int leftRoom = Math.max(0, occupiedLeft - PANEL_GAP - SCREEN_MARGIN);
+		int aboveRoom = Math.max(0, occupiedTop - PANEL_GAP - SCREEN_MARGIN);
 		int x, y;
 		// 左侧放得下完整面板，或上方连最小高度都没有 → 贴左（宽度不足时按空隙收窄）
 		if (leftRoom >= panelWidth || aboveRoom < minPanelHeight) {
@@ -69,8 +70,8 @@ public class SchematicTablePreviewController {
 	public void render(GuiGraphics graphics, int mouseX, int mouseY) {
 		if (area == null) return;
 		SchematicImageUtil.getSchematicNameFromIndex(schematicIndex.getAsInt()).ifPresent(panel::setSelected);
-		var mc = Minecraft.getInstance();
-		var leftDown = GLFW.glfwGetMouseButton(mc.getWindow().getWindow(), GLFW.GLFW_MOUSE_BUTTON_LEFT) == GLFW.GLFW_PRESS;
+		Minecraft mc = Minecraft.getInstance();
+		boolean leftDown = GLFW.glfwGetMouseButton(mc.getWindow().getWindow(), GLFW.GLFW_MOUSE_BUTTON_LEFT) == GLFW.GLFW_PRESS;
 		panel.updateMouse(mouseX, mouseY, leftDown);
 		panel.render(graphics, area.getX(), area.getY(), area.getWidth(), area.getHeight());
 	}

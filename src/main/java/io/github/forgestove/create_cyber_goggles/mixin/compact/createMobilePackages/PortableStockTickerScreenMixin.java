@@ -1,4 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.mixin.compact.createMobilePackages;
+import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrderWithCrafts;
 import com.simibubi.create.foundation.gui.AllIcons;
@@ -65,10 +66,10 @@ public abstract class PortableStockTickerScreenMixin extends AbstractSimiContain
 	@Inject(method = "containerTick", at = @At("TAIL"))
 	private void applySchematicOrder(CallbackInfo ci) {
 		if (!ccg$schematicPending) return;
-		var summary = ccg$summary();
+		InventorySummary summary = ccg$summary();
 		if (summary != null && summary.isEmpty()) return;
 		ccg$schematicPending = false;
-		var orders = ReplenishPlanner.schematicOrders(ReplenishPlanner.clipboardOf(mc.player), summary);
+		List<BigItemStack> orders = ReplenishPlanner.schematicOrders(ReplenishPlanner.clipboardOf(mc.player), summary);
 		if (orders.isEmpty()) return;
 		itemsToOrder.clear();
 		itemsToOrder.addAll(orders.stream().map(BigGenericStack::of).toList());

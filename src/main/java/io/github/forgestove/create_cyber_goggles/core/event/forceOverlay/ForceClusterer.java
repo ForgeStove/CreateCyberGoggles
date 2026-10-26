@@ -1,7 +1,8 @@
 package io.github.forgestove.create_cyber_goggles.core.event.forceOverlay;
 import dev.ryanhcode.sable.api.physics.force.QueuedForceGroup.PointForce;
-import org.joml.Vector3d;
+import org.joml.*;
 
+import java.lang.Math;
 import java.util.*;
 /**
  * 根据力向量的角度相似性对 {@link PointForce} 进行聚类。
@@ -21,9 +22,9 @@ public class ForceClusterer {
 	 * @return 聚类列表，每个聚类包含合并后的位置和力向量
 	 */
 	public static List<Cluster> cluster(List<PointForce> forces, double angleThresholdRadians, int maxClusters) {
-		var fSize = forces.size();
+		int fSize = forces.size();
 		if (fSize == 0) return List.of();
-		var cap = Math.clamp(maxClusters, 1, fSize);
+		int cap = Math.clamp(maxClusters, 1, fSize);
 		// 展平数据，避免为每个力分配包装对象
 		var px = new double[fSize];
 		var py = new double[fSize];
@@ -32,9 +33,9 @@ public class ForceClusterer {
 		var fy = new double[fSize];
 		var fz = new double[fSize];
 		for (var i = 0; i < fSize; i++) {
-			var f = forces.get(i);
-			var p = f.point();
-			var v = f.force();
+			PointForce f = forces.get(i);
+			Vector3dc p = f.point();
+			Vector3dc v = f.force();
 			px[i] = p.x();
 			py[i] = p.y();
 			pz[i] = p.z();
@@ -47,7 +48,7 @@ public class ForceClusterer {
 		var cz = new double[cap];
 		var assign = new int[fSize];
 		var bestVar = new double[fSize];
-		var thresholdSq = angleThresholdRadians * angleThresholdRadians;
+		double thresholdSq = angleThresholdRadians * angleThresholdRadians;
 		var n = 0;
 		// 初始化首簇：绝对分量之和；退化（完全抵消）时取首个非零力方向
 		var ax = 0.0;
@@ -58,7 +59,7 @@ public class ForceClusterer {
 			ay += Math.abs(fy[i]);
 			az += Math.abs(fz[i]);
 		}
-		var len = Math.sqrt(ax * ax + ay * ay + az * az);
+		double len = Math.sqrt(ax * ax + ay * ay + az * az);
 		if (len > 0) {
 			cx[0] = ax / len;
 			cy[0] = ay / len;
@@ -66,7 +67,7 @@ public class ForceClusterer {
 			n = 1;
 		} else {
 			for (var i = 0; i < fSize; i++) {
-				var l = Math.sqrt(fx[i] * fx[i] + fy[i] * fy[i] + fz[i] * fz[i]);
+				double l = Math.sqrt(fx[i] * fx[i] + fy[i] * fy[i] + fz[i] * fz[i]);
 				if (l <= 0) continue;
 				cx[0] = fx[i] / l;
 				cy[0] = fy[i] / l;
@@ -79,8 +80,8 @@ public class ForceClusterer {
 		for (var i = 0; i < fSize; i++) bestVar[i] = angularVariance(fx[i], fy[i], fz[i], cx[0], cy[0], cz[0]);
 		// 最远点增量初始化：每次新增一个簇，只做一遍 O(F) 增量更新
 		while (n < cap) {
-			var worst = -1;
-			var worstVar = thresholdSq;
+			int worst = -1;
+			double worstVar = thresholdSq;
 			for (var i = 0; i < fSize; i++)
 				if (bestVar[i] > worstVar) {
 					worstVar = bestVar[i];
@@ -91,7 +92,7 @@ public class ForceClusterer {
 			cy[n] = fy[worst];
 			cz[n] = fz[worst];
 			for (var i = 0; i < fSize; i++) {
-				var v = angularVariance(fx[i], fy[i], fz[i], cx[n], cy[n], cz[n]);
+				double v = angularVariance(fx[i], fy[i], fz[i], cx[n], cy[n], cz[n]);
 				if (v < bestVar[i]) {
 					bestVar[i] = v;
 					assign[i] = n;
@@ -111,11 +112,11 @@ public class ForceClusterer {
 		var posZ = new double[n];
 		var cnt = new int[n];
 		for (var i = 0; i < fSize; i++) {
-			var c = assign[i];
+			int c = assign[i];
 			cnt[c]++;
-			var lenSq = cx[c] * cx[c] + cy[c] * cy[c] + cz[c] * cz[c];
+			double lenSq = cx[c] * cx[c] + cy[c] * cy[c] + cz[c] * cz[c];
 			if (lenSq <= 0) continue;
-			var w = (cx[c] * fx[i] + cy[c] * fy[i] + cz[c] * fz[i]) / lenSq;
+			double w = (cx[c] * fx[i] + cy[c] * fy[i] + cz[c] * fz[i]) / lenSq;
 			posX[c] += w * px[i];
 			posY[c] += w * py[i];
 			posZ[c] += w * pz[i];
@@ -129,10 +130,10 @@ public class ForceClusterer {
 		return out;
 	}
 	private static double angularVariance(double ax, double ay, double az, double bx, double by, double bz) {
-		var a2 = ax * ax + ay * ay + az * az;
-		var b2 = bx * bx + by * by + bz * bz;
+		double a2 = ax * ax + ay * ay + az * az;
+		double b2 = bx * bx + by * by + bz * bz;
 		if (a2 <= 0 || b2 <= 0) return 0;
-		var cos = (ax * bx + ay * by + az * bz) / Math.sqrt(a2 * b2);
+		double cos = (ax * bx + ay * by + az * bz) / Math.sqrt(a2 * b2);
 		if (cos > 1.0) cos = 1.0;
 		else if (cos < -1.0) cos = -1.0;
 		return 2.0 * (1.0 - cos);
@@ -152,7 +153,7 @@ public class ForceClusterer {
 		Arrays.fill(cy, 0, n, 0.0);
 		Arrays.fill(cz, 0, n, 0.0);
 		for (var i = 0; i < fx.length; i++) {
-			var c = assign[i];
+			int c = assign[i];
 			cx[c] += fx[i];
 			cy[c] += fy[i];
 			cz[c] += fz[i];
@@ -162,12 +163,12 @@ public class ForceClusterer {
 	private static boolean assignAll(int[] assign, double[] fx, double[] fy, double[] fz, double[] cx, double[] cy, double[] cz, int n) {
 		var stable = true;
 		for (var i = 0; i < fx.length; i++) {
-			var prev = assign[i];
-			var best = prev;
-			var bestDist = Double.POSITIVE_INFINITY;
+			int prev = assign[i];
+			int best = prev;
+			double bestDist = Double.POSITIVE_INFINITY;
 			for (var c = 0; c < n; c++) {
 				if (cx[c] * cx[c] + cy[c] * cy[c] + cz[c] * cz[c] <= 0) continue;
-				var v = angularVariance(fx[i], fy[i], fz[i], cx[c], cy[c], cz[c]);
+				double v = angularVariance(fx[i], fy[i], fz[i], cx[c], cy[c], cz[c]);
 				if (v < bestDist) {
 					bestDist = v;
 					best = c;

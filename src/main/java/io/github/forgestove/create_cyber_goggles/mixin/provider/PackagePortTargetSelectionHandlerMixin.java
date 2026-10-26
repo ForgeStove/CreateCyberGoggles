@@ -35,9 +35,9 @@ public abstract class PackagePortTargetSelectionHandlerMixin {
 			|| PackagePortTargetSelectionHandler.activePackageTarget == null
 			|| PackagePortTargetSelectionHandler.exactPositionOfTarget == null) return;
 		if (!(mc.hitResult instanceof BlockHitResult blockHit) || blockHit.getType() == Type.MISS) return;
-		var pos = blockHit.getBlockPos();
+		BlockPos pos = blockHit.getBlockPos();
 		if (!mc.level.getBlockState(pos).canBeReplaced()) pos = pos.relative(blockHit.getDirection());
-		var hints = ccg$getRangeHints(PackagePortTargetSelectionHandler.exactPositionOfTarget, pos.getY());
+		Couple<List<BlockPos>> hints = ccg$getRangeHints(PackagePortTargetSelectionHandler.exactPositionOfTarget, pos.getY());
 		if (hints == null) return;
 		outliner.showCluster("PackagePortConnectableRange", hints.getFirst())
 			.withFaceTexture(AllSpecialTextures.THIN_CHECKERED)
@@ -52,11 +52,11 @@ public abstract class PackagePortTargetSelectionHandlerMixin {
 	private static Couple<List<BlockPos>> ccg$getRangeHints(Vec3 target, int yLevel) {
 		if (target == null) return null;
 		int range = AllConfigs.server().logistics.packagePortRange.get();
-		var renderY = yLevel - 1;
-		var bitsX = Double.doubleToLongBits(target.x);
-		var bitsY = Double.doubleToLongBits(target.y);
-		var bitsZ = Double.doubleToLongBits(target.z);
-		var key = 31L * (31L * (31L + bitsX) + bitsY) + bitsZ;
+		int renderY = yLevel - 1;
+		long bitsX = Double.doubleToLongBits(target.x);
+		long bitsY = Double.doubleToLongBits(target.y);
+		long bitsZ = Double.doubleToLongBits(target.z);
+		long key = 31L * (31L * (31L + bitsX) + bitsY) + bitsZ;
 		key = 31L * key + yLevel;
 		key = 31L * key + renderY;
 		key = 31L * key + Double.doubleToLongBits(range);
@@ -66,11 +66,11 @@ public abstract class PackagePortTargetSelectionHandlerMixin {
 		var minZ = (int) Math.floor(target.z - range);
 		var maxZ = (int) Math.ceil(target.z + range);
 		Couple<List<BlockPos>> hints = Couple.create(ArrayList::new);
-		for (var x = minX; x <= maxX; x++)
-			for (var z = minZ; z <= maxZ; z++) {
+		for (int x = minX; x <= maxX; x++)
+			for (int z = minZ; z <= maxZ; z++) {
 				var candidate = new BlockPos(x, yLevel, z);
 				var renderPos = new BlockPos(x, renderY, z);
-				var connectable = PackagePortTargetSelectionHandler.validateDiff(target, candidate) == null;
+				boolean connectable = PackagePortTargetSelectionHandler.validateDiff(target, candidate) == null;
 				hints.get(connectable).add(renderPos);
 			}
 		ccg$rangeCacheKey = key;

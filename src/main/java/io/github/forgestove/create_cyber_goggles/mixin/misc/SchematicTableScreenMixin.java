@@ -63,7 +63,7 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 	@Unique
 	private void ccg$rebuildSchematicList() {
 		if (!CCG.config.schematic.recursiveSchematicScan) return;
-		var displaySchematics = SchematicImageUtil.refreshSchematicNames();
+		List<Component> displaySchematics = SchematicImageUtil.refreshSchematicNames();
 		if (schematicsArea != null) removeWidget(schematicsArea);
 		if (!displaySchematics.isEmpty()) {
 			schematicsArea = new SelectionScrollInput(leftPos + 45, topPos + 21, 139, 18).forOptions(displaySchematics)
@@ -103,11 +103,11 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 	private void includePreviewAreas(CallbackInfoReturnable<List<Rect2i>> cir) {
 		var areas = new ArrayList<>(cir.getReturnValue());
 		if (ccg$previewController != null) {
-			var area = ccg$previewController.area();
+			Rect2i area = ccg$previewController.area();
 			if (area != null) areas.add(area);
 		}
 		if (ccg$exportController != null) {
-			var button = ccg$exportController.button();
+			SchematicExportButton button = ccg$exportController.button();
 			areas.add(new Rect2i(button.getX(), button.getY(), button.getWidth(), button.getHeight()));
 		}
 		cir.setReturnValue(List.copyOf(areas));
@@ -123,9 +123,9 @@ public abstract class SchematicTableScreenMixin extends AbstractSimiContainerScr
 	private void truncateSchematicName(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY, CallbackInfo ci) {
 		if (!CCG.config.schematic.truncateSchematicName) return;
 		if (schematicsArea == null || schematicsLabel == null || schematicsLabel.text == null) return;
-		var originalText = schematicsLabel.text.getString();
+		String originalText = schematicsLabel.text.getString();
 		if (originalText.isEmpty()) return;
-		var truncated = SchematicLang.truncate(mc.font, originalText, schematicsArea.getWidth() - 5);
+		String truncated = SchematicLang.truncate(mc.font, originalText, schematicsArea.getWidth() - 5);
 		if (!truncated.equals(originalText)) schematicsLabel.text = Component.literal(truncated);
 	}
 }

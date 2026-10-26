@@ -36,7 +36,7 @@ public abstract class StockKeeperReplenishEntryMixin extends AbstractSimiContain
 		var btn = new IconButton(leftPos + imageWidth - 10, topPos + 20, AllIcons.I_ADD);
 		btn.withCallback(() -> {
 			List<ReplenishGroup> groups = ccg$buildGroups();
-			var summary = ccg$summary();
+			InventorySummary summary = ccg$summary();
 			CCG.LOGGER.debug("AutoReplenish click: groups={} summary={}", groups.size(), summary == null ? "null" : "ok");
 			mc.setScreen(new ReplenishScreen(thiz(), this, groups));
 		});

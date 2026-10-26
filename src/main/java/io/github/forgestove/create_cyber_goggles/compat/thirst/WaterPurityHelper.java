@@ -11,7 +11,7 @@ public class WaterPurityHelper {
 				|| !WaterPurity.hasPurity(fluidStack) && !fluidStack.getFluid().equals(Fluids.WATER)
 				|| WaterPurity.getPurity(fluidStack) == -1) return null;
 			int purity = WaterPurity.getPurity(fluidStack);
-			var color = getPurityColor(purity);
+			ChatFormatting color = getPurityColor(purity);
 			return CCGLang.text(WaterPurity.getPurityText(purity)).space().fluidName(fluidStack).style(color);
 		} catch (Throwable e) { // 阻止和旧版口渴冲突
 			return null;

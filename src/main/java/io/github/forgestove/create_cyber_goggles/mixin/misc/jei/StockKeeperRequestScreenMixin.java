@@ -14,7 +14,7 @@ import net.createmod.catnip.data.Pair;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.*;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
@@ -52,27 +52,27 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 	)
 	private PackageOrder orderedByRecipe(PackageOrder orderedStacks) {
 		if (!CCG.config.misc.jei.allowLargeCrafting || !ccg$plainRequest) return orderedStacks;
-		var groups = ccg$recipeGroups();
+		List<BigItemStack> groups = ccg$recipeGroups();
 		return groups.isEmpty() ? orderedStacks : new PackageOrder(groups);
 	}
 	@Unique
 	private List<BigItemStack> ccg$recipeGroups() {
 		List<BigItemStack> groups = new ArrayList<>();
 		BigItemStack currentGroup = null;
-		var thiz = thiz();
-		for (var cbis : thiz.recipesToOrder) {
+		StockKeeperRequestScreen thiz = thiz();
+		for (CraftableBigItemStack cbis : thiz.recipesToOrder) {
 			if (!(cbis.recipe instanceof CraftingRecipe cr)) continue;
-			for (var ingredient : cr.getIngredients()) {
+			for (Ingredient ingredient : cr.getIngredients()) {
 				if (ingredient.isEmpty()) continue;
 				// 优先用实际请求的物品（与包裹内容一致，避免理包机按 tag 首个物品匹配不上而漏物品）
 				ItemStack rep = null;
-				for (var ordered : thiz.itemsToOrder) {
+				for (BigItemStack ordered : thiz.itemsToOrder) {
 					if (!ingredient.test(ordered.stack)) continue;
 					rep = ordered.stack;
 					break;
 				}
 				if (rep == null) {
-					var matches = ingredient.getItems();
+					ItemStack[] matches = ingredient.getItems();
 					if (matches.length > 0) rep = matches[0];
 				}
 				if (rep == null) continue;
@@ -107,16 +107,16 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 		if (!CCG.config.misc.jei.optimizeRecipeProcessing)
 			return original.call(instance, cbis, availableItems, countModifier, newTypeLimit);
 		Set<Item> items = new HashSet<>();
-		for (var ingredient : cbis.getIngredients()) {
+		for (Ingredient ingredient : cbis.getIngredients()) {
 			if (ingredient.isEmpty()) continue;
-			for (var match : ingredient.getItems()) items.add(match.getItem());
+			for (ItemStack match : ingredient.getItems()) items.add(match.getItem());
 		}
 		if (items.isEmpty()) return original.call(instance, cbis, availableItems, countModifier, newTypeLimit);
 		var filtered = new InventorySummary();
-		for (var item : items) {
-			var list = availableItems.getItemMap().get(item);
+		for (Item item : items) {
+			List<BigItemStack> list = availableItems.getItemMap().get(item);
 			if (list == null) continue;
-			for (var entry : list) filtered.add(entry.stack, entry.count);
+			for (BigItemStack entry : list) filtered.add(entry.stack, entry.count);
 		}
 		return original.call(instance, cbis, filtered, countModifier, newTypeLimit);
 	}
@@ -125,13 +125,13 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 	private void fastResolve(List<List<BigItemStack>> validIngredients, CallbackInfoReturnable<List<List<BigItemStack>>> cir) {
 		if (!CCG.config.misc.jei.optimizeRecipeProcessing) return;
 		Map<BigItemStack, Integer> shareCount = new IdentityHashMap<>();
-		for (var list : validIngredients)
+		for (List<BigItemStack> list : validIngredients)
 			for (BigItemStack entry : list)
 				shareCount.merge(entry, 1, Integer::sum);
 		List<List<BigItemStack>> resolved = new ArrayList<>(validIngredients.size());
-		for (var list : validIngredients) {
+		for (List<BigItemStack> list : validIngredients) {
 			List<BigItemStack> resolvedList = new ArrayList<>(list.size());
-			for (var entry : list)
+			for (BigItemStack entry : list)
 				resolvedList.add(new BigItemStack(entry.stack, entry.count / shareCount.get(entry)));
 			resolved.add(resolvedList);
 		}
@@ -141,7 +141,7 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 	@Inject(method = "init", at = @At("TAIL"))
 	private void ccg$addPlainRequestButton(CallbackInfo ci) {
 		if (!CCG.config.misc.jei.allowLargeCrafting) return;
-		var thiz = thiz();
+		StockKeeperRequestScreen thiz = thiz();
 		var button = new IconButton(thiz.getGuiLeft() + windowWidth - 29, thiz.getGuiTop() + windowHeight - 21, AllIcons.I_3x3);
 		button.green = !ccg$plainRequest;
 		button.withCallback(() -> {

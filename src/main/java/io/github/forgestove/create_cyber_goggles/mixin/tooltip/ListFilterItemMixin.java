@@ -6,8 +6,10 @@ import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.CCGCreateLang;
 import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -18,20 +20,20 @@ public abstract class ListFilterItemMixin implements Self<ListFilterItem> {
 	@Inject(method = "makeSummary", at = @At("HEAD"), cancellable = true)
 	private void makeSummary(ItemStack filter, CallbackInfoReturnable<List<Component>> cir) {
 		if (!CCG.config.tooltip.listFilter) return;
-		var filterItems = thiz().getFilterItemHandler(filter);
+		ItemStackHandler filterItems = thiz().getFilterItemHandler(filter);
 		var accessor = (ItemStackHandlerAccessor) filterItems;
-		var stacks = accessor.create$getStacks();
-		var allEmpty = stacks.stream().allMatch(ItemStack::isEmpty);
+		NonNullList<ItemStack> stacks = accessor.create$getStacks();
+		boolean allEmpty = stacks.stream().allMatch(ItemStack::isEmpty);
 		if (allEmpty) {
 			cir.setReturnValue(Collections.emptyList());
 			return;
 		}
-		var blacklist = filter.getOrDefault(AllDataComponents.FILTER_ITEMS_BLACKLIST, false);
+		Boolean blacklist = filter.getOrDefault(AllDataComponents.FILTER_ITEMS_BLACKLIST, false);
 		List<Component> list = new ArrayList<>();
 		list.add((
 			blacklist ? CCGCreateLang.translateDirect("gui.filter.deny_list") : CCGCreateLang.translateDirect("gui.filter.allow_list")
 		).withStyle(ChatFormatting.GOLD));
-		var respectNBT = filter.getOrDefault(AllDataComponents.FILTER_ITEMS_RESPECT_NBT, false);
+		Boolean respectNBT = filter.getOrDefault(AllDataComponents.FILTER_ITEMS_RESPECT_NBT, false);
 		list.add((respectNBT
 			? CCGCreateLang.translateDirect("gui.filter.respect_data")
 			: CCGCreateLang.translateDirect("gui.filter.ignore_data")

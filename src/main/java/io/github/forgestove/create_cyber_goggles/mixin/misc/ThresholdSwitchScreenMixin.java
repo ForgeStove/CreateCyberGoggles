@@ -7,8 +7,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollVa
 import com.simibubi.create.foundation.gui.widget.ScrollInput;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
-import io.github.forgestove.create_cyber_goggles.core.factory.MultiplyScreen;
-import io.github.forgestove.create_cyber_goggles.core.factory.RequestAmountScreen;
+import io.github.forgestove.create_cyber_goggles.core.factory.*;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
@@ -43,9 +42,16 @@ public abstract class ThresholdSwitchScreenMixin extends AbstractSimiScreen {
 		return false;
 	}
 	@Unique
+	private static int ccg$scaleLevel(int value, double factor, int min, int max, int step) {
+		int scaled = MultiplyScreen.scale(value, factor, min, max);
+		return Mth.clamp(Math.round((float) scaled / step) * step, min, max);
+	}
+	@Shadow
+	protected abstract int getValueStep();
+	@Unique
 	private void ccg$openPopup(ScrollInput input, boolean isOnAbove) {
-		var valueStep = Math.max(1, getValueStep());
-		var max = (isOnAbove ? blockEntity.currentMaxLevel : blockEntity.currentMaxLevel - valueStep) / valueStep;
+		int valueStep = Math.max(1, getValueStep());
+		int max = (isOnAbove ? blockEntity.currentMaxLevel : blockEntity.currentMaxLevel - valueStep) / valueStep;
 		mc.setScreen(new RequestAmountScreen(
 			this,
 			new ItemStack(AllBlocks.THRESHOLD_SWITCH.get()),
@@ -55,18 +61,16 @@ public abstract class ThresholdSwitchScreenMixin extends AbstractSimiScreen {
 		));
 	}
 	@Shadow
-	protected abstract int getValueStep();
+	protected abstract void send(boolean invert);
 	@Unique
 	private void ccg$apply(ScrollInput input, int count, int valueStep, boolean isOnAbove) {
-		var state = isOnAbove
+		int state = isOnAbove
 			? Mth.clamp(count * valueStep, blockEntity.currentMinLevel + valueStep, blockEntity.currentMaxLevel)
 			: Mth.clamp(count * valueStep, blockEntity.currentMinLevel, blockEntity.currentMaxLevel - valueStep);
 		input.setState(state);
 		input.onChanged();
 		send(blockEntity.isInverted());
 	}
-	@Shadow
-	protected abstract void send(boolean invert);
 	@WrapOperation(
 		method = "init", at = @At(
 		value = "INVOKE",
@@ -77,43 +81,38 @@ public abstract class ThresholdSwitchScreenMixin extends AbstractSimiScreen {
 	private ScrollInput ccg$modifyScrollStep(ScrollInput instance, Function<StepContext, Integer> step, Operation<ScrollInput> original) {
 		if (!CCG.config.misc.quickRequestActions) return original.call(instance, step);
 		Function<StepContext, Integer> modified = sc -> {
-			var amount = getModifiedScrollAmount();
-			var valueStep = getValueStep();
+			int amount = getModifiedScrollAmount();
+			int valueStep = getValueStep();
 			if (sc.currentValue / valueStep == 1 && amount > 1) amount--;
 			return amount * valueStep;
 		};
 		return original.call(instance, modified);
-	}
-	/** 覆写 Shift 滚动逻辑 */
-	@Inject(method = "updateInputBoxes", at = @At("TAIL"))
-	private void ccg$alignShiftStep(CallbackInfo ci) {
-		if (!CCG.config.misc.quickRequestActions) return;
-		var valueStep = getValueStep();
-		onAbove.withShiftStep(valueStep);
-		offBelow.withShiftStep(valueStep);
 	}
 	@Inject(method = "init", at = @At("TAIL"))
 	private void ccg$addMultiplier(CallbackInfo ci) {
 		if (!CCG.config.misc.multiplyAllValues) return;
 		addRenderableWidget(MultiplyScreen.createButton(guiLeft + 35, guiTop + 79, this::ccg$multiplyAll));
 	}
+	/** 覆写 Shift 滚动逻辑 */
+	@Inject(method = "updateInputBoxes", at = @At("TAIL"))
+	private void ccg$alignShiftStep(CallbackInfo ci) {
+		if (!CCG.config.misc.quickRequestActions) return;
+		int valueStep = getValueStep();
+		onAbove.withShiftStep(valueStep);
+		offBelow.withShiftStep(valueStep);
+	}
 	@Unique
 	private void ccg$multiplyAll(double factor) {
-		var valueStep = Math.max(1, getValueStep());
-		var min = blockEntity.currentMinLevel;
-		var max = blockEntity.currentMaxLevel;
-		var off = ccg$scaleLevel(offBelow.getState(), factor, min, max - valueStep, valueStep);
-		var on = ccg$scaleLevel(onAbove.getState(), factor, min + valueStep, max, valueStep);
+		int valueStep = Math.max(1, getValueStep());
+		int min = blockEntity.currentMinLevel;
+		int max = blockEntity.currentMaxLevel;
+		int off = ccg$scaleLevel(offBelow.getState(), factor, min, max - valueStep, valueStep);
+		int on = ccg$scaleLevel(onAbove.getState(), factor, min + valueStep, max, valueStep);
 		if (on < off + valueStep) on = Math.min(max, off + valueStep);
 		offBelow.setState(Math.min(off, on - valueStep));
 		onAbove.setState(on);
 		offBelow.onChanged();
 		onAbove.onChanged();
 		send(blockEntity.isInverted());
-	}
-	@Unique
-	private static int ccg$scaleLevel(int value, double factor, int min, int max, int step) {
-		var scaled = MultiplyScreen.scale(value, factor, min, max);
-		return Mth.clamp(Math.round((float) scaled / step) * step, min, max);
 	}
 }

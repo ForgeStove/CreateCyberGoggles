@@ -19,7 +19,7 @@ public abstract class LangNumberFormatMixin {
 			cir.setReturnValue(String.format("%e", d));
 			return;
 		}
-		var format = NumberFormat.getNumberInstance();
+		NumberFormat format = NumberFormat.getNumberInstance();
 		format.setMaximumFractionDigits(CCG.config.goggles.maxFractionDigits);
 		cir.setReturnValue(format.format(d));
 	}

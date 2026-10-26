@@ -6,6 +6,7 @@ import com.simibubi.create.content.schematics.cannon.SchematicannonBlockEntity.S
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.*;
 import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,7 +23,7 @@ public abstract class SchematicannonBlockEntityMixin
 	}
 	@Override
 	public ItemStack ccg$getItemStack() {
-		var sbe = thiz();
+		SchematicannonBlockEntity sbe = thiz();
 		if (sbe.state == State.STOPPED) return null;
 		if (sbe.missingItem != null) return sbe.missingItem;
 		if (sbe.flyingBlocks.isEmpty()) return null;
@@ -30,7 +31,7 @@ public abstract class SchematicannonBlockEntityMixin
 	}
 	@Override
 	public void ccg$render() {
-		var currentTarget = thiz().printer.getCurrentTarget();
+		BlockPos currentTarget = thiz().printer.getCurrentTarget();
 		if (currentTarget == null) return;
 		outliner.chaseAABB("SchematiCannonTargetBox" + this, getBounds(currentTarget))
 			.withFaceTextures(AllSpecialTextures.HIGHLIGHT_CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)

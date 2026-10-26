@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.ItemCountFontUtil;
 import net.minecraft.client.gui.*;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 @Mixin(GuiGraphics.class)
@@ -28,8 +29,8 @@ public abstract class ItemCountFontMixin {
 	) {
 		if (!CCG.config.misc.createStackCount.enableCreateStyleStackCount)
 			return original.call(gui, font, text, strX, strY, color, dropShadow);
-		var styled = ItemCountFontUtil.getStyledAmount(text);
-		var x = itemX + 16 - font.width(styled);
+		Component styled = ItemCountFontUtil.getStyledAmount(text);
+		int x = itemX + 16 - font.width(styled);
 		return gui.drawString(font, styled, x, strY, color);
 	}
 }

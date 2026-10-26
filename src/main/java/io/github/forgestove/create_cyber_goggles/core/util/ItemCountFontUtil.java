@@ -1,8 +1,11 @@
 package io.github.forgestove.create_cyber_goggles.core.util;
+import com.mojang.blaze3d.font.GlyphInfo;
+import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.factory.CCGMods;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.Font.DisplayMode;
+import net.minecraft.client.gui.font.FontSet;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
@@ -21,8 +24,8 @@ public final class ItemCountFontUtil {
 	}
 	public static void renderSizeLabel(GuiGraphics gui, Font font, float x, float y, Component text) {
 		float fontWidth = font.width(text);
-		var scale = Math.min(1F, 15F / fontWidth);
-		var stack = gui.pose();
+		float scale = Math.min(1F, 15F / fontWidth);
+		PoseStack stack = gui.pose();
 		stack.pushPose();
 		stack.translate(0F, 0F, 200F);
 		stack.scale(scale, scale, 1F);
@@ -50,7 +53,7 @@ public final class ItemCountFontUtil {
 		});
 		if (rl[0] == null || !rl[0].equals(FONT_CREATE)) return;
 		if (!dropShadow) return;
-		var shadowColor = CCG.config.misc.createStackCount.countOutlineColor;
+		int shadowColor = CCG.config.misc.createStackCount.countOutlineColor;
 		if (!CCGMods.modernui.isLoaded()) font.drawInBatch8xOutline(text, x, y, color, shadowColor, matrix, buffer, packedLightCoords);
 		else drawInBatch8xOutline(font, text, x, y, color, shadowColor, matrix, buffer, packedLightCoords);
 		cir.setReturnValue(font.width(text) + 1);
@@ -66,19 +69,19 @@ public final class ItemCountFontUtil {
 		MultiBufferSource buffer,
 		int packedLightCoords
 	) {
-		var finalY = y - 1F;
-		var adjusted = Font.adjustColor(shadowColor);
+		float finalY = y - 1F;
+		int adjusted = Font.adjustColor(shadowColor);
 		var outputOutliner = font.new StringRenderOutput(buffer, 0, 0, adjusted, false, matrix, DisplayMode.NORMAL, packedLightCoords);
-		for (var dx = -1; dx <= 1; dx++)
-			for (var dy = -1; dy <= 1; dy++) {
+		for (int dx = -1; dx <= 1; dx++)
+			for (int dy = -1; dy <= 1; dy++) {
 				if (dx == 0 && dy == 0) continue;
 				var cursorX = new float[]{x};
-				var finalDx = dx;
-				var finalDy = dy;
+				int finalDx = dx;
+				int finalDy = dy;
 				text.accept((pos, style, codePoint) -> {
-					var fontset = font.getFontSet(style.getFont());
-					var glyphinfo = fontset.getGlyphInfo(codePoint, font.filterFishyGlyphs);
-					var offset = glyphinfo.getShadowOffset();
+					FontSet fontset = font.getFontSet(style.getFont());
+					GlyphInfo glyphinfo = fontset.getGlyphInfo(codePoint, font.filterFishyGlyphs);
+					float offset = glyphinfo.getShadowOffset();
 					outputOutliner.x = cursorX[0] + finalDx * offset * 2F;
 					outputOutliner.y = finalY + finalDy * offset * 2F;
 					cursorX[0] += glyphinfo.getAdvance(style.isBold());

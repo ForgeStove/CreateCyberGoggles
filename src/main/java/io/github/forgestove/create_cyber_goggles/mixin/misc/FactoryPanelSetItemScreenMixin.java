@@ -20,9 +20,9 @@ public abstract class FactoryPanelSetItemScreenMixin extends AbstractSimiContain
 	@Inject(method = "init", at = @At("TAIL"))
 	public void init(CallbackInfo ci) {
 		if (!CCG.config.goggles.betterFactoryGauge) return;
-		var x = getGuiLeft();
-		var y = getGuiTop();
-		var behaviour = getMenu().contentHolder;
+		int x = getGuiLeft();
+		int y = getGuiTop();
+		FactoryPanelBehaviour behaviour = getMenu().contentHolder;
 		var newInputButton = new IconButton(x + 4, y + 63, AllIcons.I_ADD);
 		newInputButton.withCallback(() -> {
 			FactoryPanelConnectionHandler.startConnection(behaviour);

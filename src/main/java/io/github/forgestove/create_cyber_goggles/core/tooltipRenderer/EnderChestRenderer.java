@@ -4,6 +4,8 @@ import io.github.forgestove.create_cyber_goggles.api.AutoTooltipRenderer;
 import io.github.forgestove.create_cyber_goggles.core.util.EnderChestTooltipUtil;
 import net.minecraft.world.item.*;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 @AutoTooltipRenderer
 public final class EnderChestRenderer extends AbstractItemGridRenderer {
 	@Override
@@ -12,8 +14,8 @@ public final class EnderChestRenderer extends AbstractItemGridRenderer {
 	}
 	@Override
 	public @Nullable OverlayData buildItemGrid(ItemStack stack) {
-		var items = EnderChestTooltipUtil.cachedItems;
-		for (var item : items) {
+		List<ItemStack> items = EnderChestTooltipUtil.cachedItems;
+		for (ItemStack item : items) {
 			if (item.isEmpty()) continue;
 			return new OverlayData(items, 9);
 		}

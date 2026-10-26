@@ -34,7 +34,7 @@ public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen impleme
 		@Local(name = "scrollY") double scrollY
 	) {
 		if (!CCG.config.misc.removeRequestLimit) return original;
-		var amount = getModifiedScrollAmount();
+		int amount = getModifiedScrollAmount();
 		if (itemStack.count == 1 && amount > 1) amount--;
 		return (int) (itemStack.count + Math.signum(scrollY) * amount);
 	}
@@ -50,9 +50,9 @@ public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen impleme
 		if (!CCG.config.misc.multiplyAllValues) return;
 		addRenderableWidget(MultiplyScreen.createButton(
 			guiLeft + 31, guiTop + (restocker ? 67 : 87), factor -> {
-				var max = CCG.config.misc.removeRequestLimit ? Integer.MAX_VALUE : 64;
+				int max = CCG.config.misc.removeRequestLimit ? Integer.MAX_VALUE : 64;
 				if (!outputConfig.stack.isEmpty()) outputConfig.count = MultiplyScreen.scale(outputConfig.count, factor, 1, max);
-				for (var stack : inputConfig)
+				for (BigItemStack stack : inputConfig)
 					if (!stack.stack.isEmpty()) stack.count = MultiplyScreen.scale(stack.count, factor, 1, max);
 			}
 		));
@@ -74,10 +74,10 @@ public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen impleme
 			var finished = false;
 			if (!craftingActive) {// 输出格（仅非 restocker 模式显示，原版位置 x+160, y+48）
 				if (!restocker && !outputConfig.stack.isEmpty()) {
-					var outputX = guiLeft + 160;
-					var outputY = guiTop + 48;
+					int outputX = guiLeft + 160;
+					int outputY = guiTop + 48;
 					if (mouseX >= outputX && mouseX < outputX + 16 && mouseY >= outputY && mouseY < outputY + 16) {
-						var max = CCG.config.misc.removeRequestLimit ? Integer.MAX_VALUE : 64;
+						int max = CCG.config.misc.removeRequestLimit ? Integer.MAX_VALUE : 64;
 						mc.setScreen(new RequestAmountScreen(
 							thiz(),
 							outputConfig.stack,
@@ -90,12 +90,12 @@ public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen impleme
 					}
 				}
 				if (!finished) for (var i = 0; i < inputConfig.size(); i++) {
-					var inputX = guiLeft + (restocker ? 88 : 68 + i % 3 * 20);
-					var inputY = guiTop + (restocker ? 12 : 28) + i / 3 * 20;
+					int inputX = guiLeft + (restocker ? 88 : 68 + i % 3 * 20);
+					int inputY = guiTop + (restocker ? 12 : 28) + i / 3 * 20;
 					if (mouseX < inputX || mouseX >= inputX + 16 || mouseY < inputY || mouseY >= inputY + 16) continue;
-					var itemStack = inputConfig.get(i);
+					BigItemStack itemStack = inputConfig.get(i);
 					if (itemStack.stack.isEmpty()) break;
-					var max = CCG.config.misc.removeRequestLimit ? Integer.MAX_VALUE : 64;
+					int max = CCG.config.misc.removeRequestLimit ? Integer.MAX_VALUE : 64;
 					mc.setScreen(new RequestAmountScreen(thiz(), itemStack.stack, itemStack.count, max, count -> itemStack.count = count));
 					result = true;
 					break;

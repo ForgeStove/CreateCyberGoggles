@@ -55,7 +55,7 @@ public class SchematicImageHandler {
 		schematicLevel = new SchematicLevel(BlockPos.ZERO, level);
 	}
 	public void export() {
-		var client = Minecraft.getInstance();
+		Minecraft client = Minecraft.getInstance();
 		renderAndDownsample().thenApplyAsync(imageByteArray -> processExport(imageByteArray, client), PIPELINE)
 			.whenComplete((file, e) -> onExportFinish(file, e, client));
 	}
@@ -67,10 +67,10 @@ public class SchematicImageHandler {
 					level
 				)
 				.orElseThrow(() -> new EmptyImageBakeException("Structure template is empty."));
-		var settings = settingsBuilder.build();
-		var ssaa = settings.antialiasingFactor();
+		SchematicRenderSettings settings = settingsBuilder.build();
+		int ssaa = settings.antialiasingFactor();
 		ImageActionProgress.start(schematicName);
-		var client = Minecraft.getInstance();
+		Minecraft client = Minecraft.getInstance();
 		return CompletableFuture.supplyAsync(renderSupplier, PIPELINE)
 			.thenCompose(renderer -> onRenderThread(() -> render(renderer)))
 			.thenApplyAsync(image -> ssaa == 1 ? image : downsample(image, ssaa), PIPELINE)
@@ -90,7 +90,7 @@ public class SchematicImageHandler {
 	}
 	private void onExportFinish(@Nullable File outputFile, @Nullable Throwable e, Minecraft client) {
 		if (outputFile == null) return; // 渲染失败或已超时
-		var cause = getExceptionCause(e);
+		Throwable cause = getExceptionCause(e);
 		if (cause != null) {
 			if (cause instanceof IOException) client.execute(() -> source.sendFailure(EXPORT_ERROR));
 			ImageActionProgress.setState(ImageActionProgress.EXPORT_FAILED);
@@ -98,7 +98,7 @@ public class SchematicImageHandler {
 			return;
 		}
 		client.execute(() -> {
-			var finalMessage = CCGLang.translateDirect("command.schematicExport.success")
+			MutableComponent finalMessage = CCGLang.translateDirect("command.schematicExport.success")
 				.withColor(SchematicLang.LIGHT_BLUE)
 				.append(Component.literal(outputFile.toString())
 					.withStyle(Style.EMPTY.withColor(SchematicLang.DARK_BLUE)
@@ -124,11 +124,11 @@ public class SchematicImageHandler {
 		}
 	}
 	private byte[] handleRenderExceptions(byte[] imageByteArray, @Nullable Throwable e, Minecraft client) {
-		var cause = getExceptionCause(e);
+		Throwable cause = getExceptionCause(e);
 		if (cause == null) return imageByteArray;
 		ImageActionProgress.setState(ImageActionProgress.RENDER_FAILED);
 		client.execute(() -> {
-			var renderError = RENDER_ERROR.copy().append(" ");
+			MutableComponent renderError = RENDER_ERROR.copy().append(" ");
 			//noinspection IfCanBeSwitch
 			if (cause instanceof EmptyImageBakeException) source.sendFailure(renderError.append(EMPTY_IMAGE_BAKE));
 			else if (cause instanceof SchematicImageRenderException) source.sendFailure(renderError.append(RENDER_FAILED));

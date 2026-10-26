@@ -13,6 +13,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.io.IOException;
 import java.nio.file.*;
+import java.util.List;
+import java.util.stream.Stream;
 @Mixin(ClientSchematicLoader.class)
 public abstract class ClientSchematicLoaderMixin implements Self<ClientSchematicLoader> {
 	@ModifyArg(
@@ -49,10 +51,10 @@ public abstract class ClientSchematicLoaderMixin implements Self<ClientSchematic
 	private void refreshFromSelectedFolderOnly(CallbackInfo ci) {
 		if (!CCG.config.schematic.recursiveSchematicScan) return;
 		FilesHelper.createFolderIfMissing(CreatePaths.SCHEMATICS_DIR);
-		var availableSchematics = thiz().getAvailableSchematics();
+		List<Component> availableSchematics = thiz().getAvailableSchematics();
 		availableSchematics.clear();
-		var folder = SchematicFolderUtil.getSelectedDirectory();
-		try (var paths = Files.list(folder)) {
+		Path folder = SchematicFolderUtil.getSelectedDirectory();
+		try (Stream<Path> paths = Files.list(folder)) {
 			paths.filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".nbt"))
 				.map(CreatePaths.SCHEMATICS_DIR::relativize)
 				.map(relative -> relative.toString().replace('\\', '/'))
@@ -64,13 +66,13 @@ public abstract class ClientSchematicLoaderMixin implements Self<ClientSchematic
 			Create.LOGGER.error("Failed to refresh schematics", e);
 		}
 		availableSchematics.sort((aT, bT) -> {
-			var a = aT.getString();
-			var b = bT.getString();
+			String a = aT.getString();
+			String b = bT.getString();
 			if (a.endsWith(".nbt")) a = a.substring(0, a.length() - 4);
 			if (b.endsWith(".nbt")) b = b.substring(0, b.length() - 4);
-			var aLength = a.length();
-			var bLength = b.length();
-			var minSize = Math.min(aLength, bLength);
+			int aLength = a.length();
+			int bLength = b.length();
+			int minSize = Math.min(aLength, bLength);
 			char aChar;
 			char bChar;
 			boolean aNumber;

@@ -2,6 +2,7 @@ package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.belt.BeltBlockEntity;
+import com.simibubi.create.content.kinetics.belt.transport.*;
 import io.github.forgestove.create_cyber_goggles.api.*;
 import io.github.forgestove.create_cyber_goggles.core.factory.BeltThroughput;
 import io.github.forgestove.create_cyber_goggles.core.util.contract.*;
@@ -27,7 +28,7 @@ public abstract class BeltBlockEntityMixin extends KineticBlockEntity
 		if (level == null || !level.isClientSide) return;
 		if (thiz().index != 0) return;
 		var totalItems = 0;
-		for (var tis : thiz().getInventory().getTransportedItems())
+		for (TransportedItemStack tis : thiz().getInventory().getTransportedItems())
 			if (tis != null && tis.stack != null) totalItems += tis.stack.getCount();
 		ccg$throughput.tick(totalItems);
 	}
@@ -41,9 +42,9 @@ public abstract class BeltBlockEntityMixin extends KineticBlockEntity
 	}
 	@Override
 	public ItemStack ccg$getItemStack() {
-		var inventory = thiz().getInventory();
+		BeltInventory inventory = thiz().getInventory();
 		if (inventory == null) return null;
-		var stackAtOffset = inventory.getStackAtOffset(thiz().index);
+		TransportedItemStack stackAtOffset = inventory.getStackAtOffset(thiz().index);
 		return stackAtOffset == null ? null : stackAtOffset.stack;
 	}
 }

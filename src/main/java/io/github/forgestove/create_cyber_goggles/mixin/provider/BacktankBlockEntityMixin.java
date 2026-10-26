@@ -44,8 +44,8 @@ public abstract class BacktankBlockEntityMixin extends KineticBlockEntity
 		if (!CCG.config.goggles.enhancedInfo) return;
 		if (airLevel == max) return;
 		ccg$prevAirLevel = airLevel;
-		var abs = Math.abs(getSpeed());
-		var increment = Mth.clamp(((int) abs - 100) / 20, 1, 5);
+		float abs = Math.abs(getSpeed());
+		int increment = Mth.clamp(((int) abs - 100) / 20, 1, 5);
 		airLevel = Math.min(max, airLevel + increment);
 		airLevelTimer = Mth.clamp((int) (128f - abs / 5f) - 108, 0, 20);
 		ccg$leftTick = (max - airLevel) / increment * Math.max(1, airLevelTimer);

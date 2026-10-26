@@ -5,6 +5,7 @@ import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.AutoTooltipRenderer;
 import io.github.forgestove.create_cyber_goggles.compat.fluidlogistics.PackageTankHelper;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -16,12 +17,12 @@ public final class PackageItemRenderer extends AbstractItemGridRenderer {
 	}
 	@Override
 	public @Nullable OverlayData buildItemGrid(ItemStack stack) {
-		var contents = PackageItem.getContents(stack);
+		ItemStackHandler contents = PackageItem.getContents(stack);
 		List<ItemStack> items = new ArrayList<>();
 		for (var i = 0; i < contents.getSlots(); i++) {
-			var itemstack = contents.getStackInSlot(i);
+			ItemStack itemstack = contents.getStackInSlot(i);
 			if (itemstack.isEmpty()) continue;
-			var amount = PackageTankHelper.getCFLTankAmount(itemstack);
+			int amount = PackageTankHelper.getCFLTankAmount(itemstack);
 			items.add(amount > 0 ? itemstack.copyWithCount(amount) : itemstack);
 		}
 		return items.isEmpty() ? null : new OverlayData(items, 3);

@@ -1,6 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.mixin.goggles;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.CCGConfig.Goggles.GameMode;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -11,7 +12,7 @@ public abstract class GogglesItemMixin {
 	@Inject(method = "isWearingGoggles", at = @At("HEAD"), cancellable = true)
 	private static void isWearingGoggles(CallbackInfoReturnable<Boolean> cir) {
 		if (mc.gameMode == null) return;
-		var mode = CCG.config.goggles.gameMode;
+		GameMode mode = CCG.config.goggles.gameMode;
 		if (mode.enableGoggles && switch (mc.gameMode.getPlayerMode()) {
 			case SURVIVAL -> mode.enableInSurvival;
 			case CREATIVE -> mode.enableInCreative;

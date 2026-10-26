@@ -15,7 +15,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.*;
 import net.neoforged.neoforge.client.event.InputEvent.*;
 
-import java.util.Map;
+import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 public final class KeyInput {
@@ -32,7 +32,7 @@ public final class KeyInput {
 	private static void previewFilterScreen() {
 		if (!CCGKey.previewFilter.isDown()) return;
 		if (mc.player == null) return;
-		var itemStack = getSelectedFilter();
+		ItemStack itemStack = getSelectedFilter();
 		if (itemStack == null || !(itemStack.getItem() instanceof FilterItem)) return;
 		mc.setScreen(Map.<Item, Function3<Integer, Inventory, ItemStack, Screen>>of(
 			AllItems.FILTER.get(),
@@ -51,7 +51,7 @@ public final class KeyInput {
 	private static void clothStore(MouseScrollingEvent event) {
 		if (!CCG.config.goggles.betterStoreInfo) return;
 		if (!CCGKey.toggleItemOverlay.isDown()) return;
-		var tcbe = getBlockEntity(TableClothBlockEntity.class);
+		TableClothBlockEntity tcbe = getBlockEntity(TableClothBlockEntity.class);
 		if (tcbe == null) return;
 		if (TableClothUtil.getItems(tcbe).size() <= 1) return;
 		if (hasActivedValueBox()) return;
@@ -61,19 +61,19 @@ public final class KeyInput {
 	private static void tryScrollClipboardPage(MouseScrollingEvent event) {
 		if (!CCGKey.clipboardPageScroll.isDown()) return;
 		if (mc.player == null || mc.screen != null) return;
-		var stack = mc.player.getMainHandItem();
+		ItemStack stack = mc.player.getMainHandItem();
 		if (!(stack.getItem() instanceof ClipboardBlockItem)) {
 			stack = mc.player.getOffhandItem();
 			if (!(stack.getItem() instanceof ClipboardBlockItem)) return;
 		}
-		var delta = event.getScrollDeltaY();
+		double delta = event.getScrollDeltaY();
 		if (delta == 0) return;
-		var content = stack.getOrDefault(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY);
-		var pages = ClipboardEntry.readAll(content);
+		ClipboardContent content = stack.getOrDefault(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY);
+		List<List<ClipboardEntry>> pages = ClipboardEntry.readAll(content);
 		if (pages.isEmpty()) return;
 		event.setCanceled(true);
-		var page = Mth.clamp(content.previouslyOpenedPage(), 0, pages.size() - 1);
-		var target = Mth.clamp(page + (delta < 0 ? 1 : -1), 0, pages.size() - 1);
+		int page = Mth.clamp(content.previouslyOpenedPage(), 0, pages.size() - 1);
+		int target = Mth.clamp(page + (delta < 0 ? 1 : -1), 0, pages.size() - 1);
 		if (target == page) return;
 		stack.set(AllDataComponents.CLIPBOARD_CONTENT, content.setPreviouslyOpenedPage(target));
 		mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1));

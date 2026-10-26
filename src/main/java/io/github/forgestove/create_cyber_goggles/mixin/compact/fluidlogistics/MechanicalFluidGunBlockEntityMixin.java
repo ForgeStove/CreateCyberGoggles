@@ -4,6 +4,9 @@ import com.yision.fluidlogistics.content.equipment.mechanicalFluidGun.Mechanical
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.OutlineRenderable;
 import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.outliner;
@@ -12,12 +15,12 @@ import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.outlin
 public abstract class MechanicalFluidGunBlockEntityMixin implements OutlineRenderable, Self<MechanicalFluidGunBlockEntity> {
 	@Override
 	public void ccg$render() {
-		var thiz = thiz();
-		var level = thiz.getLevel();
-		var color = CCG.config.outliner.outColor;
-		var center = thiz().getBlockPos().getCenter();
+		MechanicalFluidGunBlockEntity thiz = thiz();
+		Level level = thiz.getLevel();
+		int color = CCG.config.outliner.outColor;
+		Vec3 center = thiz().getBlockPos().getCenter();
 		thiz.getTargets().forEach(target -> {
-			var pos = target.absoluteFrom(thiz.gunPos());
+			BlockPos pos = target.absoluteFrom(thiz.gunPos());
 			if (level == null) return;
 			outliner.showAABB("FluidGunIOBox" + pos, level.getBlockState(pos).getShape(level, pos).bounds().move(pos))
 				.withFaceTextures(AllSpecialTextures.CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)

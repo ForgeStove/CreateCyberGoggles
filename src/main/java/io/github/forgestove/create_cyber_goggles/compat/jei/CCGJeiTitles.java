@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.compat.jei;
 import com.simibubi.create.compat.jei.CreateJEI;
 import io.github.forgestove.create_cyber_goggles.core.factory.CCGMods;
-import mezz.jei.api.recipe.IRecipeManager;
+import mezz.jei.api.recipe.*;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -40,7 +40,7 @@ public final class CCGJeiTitles {
 		for (IRecipeCategory<?> category : categories)
 			TITLES.putIfAbsent(category.getRecipeType().getUid().toString(), category.getTitle());
 		for (IRecipeCategory<?> category : categories) {
-			var type = category.getRecipeType();
+			RecipeType<?> type = category.getRecipeType();
 			manager.createRecipeLookup(type).get().findFirst().ifPresent(recipe -> {
 				if (!(recipe instanceof RecipeHolder<?> holder)) return;
 				ResourceLocation id = BuiltInRegistries.RECIPE_TYPE.getKey(holder.value().getType());

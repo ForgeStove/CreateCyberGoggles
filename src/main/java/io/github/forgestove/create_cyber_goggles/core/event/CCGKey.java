@@ -51,15 +51,15 @@ public enum CCGKey {
 		this(type.getOrCreate(key), requiredMod);
 	}
 	public static void register(RegisterKeyMappingsEvent event) {
-		for (var key : values()) if (key.shouldRegister()) event.register(key.keyMapping.get());
+		for (CCGKey key : values()) if (key.shouldRegister()) event.register(key.keyMapping.get());
 	}
 	public boolean shouldRegister() {
 		return requiredMod == null || requiredMod.isLoaded();
 	}
 	public boolean isDown() {
-		var key = getKey();
+		Key key = getKey();
 		if (key.equals(UNKNOWN)) return false;
-		var window = mc.getWindow().getWindow();
+		long window = mc.getWindow().getWindow();
 		return switch (key.getType()) {
 			case MOUSE -> GLFW.glfwGetMouseButton(window, key.getValue()) == GLFW.GLFW_PRESS;
 			case KEYSYM, SCANCODE -> isKeyDown(window, key.getValue());

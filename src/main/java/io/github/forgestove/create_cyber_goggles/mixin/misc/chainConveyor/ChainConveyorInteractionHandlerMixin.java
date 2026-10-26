@@ -20,7 +20,7 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 			cir.setReturnValue(false);
 			return;
 		}
-		var mainHandItem = mc.player.getMainHandItem();
+		ItemStack mainHandItem = mc.player.getMainHandItem();
 		if (getBlock(ChainConveyorBlock.class) == null || !mc.player.isShiftKeyDown()
 			&& !mainHandItem.getItem().equals(Items.CHAIN)
 			&& !AllBlocks.CHAIN_CONVEYOR.isIn(mainHandItem)) cir.setReturnValue(true);
@@ -41,7 +41,7 @@ public abstract class ChainConveyorInteractionHandlerMixin {
 			return;
 		}
 		if (selectedConnection == null) return;
-		var mainHandItem = mc.player.getMainHandItem();
+		ItemStack mainHandItem = mc.player.getMainHandItem();
 		sendToServer(new ChainConveyorConnectionPacket(
 			selectedLift,
 			selectedLift.offset(selectedConnection),

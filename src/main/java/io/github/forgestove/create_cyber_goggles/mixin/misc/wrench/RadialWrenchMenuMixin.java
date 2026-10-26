@@ -22,12 +22,12 @@ public abstract class RadialWrenchMenuMixin {
 	@Inject(method = "tryCreateFor", at = @At("HEAD"), cancellable = true)
 	private static void tryCreateFor(BlockState state, BlockPos pos, Level level, CallbackInfoReturnable<Optional<RadialWrenchMenu>> cir) {
 		if (!CCG.config.misc.wrench.enchancedRotationMenu) return;
-		var isCreative = mc.player != null && mc.player.isCreative();
+		boolean isCreative = mc.player != null && mc.player.isCreative();
 		if (!isCreative && BLOCK_BLACKLIST.contains(RegisteredObjectsHelper.getKeyOrThrow(state.getBlock()))) {
 			cir.setReturnValue(Optional.empty());
 			return;
 		}
-		var properties = state.getProperties()
+		List<Entry<Property<?>, String>> properties = state.getProperties()
 			.stream()
 			.<Entry<Property<?>, String>>map(property -> Map.entry(property, property.getName()))
 			.filter(entry -> isCreative || !WrenchMenuUtil.PROPERTIES_BLACKLIST.contains(entry.getKey()))

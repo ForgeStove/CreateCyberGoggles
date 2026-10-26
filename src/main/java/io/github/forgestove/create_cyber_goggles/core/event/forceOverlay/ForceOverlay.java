@@ -2,19 +2,23 @@ package io.github.forgestove.create_cyber_goggles.core.event.forceOverlay;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.physics.force.*;
 import dev.ryanhcode.sable.api.physics.force.QueuedForceGroup.PointForce;
+import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import dev.simulated_team.simulated.network.packets.contraption_diagram.RequestDiagramDataPacket;
-import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.*;
+import io.github.forgestove.create_cyber_goggles.CCGConfig.Aeronautics;
 import io.github.forgestove.create_cyber_goggles.core.event.forceOverlay.ForceClusterer.Cluster;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.*;
 import net.minecraft.world.phys.HitResult.Type;
 import net.neoforged.neoforge.client.event.ClientTickEvent.Post;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 /**
@@ -32,14 +36,14 @@ public final class ForceOverlay {
 	private static boolean hadData;
 	public static void tick(Post ignoredEvent) {
 		localTick++;
-		var player = mc.player;
-		var level = mc.level;
-		var forceOverlay = CCG.config.aeronautics.forceOverlay;
+		LocalPlayer player = mc.player;
+		ClientLevel level = mc.level;
+		Aeronautics.ForceOverlay forceOverlay = CCG.config.aeronautics.forceOverlay;
 		if (player == null || level == null || !forceOverlay.enableForceOverlay || shouldSuppressInfo()) {
 			clear();
 			return;
 		}
-		var newTarget = raycastTargetSubLevel(player);
+		UUID newTarget = raycastTargetSubLevel(player);
 		if (newTarget == null) {
 			clear();
 			return;
@@ -59,7 +63,7 @@ public final class ForceOverlay {
 		}
 		// 如果自上一刻以来新数据到达，则重新聚类
 		if (ForceDataCache.consumeDirty()) {
-			var rawForces = ForceDataCache.getLatestForces();
+			Map<ForceGroup, List<PointForce>> rawForces = ForceDataCache.getLatestForces();
 			if (rawForces != null) {
 				lastMass = ForceDataCache.getLatestMass();
 				recomputeSmoothedClusters(rawForces);
@@ -82,28 +86,28 @@ public final class ForceOverlay {
 	}
 	@Nullable
 	private static UUID raycastTargetSubLevel(LocalPlayer player) {
-		var chunks = CCG.config.aeronautics.forceOverlay.targetingChunks;
-		var maxDist = chunks * 16.0;
-		var hit = player.pick(maxDist, 1.0f, false);
+		int chunks = CCG.config.aeronautics.forceOverlay.targetingChunks;
+		double maxDist = chunks * 16.0;
+		HitResult hit = player.pick(maxDist, 1.0f, false);
 		if (hit.getType() != Type.BLOCK) return null;
 		var blockHit = (BlockHitResult) hit;
-		var containing = Sable.HELPER.getContainingClient(blockHit.getLocation());
+		ClientSubLevel containing = Sable.HELPER.getContainingClient(blockHit.getLocation());
 		return containing != null ? containing.getUniqueId() : null;
 	}
 	private static void recomputeSmoothedClusters(
 		Map<ForceGroup, List<PointForce>> rawForces
 	) {
-		var angleThreshold = CCG.config.aeronautics.forceOverlay.clusterAngleRadians;
-		var maxClusters = CCG.config.aeronautics.forceOverlay.maxClustersPerGroup;
-		var alpha = CCG.config.aeronautics.forceOverlay.smoothingFactor;
+		double angleThreshold = CCG.config.aeronautics.forceOverlay.clusterAngleRadians;
+		int maxClusters = CCG.config.aeronautics.forceOverlay.maxClustersPerGroup;
+		double alpha = CCG.config.aeronautics.forceOverlay.smoothingFactor;
 		Map<ResourceLocation, List<Cluster>> next = new Object2ObjectOpenHashMap<>();
-		for (var e : rawForces.entrySet()) {
-			var key = ForceGroups.REGISTRY.getKey(e.getKey());
+		for (Entry<ForceGroup, List<PointForce>> e : rawForces.entrySet()) {
+			ResourceLocation key = ForceGroups.REGISTRY.getKey(e.getKey());
 			if (key == null) continue;
-			var forces = e.getValue();
+			List<PointForce> forces = e.getValue();
 			if (forces.isEmpty()) continue;
 			// 始终进行聚类——即使是单个力也能从位置混合中受益
-			var rawClusters = ForceClusterer.cluster(forces, angleThreshold, maxClusters);
+			List<Cluster> rawClusters = ForceClusterer.cluster(forces, angleThreshold, maxClusters);
 			if (rawClusters.isEmpty()) continue;
 			// 与之前的聚类进行混合（指数移动平均）
 			List<Cluster> prev = smoothedClusters != null ? smoothedClusters.getOrDefault(key, List.of()) : List.of();
@@ -115,16 +119,16 @@ public final class ForceOverlay {
 	private static List<Cluster> blendClusters(List<Cluster> raw, List<Cluster> prev, double alpha) {
 		var used = new boolean[prev.size()];
 		List<Cluster> out = new ArrayList<>(raw.size());
-		for (var n : raw) {
-			var bestIdx = -1;
+		for (Cluster n : raw) {
+			int bestIdx = -1;
 			var bestScore = 0.5; // 匹配的最小余弦相似度
 			for (var i = 0; i < prev.size(); i++) {
 				if (used[i]) continue;
-				var p = prev.get(i);
-				var na2 = n.force().lengthSquared();
-				var pa2 = p.force().lengthSquared();
+				Cluster p = prev.get(i);
+				double na2 = n.force().lengthSquared();
+				double pa2 = p.force().lengthSquared();
 				if (na2 <= 0 || pa2 <= 0) continue;
-				var cos = n.force().dot(p.force()) / Math.sqrt(na2 * pa2);
+				double cos = n.force().dot(p.force()) / Math.sqrt(na2 * pa2);
 				if (cos > bestScore) {
 					bestScore = cos;
 					bestIdx = i;
@@ -132,9 +136,9 @@ public final class ForceOverlay {
 			}
 			if (bestIdx >= 0) {
 				used[bestIdx] = true;
-				var p = prev.get(bestIdx);
-				var pos = new Vector3d(p.pos()).lerp(n.pos(), alpha);
-				var force = new Vector3d(p.force()).lerp(n.force(), alpha);
+				Cluster p = prev.get(bestIdx);
+				Vector3d pos = new Vector3d(p.pos()).lerp(n.pos(), alpha);
+				Vector3d force = new Vector3d(p.force()).lerp(n.force(), alpha);
 				out.add(new Cluster(pos, force, n.groupSize()));
 			} else out.add(new Cluster(new Vector3d(n.pos()), new Vector3d(n.force()), n.groupSize()));
 		}

@@ -4,7 +4,9 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.minecraft.network.chat.Component;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.network.chat.*;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -36,12 +38,8 @@ public final class ClientFluidEntryTooltipComponent implements ClientTooltipComp
 	private int indentPixels(@NotNull Font font) {
 		return c.indent * font.width(" ");
 	}
-	private int barWidth(@NotNull Font font) {
-		var preferred = preferredBarWidth(font, c.fluid, c.capacityMb, c.label);
-		return Math.max(preferred, c.sharedBarWidth);
-	}
 	public static int preferredBarWidth(@NotNull Font font, @NotNull FluidStack fluid, int capacityMb, @Nullable Component label) {
-		var labelComp = buildLabel(fluid, capacityMb, Screen.hasShiftDown(), label);
+		Component labelComp = buildLabel(fluid, capacityMb, Screen.hasShiftDown(), label);
 		return Math.max(SlotUtil.SIZE * 4, font.width(labelComp) + H_PADDING * 2);
 	}
 	private static @NotNull Component buildLabel(
@@ -54,21 +52,11 @@ public final class ClientFluidEntryTooltipComponent implements ClientTooltipComp
 			.space()
 			.text(AmountUtil.formatFluidAmount(capacityMb))
 			.component();
-		var name = (label != null ? label : fluid.getHoverName()).copy();
-		var result = CCGLang.add(name).space().text(AmountUtil.formatFluidAmount(fluid.getAmount()));
+		MutableComponent name = (label != null ? label : fluid.getHoverName()).copy();
+		CCGLangBuilder result = CCGLang.add(name).space().text(AmountUtil.formatFluidAmount(fluid.getAmount()));
 		if (showCapacity)
 			return result.text(" / ", ChatFormatting.GRAY).text(AmountUtil.formatFluidAmount(capacityMb), ChatFormatting.GRAY).component();
 		return result.component();
-	}
-	@Override
-	public void renderImage(@NotNull Font font, int x, int y, @NotNull GuiGraphics gui) {
-		var label = buildLabel(c.fluid, c.capacityMb, Screen.hasShiftDown(), c.label);
-		var barX = x + indentPixels(font);
-		var barWidth = barWidth(font);
-		renderFluidBar(gui, c.fluid, c.capacityMb, barX, y, barWidth, SlotUtil.SIZE_SLIM);
-		var textX = barX + H_PADDING;
-		var textY = y + Mth.floor((SlotUtil.SIZE_SLIM - font.lineHeight) / 2F) + 1;
-		gui.drawString(font, label, textX, textY, 0xFFFFFFFF, true);
 	}
 	public static void renderFluidBar(
 		@NotNull GuiGraphics gui,
@@ -84,29 +72,43 @@ public final class ClientFluidEntryTooltipComponent implements ClientTooltipComp
 		gui.fill(x, y, x + 1, y + height, BORDER_COLOR);
 		gui.fill(x + width - 1, y, x + width, y + height, BORDER_COLOR);
 		if (stack.isEmpty()) return;
-		var innerX = x + 1;
-		var innerY = y + 1;
-		var innerW = Math.max(0, width - 2);
-		var innerH = Math.max(0, height - 2);
-		var fillRatio = Mth.clamp(stack.getAmount() / (float) Math.max(1, capacityMb), 0F, 1F);
-		var fillWidth = Mth.clamp(Mth.floor(innerW * fillRatio), 1, innerW);
+		int innerX = x + 1;
+		int innerY = y + 1;
+		int innerW = Math.max(0, width - 2);
+		int innerH = Math.max(0, height - 2);
+		float fillRatio = Mth.clamp(stack.getAmount() / (float) Math.max(1, capacityMb), 0F, 1F);
+		int fillWidth = Mth.clamp(Mth.floor(innerW * fillRatio), 1, innerW);
 		renderFluid(gui, stack, innerX, innerY, fillWidth, innerH);
 	}
 	private static void renderFluid(@NotNull GuiGraphics gui, @NotNull FluidStack stack, int x, int y, int width, int height) {
 		if (stack.isEmpty()) return;
-		var ext = IClientFluidTypeExtensions.of(stack.getFluid());
-		var still = ext.getStillTexture(stack);
-		var sprite = mc.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(still);
-		var tint = ext.getTintColor(stack);
-		var r = ARGB32.red(tint) / 255F;
-		var g = ARGB32.green(tint) / 255F;
-		var b = ARGB32.blue(tint) / 255F;
-		var a = ARGB32.alpha(tint) / 255F;
+		IClientFluidTypeExtensions ext = IClientFluidTypeExtensions.of(stack.getFluid());
+		ResourceLocation still = ext.getStillTexture(stack);
+		TextureAtlasSprite sprite = mc.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(still);
+		int tint = ext.getTintColor(stack);
+		float r = ARGB32.red(tint) / 255F;
+		float g = ARGB32.green(tint) / 255F;
+		float b = ARGB32.blue(tint) / 255F;
+		float a = ARGB32.alpha(tint) / 255F;
 		gui.enableScissor(x, y, x + width, y + height);
 		for (var dx = 0; dx < width; dx += 16)
 			for (var dy = 0; dy < height; dy += 16)
 				gui.blit(x + dx, y + dy, 0, 16, 16, sprite, r, g, b, a);
 		gui.disableScissor();
+	}
+	private int barWidth(@NotNull Font font) {
+		int preferred = preferredBarWidth(font, c.fluid, c.capacityMb, c.label);
+		return Math.max(preferred, c.sharedBarWidth);
+	}
+	@Override
+	public void renderImage(@NotNull Font font, int x, int y, @NotNull GuiGraphics gui) {
+		Component label = buildLabel(c.fluid, c.capacityMb, Screen.hasShiftDown(), c.label);
+		int barX = x + indentPixels(font);
+		int barWidth = barWidth(font);
+		renderFluidBar(gui, c.fluid, c.capacityMb, barX, y, barWidth, SlotUtil.SIZE_SLIM);
+		int textX = barX + H_PADDING;
+		int textY = y + Mth.floor((SlotUtil.SIZE_SLIM - font.lineHeight) / 2F) + 1;
+		gui.drawString(font, label, textX, textY, 0xFFFFFFFF, true);
 	}
 	public record FluidEntryTooltipComponent(FluidStack fluid, int indent, int capacityMb, int sharedBarWidth, @Nullable Component label)
 		implements TooltipComponent {}

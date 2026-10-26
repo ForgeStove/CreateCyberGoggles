@@ -45,7 +45,7 @@ public final class SchematicCommands {
 		return builder.buildFuture();
 	}
 	private static int dispatch(CommandContext<CommandSourceStack> ctx, Builder settingsBuilder) {
-		var fileName = StringArgumentType.getString(ctx, "fileName");
+		String fileName = StringArgumentType.getString(ctx, "fileName");
 		new SchematicImageHandler(fileName, ctx.getSource(), settingsBuilder).export();
 		return Command.SINGLE_SUCCESS;
 	}

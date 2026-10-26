@@ -1,6 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.mixin.goggles;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.*;
+import com.mojang.blaze3d.platform.Window;
 import com.simibubi.create.api.equipment.goggles.*;
 import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import com.simibubi.create.infrastructure.config.AllConfigs;
@@ -13,6 +14,7 @@ import net.createmod.catnip.outliner.Outliner.OutlineEntry;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
@@ -39,8 +41,8 @@ public abstract class GoggleOverlayRendererMixin {
 	private static void renderOverlay(CallbackInfo ci) {
 		OverlayManager.clearFrame(); // 帧开始清空已占用区域
 		// 计算 Goggle 让开偏移：需在世界场景同样生效，故先算再判断是否禁用（此前世界场景提前 return 导致 ccg$Offset 恒 0）
-		var window = mc.getWindow();
-		var goggleY = window.getGuiScaledHeight() / 2 + AllConfigs.client().overlayOffsetY.get();
+		Window window = mc.getWindow();
+		int goggleY = window.getGuiScaledHeight() / 2 + AllConfigs.client().overlayOffsetY.get();
 		ccg$Offset = OverlayManager.prevUpperBottom > 0 ? Math.max(0, OverlayManager.prevUpperBottom + 22 - goggleY) : 0;
 		if (!CCG.config.goggles.disableInScreenGoggles || isInGame()) return;
 		ci.cancel();
@@ -93,7 +95,7 @@ public abstract class GoggleOverlayRendererMixin {
 	) {
 		y += ccg$Offset;
 		var hasItemList = false;
-		for (var line : tooltip) {
+		for (Component line : tooltip) {
 			if (!TooltipComponentUtil.hasIcon(line)) continue;
 			hasItemList = true;
 			break;
@@ -102,10 +104,10 @@ public abstract class GoggleOverlayRendererMixin {
 			original.call(gui, tooltip, x, y, screenWidth, screenHeight, maxWidth, back, top, bot, font);
 			return;
 		}
-		var components = TooltipOverlay.buildTooltipComponents(tooltip, maxWidth, false);
+		List<ClientTooltipComponent> components = TooltipOverlay.buildTooltipComponents(tooltip, maxWidth, false);
 		if (components.isEmpty()) return;
-		var tooltipWidth = components.stream().mapToInt(c -> c.getWidth(mc.font)).max().orElse(0);
-		var tooltipHeight = components.stream().mapToInt(ClientTooltipComponent::getHeight).sum() + (components.size() > 1 ? 2 : 0);
+		int tooltipWidth = components.stream().mapToInt(c -> c.getWidth(mc.font)).max().orElse(0);
+		int tooltipHeight = components.stream().mapToInt(ClientTooltipComponent::getHeight).sum() + (components.size() > 1 ? 2 : 0);
 		TooltipOverlay.renderTooltip(gui, ItemStack.EMPTY, components, x, y, tooltipWidth, tooltipHeight, back, top, bot);
 	}
 	@WrapOperation(
@@ -159,7 +161,7 @@ public abstract class GoggleOverlayRendererMixin {
 	private static boolean ccg$hasInfo(HitResult hit) {
 		if (hit instanceof BlockHitResult bhr && bhr.getType() == Type.BLOCK) {
 			if (mc.level == null) return false;
-			var blockPos = bhr.getBlockPos();
+			BlockPos blockPos = bhr.getBlockPos();
 			return mc.level.getBlockEntity(blockPos) instanceof IHaveCustomOverlayIcon || mc.level.getBlockState(blockPos)
 				.getBlock() instanceof IProxyHoveringInformation;
 		}

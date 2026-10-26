@@ -47,18 +47,18 @@ public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen {
 	private void renderLargeTotals(GuiGraphics gui, int slot, BigItemStack itemStack, int mouseX, int mouseY, CallbackInfo ci) {
 		if (!CCG.config.misc.jei.allowLargeCrafting || CCGMods.extra_gauges.isLoaded()) return;
 		if (!(craftingActive && availableCraftingRecipe instanceof ShapedRecipe shaped && shaped.getWidth() > 3)) return;
-		var totals = ccg$totals();
+		List<BigItemStack> totals = ccg$totals();
 		if (slot >= totals.size()) {
 			ci.cancel();
 			return;
 		}
-		var total = totals.get(slot);
-		var inputX = guiLeft + 68 + slot % 3 * 20;
-		var inputY = guiTop + 28 + slot / 3 * 20;
+		BigItemStack total = totals.get(slot);
+		int inputX = guiLeft + 68 + slot % 3 * 20;
+		int inputY = guiTop + 28 + slot / 3 * 20;
 		gui.renderItem(total.stack, inputX, inputY);
 		gui.renderItemDecorations(font, total.stack, inputX, inputY, total.count + "");
 		if (slot == 0 && mouseX >= inputX - 2 && mouseX < inputX - 2 + 60 && mouseY >= inputY - 2 && mouseY < inputY - 2 + 60) {
-			var recipeItems = craftingIngredients.stream().map(b -> b.stack).toList();
+			List<ItemStack> recipeItems = craftingIngredients.stream().map(b -> b.stack).toList();
 			List<Component> tooltip = new ArrayList<>();
 			CCGLang.itemList(recipeItems, shaped.getWidth()).addTo(tooltip);
 			gui.renderComponentTooltip(font, tooltip, mouseX, mouseY);
@@ -69,10 +69,10 @@ public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen {
 	@Unique
 	private List<BigItemStack> ccg$totals() {
 		List<BigItemStack> totals = new ArrayList<>();
-		for (var entry : craftingIngredients) {
+		for (BigItemStack entry : craftingIngredients) {
 			if (entry.stack.isEmpty()) continue;
 			BigItemStack existing = null;
-			for (var t : totals) {
+			for (BigItemStack t : totals) {
 				if (!ItemStack.isSameItemSameComponents(t.stack, entry.stack)) continue;
 				existing = t;
 				break;

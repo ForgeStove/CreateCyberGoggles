@@ -1,5 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.compat.jei;
 import com.simibubi.create.AllMenuTypes;
+import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterMenu;
 import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
@@ -10,10 +11,11 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import org.jetbrains.annotations.*;
 
-import java.util.Optional;
+import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.compat.RedstoneRequesterFill.*;
 public class RedstoneRequesterTransferHandler implements IUniversalRecipeTransferHandler<RedstoneRequesterMenu> {
@@ -36,8 +38,8 @@ public class RedstoneRequesterTransferHandler implements IUniversalRecipeTransfe
 	) {
 		if (!(object instanceof RecipeHolder<?> recipeHolder)) return null;
 		// 按住 Alt 以原版合成器方式填入，否则默认以动力合成器方式填入
-		var reps = representatives(recipeHolder.value());
-		var groups = Screen.hasAltDown() ? vanillaStyleGroups(reps, maxTransfer) : mechanicalStyleGroups(reps, maxTransfer);
+		List<ItemStack> reps = representatives(recipeHolder.value());
+		List<BigItemStack> groups = Screen.hasAltDown() ? vanillaStyleGroups(reps, maxTransfer) : mechanicalStyleGroups(reps, maxTransfer);
 		if (groups.size() > slotCount(container))
 			return new RecipeTransferErrorTooltip(CCGLang.translateDirect("gui.redstoneRequester.tooManyIngredients"));
 		// 不实际转移时返回 COSMETIC 错误

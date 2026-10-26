@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.core.event.forceOverlay;
-import dev.ryanhcode.sable.api.physics.force.ForceGroups;
+import dev.ryanhcode.sable.api.physics.force.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.event.forceOverlay.ForceClusterer.Cluster;
 import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
@@ -12,7 +12,9 @@ import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import org.jetbrains.annotations.*;
 
+import java.awt.Point;
 import java.util.*;
+import java.util.Map.Entry;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 /**
@@ -31,13 +33,13 @@ public final class ForceTooltipOverlay {
 		if (shouldSuppressInfo()) return;
 		if (mc.options.hideGui) return;
 		if (!ForceOverlay.hasData()) return;
-		var lines = buildLines();
+		List<Component> lines = buildLines();
 		if (lines.isEmpty()) return;
 		drawHud(gui, mc.font, lines);
 	}
 	private static List<Component> buildLines() {
-		var clusters = ForceOverlay.smoothedClusters();
-		var mass = ForceOverlay.currentMass();
+		Map<ResourceLocation, List<Cluster>> clusters = ForceOverlay.smoothedClusters();
+		double mass = ForceOverlay.currentMass();
 		if (clusters == linesSource && mass == linesMass) return linesCache;
 		List<Component> lines = new ArrayList<>();
 		lines.add(labeledLine(
@@ -45,11 +47,11 @@ public final class ForceTooltipOverlay {
 			0xCCCCCC,
 			CCGLang.translateDirect("hud.forceOverlay.massValue", formatScalar(mass))
 		));
-		if (clusters != null) for (var entry : clusters.entrySet()) {
-			var group = ForceGroups.REGISTRY.get(entry.getKey());
+		if (clusters != null) for (Entry<ResourceLocation, List<Cluster>> entry : clusters.entrySet()) {
+			ForceGroup group = ForceGroups.REGISTRY.get(entry.getKey());
 			if (group == null) continue;
 			double netMagnitude = 0;
-			for (var c : entry.getValue()) netMagnitude += c.force().length();
+			for (Cluster c : entry.getValue()) netMagnitude += c.force().length();
 			if (netMagnitude <= 0) continue;
 			lines.add(labeledLine(
 				group.name(),
@@ -63,17 +65,17 @@ public final class ForceTooltipOverlay {
 		return lines;
 	}
 	private static void drawHud(GuiGraphics gui, Font font, List<Component> lines) {
-		var pos = CCG.config.aeronautics.forceOverlay.forceOverlayPos;
-		var offsetX = pos.x;
-		var offsetY = pos.y;
-		var lineHeight = 9 + 1;
+		Point pos = CCG.config.aeronautics.forceOverlay.forceOverlayPos;
+		int offsetX = pos.x;
+		int offsetY = pos.y;
+		int lineHeight = 9 + 1;
 		var maxLine = 0;
-		for (var line : lines) maxLine = Math.max(maxLine, font.width(line));
-		var textHeight = lines.size() * lineHeight - 1;
-		var textX = gui.guiWidth() - 4 - 3 - 1 - maxLine + offsetX;
-		var innerX1 = textX - 3;
-		var innerX2 = textX + maxLine + 3;
-		var innerY2 = 8 + textHeight + 3 + offsetY;
+		for (Component line : lines) maxLine = Math.max(maxLine, font.width(line));
+		int textHeight = lines.size() * lineHeight - 1;
+		int textX = gui.guiWidth() - 4 - 3 - 1 - maxLine + offsetX;
+		int innerX1 = textX - 3;
+		int innerX2 = textX + maxLine + 3;
+		int innerY2 = 8 + textHeight + 3 + offsetY;
 		// 背景
 		var bgColor = 0xE0202020;
 		gui.fill(innerX1, 4 + offsetY, innerX2, 5 + offsetY, bgColor);
@@ -87,14 +89,14 @@ public final class ForceTooltipOverlay {
 		gui.fill(innerX1, innerY2 - 1, innerX2, innerY2, borderColor);
 		gui.fill(innerX1, 6 + offsetY, innerX1 + 1, innerY2 - 1, borderColor);
 		gui.fill(innerX2 - 1, 6 + offsetY, innerX2, innerY2 - 1, borderColor);
-		var y = 8 + offsetY;
-		for (var line : lines) {
+		int y = 8 + offsetY;
+		for (Component line : lines) {
 			gui.drawString(font, line, textX, y, 0xFFFFFF, false);
 			y += lineHeight;
 		}
 	}
 	private static Component labeledLine(Component label, int labelColor, Component value) {
-		var out = Component.empty();
+		MutableComponent out = Component.empty();
 		out.append(label.copy().withStyle(Style.EMPTY.withColor(TextColor.fromRgb(labelColor & 0xFFFFFF))));
 		out.append(Component.literal(": ").withStyle(Style.EMPTY.withColor(TextColor.fromRgb(0xB0B0B0))));
 		out.append(value.copy().withStyle(Style.EMPTY.withColor(TextColor.fromRgb(0xFFFFFF)).withBold(false)));

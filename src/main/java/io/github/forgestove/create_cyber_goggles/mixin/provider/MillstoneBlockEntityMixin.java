@@ -9,6 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import org.spongepowered.asm.mixin.Mixin;
 
 import java.util.List;
@@ -24,12 +25,12 @@ public abstract class MillstoneBlockEntityMixin extends KineticBlockEntity
 	}
 	@Override
 	public ItemStack ccg$getItemStack() {
-		var thiz = thiz();
-		var input = thiz.inputInv.getStackInSlot(0);
+		MillstoneBlockEntity thiz = thiz();
+		ItemStack input = thiz.inputInv.getStackInSlot(0);
 		if (!input.isEmpty()) return input;
-		var inventory = thiz.outputInv;
+		ItemStackHandler inventory = thiz.outputInv;
 		for (var i = 0; i < inventory.getSlots(); i++) {
-			var stackInSlot = inventory.getStackInSlot(i);
+			ItemStack stackInSlot = inventory.getStackInSlot(i);
 			if (!stackInSlot.isEmpty()) return stackInSlot;
 		}
 		return null;

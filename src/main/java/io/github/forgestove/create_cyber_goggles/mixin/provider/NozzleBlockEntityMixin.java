@@ -6,7 +6,7 @@ import io.github.forgestove.create_cyber_goggles.api.*;
 import io.github.forgestove.create_cyber_goggles.core.event.Outliner;
 import io.github.forgestove.create_cyber_goggles.core.util.contract.*;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.*;
 import org.spongepowered.asm.mixin.*;
 
 import java.util.List;
@@ -31,23 +31,23 @@ public abstract class NozzleBlockEntityMixin
 	}
 	@Override
 	public void ccg$render() {
-		var center = thiz().getBlockPos().getCenter();
-		var color = Outliner.getColor(pushing);
-		var range = this.range / 2F;
+		Vec3 center = thiz().getBlockPos().getCenter();
+		int color = Outliner.getColor(pushing);
+		float range = this.range / 2F;
 		outliner.chaseAABB("NozzleAirBox" + this, new AABB(center, center).inflate(range))
 			.withFaceTextures(AllSpecialTextures.CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
 			.lineWidth(1 / 16f)
 			.colored(color);
-		var numberOfFlowBoxes = Outliner.getNumberOfFlowBoxes(this.range);
+		int numberOfFlowBoxes = Outliner.getNumberOfFlowBoxes(this.range);
 		for (var i = 0; i < numberOfFlowBoxes; i++) {
-			var offsetScale = Outliner.getOffsetScale(i, numberOfFlowBoxes);
-			var id = "NozzleAirFlowBox" + this + i;
+			double offsetScale = Outliner.getOffsetScale(i, numberOfFlowBoxes);
+			String id = "NozzleAirFlowBox" + this + i;
 			if (offsetScale > 0.98) {
 				outliner.remove(id);
 				continue;
 			}
-			var radius = (pushing ? offsetScale : 1 - offsetScale) * range;
-			var flowBound = new AABB(center, center).inflate(radius);
+			double radius = (pushing ? offsetScale : 1 - offsetScale) * range;
+			AABB flowBound = new AABB(center, center).inflate(radius);
 			outliner.chaseAABB(id, flowBound)
 				.withFaceTextures(AllSpecialTextures.CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
 				.lineWidth(1 / 16f)

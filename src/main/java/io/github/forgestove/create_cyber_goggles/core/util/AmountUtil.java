@@ -24,7 +24,7 @@ public final class AmountUtil {
 	private static String formatCompact(int amount, int unitSize, String suffix) {
 		if (amount >= unitSize && amount % unitSize == 0) return amount / unitSize + suffix;
 		if (amount / unitSize <= 10) {
-			var value = Math.floor(amount / (unitSize / 10.0)) / 10.0;
+			double value = Math.floor(amount / (unitSize / 10.0)) / 10.0;
 			return String.format(Locale.ROOT, "%.1f%s", value, suffix);
 		}
 		return String.format(Locale.ROOT, "%.0f%s", Math.floor(amount / (float) unitSize), suffix);

@@ -1,4 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.core.event;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Either;
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.*;
@@ -6,22 +7,29 @@ import com.simibubi.create.content.equipment.armor.*;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import com.simibubi.create.content.equipment.wrench.WrenchItem;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.CCGConfig.Schematic.Preview;
 import io.github.forgestove.create_cyber_goggles.api.*;
 import io.github.forgestove.create_cyber_goggles.compat.simulated.NavigationDistanceHelper;
 import io.github.forgestove.create_cyber_goggles.core.factory.*;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientFluidEntryTooltipComponent.FluidEntryTooltipComponent;
 import io.github.forgestove.create_cyber_goggles.core.factory.ClientSchematicPreviewTooltipComponent.SchematicPreviewTooltip;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
+import io.github.forgestove.create_cyber_goggles.core.util.TooltipComponentUtil.MarkerSplit;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.Component;
+import net.minecraft.client.gui.screens.inventory.tooltip.*;
+import net.minecraft.network.chat.*;
 import net.minecraft.util.Mth;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.client.event.RenderTooltipEvent.*;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.fluids.*;
+import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 import org.jetbrains.annotations.*;
+import org.joml.Vector2ic;
 import org.slf4j.Logger;
 
 import java.util.*;
@@ -35,10 +43,10 @@ public final class ItemTooltip {
 	private static final int PREVIEW_TEXT_HEIGHT = 48;
 	private static final int PREVIEW_TOOLTIP_INDEX = 1;
 	static {
-		var annoName = AutoTooltipRenderer.class.getName();
+		String annoName = AutoTooltipRenderer.class.getName();
 		ModList.get().getAllScanData().forEach(scanData -> scanData.getAnnotations().forEach(annoData -> {
 			if (annoName.equals(annoData.annotationType().getClassName())) try {
-				var clazz = Class.forName(annoData.memberName());
+				Class<?> clazz = Class.forName(annoData.memberName());
 				if (TooltipRenderer.class.isAssignableFrom(clazz))
 					OVERLAY_RENDERERS.add((TooltipRenderer) clazz.getDeclaredConstructor().newInstance());
 			} catch (Exception e) {
@@ -49,8 +57,8 @@ public final class ItemTooltip {
 	public static void itemTooltip(@NotNull ItemTooltipEvent event) {
 		if (!CCG.config.tooltip.extraItemTooltip) return;
 		if (shouldSuppressInfo()) return;
-		var stack = event.getItemStack();
-		var tooltip = event.getToolTip();
+		ItemStack stack = event.getItemStack();
+		List<Component> tooltip = event.getToolTip();
 		goggles(stack, tooltip);
 		backtank(stack, tooltip);
 		divingBoots(stack, tooltip);
@@ -87,12 +95,12 @@ public final class ItemTooltip {
 	}
 	private static void fluidContainer(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!CCG.config.tooltip.fluidContainer) return;
-		var handler = FluidUtil.getFluidHandler(stack).orElse(null);
+		IFluidHandlerItem handler = FluidUtil.getFluidHandler(stack).orElse(null);
 		if (handler == null || handler.getTanks() == 0) return;
 		var entries = new ArrayList<FluidStack>();
 		var capacities = new ArrayList<Integer>();
 		for (var i = 0; i < handler.getTanks(); i++) {
-			var fluid = handler.getFluidInTank(i);
+			FluidStack fluid = handler.getFluidInTank(i);
 			if (fluid.isEmpty()) continue;
 			entries.add(fluid.copy());
 			capacities.add(handler.getTankCapacity(i));
@@ -102,8 +110,8 @@ public final class ItemTooltip {
 			capacities.add(handler.getTankCapacity(0));
 		}
 		for (var i = 0; i < entries.size(); i++) {
-			var fluid = entries.get(i);
-			var capacity = i < capacities.size() ? capacities.get(i) : Math.max(1, fluid.getAmount());
+			FluidStack fluid = entries.get(i);
+			int capacity = i < capacities.size() ? capacities.get(i) : Math.max(1, fluid.getAmount());
 			CCGLang.fluidEntry(fluid, capacity).addTo(1, tooltip);
 		}
 	}
@@ -120,49 +128,49 @@ public final class ItemTooltip {
 	 * {@link #gatherComponents} 替换为实际 UI 组件；marker 为原地替换，插入位置即显示位置。
 	 */
 	private static void schematicPreview(@NotNull ItemStack stack, List<Component> tooltip) {
-		var preview = CCG.config.schematic.preview;
+		Preview preview = CCG.config.schematic.preview;
 		if (!preview.previewEnabled || !preview.tooltipPreview) return;
 		if (!AllItems.SCHEMATIC.isIn(stack) || !stack.has(AllDataComponents.SCHEMATIC_FILE)) return;
-		var fileName = stack.get(AllDataComponents.SCHEMATIC_FILE);
+		String fileName = stack.get(AllDataComponents.SCHEMATIC_FILE);
 		if (fileName == null || fileName.isBlank()) return;
-		var alt = Screen.hasAltDown();
-		var index = Math.min(PREVIEW_TOOLTIP_INDEX, tooltip.size());
+		boolean alt = Screen.hasAltDown();
+		int index = Math.min(PREVIEW_TOOLTIP_INDEX, tooltip.size());
 		// 提示行常驻，按住 Alt 时在其下方追加预览块
 		tooltip.add(
 			index,
 			CCGKey.hint(CCGLang.translateDirect("gui.schematicPreview.altHint", CCGKey.keyName("Alt", alt)))
 		);
 		if (!alt) return;
-		var marker = Component.empty();
-		var width = Mth.clamp(mc.getWindow().getGuiScaledWidth() - PREVIEW_EDGE_PADDING, PREVIEW_MIN_SIZE, preview.sidePanelWidth);
-		var height = Mth.clamp(mc.getWindow().getGuiScaledHeight() - PREVIEW_TEXT_HEIGHT, PREVIEW_MIN_SIZE, preview.maxHeight);
+		MutableComponent marker = Component.empty();
+		int width = Mth.clamp(mc.getWindow().getGuiScaledWidth() - PREVIEW_EDGE_PADDING, PREVIEW_MIN_SIZE, preview.sidePanelWidth);
+		int height = Mth.clamp(mc.getWindow().getGuiScaledHeight() - PREVIEW_TEXT_HEIGHT, PREVIEW_MIN_SIZE, preview.maxHeight);
 		TooltipComponentUtil.SCHEMATIC_PREVIEW_MAP.put(marker, new SchematicPreviewTooltip(fileName, width, height));
 		tooltip.add(index + 1, marker);
 	}
 	public static void gatherComponents(@NotNull GatherComponents event) {
-		var elements = event.getTooltipElements();
+		List<Either<FormattedText, TooltipComponent>> elements = event.getTooltipElements();
 		// 第一遍：只读收集流体条目，取最大 preferred 条宽作为统一宽度（不消费 marker）
 		var sharedBarWidth = 0;
-		for (var element : elements) {
+		for (Either<FormattedText, TooltipComponent> element : elements) {
 			if (!(element.left().orElse(null) instanceof Component comp)) continue;
-			var fluid = TooltipComponentUtil.peekFluidEntry(comp);
+			FluidEntryTooltipComponent fluid = TooltipComponentUtil.peekFluidEntry(comp);
 			if (fluid == null) continue;
-			var preferred = ClientFluidEntryTooltipComponent.preferredBarWidth(mc.font, fluid.fluid(), fluid.capacityMb(), fluid.label());
+			int preferred = ClientFluidEntryTooltipComponent.preferredBarWidth(mc.font, fluid.fluid(), fluid.capacityMb(), fluid.label());
 			if (preferred > sharedBarWidth) sharedBarWidth = preferred;
 		}
 		// 第二遍：消费 marker 并原地替换（marker 与文本混行时剩余文本保留，UI 独立成行插入）
 		for (var i = 0; i < elements.size(); ) {
-			var left = elements.get(i).left().orElse(null);
+			FormattedText left = elements.get(i).left().orElse(null);
 			if (!(left instanceof Component comp)) {
 				i++;
 				continue;
 			}
-			var split = TooltipComponentUtil.consumeMarker(comp);
+			MarkerSplit split = TooltipComponentUtil.consumeMarker(comp);
 			if (split == null) {
 				i++;
 				continue;
 			}
-			var ui = split.data();
+			TooltipComponent ui = split.data();
 			if (ui instanceof FluidEntryTooltipComponent fluid)
 				ui = new FluidEntryTooltipComponent(fluid.fluid(), fluid.indent(), fluid.capacityMb(), sharedBarWidth, fluid.label());
 			if (split.remaining() != null) {
@@ -174,33 +182,33 @@ public final class ItemTooltip {
 	}
 	public static void renderTooltipPre(@NotNull Pre event) {
 		if (!CCG.config.tooltip.extraItemTooltip) return;
-		var stack = event.getItemStack();
-		var renderer = findRenderer(stack);
+		ItemStack stack = event.getItemStack();
+		TooltipRenderer renderer = findRenderer(stack);
 		if (renderer == null) return;
 		if (!renderer.canRender(stack)) return;
-		var font = event.getFont();
-		var components = event.getComponents();
+		Font font = event.getFont();
+		List<ClientTooltipComponent> components = event.getComponents();
 		if (components.isEmpty()) return;
 		int tooltipWidth = 0, tooltipHeight = 0;
-		for (var component : components) {
+		for (ClientTooltipComponent component : components) {
 			tooltipWidth = Math.max(tooltipWidth, component.getWidth(font));
 			tooltipHeight += component.getHeight();
 		}
-		var overlayWidth = renderer.width(stack);
-		var overlayHeight = renderer.height(stack);
-		var positioner = event.getTooltipPositioner();
-		var screenWidth = event.getScreenWidth();
-		var screenHeight = event.getScreenHeight();
-		var pos = positioner.positionTooltip(screenWidth, screenHeight, event.getX(), event.getY(), tooltipWidth, tooltipHeight);
+		int overlayWidth = renderer.width(stack);
+		int overlayHeight = renderer.height(stack);
+		ClientTooltipPositioner positioner = event.getTooltipPositioner();
+		int screenWidth = event.getScreenWidth();
+		int screenHeight = event.getScreenHeight();
+		Vector2ic pos = positioner.positionTooltip(screenWidth, screenHeight, event.getX(), event.getY(), tooltipWidth, tooltipHeight);
 		// 上方 overlay 让位：overlay 顶部 = tooltip 顶部 - overlayHeight - 6，不顶出需 tooltip 顶部 >= overlayHeight + 6
 		// 不足时二分下移 mouseY（renderTooltipInternal 用 preEvent.getX/Y 定位，当前帧生效，无需帧间状态）
-		var minTop = overlayHeight + 6;
+		int minTop = overlayHeight + 6;
 		if (pos.y() < minTop) {
-			var low = event.getY();
-			var high = screenHeight;
+			int low = event.getY();
+			int high = screenHeight;
 			while (low < high) {
-				var mid = low + high >>> 1;
-				var test = positioner.positionTooltip(screenWidth, screenHeight, event.getX(), mid, tooltipWidth, tooltipHeight);
+				int mid = low + high >>> 1;
+				Vector2ic test = positioner.positionTooltip(screenWidth, screenHeight, event.getX(), mid, tooltipWidth, tooltipHeight);
 				if (test.y() >= minTop) high = mid;
 				else low = mid + 1;
 			}
@@ -210,10 +218,10 @@ public final class ItemTooltip {
 			}
 		}
 		// 完整 clamp 到屏幕内
-		var overlayX = Mth.clamp(pos.x(), 0, Math.max(0, screenWidth - overlayWidth));
-		var overlayY = Mth.clamp(pos.y() - overlayHeight - 6, 0, Math.max(0, screenHeight - overlayHeight));
-		var gui = event.getGraphics();
-		var pose = gui.pose();
+		int overlayX = Mth.clamp(pos.x(), 0, Math.max(0, screenWidth - overlayWidth));
+		int overlayY = Mth.clamp(pos.y() - overlayHeight - 6, 0, Math.max(0, screenHeight - overlayHeight));
+		GuiGraphics gui = event.getGraphics();
+		PoseStack pose = gui.pose();
 		pose.pushPose();
 		renderer.render(gui, stack, overlayX - 4, overlayY);
 		// 登记已渲染区域，供后渲染的 GoggleOverlay 避让
@@ -221,7 +229,7 @@ public final class ItemTooltip {
 		pose.popPose();
 	}
 	public static @Nullable TooltipRenderer findRenderer(@NotNull ItemStack stack) {
-		for (var renderer : OVERLAY_RENDERERS) if (renderer.supports(stack)) return renderer;
+		for (TooltipRenderer renderer : OVERLAY_RENDERERS) if (renderer.supports(stack)) return renderer;
 		return null;
 	}
 }

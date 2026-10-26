@@ -91,10 +91,10 @@ public abstract class TunablePortableTickerScreenMixin extends AbstractSimiConta
 	@Inject(method = "containerTick", at = @At("TAIL"))
 	private void applySchematicOrder(CallbackInfo ci) {
 		if (!ccg$schematicPending) return;
-		var summary = ccg$summary();
+		InventorySummary summary = ccg$summary();
 		if (summary != null && summary.isEmpty()) return;
 		ccg$schematicPending = false;
-		var orders = ReplenishPlanner.schematicOrders(ReplenishPlanner.clipboardOf(mc.player), summary);
+		List<BigItemStack> orders = ReplenishPlanner.schematicOrders(ReplenishPlanner.clipboardOf(mc.player), summary);
 		if (orders.isEmpty()) return;
 		itemsToOrder.clear();
 		itemsToOrder.addAll(orders);

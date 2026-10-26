@@ -9,8 +9,7 @@ import com.simibubi.create.content.logistics.stockTicker.*;
 import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
-import io.github.forgestove.create_cyber_goggles.core.factory.MultiplyScreen;
-import io.github.forgestove.create_cyber_goggles.core.factory.RequestAmountScreen;
+import io.github.forgestove.create_cyber_goggles.core.factory.*;
 import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
 import net.createmod.catnip.data.*;
 import net.minecraft.network.chat.Component;
@@ -44,11 +43,11 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 	/** 物品订单与合成订单都乘倍数，各自截断到库存/材料上限 */
 	@Unique
 	private void ccg$multiplyAll(double factor) {
-		var thiz = thiz();
-		for (var entry : thiz.itemsToOrder)
+		StockKeeperRequestScreen thiz = thiz();
+		for (BigItemStack entry : thiz.itemsToOrder)
 			entry.count = MultiplyScreen.scale(entry.count, factor, 1, ccg$getAvailableMax(entry));
-		for (var cbis : List.copyOf(thiz.recipesToOrder)) {
-			var target = MultiplyScreen.scale(cbis.count, factor, 0, ccg$getMaxCraftable(cbis));
+		for (CraftableBigItemStack cbis : List.copyOf(thiz.recipesToOrder)) {
+			int target = MultiplyScreen.scale(cbis.count, factor, 0, ccg$getMaxCraftable(cbis));
 			if (target != cbis.count) thiz.requestCraftable(cbis, target - cbis.count);
 		}
 	}
@@ -110,18 +109,18 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 	}
 	@Unique
 	private boolean ccg$applyFullAmount(double mouseX, double mouseY) {
-		var hoveredSlot = getHoveredSlot((int) mouseX, (int) mouseY);
+		Couple<Integer> hoveredSlot = getHoveredSlot((int) mouseX, (int) mouseY);
 		if (hoveredSlot == noneHovered) return false;
 		int group = hoveredSlot.getFirst();
 		int index = hoveredSlot.getSecond();
 		if (group == -2) {
-			var cbis = thiz().recipesToOrder.get(index);
+			CraftableBigItemStack cbis = thiz().recipesToOrder.get(index);
 			if (cbis == null || cbis.stack.isEmpty()) return false;
 			// 配方请求满量：按可用材料最大可合成量
 			thiz().requestCraftable(cbis, ccg$getMaxCraftable(cbis) - cbis.count);
 			return true;
 		}
-		var entry = group == -1 ? thiz().itemsToOrder.get(index) : displayedItems.get(group).get(index);
+		BigItemStack entry = group == -1 ? thiz().itemsToOrder.get(index) : displayedItems.get(group).get(index);
 		if (entry == null || entry.stack.isEmpty()) return false;
 		if (group == -1) {
 			ccg$setOrRemoveOrder(entry.stack, 0);
@@ -133,19 +132,19 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 	@Unique
 	private boolean ccg$openPopupForHoveredItem(double mouseX, double mouseY) {
 		BigItemStack result = null;
-		var hoveredSlot = getHoveredSlot((int) mouseX, (int) mouseY);
+		Couple<Integer> hoveredSlot = getHoveredSlot((int) mouseX, (int) mouseY);
 		if (hoveredSlot != noneHovered) {
 			int group = hoveredSlot.getFirst();
 			int index = hoveredSlot.getSecond(); // 配方条使用自己的数量语义
 			if (group == -2) {
-				var cbis = thiz().recipesToOrder.get(index);
+				CraftableBigItemStack cbis = thiz().recipesToOrder.get(index);
 				result = cbis == null || cbis.stack.isEmpty() ? null : cbis;
 			} else {
-				var entry1 = group == -1 ? thiz().itemsToOrder.get(index) : displayedItems.get(group).get(index);
+				BigItemStack entry1 = group == -1 ? thiz().itemsToOrder.get(index) : displayedItems.get(group).get(index);
 				result = entry1 == null || entry1.stack.isEmpty() ? null : entry1;
 			}
 		}
-		final var entry = result;
+		final BigItemStack entry = result;
 		if (entry == null) return false;
 		if (entry instanceof CraftableBigItemStack cbis) {
 			// 配方请求：上限按可用材料可合成量，应用时经 requestCraftable 对齐配方产量
@@ -158,8 +157,8 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 			));
 			return true;
 		}
-		var max = ccg$getAvailableMax(entry);
-		var existing = getOrderForItem(entry.stack);
+		int max = ccg$getAvailableMax(entry);
+		BigItemStack existing = getOrderForItem(entry.stack);
 		mc.setScreen(new RequestAmountScreen(
 			thiz(),
 			entry.stack,
@@ -174,9 +173,9 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 	@Unique
 	private int ccg$getAvailableMax(BigItemStack entry) {
 		var max = 0;
-		var summary = blockEntity.getLastClientsideStockSnapshotAsSummary();
+		InventorySummary summary = blockEntity.getLastClientsideStockSnapshotAsSummary();
 		if (summary != null) {
-			var summaryCount = summary.getCountOf(entry.stack);
+			int summaryCount = summary.getCountOf(entry.stack);
 			if (summaryCount == BigItemStack.INF) return Integer.MAX_VALUE;
 			if (summaryCount > 0) max = summaryCount;
 		}
@@ -185,11 +184,11 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 	}
 	@Unique
 	private int ccg$getMaxCraftable(CraftableBigItemStack cbis) {
-		var summary = blockEntity.getLastClientsideStockSnapshotAsSummary();
+		InventorySummary summary = blockEntity.getLastClientsideStockSnapshotAsSummary();
 		if (summary == null) return Math.max(1, cbis.count);
 		// 与 requestCraftable 增加方向一致：扣除已订购材料量
 		Function<ItemStack, Integer> countModifier = stack -> {
-			var ordered = getOrderForItem(stack);
+			BigItemStack ordered = getOrderForItem(stack);
 			return ordered == null ? 0 : -ordered.count;
 		};
 		return maxCraftable(cbis, summary, countModifier, -1).getFirst();
@@ -205,8 +204,8 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 	}
 	@Unique
 	private void ccg$setOrRemoveOrder(ItemStack stack, int count) {
-		var existing = getOrderForItem(stack);
-		var thiz = thiz();
+		BigItemStack existing = getOrderForItem(stack);
+		StockKeeperRequestScreen thiz = thiz();
 		if (count <= 0) {
 			if (existing != null) thiz.itemsToOrder.remove(existing);
 			return;

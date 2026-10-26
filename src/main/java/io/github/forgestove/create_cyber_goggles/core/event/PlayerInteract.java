@@ -9,11 +9,17 @@ import com.simibubi.create.content.logistics.tableCloth.TableClothBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.util.*;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.Direction.AxisDirection;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.*;
+import net.minecraft.core.Direction.*;
 import net.minecraft.network.chat.*;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket.Action;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.*;
+import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.client.event.ClientTickEvent.Pre;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.*;
 
@@ -38,9 +44,9 @@ public final class PlayerInteract {
 	}
 	private static void encasedCogWheel() {
 		if (!CCG.config.misc.wrench.betterEncasedCogwheel) return;
-		var ecb = getBlock(EncasedCogwheelBlock.class);
+		EncasedCogwheelBlock ecb = getBlock(EncasedCogwheelBlock.class);
 		if (ecb == null) return;
-		var bhr = getBlockHitResult();
+		BlockHitResult bhr = getBlockHitResult();
 		if (mc.level == null || bhr == null) return;
 		if (ecb.getRotationAxis(mc.level.getBlockState(bhr.getBlockPos())) != bhr.getDirection().getAxis()) return;
 		showCommonTip(CCGLang.translateDirect("message.openState"));
@@ -53,22 +59,22 @@ public final class PlayerInteract {
 	private static void chassis() {
 		if (!CCG.config.misc.wrench.betterChassis) return;
 		if (mc.level == null) return;
-		var acb = getBlock(AbstractChassisBlock.class);
+		AbstractChassisBlock acb = getBlock(AbstractChassisBlock.class);
 		if (acb == null) return;
-		var bhr = getBlockHitResult();
+		BlockHitResult bhr = getBlockHitResult();
 		if (bhr == null || acb.getGlueableSide(mc.level.getBlockState(bhr.getBlockPos()), bhr.getDirection()) == null) return;
 		showCommonTip(CCGLang.translateDirect("message.glueState"));
 	}
 	public static void tableCloth() {
 		if (!CCG.config.goggles.betterStoreInfo) return;
 		if (mc.player == null) return;
-		var currentTick = mc.player.tickCount;
+		int currentTick = mc.player.tickCount;
 		if (currentTick == lastTick) return;
 		lastTick = currentTick;
-		var tcbe = getBlockEntity(TableClothBlockEntity.class);
+		TableClothBlockEntity tcbe = getBlockEntity(TableClothBlockEntity.class);
 		if (tcbe == null) return;
 		if (TableClothUtil.getItems(tcbe).size() <= 1) return;
-		var builder = CCGLang.translate(
+		CCGLangBuilder builder = CCGLang.translate(
 			"message.toggleItemOverlay",
 			CCGKey.toggleItemOverlay.getFancyName()
 		).style(ChatFormatting.WHITE);
@@ -91,21 +97,21 @@ public final class PlayerInteract {
 	private static void wrench(LeftClickBlock event) {
 		if (!CCG.config.misc.wrench.leftClickFastDismantle) return;
 		if (dismantleDelay > 0) dismantleDelay--;
-		var canDismantle = System.currentTimeMillis() - lastDismantleTime > dismantleDelay * 20;
+		boolean canDismantle = System.currentTimeMillis() - lastDismantleTime > dismantleDelay * 20;
 		if (!canDismantle) return;
-		var action = event.getAction();
+		LeftClickBlock.Action action = event.getAction();
 		if (!(action == START || action == CLIENT_HOLD)) return;
-		var player = mc.player;
+		LocalPlayer player = mc.player;
 		if (player == null || player.isCreative() || mc.gameMode == null) return;
-		var handWithWrench = player.getMainHandItem().getItem() instanceof WrenchItem
+		InteractionHand handWithWrench = player.getMainHandItem().getItem() instanceof WrenchItem
 			? InteractionHand.MAIN_HAND
 			: player.getOffhandItem().getItem() instanceof WrenchItem ? InteractionHand.OFF_HAND : null;
 		if (handWithWrench == null) return;
-		var pos = event.getPos();
-		var state = event.getLevel().getBlockState(pos);
-		var block = state.getBlock();
+		BlockPos pos = event.getPos();
+		BlockState state = event.getLevel().getBlockState(pos);
+		Block block = state.getBlock();
 		if (!(block instanceof IWrenchable || AllBlockTags.WRENCH_PICKUP.matches(state))) return;
-		var result = getBlockHitResult();
+		BlockHitResult result = getBlockHitResult();
 		if (result == null) return;
 		sendAction(Action.PRESS_SHIFT_KEY);
 		isShiftKeyDown = true;
@@ -124,31 +130,31 @@ public final class PlayerInteract {
 	}
 	private static void enacesdPipe(RightClickBlock event) {
 		if (!CCG.config.misc.wrench.betterEncasedPipe) return;
-		var pos = event.getPos();
-		var state = event.getLevel().getBlockState(pos);
+		BlockPos pos = event.getPos();
+		BlockState state = event.getLevel().getBlockState(pos);
 		if (!(state.getBlock() instanceof EncasedPipeBlock)
 			|| event.getHand() != InteractionHand.MAIN_HAND
 			|| mc.player == null
 			|| hasItemInHand()) return;
-		var clickedFace = event.getHitVec().getDirection();
+		Direction clickedFace = event.getHitVec().getDirection();
 		if (CCGKey.interactOpposite.isDown()) clickedFace = clickedFace.getOpposite();
-		var booleanProperty = EncasedPipeBlock.FACING_TO_PROPERTY_MAP.get(clickedFace);
+		BooleanProperty booleanProperty = EncasedPipeBlock.FACING_TO_PROPERTY_MAP.get(clickedFace);
 		sendToServer(new RadialWrenchMenuSubmitPacket(pos, state.cycle(booleanProperty)));
 		mc.player.swing(mc.player.getUsedItemHand());
 	}
 	private static void encasedCogWheel(RightClickBlock event) {
 		if (!CCG.config.misc.wrench.betterEncasedCogwheel) return;
-		var pos = event.getPos();
-		var state = event.getLevel().getBlockState(pos);
+		BlockPos pos = event.getPos();
+		BlockState state = event.getLevel().getBlockState(pos);
 		if (!(state.getBlock() instanceof EncasedCogwheelBlock)
 			|| event.getHand() != InteractionHand.MAIN_HAND
 			|| mc.player == null
 			|| hasItemInHand()) return;
-		var clickedFace = event.getHitVec().getDirection();
+		Direction clickedFace = event.getHitVec().getDirection();
 		if (CCGKey.interactOpposite.isDown()) clickedFace = clickedFace.getOpposite();
-		var axis = state.getValue(RotatedPillarBlock.AXIS);
+		Axis axis = state.getValue(RotatedPillarBlock.AXIS);
 		if (clickedFace.getAxis() != axis) return;
-		var booleanProperty = clickedFace.getAxisDirection() == AxisDirection.POSITIVE
+		BooleanProperty booleanProperty = clickedFace.getAxisDirection() == AxisDirection.POSITIVE
 			? EncasedCogwheelBlock.TOP_SHAFT
 			: EncasedCogwheelBlock.BOTTOM_SHAFT;
 		sendToServer(new RadialWrenchMenuSubmitPacket(pos, state.cycle(booleanProperty)));
@@ -157,25 +163,25 @@ public final class PlayerInteract {
 	private static void chassis(RightClickBlock event) {
 		if (!CCG.config.misc.wrench.betterChassis) return;
 		if (hasActivedValueBox()) return;
-		var pos = event.getPos();
-		var state = event.getLevel().getBlockState(pos);
+		BlockPos pos = event.getPos();
+		BlockState state = event.getLevel().getBlockState(pos);
 		if (!(state.getBlock() instanceof AbstractChassisBlock acb)) return;
 		if (event.getHand() != InteractionHand.MAIN_HAND) return;
 		if (mc.player == null) return;
 		if (mc.player.isShiftKeyDown()) return;
 		if (hasItemInHand()) return;
-		var clickedFace = event.getHitVec().getDirection();
+		Direction clickedFace = event.getHitVec().getDirection();
 		if (CCGKey.interactOpposite.isDown()) {
 			clickedFace = clickedFace.getOpposite();
-			var level = event.getLevel();
-			var axisProp = RotatedPillarBlock.AXIS;
-			var baseAxis = state.hasProperty(axisProp) ? state.getValue(axisProp) : null;
-			var probePos = pos.relative(clickedFace);
-			var probeState = level.getBlockState(probePos);
-			var targetAcb = acb;
+			Level level = event.getLevel();
+			EnumProperty<Axis> axisProp = RotatedPillarBlock.AXIS;
+			Axis baseAxis = state.hasProperty(axisProp) ? state.getValue(axisProp) : null;
+			BlockPos probePos = pos.relative(clickedFace);
+			BlockState probeState = level.getBlockState(probePos);
+			AbstractChassisBlock targetAcb = acb;
 			if (LinearChassisBlock.isChassis(state) && LinearChassisBlock.sameKind(state, probeState))
 				while (probeState.getBlock() instanceof LinearChassisBlock lcb) {
-					var probeAxis = probeState.hasProperty(axisProp) ? probeState.getValue(axisProp) : null;
+					Axis probeAxis = probeState.hasProperty(axisProp) ? probeState.getValue(axisProp) : null;
 					if (probeAxis == null || probeAxis != baseAxis) break;
 					pos = probePos;
 					state = probeState;
@@ -185,7 +191,7 @@ public final class PlayerInteract {
 				}
 			acb = targetAcb;
 		}
-		var booleanProperty = acb.getGlueableSide(state, clickedFace);
+		BooleanProperty booleanProperty = acb.getGlueableSide(state, clickedFace);
 		if (booleanProperty == null) return;
 		sendToServer(new RadialWrenchMenuSubmitPacket(pos, state.cycle(booleanProperty)));
 		mc.player.swing(mc.player.getUsedItemHand());

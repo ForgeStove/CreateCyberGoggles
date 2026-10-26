@@ -1,6 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.mixin.goggles;
 import com.simibubi.create.content.kinetics.base.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.CCGConfig.Goggles;
 import io.github.forgestove.create_cyber_goggles.core.util.GoggleTooltipUtil;
 import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
 import net.minecraft.core.BlockPos;
@@ -19,7 +20,7 @@ public abstract class GeneratingKineticBlockEntityMixin extends KineticBlockEnti
 	}
 	@Inject(method = "addToGoggleTooltip", at = @At("HEAD"), cancellable = true)
 	public void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> cir) {
-		var goggles = CCG.config.goggles;
+		Goggles goggles = CCG.config.goggles;
 		if (!goggles.enhancedInfo) return;
 		if (goggles.hideStaticKineticInfo && speed == 0) {
 			cir.setReturnValue(false);

@@ -31,7 +31,7 @@ public abstract class BlazeEnchanterBlockEntityMixin extends BlazeExperienceBloc
 	@Override
 	public ItemStack ccg$getItemStack() {
 		if (thiz().isActive()) {
-			var copy = heldItem.copy();
+			ItemStack copy = heldItem.copy();
 			if (ccg$cachedResult.isEmpty() || enchanter.value != ccg$lastEnchantLevel) {
 				ccg$cachedResult = enchanter.getResult(copy);
 				ccg$lastEnchantLevel = enchanter.value;

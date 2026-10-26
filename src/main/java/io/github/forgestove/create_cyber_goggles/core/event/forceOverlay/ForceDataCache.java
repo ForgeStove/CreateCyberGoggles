@@ -21,7 +21,7 @@ public final class ForceDataCache {
 	}
 	/** 原子性地读取并消费"dirty"标记。 */
 	public static boolean consumeDirty() {
-		var d = dirty;
+		boolean d = dirty;
 		dirty = false;
 		return d;
 	}

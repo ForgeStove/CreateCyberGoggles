@@ -12,7 +12,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Quaterniond;
+import org.joml.*;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -27,8 +27,8 @@ public abstract class PhysicsStaffClientHandlerMixin {
 		if (dragSession == null) return;
 		if (mc.player == null) return;
 		if (!CCGKey.correctionSublevel.isDown()) return;
-		var subLevel = dragSession.dragSubLevel();
-		var localAnchor = dragSession.dragLocalAnchor();
+		SubLevel subLevel = dragSession.dragSubLevel();
+		Vector3dc localAnchor = dragSession.dragLocalAnchor();
 		dragSession = new ClientDragSession(
 			subLevel,
 			localAnchor,

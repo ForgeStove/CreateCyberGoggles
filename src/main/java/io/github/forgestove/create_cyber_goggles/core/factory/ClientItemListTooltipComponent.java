@@ -35,17 +35,17 @@ public final class ClientItemListTooltipComponent implements ClientTooltipCompon
 	@Override
 	public void renderImage(@NotNull Font font, int x, int y, @NotNull GuiGraphics gui) {
 		for (var i = 0; i < c.items.size(); i++) {
-			var col = i % c.maxColumns;
-			var row = i / c.maxColumns;
-			var slotX = x + col * SlotUtil.SIZE + indentPixels(font);
-			var slotY = y + row * SlotUtil.SIZE;
+			int col = i % c.maxColumns;
+			int row = i / c.maxColumns;
+			int slotX = x + col * SlotUtil.SIZE + indentPixels(font);
+			int slotY = y + row * SlotUtil.SIZE;
 			renderSlot(gui, font, c.items.get(i), slotX, slotY);
 		}
 	}
 	private void renderSlot(GuiGraphics gui, Font font, ItemStack stack, int x, int y) {
 		gui.blitSprite(SlotUtil.SLOT, x, y, 0, SlotUtil.SIZE, SlotUtil.SIZE);
 		gui.renderItem(stack, x + 1, y + 1);
-		var count = stack.getCount();
+		int count = stack.getCount();
 		if (PackageTankHelper.isCFLCompressedTank(stack))
 			gui.renderItemDecorations(font, stack, x + 1, y + 1, AmountUtil.formatFluidAmount(count));
 		else if (count > 1) gui.renderItemDecorations(font, stack, x + 1, y + 1, AmountUtil.formatItemCountIfEnabled(count));

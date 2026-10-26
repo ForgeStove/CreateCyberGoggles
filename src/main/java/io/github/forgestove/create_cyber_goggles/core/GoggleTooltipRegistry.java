@@ -58,7 +58,7 @@ public final class GoggleTooltipRegistry<C> {
 		List<Entry<C>> list = lookup(actualClass);
 		if (list == null) return nativeFallback != null && nativeFallback.getAsBoolean();
 		var added = false;
-		for (var entry : list) {
+		for (Entry<C> entry : list) {
 			if (entry.id().equals(nativeId)) {
 				if (nativeFallback != null) added |= nativeFallback.getAsBoolean();
 				continue;

@@ -5,7 +5,7 @@ public class BeltThroughput {
 	private double rate;
 	private int lastTotalItems;
 	public void tick(int totalItems) {
-		var passed = Math.max(0, lastTotalItems - totalItems);
+		int passed = Math.max(0, lastTotalItems - totalItems);
 		lastTotalItems = totalItems;
 		history.addLast(passed);
 		if (history.size() > 60) history.pollFirst();

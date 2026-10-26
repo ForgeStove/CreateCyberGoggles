@@ -3,7 +3,10 @@ import com.simibubi.create.AllSpecialTextures;
 import com.simibubi.create.content.kinetics.mechanicalArm.*;
 import io.github.forgestove.create_cyber_goggles.api.*;
 import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.*;
 
 import java.util.List;
@@ -20,13 +23,13 @@ public abstract class ArmBlockEntityMixin implements ItemRenderable, OutlineRend
 	}
 	@Override
 	public void ccg$render() {
-		var center = thiz().getBlockPos().getCenter();
+		Vec3 center = thiz().getBlockPos().getCenter();
 		List.of(inputs, outputs).forEach(points -> {
-			for (var point : points) {
+			for (ArmInteractionPoint point : points) {
 				if (!point.isValid()) continue;
-				var level = point.getLevel();
-				var pos = point.getPos();
-				var color = point.getMode().getColor();
+				Level level = point.getLevel();
+				BlockPos pos = point.getPos();
+				int color = point.getMode().getColor();
 				outliner.showAABB("ArmIOBox" + point, level.getBlockState(pos).getShape(level, pos).bounds().move(pos))
 					.withFaceTextures(AllSpecialTextures.CHECKERED, AllSpecialTextures.HIGHLIGHT_CHECKERED)
 					.lineWidth(1 / 16f)

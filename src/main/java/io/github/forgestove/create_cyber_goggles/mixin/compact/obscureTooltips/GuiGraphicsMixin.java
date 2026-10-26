@@ -8,6 +8,7 @@ import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.inventory.tooltip.*;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.ClientHooks;
+import net.neoforged.neoforge.client.event.RenderTooltipEvent.Pre;
 import org.spongepowered.asm.mixin.*;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public abstract class GuiGraphicsMixin implements Self<GuiGraphics> {
 			return;
 		}
 		if (!components.isEmpty()) {
-			var preEvent = ClientHooks.onRenderTooltipPre(
+			Pre preEvent = ClientHooks.onRenderTooltipPre(
 				tooltipStack,
 				thiz(),
 				mouseX,

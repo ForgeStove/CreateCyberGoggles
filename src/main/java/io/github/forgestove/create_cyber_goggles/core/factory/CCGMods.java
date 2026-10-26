@@ -42,7 +42,7 @@ public enum CCGMods {
 	}
 	public boolean contains(ItemLike entry) {
 		if (!isLoaded()) return false;
-		var asItem = entry.asItem();
+		Item asItem = entry.asItem();
 		return RegisteredObjectsHelper.getKeyOrThrow(asItem).getNamespace().equals(id);
 	}
 	/**

@@ -2,6 +2,7 @@ package io.github.forgestove.create_cyber_goggles.core.factory;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderType.CompositeState.CompositeStateBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import org.jetbrains.annotations.NotNull;
@@ -65,7 +66,7 @@ public class CCGRenderTypes extends RenderType {
 	}
 	// 剪贴板背景/贴图：正常深度遮挡并写深度（挡住云等透明物）
 	public static @NotNull RenderType textWithDepth(ResourceLocation location, boolean polygonOffset) {
-		var builder = CompositeState.builder()
+		CompositeStateBuilder builder = CompositeState.builder()
 			.setShaderState(RENDERTYPE_TEXT_SHADER)
 			.setTextureState(new TextureStateShard(location, false, false))
 			.setTransparencyState(TRANSLUCENT_TRANSPARENCY)

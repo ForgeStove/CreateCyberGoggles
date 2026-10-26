@@ -21,13 +21,13 @@ public final class TipOverlay {
 	public static void renderOverlay(GuiGraphics gui, DeltaTracker ignoredDeltaTracker) {
 		if (mc.options.hideGui) return;
 		if (hoverTicks == 0 || lastTip == null) return;
-		var x = gui.guiWidth() / 2 + deltaX;
-		var y = gui.guiHeight() - 75 - lastTip.size() * 12 + deltaY;
-		var alpha = hoverTicks > 5 ? (11 - hoverTicks) / 5F : Math.min(1, hoverTicks / 5F);
-		var color = new Color(0xFFFFFF).setAlpha(alpha);
-		var titleColor = new Color(0xFBDC7D).setAlpha(alpha);
+		int x = gui.guiWidth() / 2 + deltaX;
+		int y = gui.guiHeight() - 75 - lastTip.size() * 12 + deltaY;
+		float alpha = hoverTicks > 5 ? (11 - hoverTicks) / 5F : Math.min(1, hoverTicks / 5F);
+		Color color = new Color(0xFFFFFF).setAlpha(alpha);
+		Color titleColor = new Color(0xFBDC7D).setAlpha(alpha);
 		var i = 0;
-		for (var component : lastTip) {
+		for (MutableComponent component : lastTip) {
 			gui.drawString(mc.font, component, x - mc.font.width(component) / 2, y + i * 12, (i == 0 ? titleColor : color).getRGB());
 			i++;
 		}

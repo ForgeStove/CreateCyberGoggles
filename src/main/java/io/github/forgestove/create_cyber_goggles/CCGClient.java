@@ -7,6 +7,7 @@ import io.github.forgestove.create_cyber_goggles.core.factory.*;
 import io.github.forgestove.create_cyber_goggles.core.schematic.*;
 import io.github.forgestove.create_cyber_goggles.core.util.EnderChestTooltipUtil;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
@@ -16,7 +17,7 @@ import static io.github.forgestove.create_cyber_goggles.CCG.ID;
 public class CCGClient {
 	public CCGClient(ModContainer container) {
 		CCGGoggleEntries.register();
-		var mod = container.getEventBus();
+		IEventBus mod = container.getEventBus();
 		assert mod != null;
 		mod.addListener(CCGKey::register);
 		mod.addListener(TooltipOverlay::register);
@@ -28,7 +29,7 @@ public class CCGClient {
 		mod.addListener(ClientSchematicPreviewTooltipComponent::register);
 		mod.addListener(DraftingShaders::register);
 		CCGMods.simulated.executeIfInstalled(() -> mod.addListener(ForceTooltipOverlay::register));
-		var game = NeoForge.EVENT_BUS;
+		IEventBus game = NeoForge.EVENT_BUS;
 		game.addListener(KeyInput::key);
 		game.addListener(KeyInput::mouseScroll);
 		game.addListener(PlayerInteract::leftClick);

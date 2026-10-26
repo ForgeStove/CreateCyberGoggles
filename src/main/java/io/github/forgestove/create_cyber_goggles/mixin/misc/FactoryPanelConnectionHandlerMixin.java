@@ -37,8 +37,8 @@ public abstract class FactoryPanelConnectionHandlerMixin {
 	) {
 		if (!CCG.config.goggles.betterFactoryGauge) return;
 		// 用目标方向状态重算槽位：rotatePanelTo 会转向目标面，槽位点击映射必须与之一致
-		var targetState = FactoryPanelUtil.facingState(blockState, mc.hitResult, new FactoryPanelPosition(pos, slot));
-		var targetSlot = FactoryPanelBlock.getTargetedSlot(pos, targetState, offsetPos);
+		BlockState targetState = FactoryPanelUtil.facingState(blockState, mc.hitResult, new FactoryPanelPosition(pos, slot));
+		PanelSlot targetSlot = FactoryPanelBlock.getTargetedSlot(pos, targetState, offsetPos);
 		validRelocationTarget = new FactoryPanelPosition(pos, targetSlot);
 		Outliner.getInstance()
 			.showAABB("target", FactoryPanelConnectionHandler.getBB(targetState, validRelocationTarget))
@@ -66,11 +66,11 @@ public abstract class FactoryPanelConnectionHandlerMixin {
 	/** 重定位确认：先交原方法发移动包(moveTo 克隆源面板方向到目标)，再发旋转包把目标面板转向点击面方向 */
 	@WrapMethod(method = "onRightClick")
 	private static boolean onRightClick(Operation<Boolean> original) {
-		var wasRelocating = relocating;
-		var from = connectingFrom;
-		var target = validRelocationTarget;
-		var hitResult = mc.hitResult;
-		var engaged = CCG.config.goggles.betterFactoryGauge
+		boolean wasRelocating = relocating;
+		FactoryPanelPosition from = connectingFrom;
+		FactoryPanelPosition target = validRelocationTarget;
+		HitResult hitResult = mc.hitResult;
+		boolean engaged = CCG.config.goggles.betterFactoryGauge
 			&& wasRelocating
 			&& from != null
 			&& target != null

@@ -1,15 +1,17 @@
 package io.github.forgestove.create_cyber_goggles.core.factory;
+import com.mojang.blaze3d.platform.Window;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.content.logistics.*;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelScreen;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.stockTicker.*;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrderWithCrafts.CraftingEntry;
+import com.simibubi.create.content.trains.schedule.DestinationSuggestions;
 import com.simibubi.create.foundation.gui.*;
 import io.github.forgestove.create_cyber_goggles.compat.jei.CCGJeiTitles;
 import io.github.forgestove.create_cyber_goggles.core.factory.ReplenishGroup.*;
-import io.github.forgestove.create_cyber_goggles.core.util.CCGCreateLang;
-import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
+import io.github.forgestove.create_cyber_goggles.core.util.*;
 import io.github.forgestove.create_cyber_goggles.mixin.accessor.*;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.animation.LerpedFloat.Chaser;
@@ -207,9 +209,9 @@ public class ReplenishScreen extends AbstractSimiScreen {
 				: count >= 1000 ? (count * 10 / 1000) / 10f + "k" : count >= 100 ? count + "" : " " + count;
 		if (count >= BigItemStack.INF) text = "+";
 		if (text.isBlank()) return;
-		var numbers = AllGuiTextures.NUMBERS;
+		AllGuiTextures numbers = AllGuiTextures.NUMBERS;
 		// 抬高 z 以盖住物品（物品画在 z=150）
-		var pose = gui.pose();
+		PoseStack pose = gui.pose();
 		pose.pushPose();
 		pose.translate(0, 0, 200);
 		var x = (int) Math.floor(-text.length() * 2.5);
@@ -262,7 +264,7 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		panelH = Math.min(screenH - 18, needed);
 		viewH = Math.max(0, panelH - HEADER_H - FOOTER_H);
 		setWindowSize(PANEL_W, panelH);
-		var window = mc.getWindow();
+		Window window = mc.getWindow();
 		setWindowOffset((window.getGuiScaledWidth() - PANEL_W) / 2, (window.getGuiScaledHeight() - panelH) / 2);
 		super.init();
 		// 宽度收窄，给右挂的剪贴板图标留位
@@ -322,46 +324,29 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		removed();
 		mc.screen = parent;
 	}
-	/** 发送所有原料齐备的节点，内容与发送区同源。 */
-	private void sendAll() {
-		// 按序扣减共享原料，避免两个配方同时认为库存够用
-		Map<Item, Integer> remaining = new HashMap<>();
-		var summary = host.ccg$summary(); // 快照可能是现算的，整轮只取一次
-		for (var i = 0; i < groups.size(); i++) {
-			String addr = groupAddress.get(i);
-			for (Node n : groups.get(i).nodes()) {
-				if (n.craftTimes() <= 0 || n.items().isEmpty()) continue;
-				if (addr == null || addr.isBlank()) {
-					LOGGER.debug("未填地址, 跳过 {}", n.target().getHoverName().getString());
-					continue;
-				}
-				if (!hasMaterials(n, remaining, summary)) {
-					LOGGER.debug("原料不足, 跳过 {}", n.target().getHoverName().getString());
-					continue;
-				}
-				List<BigItemStack> order = new ArrayList<>();
-				for (ReplenishEntry e : n.items())
-					order.add(new BigItemStack(e.material().copy(), e.per() * n.craftTimes()));
-				List<BigItemStack> pattern = new ArrayList<>();
-				if (n.recipe() instanceof CraftingRecipe cr)
-					pattern = FactoryPanelScreen.convertRecipeToPackageOrderContext(cr, order, true);
-				else for (ReplenishEntry e : n.items()) pattern.add(new BigItemStack(e.material().copy(), e.per()));
-				var packet = new PackageOrderWithCrafts(
-					new PackageOrder(order),
-					List.of(new CraftingEntry(new PackageOrder(pattern), n.craftTimes()))
-				);
-				LOGGER.debug(
-					"Send: {} addr={} craft={}/{} order={}",
-					n.target().getHoverName().getString(),
-					addr,
-					n.craftTimes(),
-					n.wantTimes(),
-					order
-				);
-				host.ccg$sendOrder(packet, addr);
-			}
+	@Override
+	protected void renderWindowBackground(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+		PoseStack pose = gui.pose();
+		pose.pushPose();
+		pose.translate(0, 0, -500);
+		Screen current = mc.screen;
+		mc.screen = parent;
+		try {
+			parent.renderBackground(gui, -1, -1, partialTick);
+			parent.render(gui, -1, -1, partialTick);
+		} finally {
+			mc.screen = current;
 		}
-		onClose();
+		gui.fill(0, 0, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight(), 0x66_101010);
+		pose.popPose();
+		pose.pushPose();
+		pose.translate(windowXOffset, windowYOffset, 0);
+		CCGGuiTextures.HEADER.render(gui, 0, 0);
+		int bodyEnd = panelH - FOOTER_H;
+		// 纵向平铺
+		if (bodyEnd > HEADER_H) CCGGuiTextures.BODY.render(gui, 0, HEADER_H, PANEL_W, bodyEnd - HEADER_H);
+		CCGGuiTextures.FOOTER.render(gui, 0, bodyEnd);
+		pose.popPose();
 	}
 	/** 可滚动距离：内容高 − 视口高；contentH 含 BODY_TOP 偏移，须减去。 */
 	private int maxScroll() {return Math.max(0, contentH - BODY_TOP - viewH);}
@@ -395,37 +380,13 @@ public class ReplenishScreen extends AbstractSimiScreen {
 	@Override
 	protected void renderMenuBackground(@NotNull GuiGraphics gui, int x, int y, int width, int height) {}
 	@Override
-	protected void renderWindowBackground(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
-		var pose = gui.pose();
-		pose.pushPose();
-		pose.translate(0, 0, -500);
-		var current = mc.screen;
-		mc.screen = parent;
-		try {
-			parent.renderBackground(gui, -1, -1, partialTick);
-			parent.render(gui, -1, -1, partialTick);
-		} finally {
-			mc.screen = current;
-		}
-		gui.fill(0, 0, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight(), 0x66_101010);
-		pose.popPose();
-		pose.pushPose();
-		pose.translate(windowXOffset, windowYOffset, 0);
-		CCGGuiTextures.HEADER.render(gui, 0, 0);
-		int bodyEnd = panelH - FOOTER_H;
-		// 纵向平铺
-		if (bodyEnd > HEADER_H) CCGGuiTextures.BODY.render(gui, 0, HEADER_H, PANEL_W, bodyEnd - HEADER_H);
-		CCGGuiTextures.FOOTER.render(gui, 0, bodyEnd);
-		pose.popPose();
-	}
-	@Override
 	protected void renderWindow(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
 		mouseXPos = mouseX;
 		mouseYPos = mouseY;
 		hoveredNode = null;
 		hoveredSendItem = null;
 		int clamped = Mth.clamp((int) scrollAnim.getValue(partialTick), 0, maxScroll());
-		var pose = gui.pose();
+		PoseStack pose = gui.pose();
 		pose.pushPose();
 		pose.translate(windowXOffset, windowYOffset, 0);
 		Font font = mc.font;
@@ -473,6 +434,47 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		pose.popPose();
 		if (maxScroll() > 0) renderScrollbar(gui, partialTick);
 	}
+	/** 发送所有原料齐备的节点，内容与发送区同源。 */
+	private void sendAll() {
+		// 按序扣减共享原料，避免两个配方同时认为库存够用
+		Map<Item, Integer> remaining = new HashMap<>();
+		InventorySummary summary = host.ccg$summary(); // 快照可能是现算的，整轮只取一次
+		for (var i = 0; i < groups.size(); i++) {
+			String addr = groupAddress.get(i);
+			for (Node n : groups.get(i).nodes()) {
+				if (n.craftTimes() <= 0 || n.items().isEmpty()) continue;
+				if (addr == null || addr.isBlank()) {
+					LOGGER.debug("未填地址, 跳过 {}", n.target().getHoverName().getString());
+					continue;
+				}
+				if (!hasMaterials(n, remaining, summary)) {
+					LOGGER.debug("原料不足, 跳过 {}", n.target().getHoverName().getString());
+					continue;
+				}
+				List<BigItemStack> order = new ArrayList<>();
+				for (ReplenishEntry e : n.items())
+					order.add(new BigItemStack(e.material().copy(), e.per() * n.craftTimes()));
+				List<BigItemStack> pattern = new ArrayList<>();
+				if (n.recipe() instanceof CraftingRecipe cr)
+					pattern = FactoryPanelScreen.convertRecipeToPackageOrderContext(cr, order, true);
+				else for (ReplenishEntry e : n.items()) pattern.add(new BigItemStack(e.material().copy(), e.per()));
+				var packet = new PackageOrderWithCrafts(
+					new PackageOrder(order),
+					List.of(new CraftingEntry(new PackageOrder(pattern), n.craftTimes()))
+				);
+				LOGGER.debug(
+					"Send: {} addr={} craft={}/{} order={}",
+					n.target().getHoverName().getString(),
+					addr,
+					n.craftTimes(),
+					n.wantTimes(),
+					order
+				);
+				host.ccg$sendOrder(packet, addr);
+			}
+		}
+		onClose();
+	}
 	private void drawGroup(GuiGraphics gui, Font font, Row r, int top) {
 		int gx = CONTENT_L + GROUP_INDENT;
 		// 收起/展开三角
@@ -480,7 +482,7 @@ public class ReplenishScreen extends AbstractSimiScreen {
 			hiddenGroups.contains(r.gi()) ? AllGuiTextures.STOCK_KEEPER_CATEGORY_HIDDEN : AllGuiTextures.STOCK_KEEPER_CATEGORY_SHOWN
 		).render(gui, gx, top + (GROUP_H - 8) / 2);
 		// 阴影用深色右下偏移 1px 的双画法
-		var name = groupName(groups.get(r.gi()));
+		Component name = groupName(groups.get(r.gi()));
 		int x = gx + 10, y = top + (GROUP_H - 9) / 2 + 1;
 		gui.drawString(font, name, x + 1, y + 1, 0x4A2D31, false);
 		gui.drawString(font, name, x, y, 0xF8F8EC, false);
@@ -509,7 +511,7 @@ public class ReplenishScreen extends AbstractSimiScreen {
 				&& mouseYPos >= windowYOffset + iconY
 				&& mouseYPos < windowYOffset + iconY + 18;
 			if (hov) {
-				var pose = gui.pose();
+				PoseStack pose = gui.pose();
 				pose.pushPose();
 				pose.translate(cellX + 9, iconY + 9, 0);
 				pose.scale(1.075f, 1.075f, 1);
@@ -543,7 +545,7 @@ public class ReplenishScreen extends AbstractSimiScreen {
 				&& mouseYPos >= windowYOffset + iy
 				&& mouseYPos < windowYOffset + iy + SEND_CELL_W;
 			if (hov) {
-				var pose = gui.pose();
+				PoseStack pose = gui.pose();
 				pose.pushPose();
 				pose.translate(ix + 8, iy + 8, 0);
 				pose.scale(1.075f, 1.075f, 1);
@@ -575,11 +577,11 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		int barSize = thumbHeight();
 		if (barSize >= scrollTrackHeight() - 2) return;
 		// 整条随滚动平移
-		var pose = gui.pose();
+		PoseStack pose = gui.pose();
 		pose.pushPose();
 		pose.translate(0, thumbTop(partialTick) - scrollTrackTop(), 0);
 		int baseY = scrollTrackTop();
-		var pad = AllGuiTextures.STOCK_KEEPER_REQUEST_SCROLL_PAD;
+		AllGuiTextures pad = AllGuiTextures.STOCK_KEEPER_REQUEST_SCROLL_PAD;
 		gui.blit(pad.location, barX, baseY, SCROLL_W, barSize, pad.getStartX(), pad.getStartY(), pad.getWidth(), pad.getHeight(), 256,
 			256);
 		AllGuiTextures.STOCK_KEEPER_REQUEST_SCROLL_TOP.render(gui, barX, baseY);
@@ -589,7 +591,7 @@ public class ReplenishScreen extends AbstractSimiScreen {
 	}
 	/** 让下拉锚点跟随地址框当前的 y 位置。 */
 	private void refreshSuggestionsAnchor(AddressEditBox box) {
-		var suggestions = ((AddressEditBoxAccessor) box).getDestinationSuggestions();
+		DestinationSuggestions suggestions = ((AddressEditBoxAccessor) box).getDestinationSuggestions();
 		if (suggestions == null) return;
 		// anchorToBottom 恒为 true（列表自 yPos 向上排），顶出内容区时把 yPos 抬到框下方，列表即落到框下面。
 		var accessor = (DestinationSuggestionsAccessor) suggestions;
@@ -628,8 +630,8 @@ public class ReplenishScreen extends AbstractSimiScreen {
 	}
 	/** 配方切换弹窗：列出候选配方，点一行即切换。 */
 	private void renderRecipePopup(GuiGraphics gui) {
-		var font = mc.font;
-		var candidates = recipePopup.candidates();
+		Font font = mc.font;
+		List<CandidateCard> candidates = recipePopup.candidates();
 		hoveredPopupRow = -1;
 		if (mouseXPos >= popupX
 			&& mouseXPos < popupX + popupW
@@ -638,11 +640,11 @@ public class ReplenishScreen extends AbstractSimiScreen {
 			int row = (mouseYPos - popupY - 3) / POPUP_ROW_H;
 			if (row >= 0 && row < candidates.size()) hoveredPopupRow = row;
 		}
-		var pose = gui.pose();
+		PoseStack pose = gui.pose();
 		pose.pushPose();
 		pose.translate(0, 0, 400); // 盖住物品(z=150)、数字(z=200)、配方卡(z=300)
 		TooltipRenderUtil.renderTooltipBackground(gui, popupX, popupY, popupW, popupH, 0);
-		var current = recipePopup.recipe();
+		Recipe<?> current = recipePopup.recipe();
 		for (var i = 0; i < candidates.size(); i++) {
 			Recipe<?> recipe = candidates.get(i).holder().value();
 			int y = popupY + 3 + i * POPUP_ROW_H;
@@ -664,7 +666,7 @@ public class ReplenishScreen extends AbstractSimiScreen {
 	private void renderPopupRecipeCard(GuiGraphics gui) {
 		if (hoveredPopupRow < 0) return;
 		CandidateCard card = recipePopup.candidates().get(hoveredPopupRow);
-		var pose = gui.pose();
+		PoseStack pose = gui.pose();
 		pose.pushPose();
 		pose.translate(0, 0, 500); // 抬到弹窗(z=400)之上
 		renderRecipeCard(
@@ -703,7 +705,7 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		int craftTimes,
 		boolean switchable
 	) {
-		var font = mc.font;
+		Font font = mc.font;
 		int totalOut = craftTimes * outPer(recipe);
 		var rowH = 18;
 		var nameW = 0;
@@ -715,11 +717,11 @@ public class ReplenishScreen extends AbstractSimiScreen {
 		// 左列原料与右侧产物取高者，可切换时底部再留一行提示
 		int contentH = 3 + Math.max(items.size() * rowH, 18) + 3;
 		int cardH = contentH + (switchable ? SWITCH_HINT_H : 0);
-		var window = mc.getWindow();
+		Window window = mc.getWindow();
 		int cardX = Mth.clamp(mouseX + 12, 0, Math.max(0, window.getGuiScaledWidth() - cardW));
 		int cardY = Mth.clamp(mouseY + 12, 0, Math.max(0, window.getGuiScaledHeight() - cardH));
 		// 抬到物品与数字之上
-		var pose = gui.pose();
+		PoseStack pose = gui.pose();
 		pose.pushPose();
 		pose.translate(0, 0, 300);
 		TooltipRenderUtil.renderTooltipBackground(gui, cardX, cardY, cardW, cardH, 0);
@@ -756,7 +758,7 @@ public class ReplenishScreen extends AbstractSimiScreen {
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		// 弹窗优先：点面板内应用，点面板外或非左键关闭
 		if (recipePopup != null) {
-			var candidates = recipePopup.candidates();
+			List<CandidateCard> candidates = recipePopup.candidates();
 			if (button == 0 && mouseX >= popupX && mouseX < popupX + popupW && mouseY >= popupY && mouseY < popupY + popupH) {
 				var row = (int) ((mouseY - popupY - 3) / POPUP_ROW_H);
 				if (row >= 0 && row < candidates.size()) {
@@ -817,13 +819,13 @@ public class ReplenishScreen extends AbstractSimiScreen {
 	}
 	/** 按点击位置计算并固定弹窗矩形。 */
 	private void openRecipePopup(double mouseX, double mouseY) {
-		var candidates = recipePopup.candidates();
-		var font = mc.font;
+		List<CandidateCard> candidates = recipePopup.candidates();
+		Font font = mc.font;
 		var nameW = 0;
 		for (CandidateCard card : candidates) nameW = Math.max(nameW, font.width(typeName(card.holder().value().getType().toString())));
 		popupW = 6 + nameW + 6;
 		popupH = 6 + candidates.size() * POPUP_ROW_H;
-		var window = mc.getWindow();
+		Window window = mc.getWindow();
 		popupX = Mth.clamp((int) mouseX + 10, 0, Math.max(0, window.getGuiScaledWidth() - popupW));
 		popupY = Mth.clamp((int) mouseY + 10, 0, Math.max(0, window.getGuiScaledHeight() - popupH));
 	}

@@ -1,8 +1,13 @@
 package io.github.forgestove.create_cyber_goggles.core.event.drafting;
+import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.CCGConfig.Overlay.DraftingView;
+import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage;
@@ -22,21 +27,21 @@ public final class DraftingViewHandler {
 	public static void render(RenderLevelStageEvent event) {
 		if (event.getStage() != Stage.AFTER_TRIPWIRE_BLOCKS) return;
 		if (!CCG.config.overlay.draftingView.draftingViewEnabled) return;
-		var view = DraftingShaders.draftingView();
-		var upscale = DraftingShaders.draftingUpscale();
+		ShaderInstance view = DraftingShaders.draftingView();
+		ShaderInstance upscale = DraftingShaders.draftingUpscale();
 		if (view == null || upscale == null) return;
-		var main = mc.getMainRenderTarget();
-		var window = mc.getWindow();
+		RenderTarget main = mc.getMainRenderTarget();
+		Window window = mc.getWindow();
 		if (framebuffer == null) framebuffer = new DraftingFramebuffer(main.width, main.height);
 		else framebuffer.resizeIfNeeded(main.width, main.height);
-		var cfg = CCG.config.overlay.draftingView;
-		var lineColor = unpackColor(cfg.lineColor);
-		var lineShadow = unpackColor(cfg.lineShadowColor);
+		DraftingView cfg = CCG.config.overlay.draftingView;
+		Vector3f lineColor = unpackColor(cfg.lineColor);
+		Vector3f lineShadow = unpackColor(cfg.lineShadowColor);
 		var paletteOffset = (float) cfg.paletteOffset;
-		var pixelate = cfg.pixelate;
+		boolean pixelate = cfg.pixelate;
 		var pixelScale = (float) cfg.pixelScale;
-		var palette = mc.getTextureManager().getTexture(PALETTE_TEXTURE);
-		var dither = mc.getTextureManager().getTexture(DITHER_TEXTURE);
+		AbstractTexture palette = mc.getTextureManager().getTexture(PALETTE_TEXTURE);
+		AbstractTexture dither = mc.getTextureManager().getTexture(DITHER_TEXTURE);
 		RenderSystem.disableBlend();
 		RenderSystem.disableDepthTest();
 		RenderSystem.depthMask(false);
@@ -67,12 +72,12 @@ public final class DraftingViewHandler {
 		return new Vector3f((float) (argb >> 16 & 0xFF) / 255.0f, (float) (argb >> 8 & 0xFF) / 255.0f, (float) (argb & 0xFF) / 255.0f);
 	}
 	private static void drawFullscreenTriangle() {
-		var tess = Tesselator.getInstance();
-		var bb = tess.begin(Mode.TRIANGLES, DefaultVertexFormat.POSITION);
+		Tesselator tess = Tesselator.getInstance();
+		BufferBuilder bb = tess.begin(Mode.TRIANGLES, DefaultVertexFormat.POSITION);
 		bb.addVertex(-1.0f, -1.0f, 0.0f);
 		bb.addVertex(3.0f, -1.0f, 0.0f);
 		bb.addVertex(-1.0f, 3.0f, 0.0f);
-		var mesh = bb.buildOrThrow();
+		MeshData mesh = bb.buildOrThrow();
 		BufferUploader.drawWithShader(mesh);
 	}
 }

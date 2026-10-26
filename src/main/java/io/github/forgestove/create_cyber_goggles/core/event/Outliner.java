@@ -19,7 +19,7 @@ public final class Outliner {
 		if (!CCG.config.outliner.renderAnalogBox) return;
 		if (shouldSuppressInfo()) return;
 		if (mc.isPaused() || isInGUI()) return;
-		var be = getBlockEntity();
+		BlockEntity be = getBlockEntity();
 		if (be instanceof OutlineRenderable or) cachedBE.put(be, or.ccg$getRenderDelay());
 		if (cachedBE.isEmpty()) return;
 		try {
@@ -29,9 +29,9 @@ public final class Outliner {
 		}
 	}
 	private static boolean render(@NotNull Entry<BlockEntity, Integer> entry) {
-		var nextDelay = entry.getValue() - 1;
+		int nextDelay = entry.getValue() - 1;
 		entry.setValue(nextDelay);
-		var be = entry.getKey();
+		BlockEntity be = entry.getKey();
 		if (!be.isRemoved() && be instanceof OutlineRenderable or) or.ccg$render();
 		return nextDelay <= 0;
 	}

@@ -1,4 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.core.tooltipRenderer;
+import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.*;
 import net.minecraft.client.gui.GuiGraphics;
@@ -7,6 +9,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.saveddata.maps.*;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
 @AutoTooltipRenderer
@@ -46,19 +49,19 @@ public final class MapTooltipRenderer implements TooltipRenderer {
 	@Override
 	public void render(GuiGraphics gui, ItemStack stack, int x, int y) {
 		if (mc.level == null) return;
-		var mapData = MapItem.getSavedData(stack, mc.level);
+		MapItemSavedData mapData = MapItem.getSavedData(stack, mc.level);
 		if (mapData == null) return;
 		ensureTexture();
-		var mapId = stack.get(DataComponents.MAP_ID);
-		var mapIdValue = mapId == null ? Integer.MIN_VALUE : mapId.id();
-		var switchedMap = mapIdValue != lastMapId;
+		MapId mapId = stack.get(DataComponents.MAP_ID);
+		int mapIdValue = mapId == null ? Integer.MIN_VALUE : mapId.id();
+		boolean switchedMap = mapIdValue != lastMapId;
 		if (switchedMap) lastMapId = mapIdValue;
-		var tick = mc.level.getGameTime();
+		long tick = mc.level.getGameTime();
 		if (switchedMap || tick - lastUploadTick >= CHECK_INTERVAL_TICKS) {
 			lastUploadTick = tick;
 			uploadPreview(mapData.colors);
 		}
-		var pose = gui.pose();
+		PoseStack pose = gui.pose();
 		pose.pushPose();
 		pose.translate(x, y, 600F);
 		gui.blit(MAP_BACKGROUND, 0, 0, 0, 0, PANEL_SIZE, PANEL_SIZE, PANEL_SIZE, PANEL_SIZE);
@@ -77,12 +80,12 @@ public final class MapTooltipRenderer implements TooltipRenderer {
 	}
 	private void uploadPreview(byte[] colors) {
 		if (previewTexture == null) return;
-		var image = previewTexture.getPixels();
+		NativeImage image = previewTexture.getPixels();
 		if (image == null) return;
 		for (var py = 0; py < MAP_SIZE; py++) {
-			var row = py * MAP_SIZE;
+			int row = py * MAP_SIZE;
 			for (var px = 0; px < MAP_SIZE; px++) {
-				var packed = Byte.toUnsignedInt(colors[px + row]);
+				int packed = Byte.toUnsignedInt(colors[px + row]);
 				image.setPixelRGBA(px, py, PACKED_TO_ABGR[packed]);
 			}
 		}

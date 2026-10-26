@@ -9,15 +9,18 @@ import io.github.forgestove.create_cyber_goggles.compat.jei.ScreenReferenced;
 import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
 import io.github.forgestove.create_cyber_goggles.core.factory.MultiplyScreen;
 import io.github.forgestove.create_cyber_goggles.core.util.RedstoneRequesterInteractions;
-import io.github.forgestove.create_cyber_goggles.mixin.accessor.RedstoneRequesterScreenAccessor;
 import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
+import io.github.forgestove.create_cyber_goggles.mixin.accessor.RedstoneRequesterScreenAccessor;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.List;
 @Mixin(RedstoneRequesterScreen.class)
 public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainerScreen<RedstoneRequesterMenu>
 	implements Self<RedstoneRequesterScreen> {
@@ -29,7 +32,7 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 	/** 打开界面时把当前 Screen 关联到菜单，供 JEI 转移读取 */
 	@Inject(method = "init", at = @At("HEAD"))
 	private void linkScreen(CallbackInfo ci) {
-		var requesterMenu = thiz().getMenu();
+		RedstoneRequesterMenu requesterMenu = thiz().getMenu();
 		((ScreenReferenced) requesterMenu).ccg$setScreenReference(thiz());
 		// 打开界面时请求一次网络库存，供 JEI 转移按库存选择原料
 		if (CCG.config.misc.jei.redstoneRequesterJEIRequest && requesterMenu.contentHolder != null)
@@ -38,10 +41,10 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 	/** 在「完成」按钮左侧添加撤销按钮：点击恢复到打开界面时的初始内容 */
 	@Inject(method = "init", at = @At("TAIL"))
 	private void addUndoButton(CallbackInfo ci) {
-		var x = getGuiLeft();
-		var y = getGuiTop();
-		var bgWidth = AllGuiTextures.REDSTONE_REQUESTER.getWidth();
-		var bgHeight = AllGuiTextures.REDSTONE_REQUESTER.getHeight();
+		int x = getGuiLeft();
+		int y = getGuiTop();
+		int bgWidth = AllGuiTextures.REDSTONE_REQUESTER.getWidth();
+		int bgHeight = AllGuiTextures.REDSTONE_REQUESTER.getHeight();
 		var undo = new IconButton(x + bgWidth - 59, y + bgHeight - 25, AllIcons.I_CONFIG_RESET);
 		undo.setToolTip(Component.translatable("flexconfig.undo.tooltip"));
 		undo.withCallback(() -> ccg$interactions.undo());
@@ -61,9 +64,9 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 	/** 非空槽的数量统一乘倍数，上限与原版滚动一致 */
 	@Unique
 	private void ccg$multiplyAll(double factor) {
-		var amounts = ((RedstoneRequesterScreenAccessor) thiz()).getAmounts();
-		var ghost = thiz().getMenu().ghostInventory;
-		var max = CCG.config.misc.removeRequestLimit ? Integer.MAX_VALUE : 256;
+		List<Integer> amounts = ((RedstoneRequesterScreenAccessor) thiz()).getAmounts();
+		ItemStackHandler ghost = thiz().getMenu().ghostInventory;
+		int max = CCG.config.misc.removeRequestLimit ? Integer.MAX_VALUE : 256;
 		for (var i = 0; i < amounts.size(); i++)
 			if (!ghost.getStackInSlot(i).isEmpty()) amounts.set(i, MultiplyScreen.scale(amounts.get(i), factor, 1, max));
 	}

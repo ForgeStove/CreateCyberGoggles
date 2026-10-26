@@ -30,8 +30,8 @@ public abstract class ItemInHandRendererMixin {
 		if (player.isScoping()) return;
 		if (!CCG.config.tooltip.clipboard) return;
 		if (!(stack.getItem() instanceof ClipboardBlockItem)) return;
-		var mainHand = hand == InteractionHand.MAIN_HAND;
-		var arm = mainHand ? player.getMainArm() : player.getMainArm().getOpposite();
+		boolean mainHand = hand == InteractionHand.MAIN_HAND;
+		HumanoidArm arm = mainHand ? player.getMainArm() : player.getMainArm().getOpposite();
 		poseStack.pushPose();
 		renderOneHandedMap(poseStack, buffer, combinedLight, equippedProgress, arm, swingProgress, stack);
 		poseStack.popPose();

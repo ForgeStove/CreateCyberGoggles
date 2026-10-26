@@ -20,7 +20,7 @@ public abstract class RecipeScreenMixin {
 	@Inject(method = "mouseScrolled", at = @At("HEAD"), cancellable = true)
 	private void ccg$mouseScrolled(double mouseX, double mouseY, double horizontal, double amount, CallbackInfoReturnable<Boolean> cir) {
 		if (!CCG.config.misc.jei.showScrapContent || amount == 0) return;
-		for (var group : currentPage) {
+		for (WidgetGroup group : currentPage) {
 			if (!(group.recipe instanceof JemiRecipe<?> jemi)) continue;
 			if (!(jemi.recipe instanceof RecipeHolder<?> holder)) continue;
 			if (!(holder.value() instanceof SequencedAssemblyRecipe recipe)) continue;

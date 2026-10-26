@@ -3,6 +3,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.foundation.render.BlockEntityRenderHelper;
 import dev.ryanhcode.sable.neoforge.mixinterface.compatibility.create.schematics.*;
 import dev.ryanhcode.sable.neoforge.mixinterface.compatibility.create.schematics.SchematicLevelExtension.SchematicSubLevel;
+import dev.ryanhcode.sable.neoforge.mixinterface.compatibility.create.schematics.StructureTemplateExtension.SubLevelTemplate;
 import net.createmod.catnip.levelWrappers.SchematicLevel;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.minecraft.core.BlockPos;
@@ -15,8 +16,7 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.*;
 import org.joml.*;
 
 import java.lang.Math;
-import java.util.ArrayList;
-import java.util.BitSet;
+import java.util.*;
 /**
  * sable 子维度（sublevel）的渲染支持。
  * <p>
@@ -32,10 +32,10 @@ public final class SchematicSubLevelHelper {
 	 * 的实现，客户端调用会抛出 {@code IllegalStateException}。
 	 */
 	public static void attachSubLevels(StructureTemplate template, SchematicLevel target, Level level) {
-		var subLevelTemplates = ((StructureTemplateExtension) template).sable$getSubLevels();
+		List<SubLevelTemplate> subLevelTemplates = ((StructureTemplateExtension) template).sable$getSubLevels();
 		if (subLevelTemplates.isEmpty()) return;
-		var targetSubLevels = ((SchematicLevelExtension) target).sable$getSubLevels();
-		for (var subLevelTemplate : subLevelTemplates) {
+		List<SchematicSubLevel> targetSubLevels = ((SchematicLevelExtension) target).sable$getSubLevels();
+		for (SubLevelTemplate subLevelTemplate : subLevelTemplates) {
 			var subLevel = new SchematicLevel(level);
 			// random 须在当前线程现造：level 的 random 属于它的创建线程，c2me 会把跨线程使用判为错误
 			subLevelTemplate.template()
@@ -69,12 +69,12 @@ public final class SchematicSubLevelHelper {
 	 * 须在 {@code SchematicRenderer#render} 之后、{@code buffers.draw()} 之前调用，以保证位姿一致。
 	 */
 	public static void renderBlockEntities(PoseStack ms, SuperRenderTypeBuffer buffers, SchematicLevel mainLevel, float partialTicks) {
-		var subLevels = ((SchematicLevelExtension) mainLevel).sable$getSubLevels();
+		List<SchematicSubLevel> subLevels = ((SchematicLevelExtension) mainLevel).sable$getSubLevels();
 		if (subLevels.isEmpty()) return;
-		for (var subLevel : subLevels) {
+		for (SchematicSubLevel subLevel : subLevels) {
 			SchematicLevel level = subLevel.level();
 			var blockEntities = new ArrayList<BlockEntity>();
-			for (var blockEntity : level.getRenderedBlockEntities()) blockEntities.add(blockEntity);
+			for (BlockEntity blockEntity : level.getRenderedBlockEntities()) blockEntities.add(blockEntity);
 			if (blockEntities.isEmpty()) continue;
 			var shouldRender = new BitSet(blockEntities.size());
 			shouldRender.set(0, blockEntities.size());
@@ -105,13 +105,13 @@ public final class SchematicSubLevelHelper {
 	 */
 	@SuppressWarnings("resource")
 	public static BoundingBox frameBounds(SchematicLevel level) {
-		var subLevels = ((SchematicLevelExtension) level).sable$getSubLevels();
+		List<SchematicSubLevel> subLevels = ((SchematicLevelExtension) level).sable$getSubLevels();
 		if (subLevels.isEmpty()) return level.getBounds();
 		int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, minZ = Integer.MAX_VALUE;
 		int maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE, maxZ = Integer.MIN_VALUE;
 		// 主层级可能为空（sable 飞船整体位于子维度中），其包围盒会退化为原点一格，计入取景会偏移构图
 		if (!level.getBlockMap().isEmpty()) {
-			var main = level.getBounds();
+			BoundingBox main = level.getBounds();
 			minX = main.minX();
 			minY = main.minY();
 			minZ = main.minZ();
@@ -119,10 +119,10 @@ public final class SchematicSubLevelHelper {
 			maxY = main.maxY();
 			maxZ = main.maxZ();
 		}
-		for (var subLevel : subLevels) {
-			var sub = subLevel.level().getBounds();
+		for (SchematicSubLevel subLevel : subLevels) {
+			BoundingBox sub = subLevel.level().getBounds();
 			// 子层级方块使用自身坐标（自 0 起），摆放位置由 position 与 orientation 决定，故需变换 8 个角点
-			var matrix = new Matrix4f().translation(
+			Matrix4f matrix = new Matrix4f().translation(
 					(float) subLevel.position().x,
 					(float) subLevel.position().y,
 					(float) subLevel.position().z
@@ -131,7 +131,7 @@ public final class SchematicSubLevelHelper {
 			for (var x = 0; x < 2; x++)
 				for (var y = 0; y < 2; y++)
 					for (var z = 0; z < 2; z++) {
-						var corner = matrix.transformPosition(new Vector3f(
+						Vector3f corner = matrix.transformPosition(new Vector3f(
 							x == 0 ? sub.minX() : sub.maxX() + 1,
 							y == 0 ? sub.minY() : sub.maxY() + 1,
 							z == 0 ? sub.minZ() : sub.maxZ() + 1

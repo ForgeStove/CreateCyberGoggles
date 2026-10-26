@@ -5,6 +5,7 @@ import com.simibubi.create.content.equipment.clipboard.ClipboardEntry;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import io.github.forgestove.create_cyber_goggles.core.factory.ReplenishGroup.*;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -44,7 +45,7 @@ public final class ReplenishPlanner {
 	/** 主手优先、其次副手读取剪贴板蓝图清单；整页没有任何物品条目则视为没有清单。 */
 	public static List<List<ClipboardEntry>> clipboardOf(Player player) {
 		if (player == null) return null;
-		for (var hand : new InteractionHand[]{InteractionHand.MAIN_HAND, InteractionHand.OFF_HAND}) {
+		for (InteractionHand hand : new InteractionHand[]{InteractionHand.MAIN_HAND, InteractionHand.OFF_HAND}) {
 			ItemStack stack = player.getItemInHand(hand);
 			if (!AllBlocks.CLIPBOARD.isIn(stack)) continue;
 			List<List<ClipboardEntry>> content = ClipboardEntry.readAll(stack);
@@ -92,7 +93,7 @@ public final class ReplenishPlanner {
 		Map<Item, Integer> spreadWant = new HashMap<>();
 		for (var round = 0; round < 32; round++) {
 			var progressed = false;
-			for (var itemId : new ArrayList<>(pending.keySet())) {
+			for (Item itemId : new ArrayList<>(pending.keySet())) {
 				int needed = pending.getOrDefault(itemId, 0);
 				if (needed <= 0) continue;
 				ItemStack item = itemId.getDefaultInstance();
@@ -221,7 +222,7 @@ public final class ReplenishPlanner {
 			List<ReplenishEntry> entries = new ArrayList<>(d.items().size());
 			for (var i = 0; i < d.items().size(); i++) {
 				DraftItem di = d.items().get(i);
-				var enough = i < flags.size() && flags.get(i);
+				boolean enough = i < flags.size() && flags.get(i);
 				entries.add(new ReplenishEntry(di.material(), di.per(), enough, drafts.containsKey(di.material().getItem())));
 			}
 			int nodeDepth = depth.getOrDefault(itemId, 0);
@@ -250,7 +251,7 @@ public final class ReplenishPlanner {
 	}
 	/** 换存档或重载数据包后 RecipeManager 会变，候选与产物表必须重建。 */
 	private static void ensureCacheOwner() {
-		var manager = mc.level == null ? null : mc.level.getRecipeManager();
+		RecipeManager manager = mc.level == null ? null : mc.level.getRecipeManager();
 		if (manager == cacheOwner) return;
 		cacheOwner = manager;
 		candidatesCache = new HashMap<>();
@@ -363,7 +364,7 @@ public final class ReplenishPlanner {
 	/** 该物品的全部候选配方，已按优先级排序。 */
 	public static List<RecipeHolder<?>> candidatesFor(ItemStack target, InventorySummary summary) {
 		if (mc.level == null) return List.of();
-		var registry = mc.level.registryAccess();
+		RegistryAccess registry = mc.level.registryAccess();
 		List<Candidate> found = new ArrayList<>();
 		outer:
 		for (RecipeHolder<?> holder : mc.level.getRecipeManager().getRecipes()) {
@@ -392,8 +393,8 @@ public final class ReplenishPlanner {
 				if (!hasStock) stocked = false;
 				if (!craftable) raw++;
 			}
-			var typeId = recipe.getType().toString();
-			var rank = TYPE_ORDER.indexOf(typeId);
+			String typeId = recipe.getType().toString();
+			int rank = TYPE_ORDER.indexOf(typeId);
 			if (rank < 0) rank = typeId.startsWith("create:") ? TYPE_ORDER.size() : TYPE_ORDER.size() + 1;
 			found.add(new Candidate(stocked, rank, result.getCount(), raw, holder));
 		}
@@ -410,9 +411,9 @@ public final class ReplenishPlanner {
 	private static Recipe<?> findAnyRecipeFor(ItemStack target, InventorySummary summary, Map<Item, Draft> drafts) {
 		if (mc.level == null) return null;
 		Item key = target.getItem();
-		var chosen = RECIPE_CHOICES.get(key);
+		ResourceLocation chosen = RECIPE_CHOICES.get(key);
 		if (chosen != null) {
-			var forced = mc.level.getRecipeManager().byKey(chosen).map(RecipeHolder::value).orElse(null);
+			Recipe<?> forced = mc.level.getRecipeManager().byKey(chosen).map(RecipeHolder::value).orElse(null);
 			if (forced != null) return forced; // 手动指定不避环，由断环兜底
 		}
 		List<RecipeHolder<?>> candidates = candidates(target, summary);

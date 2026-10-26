@@ -27,8 +27,8 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 	)
 	public <E> E mouseScrolled(List<Integer> instance, int i, E e, Operation<E> original, @Local(name = "scrollY") double scrollY) {
 		if (!CCG.config.misc.removeRequestLimit) return original.call(instance, i, e);
-		var current = instance.get(i);
-		var amount = getModifiedScrollAmount();
+		Integer current = instance.get(i);
+		int amount = getModifiedScrollAmount();
 		// 值恰为 1 时修正步进：shift +63 / ctrl +9
 		if (current == 1 && amount > 1) amount--;
 		return (E) instance.set(i, Mth.clamp(current + (int) Math.signum(scrollY) * amount, 1, Integer.MAX_VALUE));

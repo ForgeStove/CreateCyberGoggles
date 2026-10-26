@@ -19,8 +19,8 @@ public abstract class SchematicItemMixin {
 	private static InputStream openInputWithFallback(Path path, OpenOption[] options, Operation<InputStream> original) {
 		if (Files.exists(path)) return original.call(path, options);
 		if (!path.startsWith(CreatePaths.SCHEMATICS_DIR)) return original.call(path, options);
-		var uploadName = path.getFileName().toString();
-		var fallback = SchematicFolderUtil.denormalizeUploadName(uploadName);
+		String uploadName = path.getFileName().toString();
+		Path fallback = SchematicFolderUtil.denormalizeUploadName(uploadName);
 		if (fallback == null) return original.call(path, options);
 		if (Files.exists(fallback)) return original.call(fallback, options);
 		return original.call(path, options);

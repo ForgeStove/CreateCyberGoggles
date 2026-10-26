@@ -8,7 +8,7 @@ import io.github.forgestove.create_cyber_goggles.core.util.CCGLang;
 import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.*;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.*;
@@ -24,7 +24,7 @@ public abstract class SpringBlockEntityMixin extends SmartBlockEntity implements
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		if (!CCG.config.goggles.enhancedInfo) return false;
 		CCGLang.translate("tooltip.spring").forGoggles(tooltip);
-		var size = switch (getBlockState().getValue(SpringBlock.SIZE).getSerializedName()) {
+		MutableComponent size = switch (getBlockState().getValue(SpringBlock.SIZE).getSerializedName()) {
 			case "small" -> CCGLang.translateDirect("tooltip.size.small");
 			case "medium" -> CCGLang.translateDirect("tooltip.size.medium");
 			case "large" -> CCGLang.translateDirect("tooltip.size.large");

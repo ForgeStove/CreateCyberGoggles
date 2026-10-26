@@ -1,4 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.core.tooltipRenderer;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.content.redstone.link.controller.LinkedControllerItem;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.AutoTooltipRenderer;
@@ -6,6 +7,7 @@ import io.github.forgestove.create_cyber_goggles.core.factory.CCGMods;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.Point;
@@ -42,45 +44,45 @@ public final class LinkedControllerRenderer extends AbstractItemGridRenderer {
 	public int width(ItemStack stack) {
 		return hasItems(stack) ? CROP_BOTTOM_RIGHT.x - CROP_TOP_LEFT.x : 0;
 	}
-	private boolean hasItems(ItemStack stack) {
-		return buildItemGrid(stack) != null;
-	}
-	@Override
-	public @Nullable OverlayData buildItemGrid(ItemStack stack) {
-		var frequencyItems = LinkedControllerItem.getFrequencyItems(stack);
-		var items = new ArrayList<ItemStack>(12);
-		var hasAnyItem = false;
-		for (var row = 0; row < 2; row++)
-			for (var column = 0; column < 6; column++) {
-				var slotIndex = column * 2 + row;
-				var slot = frequencyItems.getStackInSlot(slotIndex);
-				if (!slot.isEmpty()) hasAnyItem = true;
-				items.add(slot.copyWithCount(1));
-			}
-		return hasAnyItem ? new OverlayData(items, 6) : null;
-	}
 	@Override
 	public int height(ItemStack stack) {
 		return hasItems(stack) ? CROP_BOTTOM_RIGHT.y - CROP_TOP_LEFT.y : 0;
 	}
 	@Override
 	public void render(GuiGraphics gui, ItemStack stack, int x, int y) {
-		var data = buildItemGrid(stack);
+		OverlayData data = buildItemGrid(stack);
 		if (data == null) return;
-		var pose = gui.pose();
+		PoseStack pose = gui.pose();
 		pose.pushPose();
 		pose.translate(x, y, 600F);
-		var cropWidth = CROP_BOTTOM_RIGHT.x - CROP_TOP_LEFT.x;
-		var cropHeight = CROP_BOTTOM_RIGHT.y - CROP_TOP_LEFT.y;
+		int cropWidth = CROP_BOTTOM_RIGHT.x - CROP_TOP_LEFT.x;
+		int cropHeight = CROP_BOTTOM_RIGHT.y - CROP_TOP_LEFT.y;
 		gui.blit(CONTROLLER_BG, 0, 0, CROP_TOP_LEFT.x, CROP_TOP_LEFT.y, cropWidth, cropHeight, TEXTURE_SIZE, TEXTURE_SIZE);
 		for (var i = 0; i < SLOT_POINTS.length; i++) {
-			var item = data.items().get(i);
-			var slot = SLOT_POINTS[i];
-			var slotX = slot.x - CROP_TOP_LEFT.x;
-			var slotY = slot.y - CROP_TOP_LEFT.y;
+			ItemStack item = data.items().get(i);
+			Point slot = SLOT_POINTS[i];
+			int slotX = slot.x - CROP_TOP_LEFT.x;
+			int slotY = slot.y - CROP_TOP_LEFT.y;
 			gui.renderItem(item, slotX, slotY);
 			gui.renderItemDecorations(mc.font, item, slotX, slotY);
 		}
 		pose.popPose();
+	}
+	@Override
+	public @Nullable OverlayData buildItemGrid(ItemStack stack) {
+		ItemStackHandler frequencyItems = LinkedControllerItem.getFrequencyItems(stack);
+		var items = new ArrayList<ItemStack>(12);
+		var hasAnyItem = false;
+		for (var row = 0; row < 2; row++)
+			for (var column = 0; column < 6; column++) {
+				int slotIndex = column * 2 + row;
+				ItemStack slot = frequencyItems.getStackInSlot(slotIndex);
+				if (!slot.isEmpty()) hasAnyItem = true;
+				items.add(slot.copyWithCount(1));
+			}
+		return hasAnyItem ? new OverlayData(items, 6) : null;
+	}
+	private boolean hasItems(ItemStack stack) {
+		return buildItemGrid(stack) != null;
 	}
 }

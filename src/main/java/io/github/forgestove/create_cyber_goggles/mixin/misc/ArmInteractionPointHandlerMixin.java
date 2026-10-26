@@ -4,6 +4,7 @@ import com.simibubi.create.AllSpecialTextures;
 import com.simibubi.create.content.kinetics.mechanicalArm.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.createmod.catnip.data.Couple;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.*;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
@@ -38,8 +39,8 @@ public class ArmInteractionPointHandlerMixin {
 	private static void renderPlacementPreviewConnections(CallbackInfo ci) {
 		if (!CCG.config.outliner.betterLine) return;
 		if (currentItem != null && currentSelection != null && !currentSelection.isEmpty()) {
-			var player = mc.player;
-			var hit = mc.hitResult;
+			LocalPlayer player = mc.player;
+			HitResult hit = mc.hitResult;
 			if (player != null && player.isShiftKeyDown() && (hit == null || hit.getType() == Type.MISS) && mc.options.keyUse.isDown()) {
 				player.swing(InteractionHand.MAIN_HAND);
 				currentSelection.clear();
@@ -47,19 +48,19 @@ public class ArmInteractionPointHandlerMixin {
 			}
 		}
 		if (currentItem == null || currentSelection == null || currentSelection.isEmpty()) return;
-		var hit = mc.hitResult;
+		HitResult hit = mc.hitResult;
 		if (!(hit instanceof BlockHitResult blockHit)) return;
 		if (mc.level == null) return;
-		var pos = blockHit.getBlockPos();
+		BlockPos pos = blockHit.getBlockPos();
 		if (!mc.level.getBlockState(pos).canBeReplaced()) pos = pos.relative(blockHit.getDirection());
-		var source = Vec3.atCenterOf(pos);
+		Vec3 source = Vec3.atCenterOf(pos);
 		var allClose = true;
-		var removeLimit = CCG.config.misc.removeMechanicalArmLimit;
+		boolean removeLimit = CCG.config.misc.removeMechanicalArmLimit;
 		for (var i = 0; i < currentSelection.size(); i++) {
-			var point = currentSelection.get(i);
+			ArmInteractionPoint point = currentSelection.get(i);
 			if (point == null || !point.isValid()) continue;
-			var target = Vec3.atCenterOf(point.getPos());
-			var close = removeLimit || point.getPos().closerThan(pos, ArmBlockEntity.getRange());
+			Vec3 target = Vec3.atCenterOf(point.getPos());
+			boolean close = removeLimit || point.getPos().closerThan(pos, ArmBlockEntity.getRange());
 			if (!close) allClose = false;
 			outliner.showLine("MechanicalArmPlacementPreview" + i, source, target).lineWidth(1 / 8f).colored(close ? 0x9ede73 : 0xff7171);
 		}
@@ -68,7 +69,7 @@ public class ArmInteractionPointHandlerMixin {
 				.lineWidth(1 / 16f)
 				.colored(allClose ? 0x9ede73 : 0xff7171);
 		if (removeLimit) return;
-		var hints = ccg$getRangeHints(pos.getY());
+		Couple<List<BlockPos>> hints = ccg$getRangeHints(pos.getY());
 		if (hints == null) return;
 		outliner.showCluster("MechanicalArmConnectableRange", hints.getFirst())
 			.withFaceTexture(AllSpecialTextures.THIN_CHECKERED)
@@ -81,22 +82,22 @@ public class ArmInteractionPointHandlerMixin {
 	}
 	@Unique
 	private static Couple<List<BlockPos>> ccg$getRangeHints(int yLevel) {
-		var key = ArmBlockEntity.getRange() * 31L + yLevel;
-		for (var point : currentSelection) {
+		long key = ArmBlockEntity.getRange() * 31L + yLevel;
+		for (ArmInteractionPoint point : currentSelection) {
 			if (point == null || !point.isValid()) continue;
 			key = key * 31L + point.getPos().asLong();
 		}
 		if (key == ccg$rangeCacheKey) return ccg$cachedRangeHints;
 		ccg$rangeCacheKey = key;
-		var range = ArmBlockEntity.getRange();
-		var minX = Integer.MIN_VALUE;
-		var maxX = Integer.MAX_VALUE;
-		var minZ = Integer.MIN_VALUE;
-		var maxZ = Integer.MAX_VALUE;
+		int range = ArmBlockEntity.getRange();
+		int minX = Integer.MIN_VALUE;
+		int maxX = Integer.MAX_VALUE;
+		int minZ = Integer.MIN_VALUE;
+		int maxZ = Integer.MAX_VALUE;
 		var validPoints = new ArrayList<BlockPos>();
-		for (var point : currentSelection) {
+		for (ArmInteractionPoint point : currentSelection) {
 			if (point == null || !point.isValid()) continue;
-			var center = point.getPos();
+			BlockPos center = point.getPos();
 			validPoints.add(center);
 			minX = Math.max(minX, center.getX() - range);
 			maxX = Math.min(maxX, center.getX() + range);
@@ -104,17 +105,17 @@ public class ArmInteractionPointHandlerMixin {
 			maxZ = Math.min(maxZ, center.getZ() + range);
 		}
 		if (validPoints.isEmpty()) return ccg$cachedRangeHints = Couple.create(ArrayList::new);
-		var hints = Couple.<List<BlockPos>>create(ArrayList::new);
-		var rangeSq = range * range;
-		var points = validPoints.toArray(new BlockPos[0]);
-		for (var x = minX; x <= maxX; x++)
-			for (var z = minZ; z <= maxZ; z++) {
+		Couple<List<BlockPos>> hints = Couple.create(ArrayList::new);
+		int rangeSq = range * range;
+		BlockPos[] points = validPoints.toArray(new BlockPos[0]);
+		for (int x = minX; x <= maxX; x++)
+			for (int z = minZ; z <= maxZ; z++) {
 				var candidate = new BlockPos(x, yLevel - 1, z);
 				var connectable = true;
-				for (var center : points) {
-					var dx = x - center.getX();
-					var dy = yLevel - center.getY();
-					var dz = z - center.getZ();
+				for (BlockPos center : points) {
+					int dx = x - center.getX();
+					int dy = yLevel - center.getY();
+					int dz = z - center.getZ();
 					if (dx * dx + dy * dy + dz * dz < rangeSq) continue;
 					connectable = false;
 					break;

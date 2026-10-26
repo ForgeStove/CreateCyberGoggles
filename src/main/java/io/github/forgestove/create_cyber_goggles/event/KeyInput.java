@@ -48,7 +48,7 @@ public final class KeyInput {
 			return;
 		}
 		Screen screen = function.apply(-1, mc.player.getInventory(), itemStack);
-		mc.setScreen(screen);
+		mc.tell(() -> mc.setScreen(screen));
 		mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1));
 	}
 	public static void mouseScroll(MouseScrollingEvent event) {

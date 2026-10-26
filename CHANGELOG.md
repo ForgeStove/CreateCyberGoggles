@@ -1,0 +1,6 @@
+- Add expression input to quantity boxes
+- Add a multiplier field and an apply button to quantity screens to scale every value at once
+- Add an option to abbreviate large item counts
+- Optimize the force overlay: cluster arrows per force group and cap their count to reduce lag
+- Fix the filter preview typing an extra character into the opened screen
+- Make the filter preview read-only, and allow third-party mods to register their own preview screens

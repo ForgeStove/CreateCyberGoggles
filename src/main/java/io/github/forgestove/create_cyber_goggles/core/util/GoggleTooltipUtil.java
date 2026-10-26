@@ -185,8 +185,8 @@ public final class GoggleTooltipUtil {
 	public static boolean pulse(List<Component> tooltip, BrassDiodeBlockEntity be) {
 		if (!CCG.config.goggles.enhancedInfo) return false;
 		var data = (PulseTooltipData) be;
-		var state = data.ccg$getState();
-		var maxState = data.ccg$getMaxState();
+		int state = data.ccg$getState();
+		int maxState = data.ccg$getMaxState();
 		CCGLang.add(translatable("create_cyber_goggles.tooltip.pulse")).forGoggles(tooltip);
 		CCGLang.fraction(state, maxState).forGoggles(tooltip);
 		return true;

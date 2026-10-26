@@ -47,7 +47,7 @@ public final class ClientItemEntryTooltipComponent implements ClientTooltipCompo
 		pose.scale(0.75F, 0.75F, 1F);
 		gui.renderItem(c.stack, 0, 0);
 		var count = c.stack.getCount();
-		gui.renderItemDecorations(font, c.stack, 0, 0, count > 1 ? AmountUtil.formatItemCount(count) : null);
+		gui.renderItemDecorations(font, c.stack, 0, 0, count > 1 ? AmountUtil.formatItemCountIfEnabled(count) : null);
 		pose.popPose();
 	}
 	public record ItemEntryTooltipComponent(ItemStack stack, int indent, Component label) implements TooltipComponent {}

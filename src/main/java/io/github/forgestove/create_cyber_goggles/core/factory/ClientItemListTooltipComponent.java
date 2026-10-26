@@ -48,7 +48,7 @@ public final class ClientItemListTooltipComponent implements ClientTooltipCompon
 		var count = stack.getCount();
 		if (PackageTankHelper.isCFLCompressedTank(stack))
 			gui.renderItemDecorations(font, stack, x + 1, y + 1, AmountUtil.formatFluidAmount(count));
-		else if (count > 1) gui.renderItemDecorations(font, stack, x + 1, y + 1, AmountUtil.formatItemCount(count));
+		else if (count > 1) gui.renderItemDecorations(font, stack, x + 1, y + 1, AmountUtil.formatItemCountIfEnabled(count));
 	}
 	public record ItemListTooltipComponent(List<ItemStack> items, int indent, int maxColumns) implements TooltipComponent {}
 }

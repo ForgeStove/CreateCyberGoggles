@@ -5,8 +5,8 @@ import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelScreen;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.core.event.CCGKey;
-import io.github.forgestove.create_cyber_goggles.core.factory.MultiplyScreen;
-import io.github.forgestove.create_cyber_goggles.core.factory.RequestAmountScreen;
+import io.github.forgestove.create_cyber_goggles.core.factory.*;
+import io.github.forgestove.create_cyber_goggles.core.util.AmountUtil;
 import io.github.forgestove.create_cyber_goggles.core.util.contract.Self;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import org.spongepowered.asm.mixin.*;
@@ -39,58 +39,69 @@ public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen impleme
 		return (int) (itemStack.count + Math.signum(scrollY) * amount);
 	}
 	@Inject(method = "init", at = @At("TAIL"))
-	public void init(CallbackInfo ci) {
+	public void addRelocateButton(CallbackInfo ci) {
 		if (!CCG.config.goggles.betterFactoryGauge) return;
 		if (!restocker) return;
 		relocateButton.setPosition(relocateButton.getX() - 23, relocateButton.getY() - 54);
 		addRenderableWidget(relocateButton);
 	}
 	@Inject(method = "init", at = @At("TAIL"))
-	private void ccg$addMultiplier(CallbackInfo ci) {
+	public void addMultiplyButton(CallbackInfo ci) {
 		if (!CCG.config.misc.multiplyAllValues) return;
-		addRenderableWidget(MultiplyScreen.createButton(guiLeft + 31, guiTop + (restocker ? 67 : 87), this::ccg$multiplyAll));
+		addRenderableWidget(MultiplyScreen.createButton(
+			guiLeft + 31, guiTop + (restocker ? 67 : 87), factor -> {
+				var max = CCG.config.misc.removeRequestLimit ? Integer.MAX_VALUE : 64;
+				if (!outputConfig.stack.isEmpty()) outputConfig.count = MultiplyScreen.scale(outputConfig.count, factor, 1, max);
+				for (var stack : inputConfig)
+					if (!stack.stack.isEmpty()) stack.count = MultiplyScreen.scale(stack.count, factor, 1, max);
+			}
+		));
 	}
-	@Unique
-	private void ccg$multiplyAll(double factor) {
-		var max = CCG.config.misc.removeRequestLimit ? Integer.MAX_VALUE : 64;
-		if (!outputConfig.stack.isEmpty()) outputConfig.count = MultiplyScreen.scale(outputConfig.count, factor, 1, max);
-		for (var stack : inputConfig)
-			if (!stack.stack.isEmpty()) stack.count = MultiplyScreen.scale(stack.count, factor, 1, max);
+	@ModifyArg(
+		method = {"renderWindow", "renderInputItem"}, at = @At(
+		value = "INVOKE",
+		target = "Lnet/minecraft/client/gui/GuiGraphics;renderItemDecorations(Lnet/minecraft/client/gui/Font;"
+			+ "Lnet/minecraft/world/item/ItemStack;IILjava/lang/String;)V"
+	)
+	)
+	private String abbreviateCount(String text) {
+		return AmountUtil.formatItemCountIfEnabled(Integer.parseInt(text));
 	}
 	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
 	public void openPopup(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
-		if (CCG.config.misc.quickRequestActions && CCGKey.stockRequestSetter.isDown() && ccg$openPopupForHoveredSlot(mouseX, mouseY))
-			cir.setReturnValue(true);
-	}
-	@Unique
-	private boolean ccg$openPopupForHoveredSlot(double mouseX, double mouseY) {
-		if (craftingActive) return false;
-		// 输出格（仅非 restocker 模式显示，原版位置 x+160, y+48）
-		if (!restocker && !outputConfig.stack.isEmpty()) {
-			var outputX = guiLeft + 160;
-			var outputY = guiTop + 48;
-			if (mouseX >= outputX && mouseX < outputX + 16 && mouseY >= outputY && mouseY < outputY + 16) {
-				var max = CCG.config.misc.removeRequestLimit ? Integer.MAX_VALUE : 64;
-				mc.setScreen(new RequestAmountScreen(
-					thiz(),
-					outputConfig.stack,
-					outputConfig.count,
-					max,
-					count -> outputConfig.count = count
-				));
-				return true;
+		if (CCG.config.misc.quickRequestActions && CCGKey.stockRequestSetter.isDown()) {
+			var result = false;
+			var finished = false;
+			if (!craftingActive) {// 输出格（仅非 restocker 模式显示，原版位置 x+160, y+48）
+				if (!restocker && !outputConfig.stack.isEmpty()) {
+					var outputX = guiLeft + 160;
+					var outputY = guiTop + 48;
+					if (mouseX >= outputX && mouseX < outputX + 16 && mouseY >= outputY && mouseY < outputY + 16) {
+						var max = CCG.config.misc.removeRequestLimit ? Integer.MAX_VALUE : 64;
+						mc.setScreen(new RequestAmountScreen(
+							thiz(),
+							outputConfig.stack,
+							outputConfig.count,
+							max,
+							count -> outputConfig.count = count
+						));
+						result = true;
+						finished = true;
+					}
+				}
+				if (!finished) for (var i = 0; i < inputConfig.size(); i++) {
+					var inputX = guiLeft + (restocker ? 88 : 68 + i % 3 * 20);
+					var inputY = guiTop + (restocker ? 12 : 28) + i / 3 * 20;
+					if (mouseX < inputX || mouseX >= inputX + 16 || mouseY < inputY || mouseY >= inputY + 16) continue;
+					var itemStack = inputConfig.get(i);
+					if (itemStack.stack.isEmpty()) break;
+					var max = CCG.config.misc.removeRequestLimit ? Integer.MAX_VALUE : 64;
+					mc.setScreen(new RequestAmountScreen(thiz(), itemStack.stack, itemStack.count, max, count -> itemStack.count = count));
+					result = true;
+					break;
+				}
 			}
+			if (result) cir.setReturnValue(true);
 		}
-		for (var i = 0; i < inputConfig.size(); i++) {
-			var inputX = guiLeft + (restocker ? 88 : 68 + i % 3 * 20);
-			var inputY = guiTop + (restocker ? 12 : 28) + i / 3 * 20;
-			if (mouseX < inputX || mouseX >= inputX + 16 || mouseY < inputY || mouseY >= inputY + 16) continue;
-			var itemStack = inputConfig.get(i);
-			if (itemStack.stack.isEmpty()) return false;
-			var max = CCG.config.misc.removeRequestLimit ? Integer.MAX_VALUE : 64;
-			mc.setScreen(new RequestAmountScreen(thiz(), itemStack.stack, itemStack.count, max, count -> itemStack.count = count));
-			return true;
-		}
-		return false;
 	}
 }

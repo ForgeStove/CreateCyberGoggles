@@ -153,6 +153,7 @@ public final class CCGConfig {
 		public boolean quickRequestActions = true;
 		public boolean expressionInput = true;
 		public boolean multiplyAllValues = true;
+		public boolean abbreviateCounts = true;
 		public boolean removeRequestLimit = true;
 		@WarnCheat public boolean removeMechanicalArmLimit = false;
 		@WarnCheat public boolean removePackagePortDownLimit = false;

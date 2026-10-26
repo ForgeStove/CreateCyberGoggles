@@ -1,10 +1,14 @@
 package io.github.forgestove.create_cyber_goggles.core.util;
 import com.simibubi.create.content.logistics.BigItemStack;
+import io.github.forgestove.create_cyber_goggles.CCG;
 
 import java.util.Locale;
 public final class AmountUtil {
 	private static final int MB_PER_BUCKET = 1000;
 	private static final int MB_PER_KILOBUCKET = MB_PER_BUCKET * 1000;
+	public static String formatItemCountIfEnabled(int count) {
+		return CCG.config.misc.abbreviateCounts ? formatItemCount(count) : String.valueOf(count);
+	}
 	public static String formatItemCount(int count) {
 		if (count >= 1_000_000) return count / 1_000_000 + "m";
 		if (count >= 10_000) return count / 1_000 + "k";

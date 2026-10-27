@@ -16,6 +16,9 @@ public final class CCGConfig {
 		@Category(false) public GameMode gameMode = new GameMode();
 		public boolean enhancedInfo = true;
 		public boolean hideStaticKineticInfo = false;
+		public boolean fluidTransport = true;
+		public boolean fluidTankThroughput = true;
+		@IntRange(min = 20, max = 1200) public int fluidThroughputWindow = 100;
 		public boolean onlyOnWithGoggles = true;
 		public boolean betterStoreInfo = true;
 		public boolean betterFactoryGauge = true;

@@ -1,5 +1,8 @@
 package io.github.forgestove.create_cyber_goggles;
 import com.simibubi.create.content.equipment.armor.BacktankBlockEntity;
+import com.simibubi.create.content.fluids.pipes.*;
+import com.simibubi.create.content.fluids.pump.PumpBlockEntity;
+import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.content.kinetics.belt.BeltBlockEntity;
 import com.simibubi.create.content.kinetics.crusher.CrushingWheelControllerBlockEntity;
 import com.simibubi.create.content.kinetics.fan.*;
@@ -34,5 +37,17 @@ public final class CCGGoggleEntries {
 		GoggleTooltip.register(BeltBlockEntity.class, getCCGRes("belt"), GoggleTooltipUtil::belt);
 		GoggleTooltip.registerNative(MillstoneBlockEntity.class);
 		GoggleTooltip.register(MillstoneBlockEntity.class, getCCGRes("millstone"), GoggleTooltipUtil::millstone);
+		GoggleTooltip.register(FluidPipeBlockEntity.class, getCCGRes("fluid_pipe"), GoggleTooltipUtil::fluidTransport);
+		GoggleTooltip.register(StraightPipeBlockEntity.class, getCCGRes("straight_pipe"), GoggleTooltipUtil::fluidTransport);
+		GoggleTooltip.register(SmartFluidPipeBlockEntity.class, getCCGRes("smart_pipe"), GoggleTooltipUtil::fluidTransport);
+		GoggleTooltip.registerNative(PumpBlockEntity.class);
+		GoggleTooltip.register(PumpBlockEntity.class, getCCGRes("pump"), GoggleTooltipUtil::fluidTransport);
+		GoggleTooltip.registerNative(FluidTankBlockEntity.class);
+		GoggleTooltip.registerAfter(
+			FluidTankBlockEntity.class,
+			GoggleTooltip.NATIVE,
+			getCCGRes("fluid_tank"),
+			GoggleTooltipUtil::fluidTank
+		);
 	}
 }

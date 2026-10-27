@@ -1,6 +1,9 @@
 package io.github.forgestove.create_cyber_goggles.util;
 import com.simibubi.create.*;
 import com.simibubi.create.content.equipment.armor.*;
+import com.simibubi.create.content.fluids.*;
+import com.simibubi.create.content.fluids.PipeConnection.Flow;
+import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.content.kinetics.base.*;
 import com.simibubi.create.content.kinetics.base.IRotate.*;
 import com.simibubi.create.content.kinetics.belt.BeltBlockEntity;
@@ -15,16 +18,20 @@ import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity.Fuel
 import com.simibubi.create.content.redstone.diodes.BrassDiodeBlockEntity;
 import com.simibubi.create.content.schematics.cannon.SchematicannonBlockEntity;
 import com.simibubi.create.content.schematics.cannon.SchematicannonBlockEntity.State;
+import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.item.TooltipHelper;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.event.*;
 import io.github.forgestove.create_cyber_goggles.util.contract.*;
+import net.createmod.catnip.data.Couple;
 import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.*;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -327,6 +334,48 @@ public final class GoggleTooltipUtil {
 				.component();
 			CCGLang.itemEntry(stack.copyWithCount(1), line).forGoggles(tooltip);
 		});
+		return true;
+	}
+	public static boolean fluidTransport(List<Component> tooltip, SmartBlockEntity be) {
+		if (!CCG.config.goggles.fluidTransport) return false;
+		FluidTransportBehaviour behaviour = be.getBehaviour(FluidTransportBehaviour.TYPE);
+		if (behaviour == null) return false;
+		BlockState state = be.getBlockState();
+		var added = false;
+		for (Direction direction : Direction.values()) {
+			if (!behaviour.canHaveFlowToward(state, direction)) continue;
+			if (!added) {
+				CCGLang.translate("tooltip.fluidTransport").forGoggles(tooltip);
+				added = true;
+			}
+			CCGLangBuilder line = CCGLang.translate("tooltip.direction." + direction.getName(), GRAY).space();
+			Flow flow = behaviour.getFlow(direction);
+			PipeConnection connection = behaviour.getConnection(direction);
+			if (flow == null || connection == null) line.text("—", DARK_GRAY).space().number(0, DARK_GRAY).space();
+			else {
+				Couple<Float> pressure = connection.getPressure();
+				int rate = Math.max(1, (int) (Math.max(pressure.get(true), pressure.get(false)) / 2));
+				if (flow.inbound) line.translate("tooltip.fluidFlow.in", GREEN);
+				else line.translate("tooltip.fluidFlow.out", AQUA);
+				line.space().add(flow.fluid.getHoverName()).space().number(rate, GOLD).space();
+			}
+			line.add(CCGCreateLang.translateDirect("generic.unit.millibuckets")).text("/t", DARK_GRAY);
+			line.forGoggles(tooltip, 1);
+		}
+		return added;
+	}
+	public static boolean fluidTank(List<Component> tooltip, FluidTankBlockEntity be) {
+		if (!CCG.config.goggles.fluidTankThroughput) return false;
+		FluidTankBlockEntity controller = be.getControllerBE();
+		if (controller == null) return false;
+		double rate = ((FluidTankThroughputData) controller).ccg$getRate();
+		if (rate < 0.5) return false;
+		CCGLang.translate("tooltip.fluidThroughput").forGoggles(tooltip);
+		CCGLang.number(Math.round(rate), GOLD)
+			.space()
+			.add(CCGCreateLang.translateDirect("generic.unit.millibuckets"))
+			.text("/t", DARK_GRAY)
+			.forGoggles(tooltip, 1);
 		return true;
 	}
 }

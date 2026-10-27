@@ -57,6 +57,16 @@ public final class GoggleTooltip {
 	) {
 		REGISTRY.registerBefore(target, anchorId.toString(), check(id), wrap(target, provider));
 	}
+	/** 在指定锚点条目之前插入不关心 Shift 状态的条目。 */
+	public static <T extends BlockEntity> void registerBefore(
+		Class<T> target,
+		ResourceLocation anchorId,
+		ResourceLocation id,
+		SimpleProvider<? super T> provider
+	) {
+		Objects.requireNonNull(provider, "provider");
+		registerBefore(target, anchorId, id, (tooltip, be, sneaking) -> provider.add(tooltip, be));
+	}
 	/** 在指定锚点条目之后插入；锚点不存在时追加到末尾并记录 WARN。 */
 	public static <T extends BlockEntity> void registerAfter(
 		Class<T> target,
@@ -65,6 +75,16 @@ public final class GoggleTooltip {
 		Provider<? super T> provider
 	) {
 		REGISTRY.registerAfter(target, anchorId.toString(), check(id), wrap(target, provider));
+	}
+	/** 在指定锚点条目之后插入不关心 Shift 状态的条目。 */
+	public static <T extends BlockEntity> void registerAfter(
+		Class<T> target,
+		ResourceLocation anchorId,
+		ResourceLocation id,
+		SimpleProvider<? super T> provider
+	) {
+		Objects.requireNonNull(provider, "provider");
+		registerAfter(target, anchorId, id, (tooltip, be, sneaking) -> provider.add(tooltip, be));
 	}
 	/** 内部用：为指定类型注册 {@link #NATIVE} 占位。 */
 	@Internal

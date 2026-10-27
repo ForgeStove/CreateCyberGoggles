@@ -60,7 +60,7 @@ public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen {
 		if (slot == 0 && mouseX >= inputX - 2 && mouseX < inputX - 2 + 60 && mouseY >= inputY - 2 && mouseY < inputY - 2 + 60) {
 			List<ItemStack> recipeItems = craftingIngredients.stream().map(b -> b.stack).toList();
 			List<Component> tooltip = new ArrayList<>();
-			CCGLang.itemList(recipeItems, shaped.getWidth()).addTo(tooltip);
+			CCGLang.of().itemList(recipeItems, shaped.getWidth()).addTo(tooltip);
 			gui.renderComponentTooltip(font, tooltip, mouseX, mouseY);
 		}
 		ci.cancel();

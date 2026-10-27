@@ -1,6 +1,10 @@
 package io.github.forgestove.create_cyber_goggles.util;
 import com.demonwav.mcdev.annotations.Translatable;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.factory.ClientFluidEntryTooltipComponent.FluidEntryTooltipComponent;
+import io.github.forgestove.create_cyber_goggles.factory.ClientFluidListTooltipComponent.FluidListTooltipComponent;
+import io.github.forgestove.create_cyber_goggles.factory.ClientItemEntryTooltipComponent.ItemEntryTooltipComponent;
+import io.github.forgestove.create_cyber_goggles.factory.ClientItemListTooltipComponent.ItemListTooltipComponent;
 import joptsimple.internal.Strings;
 import net.createmod.catnip.lang.LangNumberFormat;
 import net.minecraft.ChatFormatting;
@@ -10,6 +14,7 @@ import net.minecraft.network.chat.*;
 import net.minecraft.network.chat.Component.Serializer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
@@ -17,7 +22,6 @@ import java.awt.Color;
 import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.mc;
-import static net.minecraft.ChatFormatting.*;
 public class CCGLangBuilder {
 	public static final float DEFAULT_SPACE_WIDTH = 4.0F;
 	public String namespace;
@@ -53,7 +57,7 @@ public class CCGLangBuilder {
 		return add(Component.translatable(namespace + "." + langKey, args).withStyle(format));
 	}
 	public CCGLangBuilder add(MutableComponent customComponent) {
-		if (customComponent.getStyle().isEmpty()) customComponent.withStyle(WHITE);
+		if (customComponent.getStyle().isEmpty()) customComponent.withStyle(ChatFormatting.WHITE);
 		component = component == null ? customComponent : component.append(customComponent);
 		return this;
 	}
@@ -97,28 +101,33 @@ public class CCGLangBuilder {
 		return text(String.valueOf(number), formats);
 	}
 	public CCGLangBuilder is(boolean is) {
-		return add(is ? CCGLang.translateDirect("message.is").withStyle(GREEN) : CCGLang.translateDirect("message.not").withStyle(RED));
+		return add(is
+			? CCGLang.translateDirect("message.is").withStyle(ChatFormatting.GREEN)
+			: CCGLang.translateDirect("message.not").withStyle(ChatFormatting.RED));
 	}
 	public CCGLangBuilder enabled(boolean enabled) {
 		return add(enabled
-			? CCGLang.translateDirect("message.enabled").withStyle(GREEN)
-			: CCGLang.translateDirect("message.disabled").withStyle(RED));
+			? CCGLang.translateDirect("message.enabled").withStyle(ChatFormatting.GREEN)
+			: CCGLang.translateDirect("message.disabled").withStyle(ChatFormatting.RED));
 	}
 	public CCGLangBuilder progress(float progress, int totalBars) {
 		var filledBars = (int) (Mth.clamp(progress, 0, 1) * totalBars);
-		return text("|".repeat(filledBars), GREEN).text("|".repeat(totalBars - filledBars), GRAY);
+		return text("|".repeat(filledBars), ChatFormatting.GREEN).text("|".repeat(totalBars - filledBars), ChatFormatting.GRAY);
 	}
 	public CCGLangBuilder text(String literalText, ChatFormatting... formats) {
 		return add(Component.literal(literalText).withStyle(formats));
 	}
 	public CCGLangBuilder fraction(int current, int total) {
-		return number(current, Color.HSBtoRGB((float) current / total * 0.33F, 1, 1)).text(" / ", GRAY).number(total, DARK_GRAY);
+		return number(current, Color.HSBtoRGB((float) current / total * 0.33F, 1, 1)).text(" / ", ChatFormatting.GRAY)
+			.number(total, ChatFormatting.DARK_GRAY);
 	}
 	public CCGLangBuilder fraction(float current, float total) {
-		return number(current, Color.HSBtoRGB(current / total * 0.33F, 1, 1)).text(" / ", GRAY).number(total, DARK_GRAY);
+		return number(current, Color.HSBtoRGB(current / total * 0.33F, 1, 1)).text(" / ", ChatFormatting.GRAY)
+			.number(total, ChatFormatting.DARK_GRAY);
 	}
 	public CCGLangBuilder fraction(double current, double total) {
-		return number(current, Color.HSBtoRGB((float) (current / total * 0.33), 1, 1)).text(" / ", GRAY).number(total, DARK_GRAY);
+		return number(current, Color.HSBtoRGB((float) (current / total * 0.33), 1, 1)).text(" / ", ChatFormatting.GRAY)
+			.number(total, ChatFormatting.DARK_GRAY);
 	}
 	public CCGLangBuilder add(Component component) {
 		if (component instanceof MutableComponent mutableComponent) return add(mutableComponent);
@@ -184,5 +193,40 @@ public class CCGLangBuilder {
 	public void forGoggles(int index, List<? super MutableComponent> tooltip, int indents) {
 		tooltip.add(index,
 			new CCGLangBuilder(namespace).text(Strings.repeat(' ', getIndents(mc.font, 4 + indents))).add(this).component());
+	}
+	public CCGLangBuilder itemName(ItemStack stack) {
+		return add(stack.getHoverName().copy().setStyle(stack.getDisplayName().getStyle()));
+	}
+	public CCGLangBuilder itemEntry(ItemStack stack) {
+		return itemEntry(stack, itemName(stack).component().copy());
+	}
+	public CCGLangBuilder itemEntry(ItemStack stack, Component label) {
+		MutableComponent marker = Component.empty();
+		TooltipComponentUtil.ITEM_ENTRY_MAP.put(marker, new ItemEntryTooltipComponent(stack.copy(), 0, label.copy()));
+		return add(marker);
+	}
+	public CCGLangBuilder itemList(List<ItemStack> items, int maxColumns) {
+		MutableComponent marker = Component.empty();
+		List<ItemStack> copied = items.stream().map(ItemStack::copy).toList();
+		TooltipComponentUtil.ITEM_LIST_MAP.put(marker, new ItemListTooltipComponent(copied, 0, maxColumns));
+		return add(marker);
+	}
+	public CCGLangBuilder fluidEntry(FluidStack fluid, int capacityMb) {
+		return fluidEntry(fluid, capacityMb, null);
+	}
+	public CCGLangBuilder fluidEntry(FluidStack fluid, int capacityMb, @Nullable Component label) {
+		MutableComponent marker = Component.empty();
+		TooltipComponentUtil.FLUID_ENTRY_MAP.put(
+			marker,
+			new FluidEntryTooltipComponent(fluid.copy(), 0, Math.max(1, capacityMb), 0, label)
+		);
+		return add(marker);
+	}
+	@SuppressWarnings("unused")
+	public CCGLangBuilder fluidList(List<FluidStack> fluids, int maxColumns) {
+		MutableComponent marker = Component.empty();
+		List<FluidStack> copied = fluids.stream().map(FluidStack::copy).toList();
+		TooltipComponentUtil.FLUID_LIST_MAP.put(marker, new FluidListTooltipComponent(copied, 0, maxColumns));
+		return add(marker);
 	}
 }

@@ -71,24 +71,26 @@ public final class ItemTooltip {
 		if (!CCG.config.tooltip.goggles) return;
 		if (!(stack.getItem() instanceof GogglesItem)) return;
 		if (mc.player == null) return;
-		CCGLang.enabled(GogglesItem.isWearingGoggles(mc.player)).addTo(1, tooltip);
+		CCGLang.of().enabled(GogglesItem.isWearingGoggles(mc.player)).addTo(1, tooltip);
 	}
 	private static void backtank(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!CCG.config.tooltip.backtank) return;
 		if (!(stack.getItem() instanceof BacktankItem)) return;
-		CCGLang.add(CCGCreateLang.translateDirect("gui.goggles.fluid_container.capacity").withStyle(ChatFormatting.GRAY))
+		CCGLang.of()
+			.add(CCGCreateLang.translateDirect("gui.goggles.fluid_container.capacity").withStyle(ChatFormatting.GRAY))
 			.fraction(BacktankUtil.getAir(stack), BacktankUtil.maxAir(stack))
 			.addTo(1, tooltip);
 	}
 	private static void divingBoots(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!CCG.config.tooltip.divingBoots) return;
 		if (!(stack.getItem() instanceof DivingBootsItem)) return;
-		CCGLang.enabled(CCG.config.misc.allowDivingBoot).addTo(1, tooltip);
+		CCGLang.of().enabled(CCG.config.misc.allowDivingBoot).addTo(1, tooltip);
 	}
 	private static void wrench(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!CCG.config.tooltip.wrench) return;
 		if (!(stack.getItem() instanceof WrenchItem)) return;
-		CCGLang.translate("config.option.misc.wrench.leftClickFastDismantle")
+		CCGLang.of()
+			.translate("config.option.misc.wrench.leftClickFastDismantle")
 			.space()
 			.enabled(CCG.config.misc.wrench.leftClickFastDismantle)
 			.addTo(1, tooltip);
@@ -112,7 +114,7 @@ public final class ItemTooltip {
 		for (var i = 0; i < entries.size(); i++) {
 			FluidStack fluid = entries.get(i);
 			int capacity = i < capacities.size() ? capacities.get(i) : Math.max(1, fluid.getAmount());
-			CCGLang.fluidEntry(fluid, capacity).addTo(1, tooltip);
+			CCGLang.of().fluidEntry(fluid, capacity).addTo(1, tooltip);
 		}
 	}
 	/** simulated 导航物：容器/仓储界面里也能看到目标离玩家多远，便于挑哪个导航物 */
@@ -136,10 +138,7 @@ public final class ItemTooltip {
 		boolean alt = Screen.hasAltDown();
 		int index = Math.min(PREVIEW_TOOLTIP_INDEX, tooltip.size());
 		// 提示行常驻，按住 Alt 时在其下方追加预览块
-		tooltip.add(
-			index,
-			CCGKey.hint(CCGLang.translateDirect("gui.schematicPreview.altHint", CCGKey.keyName("Alt", alt)))
-		);
+		tooltip.add(index, CCGKey.hint(CCGLang.translateDirect("gui.schematicPreview.altHint", CCGKey.keyName("Alt", alt))));
 		if (!alt) return;
 		MutableComponent marker = Component.empty();
 		int width = Mth.clamp(mc.getWindow().getGuiScaledWidth() - PREVIEW_EDGE_PADDING, PREVIEW_MIN_SIZE, preview.sidePanelWidth);

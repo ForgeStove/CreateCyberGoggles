@@ -23,16 +23,17 @@ public abstract class SpringBlockEntityMixin extends SmartBlockEntity implements
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		if (!CCG.config.goggles.enhancedInfo) return false;
-		CCGLang.translate("tooltip.spring").forGoggles(tooltip);
+		CCGLang.of().translate("tooltip.spring").forGoggles(tooltip);
 		MutableComponent size = switch (getBlockState().getValue(SpringBlock.SIZE).getSerializedName()) {
 			case "small" -> CCGLang.translateDirect("tooltip.size.small");
 			case "medium" -> CCGLang.translateDirect("tooltip.size.medium");
 			case "large" -> CCGLang.translateDirect("tooltip.size.large");
 			default -> Component.translatable("multiplayer.status.unknown");
 		};
-		CCGLang.translate("tooltip.size", ChatFormatting.GRAY).add(size).forGoggles(tooltip);
-		CCGLang.translate("tooltip.isController", ChatFormatting.GRAY).is(thiz().isController()).forGoggles(tooltip);
-		CCGLang.translate("tooltip.spring.currentLength", ChatFormatting.GRAY)
+		CCGLang.of().translate("tooltip.size", ChatFormatting.GRAY).add(size).forGoggles(tooltip);
+		CCGLang.of().translate("tooltip.isController", ChatFormatting.GRAY).is(thiz().isController()).forGoggles(tooltip);
+		CCGLang.of()
+			.translate("tooltip.spring.currentLength", ChatFormatting.GRAY)
 			.fraction(thiz().getRenderLength(1), SpringItemHandler.MAX_LENGTH)
 			.forGoggles(tooltip);
 		return true;

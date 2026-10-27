@@ -44,7 +44,8 @@ public abstract class BlazeEnchanterBlockEntityMixin extends BlazeExperienceBloc
 	@Inject(method = "addToGoggleTooltip", at = @At("TAIL"))
 	public void addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking, CallbackInfoReturnable<Boolean> cir) {
 		if (!CCG.config.goggles.enhancedInfo || processingTime <= 0) return;
-		CCGLang.translate("tooltip.leftTime", ChatFormatting.GRAY)
+		CCGLang.of()
+			.translate("tooltip.leftTime", ChatFormatting.GRAY)
 			.number(processingTime / 20, ChatFormatting.GOLD)
 			.space()
 			.seconds(ChatFormatting.GRAY)

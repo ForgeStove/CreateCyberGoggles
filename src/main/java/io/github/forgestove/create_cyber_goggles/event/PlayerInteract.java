@@ -74,20 +74,17 @@ public final class PlayerInteract {
 		TableClothBlockEntity tcbe = getBlockEntity(TableClothBlockEntity.class);
 		if (tcbe == null) return;
 		if (TableClothUtil.getItems(tcbe).size() <= 1) return;
-		CCGLangBuilder builder = CCGLang.translate(
-			"message.toggleItemOverlay",
-			CCGKey.toggleItemOverlay.getFancyName()
-		).style(ChatFormatting.WHITE);
+		CCGLangBuilder builder = CCGLang.of()
+			.translate("message.toggleItemOverlay", CCGKey.toggleItemOverlay.getFancyName())
+			.style(ChatFormatting.WHITE);
 		TipOverlay.show(List.of(builder.component()), 0, 25);
 	}
 	public static void showCommonTip(Component title) {
 		if (hasItemInHand()) return;
 		var tip = new ArrayList<MutableComponent>();
-		CCGLang.add(title).addTo(tip);
-		CCGLang.translate("message.useSwitchState", CCGKey.getFancyName(mc.options.keyUse))
-			.addTo(tip);
-		CCGLang.translate("message.pressToInteractOpposite", CCGKey.interactOpposite.getFancyName())
-			.addTo(tip);
+		CCGLang.of().add(title).addTo(tip);
+		CCGLang.of().translate("message.useSwitchState", CCGKey.getFancyName(mc.options.keyUse)).addTo(tip);
+		CCGLang.of().translate("message.pressToInteractOpposite", CCGKey.interactOpposite.getFancyName()).addTo(tip);
 		TipOverlay.show(tip);
 	}
 	public static void leftClick(LeftClickBlock event) {

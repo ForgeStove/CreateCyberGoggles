@@ -31,8 +31,8 @@ public interface IHaveGoggleInformationMixin {
 			int capacity = handler.getTankCapacity(i);
 			CCGMods.thirst.runIfInstalled(() -> WaterPurityHelper.getWaterPurity(fluidStack))
 				.ifPresentOrElse(
-					purify -> CCGLang.fluidEntry(fluidStack, capacity, purify.component()).forGoggles(tooltip),
-					() -> CCGLang.fluidEntry(fluidStack, capacity).forGoggles(tooltip)
+					purify -> CCGLang.of().fluidEntry(fluidStack, capacity, purify.component()).forGoggles(tooltip),
+					() -> CCGLang.of().fluidEntry(fluidStack, capacity).forGoggles(tooltip)
 				);
 			isEmpty = false;
 		}
@@ -41,7 +41,7 @@ public interface IHaveGoggleInformationMixin {
 			return true;
 		}
 		if (isEmpty) for (var i = 0; i < handler.getTanks(); i++)
-			CCGLang.fluidEntry(FluidStack.EMPTY, handler.getTankCapacity(i)).forGoggles(tooltip);
+			CCGLang.of().fluidEntry(FluidStack.EMPTY, handler.getTankCapacity(i)).forGoggles(tooltip);
 		return true;
 	}
 }

@@ -30,8 +30,8 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
 		}
 		super.addToTooltip(tooltip, isPlayerSneaking);
 		TooltipHelper.addHint(tooltip, "hint.full_deployer");
-		CCGLang.translate("tooltip.content", ChatFormatting.GRAY).forGoggles(tooltip);
-		CCGLang.itemList(overflowItems, 9).forGoggles(tooltip.size(), tooltip);
+		CCGLang.of().translate("tooltip.content", ChatFormatting.GRAY).forGoggles(tooltip);
+		CCGLang.of().itemList(overflowItems, 9).forGoggles(tooltip.size(), tooltip);
 		cir.setReturnValue(true);
 	}
 	@Inject(

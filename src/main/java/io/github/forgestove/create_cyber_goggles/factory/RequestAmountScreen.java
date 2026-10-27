@@ -103,7 +103,7 @@ public class RequestAmountScreen extends AbstractSimiScreen {
 		if (amountInput.getValue().isEmpty()) gui.drawString(mc.font, String.valueOf(max), 44, 28, 0x808080, false);
 		if (CCG.config.misc.expressionInput) renderPreview(gui);
 		GuiGameElement.of(stack).at(16, 24).render(gui);
-		MutableComponent title = CCGLang.itemName(stack).component();
+		MutableComponent title = CCGLang.of().itemName(stack).component();
 		gui.drawString(mc.font, title, (210 - mc.font.width(title)) / 2, 4, 0x303030, false);
 		GuiGameElement.of(packageBox).scale(3).at(215, 35, 0).render(gui);
 		pose.popPose();

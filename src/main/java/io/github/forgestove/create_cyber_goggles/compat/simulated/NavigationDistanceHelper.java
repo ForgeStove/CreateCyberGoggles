@@ -20,14 +20,6 @@ import org.joml.Vector3d;
 import java.util.UUID;
 
 import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.mc;
-/**
- * simulated 导航物的「玩家 → 目标」距离 tooltip。
- * <p>
- * 只处理目标位置与导航台无关的两类：指南针（世界出生点 / 磁石追踪）与回响指南针（上次死亡点）。
- * 地图、磁石、Explorer's / Nature's Compass 的目标都以导航台自身为参照算出，物品上算不出来，故跳过。
- * <p>
- * 注意不能改调 {@code NavigationTarget#getTarget}：它要求传入导航台方块实体，且回响指南针那条会写物品组件
- */
 public final class NavigationDistanceHelper {
 	public static @Nullable Component line(ItemStack stack) {
 		ClientLevel level = mc.level;
@@ -37,16 +29,15 @@ public final class NavigationDistanceHelper {
 		if (target == null) return null;
 		Resolved resolved = resolve(target, stack, level);
 		if (resolved == null) return null;
-		if (!resolved.sameDimension())
-			return CCGLang.translate("tooltip.navigationDistance.otherDimension", ChatFormatting.GRAY).component();
-		// 玩家可能站在飞船（sublevel）里，坐标须先投影到世界系，否则算出来的是飞船局部坐标
+		if (!resolved.sameDimension()) return CCGLang.translateDirect("tooltip.navigationDistance.otherDimension", ChatFormatting.GRAY);
+		// 玩家在飞船（sublevel）内时，坐标须先投影到世界系
 		Vector3d playerPos = Sable.HELPER.projectOutOfSubLevel(level, JOMLConversion.toJOML(player.position()));
 		double distance = playerPos.distance(resolved.pos().x, resolved.pos().y, resolved.pos().z);
-		return CCGLang.translate(
+		return CCGLang.translateDirect(
 			"tooltip.navigationDistance",
 			ChatFormatting.GRAY,
-			CCGLang.number(Mth.ceil(distance), ChatFormatting.GOLD).component()
-		).component();
+			CCGLang.of().number(Mth.ceil(distance), ChatFormatting.GOLD).component()
+		);
 	}
 	private static @Nullable Resolved resolve(NavigationTarget target, ItemStack stack, ClientLevel level) {
 		if (target instanceof CompassNavigationTarget) return new Resolved(true, compassTarget(stack, level));
@@ -69,12 +60,7 @@ public final class NavigationDistanceHelper {
 		return level.getSharedSpawnPos().getCenter();
 	}
 	/**
-	 * 与导航台同规则：UUID 对应的玩家在线时以其实时死亡点为准（物品上存的可能已过期），否则退回存的那个。
-	 * 差别是这里不回写组件 —— 导航台会把在线玩家的值同步进组件，而 tooltip 期间不能改物品。
-	 * <p>
-	 * 只能对本地玩家取实时值：{@code Player#lastDeathLocation} 是普通字段（非 SynchedEntityData），
-	 * MC 只在登录/重生时给「本人客户端」写入（见 ClientPacketListener 的 setLastDeathLocation），
-	 * 其他玩家在客户端恒为空 —— 那种情况必须退回组件，否则会把本来算得出来的距离吞掉
+	 * 本地玩家取实时死亡点，其他玩家退回组件：{@code lastDeathLocation} 只在本人客户端同步。
 	 */
 	private static @Nullable GlobalPos deathLocation(ItemStack stack) {
 		UUID placer = stack.get(SimDataComponents.COMPASS_PLACER_UUID);

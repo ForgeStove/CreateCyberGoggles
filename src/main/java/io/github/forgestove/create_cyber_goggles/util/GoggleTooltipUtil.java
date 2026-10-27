@@ -103,10 +103,11 @@ public final class GoggleTooltipUtil {
 	}
 	private static boolean airCurrent(List<Component> tooltip, boolean pushing, float range) {
 		if (!CCG.config.goggles.enhancedInfo || range == 0) return false;
-		CCGLang.translate("tooltip.windState").forGoggles(tooltip);
-		CCGLang.number(range)
+		CCGLang.of().translate("tooltip.windState").forGoggles(tooltip);
+		CCGLang.of()
+			.number(range)
 			.space()
-			.add(pushing ? CCGLang.translate("tooltip.pushRange") : CCGLang.translate("tooltip.pullRange"))
+			.add(pushing ? CCGLang.of().translate("tooltip.pushRange") : CCGLang.of().translate("tooltip.pullRange"))
 			.color(Outliner.getColor(pushing))
 			.forGoggles(tooltip);
 		return true;
@@ -122,8 +123,9 @@ public final class GoggleTooltipUtil {
 			case NORMAL -> GOLD;
 			default -> DARK_PURPLE;
 		};
-		CCGLang.translate("tooltip.burnerState").forGoggles(tooltip);
-		CCGLang.translate("tooltip.leftTime", GRAY)
+		CCGLang.of().translate("tooltip.burnerState").forGoggles(tooltip);
+		CCGLang.of()
+			.translate("tooltip.leftTime", GRAY)
 			.text(isCreative ? "∞" : String.valueOf(remainingBurnTime / 20), format)
 			.text(" / %d ".formatted(BlazeBurnerBlockEntity.INSERTION_THRESHOLD))
 			.seconds()
@@ -132,32 +134,32 @@ public final class GoggleTooltipUtil {
 	}
 	public static boolean cannon(List<Component> tooltip, @NotNull SchematicannonBlockEntity be) {
 		if (!CCG.config.goggles.enhancedInfo) return false;
-		CCGLang.translate("tooltip.cannonState").forGoggles(tooltip);
+		CCGLang.of().translate("tooltip.cannonState").forGoggles(tooltip);
 		CCGCreateLang.translate("schematicannon.status." + be.statusMsg).style(GOLD).forGoggles(tooltip);
-		if (be.missingItem != null) CCGLang.itemEntry(be.missingItem).forGoggles(tooltip);
+		if (be.missingItem != null) CCGLang.of().itemEntry(be.missingItem).forGoggles(tooltip);
 		int shotsLeft = be.remainingFuel;
 		int shotsLeftWithItems = shotsLeft + be.inventory.getStackInSlot(4).getCount() * be.getShotsPerGunpowder();
 		if (be.hasCreativeCrate) {
 			CCGCreateLang.translate("gui.schematicannon.gunpowderLevel", "" + 100).forGoggles(tooltip);
-			CCGLang.text("(").add(AllBlocks.CREATIVE_CRATE.get().getName()).text(")").style(DARK_PURPLE).forGoggles(tooltip);
+			CCGLang.of().text("(").add(AllBlocks.CREATIVE_CRATE.get().getName()).text(")").style(DARK_PURPLE).forGoggles(tooltip);
 		} else {
 			var fillPercent = (int) (shotsLeft / (float) be.getShotsPerGunpowder() * 100);
 			CCGCreateLang.translate("gui.schematicannon.gunpowderLevel", fillPercent).forGoggles(tooltip);
 			CCGCreateLang.builder()
-				.add(CCGCreateLang.translateDirect("gui.schematicannon.shotsRemaining", CCGLang.number(shotsLeft, BLUE).component())
+				.add(CCGCreateLang.translateDirect("gui.schematicannon.shotsRemaining", CCGLang.of().number(shotsLeft, BLUE).component())
 					.withStyle(GRAY))
 				.forGoggles(tooltip);
 			if (shotsLeftWithItems != shotsLeft) CCGCreateLang.builder()
 				.add(CCGCreateLang.translateDirect(
 					"gui.schematicannon.shotsRemainingWithBackup",
-					CCGLang.number(shotsLeftWithItems, BLUE).component()
+					CCGLang.of().number(shotsLeftWithItems, BLUE).component()
 				).withStyle(GRAY))
 				.forGoggles(tooltip);
 		}
 		if (!be.state.equals(State.RUNNING)) return true;
-		CCGLang.translate("tooltip.printProgress").forGoggles(tooltip);
-		CCGLang.fraction(be.blocksPlaced, be.blocksToPlace).forGoggles(tooltip);
-		CCGLang.progress(be.schematicProgress, 20).forGoggles(tooltip);
+		CCGLang.of().translate("tooltip.printProgress").forGoggles(tooltip);
+		CCGLang.of().fraction(be.blocksPlaced, be.blocksToPlace).forGoggles(tooltip);
+		CCGLang.of().progress(be.schematicProgress, 20).forGoggles(tooltip);
 		return true;
 	}
 	public static boolean backtank(List<Component> tooltip, BacktankBlockEntity be) {
@@ -168,22 +170,22 @@ public final class GoggleTooltipUtil {
 		CCGCreateLang.translate("gui.goggles.fluid_container").forGoggles(tooltip);
 		CCGCreateLang.translate("gui.goggles.fluid_container.capacity")
 			.style(GRAY)
-			.add(CCGLang.fraction(be.airLevel, BacktankUtil.maxAir(capacityEnchantLevel)).component())
+			.add(CCGLang.of().fraction(be.airLevel, BacktankUtil.maxAir(capacityEnchantLevel)).component())
 			.forGoggles(tooltip);
 		if (be.getSpeed() == 0 || leftTick == 0) return false;
-		CCGLang.translate("tooltip.leftTime", GRAY).number(leftTick / 20, GOLD).space().seconds(GRAY).forGoggles(tooltip);
+		CCGLang.of().translate("tooltip.leftTime", GRAY).number(leftTick / 20, GOLD).space().seconds(GRAY).forGoggles(tooltip);
 		return true;
 	}
 	public static boolean belt(List<Component> tooltip, BeltBlockEntity be) {
 		if (!CCG.config.goggles.enhancedInfo) return false;
-		CCGLang.translate("tooltip.isController", GRAY).is(be.isController()).forGoggles(tooltip);
+		CCGLang.of().translate("tooltip.isController", GRAY).is(be.isController()).forGoggles(tooltip);
 		if (be.getSpeed() == 0) return false;
 		BeltBlockEntity controllerBE = be.getControllerBE();
 		if (controllerBE == null) return true;
 		double itemsPerSecond = ((BeltTooltipData) controllerBE).ccg$getRate();
 		if (itemsPerSecond < 0.1) return true;
-		CCGLang.translate("tooltip.beltThroughput", GRAY).forGoggles(tooltip);
-		CCGLang.text(String.format("%.2f", itemsPerSecond), GOLD).text(" / ", DARK_GRAY).seconds(DARK_GRAY).forGoggles(tooltip, 1);
+		CCGLang.of().translate("tooltip.beltThroughput", GRAY).forGoggles(tooltip);
+		CCGLang.of().text(String.format("%.2f", itemsPerSecond), GOLD).text(" / ", DARK_GRAY).seconds(DARK_GRAY).forGoggles(tooltip, 1);
 		return true;
 	}
 	public static boolean pulse(List<Component> tooltip, BrassDiodeBlockEntity be) {
@@ -191,8 +193,8 @@ public final class GoggleTooltipUtil {
 		var data = (PulseTooltipData) be;
 		int state = data.ccg$getState();
 		int maxState = data.ccg$getMaxState();
-		CCGLang.translate("tooltip.pulse").forGoggles(tooltip);
-		CCGLang.fraction(state, maxState).forGoggles(tooltip);
+		CCGLang.of().translate("tooltip.pulse").forGoggles(tooltip);
+		CCGLang.of().fraction(state, maxState).forGoggles(tooltip);
 		return true;
 	}
 	public static boolean depot(List<Component> tooltip, DepotBlockEntity be) {
@@ -208,8 +210,8 @@ public final class GoggleTooltipUtil {
 			stackAdded = true;
 		}
 		if (!stackAdded) return false;
-		CCGLang.translate("tooltip.content").forGoggles(tooltip);
-		stacks.forEach(stack -> CCGLang.itemEntry(stack, CCGLang.itemName(stack).component()).forGoggles(tooltip, 1));
+		CCGLang.of().translate("tooltip.content").forGoggles(tooltip);
+		stacks.forEach(stack -> CCGLang.of().itemEntry(stack, CCGLang.of().itemName(stack).component()).forGoggles(tooltip, 1));
 		return true;
 	}
 	public static boolean redstoneRequester(List<Component> tooltip, RedstoneRequesterBlockEntity be) {
@@ -218,8 +220,8 @@ public final class GoggleTooltipUtil {
 		if (bigStacks.isEmpty()) return false;
 		var stacks = new ArrayList<ItemStack>();
 		bigStacks.forEach(bigStack -> stacks.add(bigStack.stack.copyWithCount(bigStack.count)));
-		CCGLang.translate("tooltip.content").forGoggles(tooltip);
-		CCGLang.itemList(stacks, stacks.size() > 9 ? 9 : 3).forGoggles(tooltip);
+		CCGLang.of().translate("tooltip.content").forGoggles(tooltip);
+		CCGLang.of().itemList(stacks, stacks.size() > 9 ? 9 : 3).forGoggles(tooltip);
 		return true;
 	}
 	public static boolean basin(
@@ -233,16 +235,16 @@ public final class GoggleTooltipUtil {
 	) {
 		if (inputItems.isEmpty() && outputItems.isEmpty() && inputFluids.isEmpty() && outputFluids.isEmpty()) return false;
 		CCGCreateLang.translate("gui.goggles.basin_contents").forGoggles(tooltip);
-		addItems(tooltip, inputItems, CCGLang.translate("tooltip.inputItems", GRAY));
-		addFluids(tooltip, inputFluids, inputCapacities, CCGLang.translate("tooltip.inputFluids", GRAY));
-		addItems(tooltip, outputItems, CCGLang.translate("tooltip.outputItems", GRAY));
-		addFluids(tooltip, outputFluids, outputCapacities, CCGLang.translate("tooltip.outputFluids", GRAY));
+		addItems(tooltip, inputItems, CCGLang.of().translate("tooltip.inputItems", GRAY));
+		addFluids(tooltip, inputFluids, inputCapacities, CCGLang.of().translate("tooltip.inputFluids", GRAY));
+		addItems(tooltip, outputItems, CCGLang.of().translate("tooltip.outputItems", GRAY));
+		addFluids(tooltip, outputFluids, outputCapacities, CCGLang.of().translate("tooltip.outputFluids", GRAY));
 		return true;
 	}
 	private static void addItems(List<Component> tooltip, @NotNull List<ItemStack> items, CCGLangBuilder header) {
 		if (items.isEmpty()) return;
 		header.forGoggles(tooltip, 1);
-		items.forEach(stack -> CCGLang.itemEntry(stack, CCGLang.itemName(stack).component()).forGoggles(tooltip, 1));
+		items.forEach(stack -> CCGLang.of().itemEntry(stack, CCGLang.of().itemName(stack).component()).forGoggles(tooltip, 1));
 	}
 	private static void addFluids(
 		List<Component> tooltip,
@@ -255,12 +257,13 @@ public final class GoggleTooltipUtil {
 		for (var i = 0; i < fluids.size(); i++) {
 			FluidStack fluidStack = fluids.get(i);
 			int capacityMb = i < capacities.size() ? capacities.get(i) : Math.max(1000, fluidStack.getAmount());
-			CCGLang.fluidEntry(fluidStack, capacityMb).forGoggles(tooltip, 1);
+			CCGLang.of().fluidEntry(fluidStack, capacityMb).forGoggles(tooltip, 1);
 		}
 	}
 	public static boolean crushingController(List<Component> tooltip, CrushingWheelControllerBlockEntity be, boolean isPlayerSneaking) {
 		if (!CCG.config.tooltip.crushingController) return false;
-		CCGLang.translate("tooltip.crushingController")
+		CCGLang.of()
+			.translate("tooltip.crushingController")
 			.fraction(be.crushingspeed * 50, AllConfigs.server().kinetics.maxRotationSpeed.get())
 			.forGoggles(tooltip);
 		int inputCount = be.inventory.getStackInSlot(0).getCount();
@@ -271,31 +274,33 @@ public final class GoggleTooltipUtil {
 		);
 		var leftTick = (int) (be.inventory.remainingTime / processingSpeed);
 		if (leftTick == 0) return false;
-		CCGLang.translate("tooltip.leftTime", GRAY).number(leftTick / 20, GOLD).space().seconds(GRAY).forGoggles(tooltip);
-		CCGLang.translate("tooltip.expectedOutputs", GRAY).forGoggles(tooltip);
+		CCGLang.of().translate("tooltip.leftTime", GRAY).number(leftTick / 20, GOLD).space().seconds(GRAY).forGoggles(tooltip);
+		CCGLang.of().translate("tooltip.expectedOutputs", GRAY).forGoggles(tooltip);
 		if (isPlayerSneaking) be.findRecipe().ifPresentOrElse(
 			holder -> holder.value().getRollableResults().forEach(result -> {
 				ItemStack stack = result.getStack();
 				float chance = result.getChance();
-				MutableComponent label = CCGLang.itemName(stack)
+				MutableComponent label = CCGLang.of()
+					.itemName(stack)
 					.text(" x", DARK_GRAY)
 					.number(chance * 100)
 					.style(AQUA)
 					.text("%", DARK_GRAY)
 					.component();
-				CCGLang.itemEntry(stack.copyWithCount(inputCount * stack.getCount()), label).forGoggles(tooltip);
-			}), () -> CCGLang.itemName(ItemStack.EMPTY).forGoggles(tooltip, 2)
+				CCGLang.of().itemEntry(stack.copyWithCount(inputCount * stack.getCount()), label).forGoggles(tooltip);
+			}), () -> CCGLang.of().itemName(ItemStack.EMPTY).forGoggles(tooltip, 2)
 		);
 		else be.findRecipe().ifPresentOrElse(
 			holder -> holder.value().getRollableResults().forEach(result -> {
 				ItemStack stack = result.getStack();
 				float chance = result.getChance();
-				MutableComponent line = CCGLang.itemName(stack)
+				MutableComponent line = CCGLang.of()
+					.itemName(stack)
 					.text(" x", DARK_GRAY)
 					.number(inputCount * stack.getCount() * chance, GOLD)
 					.component();
-				CCGLang.itemEntry(stack.copyWithCount(1), line).forGoggles(tooltip);
-			}), () -> CCGLang.itemName(ItemStack.EMPTY).forGoggles(tooltip, 2)
+				CCGLang.of().itemEntry(stack.copyWithCount(1), line).forGoggles(tooltip);
+			}), () -> CCGLang.of().itemName(ItemStack.EMPTY).forGoggles(tooltip, 2)
 		);
 		return true;
 	}
@@ -306,33 +311,36 @@ public final class GoggleTooltipUtil {
 		Optional<RecipeHolder<MillingRecipe>> found = AllRecipeTypes.MILLING.find(new RecipeWrapper(be.inputInv), level);
 		if (found.isEmpty()) return false;
 		MillingRecipe lastRecipe = found.get().value();
-		CCGLang.translate("tooltip.crushingController")
-			.add(CCGLang.fraction(be.getProcessingSpeed() * 16, AllConfigs.server().kinetics.maxRotationSpeed.get()))
+		CCGLang.of()
+			.translate("tooltip.crushingController")
+			.add(CCGLang.of().fraction(be.getProcessingSpeed() * 16, AllConfigs.server().kinetics.maxRotationSpeed.get()))
 			.forGoggles(tooltip);
 		int processingSpeed = Math.max(1, be.getProcessingSpeed());
 		var leftTick = (int) Math.ceil(be.timer / (double) processingSpeed);
 		if (leftTick == 0) return false;
-		CCGLang.translate("tooltip.leftTime", GRAY).number(leftTick / 20, GOLD).space().seconds(GRAY).forGoggles(tooltip);
-		CCGLang.translate("tooltip.expectedOutputs", GRAY).forGoggles(tooltip);
+		CCGLang.of().translate("tooltip.leftTime", GRAY).number(leftTick / 20, GOLD).space().seconds(GRAY).forGoggles(tooltip);
+		CCGLang.of().translate("tooltip.expectedOutputs", GRAY).forGoggles(tooltip);
 		int inputCount = Math.max(1, be.inputInv.getStackInSlot(0).getCount());
 		if (isPlayerSneaking) lastRecipe.getRollableResults().forEach(result -> {
 			ItemStack stack = result.getStack();
 			float chance = result.getChance();
-			MutableComponent label = CCGLang.itemName(stack)
+			MutableComponent label = CCGLang.of()
+				.itemName(stack)
 				.text(" x", DARK_GRAY)
 				.number(chance * 100, AQUA)
 				.text("%", DARK_GRAY)
 				.component();
-			CCGLang.itemEntry(stack.copyWithCount(inputCount * stack.getCount()), label).forGoggles(tooltip);
+			CCGLang.of().itemEntry(stack.copyWithCount(inputCount * stack.getCount()), label).forGoggles(tooltip);
 		});
 		else lastRecipe.getRollableResults().forEach(result -> {
 			ItemStack stack = result.getStack();
 			float chance = result.getChance();
-			MutableComponent line = CCGLang.itemName(stack)
+			MutableComponent line = CCGLang.of()
+				.itemName(stack)
 				.text(" x", DARK_GRAY)
 				.number(inputCount * stack.getCount() * chance, GOLD)
 				.component();
-			CCGLang.itemEntry(stack.copyWithCount(1), line).forGoggles(tooltip);
+			CCGLang.of().itemEntry(stack.copyWithCount(1), line).forGoggles(tooltip);
 		});
 		return true;
 	}
@@ -345,10 +353,10 @@ public final class GoggleTooltipUtil {
 		for (Direction direction : Direction.values()) {
 			if (!behaviour.canHaveFlowToward(state, direction)) continue;
 			if (!added) {
-				CCGLang.translate("tooltip.fluidTransport").forGoggles(tooltip);
+				CCGLang.of().translate("tooltip.fluidTransport").forGoggles(tooltip);
 				added = true;
 			}
-			CCGLangBuilder line = CCGLang.translate("tooltip.direction." + direction.getName(), GRAY).space();
+			CCGLangBuilder line = CCGLang.of().translate("tooltip.direction." + direction.getName(), GRAY).space();
 			Flow flow = behaviour.getFlow(direction);
 			PipeConnection connection = behaviour.getConnection(direction);
 			if (flow == null || connection == null) line.text("—", DARK_GRAY).space().number(0, DARK_GRAY).space();
@@ -370,8 +378,9 @@ public final class GoggleTooltipUtil {
 		if (controller == null) return false;
 		double rate = ((FluidTankThroughputData) controller).ccg$getRate();
 		if (rate < 0.5) return false;
-		CCGLang.translate("tooltip.fluidThroughput").forGoggles(tooltip);
-		CCGLang.number(Math.round(rate), GOLD)
+		CCGLang.of().translate("tooltip.fluidThroughput").forGoggles(tooltip);
+		CCGLang.of()
+			.number(Math.round(rate), GOLD)
 			.space()
 			.add(CCGCreateLang.translateDirect("generic.unit.millibuckets"))
 			.text("/t", DARK_GRAY)

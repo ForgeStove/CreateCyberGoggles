@@ -69,10 +69,10 @@ public final class RedstoneRequesterEmiHandler implements EmiRecipeHandler<Redst
 	}
 	@Override
 	public List<ClientTooltipComponent> getTooltip(EmiRecipe recipe, EmiCraftContext<RedstoneRequesterMenu> context) {
-		if (!canCraft(recipe, context)) return List.of(ClientTooltipComponent.create(EmiPort.ordered(CCGLang.translate(
+		if (!canCraft(recipe, context)) return List.of(ClientTooltipComponent.create(EmiPort.ordered(CCGLang.translateDirect(
 			"gui.redstoneRequester.tooManyIngredients",
 			ChatFormatting.RED
-		).component())));
+		))));
 		return List.of(new AltHintTooltip(0), new AltHintTooltip(1));
 	}
 	/**

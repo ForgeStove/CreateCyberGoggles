@@ -5,9 +5,6 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
-/**
- * Create 命名空间的翻译包装，供 IDE 解析短键。
- */
 public final class CCGCreateLang {
 	public static @NotNull LangBuilder translate(
 		@Translatable(prefix = Create.ID + '.', foldMethod = true) String langKey,

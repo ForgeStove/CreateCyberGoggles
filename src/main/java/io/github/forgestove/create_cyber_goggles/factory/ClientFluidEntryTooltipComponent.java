@@ -48,12 +48,10 @@ public final class ClientFluidEntryTooltipComponent implements ClientTooltipComp
 		boolean showCapacity,
 		@Nullable Component label
 	) {
-		if (fluid.isEmpty()) return CCGLang.translate("tooltip.empty")
-			.space()
-			.text(AmountUtil.formatFluidAmount(capacityMb))
-			.component();
+		if (fluid.isEmpty())
+			return CCGLang.of().translate("tooltip.empty").space().text(AmountUtil.formatFluidAmount(capacityMb)).component();
 		MutableComponent name = (label != null ? label : fluid.getHoverName()).copy();
-		CCGLangBuilder result = CCGLang.add(name).space().text(AmountUtil.formatFluidAmount(fluid.getAmount()));
+		CCGLangBuilder result = CCGLang.of().add(name).space().text(AmountUtil.formatFluidAmount(fluid.getAmount()));
 		if (showCapacity)
 			return result.text(" / ", ChatFormatting.GRAY).text(AmountUtil.formatFluidAmount(capacityMb), ChatFormatting.GRAY).component();
 		return result.component();

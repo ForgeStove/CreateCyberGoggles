@@ -20,7 +20,7 @@ public abstract class HosePulleyBlockEntityMixin {
 		CallbackInfoReturnable<Boolean> cir,
 		@Local(name = "addToGoggleTooltip") boolean addToGoggleTooltip
 	) {
-		CCGLang.fluidEntry(internalTank.getFluid(), internalTank.getCapacity()).forGoggles(tooltip);
+		CCGLang.of().fluidEntry(internalTank.getFluid(), internalTank.getCapacity()).forGoggles(tooltip);
 		cir.setReturnValue(addToGoggleTooltip || infinite);
 	}
 }

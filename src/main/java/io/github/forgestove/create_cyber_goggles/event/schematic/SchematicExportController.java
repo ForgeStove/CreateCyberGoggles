@@ -40,11 +40,12 @@ public class SchematicExportController {
 		boolean shift = shiftToggled();
 		boolean ctrl = ctrlToggled();
 		var lines = new ArrayList<Component>();
-		lines.add(CCGLang.translate("gui.schematicTable.exportButton.title").color(SchematicLang.DARK_BLUE).component());
-		CCGLangBuilder resolution = CCGLang.translate("gui.schematicTable.exportButton.resolution")
+		lines.add(CCGLang.of().translate("gui.schematicTable.exportButton.title").color(SchematicLang.DARK_BLUE).component());
+		CCGLangBuilder resolution = CCGLang.of()
+			.translate("gui.schematicTable.exportButton.resolution")
 			.style(ChatFormatting.GRAY)
 			.add(Component.literal(String.valueOf(shift ? image.alternateWidth : image.defaultWidth)).withColor(SchematicLang.LIGHT_BLUE));
-		if (!shift) resolution.add(CCGLang.translate(
+		if (!shift) resolution.add(CCGLang.of().translate(
 			"gui.schematicTable.exportButton.resolutionHint",
 			Component.literal("Shift").withStyle(ChatFormatting.GRAY),
 			image.alternateWidth
@@ -52,19 +53,17 @@ public class SchematicExportController {
 		lines.add(resolution.component());
 		// 沿用预览朝向时角度直接取自预览面板，等轴方向无从选择，故不显示这一行
 		if (!image.usePreviewRotation || !CCG.config.schematic.preview.previewEnabled) {
-			CCGLangBuilder direction = CCGLang.translate("gui.schematicTable.exportButton.direction").style(ChatFormatting.GRAY);
+			CCGLangBuilder direction = CCGLang.of().translate("gui.schematicTable.exportButton.direction").style(ChatFormatting.GRAY);
 			direction.add(ctrl
-				? CCGLang.translate("gui.schematicTable.exportButton.direction.left").color(SchematicLang.LIGHT_BLUE)
-				: CCGLang.translate("gui.schematicTable.exportButton.direction.right").color(SchematicLang.LIGHT_BLUE));
-			if (!ctrl) direction.add(CCGLang.translate(
-					"gui.schematicTable.exportButton.directionHint",
-					Component.literal("Ctrl").withStyle(ChatFormatting.GRAY)
-				)
+				? CCGLang.of().translate("gui.schematicTable.exportButton.direction.left").color(SchematicLang.LIGHT_BLUE)
+				: CCGLang.of().translate("gui.schematicTable.exportButton.direction.right").color(SchematicLang.LIGHT_BLUE));
+			if (!ctrl) direction.add(CCGLang.of()
+				.translate("gui.schematicTable.exportButton.directionHint", Component.literal("Ctrl").withStyle(ChatFormatting.GRAY))
 				.style(ChatFormatting.DARK_GRAY));
 			lines.add(direction.component());
 		}
 		lines.add(Component.literal(" "));
-		lines.add(CCGLang.translate("gui.schematicTable.exportButton.saveHint").style(ChatFormatting.GRAY).component());
+		lines.add(CCGLang.of().translate("gui.schematicTable.exportButton.saveHint").style(ChatFormatting.GRAY).component());
 		button.setToolTipLines(lines);
 	}
 	private void exportSchematicImage() {

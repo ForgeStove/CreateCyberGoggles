@@ -363,11 +363,12 @@ public final class GoggleTooltipUtil {
 			else {
 				Couple<Float> pressure = connection.getPressure();
 				int rate = Math.max(1, (int) (Math.max(pressure.get(true), pressure.get(false)) / 2));
-				if (flow.inbound) line.translate("tooltip.fluidFlow.in", GREEN);
-				else line.translate("tooltip.fluidFlow.out", AQUA);
-				line.space().add(flow.fluid.getHoverName()).space().number(rate, GOLD).space();
+				int color = Outliner.getColor(!flow.inbound);
+				if (flow.inbound) line.add(CCGLang.translateDirect("tooltip.fluidFlow.in").withStyle(s -> s.withColor(color)));
+				else line.add(CCGLang.translateDirect("tooltip.fluidFlow.out").withStyle(s -> s.withColor(color)));
+				line.space().add(flow.fluid.getHoverName()).space().number(rate, AQUA).space();
 			}
-			line.add(CCGCreateLang.translateDirect("generic.unit.millibuckets")).text("/t", DARK_GRAY);
+			line.add(CCGCreateLang.translateDirect("generic.unit.millibuckets").withStyle(DARK_GRAY)).text("/t", DARK_GRAY);
 			line.forGoggles(tooltip, 1);
 		}
 		return added;
@@ -380,9 +381,9 @@ public final class GoggleTooltipUtil {
 		if (rate < 0.5) return false;
 		CCGLang.of().translate("tooltip.fluidThroughput").forGoggles(tooltip);
 		CCGLang.of()
-			.number(Math.round(rate), GOLD)
+			.number(Math.round(rate), AQUA)
 			.space()
-			.add(CCGCreateLang.translateDirect("generic.unit.millibuckets"))
+			.add(CCGCreateLang.translateDirect("generic.unit.millibuckets").withStyle(DARK_GRAY))
 			.text("/t", DARK_GRAY)
 			.forGoggles(tooltip, 1);
 		return true;

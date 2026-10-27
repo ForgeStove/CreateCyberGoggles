@@ -362,7 +362,8 @@ public final class GoggleTooltipUtil {
 			if (flow == null || connection == null) line.text("—", DARK_GRAY).space().number(0, DARK_GRAY).space();
 			else {
 				Couple<Float> pressure = connection.getPressure();
-				int rate = Math.max(1, (int) (Math.max(pressure.get(true), pressure.get(false)) / 2));
+				float maxPressure = Math.max(pressure.get(true), pressure.get(false));
+				int rate = maxPressure <= 0 ? 0 : Math.max(1, (int) (maxPressure / 2));
 				int color = Outliner.getColor(!flow.inbound);
 				if (flow.inbound) line.add(CCGLang.translateDirect("tooltip.fluidFlow.in").withStyle(s -> s.withColor(color)));
 				else line.add(CCGLang.translateDirect("tooltip.fluidFlow.out").withStyle(s -> s.withColor(color)));

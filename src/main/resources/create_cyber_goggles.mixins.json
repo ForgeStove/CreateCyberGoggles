@@ -103,6 +103,7 @@
 		"provider.FactoryPanelBlockEntityMixin",
 		"provider.FluidPipeBlockEntityMixin",
 		"provider.FluidTankBlockEntityMixin",
+		"provider.FluidValveBlockEntityMixin",
 		"provider.ItemDrainBlockEntityMixin",
 		"provider.ItemEntityMixin",
 		"provider.MechanicalCrafterBlockEntityMixin",

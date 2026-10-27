@@ -1,6 +1,7 @@
 package io.github.forgestove.create_cyber_goggles;
 import com.simibubi.create.content.equipment.armor.BacktankBlockEntity;
 import com.simibubi.create.content.fluids.pipes.*;
+import com.simibubi.create.content.fluids.pipes.valve.FluidValveBlockEntity;
 import com.simibubi.create.content.fluids.pump.PumpBlockEntity;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.content.kinetics.belt.BeltBlockEntity;
@@ -42,6 +43,8 @@ public final class CCGGoggleEntries {
 		GoggleTooltip.register(SmartFluidPipeBlockEntity.class, getCCGRes("smart_pipe"), GoggleTooltipUtil::fluidTransport);
 		GoggleTooltip.registerNative(PumpBlockEntity.class);
 		GoggleTooltip.register(PumpBlockEntity.class, getCCGRes("pump"), GoggleTooltipUtil::fluidTransport);
+		GoggleTooltip.registerNative(FluidValveBlockEntity.class);
+		GoggleTooltip.register(FluidValveBlockEntity.class, getCCGRes("fluid_valve"), GoggleTooltipUtil::fluidTransport);
 		GoggleTooltip.registerNative(FluidTankBlockEntity.class);
 		GoggleTooltip.registerAfter(
 			FluidTankBlockEntity.class,

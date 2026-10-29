@@ -3,7 +3,7 @@ import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.fluids.pipes.valve.FluidValveBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import io.github.forgestove.create_cyber_goggles.api.GoggleTooltip;
-import io.github.forgestove.create_cyber_goggles.util.contract.Self;
+import io.github.forgestove.create_cyber_goggles.foundation.util.Self;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntityType;

@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
-import static io.github.forgestove.create_cyber_goggles.util.SequencedAssemblyUtil.*;
+import static io.github.forgestove.create_cyber_goggles.foundation.util.SequencedAssemblyUtil.*;
 @Pseudo
 @Mixin(RecipeScreen.class)
 public abstract class RecipeScreenMixin {

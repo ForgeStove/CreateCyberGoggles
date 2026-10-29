@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.compat.thirst;
 import cn.mlus.thirst.content.purity.WaterPurity;
-import io.github.forgestove.create_cyber_goggles.util.*;
+import io.github.forgestove.create_cyber_goggles.foundation.lang.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;

@@ -1,7 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.mixin.misc;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.util.ItemCountFontUtil;
-import io.github.forgestove.create_cyber_goggles.util.contract.Self;
+import io.github.forgestove.create_cyber_goggles.foundation.util.*;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Font.DisplayMode;
 import net.minecraft.client.renderer.MultiBufferSource;

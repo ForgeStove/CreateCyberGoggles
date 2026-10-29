@@ -1,11 +1,10 @@
 package io.github.forgestove.create_cyber_goggles.api;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.logistics.filter.*;
-import io.github.forgestove.create_cyber_goggles.gui.*;
+import io.github.forgestove.create_cyber_goggles.content.filterPreview.*;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;

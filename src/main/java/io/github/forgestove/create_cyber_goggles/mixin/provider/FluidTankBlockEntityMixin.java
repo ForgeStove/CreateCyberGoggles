@@ -2,14 +2,13 @@ package io.github.forgestove.create_cyber_goggles.mixin.provider;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.GoggleTooltip;
-import io.github.forgestove.create_cyber_goggles.factory.FluidTankThroughput;
-import io.github.forgestove.create_cyber_goggles.util.contract.FluidTankThroughputData;
-import io.github.forgestove.create_cyber_goggles.util.contract.Self;
+import io.github.forgestove.create_cyber_goggles.content.factoryPanel.FluidTankThroughput;
+import io.github.forgestove.create_cyber_goggles.content.goggles.tooltip.data.FluidTankThroughputData;
+import io.github.forgestove.create_cyber_goggles.foundation.util.Self;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.*;
 
 import java.util.List;
 @Mixin(FluidTankBlockEntity.class)

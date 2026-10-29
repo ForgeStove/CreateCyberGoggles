@@ -3,7 +3,8 @@ import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.redstone.diodes.BrassDiodeBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour;
 import io.github.forgestove.create_cyber_goggles.api.GoggleTooltip;
-import io.github.forgestove.create_cyber_goggles.util.contract.*;
+import io.github.forgestove.create_cyber_goggles.content.goggles.tooltip.data.PulseTooltipData;
+import io.github.forgestove.create_cyber_goggles.foundation.util.Self;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.*;
 

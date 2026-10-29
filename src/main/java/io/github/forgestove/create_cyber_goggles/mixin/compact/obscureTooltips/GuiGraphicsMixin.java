@@ -1,9 +1,8 @@
 package io.github.forgestove.create_cyber_goggles.mixin.compact.obscureTooltips;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import io.github.forgestove.create_cyber_goggles.event.ItemTooltip;
-import io.github.forgestove.create_cyber_goggles.factory.CCGMods;
-import io.github.forgestove.create_cyber_goggles.util.contract.Self;
+import io.github.forgestove.create_cyber_goggles.content.goggles.tooltip.ItemTooltip;
+import io.github.forgestove.create_cyber_goggles.foundation.util.*;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.inventory.tooltip.*;
 import net.minecraft.world.item.ItemStack;

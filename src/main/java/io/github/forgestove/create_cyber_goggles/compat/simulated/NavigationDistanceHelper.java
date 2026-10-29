@@ -5,7 +5,7 @@ import dev.simulated_team.simulated.content.blocks.nav_table.navigation_target.N
 import dev.simulated_team.simulated.content.navigation_targets.*;
 import dev.simulated_team.simulated.content.navigation_targets.lodestone_compass_compatability.ClientLodestonePositions;
 import dev.simulated_team.simulated.index.SimDataComponents;
-import io.github.forgestove.create_cyber_goggles.util.CCGLang;
+import io.github.forgestove.create_cyber_goggles.foundation.lang.CCGLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
@@ -19,7 +19,7 @@ import org.joml.Vector3d;
 
 import java.util.UUID;
 
-import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.mc;
+import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.mc;
 public final class NavigationDistanceHelper {
 	public static @Nullable Component line(ItemStack stack) {
 		ClientLevel level = mc.level;

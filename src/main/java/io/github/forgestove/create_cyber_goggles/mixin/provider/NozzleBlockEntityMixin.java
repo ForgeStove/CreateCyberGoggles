@@ -3,15 +3,16 @@ import com.simibubi.create.AllSpecialTextures;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.fan.NozzleBlockEntity;
 import io.github.forgestove.create_cyber_goggles.api.*;
-import io.github.forgestove.create_cyber_goggles.event.Outliner;
-import io.github.forgestove.create_cyber_goggles.util.contract.*;
+import io.github.forgestove.create_cyber_goggles.content.goggles.Outliner;
+import io.github.forgestove.create_cyber_goggles.content.goggles.tooltip.data.NozzleTooltipData;
+import io.github.forgestove.create_cyber_goggles.foundation.util.Self;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.*;
 import org.spongepowered.asm.mixin.*;
 
 import java.util.List;
 
-import static io.github.forgestove.create_cyber_goggles.util.CCGUtil.outliner;
+import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.outliner;
 @Mixin(NozzleBlockEntity.class)
 public abstract class NozzleBlockEntityMixin
 	implements IHaveGoggleInformation, OutlineRenderable, NozzleTooltipData, Self<NozzleBlockEntity> {

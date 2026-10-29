@@ -1,7 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.content.goggles.tooltip.renderer;
 import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterBlockItem;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrderWithCrafts;
-import com.simibubi.create.content.logistics.tableCloth.TableClothBlockItem;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.AutoTooltipRenderer;
 import net.createmod.catnip.codecs.CatnipCodecUtils;
@@ -18,9 +17,7 @@ import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.
 public final class RedstoneRequesterRenderer extends AbstractItemGridRenderer {
 	@Override
 	public boolean supports(ItemStack stack) {
-		return CCG.config.tooltip.redstoneRequester && (
-			stack.getItem() instanceof RedstoneRequesterBlockItem || stack.getItem() instanceof TableClothBlockItem
-		);
+		return CCG.config.tooltip.redstoneRequester && stack.getItem() instanceof RedstoneRequesterBlockItem;
 	}
 	@Override
 	public @Nullable OverlayData buildItemGrid(ItemStack stack) {

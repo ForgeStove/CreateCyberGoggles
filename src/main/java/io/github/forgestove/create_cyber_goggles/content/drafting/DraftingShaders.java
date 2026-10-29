@@ -1,9 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.content.drafting;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.minecraft.client.renderer.ShaderInstance;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterShadersEvent;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,7 +11,6 @@ import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.
  * 持有绘图视图效果所使用的两个着色器实例。
  * 通过 {@link RegisterShadersEvent} 注册。
  */
-@EventBusSubscriber(Dist.CLIENT)
 public final class DraftingShaders {
 	private static @Nullable ShaderInstance draftingView;
 	private static @Nullable ShaderInstance draftingUpscale;
@@ -26,7 +22,6 @@ public final class DraftingShaders {
 	public static ShaderInstance draftingUpscale() {
 		return draftingUpscale;
 	}
-	@SubscribeEvent
 	public static void register(RegisterShadersEvent event) {
 		try {
 			event.registerShader(

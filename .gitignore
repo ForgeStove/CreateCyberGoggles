@@ -1,6 +1,7 @@
 /.gradle
 /build
 /run
+/out
 /.idea
 !.idea/icon.png
 !.idea/misc.xml

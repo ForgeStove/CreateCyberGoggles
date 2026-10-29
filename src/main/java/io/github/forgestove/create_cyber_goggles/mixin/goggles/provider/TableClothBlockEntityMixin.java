@@ -1,0 +1,30 @@
+package io.github.forgestove.create_cyber_goggles.mixin.goggles.provider;
+import com.simibubi.create.content.logistics.tableCloth.TableClothBlockEntity;
+import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.api.ItemRenderable;
+import io.github.forgestove.create_cyber_goggles.content.goggles.TableClothUtil;
+import io.github.forgestove.create_cyber_goggles.foundation.util.*;
+import net.minecraft.world.item.ItemStack;
+import org.spongepowered.asm.mixin.*;
+
+import java.util.List;
+@Mixin(TableClothBlockEntity.class)
+public abstract class TableClothBlockEntityMixin implements ItemRenderable, Index, Self<TableClothBlockEntity> {
+	@Unique public int ccg$index;
+	@Override
+	public ItemStack ccg$getItemStack() {
+		if (!CCG.config.goggles.betterStoreInfo) return null;
+		List<ItemStack> items = TableClothUtil.getItems(thiz());
+		if (items.isEmpty()) return null;
+		if (ccg$index >= items.size()) ccg$index = 0;
+		return items.get(ccg$index);
+	}
+	@Override
+	public int ccg$getIndex() {
+		return ccg$index;
+	}
+	@Override
+	public void ccg$setIndex(int index) {
+		ccg$index = index;
+	}
+}

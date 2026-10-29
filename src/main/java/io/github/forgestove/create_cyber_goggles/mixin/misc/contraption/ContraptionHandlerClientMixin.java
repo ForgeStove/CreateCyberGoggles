@@ -1,0 +1,20 @@
+package io.github.forgestove.create_cyber_goggles.mixin.misc.contraption;
+import com.simibubi.create.content.contraptions.ContraptionHandlerClient;
+import io.github.forgestove.create_cyber_goggles.foundation.events.CCGKey;
+import net.neoforged.neoforge.client.event.InputEvent.InteractionKeyMappingTriggered;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.mc;
+@Mixin(ContraptionHandlerClient.class)
+public abstract class ContraptionHandlerClientMixin {
+	@Inject(method = "rightClickingOnContraptionsGetsHandledLocally", at = @At("HEAD"), cancellable = true)
+	private static void rightClickingOnContraptionsGetsHandledLocally(InteractionKeyMappingTriggered event, CallbackInfo ci) {
+		if (!CCGKey.clickPenetrate.isDown()) return;
+		if (mc.player == null) return;
+		event.setCanceled(false);
+		event.setSwingHand(true);
+		ci.cancel();
+	}
+}

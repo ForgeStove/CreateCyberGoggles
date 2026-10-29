@@ -1,0 +1,108 @@
+package io.github.forgestove.create_cyber_goggles.mixin.misc.schematic;
+import com.simibubi.create.Create;
+import com.simibubi.create.content.schematics.client.ClientSchematicLoader;
+import com.simibubi.create.foundation.utility.*;
+import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.content.schematic.SchematicFolderUtil;
+import io.github.forgestove.create_cyber_goggles.foundation.util.Self;
+import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.NotNull;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.io.IOException;
+import java.nio.file.*;
+import java.util.List;
+import java.util.stream.Stream;
+@Mixin(ClientSchematicLoader.class)
+public abstract class ClientSchematicLoaderMixin implements Self<ClientSchematicLoader> {
+	@ModifyArg(
+		method = "startNewUpload", at = @At(
+		value = "INVOKE",
+		target = "Lcom/simibubi/create/content/schematics/packet/SchematicUploadPacket;begin(Ljava/lang/String;J)"
+			+ "Lcom/simibubi/create/content/schematics/packet/SchematicUploadPacket;"
+	), index = 0
+	)
+	private @NotNull String normalizeUploadNameForBegin(String schematic) {
+		return SchematicFolderUtil.normalizeUploadName(schematic);
+	}
+	@ModifyArg(
+		method = "continueUpload", at = @At(
+		value = "INVOKE",
+		target = "Lcom/simibubi/create/content/schematics/packet/SchematicUploadPacket;write(Ljava/lang/String;[B)"
+			+ "Lcom/simibubi/create/content/schematics/packet/SchematicUploadPacket;"
+	), index = 0
+	)
+	private @NotNull String normalizeUploadNameForWrite(String schematic) {
+		return SchematicFolderUtil.normalizeUploadName(schematic);
+	}
+	@ModifyArg(
+		method = "finishUpload", at = @At(
+		value = "INVOKE",
+		target = "Lcom/simibubi/create/content/schematics/packet/SchematicUploadPacket;finish(Ljava/lang/String;)"
+			+ "Lcom/simibubi/create/content/schematics/packet/SchematicUploadPacket;"
+	), index = 0
+	)
+	private @NotNull String normalizeUploadNameForFinish(String schematic) {
+		return SchematicFolderUtil.normalizeUploadName(schematic);
+	}
+	@Inject(method = "refresh", at = @At("HEAD"), cancellable = true)
+	private void refreshFromSelectedFolderOnly(CallbackInfo ci) {
+		if (!CCG.config.schematic.recursiveSchematicScan) return;
+		FilesHelper.createFolderIfMissing(CreatePaths.SCHEMATICS_DIR);
+		List<Component> availableSchematics = thiz().getAvailableSchematics();
+		availableSchematics.clear();
+		Path folder = SchematicFolderUtil.getSelectedDirectory();
+		try (Stream<Path> paths = Files.list(folder)) {
+			paths.filter(path -> !Files.isDirectory(path) && path.getFileName().toString().endsWith(".nbt"))
+				.map(CreatePaths.SCHEMATICS_DIR::relativize)
+				.map(relative -> relative.toString().replace('\\', '/'))
+				.map(Component::literal)
+				.forEach(availableSchematics::add);
+		} catch (NoSuchFileException ignored) {
+			// 尚未创建任何原理图
+		} catch (IOException e) {
+			Create.LOGGER.error("Failed to refresh schematics", e);
+		}
+		availableSchematics.sort((aT, bT) -> {
+			String a = aT.getString();
+			String b = bT.getString();
+			if (a.endsWith(".nbt")) a = a.substring(0, a.length() - 4);
+			if (b.endsWith(".nbt")) b = b.substring(0, b.length() - 4);
+			int aLength = a.length();
+			int bLength = b.length();
+			int minSize = Math.min(aLength, bLength);
+			char aChar;
+			char bChar;
+			boolean aNumber;
+			boolean bNumber;
+			var asNumeric = false;
+			var lastNumericCompare = 0;
+			for (var i = 0; i < minSize; i++) {
+				aChar = a.charAt(i);
+				bChar = b.charAt(i);
+				aNumber = aChar >= '0' && aChar <= '9';
+				bNumber = bChar >= '0' && bChar <= '9';
+				if (asNumeric) if (aNumber && bNumber) {
+					if (lastNumericCompare == 0) lastNumericCompare = aChar - bChar;
+				} else if (aNumber) return 1;
+				else if (bNumber) return -1;
+				else if (lastNumericCompare == 0) {
+					if (aChar != bChar) return aChar - bChar;
+					asNumeric = false;
+				} else return lastNumericCompare;
+				else if (aNumber && bNumber) {
+					asNumeric = true;
+					if (lastNumericCompare == 0) lastNumericCompare = aChar - bChar;
+				} else if (aChar != bChar) return aChar - bChar;
+			}
+			if (asNumeric) if (aLength > bLength && a.charAt(bLength) >= '0' && a.charAt(bLength) <= '9') return 1;
+			else if (bLength > aLength && b.charAt(aLength) >= '0' && b.charAt(aLength) <= '9') return -1;
+			else if (lastNumericCompare == 0) return aLength - bLength;
+			else return lastNumericCompare;
+			return aLength - bLength;
+		});
+		ci.cancel();
+	}
+}

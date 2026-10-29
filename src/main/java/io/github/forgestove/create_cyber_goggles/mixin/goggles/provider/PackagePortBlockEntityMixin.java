@@ -1,0 +1,35 @@
+package io.github.forgestove.create_cyber_goggles.mixin.goggles.provider;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity;
+import com.simibubi.create.content.logistics.packagePort.*;
+import io.github.forgestove.create_cyber_goggles.api.OutlineRenderable;
+import io.github.forgestove.create_cyber_goggles.foundation.util.Self;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.*;
+import org.spongepowered.asm.mixin.Mixin;
+
+import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.outliner;
+@Mixin(PackagePortBlockEntity.class)
+public abstract class PackagePortBlockEntityMixin implements OutlineRenderable, Self<PackagePortBlockEntity> {
+	@Override
+	public void ccg$render() {
+		PackagePortBlockEntity ppbe = thiz();
+		PackagePortTarget target = ppbe.target;
+		if (target == null) return;
+		BlockPos pos = ppbe.getBlockPos();
+		BlockEntity be = target.be(ppbe.getLevel(), pos);
+		if (be == null) return;
+		BlockPos bePos = be.getBlockPos();
+		Vec3 source = Vec3.atBottomCenterOf(pos);
+		Vec3 exactTarget = target.getExactTargetLocation(ppbe, ppbe.getLevel(), pos);
+		if (exactTarget == Vec3.ZERO) return;
+		if (be instanceof ChainConveyorBlockEntity && exactTarget.closerThan(bePos.getCenter(), 1))
+			exactTarget = exactTarget.add(0, -0.25, 0);
+		var color = 0x9EDE73;
+		outliner.showLine("PackagePortConnection" + this, source, exactTarget).lineWidth(1 / 8f).colored(color);
+		outliner.showAABB("ChainPointSelected" + this, new AABB(exactTarget, exactTarget))
+			.colored(color)
+			.lineWidth(1 / 5f)
+			.disableLineNormals();
+	}
+}

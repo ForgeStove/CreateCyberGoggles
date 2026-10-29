@@ -30,6 +30,8 @@ public final class ClipboardRenderer implements TooltipRenderer {
 	private static final float ICON_SCALE = 10F;
 	// renderClipboardPage 对剪贴板坐标系的整体缩放
 	private static final float HAND_SCALE = 0.01F * 0.4F * SCALE;
+	private List<List<ClipboardEntry>> pages;
+	private int currentPage;
 	public static void renderClipboardPage(PoseStack pose, MultiBufferSource buffer, int light, ItemStack stack) {
 		pose.pushPose();
 		Matrix4f matrix = pose.last().pose();
@@ -141,12 +143,19 @@ public final class ClipboardRenderer implements TooltipRenderer {
 		return CCG.config.tooltip.clipboard && stack.getItem() instanceof ClipboardBlockItem;
 	}
 	@Override
-	public boolean canRender(ItemStack stack) {
+	public void begin(ItemStack stack) {
 		ClipboardContent content = stack.getOrDefault(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY);
-		List<List<ClipboardEntry>> pages = ClipboardEntry.readAll(content);
-		if (pages.isEmpty()) return false;
-		int currentPage = Mth.clamp(content.previouslyOpenedPage(), 0, pages.size() - 1);
-		return !pages.get(currentPage).isEmpty();
+		pages = ClipboardEntry.readAll(content);
+		currentPage = pages.isEmpty() ? 0 : Mth.clamp(content.previouslyOpenedPage(), 0, pages.size() - 1);
+	}
+	@Override
+	public void end() {
+		pages = null;
+	}
+	@Override
+	public boolean canRender(ItemStack stack) {
+		if (pages == null) begin(stack);
+		return !pages.isEmpty() && !pages.get(currentPage).isEmpty();
 	}
 	@Override
 	public int width(ItemStack stack) {
@@ -158,11 +167,7 @@ public final class ClipboardRenderer implements TooltipRenderer {
 	}
 	@Override
 	public void render(GuiGraphics gui, ItemStack stack, int x, int y) {
-		// 读取剪贴板内容
-		ClipboardContent content = stack.getOrDefault(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY);
-		List<List<ClipboardEntry>> pages = ClipboardEntry.readAll(content);
-		if (pages.isEmpty()) return;
-		int currentPage = Mth.clamp(content.previouslyOpenedPage(), 0, pages.size() - 1);
+		if (pages == null || pages.isEmpty()) return;
 		List<ClipboardEntry> entries = pages.get(currentPage);
 		if (entries.isEmpty()) return;
 		PoseStack pose = gui.pose();

@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.mc;
 @AutoTooltipRenderer
 public final class RedstoneRequesterRenderer extends AbstractItemGridRenderer {
+	private CustomData lastBeData;
+	private @Nullable OverlayData cachedGrid;
 	@Override
 	public boolean supports(ItemStack stack) {
 		return CCG.config.tooltip.redstoneRequester && stack.getItem() instanceof RedstoneRequesterBlockItem;
@@ -22,14 +24,23 @@ public final class RedstoneRequesterRenderer extends AbstractItemGridRenderer {
 	@Override
 	public @Nullable OverlayData buildItemGrid(ItemStack stack) {
 		CustomData beData = stack.getComponents().get(DataComponents.BLOCK_ENTITY_DATA);
-		if (beData == null || !beData.contains("EncodedRequest") || mc.level == null) return null;
+		if (beData == null) return null;
+		if (beData == lastBeData) return cachedGrid;
+		OverlayData grid = decodeGrid(beData);
+		if (grid != null) {
+			lastBeData = beData;
+			cachedGrid = grid;
+		}
+		return grid;
+	}
+	private @Nullable OverlayData decodeGrid(CustomData beData) {
+		if (!beData.contains("EncodedRequest") || mc.level == null) return null;
 		CompoundTag encodedRequestTag = beData.copyTag().getCompound("EncodedRequest");
 		PackageOrderWithCrafts encodedRequest = CatnipCodecUtils.decode(
-				PackageOrderWithCrafts.CODEC,
-				mc.level.registryAccess(),
-				encodedRequestTag
-			)
-			.orElse(PackageOrderWithCrafts.empty());
+			PackageOrderWithCrafts.CODEC,
+			mc.level.registryAccess(),
+			encodedRequestTag
+		).orElse(PackageOrderWithCrafts.empty());
 		if (encodedRequest.isEmpty()) return null;
 		var items = new ArrayList<ItemStack>();
 		encodedRequest.stacks().forEach(bigStack -> items.add(bigStack.stack.copyWithCount(bigStack.count)));

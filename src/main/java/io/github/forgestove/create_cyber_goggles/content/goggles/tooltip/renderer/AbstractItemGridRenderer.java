@@ -26,6 +26,9 @@ public abstract class AbstractItemGridRenderer implements TooltipRenderer {
 	private static final int PANEL_SRC_H = 222;
 	private static PanelRect cachedRect;
 	private static String cachedPackId;
+	private @Nullable ItemStack activeStack;
+	private boolean activeBuilt;
+	private @Nullable OverlayData activeData;
 	public static void renderItemGrid(
 		GuiGraphics gui,
 		@NotNull List<ItemStack> items,
@@ -155,6 +158,18 @@ public abstract class AbstractItemGridRenderer implements TooltipRenderer {
 		return Mth.clamp(data.columns(), 1, Math.max(1, data.items().size()));
 	}
 	@Override
+	public void begin(ItemStack stack) {
+		activeStack = stack;
+		activeBuilt = false;
+		activeData = null;
+	}
+	@Override
+	public void end() {
+		activeStack = null;
+		activeBuilt = false;
+		activeData = null;
+	}
+	@Override
 	public int width(ItemStack stack) {
 		OverlayData data = getData(stack);
 		if (data == null) return 0;
@@ -179,10 +194,15 @@ public abstract class AbstractItemGridRenderer implements TooltipRenderer {
 		int cols = resolveColumns(data);
 		renderItemGrid(gui, data.items, cols, x, y, r, g, b, data.zeroCountSlots);
 	}
-	private @Nullable OverlayData getData(ItemStack stack) {
+	protected @Nullable OverlayData getData(ItemStack stack) {
+		if (activeBuilt && stack == activeStack) return activeData;
 		OverlayData data = buildItemGrid(stack);
-		if (data == null || data.items().isEmpty()) return null;
-		return data;
+		OverlayData result = data == null || data.items().isEmpty() ? null : data;
+		if (stack == activeStack) {
+			activeBuilt = true;
+			activeData = result;
+		}
+		return result;
 	}
 	public abstract @Nullable OverlayData buildItemGrid(ItemStack stack);
 	/** generic_54 纹理面板范围（含纹理尺寸，用于 blit uv 换算） */

@@ -28,7 +28,6 @@ public final class TooltipComponentUtil {
 	) {
 		return findMarker(component, map, 0, true);
 	}
-	/** 与 removeMarker 相同，但可指定是否消费 map（peek 用于多遍遍历：先收集再替换） */
 	private static <T extends TooltipComponent> @Nullable MarkerResult<T> findMarker(
 		@NotNull Component component,
 		@NotNull IdentityHashMap<Component, T> map,
@@ -51,7 +50,6 @@ public final class TooltipComponentUtil {
 			if (hasMarker(sibling, map)) return true;
 		return false;
 	}
-	/** 只读版 removeFluidEntry：不消费 marker，用于 GatherComponents 阶段先统一条宽再替换 */
 	public static @Nullable FluidEntryTooltipComponent peekFluidEntry(@NotNull Component comp) {
 		MarkerResult<FluidEntryTooltipComponent> result = findMarker(comp, FLUID_ENTRY_MAP, 0, false);
 		if (result == null) return null;
@@ -65,10 +63,6 @@ public final class TooltipComponentUtil {
 		if (hasMarker(comp, FLUID_ENTRY_MAP)) return true;
 		return hasMarker(comp, FLUID_LIST_MAP);
 	}
-	/**
-	 * 消费行内首个 CCGLang marker（4 种之一），返回 UI 数据与剔除 marker 后的剩余文本行。
-	 * 解决 marker 与普通文本混行时整行替换导致同行文本丢失的问题：剩余文本单独成行渲染，UI 独立成行。
-	 */
 	public static @Nullable MarkerSplit consumeMarker(@NotNull Component line) {
 		MarkerResult<SchematicPreviewTooltip> preview = removeMarker(line, SCHEMATIC_PREVIEW_MAP);
 		if (preview != null) return buildSplit(line, preview.data(), preview.marker());
@@ -97,11 +91,9 @@ public final class TooltipComponentUtil {
 	}
 	private static @NotNull MarkerSplit buildSplit(@NotNull Component line, @NotNull TooltipComponent data, @NotNull Component marker) {
 		Component remaining = stripMarker(line, marker);
-		// marker 空不可见；剔除后只剩空白则整行即 UI，不产生空白文本行
 		if (remaining != null && remaining.getString().isBlank()) remaining = null;
 		return new MarkerSplit(data, remaining);
 	}
-	/** 从行中剔除直接 sibling 中的 marker；嵌套时原样返回（marker 为空不影响视觉）；无剩余返回 null */
 	private static @Nullable Component stripMarker(@NotNull Component line, @NotNull Component marker) {
 		if (line == marker) return null;
 		List<Component> siblings = line.getSiblings();
@@ -117,6 +109,5 @@ public final class TooltipComponentUtil {
 		return copied;
 	}
 	public record MarkerResult<T>(T data, int indent, Component marker) {}
-	/** consumeMarker 的结果：UI 数据 + 剔除 marker 后的剩余文本行（可能为 null） */
 	public record MarkerSplit(TooltipComponent data, @Nullable Component remaining) {}
 }

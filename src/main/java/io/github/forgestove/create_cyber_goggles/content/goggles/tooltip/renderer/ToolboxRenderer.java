@@ -18,10 +18,7 @@ public final class ToolboxRenderer extends AbstractItemGridRenderer {
 	public boolean supports(ItemStack stack) {
 		return CCG.config.tooltip.toolbox && AllItemTags.TOOLBOXES.matches(stack);
 	}
-	public static ItemStack readToolboxFilter(ToolboxInventory inventory, int compartment) {
-		if (mc.level == null) return ItemStack.EMPTY;
-		RegistryAccess access = mc.level.registryAccess();
-		CompoundTag tag = inventory.serializeNBT(access);
+	private static ItemStack readToolboxFilter(CompoundTag tag, RegistryAccess access, int compartment) {
 		if (!tag.contains("Compartments", 9)) return ItemStack.EMPTY;
 		ListTag compartmentsTag = tag.getList("Compartments", 10);
 		if (compartment < 0 || compartment >= compartmentsTag.size()) return ItemStack.EMPTY;
@@ -33,6 +30,9 @@ public final class ToolboxRenderer extends AbstractItemGridRenderer {
 	public @Nullable OverlayData buildItemGrid(ItemStack stack) {
 		ToolboxInventory inventory = stack.getComponents().get(AllDataComponents.TOOLBOX_INVENTORY);
 		if (inventory == null) return null;
+		// 序列化是整包深拷贝，放进隔间循环会重复 8 次
+		RegistryAccess access = mc.level == null ? null : mc.level.registryAccess();
+		CompoundTag tag = access == null ? null : inventory.serializeNBT(access);
 		var compartments = 8;
 		int stacksPerCompartment = ToolboxInventory.STACKS_PER_COMPARTMENT;
 		List<ItemStack> items = new ArrayList<>();
@@ -52,7 +52,7 @@ public final class ToolboxRenderer extends AbstractItemGridRenderer {
 				} else if (ItemStack.isSameItemSameComponents(consolidated, slot)) totalCount += slot.getCount();
 			}
 			if (consolidated.isEmpty()) {
-				ItemStack filter = readToolboxFilter(inventory, compartment);
+				ItemStack filter = tag == null ? ItemStack.EMPTY : readToolboxFilter(tag, access, compartment);
 				if (filter.isEmpty()) {
 					items.add(ItemStack.EMPTY);
 					continue;

@@ -119,18 +119,10 @@ public final class ItemTooltip {
 			CCGLang.of().fluidEntry(fluid, capacity).addTo(1, tooltip);
 		}
 	}
-	/** simulated 导航物：容器/仓储界面里也能看到目标离玩家多远，便于挑哪个导航物 */
 	private static void navigationDistance(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!CCG.config.aeronautics.navigationDistance) return;
-		// 用 lambda 而不是方法引用：方法引用会让 invokedynamic 立刻解析 simulated 的类，未装该模组时会 NoClassDefFoundError
 		CCGMods.simulated.runIfInstalled(() -> NavigationDistanceHelper.line(stack)).ifPresent(line -> tooltip.add(1, line));
 	}
-	/**
-	 * 蓝图物品：常驻一行按键提示，按住 Alt 时在其下方追加一个 3D 预览块。
-	 * <p>
-	 * 预览块走 marker 机制（{@link TooltipComponentUtil#SCHEMATIC_PREVIEW_MAP}），由
-	 * {@link #gatherComponents} 替换为实际 UI 组件；marker 为原地替换，插入位置即显示位置。
-	 */
 	private static void schematicPreview(@NotNull ItemStack stack, List<Component> tooltip) {
 		Preview preview = CCG.config.schematic.preview;
 		if (!preview.previewEnabled || !preview.tooltipPreview) return;
@@ -139,7 +131,6 @@ public final class ItemTooltip {
 		if (fileName == null || fileName.isBlank()) return;
 		boolean alt = Screen.hasAltDown();
 		int index = Math.min(PREVIEW_TOOLTIP_INDEX, tooltip.size());
-		// 提示行常驻，按住 Alt 时在其下方追加预览块
 		tooltip.add(index, CCGKey.hint(CCGLang.translateDirect("gui.schematicPreview.altHint", CCGKey.keyName("Alt", alt))));
 		if (!alt) return;
 		MutableComponent marker = Component.empty();
@@ -150,7 +141,6 @@ public final class ItemTooltip {
 	}
 	public static void gatherComponents(@NotNull GatherComponents event) {
 		List<Either<FormattedText, TooltipComponent>> elements = event.getTooltipElements();
-		// 第一遍：只读收集流体条目，取最大 preferred 条宽作为统一宽度（不消费 marker）
 		var sharedBarWidth = 0;
 		for (Either<FormattedText, TooltipComponent> element : elements) {
 			if (!(element.left().orElse(null) instanceof Component comp)) continue;
@@ -159,7 +149,6 @@ public final class ItemTooltip {
 			int preferred = ClientFluidEntryTooltipComponent.preferredBarWidth(mc.font, fluid.fluid(), fluid.capacityMb(), fluid.label());
 			if (preferred > sharedBarWidth) sharedBarWidth = preferred;
 		}
-		// 第二遍：消费 marker 并原地替换（marker 与文本混行时剩余文本保留，UI 独立成行插入）
 		for (var i = 0; i < elements.size(); ) {
 			FormattedText left = elements.get(i).left().orElse(null);
 			if (!(left instanceof Component comp)) {
@@ -186,6 +175,14 @@ public final class ItemTooltip {
 		ItemStack stack = event.getItemStack();
 		TooltipRenderer renderer = findRenderer(stack);
 		if (renderer == null) return;
+		renderer.begin(stack);
+		try {
+			renderOverlay(event, stack, renderer);
+		} finally {
+			renderer.end();
+		}
+	}
+	private static void renderOverlay(@NotNull Pre event, ItemStack stack, TooltipRenderer renderer) {
 		if (!renderer.canRender(stack)) return;
 		Font font = event.getFont();
 		List<ClientTooltipComponent> components = event.getComponents();
@@ -201,8 +198,6 @@ public final class ItemTooltip {
 		int screenWidth = event.getScreenWidth();
 		int screenHeight = event.getScreenHeight();
 		Vector2ic pos = positioner.positionTooltip(screenWidth, screenHeight, event.getX(), event.getY(), tooltipWidth, tooltipHeight);
-		// 上方 overlay 让位：overlay 顶部 = tooltip 顶部 - overlayHeight - 6，不顶出需 tooltip 顶部 >= overlayHeight + 6
-		// 不足时二分下移 mouseY（renderTooltipInternal 用 preEvent.getX/Y 定位，当前帧生效，无需帧间状态）
 		int minTop = overlayHeight + 6;
 		if (pos.y() < minTop) {
 			int low = event.getY();
@@ -218,7 +213,6 @@ public final class ItemTooltip {
 				pos = positioner.positionTooltip(screenWidth, screenHeight, event.getX(), low, tooltipWidth, tooltipHeight);
 			}
 		}
-		// 完整 clamp 到屏幕内
 		int overlayX = Mth.clamp(pos.x(), 0, Math.max(0, screenWidth - overlayWidth));
 		int overlayY = Mth.clamp(pos.y() - overlayHeight - 6, 0, Math.max(0, screenHeight - overlayHeight));
 		GuiGraphics gui = event.getGraphics();

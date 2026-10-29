@@ -42,15 +42,15 @@ public final class LinkedControllerRenderer extends AbstractItemGridRenderer {
 	}
 	@Override
 	public int width(ItemStack stack) {
-		return hasItems(stack) ? CROP_BOTTOM_RIGHT.x - CROP_TOP_LEFT.x : 0;
+		return getData(stack) != null ? CROP_BOTTOM_RIGHT.x - CROP_TOP_LEFT.x : 0;
 	}
 	@Override
 	public int height(ItemStack stack) {
-		return hasItems(stack) ? CROP_BOTTOM_RIGHT.y - CROP_TOP_LEFT.y : 0;
+		return getData(stack) != null ? CROP_BOTTOM_RIGHT.y - CROP_TOP_LEFT.y : 0;
 	}
 	@Override
 	public void render(GuiGraphics gui, ItemStack stack, int x, int y) {
-		OverlayData data = buildItemGrid(stack);
+		OverlayData data = getData(stack);
 		if (data == null) return;
 		PoseStack pose = gui.pose();
 		pose.pushPose();
@@ -81,8 +81,5 @@ public final class LinkedControllerRenderer extends AbstractItemGridRenderer {
 				items.add(slot.copyWithCount(1));
 			}
 		return hasAnyItem ? new OverlayData(items, 6) : null;
-	}
-	private boolean hasItems(ItemStack stack) {
-		return buildItemGrid(stack) != null;
 	}
 }

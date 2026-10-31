@@ -100,8 +100,6 @@
 	"create_cyber_goggles.config.option.goggles.enhancedInfo.tooltip": "Display more information with goggles",
 	"create_cyber_goggles.config.option.goggles.fluidTankThroughput": "Fluid Tank Throughput",
 	"create_cyber_goggles.config.option.goggles.fluidTankThroughput.tooltip": "Display the throughput rate of fluid tanks with goggles",
-	"create_cyber_goggles.config.option.goggles.fluidThroughputWindow": "Throughput Sampling Window",
-	"create_cyber_goggles.config.option.goggles.fluidThroughputWindow.tooltip": "Sampling window length (in ticks) used to compute fluid tank throughput",
 	"create_cyber_goggles.config.option.goggles.fluidTransport": "Fluid Transport Info",
 	"create_cyber_goggles.config.option.goggles.fluidTransport.tooltip": "Display open faces, fluid type and flow rate of fluid pipes and pumps with goggles",
 	"create_cyber_goggles.config.option.goggles.gameMode.enableGoggles": "Enable Goggles",

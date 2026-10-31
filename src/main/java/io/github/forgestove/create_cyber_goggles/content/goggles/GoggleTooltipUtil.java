@@ -25,7 +25,6 @@ import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.content.goggles.tooltip.data.*;
 import io.github.forgestove.create_cyber_goggles.foundation.events.CCGKey;
 import io.github.forgestove.create_cyber_goggles.foundation.lang.*;
-import net.createmod.catnip.data.Couple;
 import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
@@ -362,9 +361,14 @@ public final class GoggleTooltipUtil {
 			PipeConnection connection = behaviour.getConnection(direction);
 			if (flow == null || connection == null) line.text("—", DARK_GRAY).space().number(0, DARK_GRAY).space();
 			else {
-				Couple<Float> pressure = connection.getPressure();
-				float maxPressure = Math.max(pressure.get(true), pressure.get(false));
-				int rate = maxPressure <= 0 ? 0 : Math.max(1, (int) (maxPressure / 2));
+				Map<Direction, Integer> simulated = FluidFlowSimulator.rates(behaviour);
+				Integer value = simulated.get(direction);
+				int rate;
+				if (value != null) rate = value;
+				else {
+					float pressure = connection.getPressure().get(flow.inbound);
+					rate = pressure <= 0 ? 0 : Math.max(1, (int) (pressure / 2));
+				}
 				int color = Outliner.getColor(!flow.inbound);
 				if (flow.inbound) line.add(CCGLang.translateDirect("tooltip.fluidFlow.in").withStyle(s -> s.withColor(color)));
 				else line.add(CCGLang.translateDirect("tooltip.fluidFlow.out").withStyle(s -> s.withColor(color)));
@@ -379,15 +383,31 @@ public final class GoggleTooltipUtil {
 		if (!CCG.config.goggles.fluidTankThroughput) return false;
 		FluidTankBlockEntity controller = be.getControllerBE();
 		if (controller == null) return false;
-		double rate = ((FluidTankThroughputData) controller).ccg$getRate();
-		if (rate < 0.5) return false;
+		int[] rate = FluidFlowSimulator.tankThroughput(Objects.requireNonNull(controller.getLevel()), controller);
+		double delta = ((FluidTankDeltaData) controller).ccg$getDelta();
+		double in = rate[0];
+		double out = rate[1];
+		double diff = in - out;
+		if (diff > delta) if (out + delta >= 0) in = out + delta;
+		else out = Math.max(0, in - delta);
+		else if (diff < delta) if (in - delta >= 0) out = in - delta;
+		else in = Math.max(0, out + delta);
+		var roundedIn = (int) Math.round(in);
+		var roundedOut = (int) Math.round(out);
+		if (roundedIn == 0 && roundedOut == 0) return false;
 		CCGLang.of().translate("tooltip.fluidThroughput").forGoggles(tooltip);
+		throughputLine(tooltip, "tooltip.fluidFlow.in", roundedIn);
+		throughputLine(tooltip, "tooltip.fluidFlow.out", roundedOut);
+		return true;
+	}
+	private static void throughputLine(List<Component> tooltip, String key, int rate) {
 		CCGLang.of()
-			.number(Math.round(rate), AQUA)
+			.translate(key, DARK_GRAY)
+			.space()
+			.number(rate, AQUA)
 			.space()
 			.add(CCGCreateLang.translateDirect("generic.unit.millibuckets").withStyle(DARK_GRAY))
 			.text("/t", DARK_GRAY)
 			.forGoggles(tooltip, 1);
-		return true;
 	}
 }

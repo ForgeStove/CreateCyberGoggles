@@ -326,6 +326,7 @@
 	"create_cyber_goggles.gui.schematicPreview.failed": "Ошибка в загрузке",
 	"create_cyber_goggles.gui.schematicPreview.loading": "Загрузка...",
 	"create_cyber_goggles.gui.schematicPreview.none": "Выберите схематику",
+	"create_cyber_goggles.gui.schematicPreview.ok": "Готов",
 	"create_cyber_goggles.gui.schematicPreview.too_large": "Схематика слишком большая",
 	"create_cyber_goggles.gui.schematicTable.exportButton.direction": "Ориентация:",
 	"create_cyber_goggles.gui.schematicTable.exportButton.direction.left": "Лево",

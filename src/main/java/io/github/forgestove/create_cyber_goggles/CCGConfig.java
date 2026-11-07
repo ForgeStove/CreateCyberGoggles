@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles;
 import io.github.forgestove.create_cyber_goggles.content.goggles.tooltip.*;
 import io.github.forgestove.create_cyber_goggles.foundation.events.SoundReloadHandler;
-import io.github.forgestove.flexconfig.api.*;
+import io.github.forgestove.flexconfig.api.annotation.*;
 
 import java.awt.Point;
 @Config(CCG.ID)
@@ -14,7 +14,7 @@ public final class CCGConfig {
 	@Category @Condition("simulated") public Aeronautics aeronautics = new Aeronautics();
 	@Category public Misc misc = new Misc();
 	public static class Goggles {
-		@Category(false) public GameMode gameMode = new GameMode();
+		@Category public GameMode gameMode = new GameMode();
 		public boolean enhancedInfo = true;
 		public boolean hideStaticKineticInfo = false;
 		public boolean fluidTransport = true;
@@ -148,8 +148,8 @@ public final class CCGConfig {
 		}
 	}
 	public static class Misc {
-		@Category(false) public ChainConveyor chainConveyor = new ChainConveyor();
-		@Category(false) public Wrench wrench = new Wrench();
+		@Category public ChainConveyor chainConveyor = new ChainConveyor();
+		@Category public Wrench wrench = new Wrench();
 		@Category public CreateStackCount createStackCount = new CreateStackCount();
 		@Category public Jei jei = new Jei();
 		public boolean quickRequestActions = true;

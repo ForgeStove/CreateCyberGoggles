@@ -5,7 +5,7 @@ import com.simibubi.create.content.logistics.tableCloth.TableClothBlockEntity;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.api.FilterPreview;
 import io.github.forgestove.create_cyber_goggles.content.goggles.TableClothUtil;
-import io.github.forgestove.flexconfig.client.FlexConfigScreenFactory;
+import io.github.forgestove.flexconfig.api.client.FlexConfigScreenFactory;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.sounds.SoundEvents;

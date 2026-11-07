@@ -13,9 +13,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.function.IntSupplier;
-/**
- * 蓝图桌的导出渲染图按钮：Shift 切换分辨率、Ctrl 切换等轴方向。
- */
 public class SchematicExportController {
 	private final SchematicExportButton button;
 	private final IntSupplier schematicIndex;
@@ -34,7 +31,6 @@ public class SchematicExportController {
 	public SchematicExportButton button() {
 		return button;
 	}
-	/** 提示行跟随 Shift / Ctrl 实时变化，故每次刷新都整份重建 */
 	public void refreshTooltip() {
 		Image image = CCG.config.schematic.image;
 		boolean shift = shiftToggled();
@@ -51,7 +47,6 @@ public class SchematicExportController {
 			image.alternateWidth
 		).style(ChatFormatting.DARK_GRAY));
 		lines.add(resolution.component());
-		// 沿用预览朝向时角度直接取自预览面板，等轴方向无从选择，故不显示这一行
 		if (!image.usePreviewRotation || !CCG.config.schematic.preview.previewEnabled) {
 			CCGLangBuilder direction = CCGLang.of().translate("gui.schematicTable.exportButton.direction").style(ChatFormatting.GRAY);
 			direction.add(ctrl
@@ -78,14 +73,12 @@ public class SchematicExportController {
 			new SchematicImageHandler(fileName, player.createCommandSourceStack(), settings).export();
 		});
 	}
-	/** 仅在界面打开后按下的修饰键计为切换，避免打开时已按住的键被误判 */
 	private boolean shiftToggled() {
 		return Screen.hasShiftDown() && !shiftWasDownOnInit;
 	}
 	private boolean ctrlToggled() {
 		return Screen.hasControlDown() && !ctrlWasDownOnInit;
 	}
-	/** 预览面板已载入且启用「沿用预览朝向」时取面板角度，否则用等轴视角 */
 	private Orientation orientation() {
 		if (CCG.config.schematic.image.usePreviewRotation && previewPanel != null)
 			return new Orientation(previewPanel.yaw(), previewPanel.pitch());

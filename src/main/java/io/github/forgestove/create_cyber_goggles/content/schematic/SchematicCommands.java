@@ -12,12 +12,6 @@ import java.util.concurrent.CompletableFuture;
 
 import static io.github.forgestove.create_cyber_goggles.content.schematic.SchematicRenderSettings.*;
 import static net.minecraft.commands.Commands.*;
-/**
- * 客户端命令 {@code /ccg schematic export <文件名> [宽度] [朝向] [抗锯齿倍率]}。
- * <p>
- * 移植自 Create: Blueprinted（MIT）的 {@code /schematic export}：去掉分享分支，收进 {@code /ccg} 命名空间
- * 以免与其它蓝图类模组抢 {@code /schematic} 这个名字。
- */
 public final class SchematicCommands {
 	public static void register(RegisterClientCommandsEvent event) {
 		event.getDispatcher()
@@ -52,7 +46,6 @@ public final class SchematicCommands {
 	private static Builder withWidth(CommandContext<CommandSourceStack> ctx) {
 		return builder().imageWidth(IntegerArgumentType.getInteger(ctx, "width"));
 	}
-	/** {@code ~ ~} 解析为玩家当前视角 */
 	private static Orientation getOrientation(CommandContext<CommandSourceStack> ctx) {
 		Vec2 rotation = RotationArgument.getRotation(ctx, "rotation").getRotation(ctx.getSource());
 		return new Orientation(rotation.y, rotation.x);

@@ -8,11 +8,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicReference;
-/**
- * 蓝图渲染进度条：在动作栏显示「阶段 + 进度条 + 百分比」，失败与完成态短暂停留后消失。
- * <p>
- * 移植自 Create: Blueprinted（MIT），去掉了分享相关状态，改用本模组语言键。
- */
 public enum ImageActionProgress {
 	EXPORTED(1F, Type.FINAL, SchematicLang.LIGHT_GREEN),
 	EXPORT_FAILED(1F, Type.FAIL, SchematicLang.ERROR_PRIMARY),

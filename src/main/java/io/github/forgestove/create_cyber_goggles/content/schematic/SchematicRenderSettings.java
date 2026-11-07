@@ -1,11 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.content.schematic;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import net.createmod.catnip.theme.Color;
-/**
- * 一张蓝图渲染图的设置：输出宽度、视角、抗锯齿与背景色。
- * <p>
- * 移植自 Create: Blueprinted（MIT），默认值改读本模组配置。
- */
 public class SchematicRenderSettings {
 	public static final Color DEFAULT_BG_COLOR = Color.TRANSPARENT_BLACK;
 	public static final int MAX_ANTIALIASING = 4;
@@ -28,7 +23,6 @@ public class SchematicRenderSettings {
 	public static Builder builder() {
 		return new Builder();
 	}
-	/** 实际渲染像素宽 = 期望宽 × 抗锯齿倍率（超采样后再降采样） */
 	public int imageWidth() {
 		return imageWidth * antialiasingFactor;
 	}

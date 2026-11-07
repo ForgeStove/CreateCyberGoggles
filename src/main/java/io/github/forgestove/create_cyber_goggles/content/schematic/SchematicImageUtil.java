@@ -24,14 +24,8 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-/**
- * 蓝图预览与渲染共用的工具集：蓝图装载、列表取索引、图片落盘、线程调度。
- * <p>
- * 由 Create: Blueprinted 与 Create: Schematic Preview（均为 MIT）的同名工具类合并而来。
- */
 public final class SchematicImageUtil {
 	private static final Set<String> IMAGE_EXTENSIONS = Set.of("png", "jpg", "jpeg", "gif", "bmp", "webp");
-	/** 以蓝图文件名（可含子文件夹相对路径）装载结构模板 */
 	public static StructureTemplate loadTemplateFromSchematicName(String schematicName) {
 		Minecraft client = Minecraft.getInstance();
 		String owner = Objects.requireNonNull(client.player).getGameProfile().getName();
@@ -40,23 +34,12 @@ public final class SchematicImageUtil {
 		blueprint.set(AllDataComponents.SCHEMATIC_FILE, schematicName);
 		return SchematicItem.loadSchematic(client.level, blueprint);
 	}
-	/**
-	 * 把蓝图中的 sable 子维度展开成渲染层级挂到 {@code level} 上；未安装 sable 时不做任何处理。
-	 * <p>
-	 * 须用 lambda 而非方法引用：方法引用在连接 invokedynamic 时即解析 sable 的类，未安装该模组会抛 NoClassDefFoundError。
-	 */
 	public static void attachSubLevels(StructureTemplate template, SchematicLevel target, Level level) {
 		CCGMods.sable.executeIfInstalled(() -> SchematicSubLevelHelper.attachSubLevels(template, target, level));
 	}
-	/** 主层级上是否挂有 sable 子维度；未安装 sable 恒为 false */
 	public static boolean hasSubLevels(SchematicLevel level) {
 		return CCGMods.sable.runIfInstalled(() -> SchematicSubLevelHelper.hasSubLevels(level)).orElse(false);
 	}
-	/**
-	 * 补画 sable 子维度的方块实体；未安装 sable 时不做任何处理。
-	 * <p>
-	 * 须在 {@code SchematicRenderer#render} 之后、{@code buffers.draw()} 之前调用，以保证位姿与模型渲染一致。
-	 */
 	public static void renderSubLevelBlockEntities(PoseStack ms, SuperRenderTypeBuffer buffers, SchematicLevel level) {
 		CCGMods.sable.executeIfInstalled(() -> SchematicSubLevelHelper.renderBlockEntities(
 			ms,
@@ -65,17 +48,14 @@ public final class SchematicImageUtil {
 			AnimationTickHolder.getPartialTicks()
 		));
 	}
-	/** 取景包围盒：安装 sable 时将子维度一并计入（其位置可能超出主模板包围盒） */
 	public static BoundingBox frameBounds(SchematicLevel level) {
 		return CCGMods.sable.runIfInstalled(() -> SchematicSubLevelHelper.frameBounds(level)).orElseGet(level::getBounds);
 	}
-	/** 取蓝图列表第 index 项的文件名；越界返回空。每帧调用，故不记日志 */
 	public static Optional<String> getSchematicNameFromIndex(int schematicIndex) {
 		List<Component> availableSchematics = CreateClient.SCHEMATIC_SENDER.getAvailableSchematics();
 		if (schematicIndex < 0 || schematicIndex >= availableSchematics.size()) return Optional.empty();
 		return Optional.of(availableSchematics.get(schematicIndex).getString());
 	}
-	/** 刷新并返回蓝图列表的显示名（去掉目录前缀） */
 	public static List<Component> refreshSchematicNames() {
 		ClientSchematicLoader sender = CreateClient.SCHEMATIC_SENDER;
 		sender.refresh();
@@ -84,11 +64,9 @@ public final class SchematicImageUtil {
 			return (Component) Component.literal(Paths.get(value).getFileName().toString());
 		}).toList();
 	}
-	/** 当前可用的全部蓝图名，供命令补全 */
 	public static Stream<String> getAllSchematicNames() {
 		return CreateClient.SCHEMATIC_SENDER.getAvailableSchematics().stream().map(Component::getString);
 	}
-	/** 先写临时文件再改名，避免渲染中断留下半张图 */
 	public static @NotNull File saveImage(File directory, String fileName, String extension, byte @NotNull [] imageByteArray) throws
 		IOException,
 		IllegalArgumentException {
@@ -109,7 +87,6 @@ public final class SchematicImageUtil {
 			throw e;
 		}
 	}
-	/** 在渲染线程执行，完成后交付 future（渲染必须回到渲染线程） */
 	public static <T> CompletableFuture<T> onRenderThread(Supplier<T> work) {
 		var future = new CompletableFuture<T>();
 		RenderSystem.recordRenderCall(() -> {

@@ -10,9 +10,6 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
 import java.util.function.IntSupplier;
-/**
- * 蓝图桌旁的 3D 预览面板：摆位、跟随当前选中的蓝图并处理鼠标交互。
- */
 public class SchematicTablePreviewController {
 	private static final int PANEL_GAP = 4;
 	private static final int SCREEN_MARGIN = 6;
@@ -30,7 +27,6 @@ public class SchematicTablePreviewController {
 	public Rect2i area() {
 		return area;
 	}
-	/** 优先贴左侧与界面的空隙，其次贴上方的空隙；两处均放不下则不显示 */
 	public void updateArea(int guiLeft, int guiTop, int backgroundWidth, List<Rect2i> extraAreas) {
 		if (!CCG.config.schematic.preview.previewEnabled) {
 			area = null;
@@ -53,7 +49,6 @@ public class SchematicTablePreviewController {
 		int leftRoom = Math.max(0, occupiedLeft - PANEL_GAP - SCREEN_MARGIN);
 		int aboveRoom = Math.max(0, occupiedTop - PANEL_GAP - SCREEN_MARGIN);
 		int x, y;
-		// 左侧放得下完整面板，或上方连最小高度都没有 → 贴左（宽度不足时按空隙收窄）
 		if (leftRoom >= panelWidth || aboveRoom < minPanelHeight) {
 			panelWidth = Math.min(panelWidth, leftRoom);
 			x = occupiedLeft - PANEL_GAP - panelWidth;

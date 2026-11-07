@@ -2,10 +2,6 @@ package io.github.forgestove.create_cyber_goggles.content.schematic;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.joml.*;
-/**
- * 把 {@link VertexConsumer} 的顶点按给定姿态变换 —— 流体渲染走
- * {@code BlockRenderDispatcher#renderLiquid}，它不接受 PoseStack，需在此处补上变换。
- */
 final class PoseAppliedVertexConsumer implements VertexConsumer {
 	private final Matrix4f pose = new Matrix4f();
 	private final Matrix3f normal = new Matrix3f();

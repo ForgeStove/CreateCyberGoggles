@@ -19,15 +19,8 @@ import java.util.function.Supplier;
 
 import static io.github.forgestove.create_cyber_goggles.content.schematic.SchematicImageRenderer.downsample;
 import static io.github.forgestove.create_cyber_goggles.content.schematic.SchematicImageUtil.onRenderThread;
-/**
- * 一次「蓝图 → PNG」渲染的编排：后台烘焙 → 渲染线程离屏渲染 → 降采样 → 写盘，
- * 全程不阻塞游戏线程，进度通过 {@link ImageActionProgress} 显示在动作栏。
- * <p>
- * 移植自 Create: Blueprinted（MIT），去掉了分享（ShareProvider）与对外渲染事件。
- */
 public class SchematicImageHandler {
 	public static final int RENDER_TIMEOUT_SECS = 60;
-	/** 渲染管线单线程：GL 无关的烘焙、降采样与写盘都排在这条队列上 */
 	public static final ExecutorService PIPELINE = Executors.newSingleThreadExecutor(runnable -> {
 		var thread = new Thread(runnable, "create-cyber-goggles-schematic-image");
 		thread.setDaemon(true);
@@ -89,7 +82,7 @@ public class SchematicImageHandler {
 		}
 	}
 	private void onExportFinish(@Nullable File outputFile, @Nullable Throwable e, Minecraft client) {
-		if (outputFile == null) return; // 渲染失败或已超时
+		if (outputFile == null) return;
 		Throwable cause = getExceptionCause(e);
 		if (cause != null) {
 			if (cause instanceof IOException) client.execute(() -> source.sendFailure(EXPORT_ERROR));

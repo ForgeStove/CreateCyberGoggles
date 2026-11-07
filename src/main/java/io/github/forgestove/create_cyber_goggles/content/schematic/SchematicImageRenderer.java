@@ -27,11 +27,6 @@ import org.joml.*;
 import java.lang.Math;
 import java.util.*;
 import java.util.Map.Entry;
-/**
- * 把一份蓝图离屏渲染成 {@link NativeImage}：正交投影 + 按包围盒自适应取景 + 流体补渲。
- * <p>
- * 移植自 Create: Blueprinted（MIT）。
- */
 public final class SchematicImageRenderer {
 	private static final int MARGIN_PX = 4;
 	private static final int MAX_FB_SIZE = 16384;
@@ -51,8 +46,6 @@ public final class SchematicImageRenderer {
 		SchematicLevel schematicLevel,
 		Level level
 	) {
-		// random 只用于给战利品箱播种（StructureTemplate#placeInWorld 里的 LootTableSeed），
-		// 必须在当前线程现造：SchematicLevel 的 random 属于构造它的渲染线程，c2me 会把跨线程使用判为错误
 		template.placeInWorld(
 			schematicLevel,
 			BlockPos.ZERO,
@@ -61,10 +54,7 @@ public final class SchematicImageRenderer {
 			RandomSource.create(),
 			Block.UPDATE_CLIENTS
 		);
-		// sable 子维度不在本模板的方块表中，须单独展开为渲染层级
 		SchematicImageUtil.attachSubLevels(template, schematicLevel, level);
-		// 不能因 placeInWorld 返回 false 即视为空图：sable 飞船整体位于子维度中，
-		// 主模板不含任何方块，内容全部在子层级内
 		if (schematicLevel.getBlockMap().isEmpty() && !SchematicImageUtil.hasSubLevels(schematicLevel)) return Optional.empty();
 		var fluidPositions = new ArrayList<BlockPos>();
 		for (Entry<BlockPos, BlockState> blockEntry : schematicLevel.getBlockMap().entrySet()) {
@@ -74,7 +64,6 @@ public final class SchematicImageRenderer {
 		}
 		return Optional.of(new SchematicImageRenderer(schematicLevel, fluidPositions));
 	}
-	/** 按 factor×factor 方块做 alpha 加权平均降采样（超采样抗锯齿） */
 	public static NativeImage downsample(NativeImage source, int factor) {
 		try (source) {
 			int outW = Math.max(1, source.getWidth() / factor);
@@ -126,7 +115,6 @@ public final class SchematicImageRenderer {
 		rot.rotateX((float) Math.toRadians(orientation.pitch()));
 		rot.rotateY((float) Math.toRadians(orientation.yaw()));
 		rot.rotateZ((float) Math.toRadians(orientation.roll()));
-		// 旋转后 8 个包围盒角点在屏幕平面上的最大投影，决定取景尺寸
 		float maxPX = 0F, maxPY = 0F;
 		for (int sx = -1; sx <= 1; sx += 2)
 			for (int sy = -1; sy <= 1; sy += 2)
@@ -184,7 +172,6 @@ public final class SchematicImageRenderer {
 			SuperRenderTypeBuffer buffers = DefaultSuperRenderTypeBuffer.getInstance();
 			var renderer = new SchematicRenderer(schematicLevel);
 			renderer.render(poseStack, buffers);
-			// sable 只绘制子维度的方块模型，方块实体需另行补画，且须在 buffers.draw() 之前
 			SchematicImageUtil.renderSubLevelBlockEntities(poseStack, buffers, schematicLevel);
 			renderFluids(poseStack, buffers);
 			buffers.draw();
@@ -221,7 +208,6 @@ public final class SchematicImageRenderer {
 		targetW = newW;
 		targetH = newH;
 	}
-	/** Create 的蓝图渲染器会跳过流体，此处按位置补渲一遍 */
 	private void renderFluids(PoseStack poseStack, SuperRenderTypeBuffer buffers) {
 		if (fluidPositions.isEmpty()) return;
 		BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
@@ -232,7 +218,6 @@ public final class SchematicImageRenderer {
 			FluidState fluid = state.getFluidState();
 			if (fluid.isEmpty()) continue;
 			RenderType layer = ItemBlockRenderTypes.getRenderLayer(fluid);
-			// 流体模型使用区块内局部坐标，此处补上区块原点
 			fluidConsumer.prepare(
 				buffers.getBuffer(layer),
 				pose,

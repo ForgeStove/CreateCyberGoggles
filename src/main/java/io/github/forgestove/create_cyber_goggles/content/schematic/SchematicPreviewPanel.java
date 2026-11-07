@@ -22,12 +22,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.templatesystem.*;
-/**
- * 蓝图 3D 预览面板，可拖拽旋转、滚轮缩放。
- * <p>
- * 移植自 Create: Schematic Preview（作者 titlo10，MIT），做了以下改动：配置改读 {@link CCG} 的 flexconfig、
- * 语言键迁到本模组命名空间、日志改用本模组 logger。
- */
 public class SchematicPreviewPanel {
 	private static final int BORDER = 1;
 	private static final int CHECKER_SIZE = 10;
@@ -69,17 +63,14 @@ public class SchematicPreviewPanel {
 		schematicLevel = null;
 		state = State.NONE;
 	}
-	/** 视角与缩放复位到配置的默认值 */
 	public void resetView() {
 		yaw = CCG.config.schematic.preview.defaultYaw;
 		pitch = CCG.config.schematic.preview.defaultPitch;
 		zoom = CCG.config.schematic.preview.defaultZoom;
 	}
-	/** 当前水平旋转角（度），供蓝图渲染取用 */
 	public float yaw() {
 		return yaw;
 	}
-	/** 当前俯仰角（度），供蓝图渲染取用 */
 	public float pitch() {
 		return pitch;
 	}
@@ -127,7 +118,6 @@ public class SchematicPreviewPanel {
 		int loadDelay = CCG.config.schematic.preview.loadDelayMs;
 		if (pendingFile != null && Util.getMillis() - pendingSince >= loadDelay) build(pendingFile);
 	}
-	/** 棋盘格底：让半透明/镂空的方块结构有可辨识的衬底 */
 	private void drawCheckerboard(GuiGraphics graphics, int x, int y, int w, int h) {
 		int cols = (w + CHECKER_SIZE - 1) / CHECKER_SIZE;
 		int rows = (h + CHECKER_SIZE - 1) / CHECKER_SIZE;
@@ -167,7 +157,6 @@ public class SchematicPreviewPanel {
 		);
 		SuperRenderTypeBuffer buffer = DefaultSuperRenderTypeBuffer.getInstance();
 		renderer.render(ms, buffer);
-		// sable 只绘制子维度的方块模型，方块实体需另行补画，且须在 buffer.draw() 之前
 		SchematicImageUtil.renderSubLevelBlockEntities(ms, buffer, schematicLevel);
 		buffer.draw();
 		ms.popPose();
@@ -202,7 +191,6 @@ public class SchematicPreviewPanel {
 				return;
 			}
 			var fakeSchematicLevel = new SchematicLevel(level);
-			// random 须在当前线程现造（同 SchematicImageRenderer）：层级的 random 属于构造它的线程
 			template.placeInWorld(
 				fakeSchematicLevel,
 				BlockPos.ZERO,
@@ -213,9 +201,7 @@ public class SchematicPreviewPanel {
 			);
 			for (BlockEntity be : fakeSchematicLevel.getBlockEntities()) be.setLevel(fakeSchematicLevel);
 			fixControllerBlockEntities(fakeSchematicLevel);
-			// sable 子维度不在本模板的方块表中，须单独展开为渲染层级
 			SchematicImageUtil.attachSubLevels(template, fakeSchematicLevel, level);
-			// 取景使用包围盒而非模板尺寸：子维度为整艘船，可能远超主模板范围
 			frame = SchematicImageUtil.frameBounds(fakeSchematicLevel);
 			renderer = new SchematicRenderer(fakeSchematicLevel);
 			schematicLevel = fakeSchematicLevel;
@@ -227,7 +213,6 @@ public class SchematicPreviewPanel {
 			state = State.FAILED;
 		}
 	}
-	/** 蓝图放置后多方块控制器的"最后已知位置"停留在世界坐标，需要按偏移量修正回虚拟层级，否则模型渲染错位 */
 	private void fixControllerBlockEntities(SchematicLevel schematicLevel) {
 		for (BlockEntity blockEntity : schematicLevel.getBlockEntities()) {
 			if (!(blockEntity instanceof IMultiBlockEntityContainer multiBlock)) continue;

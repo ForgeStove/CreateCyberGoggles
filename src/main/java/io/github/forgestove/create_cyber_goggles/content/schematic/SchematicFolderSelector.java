@@ -7,9 +7,6 @@ import net.minecraft.network.chat.*;
 
 import java.util.*;
 import java.util.function.Consumer;
-/**
- * 蓝图桌的递归文件夹选择器，与 Create 自带的蓝图滚动框互斥显示。
- */
 public class SchematicFolderSelector {
 	private final Runnable rebuildSchematicList;
 	private final Consumer<Boolean> setSchematicInputVisible;
@@ -60,7 +57,6 @@ public class SchematicFolderSelector {
 		area.onChanged();
 		rebuildSchematicList.run();
 	}
-	/** 选择器显示时重新隐藏刚重建的蓝图滚动框 */
 	public void reassertVisibility() {
 		if (area.visible) setVisible(true);
 	}

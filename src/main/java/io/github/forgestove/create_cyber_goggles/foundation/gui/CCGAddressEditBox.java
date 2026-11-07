@@ -1,6 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.foundation.gui;
 import com.simibubi.create.content.logistics.AddressEditBox;
-import io.github.forgestove.create_cyber_goggles.content.replenish.ReplenishScreen;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.Screen;
 import org.jetbrains.annotations.NotNull;
@@ -12,8 +11,9 @@ public class CCGAddressEditBox extends AddressEditBox {
 	}
 	@Override
 	public void renderWidget(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
-		if (screen instanceof ReplenishScreen owner) gui.enableScissor(owner.scissorL, owner.scissorT, owner.scissorR, owner.scissorB);
+		if (screen instanceof ScissorArea area)
+			gui.enableScissor(area.scissorLeft(), area.scissorTop(), area.scissorRight(), area.scissorBottom());
 		super.renderWidget(gui, mouseX, mouseY, partialTick);
-		if (screen instanceof ReplenishScreen) gui.disableScissor();
+		if (screen instanceof ScissorArea) gui.disableScissor();
 	}
 }

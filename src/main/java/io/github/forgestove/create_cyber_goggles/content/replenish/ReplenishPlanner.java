@@ -1,6 +1,7 @@
 package io.github.forgestove.create_cyber_goggles.content.replenish;
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.AllBlocks;
+import io.github.forgestove.create_cyber_goggles.CCG;
 import com.simibubi.create.content.equipment.clipboard.ClipboardEntry;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
@@ -17,20 +18,8 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.mc;
-public final class ReplenishPlanner {
+public class ReplenishPlanner {
 	private static final Logger LOGGER = LogUtils.getLogger();
-	private static final List<String> TYPE_ORDER = List.of(
-		"create:crushing",
-		"create:milling",
-		"create:cutting",
-		"create:pressing",
-		"create:compacting",
-		"create:mixing",
-		"create:splashing",
-		"create:haunting",
-		"create:deploying",
-		"create:item_application"
-	);
 	private static final Map<Item, ResourceLocation> RECIPE_CHOICES = new HashMap<>();
 	private static Object cacheOwner;
 	private static Map<Item, List<RecipeHolder<?>>> candidatesCache = new HashMap<>();
@@ -329,6 +318,7 @@ public final class ReplenishPlanner {
 	public static List<RecipeHolder<?>> candidatesFor(ItemStack target, InventorySummary summary) {
 		if (mc.level == null) return List.of();
 		RegistryAccess registry = mc.level.registryAccess();
+		List<String> typeOrder = CCG.config.misc.replenishTypeOrder;
 		List<Candidate> found = new ArrayList<>();
 		outer:
 		for (RecipeHolder<?> holder : mc.level.getRecipeManager().getRecipes()) {
@@ -356,8 +346,8 @@ public final class ReplenishPlanner {
 				if (!craftable) raw++;
 			}
 			String typeId = recipe.getType().toString();
-			int rank = TYPE_ORDER.indexOf(typeId);
-			if (rank < 0) rank = typeId.startsWith("create:") ? TYPE_ORDER.size() : TYPE_ORDER.size() + 1;
+			int rank = typeOrder.indexOf(typeId);
+			if (rank < 0) rank = typeId.startsWith("create:") ? typeOrder.size() : typeOrder.size() + 1;
 			found.add(new Candidate(stocked, rank, result.getCount(), raw, holder));
 		}
 		found.sort(Comparator.comparing((Candidate c) -> !c.stocked())

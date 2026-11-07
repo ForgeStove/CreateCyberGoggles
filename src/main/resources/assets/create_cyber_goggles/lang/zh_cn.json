@@ -176,6 +176,8 @@
 	"create_cyber_goggles.config.option.misc.removeRequestLimit.tooltip": "移除工厂仪表和红石请求器的请求数量限制并优化快速滚动",
 	"create_cyber_goggles.config.option.misc.removeTrainDamage": "移除列车伤害",
 	"create_cyber_goggles.config.option.misc.removeTrainDamage.tooltip": "阻止列车碰撞对玩家造成伤害",
+	"create_cyber_goggles.config.option.misc.replenishTypeOrder": "自动补齐配方类型优先级",
+	"create_cyber_goggles.config.option.misc.replenishTypeOrder.tooltip": "自动补齐根据此列表顺序选择配方类型",
 	"create_cyber_goggles.config.option.misc.soundPoolLimit": "声音池上限",
 	"create_cyber_goggles.config.option.misc.soundPoolLimit.tooltip": "向 OpenAL 申请的声源数量，增加该值可以缓解声音池溢出导致的静默失效",
 	"create_cyber_goggles.config.option.misc.wrench.alwaysAllowRotating": "始终允许旋转方块",

@@ -4,6 +4,7 @@ import io.github.forgestove.create_cyber_goggles.foundation.events.SoundReloadHa
 import io.github.forgestove.flexconfig.api.annotation.*;
 
 import java.awt.Point;
+import java.util.*;
 @Config(CCG.ID)
 public final class CCGConfig {
 	@Category public Goggles goggles = new Goggles();
@@ -166,6 +167,18 @@ public final class CCGConfig {
 		public boolean preventAutoCloseFilter = false;
 		public boolean allowDivingBoot = true;
 		public boolean autoReplenishStock = true;
+		public List<String> replenishTypeOrder = new ArrayList<>(List.of(
+			"create:crushing",
+			"create:milling",
+			"create:cutting",
+			"create:pressing",
+			"create:compacting",
+			"create:mixing",
+			"create:splashing",
+			"create:haunting",
+			"create:deploying",
+			"create:item_application"
+		));
 		@WarnCheat public boolean removeTrainDamage = false;
 		@WarnCheat public boolean enableNegativeInfThrottle = false;
 		public boolean forcedBackend = false;

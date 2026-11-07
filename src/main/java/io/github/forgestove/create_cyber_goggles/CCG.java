@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles;
 import com.mojang.logging.LogUtils;
-import io.github.forgestove.flexconfig.api.registration.*;
+import io.github.forgestove.flexconfig.api.registration.ConfigHandler;
 import net.neoforged.fml.common.Mod;
 import org.slf4j.Logger;
 @Mod(CCG.ID)

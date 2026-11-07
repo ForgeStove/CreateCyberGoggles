@@ -34,9 +34,9 @@ import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.
 public abstract class TunablePortableTickerScreenMixin extends AbstractSimiContainerScreen<TunablePortableTickerMenu>
 	implements Self<TunablePortableTickerScreen>, CCGReplenishTree {
 	/**
- * 正在打开本覆盖层。宿主的 {@code removed()} 会调 {@code ClientScreenStorage.close()} 清空库存缓存，
- * 而被覆盖层顶掉也算一次 removed，故标记这一次不清缓存。
- */
+	 * 正在打开本覆盖层。宿主的 {@code removed()} 会调 {@code ClientScreenStorage.close()} 清空库存缓存，
+	 * 而被覆盖层顶掉也算一次 removed，故标记这一次不清缓存。
+	 */
 	@Unique private static boolean ccg$overlayOpening;
 	@Shadow public List<BigItemStack> itemsToOrder;
 	@Shadow private int activeChannel;

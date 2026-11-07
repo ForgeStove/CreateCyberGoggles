@@ -60,7 +60,9 @@ public class MultiplyScreen extends AbstractSimiScreen {
 		cancelButton.withCallback(this::onClose);
 		cancelButton.setToolTip(Component.translatable("gui.cancel"));
 		factorInput = new EditBox(mc.font, x + 44, y + 28, 129, 9, Component.empty());
-		factorInput.setFilter(CCG.config.misc.expressionInput ? ExpressionParser::isAllowed : value -> value.chars().allMatch(c -> Character.isDigit(c) || c == '.'));
+		factorInput.setFilter(CCG.config.misc.expressionInput
+			? ExpressionParser::isAllowed
+			: value -> value.chars().allMatch(c -> Character.isDigit(c) || c == '.'));
 		factorInput.setBordered(false);
 		factorInput.setValue(lastValue);
 		factorInput.setFocused(true);

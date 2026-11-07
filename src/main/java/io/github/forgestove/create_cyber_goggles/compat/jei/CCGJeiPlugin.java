@@ -6,7 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.getCCGRes;
-/** JEI 插件入口，用于追加注册红石请求器的配方转移 handler。*/
+/** JEI 插件入口，用于追加注册红石请求器的配方转移 handler。 */
 @JeiPlugin
 @SuppressWarnings("unused")
 public final class CCGJeiPlugin implements IModPlugin {

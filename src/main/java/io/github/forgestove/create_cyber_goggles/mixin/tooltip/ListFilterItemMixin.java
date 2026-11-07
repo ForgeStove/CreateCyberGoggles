@@ -34,9 +34,8 @@ public abstract class ListFilterItemMixin implements Self<ListFilterItem> {
 			blacklist ? CCGCreateLang.translateDirect("gui.filter.deny_list") : CCGCreateLang.translateDirect("gui.filter.allow_list")
 		).withStyle(ChatFormatting.GOLD));
 		Boolean respectNBT = filter.getOrDefault(AllDataComponents.FILTER_ITEMS_RESPECT_NBT, false);
-		list.add((respectNBT
-			? CCGCreateLang.translateDirect("gui.filter.respect_data")
-			: CCGCreateLang.translateDirect("gui.filter.ignore_data")
+		list.add((
+			respectNBT ? CCGCreateLang.translateDirect("gui.filter.respect_data") : CCGCreateLang.translateDirect("gui.filter.ignore_data")
 		).withStyle(ChatFormatting.GOLD));
 		cir.setReturnValue(list);
 	}

@@ -6,12 +6,11 @@ import com.simibubi.create.content.trains.schedule.DestinationSuggestions;
 import com.simibubi.create.foundation.gui.*;
 import io.github.forgestove.create_cyber_goggles.compat.jei.CCGJeiTitles;
 import io.github.forgestove.create_cyber_goggles.content.replenish.ReplenishGroup.*;
-import io.github.forgestove.create_cyber_goggles.content.replenish.ReplenishLayout.*;
 import io.github.forgestove.create_cyber_goggles.foundation.gui.*;
+import io.github.forgestove.flexconfig.foundation.ui.core.*;
 import io.github.forgestove.create_cyber_goggles.foundation.lang.*;
 import io.github.forgestove.create_cyber_goggles.mixin.accessor.*;
 import net.createmod.catnip.gui.AbstractSimiScreen;
-import net.createmod.catnip.gui.widget.AbstractSimiWidget;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
@@ -20,7 +19,6 @@ import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.*;
@@ -33,12 +31,8 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
 
+import static io.github.forgestove.create_cyber_goggles.content.replenish.ReplenishLayout.*;
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.mc;
-/**
- * 自动补齐缺货覆盖层，宿主屏幕提供 {@link ReplenishTree} 能力。
- * <p>
- * 内容预计算成 {@link ReplenishLayout#rows()} 扁平行列表，只渲染视口内的行。
- */
 public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 	private static final Map<String, String> CACHE_ADDRS = new LinkedHashMap<>();
 	private static final int PARKED = -10000;
@@ -60,7 +54,8 @@ public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 	 */
 	private final List<List<ItemStack>> sendItems = new ArrayList<>();
 	private final Set<Integer> hiddenGroups = new HashSet<>();
-	private final ReplenishScroll scroll = new ReplenishScroll();
+	private final ReplenishScrollPane scrollPane = new ReplenishScrollPane();
+	private final UiContext ui = new UiContext();
 	private final ReplenishHover hover = new ReplenishHover();
 	private ReplenishLayout layout;
 	/** 内容区裁剪范围，绝对屏幕坐标。 */
@@ -73,6 +68,7 @@ public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 		this.host = host;
 		this.groups = groups;
 		for (ReplenishGroup group : groups) groupAddress.add(CACHE_ADDRS.getOrDefault(group.name(), ""));
+		scrollPane.content(this::renderContent);
 		rebuildLayout();
 		mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1));
 		hookCharTyped();
@@ -176,6 +172,7 @@ public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 	private void rebuildLayout() {
 		buildSendItems();
 		layout = new ReplenishLayout(groups, sendItems, hiddenGroups);
+		scrollPane.setContentHeight(layout.contentH() - BODY_TOP);
 	}
 	/** 按配方类型汇总待发送的原料，与 {@link #sendAll()} 同源。 */
 	private void buildSendItems() {
@@ -223,7 +220,7 @@ public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 			addRenderableWidget(box);
 		}
 		// 按钮画在底部纹理烘好的按钮之上，只补交互与前景
-		addRenderableWidget(new CCGButton(
+		addRenderableWidget(new ReplenishButton(
 			windowXOffset + 135,
 			windowYOffset + panelH - FOOTER_H + 7,
 			17,
@@ -235,7 +232,7 @@ public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 			null,
 			this::onClose
 		).tooltip(Component.translatable("gui.cancel")));
-		addRenderableWidget(new CCGButton(
+		addRenderableWidget(new ReplenishButton(
 			windowXOffset + 161,
 			windowYOffset + panelH - FOOTER_H + 7,
 			75,
@@ -247,9 +244,12 @@ public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 			CCGCreateLang.translateDirect("gui.stock_keeper.send"),
 			this::sendAll
 		).tooltip(CCGCreateLang.translateDirect("gui.stock_keeper.send")));
+		scrollPane.setBounds(new UiBounds(windowXOffset + CONTENT_L, windowYOffset + BODY_TOP, CONTENT_R - CONTENT_L, viewH));
+		scrollPane.setPitch(NODE_H);
+		scrollPane.setContentHeight(layout.contentH() - BODY_TOP);
 		// 恢复滚动位置：此时 contentH/viewH 已算好，按新内容 clamp
 		if (restoreScroll >= 0) {
-			scroll.moveTo(Mth.clamp(restoreScroll, 0, maxScroll()));
+			scrollPane.setScroll(restoreScroll);
 			restoreScroll = -1;
 		}
 	}
@@ -258,7 +258,6 @@ public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 		// AddressEditBox 不是 TickableGuiEventListener，需显式 tick 才激活下拉建议。
 		super.tick();
 		addrBoxes.forEach(AddressEditBox::tick);
-		scroll.tick();
 	}
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
@@ -296,29 +295,36 @@ public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 	protected void renderWindow(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
 		hover.setMouse(mouseX, mouseY);
 		hover.clearTargets();
-		int clamped = scroll.clamped(partialTick, maxScroll());
 		PoseStack pose = gui.pose();
 		pose.pushPose();
 		pose.translate(windowXOffset, windowYOffset, 0);
 		Font font = mc.font;
 		Component title = CCGLang.translateDirect("gui.auto_replenish.title");
 		gui.drawString(font, title, (PANEL_W - font.width(title)) / 2, 4, 0xFF4A3728, false);
-		int scissorBottom = windowYOffset + BODY_TOP + Math.max(1, viewH);
+		pose.popPose();
 		scissorL = windowXOffset + CONTENT_L;
 		scissorT = windowYOffset + BODY_TOP;
 		scissorR = windowXOffset + CONTENT_R;
-		scissorB = scissorBottom;
-		gui.enableScissor(scissorL, scissorT, scissorR, scissorB);
+		scissorB = windowYOffset + BODY_TOP + Math.max(1, viewH);
+		ui.beginFrame(gui, partialTick, mouseX, mouseY);
+		scrollPane.render(ui);
+	}
+	private void renderContent(GuiGraphics gui, double scroll) {
+		var pose = gui.pose();
+		pose.pushPose();
+		pose.translate(windowXOffset, windowYOffset, 0);
+		Font font = mc.font;
 		if (groups.isEmpty()) {
 			Component empty = CCGLang.translateDirect("gui.auto_replenish.empty");
 			gui.drawString(font, empty, (PANEL_W - font.width(empty)) / 2, BODY_TOP + 4, 0xFFC8B688, false);
 		}
 		int viewBottom = BODY_TOP + viewH;
+		int offset = (int) scroll;
 		// 地址框不能用 setVisible(false) 裁剪：不可见时 EditBox.canConsumeInput() 为假，键盘输入会丢。
 		// 滚出视口时改为挪到 PARKED。
 		var onScreen = new boolean[addrBoxes.size()];
 		for (Row r : layout.rows()) {
-			int top = r.y() - clamped;
+			int top = r.y() - offset;
 			if (top + r.h() <= BODY_TOP) continue;
 			if (top >= viewBottom) break;
 			switch (r.kind()) {
@@ -342,9 +348,7 @@ public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 			box.setY(PARKED);
 			refreshSuggestionsAnchor(box);
 		}
-		gui.disableScissor();
 		pose.popPose();
-		if (maxScroll() > 0) renderScrollbar(gui, partialTick);
 	}
 	@Override
 	protected void renderWindowForeground(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
@@ -397,12 +401,6 @@ public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 		parent.resize(mc, width, height);
 		super.resize(mc, width, height);
 	}
-	/**
-	 * 可滚动距离：内容高 − 视口高。
-	 * <p>
-	 * contentH 含 BODY_TOP 偏移，须减去。
-	 */
-	private int maxScroll() {return Math.max(0, layout.contentH() - BODY_TOP - viewH);}
 	private void sendAll() {
 		ReplenishSender.sendAll(host, groups, groupAddress);
 		onClose();
@@ -500,22 +498,6 @@ public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 			Component hint = CCGCreateLang.translateDirect("gui.stock_keeper.package_address").withStyle(ChatFormatting.ITALIC);
 			gui.drawString(font, hint, box.getX() - windowXOffset, box.getY() - windowYOffset, 0xFFCDBCA8, false);
 		}
-	}
-	private void renderScrollbar(GuiGraphics gui, float partialTick) {
-		int barX = scrollX();
-		int barSize = thumbHeight();
-		if (barSize >= scrollTrackHeight() - 2) return;
-		PoseStack pose = gui.pose();
-		pose.pushPose();
-		pose.translate(0, thumbTop(partialTick) - scrollTrackTop(), 0);
-		int baseY = scrollTrackTop();
-		AllGuiTextures pad = AllGuiTextures.STOCK_KEEPER_REQUEST_SCROLL_PAD;
-		gui.blit(pad.location, barX, baseY, SCROLL_W, barSize, pad.getStartX(), pad.getStartY(), pad.getWidth(), pad.getHeight(), 256,
-			256);
-		AllGuiTextures.STOCK_KEEPER_REQUEST_SCROLL_TOP.render(gui, barX, baseY);
-		if (barSize > 16) AllGuiTextures.STOCK_KEEPER_REQUEST_SCROLL_MID.render(gui, barX, baseY + barSize / 2 - 4);
-		AllGuiTextures.STOCK_KEEPER_REQUEST_SCROLL_BOT.render(gui, barX, baseY + barSize - 5);
-		pose.popPose();
 	}
 	private void refreshSuggestionsAnchor(AddressEditBox box) {
 		DestinationSuggestions suggestions = ((AddressEditBoxAccessor) box).getDestinationSuggestions();
@@ -680,13 +662,10 @@ public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 			openRecipePopup(mouseX, mouseY);
 			return true;
 		}
-		if (button == 0 && maxScroll() > 0 && overScrollbar(mouseX, mouseY)) {
-			scroll.startDrag(mouseY - thumbTop(1));
-			return true;
-		}
+		if (scrollPane.mouseClicked(ui, mouseX, mouseY, button)) return true;
 		// 点组头三角切换展开/收起
 		if (button == 0) {
-			int clamped = scroll.clamped(1, maxScroll());
+			int clamped = (int) scrollPane.scroll();
 			int iconX = windowXOffset + CONTENT_L + GROUP_INDENT;
 			for (Row r : layout.rows()) {
 				if (r.kind() != RowKind.GROUP) continue;
@@ -698,7 +677,7 @@ public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 				if (!hiddenGroups.remove(gi)) hiddenGroups.add(gi);
 				mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.ITEM_FRAME_ROTATE_ITEM, 1.5f));
 				rebuildLayout();
-				scroll.moveTo(Mth.clamp(scroll.value(), 0, maxScroll()));
+				scrollPane.setScroll(scrollPane.scroll());
 				return true;
 			}
 		}
@@ -712,27 +691,12 @@ public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 	}
 	@Override
 	public boolean mouseReleased(double mouseX, double mouseY, int button) {
-		if (scroll.dragging() && button == 0) {
-			scroll.stopDrag();
-			return true;
-		}
+		if (scrollPane.mouseReleased(ui, mouseX, mouseY, button)) return true;
 		return super.mouseReleased(mouseX, mouseY, button);
 	}
 	@Override
 	public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-		if (scroll.dragging() && button == 0) {
-			int track = scrollTrackHeight();
-			int thumb = thumbHeight();
-			int maxThumbTop = track - thumb;
-			int maxScroll = maxScroll();
-			if (maxThumbTop <= 0 || maxScroll <= 0) {
-				scroll.moveTo(0);
-				return true;
-			}
-			var top = (int) Mth.clamp(mouseY - scroll.dragOffset(), scrollTrackTop(), scrollTrackTop() + maxThumbTop);
-			scroll.moveTo((int) ((float) (top - scrollTrackTop()) / maxThumbTop * maxScroll));
-			return true;
-		}
+		if (scrollPane.mouseDragged(ui, mouseX, mouseY, button, deltaX, deltaY)) return true;
 		return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
 	}
 	@Override
@@ -740,16 +704,12 @@ public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 		// 下拉建议优先处理滚轮，需显式投递。
 		if (getFocused() instanceof AddressEditBox box && box.mouseScrolled(mouseX, mouseY, scrollX, scrollY)) return true;
 		if (super.mouseScrolled(mouseX, mouseY, scrollX, scrollY)) return true;
-		if (overScrollbar(mouseX, mouseY)) return true;
-		// 滚轮以行为单位推进，指数追赶。
-		var direction = (int) (Math.ceil(Math.abs(scrollY)) * -Math.signum(scrollY));
-		scroll.chaseTo(Mth.clamp(scroll.chaseTarget() + direction * NODE_H, 0, maxScroll()));
-		return true;
+		return scrollPane.mouseScrolled(ui, mouseX, mouseY, scrollY);
 	}
 	/** 根据新的配方选择重建整棵树并重开界面。 */
 	private void rebuildAll() {
 		var next = new ReplenishScreen(parent, host, host.ccg$buildGroups());
-		next.restoreScroll = scroll.value(); // 继承当前滚动位置
+		next.restoreScroll = (int) scrollPane.scroll(); // 继承当前滚动位置
 		mc.setScreen(next);
 	}
 	private void openRecipePopup(double mouseX, double mouseY) {
@@ -766,78 +726,5 @@ public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 			popupW,
 			popupH
 		);
-	}
-	private boolean overScrollbar(double mouseX, double mouseY) {
-		return mouseX >= scrollX()
-			&& mouseX < scrollX() + SCROLL_W
-			&& mouseY >= scrollTrackTop()
-			&& mouseY < scrollTrackTop() + scrollTrackHeight();
-	}
-	private int thumbTop(float partialTick) {
-		int thumb = thumbHeight();
-		int maxThumbTop = scrollTrackHeight() - thumb;
-		return scrollTrackTop() + (maxScroll() == 0 ? 0 : (int) (scroll.display(partialTick) / maxScroll() * maxThumbTop));
-	}
-	private int scrollX() {return windowXOffset + CONTENT_R - SCROLL_W - 4;}
-	private int scrollTrackTop() {return windowYOffset + BODY_TOP;}
-	private int scrollTrackHeight() {return Math.max(1, viewH);}
-	private int thumbHeight() {
-		int viewport = scrollTrackHeight();
-		int total = Math.max(viewport, maxScroll() + viewport);
-		return Math.max(5, Mth.floor((float) viewport / total * (viewport - 2)));
-	}
-	/** 底部按钮：返回方块与发送长条。 */
-	private static final class CCGButton extends AbstractSimiWidget {
-		private final ResourceLocation bg;
-		private final AllGuiTextures hover;
-		private final boolean hoverNative; // 以原生尺寸居中，避免拉伸畸变
-		private final AllIcons innerIcon;
-		private final Component label;
-		CCGButton(
-			int x,
-			int y,
-			int w,
-			int h,
-			ResourceLocation bg,
-			AllGuiTextures hover,
-			boolean hoverNative,
-			AllIcons innerIcon,
-			Component label,
-			Runnable action
-		) {
-			super(x, y, w, h, label == null ? Component.empty() : label);
-			this.bg = bg;
-			this.hover = hover;
-			this.hoverNative = hoverNative;
-			this.innerIcon = innerIcon;
-			this.label = label;
-			withCallback(action);
-		}
-		CCGButton tooltip(Component text) {
-			toolTip.clear();
-			toolTip.add(text);
-			return this;
-		}
-		@Override
-		public void doRender(@NotNull GuiGraphics gui, int mx, int my, float pt) {
-			if (isHovered() && hover != null) if (hoverNative) {
-				int hw = hover.getWidth(), hh = hover.getHeight();
-				gui.blit(
-					hover.location,
-					getX() + (getWidth() - hw) / 2,
-					getY() + (getHeight() - hh) / 2,
-					hover.getStartX(),
-					hover.getStartY(),
-					hw,
-					hh
-				);
-			} else gui.blit(hover.location, getX(), getY(), hover.getStartX(), hover.getStartY(), getWidth(), getHeight());
-			else if (bg != null) gui.blitSprite(bg, getX(), getY(), getWidth(), getHeight());
-			if (innerIcon != null) innerIcon.render(gui, getX() + (getWidth() - 16) / 2, getY() + (getHeight() - 16) / 2);
-			if (label != null) {
-				int tw = mc.font.width(label);
-				gui.drawString(mc.font, label, getX() + (getWidth() - tw) / 2, getY() + (getHeight() - 9) / 2 + 1, 0x252525, false);
-			}
-		}
 	}
 }

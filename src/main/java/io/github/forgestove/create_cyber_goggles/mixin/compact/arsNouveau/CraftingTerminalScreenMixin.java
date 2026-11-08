@@ -7,8 +7,8 @@ import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Pseudo
-@Mixin(AbstractStorageTerminalScreen.class)
-public class AbstractStorageTerminalScreenMixin {
+@Mixin(CraftingTerminalScreen.class)
+public class CraftingTerminalScreenMixin {
 	@Inject(method = "drawStackSize", at = @At("HEAD"), cancellable = true)
 	public void drawStackSize(GuiGraphics gui, Font font, long size, int x, int y, CallbackInfo ci) {
 		if (!CCG.config.misc.createStackCount.enableCreateStyleStackCount) return;

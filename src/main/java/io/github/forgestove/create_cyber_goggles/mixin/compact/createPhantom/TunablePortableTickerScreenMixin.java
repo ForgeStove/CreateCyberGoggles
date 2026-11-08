@@ -2,12 +2,11 @@ package io.github.forgestove.create_cyber_goggles.mixin.compact.createPhantom;
 import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
-import com.simibubi.create.content.logistics.stockTicker.PackageOrderWithCrafts;
+import com.simibubi.create.content.logistics.stockTicker.*;
 import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import com.simibubi.create.foundation.gui.widget.IconButton;
-import com.yision.phantom.item.ticker.*;
-import com.yision.phantom.network.ticker.TunablePortableTickerSendOrderPacket;
+import com.yision.phantom.content.logistics.tunablePortableTicker.*;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.content.replenish.*;
 import io.github.forgestove.create_cyber_goggles.foundation.lang.CCGLang;
@@ -21,43 +20,28 @@ import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.*;
+import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.mc;
-/**
- * 给 phantom 的可调便携仓储管理员（{@link TunablePortableTickerScreen}）补两个功能，都只在主手（其次副手）拿着 Create 剪贴板时启用：
- * 蓝图模式（等库存到位后按 {@code requestSchematicList()} 的语义照单填单，不递归配方）与自动补齐缺货按钮
- * （受 {@code misc.autoReplenishStock} 控制，递归到原材料，求解交给 {@link ReplenishPlanner}）。
- */
 @Pseudo
 @Mixin(TunablePortableTickerScreen.class)
 public abstract class TunablePortableTickerScreenMixin extends AbstractSimiContainerScreen<TunablePortableTickerMenu>
 	implements Self<TunablePortableTickerScreen>, ReplenishTree {
-	/**
-	 * 正在打开本覆盖层。宿主的 {@code removed()} 会调 {@code ClientScreenStorage.close()} 清空库存缓存，
-	 * 而被覆盖层顶掉也算一次 removed，故标记这一次不清缓存。
-	 */
 	@Unique private static boolean ccg$overlayOpening;
-	@Shadow public List<BigItemStack> itemsToOrder;
-	@Shadow private int activeChannel;
-	@Shadow private UUID activeSessionNetwork;
-	@Shadow private List<BigItemStack> lastSeenStacks;
-	/** 蓝图模式待填单；只填一次，之后不覆盖玩家手改的订单。 */
 	@Unique private boolean ccg$schematicPending;
 	public TunablePortableTickerScreenMixin(TunablePortableTickerMenu menu, Inventory playerInventory, Component title) {
 		super(menu, playerInventory, title);
 	}
 	@Inject(method = "init", at = @At("TAIL"))
 	private void portableReplenishInit(CallbackInfo ci) {
-		if (ReplenishPlanner.clipboardOf(mc.player) == null) return; // 没拿剪贴板则两个功能都不启用
+		if (ReplenishPlanner.clipboardOf(mc.player) == null) return;
 		ccg$schematicPending = true;
 		if (!CCG.config.misc.autoReplenishStock) return;
-		// y 比 Create 仓管高一行：≥2 个网络时宿主会在右侧前景绘制通道栏，会盖住 widget
 		var btn = new IconButton(leftPos + imageWidth - 10, topPos + 8, AllIcons.I_ADD);
 		btn.withCallback(() -> {
 			List<ReplenishGroup> groups = ccg$buildGroups();
-			CCG.LOGGER.debug("AutoReplenish click: groups={} summary={}", groups.size(), lastSeenStacks == null ? "null" : "ok");
-			ccg$overlayOpening = true; // 本次切屏会调宿主的 removed()，别清库存缓存
+			CCG.LOGGER.debug("AutoReplenish click: groups={}", groups.size());
+			ccg$overlayOpening = true;
 			mc.setScreen(new ReplenishScreen(thiz(), this, groups));
 		});
 		btn.setToolTip(CCGLang.translateDirect("gui.auto_replenish.title"));
@@ -76,46 +60,39 @@ public abstract class TunablePortableTickerScreenMixin extends AbstractSimiConta
 	@Unique
 	@Override
 	public InventorySummary ccg$summary() {
-		var summary = new InventorySummary();
-		if (lastSeenStacks != null) summary.addAllBigItemStacks(lastSeenStacks);
-		return summary;
+		var stockData = menu.getStockData();
+		return stockData == null ? new InventorySummary() : stockData.getLastClientsideStockSnapshotAsSummary();
 	}
 	@Unique
 	@Override
 	public void ccg$sendOrder(PackageOrderWithCrafts order, String address) {
-		if (activeSessionNetwork == null) {   // 未绑定物流网络：宿主自己的发送路径同样会跳过
-			CCG.LOGGER.debug("可调便携仓储管理员未绑定网络, 跳过发送");
-			return;
-		}
-		CatnipServices.NETWORK.sendToServer(new TunablePortableTickerSendOrderPacket(
-			menu.locator,
-			activeChannel,
-			activeSessionNetwork,
-			order,
-			address
-		));
+		var stockData = menu.getStockData();
+		if (stockData == null) return;
+		CatnipServices.NETWORK.sendToServer(new PackageOrderRequestPacket(stockData.getBlockPos(), order, address, false));
 	}
 	@WrapOperation(
 		method = "removed", at = @At(
-		value = "INVOKE", target = "Lcom/yision/phantom/item/ticker/ClientScreenStorage;close()V"
+		value = "INVOKE",
+		target = "Lcom/yision/phantom/content/logistics/tunablePortableTicker/ClientScreenStorage;close"
+			+ "(Lcom/yision/phantom/content/logistics/tunablePortableTicker/TunablePortableTickerMenu;)V"
 	)
 	)
-	private void ccg$keepStockOnOverlay(Operation<Void> original) {
+	private void ccg$keepStockOnOverlay(TunablePortableTickerMenu menu, Operation<Void> original) {
 		if (ccg$overlayOpening) {
 			ccg$overlayOpening = false;
 			return;
 		}
-		original.call();
+		original.call(menu);
 	}
-	/** 蓝图模式：等第一份非空库存到位，把清单里仓库有的物品按 min(清单数量, 库存) 铺进订单列表，只做一次。 */
 	@Inject(method = "containerTick", at = @At("TAIL"))
 	private void applySchematicOrder(CallbackInfo ci) {
 		if (!ccg$schematicPending) return;
 		InventorySummary summary = ccg$summary();
-		if (summary != null && summary.isEmpty()) return;
+		if (summary == null || summary.isEmpty()) return;
 		ccg$schematicPending = false;
 		List<BigItemStack> orders = ReplenishPlanner.schematicOrders(ReplenishPlanner.clipboardOf(mc.player), summary);
 		if (orders.isEmpty()) return;
+		var itemsToOrder = ((StockKeeperRequestScreen) (Object) this).itemsToOrder;
 		itemsToOrder.clear();
 		itemsToOrder.addAll(orders);
 		CCG.LOGGER.debug("SchematicList: 便携界面按剪贴板清单填单 {} 项", orders.size());

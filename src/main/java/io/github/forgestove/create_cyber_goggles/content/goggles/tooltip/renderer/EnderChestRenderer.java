@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 @AutoTooltipRenderer
-public final class EnderChestRenderer extends AbstractItemGridRenderer {
+public class EnderChestRenderer extends AbstractItemGridRenderer {
 	@Override
 	public boolean supports(ItemStack stack) {
 		return CCG.config.tooltip.enderChest && stack.is(Items.ENDER_CHEST);

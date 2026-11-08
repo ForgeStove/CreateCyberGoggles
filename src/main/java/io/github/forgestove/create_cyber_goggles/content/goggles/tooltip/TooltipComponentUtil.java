@@ -9,7 +9,7 @@ import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import org.jetbrains.annotations.*;
 
 import java.util.*;
-public final class TooltipComponentUtil {
+public class TooltipComponentUtil {
 	public static final IdentityHashMap<Component, ItemListTooltipComponent> ITEM_LIST_MAP = new IdentityHashMap<>();
 	public static final IdentityHashMap<Component, ItemEntryTooltipComponent> ITEM_ENTRY_MAP = new IdentityHashMap<>();
 	public static final IdentityHashMap<Component, FluidListTooltipComponent> FLUID_LIST_MAP = new IdentityHashMap<>();

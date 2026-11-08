@@ -24,7 +24,7 @@ import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.
 /** 在 Create {@link StockKeeperRequestScreen} 右下角加「自动补齐缺货」入口；需求取自剪贴板，求解交给 {@link ReplenishPlanner}。 */
 @Mixin(StockKeeperRequestScreen.class)
 public abstract class StockKeeperReplenishEntryMixin extends AbstractSimiContainerScreen<StockKeeperRequestMenu>
-	implements Self<StockKeeperRequestScreen>, CCGReplenishTree {
+	implements Self<StockKeeperRequestScreen>, ReplenishTree {
 	@Shadow List<List<ClipboardEntry>> clipboardItem;
 	@Shadow StockTickerBlockEntity blockEntity;
 	public StockKeeperReplenishEntryMixin(StockKeeperRequestMenu container, Inventory inv, Component title) {
@@ -50,13 +50,13 @@ public abstract class StockKeeperReplenishEntryMixin extends AbstractSimiContain
 	}
 	@Unique
 	@Override
-	public InventorySummary ccg$summary() {
-		return blockEntity.getLastClientsideStockSnapshotAsSummary();
+	public void ccg$setRecipeChoice(Item item, ResourceLocation recipeId) {
+		ReplenishPlanner.setRecipeChoice(item, recipeId);
 	}
 	@Unique
 	@Override
-	public void ccg$setRecipeChoice(Item item, ResourceLocation recipeId) {
-		ReplenishPlanner.setRecipeChoice(item, recipeId);
+	public InventorySummary ccg$summary() {
+		return blockEntity.getLastClientsideStockSnapshotAsSummary();
 	}
 	@Unique
 	@Override

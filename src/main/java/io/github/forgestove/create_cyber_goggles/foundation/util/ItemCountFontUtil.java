@@ -13,7 +13,7 @@ import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.getCCGRes;
-public final class ItemCountFontUtil {
+public class ItemCountFontUtil {
 	public static final ResourceLocation FONT_CREATE = getCCGRes("create");
 	public static Component getStyledAmount(Component component) {
 		return component.copy().withStyle(Style.EMPTY.withFont(FONT_CREATE));

@@ -71,7 +71,6 @@ class ReplenishLayout {
 	int contentH() {
 		return contentH;
 	}
-	record Row(int y, int h, RowKind kind, int gi) {}
 	enum RowKind {
 		GROUP,
 		NODE,
@@ -80,4 +79,5 @@ class ReplenishLayout {
 		MISSING,
 		ADDR
 	}
+	record Row(int y, int h, RowKind kind, int gi) {}
 }

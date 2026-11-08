@@ -32,7 +32,7 @@ import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.
 @Pseudo
 @Mixin(TunablePortableTickerScreen.class)
 public abstract class TunablePortableTickerScreenMixin extends AbstractSimiContainerScreen<TunablePortableTickerMenu>
-	implements Self<TunablePortableTickerScreen>, CCGReplenishTree {
+	implements Self<TunablePortableTickerScreen>, ReplenishTree {
 	/**
 	 * 正在打开本覆盖层。宿主的 {@code removed()} 会调 {@code ClientScreenStorage.close()} 清空库存缓存，
 	 * 而被覆盖层顶掉也算一次 removed，故标记这一次不清缓存。
@@ -70,10 +70,30 @@ public abstract class TunablePortableTickerScreenMixin extends AbstractSimiConta
 	}
 	@Unique
 	@Override
+	public void ccg$setRecipeChoice(Item item, ResourceLocation recipeId) {
+		ReplenishPlanner.setRecipeChoice(item, recipeId);
+	}
+	@Unique
+	@Override
 	public InventorySummary ccg$summary() {
 		var summary = new InventorySummary();
 		if (lastSeenStacks != null) summary.addAllBigItemStacks(lastSeenStacks);
 		return summary;
+	}
+	@Unique
+	@Override
+	public void ccg$sendOrder(PackageOrderWithCrafts order, String address) {
+		if (activeSessionNetwork == null) {   // 未绑定物流网络：宿主自己的发送路径同样会跳过
+			CCG.LOGGER.debug("可调便携仓储管理员未绑定网络, 跳过发送");
+			return;
+		}
+		CatnipServices.NETWORK.sendToServer(new TunablePortableTickerSendOrderPacket(
+			menu.locator,
+			activeChannel,
+			activeSessionNetwork,
+			order,
+			address
+		));
 	}
 	@WrapOperation(
 		method = "removed", at = @At(
@@ -99,25 +119,5 @@ public abstract class TunablePortableTickerScreenMixin extends AbstractSimiConta
 		itemsToOrder.clear();
 		itemsToOrder.addAll(orders);
 		CCG.LOGGER.debug("SchematicList: 便携界面按剪贴板清单填单 {} 项", orders.size());
-	}
-	@Unique
-	@Override
-	public void ccg$setRecipeChoice(Item item, ResourceLocation recipeId) {
-		ReplenishPlanner.setRecipeChoice(item, recipeId);
-	}
-	@Unique
-	@Override
-	public void ccg$sendOrder(PackageOrderWithCrafts order, String address) {
-		if (activeSessionNetwork == null) {   // 未绑定物流网络：宿主自己的发送路径同样会跳过
-			CCG.LOGGER.debug("可调便携仓储管理员未绑定网络, 跳过发送");
-			return;
-		}
-		CatnipServices.NETWORK.sendToServer(new TunablePortableTickerSendOrderPacket(
-			menu.locator,
-			activeChannel,
-			activeSessionNetwork,
-			order,
-			address
-		));
 	}
 }

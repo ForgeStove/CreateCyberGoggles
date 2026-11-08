@@ -9,7 +9,7 @@ import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.
 /** JEI 插件入口，用于追加注册红石请求器的配方转移 handler。 */
 @JeiPlugin
 @SuppressWarnings("unused")
-public final class CCGJeiPlugin implements IModPlugin {
+public class CCGJeiPlugin implements IModPlugin {
 	@Override
 	public @NotNull ResourceLocation getPluginUid() {
 		return getCCGRes("jei_plugin");

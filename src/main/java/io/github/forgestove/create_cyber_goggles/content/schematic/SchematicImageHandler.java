@@ -47,6 +47,9 @@ public class SchematicImageHandler {
 		if (level == null) throw new IllegalStateException("Cannot construct schematic image handler without a loaded level.");
 		schematicLevel = new SchematicLevel(BlockPos.ZERO, level);
 	}
+	private static @Nullable Throwable getExceptionCause(@Nullable Throwable e) {
+		return e instanceof CompletionException && e.getCause() != null ? e.getCause() : e;
+	}
 	public void export() {
 		Minecraft client = Minecraft.getInstance();
 		renderAndDownsample().thenApplyAsync(imageByteArray -> processExport(imageByteArray, client), PIPELINE)
@@ -130,8 +133,5 @@ public class SchematicImageHandler {
 		});
 		CCG.LOGGER.error("Failed to render schematic {}.", schematicName, e);
 		return null;
-	}
-	private static @Nullable Throwable getExceptionCause(@Nullable Throwable e) {
-		return e instanceof CompletionException && e.getCause() != null ? e.getCause() : e;
 	}
 }

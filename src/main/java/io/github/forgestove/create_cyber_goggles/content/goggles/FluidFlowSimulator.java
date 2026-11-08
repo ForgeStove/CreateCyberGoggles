@@ -15,7 +15,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-public final class FluidFlowSimulator {
+public class FluidFlowSimulator {
 	private static final Map<FluidTransportBehaviour, Map<Direction, Integer>> CACHE = new IdentityHashMap<>();
 	private static final Map<FluidTankBlockEntity, int[]> TANK_CACHE = new IdentityHashMap<>();
 	private static long cacheTick = Long.MIN_VALUE;
@@ -39,8 +39,8 @@ public final class FluidFlowSimulator {
 			if (source != null) inboundSources.put(face, source);
 		}
 		Map<Direction, Integer> result = new EnumMap<>(Direction.class);
-		boolean resolved = false;
-		for (BlockFace source : new HashSet<>(inboundSources.values())) {
+		var resolved = false;
+		for (var source : new HashSet<>(inboundSources.values())) {
 			Map<Direction, Integer> partial = simulateNetwork(level, start, source, inboundSources);
 			if (partial == null) continue;
 			resolved = true;

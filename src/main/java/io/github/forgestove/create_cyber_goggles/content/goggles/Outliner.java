@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.*;
-public final class Outliner {
+public class Outliner {
 	public static final Map<BlockEntity, Integer> cachedBE = new Object2IntOpenHashMap<>();
 	private static final Logger LOGGER = LogUtils.getLogger();
 	public static void tick(Post ignoredEvent) {

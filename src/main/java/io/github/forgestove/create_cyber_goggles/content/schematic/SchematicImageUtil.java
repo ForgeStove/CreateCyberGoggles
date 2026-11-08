@@ -24,7 +24,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-public final class SchematicImageUtil {
+public class SchematicImageUtil {
 	private static final Set<String> IMAGE_EXTENSIONS = Set.of("png", "jpg", "jpeg", "gif", "bmp", "webp");
 	public static StructureTemplate loadTemplateFromSchematicName(String schematicName) {
 		Minecraft client = Minecraft.getInstance();

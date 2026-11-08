@@ -5,7 +5,7 @@ import net.minecraft.client.gui.navigation.ScreenRectangle;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-public final class SequencedAssemblyUtil {
+public class SequencedAssemblyUtil {
 	public static final int JUNK_X = 143;
 	public static final int JUNK_Y = 90;
 	public static final int JUNK_SIZE = 18;

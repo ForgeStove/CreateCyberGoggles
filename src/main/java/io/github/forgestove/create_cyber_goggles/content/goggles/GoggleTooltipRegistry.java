@@ -10,7 +10,7 @@ import java.util.function.*;
  * <p>由 {@code GoggleTooltip} 持有实例并做类型适配。</p>
  */
 @Internal
-public final class GoggleTooltipRegistry<C> {
+public class GoggleTooltipRegistry<C> {
 	private final String nativeId;
 	private final String builtinPrefix;
 	private final BiConsumer<String, @Nullable Throwable> warner;

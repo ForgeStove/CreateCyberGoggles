@@ -15,7 +15,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent.Post;
 import org.jetbrains.annotations.NotNull;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.*;
-public final class KineticParticle {
+public class KineticParticle {
 	public static void tick(Post ignoredEvent) {
 		if (!CCG.config.goggles.enableKineticEffect || mc.level == null || isInGUI()) return;
 		KineticBlockEntity kbe = getBlockEntity(KineticBlockEntity.class);

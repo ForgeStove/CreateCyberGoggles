@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Stream;
-public final class SchematicFolderUtil {
+public class SchematicFolderUtil {
 	private static final String ROOT = "";
 	private static String selectedFolder = ROOT;
 	public static synchronized String getSelectedFolder() {

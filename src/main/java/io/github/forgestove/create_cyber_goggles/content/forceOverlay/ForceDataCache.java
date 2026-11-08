@@ -11,7 +11,7 @@ import java.util.*;
  * {@link DiagramDataPacket} 不携带子层级 UUID，因此我们只存储单个"最新"快照。
  * 上游代码（{@link ForceOverlay}）将其与所请求的目标配对。
  */
-public final class ForceDataCache {
+public class ForceDataCache {
 	private static volatile DiagramDataPacket latestPacket;
 	private static volatile boolean dirty;
 	/** 当新的数据包到达时由 mixin 调用。 */

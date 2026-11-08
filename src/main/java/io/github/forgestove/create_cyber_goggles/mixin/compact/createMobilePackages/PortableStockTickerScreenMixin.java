@@ -31,7 +31,7 @@ import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.
 @Pseudo
 @Mixin(PortableStockTickerScreen.class)
 public abstract class PortableStockTickerScreenMixin extends AbstractSimiContainerScreen<PortableStockTickerMenu>
-	implements Self<PortableStockTickerScreen>, CCGReplenishTree {
+	implements Self<PortableStockTickerScreen>, ReplenishTree {
 	@Shadow public List<BigGenericStack> itemsToOrder;
 	/** 蓝图模式待填单；只填一次，之后不覆盖玩家手改的订单。 */
 	@Unique private boolean ccg$schematicPending;
@@ -59,8 +59,18 @@ public abstract class PortableStockTickerScreenMixin extends AbstractSimiContain
 	}
 	@Unique
 	@Override
+	public void ccg$setRecipeChoice(Item item, ResourceLocation recipeId) {
+		ReplenishPlanner.setRecipeChoice(item, recipeId);
+	}
+	@Unique
+	@Override
 	public InventorySummary ccg$summary() {
 		return thiz().stockSnapshot().asSummary();
+	}
+	@Unique
+	@Override
+	public void ccg$sendOrder(PackageOrderWithCrafts order, String address) {
+		CatnipServices.NETWORK.sendToServer(new SendPackage(GenericOrder.of(order), address));
 	}
 	/** 蓝图模式：等第一份非空库存到位，把清单里仓库有的物品按 min(清单数量, 库存) 铺进订单列表，只做一次。 */
 	@Inject(method = "containerTick", at = @At("TAIL"))
@@ -74,15 +84,5 @@ public abstract class PortableStockTickerScreenMixin extends AbstractSimiContain
 		itemsToOrder.clear();
 		itemsToOrder.addAll(orders.stream().map(BigGenericStack::of).toList());
 		CCG.LOGGER.debug("SchematicList: 便携界面按剪贴板清单填单 {} 项", orders.size());
-	}
-	@Unique
-	@Override
-	public void ccg$setRecipeChoice(Item item, ResourceLocation recipeId) {
-		ReplenishPlanner.setRecipeChoice(item, recipeId);
-	}
-	@Unique
-	@Override
-	public void ccg$sendOrder(PackageOrderWithCrafts order, String address) {
-		CatnipServices.NETWORK.sendToServer(new SendPackage(GenericOrder.of(order), address));
 	}
 }

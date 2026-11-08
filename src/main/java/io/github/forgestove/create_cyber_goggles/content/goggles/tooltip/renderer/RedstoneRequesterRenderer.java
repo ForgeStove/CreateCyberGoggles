@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.mc;
 @AutoTooltipRenderer
-public final class RedstoneRequesterRenderer extends AbstractItemGridRenderer {
+public class RedstoneRequesterRenderer extends AbstractItemGridRenderer {
 	private CustomData lastBeData;
 	private @Nullable OverlayData cachedGrid;
 	@Override

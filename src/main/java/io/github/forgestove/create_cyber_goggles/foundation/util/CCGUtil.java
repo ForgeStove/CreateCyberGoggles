@@ -30,7 +30,7 @@ import org.jetbrains.annotations.*;
 
 import java.util.*;
 import java.util.stream.Stream;
-public final class CCGUtil {
+public class CCGUtil {
 	public static final Minecraft mc = Minecraft.getInstance();
 	public static final Outliner outliner = Outliner.getInstance();
 	private static HitResult cachedHitResult;

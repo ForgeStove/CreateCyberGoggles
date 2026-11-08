@@ -16,7 +16,7 @@ import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.mc;
 /** 红石请求器界面的扩展交互：ghost 槽抓起/拖拽换位与撤销。 */
-public final class RedstoneRequesterInteractions {
+public class RedstoneRequesterInteractions {
 	/** 拖动判定阈值（像素） */
 	private static final double DRAG_THRESHOLD = 4;
 	/** 覆盖色取自 JEI GhostIngredientDrag。 */

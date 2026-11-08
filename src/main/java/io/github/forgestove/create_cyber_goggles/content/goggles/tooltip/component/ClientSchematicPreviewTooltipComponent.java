@@ -10,14 +10,14 @@ import org.jetbrains.annotations.NotNull;
  * <p>
  * 面板实例是静态共享的 —— tooltip 渲染生命周期极短，每帧重建 {@link SchematicPreviewPanel} 会反复装载蓝图。
  */
-public final class ClientSchematicPreviewTooltipComponent implements ClientTooltipComponent {
+public class ClientSchematicPreviewTooltipComponent implements ClientTooltipComponent {
 	private static final SchematicPreviewPanel PANEL = new SchematicPreviewPanel();
 	private final SchematicPreviewTooltip preview;
-	public static void register(@NotNull RegisterClientTooltipComponentFactoriesEvent event) {
-		event.register(SchematicPreviewTooltip.class, ClientSchematicPreviewTooltipComponent::new);
-	}
 	public ClientSchematicPreviewTooltipComponent(SchematicPreviewTooltip preview) {
 		this.preview = preview;
+	}
+	public static void register(@NotNull RegisterClientTooltipComponentFactoriesEvent event) {
+		event.register(SchematicPreviewTooltip.class, ClientSchematicPreviewTooltipComponent::new);
 	}
 	@Override
 	public int getHeight() {

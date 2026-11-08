@@ -9,17 +9,17 @@ import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactori
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-public final class ClientItemListTooltipComponent implements ClientTooltipComponent {
+public class ClientItemListTooltipComponent implements ClientTooltipComponent {
 	private final ItemListTooltipComponent c;
 	private final int columns;
 	private final int rows;
-	public static void register(@NotNull RegisterClientTooltipComponentFactoriesEvent event) {
-		event.register(ItemListTooltipComponent.class, ClientItemListTooltipComponent::new);
-	}
 	public ClientItemListTooltipComponent(ItemListTooltipComponent c) {
 		this.c = c;
 		columns = Math.min(c.items.size(), c.maxColumns);
 		rows = (c.items.size() + c.maxColumns - 1) / c.maxColumns;
+	}
+	public static void register(@NotNull RegisterClientTooltipComponentFactoriesEvent event) {
+		event.register(ItemListTooltipComponent.class, ClientItemListTooltipComponent::new);
 	}
 	@Override
 	public int getHeight() {
@@ -28,9 +28,6 @@ public final class ClientItemListTooltipComponent implements ClientTooltipCompon
 	@Override
 	public int getWidth(@NotNull Font font) {
 		return columns * SlotUtil.SIZE + indentPixels(font);
-	}
-	private int indentPixels(@NotNull Font font) {
-		return c.indent * font.width(" ");
 	}
 	@Override
 	public void renderImage(@NotNull Font font, int x, int y, @NotNull GuiGraphics gui) {
@@ -41,6 +38,9 @@ public final class ClientItemListTooltipComponent implements ClientTooltipCompon
 			int slotY = y + row * SlotUtil.SIZE;
 			renderSlot(gui, font, c.items.get(i), slotX, slotY);
 		}
+	}
+	private int indentPixels(@NotNull Font font) {
+		return c.indent * font.width(" ");
 	}
 	private void renderSlot(GuiGraphics gui, Font font, ItemStack stack, int x, int y) {
 		gui.blitSprite(SlotUtil.SLOT, x, y, 0, SlotUtil.SIZE, SlotUtil.SIZE);

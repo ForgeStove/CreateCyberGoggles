@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.*;
-public final class TooltipOverlay {
+public class TooltipOverlay {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	public static float hoverTicks;
 	private static ItemStack lastItemStack = ItemStack.EMPTY;

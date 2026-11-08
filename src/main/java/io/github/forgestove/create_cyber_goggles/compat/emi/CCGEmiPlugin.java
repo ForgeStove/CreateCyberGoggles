@@ -13,7 +13,7 @@ import java.util.List;
  */
 @EmiEntrypoint
 @SuppressWarnings("unused")
-public final class CCGEmiPlugin implements EmiPlugin {
+public class CCGEmiPlugin implements EmiPlugin {
 	@Override
 	public void register(EmiRegistry registry) {
 		if (!CCG.config.misc.jei.redstoneRequesterJEIRequest) return;

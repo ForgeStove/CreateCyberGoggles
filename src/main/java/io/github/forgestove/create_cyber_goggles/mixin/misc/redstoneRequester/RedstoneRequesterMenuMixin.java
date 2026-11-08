@@ -14,11 +14,11 @@ public abstract class RedstoneRequesterMenuMixin extends GhostItemMenu<RedstoneR
 		super(type, id, inv, contentHolder);
 	}
 	@Override
-	public void ccg$setScreenReference(Screen screen) {
-		ccg$screenReference = screen;
-	}
-	@Override
 	public Screen ccg$getScreenReference() {
 		return ccg$screenReference;
+	}
+	@Override
+	public void ccg$setScreenReference(Screen screen) {
+		ccg$screenReference = screen;
 	}
 }

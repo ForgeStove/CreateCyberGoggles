@@ -20,10 +20,10 @@ import java.util.List;
 @Mixin(BacktankBlockEntity.class)
 public abstract class BacktankBlockEntityMixin extends KineticBlockEntity
 	implements IHaveGoggleInformation, BacktankTooltipData, Self<BacktankBlockEntity> {
-	@Unique private int ccg$leftTick;
 	@Unique public int ccg$prevAirLevel;
 	@Shadow public int airLevel;
 	@Shadow public int airLevelTimer;
+	@Unique private int ccg$leftTick;
 	@Shadow private int capacityEnchantLevel;
 	public BacktankBlockEntityMixin(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
 		super(typeIn, pos, state);

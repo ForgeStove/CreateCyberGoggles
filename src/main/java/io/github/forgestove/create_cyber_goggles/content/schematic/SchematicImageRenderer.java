@@ -27,7 +27,7 @@ import org.joml.*;
 import java.lang.Math;
 import java.util.*;
 import java.util.Map.Entry;
-public final class SchematicImageRenderer {
+public class SchematicImageRenderer {
 	private static final int MARGIN_PX = 4;
 	private static final int MAX_FB_SIZE = 16384;
 	private static final float DEFAULT_NEAR_AND_FAR = 10_000F;

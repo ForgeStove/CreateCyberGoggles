@@ -70,6 +70,20 @@ public class RequestAmountScreen extends AbstractSimiScreen {
 		addRenderableWidgets(confirmButton, cancelButton, amountInput);
 	}
 	@Override
+	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+		if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+			onClose();
+			mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1));
+			return super.keyReleased(keyCode, scanCode, modifiers);
+		}
+		if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+			apply();
+			mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1));
+			return super.keyReleased(keyCode, scanCode, modifiers);
+		}
+		return amountInput.keyPressed(keyCode, scanCode, modifiers);
+	}
+	@Override
 	protected void renderWindowBackground(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
 		PoseStack pose = gui.pose();
 		pose.pushPose();
@@ -84,16 +98,6 @@ public class RequestAmountScreen extends AbstractSimiScreen {
 		pose.translate(windowXOffset, windowYOffset, 0);
 		AllGuiTextures.PACKAGE_FILTER.render(gui, 0, 0);
 		pose.popPose();
-	}
-	@Override
-	public void onClose() {
-		removed();
-		mc.screen = parentScreen;
-	}
-	@Override
-	public void resize(@NotNull Minecraft minecraft, int width, int height) {
-		parentScreen.resize(minecraft, width, height);
-		super.resize(minecraft, width, height);
 	}
 	@Override
 	protected void renderWindow(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
@@ -111,22 +115,16 @@ public class RequestAmountScreen extends AbstractSimiScreen {
 			gui.renderComponentTooltip(mc.font, getTooltipFromItem(mc, stack), mouseX, mouseY);
 	}
 	@Override
-	public boolean charTyped(char codePoint, int modifiers) {
-		return amountInput.charTyped(codePoint, modifiers);
+	public void onClose() {
+		removed();
+		mc.screen = parentScreen;
 	}
 	@Override
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
-			onClose();
-			mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1));
-			return super.keyReleased(keyCode, scanCode, modifiers);
-		}
-		if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
-			apply();
-			mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1));
-			return super.keyReleased(keyCode, scanCode, modifiers);
-		}
-		return amountInput.keyPressed(keyCode, scanCode, modifiers);
+	protected void renderMenuBackground(@NotNull GuiGraphics gui, int x, int y, int width, int height) {}
+	@Override
+	public void resize(@NotNull Minecraft minecraft, int width, int height) {
+		parentScreen.resize(minecraft, width, height);
+		super.resize(minecraft, width, height);
 	}
 	protected void apply() {
 		String text = amountInput.getValue();
@@ -146,7 +144,9 @@ public class RequestAmountScreen extends AbstractSimiScreen {
 		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
 	}
 	@Override
-	protected void renderMenuBackground(@NotNull GuiGraphics gui, int x, int y, int width, int height) {}
+	public boolean charTyped(char codePoint, int modifiers) {
+		return amountInput.charTyped(codePoint, modifiers);
+	}
 	/** 输入含运算符时在右侧显示求值结果 */
 	private void renderPreview(GuiGraphics gui) {
 		String text = amountInput.getValue();

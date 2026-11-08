@@ -13,11 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 
 import java.util.*;
-/**
- * 红石请求器填充逻辑，JEI 与 EMI 侧共用。
- */
-public final class RedstoneRequesterFill {
-	private RedstoneRequesterFill() {}
+public class RedstoneRequesterFill {
 	/** 从原版配方取每格代表物品，空位为 {@link ItemStack#EMPTY}，有原料但无候选项为 {@code null} */
 	public static List<ItemStack> representatives(Recipe<?> recipe) {
 		List<ItemStack> reps = new ArrayList<>();

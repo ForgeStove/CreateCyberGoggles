@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 @AutoTooltipRenderer
-public final class TableClothRenderer extends AbstractItemGridRenderer {
+public class TableClothRenderer extends AbstractItemGridRenderer {
 	@Override
 	public boolean supports(ItemStack stack) {
 		return CCG.config.tooltip.tableCloth && stack.getItem() instanceof TableClothBlockItem;

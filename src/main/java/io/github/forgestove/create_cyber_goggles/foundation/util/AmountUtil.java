@@ -3,7 +3,7 @@ import com.simibubi.create.content.logistics.BigItemStack;
 import io.github.forgestove.create_cyber_goggles.CCG;
 
 import java.util.Locale;
-public final class AmountUtil {
+public class AmountUtil {
 	private static final int MB_PER_BUCKET = 1000;
 	private static final int MB_PER_KILOBUCKET = MB_PER_BUCKET * 1000;
 	public static String formatItemCountIfEnabled(int count) {

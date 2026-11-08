@@ -22,7 +22,7 @@ import org.joml.Matrix4f;
 import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.compat.RedstoneRequesterFill.*;
-public final class RedstoneRequesterEmiHandler implements EmiRecipeHandler<RedstoneRequesterMenu> {
+public class RedstoneRequesterEmiHandler implements EmiRecipeHandler<RedstoneRequesterMenu> {
 	public static final RedstoneRequesterEmiHandler INSTANCE = new RedstoneRequesterEmiHandler();
 	/** 空位为 {@link ItemStack#EMPTY}，有原料但无候选项为 {@code null} */
 	private static List<ItemStack> toRepresentatives(EmiRecipe recipe) {

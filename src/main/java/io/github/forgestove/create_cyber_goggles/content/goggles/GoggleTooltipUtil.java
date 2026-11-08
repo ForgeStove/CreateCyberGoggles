@@ -42,7 +42,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.*;
 
 import static net.minecraft.ChatFormatting.*;
-public final class GoggleTooltipUtil {
+public class GoggleTooltipUtil {
 	public static void kinetic(List<Component> tooltip, @NotNull KineticBlockEntity be, float stress, float capacity) {
 		float speed = be.getTheoreticalSpeed();
 		LangBuilder su = CCGCreateLang.translate("generic.unit.stress");

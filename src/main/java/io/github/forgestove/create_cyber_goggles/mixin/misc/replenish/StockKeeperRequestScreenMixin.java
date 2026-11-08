@@ -35,22 +35,6 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 	public StockKeeperRequestScreenMixin(StockKeeperRequestMenu container, Inventory inv, Component title) {
 		super(container, inv, title);
 	}
-	@Inject(method = "init", at = @At("TAIL"))
-	private void ccg$addMultiplier(CallbackInfo ci) {
-		if (!CCG.config.misc.multiplyAllValues) return;
-		addRenderableWidget(MultiplyScreen.createButton(getGuiLeft() + 24, getGuiTop() + windowHeight - 26, this::ccg$multiplyAll));
-	}
-	/** 物品订单与合成订单都乘倍数，各自截断到库存/材料上限 */
-	@Unique
-	private void ccg$multiplyAll(double factor) {
-		StockKeeperRequestScreen thiz = thiz();
-		for (BigItemStack entry : thiz.itemsToOrder)
-			entry.count = MultiplyScreen.scale(entry.count, factor, 1, ccg$getAvailableMax(entry));
-		for (CraftableBigItemStack cbis : List.copyOf(thiz.recipesToOrder)) {
-			int target = MultiplyScreen.scale(cbis.count, factor, 0, ccg$getMaxCraftable(cbis));
-			if (target != cbis.count) thiz.requestCraftable(cbis, target - cbis.count);
-		}
-	}
 	@WrapOperation(
 		method = "mouseScrolled", at = @At(
 		value = "INVOKE",
@@ -71,6 +55,22 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 		// 当前恰好为 1 次配方的产物量时修正步进（产出>1 的配方首次请求后为 outputCount，而非 1）
 		if (cbis.count == cbis.getOutputCount(mc.level) && transfer > 1) transfer--;
 		original.call(thiz, cbis, transfer);
+	}
+	@Inject(method = "init", at = @At("TAIL"))
+	private void ccg$addMultiplier(CallbackInfo ci) {
+		if (!CCG.config.misc.multiplyAllValues) return;
+		addRenderableWidget(MultiplyScreen.createButton(getGuiLeft() + 24, getGuiTop() + windowHeight - 26, this::ccg$multiplyAll));
+	}
+	/** 物品订单与合成订单都乘倍数，各自截断到库存/材料上限 */
+	@Unique
+	private void ccg$multiplyAll(double factor) {
+		StockKeeperRequestScreen thiz = thiz();
+		for (BigItemStack entry : thiz.itemsToOrder)
+			entry.count = MultiplyScreen.scale(entry.count, factor, 1, ccg$getAvailableMax(entry));
+		for (CraftableBigItemStack cbis : List.copyOf(thiz.recipesToOrder)) {
+			int target = MultiplyScreen.scale(cbis.count, factor, 0, ccg$getMaxCraftable(cbis));
+			if (target != cbis.count) thiz.requestCraftable(cbis, target - cbis.count);
+		}
 	}
 	@WrapWithCondition(
 		method = "containerTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;closeContainer()V")

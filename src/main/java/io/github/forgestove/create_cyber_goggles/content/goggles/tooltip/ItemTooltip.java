@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.*;
-public final class ItemTooltip {
+public class ItemTooltip {
 	public final static List<TooltipRenderer> OVERLAY_RENDERERS = new ArrayList<>();
 	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final int PREVIEW_MIN_SIZE = 48;

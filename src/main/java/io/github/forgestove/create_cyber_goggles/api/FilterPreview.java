@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>仅客户端，注册应在客户端初始化阶段完成。</p>
  */
 @SuppressWarnings("unused")
-public final class FilterPreview {
+public class FilterPreview {
 	private static final Map<Item, FilterPreviewFactory> FACTORIES = new ConcurrentHashMap<>(Map.of(
 		AllItems.FILTER.get(),
 		(id, inv, stack) -> new ReadOnlyFilterScreen(FilterMenu.create(id, inv, stack), inv, stack.getHoverName()),

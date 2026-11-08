@@ -5,7 +5,7 @@ import io.github.forgestove.create_cyber_goggles.mixin.accessor.IconButtonAccess
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
-public final class FilterPreviewUtil {
+public class FilterPreviewUtil {
 	public static void lock(Screen screen) {
 		screen.setFocused(null);
 		for (GuiEventListener listener : screen.children()) {

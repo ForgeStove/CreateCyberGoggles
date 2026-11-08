@@ -13,11 +13,7 @@ import java.util.*;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.mc;
 @AutoTooltipRenderer
-public final class ToolboxRenderer extends AbstractItemGridRenderer {
-	@Override
-	public boolean supports(ItemStack stack) {
-		return CCG.config.tooltip.toolbox && AllItemTags.TOOLBOXES.matches(stack);
-	}
+public class ToolboxRenderer extends AbstractItemGridRenderer {
 	private static ItemStack readToolboxFilter(CompoundTag tag, RegistryAccess access, int compartment) {
 		if (!tag.contains("Compartments", 9)) return ItemStack.EMPTY;
 		ListTag compartmentsTag = tag.getList("Compartments", 10);
@@ -25,6 +21,10 @@ public final class ToolboxRenderer extends AbstractItemGridRenderer {
 		CompoundTag filterTag = compartmentsTag.getCompound(compartment);
 		if (filterTag.isEmpty() || !filterTag.contains("id", 8)) return ItemStack.EMPTY;
 		return ItemStack.parse(access, filterTag).orElse(ItemStack.EMPTY);
+	}
+	@Override
+	public boolean supports(ItemStack stack) {
+		return CCG.config.tooltip.toolbox && AllItemTags.TOOLBOXES.matches(stack);
 	}
 	@Override
 	public @Nullable OverlayData buildItemGrid(ItemStack stack) {

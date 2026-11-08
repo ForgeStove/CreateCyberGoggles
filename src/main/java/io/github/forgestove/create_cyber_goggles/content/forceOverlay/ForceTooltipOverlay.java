@@ -20,7 +20,7 @@ import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.
 /**
  * HUD 提示框，显示当前目标子层级的总质量和每个力组的净力大小。
  */
-public final class ForceTooltipOverlay {
+public class ForceTooltipOverlay {
 	// 缓存：仅在簇数据引用或质量变化时重建行，避免每帧分配
 	private static @Nullable Map<ResourceLocation, List<Cluster>> linesSource;
 	private static double linesMass = Double.NaN;

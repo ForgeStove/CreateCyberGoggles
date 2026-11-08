@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.*;
-public final class TipOverlay {
+public class TipOverlay {
 	public static List<MutableComponent> lastTip;
 	public static int hoverTicks;
 	public static int deltaX, deltaY;

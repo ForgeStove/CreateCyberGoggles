@@ -78,16 +78,16 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 		return super.mouseClicked(mouseX, mouseY, button);
 	}
 	@Override
-	public boolean mouseReleased(double mouseX, double mouseY, int button) {
-		if (!CCG.config.misc.quickRequestActions) return super.mouseReleased(mouseX, mouseY, button);
-		if (button == 0 && ccg$interactions.onRelease()) return true;
-		return super.mouseReleased(mouseX, mouseY, button);
-	}
-	@Override
 	public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
 		if (!CCG.config.misc.quickRequestActions) return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
 		if (button == 0 && ccg$interactions.onDrag(mouseX, mouseY)) return true;
 		return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+	}
+	@Override
+	public boolean mouseReleased(double mouseX, double mouseY, int button) {
+		if (!CCG.config.misc.quickRequestActions) return super.mouseReleased(mouseX, mouseY, button);
+		if (button == 0 && ccg$interactions.onRelease()) return true;
+		return super.mouseReleased(mouseX, mouseY, button);
 	}
 	/** 每帧更新撤销按钮可用状态并渲染悬空物品与源槽高亮 */
 	@Inject(method = "renderForeground", at = @At("TAIL"))

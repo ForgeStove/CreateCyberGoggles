@@ -16,7 +16,7 @@ import com.simibubi.create.content.schematics.cannon.SchematicannonBlockEntity;
 import io.github.forgestove.create_cyber_goggles.api.GoggleTooltip;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.getCCGRes;
-public final class CCGGoggleEntries {
+public class CCGGoggleEntries {
 	public static void register() {
 		GoggleTooltip.register(BlazeBurnerBlockEntity.class, getCCGRes("burner"), GoggleTooltipUtil::burner);
 		GoggleTooltip.register(RedstoneRequesterBlockEntity.class, getCCGRes("redstone_requester"), GoggleTooltipUtil::redstoneRequester);

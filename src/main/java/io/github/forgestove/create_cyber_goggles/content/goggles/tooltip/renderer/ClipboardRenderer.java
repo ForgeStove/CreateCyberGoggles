@@ -24,7 +24,7 @@ import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.mc;
 @AutoTooltipRenderer
-public final class ClipboardRenderer implements TooltipRenderer {
+public class ClipboardRenderer implements TooltipRenderer {
 	private static final float SCALE = 0.5F;
 	// 手持世界渲染中物品图标：NONE context 模型 1 方块 = 16px
 	private static final float ICON_SCALE = 10F;
@@ -143,6 +143,11 @@ public final class ClipboardRenderer implements TooltipRenderer {
 		return CCG.config.tooltip.clipboard && stack.getItem() instanceof ClipboardBlockItem;
 	}
 	@Override
+	public boolean canRender(ItemStack stack) {
+		if (pages == null) begin(stack);
+		return !pages.isEmpty() && !pages.get(currentPage).isEmpty();
+	}
+	@Override
 	public void begin(ItemStack stack) {
 		ClipboardContent content = stack.getOrDefault(AllDataComponents.CLIPBOARD_CONTENT, ClipboardContent.EMPTY);
 		pages = ClipboardEntry.readAll(content);
@@ -151,11 +156,6 @@ public final class ClipboardRenderer implements TooltipRenderer {
 	@Override
 	public void end() {
 		pages = null;
-	}
-	@Override
-	public boolean canRender(ItemStack stack) {
-		if (pages == null) begin(stack);
-		return !pages.isEmpty() && !pages.get(currentPage).isEmpty();
 	}
 	@Override
 	public int width(ItemStack stack) {

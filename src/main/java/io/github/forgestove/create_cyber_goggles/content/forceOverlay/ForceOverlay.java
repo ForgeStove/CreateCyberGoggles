@@ -27,7 +27,7 @@ import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.
  * 每个游戏刻执行射线投射以找到目标子层级，定期通过 {@link RequestDiagramDataPacket}
  * 从服务器请求力数据，并缓存接收到的聚类供渲染使用。
  */
-public final class ForceOverlay {
+public class ForceOverlay {
 	private static @Nullable UUID targetSubLevelId;
 	private static @Nullable Map<ResourceLocation, List<Cluster>> smoothedClusters;
 	private static double lastMass;

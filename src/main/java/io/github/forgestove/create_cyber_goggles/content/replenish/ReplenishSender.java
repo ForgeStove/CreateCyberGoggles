@@ -1,5 +1,4 @@
 package io.github.forgestove.create_cyber_goggles.content.replenish;
-
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelScreen;
@@ -12,10 +11,9 @@ import net.minecraft.world.item.crafting.CraftingRecipe;
 import org.slf4j.Logger;
 
 import java.util.*;
-
 class ReplenishSender {
 	private static final Logger LOGGER = LogUtils.getLogger();
-	static void sendAll(CCGReplenishTree host, List<ReplenishGroup> groups, List<String> addresses) {
+	static void sendAll(ReplenishTree host, List<ReplenishGroup> groups, List<String> addresses) {
 		Map<Item, Integer> remaining = new HashMap<>();
 		InventorySummary summary = host.ccg$summary();
 		for (var i = 0; i < groups.size(); i++) {

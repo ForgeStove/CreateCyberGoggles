@@ -69,6 +69,20 @@ public class MultiplyScreen extends AbstractSimiScreen {
 		addRenderableWidgets(confirmButton, cancelButton, factorInput);
 	}
 	@Override
+	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+		if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+			onClose();
+			mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1));
+			return super.keyReleased(keyCode, scanCode, modifiers);
+		}
+		if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+			apply();
+			mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1));
+			return super.keyReleased(keyCode, scanCode, modifiers);
+		}
+		return factorInput.keyPressed(keyCode, scanCode, modifiers);
+	}
+	@Override
 	protected void renderWindowBackground(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
 		PoseStack pose = gui.pose();
 		pose.pushPose();
@@ -85,34 +99,6 @@ public class MultiplyScreen extends AbstractSimiScreen {
 		pose.popPose();
 	}
 	@Override
-	public void onClose() {
-		removed();
-		mc.screen = parentScreen;
-	}
-	@Override
-	public void resize(@NotNull Minecraft minecraft, int width, int height) {
-		parentScreen.resize(minecraft, width, height);
-		super.resize(minecraft, width, height);
-	}
-	@Override
-	public boolean charTyped(char codePoint, int modifiers) {
-		return factorInput.charTyped(codePoint, modifiers);
-	}
-	@Override
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
-			onClose();
-			mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1));
-			return super.keyReleased(keyCode, scanCode, modifiers);
-		}
-		if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
-			apply();
-			mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1));
-			return super.keyReleased(keyCode, scanCode, modifiers);
-		}
-		return factorInput.keyPressed(keyCode, scanCode, modifiers);
-	}
-	@Override
 	protected void renderWindow(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
 		PoseStack pose = gui.pose();
 		pose.pushPose();
@@ -123,7 +109,21 @@ public class MultiplyScreen extends AbstractSimiScreen {
 		pose.popPose();
 	}
 	@Override
+	public void onClose() {
+		removed();
+		mc.screen = parentScreen;
+	}
+	@Override
 	protected void renderMenuBackground(@NotNull GuiGraphics gui, int x, int y, int width, int height) {}
+	@Override
+	public void resize(@NotNull Minecraft minecraft, int width, int height) {
+		parentScreen.resize(minecraft, width, height);
+		super.resize(minecraft, width, height);
+	}
+	@Override
+	public boolean charTyped(char codePoint, int modifiers) {
+		return factorInput.charTyped(codePoint, modifiers);
+	}
 	protected void apply() {
 		String text = factorInput.getValue();
 		Double factor = ExpressionParser.evaluateDouble(text);

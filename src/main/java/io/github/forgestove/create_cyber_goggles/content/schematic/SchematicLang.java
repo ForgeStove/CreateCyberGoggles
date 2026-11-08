@@ -4,7 +4,7 @@ import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.foundation.lang.CCGLang;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.MutableComponent;
-public final class SchematicLang {
+public class SchematicLang {
 	public static final int DARK_BLUE = 0x528FDE;
 	public static final int LIGHT_BLUE = 0x94B5DD;
 	public static final int LIGHT_GREEN = 0x8DD58F;

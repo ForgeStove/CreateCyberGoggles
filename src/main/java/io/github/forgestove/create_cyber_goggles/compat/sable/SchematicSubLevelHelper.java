@@ -24,7 +24,7 @@ import java.util.*;
  * （{@code SchematicHandler.setupRenderer}）把子维度展开到渲染层级；本模组的离屏渲染与 3D 预览各自新建
  * {@link SchematicLevel}，须按同样的规则展开，否则子维度空白。
  */
-public final class SchematicSubLevelHelper {
+public class SchematicSubLevelHelper {
 	/**
 	 * 把模板中的子维度展开成渲染层级并挂到主层级上。
 	 * <p>

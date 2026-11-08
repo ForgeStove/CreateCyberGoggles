@@ -15,28 +15,17 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.mc;
-public final class ClientFluidListTooltipComponent implements ClientTooltipComponent {
+public class ClientFluidListTooltipComponent implements ClientTooltipComponent {
 	private final FluidListTooltipComponent c;
 	private final int columns;
 	private final int rows;
-	public static void register(@NotNull RegisterClientTooltipComponentFactoriesEvent event) {
-		event.register(FluidListTooltipComponent.class, ClientFluidListTooltipComponent::new);
-	}
 	public ClientFluidListTooltipComponent(FluidListTooltipComponent c) {
 		this.c = c;
 		columns = Math.min(c.fluids.size(), c.maxColumns);
 		rows = (c.fluids.size() + c.maxColumns - 1) / c.maxColumns;
 	}
-	@Override
-	public int getHeight() {
-		return Math.max(1, rows) * SlotUtil.SIZE + 4;
-	}
-	@Override
-	public int getWidth(@NotNull Font font) {
-		return columns * SlotUtil.SIZE + indentPixels(font);
-	}
-	private int indentPixels(@NotNull Font font) {
-		return c.indent * font.width(" ");
+	public static void register(@NotNull RegisterClientTooltipComponentFactoriesEvent event) {
+		event.register(FluidListTooltipComponent.class, ClientFluidListTooltipComponent::new);
 	}
 	public static void renderFluidBar(@NotNull GuiGraphics gui, @NotNull FluidStack stack, int x, int y, int width, int height) {
 		gui.blitSprite(SlotUtil.SLOT, x, y, 0, SlotUtil.SIZE, SlotUtil.SIZE + 2);
@@ -65,6 +54,14 @@ public final class ClientFluidListTooltipComponent implements ClientTooltipCompo
 		}
 	}
 	@Override
+	public int getHeight() {
+		return Math.max(1, rows) * SlotUtil.SIZE + 4;
+	}
+	@Override
+	public int getWidth(@NotNull Font font) {
+		return columns * SlotUtil.SIZE + indentPixels(font);
+	}
+	@Override
 	public void renderImage(@NotNull Font font, int x, int y, @NotNull GuiGraphics gui) {
 		for (var i = 0; i < c.fluids.size(); i++) {
 			FluidStack stack = c.fluids.get(i);
@@ -76,6 +73,9 @@ public final class ClientFluidListTooltipComponent implements ClientTooltipCompo
 			renderFluidBar(gui, stack, slotX, slotY, SlotUtil.SIZE, SlotUtil.SIZE);
 			renderFluidCount(gui, font, stack, slotX, slotY);
 		}
+	}
+	private int indentPixels(@NotNull Font font) {
+		return c.indent * font.width(" ");
 	}
 	public record FluidListTooltipComponent(List<FluidStack> fluids, int indent, int maxColumns) implements TooltipComponent {}
 }

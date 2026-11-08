@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.mc;
 @AutoTooltipRenderer
-public final class LinkedControllerRenderer extends AbstractItemGridRenderer {
+public class LinkedControllerRenderer extends AbstractItemGridRenderer {
 	private static final ResourceLocation CONTROLLER_BG = CCGMods.create.rl("textures/gui/curiosities_2.png");
 	private static final int TEXTURE_SIZE = 256;
 	/** 面板裁剪区域：左上/右下两个点 */

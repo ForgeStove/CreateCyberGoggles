@@ -6,7 +6,7 @@ import io.github.forgestove.flexconfig.api.annotation.*;
 import java.awt.Point;
 import java.util.*;
 @Config(CCG.ID)
-public final class CCGConfig {
+public class CCGConfig {
 	@Category public Goggles goggles = new Goggles();
 	@Category public Tooltip tooltip = new Tooltip();
 	@Category public Overlay overlay = new Overlay();

@@ -23,7 +23,7 @@ import java.util.function.*;
  * </p>
  */
 @SuppressWarnings("unused")
-public final class GoggleTooltip {
+public class GoggleTooltip {
 	/** 占位条目 id：标记目标类型原生内容的执行位置。 */
 	public static final ResourceLocation NATIVE = CCGMods.create.rl("native");
 	private static final GoggleTooltipRegistry<Context> REGISTRY = new GoggleTooltipRegistry<>(

@@ -12,15 +12,15 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
-public final class ClientItemEntryTooltipComponent implements ClientTooltipComponent {
+public class ClientItemEntryTooltipComponent implements ClientTooltipComponent {
 	private final ItemEntryTooltipComponent c;
 	private final Component label;
-	public static void register(@NotNull RegisterClientTooltipComponentFactoriesEvent event) {
-		event.register(ItemEntryTooltipComponent.class, ClientItemEntryTooltipComponent::new);
-	}
 	public ClientItemEntryTooltipComponent(ItemEntryTooltipComponent c) {
 		this.c = c;
 		label = c.label.copy().withStyle(c.stack.getRarity().getStyleModifier().apply(c.label.getStyle()));
+	}
+	public static void register(@NotNull RegisterClientTooltipComponentFactoriesEvent event) {
+		event.register(ItemEntryTooltipComponent.class, ClientItemEntryTooltipComponent::new);
 	}
 	@Override
 	public int getHeight() {
@@ -29,9 +29,6 @@ public final class ClientItemEntryTooltipComponent implements ClientTooltipCompo
 	@Override
 	public int getWidth(@NotNull Font font) {
 		return indentPixels(font) + SlotUtil.SIZE_SLIM + font.width(label);
-	}
-	private int indentPixels(@NotNull Font font) {
-		return c.indent * font.width(" ");
 	}
 	@Override
 	public void renderText(@NotNull Font font, int x, int y, @NotNull Matrix4f matrix, @NotNull BufferSource source) {
@@ -50,6 +47,9 @@ public final class ClientItemEntryTooltipComponent implements ClientTooltipCompo
 		int count = c.stack.getCount();
 		gui.renderItemDecorations(font, c.stack, 0, 0, count > 1 ? AmountUtil.formatItemCountIfEnabled(count) : null);
 		pose.popPose();
+	}
+	private int indentPixels(@NotNull Font font) {
+		return c.indent * font.width(" ");
 	}
 	public record ItemEntryTooltipComponent(ItemStack stack, int indent, Component label) implements TooltipComponent {}
 }

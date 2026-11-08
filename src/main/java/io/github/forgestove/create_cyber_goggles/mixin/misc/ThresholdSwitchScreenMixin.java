@@ -23,6 +23,11 @@ public abstract class ThresholdSwitchScreenMixin extends AbstractSimiScreen {
 	@Shadow private ScrollInput offBelow;
 	@Shadow private ScrollInput onAbove;
 	@Shadow private ThresholdSwitchBlockEntity blockEntity;
+	@Unique
+	private static int ccg$scaleLevel(int value, double factor, int min, int max, int step) {
+		int scaled = MultiplyScreen.scale(value, factor, min, max);
+		return Mth.clamp(Math.round((float) scaled / step) * step, min, max);
+	}
 	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
 	private void openPopup(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
 		if (button != InputConstants.MOUSE_BUTTON_MIDDLE || !CCG.config.misc.quickRequestActions || !CCGKey.stockRequestSetter.isDown())
@@ -40,11 +45,6 @@ public abstract class ThresholdSwitchScreenMixin extends AbstractSimiScreen {
 			return true;
 		}
 		return false;
-	}
-	@Unique
-	private static int ccg$scaleLevel(int value, double factor, int min, int max, int step) {
-		int scaled = MultiplyScreen.scale(value, factor, min, max);
-		return Mth.clamp(Math.round((float) scaled / step) * step, min, max);
 	}
 	@Shadow
 	protected abstract int getValueStep();

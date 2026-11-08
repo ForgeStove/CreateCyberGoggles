@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 @AutoTooltipRenderer
-public final class PackageItemRenderer extends AbstractItemGridRenderer {
+public class PackageItemRenderer extends AbstractItemGridRenderer {
 	@Override
 	public boolean supports(ItemStack stack) {
 		return CCG.config.tooltip.packageItem && stack.getItem() instanceof PackageItem && stack.has(AllDataComponents.PACKAGE_CONTENTS);

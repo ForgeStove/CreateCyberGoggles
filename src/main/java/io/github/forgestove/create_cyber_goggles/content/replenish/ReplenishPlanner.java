@@ -1,10 +1,10 @@
 package io.github.forgestove.create_cyber_goggles.content.replenish;
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.AllBlocks;
-import io.github.forgestove.create_cyber_goggles.CCG;
 import com.simibubi.create.content.equipment.clipboard.ClipboardEntry;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
+import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.content.replenish.ReplenishGroup.*;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;

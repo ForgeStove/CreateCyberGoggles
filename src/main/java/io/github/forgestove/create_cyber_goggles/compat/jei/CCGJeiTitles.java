@@ -15,7 +15,7 @@ import java.util.*;
  * <p>JEI 是软依赖：本类只在 {@link #get} 里确认 JEI 已加载后才会走到引用 JEI 类的 {@link #collectTitles()}，
  * 未安装时整个类不会触发 JEI 类加载，调用方拿到 null 后自行回退。</p>
  */
-public final class CCGJeiTitles {
+public class CCGJeiTitles {
 	private static final Map<String, Component> TITLES = new HashMap<>();
 	private static boolean built;
 	/** 按配方类型 id 取 JEI 分类标题；JEI 未安装或查不到时返回 null */

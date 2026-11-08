@@ -20,7 +20,7 @@ import org.joml.Vector3d;
 import java.util.UUID;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.mc;
-public final class NavigationDistanceHelper {
+public class NavigationDistanceHelper {
 	public static @Nullable Component line(ItemStack stack) {
 		ClientLevel level = mc.level;
 		LocalPlayer player = mc.player;

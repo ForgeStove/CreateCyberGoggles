@@ -13,7 +13,7 @@ import net.minecraft.world.level.saveddata.maps.*;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.*;
 @AutoTooltipRenderer
-public final class MapTooltipRenderer implements TooltipRenderer {
+public class MapTooltipRenderer implements TooltipRenderer {
 	private static final int PADDING = 4;
 	private static final int MAP_SIZE = 128;
 	private static final int PREVIEW_SIZE = 64;

@@ -12,7 +12,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static io.github.forgestove.create_cyber_goggles.content.schematic.SchematicRenderSettings.*;
 import static net.minecraft.commands.Commands.*;
-public final class SchematicCommands {
+public class SchematicCommands {
 	public static void register(RegisterClientCommandsEvent event) {
 		event.getDispatcher()
 			.register(literal("ccg").then(literal("schematic").then(literal("export").then(argument(

@@ -18,26 +18,15 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.*;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.mc;
-public final class ClientFluidEntryTooltipComponent implements ClientTooltipComponent {
+public class ClientFluidEntryTooltipComponent implements ClientTooltipComponent {
 	private static final int H_PADDING = 4;
 	private static final int BORDER_COLOR = 0xFF777777;
 	private final FluidEntryTooltipComponent c;
-	public static void register(@NotNull RegisterClientTooltipComponentFactoriesEvent event) {
-		event.register(FluidEntryTooltipComponent.class, ClientFluidEntryTooltipComponent::new);
-	}
 	public ClientFluidEntryTooltipComponent(FluidEntryTooltipComponent c) {
 		this.c = c;
 	}
-	@Override
-	public int getHeight() {
-		return SlotUtil.SIZE_SLIM + 2;
-	}
-	@Override
-	public int getWidth(@NotNull Font font) {
-		return indentPixels(font) + barWidth(font);
-	}
-	private int indentPixels(@NotNull Font font) {
-		return c.indent * font.width(" ");
+	public static void register(@NotNull RegisterClientTooltipComponentFactoriesEvent event) {
+		event.register(FluidEntryTooltipComponent.class, ClientFluidEntryTooltipComponent::new);
 	}
 	public static int preferredBarWidth(@NotNull Font font, @NotNull FluidStack fluid, int capacityMb, @Nullable Component label) {
 		Component labelComp = buildLabel(fluid, capacityMb, Screen.hasShiftDown(), label);
@@ -95,9 +84,13 @@ public final class ClientFluidEntryTooltipComponent implements ClientTooltipComp
 				gui.blit(x + dx, y + dy, 0, 16, 16, sprite, r, g, b, a);
 		gui.disableScissor();
 	}
-	private int barWidth(@NotNull Font font) {
-		int preferred = preferredBarWidth(font, c.fluid, c.capacityMb, c.label);
-		return Math.max(preferred, c.sharedBarWidth);
+	@Override
+	public int getHeight() {
+		return SlotUtil.SIZE_SLIM + 2;
+	}
+	@Override
+	public int getWidth(@NotNull Font font) {
+		return indentPixels(font) + barWidth(font);
 	}
 	@Override
 	public void renderImage(@NotNull Font font, int x, int y, @NotNull GuiGraphics gui) {
@@ -108,6 +101,13 @@ public final class ClientFluidEntryTooltipComponent implements ClientTooltipComp
 		int textX = barX + H_PADDING;
 		int textY = y + Mth.floor((SlotUtil.SIZE_SLIM - font.lineHeight) / 2F) + 1;
 		gui.drawString(font, label, textX, textY, 0xFFFFFFFF, true);
+	}
+	private int indentPixels(@NotNull Font font) {
+		return c.indent * font.width(" ");
+	}
+	private int barWidth(@NotNull Font font) {
+		int preferred = preferredBarWidth(font, c.fluid, c.capacityMb, c.label);
+		return Math.max(preferred, c.sharedBarWidth);
 	}
 	public record FluidEntryTooltipComponent(FluidStack fluid, int indent, int capacityMb, int sharedBarWidth, @Nullable Component label)
 		implements TooltipComponent {}

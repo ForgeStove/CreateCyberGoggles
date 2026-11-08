@@ -20,6 +20,9 @@ public class SchematicTablePreviewController {
 	public SchematicTablePreviewController(IntSupplier schematicIndex) {
 		this.schematicIndex = schematicIndex;
 	}
+	private static int clampToMargin(int value, int max) {
+		return max < SCREEN_MARGIN ? SCREEN_MARGIN : Mth.clamp(value, SCREEN_MARGIN, max);
+	}
 	public SchematicPreviewPanel panel() {
 		return panel;
 	}
@@ -69,8 +72,5 @@ public class SchematicTablePreviewController {
 		boolean leftDown = GLFW.glfwGetMouseButton(mc.getWindow().getWindow(), GLFW.GLFW_MOUSE_BUTTON_LEFT) == GLFW.GLFW_PRESS;
 		panel.updateMouse(mouseX, mouseY, leftDown);
 		panel.render(graphics, area.getX(), area.getY(), area.getWidth(), area.getHeight());
-	}
-	private static int clampToMargin(int value, int max) {
-		return max < SCREEN_MARGIN ? SCREEN_MARGIN : Mth.clamp(value, SCREEN_MARGIN, max);
 	}
 }

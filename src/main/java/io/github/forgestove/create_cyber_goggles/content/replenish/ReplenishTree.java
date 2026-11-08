@@ -11,7 +11,7 @@ import java.util.List;
  * <p>
  * 实现方是各宿主屏幕的 mixin；mixin 不在屏幕继承链上，因此通过接口回调。
  */
-public interface CCGReplenishTree {
+public interface ReplenishTree {
 	List<ReplenishGroup> ccg$buildGroups();
 	/** {@code null} 恢复自动选优。 */
 	void ccg$setRecipeChoice(Item item, ResourceLocation recipeId);

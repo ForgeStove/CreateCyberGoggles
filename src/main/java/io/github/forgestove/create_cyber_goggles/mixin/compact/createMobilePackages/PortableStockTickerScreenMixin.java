@@ -23,17 +23,11 @@ import ru.zznty.create_factory_abstractions.generic.support.*;
 import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.mc;
-/**
- * 给 CMP 的便携仓储管理员（{@link PortableStockTickerScreen}）补两个功能，都只在主手（其次副手）拿着 Create 剪贴板时启用：
- * 蓝图模式（等库存到位后按 {@code requestSchematicList()} 的语义照单填单，不递归配方）与自动补齐缺货按钮
- * （受 {@code misc.autoReplenishStock} 控制，递归到原材料，求解交给 {@link ReplenishPlanner}）。
- */
 @Pseudo
 @Mixin(PortableStockTickerScreen.class)
 public abstract class PortableStockTickerScreenMixin extends AbstractSimiContainerScreen<PortableStockTickerMenu>
 	implements Self<PortableStockTickerScreen>, ReplenishTree {
 	@Shadow public List<BigGenericStack> itemsToOrder;
-	/** 蓝图模式待填单；只填一次，之后不覆盖玩家手改的订单。 */
 	@Unique private boolean ccg$schematicPending;
 	public PortableStockTickerScreenMixin(PortableStockTickerMenu menu, Inventory playerInventory, Component title) {
 		super(menu, playerInventory, title);
@@ -72,7 +66,6 @@ public abstract class PortableStockTickerScreenMixin extends AbstractSimiContain
 	public void ccg$sendOrder(PackageOrderWithCrafts order, String address) {
 		CatnipServices.NETWORK.sendToServer(new SendPackage(GenericOrder.of(order), address));
 	}
-	/** 蓝图模式：等第一份非空库存到位，把清单里仓库有的物品按 min(清单数量, 库存) 铺进订单列表，只做一次。 */
 	@Inject(method = "containerTick", at = @At("TAIL"))
 	private void applySchematicOrder(CallbackInfo ci) {
 		if (!ccg$schematicPending) return;

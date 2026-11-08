@@ -30,17 +30,20 @@ public class FluidFlowSimulator {
 		return CACHE.computeIfAbsent(behaviour, ignored -> simulate(level, behaviour));
 	}
 	private static Map<Direction, Integer> simulate(Level level, FluidTransportBehaviour start) {
-		Map<BlockFace, BlockFace> inboundSources = new HashMap<>();
+		Map<BlockFace, Set<BlockFace>> inboundSources = new HashMap<>();
+		Set<BlockFace> sources = new HashSet<>();
 		for (Direction direction : Direction.values()) {
 			Flow flow = start.getFlow(direction);
 			if (flow == null || !flow.inbound) continue;
 			var face = new BlockFace(start.getPos(), direction);
-			BlockFace source = findSource(level, face);
-			if (source != null) inboundSources.put(face, source);
+			Set<BlockFace> found = findSources(level, face);
+			if (found.isEmpty()) continue;
+			inboundSources.put(face, found);
+			sources.addAll(found);
 		}
 		Map<Direction, Integer> result = new EnumMap<>(Direction.class);
 		var resolved = false;
-		for (var source : new HashSet<>(inboundSources.values())) {
+		for (var source : sources) {
 			Map<Direction, Integer> partial = simulateNetwork(level, start, source, inboundSources);
 			if (partial == null) continue;
 			resolved = true;
@@ -53,13 +56,13 @@ public class FluidFlowSimulator {
 		Level level,
 		FluidTransportBehaviour start,
 		BlockFace source,
-		Map<BlockFace, BlockFace> inboundSources
+		Map<BlockFace, Set<BlockFace>> inboundSources
 	) {
 		Set<BlockPos> pipes = new HashSet<>();
 		List<BlockFace> targets = collectTargets(level, source, pipes);
 		if (!pipes.contains(start.getPos())) return null;
 		if (targets.isEmpty()) return zeroes(start);
-		Map<BlockFace, Integer> allotted = allocate(level, source, targets, true);
+		Map<BlockFace, Integer> allotted = allocate(level, source, targets, new HashSet<>());
 		if (allotted == null) return null;
 		boolean onPath = pathPipes(level, targets).contains(start.getPos());
 		Map<Direction, Integer> outbound = new EnumMap<>(Direction.class);
@@ -82,7 +85,7 @@ public class FluidFlowSimulator {
 			Integer value = outbound.get(direction);
 			if (value == null) {
 				var face = new BlockFace(start.getPos(), direction);
-				value = onPath && source.equals(inboundSources.get(face)) ? downstreamTotal : 0;
+				value = onPath && inboundSources.getOrDefault(face, Set.of()).contains(source) ? downstreamTotal : 0;
 			}
 			result.put(direction, value);
 		}
@@ -109,7 +112,7 @@ public class FluidFlowSimulator {
 		return result;
 	}
 	@Nullable
-	private static Map<BlockFace, Integer> allocate(Level level, BlockFace source, List<BlockFace> targets, boolean compensate) {
+	private static Map<BlockFace, Integer> allocate(Level level, BlockFace source, List<BlockFace> targets, Set<BlockFace> visiting) {
 		Map<BlockFace, IFluidHandler> handlers = new HashMap<>();
 		for (BlockFace face : targets) {
 			IFluidHandler handler = handler(level, face);
@@ -123,37 +126,67 @@ public class FluidFlowSimulator {
 		if (connection == null || flow == null || !flow.inbound || !flow.complete) return null;
 		IFluidHandler sourceHandler = handler(level, source);
 		if (sourceHandler == null) return null;
-		Map<BlockFace, Integer> released = new HashMap<>();
-		if (compensate) for (BlockFace face : handlers.keySet()) released.put(face, released(level, face, source));
-		var speed = (int) Math.max(1, connection.getPressure().get(true) / 2f);
-		FluidStack transfer = drain(sourceHandler, speed, flow.fluid);
-		Map<BlockFace, Integer> allotted = new HashMap<>();
-		if (transfer.isEmpty()) return allotted;
-		Map<IFluidHandler, Integer> accepted = new IdentityHashMap<>();
-		List<BlockFace> available = new ArrayList<>();
-		for (BlockFace face : targets)
-			if (handlers.containsKey(face)) available.add(face);
-		while (!available.isEmpty() && !transfer.isEmpty()) {
-			int divided = transfer.getAmount() / available.size();
-			int remainder = transfer.getAmount() % available.size();
-			for (Iterator<BlockFace> iterator = available.iterator(); iterator.hasNext(); ) {
-				BlockFace face = iterator.next();
-				if (transfer.isEmpty()) break;
-				int share = divided + (remainder-- > 0 ? 1 : 0);
-				IFluidHandler target = handlers.get(face);
-				int request = share + accepted.getOrDefault(target, 0);
-				FluidStack stack = transfer.copy();
-				stack.setAmount(request);
-				int fill = Math.clamp(target.fill(stack, FluidAction.SIMULATE), 0, request);
-				accepted.put(target, fill);
-				int gained = fill - (request - share) + released.getOrDefault(face, 0);
-				gained = Math.clamp(gained, 0, share);
-				if (gained > 0) allotted.merge(face, gained, Integer::sum);
-				transfer.setAmount(Math.max(0, transfer.getAmount() - gained));
-				if (fill < request) iterator.remove();
+		if (!visiting.add(source)) return null;
+		try {
+			var speed = (int) Math.max(1, connection.getPressure().get(true) / 2f);
+			int supply = supply(level, source, sourceHandler, flow.fluid, speed, visiting);
+			if (supply <= 0) return null;
+			FluidStack transfer = FluidHelper.copyStackWithAmount(flow.fluid, supply);
+			Map<BlockFace, Integer> allotted = new HashMap<>();
+			Map<IFluidHandler, Integer> accepted = new IdentityHashMap<>();
+			List<BlockFace> available = new ArrayList<>();
+			for (BlockFace face : targets)
+				if (handlers.containsKey(face)) available.add(face);
+			while (!available.isEmpty() && !transfer.isEmpty()) {
+				int divided = transfer.getAmount() / available.size();
+				int remainder = transfer.getAmount() % available.size();
+				for (Iterator<BlockFace> iterator = available.iterator(); iterator.hasNext(); ) {
+					BlockFace face = iterator.next();
+					if (transfer.isEmpty()) break;
+					int share = divided + (remainder-- > 0 ? 1 : 0);
+					IFluidHandler target = handlers.get(face);
+					int request = share + accepted.getOrDefault(target, 0);
+					FluidStack stack = transfer.copy();
+					stack.setAmount(request);
+					int fill = Math.clamp(target.fill(stack, FluidAction.SIMULATE), 0, request);
+					accepted.put(target, fill);
+					int gained = Math.clamp(fill - (request - share), 0, share);
+					if (gained > 0) allotted.merge(face, gained, Integer::sum);
+					transfer.setAmount(Math.max(0, transfer.getAmount() - gained));
+					if (fill < request) iterator.remove();
+				}
+			}
+			return allotted;
+		} finally {
+			visiting.remove(source);
+		}
+	}
+	private static int supply(Level level, BlockFace source, IFluidHandler handler, FluidStack fluid, int speed, Set<BlockFace> visiting) {
+		int amount = drain(handler, speed, fluid).getAmount();
+		if (amount >= speed) return speed;
+		BlockPos container = source.getConnectedPos();
+		for (Direction direction : Direction.values()) {
+			FluidTransportBehaviour pipe = behaviour(level, container.relative(direction));
+			if (pipe == null) continue;
+			Direction towardContainer = direction.getOpposite();
+			var face = new BlockFace(pipe.getPos(), towardContainer);
+			if (face.equals(source)) continue;
+			Flow out = pipe.getFlow(towardContainer);
+			if (out == null || out.inbound || !out.complete) continue;
+			if (!isEndpoint(level, face)) continue;
+			for (Direction upstreamSide : Direction.values()) {
+				Flow in = pipe.getFlow(upstreamSide);
+				if (in == null || !in.inbound) continue;
+				for (BlockFace src : findSources(level, new BlockFace(pipe.getPos(), upstreamSide))) {
+					List<BlockFace> targets = collectTargets(level, src, new HashSet<>());
+					if (!targets.contains(face)) continue;
+					Map<BlockFace, Integer> allotted = allocate(level, src, targets, visiting);
+					if (allotted != null) amount += allotted.getOrDefault(face, 0);
+					if (amount >= speed) return speed;
+				}
 			}
 		}
-		return allotted;
+		return amount;
 	}
 	public static int[] tankThroughput(Level level, FluidTankBlockEntity controller) {
 		long tick = level.getGameTime();
@@ -172,6 +205,7 @@ public class FluidFlowSimulator {
 		for (var x = 0; x < width; x++)
 			for (var y = 0; y < height; y++)
 				for (var z = 0; z < width; z++) {
+					if (x != 0 && x != width - 1 && z != 0 && z != width - 1 && y != 0 && y != height - 1) continue;
 					BlockPos pos = origin.offset(x, y, z);
 					for (Direction direction : Direction.values()) {
 						FluidTransportBehaviour pipe = behaviour(level, pos.relative(direction));
@@ -187,37 +221,18 @@ public class FluidFlowSimulator {
 				}
 		return new int[]{input, output};
 	}
-	private static int released(Level level, BlockFace target, BlockFace source) {
-		BlockPos container = target.getConnectedPos();
-		if (!FluidPropagator.hasFluidCapability(level, container, target.getOppositeFace())) return 0;
-		var total = 0;
-		for (Direction direction : Direction.values()) {
-			BlockPos pipePos = container.relative(direction);
-			FluidTransportBehaviour pipe = behaviour(level, pipePos);
-			if (pipe == null) continue;
-			Direction towardContainer = direction.getOpposite();
-			var face = new BlockFace(pipePos, towardContainer);
-			if (face.getPos().equals(source.getPos()) && face.getFace() == source.getFace()) continue;
-			Flow flow = pipe.getFlow(towardContainer);
-			if (flow == null || !flow.inbound || !flow.complete) continue;
-			if (!isEndpoint(level, face)) continue;
-			Set<BlockPos> pipes = new HashSet<>();
-			List<BlockFace> targets = collectTargets(level, face, pipes);
-			if (targets.isEmpty()) continue;
-			Map<BlockFace, Integer> allocated = allocate(level, face, targets, false);
-			if (allocated != null) total += allocated.values().stream().mapToInt(Integer::intValue).sum();
-		}
-		return total;
-	}
-	@Nullable
-	private static BlockFace findSource(Level level, BlockFace face) {
+	private static Set<BlockFace> findSources(Level level, BlockFace face) {
+		Set<BlockFace> sources = new HashSet<>();
 		Deque<BlockFace> queue = new ArrayDeque<>();
-		Set<BlockPos> visited = new HashSet<>();
+		Set<BlockFace> visited = new HashSet<>();
 		queue.add(face);
 		while (!queue.isEmpty()) {
 			BlockFace current = queue.poll();
-			if (isEndpoint(level, current)) return current;
-			if (!visited.add(current.getConnectedPos())) continue;
+			if (isEndpoint(level, current)) {
+				sources.add(current);
+				continue;
+			}
+			if (!visited.add(current)) continue;
 			FluidTransportBehaviour next = behaviour(level, current.getConnectedPos());
 			if (next == null) continue;
 			for (Direction direction : Direction.values()) {
@@ -226,10 +241,10 @@ public class FluidFlowSimulator {
 				queue.add(new BlockFace(next.getPos(), direction));
 			}
 		}
-		return null;
+		return sources;
 	}
 	private static List<BlockFace> collectTargets(Level level, BlockFace source, Set<BlockPos> pipes) {
-		List<BlockFace> targets = new ArrayList<>();
+		Set<BlockFace> targets = new LinkedHashSet<>();
 		Deque<BlockFace> queue = new ArrayDeque<>();
 		queue.add(source);
 		while (!queue.isEmpty()) {
@@ -248,7 +263,7 @@ public class FluidFlowSimulator {
 				else queue.add(new BlockFace(face.getConnectedPos(), direction.getOpposite()));
 			}
 		}
-		return targets;
+		return new ArrayList<>(targets);
 	}
 	private static boolean isEndpoint(Level level, BlockFace face) {
 		return FluidPropagator.isOpenEnd(level, face.getPos(), face.getFace()) || FluidPropagator.hasFluidCapability(

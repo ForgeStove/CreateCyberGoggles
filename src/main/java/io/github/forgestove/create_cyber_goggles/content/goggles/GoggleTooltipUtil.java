@@ -362,13 +362,7 @@ public class GoggleTooltipUtil {
 			if (flow == null || connection == null) line.text("—", DARK_GRAY).space().number(0, DARK_GRAY).space();
 			else {
 				Map<Direction, Integer> simulated = FluidFlowSimulator.rates(behaviour);
-				Integer value = simulated.get(direction);
-				int rate;
-				if (value != null) rate = value;
-				else {
-					float pressure = connection.getPressure().get(flow.inbound);
-					rate = pressure <= 0 ? 0 : Math.max(1, (int) (pressure / 2));
-				}
+				int rate = simulated.getOrDefault(direction, 0);
 				int color = Outliner.getColor(!flow.inbound);
 				if (flow.inbound) line.add(CCGLang.translateDirect("tooltip.fluidFlow.in").withStyle(s -> s.withColor(color)));
 				else line.add(CCGLang.translateDirect("tooltip.fluidFlow.out").withStyle(s -> s.withColor(color)));

@@ -5,7 +5,9 @@ import com.simibubi.create.content.logistics.redstoneRequester.*;
 import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.foundation.util.AmountUtil;
+import net.createmod.catnip.platform.services.NetworkHelper;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import org.spongepowered.asm.mixin.Mixin;
@@ -42,5 +44,16 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 	)
 	private String abbreviateCount(String text) {
 		return AmountUtil.formatItemCountIfEnabled(Integer.parseInt(text));
+	}
+	@WrapOperation(
+		method = "removed", at = @At(
+		value = "INVOKE",
+		target = "Lnet/createmod/catnip/platform/services/NetworkHelper;sendToServer("
+			+ "Lnet/minecraft/network/protocol/common/custom/CustomPacketPayload;)V"
+	)
+	)
+	private void skipConfigWhileMenuOpen(NetworkHelper network, CustomPacketPayload payload, Operation<Void> original) {
+		if (minecraft != null && minecraft.player != null && minecraft.player.containerMenu == getMenu()) return;
+		original.call(network, payload);
 	}
 }

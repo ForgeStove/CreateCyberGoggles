@@ -88,16 +88,6 @@ public class RedstoneRequesterInteractions {
 		boolean allow = backupAllowPartial;
 		allowPartial().green = allow;
 		dontAllowPartial().green = !allow;
-		// 服务端 saveData 会压缩空槽，数量列表需按非空槽顺序提交
-		var compressedAmounts = new ArrayList<Integer>();
-		for (var i = 0; i < backupStacks.size(); i++)
-			if (!backupStacks.get(i).isEmpty()) compressedAmounts.add(backupAmounts.get(i));
-		CatnipServices.NETWORK.sendToServer(new RedstoneRequesterConfigurationPacket(
-			menu.contentHolder.getBlockPos(),
-			backupAddress,
-			allow,
-			compressedAmounts
-		));
 		resetDrag();
 		screen.onClose();
 	}

@@ -9,6 +9,7 @@ import io.github.forgestove.create_cyber_goggles.content.kinetic.*;
 import io.github.forgestove.create_cyber_goggles.content.schematic.*;
 import io.github.forgestove.create_cyber_goggles.foundation.events.*;
 import io.github.forgestove.create_cyber_goggles.foundation.util.CCGMods;
+import io.github.forgestove.create_cyber_goggles.foundation.util.CatnipConfigLocalization;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -20,9 +21,11 @@ import static io.github.forgestove.create_cyber_goggles.CCG.ID;
 public class CCGClient {
 	public CCGClient(ModContainer container) {
 		CCGGoggleEntries.register();
+		CatnipConfigLocalization.registerSource();
 		IEventBus mod = container.getEventBus();
 		assert mod != null;
 		mod.addListener(CCGKey::register);
+		mod.addListener(ConfigLangPack::register);
 		mod.addListener(TooltipOverlay::register);
 		mod.addListener(TipOverlay::register);
 		mod.addListener(ClientItemEntryTooltipComponent::register);

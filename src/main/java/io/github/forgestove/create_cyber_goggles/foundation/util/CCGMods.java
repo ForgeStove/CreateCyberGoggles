@@ -11,13 +11,17 @@ import net.neoforged.fml.loading.LoadingModList;
 import java.util.Optional;
 import java.util.function.Supplier;
 public enum CCGMods {
+	aeronautics,
 	create,
 	createbigcannons,
 	extra_gauges,
 	fluidlogistics,
+	flywheel,
 	jei,
 	modernui,
 	obscure_tooltips,
+	offroad,
+	ponder,
 	sable,
 	simulated,
 	thirst;

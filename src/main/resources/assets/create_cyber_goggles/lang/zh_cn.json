@@ -387,8 +387,6 @@
 	"create_cyber_goggles.message.pressToInteractOpposite": "按住 [%1$s] 选中反面",
 	"create_cyber_goggles.message.toggleItemOverlay": "按住 [%1$s] 并滚动鼠标滚轮以切换物品显示",
 	"create_cyber_goggles.message.useSwitchState": "按 [%1$s] 切换状态",
-	"create_cyber_goggles.resourcepack.config_i18n": "内置本地化配置",
-	"create_cyber_goggles.resourcepack.config_i18n.description": "为 Create 配置界面提供翻译。",
 	"create_cyber_goggles.tooltip.beltThroughput": "传送带吞吐量：",
 	"create_cyber_goggles.tooltip.burnerState": "燃烧室状态：",
 	"create_cyber_goggles.tooltip.cannonState": "加农炮状态：",

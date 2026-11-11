@@ -15,8 +15,18 @@ import net.neoforged.neoforge.common.ModConfigSpec.*;
 
 import java.util.*;
 public class CatnipConfigLocalization {
+	private static final CCGMods[] CONFIG_MODS = {
+		CCGMods.create,
+		CCGMods.aeronautics,
+		CCGMods.simulated,
+		CCGMods.offroad,
+		CCGMods.sable,
+		CCGMods.flywheel,
+		CCGMods.ponder
+	};
 	public static void registerSource() {
-		if (CCGMods.create.isLoaded()) TranslationChecker.registerSource("catnip:create", CatnipConfigLocalization::collectCreateKeys);
+		for (var mod : CONFIG_MODS)
+			if (mod.isLoaded()) TranslationChecker.registerSource("catnip:" + mod.id(), () -> collectKeys(mod.id()));
 	}
 	public static String optionKey(String modId, List<String> path) {
 		if (path == null || path.isEmpty()) return null;
@@ -73,10 +83,10 @@ public class CatnipConfigLocalization {
 		tooltip.clear();
 		tooltip.addAll(rebuilt);
 	}
-	private static Collection<String> collectCreateKeys() {
+	private static Collection<String> collectKeys(String modId) {
 		var keys = new LinkedHashSet<String>();
-		for (var config : ModConfigs.getModConfigs(CCGMods.create.id()))
-			if (config.getSpec() instanceof ModConfigSpec spec) collectKeys(spec, spec.getValues(), "", CCGMods.create.id(), keys);
+		for (var config : ModConfigs.getModConfigs(modId))
+			if (config.getSpec() instanceof ModConfigSpec spec) collectKeys(spec, spec.getValues(), "", modId, keys);
 		return keys;
 	}
 	private static void collectKeys(ModConfigSpec spec, UnmodifiableConfig group, String prefix, String modId, Set<String> keys) {

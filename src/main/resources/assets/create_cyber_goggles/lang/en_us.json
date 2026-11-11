@@ -387,8 +387,6 @@
 	"create_cyber_goggles.message.pressToInteractOpposite": "Hold [%1$s] switch the opposite side",
 	"create_cyber_goggles.message.toggleItemOverlay": "Hold [%1$s] and scroll the mouse wheel to toggle item display",
 	"create_cyber_goggles.message.useSwitchState": "Press [%1$s] to switch state",
-	"create_cyber_goggles.resourcepack.config_i18n": "Built-in Config Localization",
-	"create_cyber_goggles.resourcepack.config_i18n.description": "Translations for Create's config screen.",
 	"create_cyber_goggles.tooltip.beltThroughput": "Belt Throughput:",
 	"create_cyber_goggles.tooltip.burnerState": "Burner State:",
 	"create_cyber_goggles.tooltip.cannonState": "Cannon State:",

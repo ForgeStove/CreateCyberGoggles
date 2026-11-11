@@ -1,6 +1,8 @@
-- Add expression input to quantity boxes
-- Add a multiplier field and an apply button to quantity screens to scale every value at once
-- Add an option to abbreviate large item counts
-- Optimize the force overlay: cluster arrows per force group and cap their count to reduce lag
-- Fix the filter preview typing an extra character into the opened screen
-- Make the filter preview read-only, and allow third-party mods to register their own preview screens
+- Add fluid flow rate display to goggle information for pipes, pumps, tanks, and fluid valves
+- Fix the fluid flow rate calculation
+- Add built-in resource pack localization for the Create, Aeronautics, Simulated, Offroad, Sable, Ponder, and Flywheel config screens
+- Fix table cloth tooltips not showing their configured contents
+- Improve tooltip rendering performance
+- Rework the stock replenish screen to use the shared UI framework
+- Restore configuration locking
+- Fix packet errors when closing the redstone requester screen

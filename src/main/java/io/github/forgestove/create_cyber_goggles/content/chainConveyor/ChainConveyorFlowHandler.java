@@ -9,7 +9,7 @@ import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage;
 
 import static io.github.forgestove.create_cyber_goggles.content.goggles.Outliner.getColor;
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.*;
-public final class ChainConveyorFlowHandler {
+public class ChainConveyorFlowHandler {
 	/** 累计真实时间(tick)，替代离散 gameTime 作为流动基准，与 TPS 解耦 */
 	private static double flowTime;
 	public static void render(RenderLevelStageEvent event) {

@@ -19,7 +19,7 @@ import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.
  * <p>
  * 该效果执行：通过深度缓冲进行边缘检测、基于调色板的颜色量化与抖动、可选像素化，以及类似墨水在纸上的外观。
  */
-public final class DraftingViewHandler {
+public class DraftingViewHandler {
 	private static final ResourceLocation PALETTE_TEXTURE = getCCGRes("textures/effects/diagram_palette.png");
 	private static final ResourceLocation DITHER_TEXTURE = getCCGRes("textures/effects/dither.png");
 	private static DraftingFramebuffer framebuffer;

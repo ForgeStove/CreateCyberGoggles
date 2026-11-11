@@ -13,7 +13,7 @@ import net.minecraft.world.phys.*;
 import org.jetbrains.annotations.Nullable;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.*;
-public final class FactoryPanelUtil {
+public class FactoryPanelUtil {
 	/** 移动包发出后，把目标位置面板转向鼠标命中的目标面方向：moveTo 已把源方向克隆到目标 */
 	public static void rotatePanelTo(HitResult hitResult, FactoryPanelPosition from, FactoryPanelPosition target) {
 		ClientLevel level = mc.level;

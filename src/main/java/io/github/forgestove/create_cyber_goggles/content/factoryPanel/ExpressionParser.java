@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.content.factoryPanel;
 /** 四则算式求值：支持 + - * / x X × ÷ 与括号，非法输入返回 null。 */
-public final class ExpressionParser {
+public class ExpressionParser {
 	public static boolean isAllowed(String text) {
 		return text.chars().allMatch(c -> isAllowedChar((char) c));
 	}

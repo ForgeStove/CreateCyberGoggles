@@ -11,7 +11,7 @@ import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.
  * 持有绘图视图效果所使用的两个着色器实例。
  * 通过 {@link RegisterShadersEvent} 注册。
  */
-public final class DraftingShaders {
+public class DraftingShaders {
 	private static @Nullable ShaderInstance draftingView;
 	private static @Nullable ShaderInstance draftingUpscale;
 	@Nullable

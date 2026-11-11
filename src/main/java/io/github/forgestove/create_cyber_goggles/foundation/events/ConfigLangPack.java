@@ -13,7 +13,7 @@ public class ConfigLangPack {
 			PackType.CLIENT_RESOURCES,
 			Component.literal("Config I18n"),
 			PackSource.BUILT_IN,
-			false,
+			true,
 			Position.BOTTOM
 		);
 	}

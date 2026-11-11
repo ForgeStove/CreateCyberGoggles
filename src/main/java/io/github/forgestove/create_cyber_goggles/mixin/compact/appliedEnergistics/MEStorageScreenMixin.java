@@ -6,7 +6,6 @@ import net.minecraft.client.gui.*;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 @Pseudo
-@SuppressWarnings("UnresolvedMixinReference")
 @Mixin(targets = "appeng.client.gui.me.common.MEStorageScreen")
 public class MEStorageScreenMixin {
 	@WrapOperation(

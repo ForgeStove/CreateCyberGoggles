@@ -7,7 +7,6 @@ import net.createmod.catnip.config.ui.entries.ValueEntry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.neoforged.fml.config.ModConfig.Type;
 import net.neoforged.neoforge.common.ModConfigSpec.ConfigValue;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
@@ -15,7 +14,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ValueEntry.class)
 public abstract class ValueEntryMixin {
 	@Shadow protected ConfigValue<?> value;
-	@Shadow @Final protected Type type;
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void localize(CallbackInfo ci) {
 		var modId = ConfigScreen.modID;
@@ -36,7 +34,7 @@ public abstract class ValueEntryMixin {
 		if (I18n.exists(tooltipKey)) {
 			var text = I18n.get(tooltipKey);
 			if (!text.isBlank())
-				CatnipConfigLocalization.applyTooltip(tooltip, header, text, modId, type, path, ((EntryAccessor) this).getAnnotations());
+				CatnipConfigLocalization.applyTooltip(tooltip, header, text, modId, path, ((EntryAccessor) this).getAnnotations());
 		}
 		var unitKey = ConfigTranslationKeys.unit(key);
 		if (I18n.exists(unitKey)) labeled.setUnit(I18n.get(unitKey));

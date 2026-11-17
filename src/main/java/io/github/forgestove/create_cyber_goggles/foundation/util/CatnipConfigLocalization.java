@@ -8,7 +8,6 @@ import net.createmod.catnip.lang.FontHelper.Palette;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.neoforged.fml.config.ModConfig.Type;
 import net.neoforged.fml.config.ModConfigs;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.common.ModConfigSpec.*;
@@ -16,13 +15,7 @@ import net.neoforged.neoforge.common.ModConfigSpec.*;
 import java.util.*;
 public class CatnipConfigLocalization {
 	private static final CCGMods[] CONFIG_MODS = {
-		CCGMods.create,
-		CCGMods.aeronautics,
-		CCGMods.simulated,
-		CCGMods.offroad,
-		CCGMods.sable,
-		CCGMods.flywheel,
-		CCGMods.ponder
+		CCGMods.create, CCGMods.aeronautics, CCGMods.simulated, CCGMods.offroad, CCGMods.sable, CCGMods.flywheel, CCGMods.ponder
 	};
 	public static void registerSource() {
 		for (var mod : CONFIG_MODS)
@@ -53,7 +46,6 @@ public class CatnipConfigLocalization {
 		Component header,
 		String text,
 		String modId,
-		Type type,
 		List<String> path,
 		Map<String, String> annotations
 	) {
@@ -71,7 +63,7 @@ public class CatnipConfigLocalization {
 				Component.translatable("catnip.ui.value_entry.restart_required"),
 				Palette.GRAY_AND_RED
 			));
-		var fullPath = modId + ":" + type.extension() + "." + String.join(".", path);
+		var fullPath = modId + ":" + String.join(".", path);
 		var font = Minecraft.getInstance().font;
 		if (font.width(fullPath) > FontHelper.MAX_WIDTH_PER_LINE) {
 			var trimPos = 0;
@@ -107,7 +99,8 @@ public class CatnipConfigLocalization {
 			ValueSpec raw = spec.getSpec().getRaw(path);
 			if (raw != null && raw.getComment() != null && raw.getComment().contains("[in ")) keys.add(ConfigTranslationKeys.unit(key));
 			try {
-				if (configValue.get() instanceof Enum<?> constant) keys.add(ConfigTranslationKeys.enumValue(modId, constant));
+				if (configValue.get() instanceof Enum<?> constant) for (var enumConstant : constant.getDeclaringClass().getEnumConstants())
+					keys.add(ConfigTranslationKeys.enumValue(modId, enumConstant));
 			} catch (RuntimeException ignored) {
 			}
 		}

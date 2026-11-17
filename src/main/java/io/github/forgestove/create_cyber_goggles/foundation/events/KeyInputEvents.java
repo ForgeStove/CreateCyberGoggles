@@ -16,7 +16,7 @@ import net.neoforged.neoforge.client.event.InputEvent.*;
 import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.*;
-public class KeyInput {
+public class KeyInputEvents {
 	public static int scrollDeltaY;
 	public static void key(Key ignoredEvent) {
 		openConfigScreen();

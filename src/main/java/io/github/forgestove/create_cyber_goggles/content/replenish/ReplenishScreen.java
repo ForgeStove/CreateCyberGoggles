@@ -7,9 +7,9 @@ import com.simibubi.create.foundation.gui.*;
 import io.github.forgestove.create_cyber_goggles.compat.jei.CCGJeiTitles;
 import io.github.forgestove.create_cyber_goggles.content.replenish.ReplenishGroup.*;
 import io.github.forgestove.create_cyber_goggles.foundation.gui.*;
-import io.github.forgestove.flexconfig.foundation.ui.core.*;
 import io.github.forgestove.create_cyber_goggles.foundation.lang.*;
 import io.github.forgestove.create_cyber_goggles.mixin.accessor.*;
+import io.github.forgestove.flexconfig.foundation.ui.core.*;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -23,9 +23,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Recipe;
-import net.neoforged.bus.api.EventPriority;
 import net.neoforged.neoforge.client.event.ScreenEvent.CharacterTyped.Pre;
-import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
@@ -41,7 +39,6 @@ public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 	private static final int SUGGESTION_ROW_H = 12;
 	private static final int POPUP_ROW_H = 14;
 	private static final int SWITCH_HINT_H = 11;
-	private static boolean charHooked;
 	private final Screen parent;
 	private final ReplenishTree host;
 	private final List<ReplenishGroup> groups;
@@ -71,19 +68,12 @@ public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 		scrollPane.content(this::renderContent);
 		rebuildLayout();
 		mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1));
-		hookCharTyped();
 	}
-	/** 最高优先级拦截字符事件，只有消费成功才取消。 */
-	private static void hookCharTyped() {
-		if (charHooked) return;
-		charHooked = true;
-		NeoForge.EVENT_BUS.addListener(
-			EventPriority.HIGHEST, (Pre event) -> {
-				if (!(event.getScreen() instanceof ReplenishScreen screen)) return;
-				if (!(screen.getFocused() instanceof CCGAddressEditBox box)) return;
-				if (box.charTyped(event.getCodePoint(), event.getModifiers())) event.setCanceled(true);
-			}
-		);
+	/** 地址框优先拿到字符，只有消费成功才取消。 */
+	public static void onCharTyped(Pre event) {
+		if (!(event.getScreen() instanceof ReplenishScreen screen)) return;
+		if (!(screen.getFocused() instanceof CCGAddressEditBox box)) return;
+		if (box.charTyped(event.getCodePoint(), event.getModifiers())) event.setCanceled(true);
 	}
 	private static void drawSendLabel(GuiGraphics gui, Component text, int top) {
 		Font font = mc.font;
@@ -190,9 +180,7 @@ public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 	}
 	@Override
 	protected void init() {
-		// resize 重跑 init 时 Screen 已清空 widgets，残留的旧引用无法交互。
 		addrBoxes.clear();
-		// contentH 已含 BODY_TOP，不再重复相加
 		int needed = Math.max(80, layout.contentH() + FOOTER_H);
 		int screenH = mc.getWindow().getGuiScaledHeight();
 		panelH = Math.min(screenH - 18, needed);
@@ -201,10 +189,8 @@ public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 		Window window = mc.getWindow();
 		setWindowOffset((window.getGuiScaledWidth() - PANEL_W) / 2, (window.getGuiScaledHeight() - panelH) / 2);
 		super.init();
-		// 宽度收窄，给右侧的剪贴板图标留位
 		int boxW = contentW() - ADDR_TEXT_IN - 24;
 		for (var i = 0; i < groups.size(); i++) {
-			// anchorToBottom：下拉建议显示在框上方
 			var box = new CCGAddressEditBox(this, mc.font, windowXOffset + ADDR_X + ADDR_TEXT_IN, windowYOffset + BODY_TOP, boxW, 10,
 				true);
 			box.setTextColor(0xFF714A40);
@@ -219,7 +205,6 @@ public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 			addrBoxes.add(box);
 			addRenderableWidget(box);
 		}
-		// 按钮画在底部纹理烘好的按钮之上，只补交互与前景
 		addRenderableWidget(new ReplenishButton(
 			windowXOffset + 135,
 			windowYOffset + panelH - FOOTER_H + 7,
@@ -247,7 +232,6 @@ public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 		scrollPane.setBounds(new UiBounds(windowXOffset + CONTENT_L, windowYOffset + BODY_TOP, CONTENT_R - CONTENT_L, viewH));
 		scrollPane.setPitch(NODE_H);
 		scrollPane.setContentHeight(layout.contentH() - BODY_TOP);
-		// 恢复滚动位置：此时 contentH/viewH 已算好，按新内容 clamp
 		if (restoreScroll >= 0) {
 			scrollPane.setScroll(restoreScroll);
 			restoreScroll = -1;
@@ -255,7 +239,6 @@ public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 	}
 	@Override
 	public void tick() {
-		// AddressEditBox 不是 TickableGuiEventListener，需显式 tick 才激活下拉建议。
 		super.tick();
 		addrBoxes.forEach(AddressEditBox::tick);
 	}
@@ -309,6 +292,28 @@ public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 		ui.beginFrame(gui, partialTick, mouseX, mouseY);
 		scrollPane.render(ui);
 	}
+	@Override
+	protected void renderWindowForeground(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+		if (hover.popup() != null) {
+			renderRecipePopup(gui);
+			renderPopupRecipeCard(gui);
+			return;
+		}
+		for (AddressEditBox box : addrBoxes)
+			if (box.visible && box.getValue().isBlank() && !box.isFocused() && box.isMouseOver(mouseX, mouseY)) {
+				gui.renderComponentTooltip(
+					mc.font, List.of(
+						CCGCreateLang.translateDirect("gui.factory_panel.restocker_address").withStyle(s -> s.withColor(0x5391E1)),
+						CCGCreateLang.translateDirect("gui.schedule.lmb_edit")
+							.withStyle(ChatFormatting.DARK_GRAY)
+							.withStyle(ChatFormatting.ITALIC)
+					), mouseX, mouseY
+				);
+				break;
+			}
+		if (hover.node() != null) renderNodeCard(gui, mouseX, mouseY, hover.node());
+		if (hover.sendItem() != null) gui.renderTooltip(mc.font, hover.sendItem(), mouseX, mouseY);
+	}
 	private void renderContent(GuiGraphics gui, double scroll) {
 		var pose = gui.pose();
 		pose.pushPose();
@@ -319,9 +324,7 @@ public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 			gui.drawString(font, empty, (PANEL_W - font.width(empty)) / 2, BODY_TOP + 4, 0xFFC8B688, false);
 		}
 		int viewBottom = BODY_TOP + viewH;
-		int offset = (int) scroll;
-		// 地址框不能用 setVisible(false) 裁剪：不可见时 EditBox.canConsumeInput() 为假，键盘输入会丢。
-		// 滚出视口时改为挪到 PARKED。
+		var offset = (int) scroll;
 		var onScreen = new boolean[addrBoxes.size()];
 		for (Row r : layout.rows()) {
 			int top = r.y() - offset;
@@ -349,29 +352,6 @@ public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 			refreshSuggestionsAnchor(box);
 		}
 		pose.popPose();
-	}
-	@Override
-	protected void renderWindowForeground(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
-		// 弹窗独占浮层，其余悬停提示会穿透，一概不画。
-		if (hover.popup() != null) {
-			renderRecipePopup(gui);
-			renderPopupRecipeCard(gui);
-			return;
-		}
-		for (AddressEditBox box : addrBoxes)
-			if (box.visible && box.getValue().isBlank() && !box.isFocused() && box.isMouseOver(mouseX, mouseY)) {
-				gui.renderComponentTooltip(
-					mc.font, List.of(
-						CCGCreateLang.translateDirect("gui.factory_panel.restocker_address").withStyle(s -> s.withColor(0x5391E1)),
-						CCGCreateLang.translateDirect("gui.schedule.lmb_edit")
-							.withStyle(ChatFormatting.DARK_GRAY)
-							.withStyle(ChatFormatting.ITALIC)
-					), mouseX, mouseY
-				);
-				break;
-			}
-		if (hover.node() != null) renderNodeCard(gui, mouseX, mouseY, hover.node());
-		if (hover.sendItem() != null) gui.renderTooltip(mc.font, hover.sendItem(), mouseX, mouseY);
 	}
 	@Override
 	public int scissorLeft() {
@@ -665,7 +645,7 @@ public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 		if (scrollPane.mouseClicked(ui, mouseX, mouseY, button)) return true;
 		// 点组头三角切换展开/收起
 		if (button == 0) {
-			int clamped = (int) scrollPane.scroll();
+			var clamped = (int) scrollPane.scroll();
 			int iconX = windowXOffset + CONTENT_L + GROUP_INDENT;
 			for (Row r : layout.rows()) {
 				if (r.kind() != RowKind.GROUP) continue;

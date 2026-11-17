@@ -7,7 +7,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent.Post;
 import org.joml.Vector3f;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.mc;
-public class ContraptionRotationHandler {
+public class ContraptionRotationEvents {
 	public static void onClientTick(Post ignoredEvent) {
 		var player = mc.player;
 		if (player == null) return;

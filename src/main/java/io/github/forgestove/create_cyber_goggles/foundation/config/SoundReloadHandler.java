@@ -1,4 +1,4 @@
-package io.github.forgestove.create_cyber_goggles.foundation.events;
+package io.github.forgestove.create_cyber_goggles.foundation.config;
 import io.github.forgestove.flexconfig.api.registration.ConfigChangeHandler;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.*;

@@ -6,7 +6,7 @@ import net.minecraft.server.packs.repository.PackSource;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.getCCGRes;
-public class ConfigLangPack {
+public class ConfigResourcePackEvents {
 	public static void register(AddPackFindersEvent event) {
 		event.addPackFinders(
 			getCCGRes("resourcepacks/config_i18n"),

@@ -1,8 +1,2 @@
-- Add fluid flow rate display to goggle information for pipes, pumps, tanks, and fluid valves
-- Fix the fluid flow rate calculation
-- Add built-in resource pack localization for the Create, Aeronautics, Simulated, Offroad, Sable, Ponder, and Flywheel config screens
-- Fix table cloth tooltips not showing their configured contents
-- Improve tooltip rendering performance
-- Rework the stock replenish screen to use the shared UI framework
-- Restore configuration locking
-- Fix packet errors when closing the redstone requester screen
+- Add config to be able to walk while sneaking on a contraption
+- Add config to make the player and camera follow contraption rotation

@@ -1,2 +1,3 @@
 - Add config to be able to walk while sneaking on a contraption
 - Add config to make the player and camera follow contraption rotation
+- Fix config i18n

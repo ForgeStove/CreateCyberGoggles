@@ -180,6 +180,8 @@ public class CCGConfig {
 			"create:item_application"
 		));
 		@WarnCheat public boolean removeTrainDamage = false;
+		public boolean allowSneakWalkOnContraption = true;
+		public boolean followContraptionRotation = true;
 		@WarnCheat public boolean enableNegativeInfThrottle = false;
 		public boolean forcedBackend = false;
 		public boolean nbtFix = false;

@@ -102,6 +102,8 @@
 		"misc.contraption.ContinuousOBBColliderMixin",
 		"misc.contraption.ContraptionColliderMixin",
 		"misc.contraption.ContraptionHandlerClientMixin",
+		"misc.contraption.LocalPlayerViewRotationMixin",
+		"misc.contraption.PlayerEdgeProtectionMixin",
 		"misc.equipment.CardboardArmorStealthOverlayMixin",
 		"misc.equipment.DivingBootsItemMixin",
 		"misc.equipment.ItemInHandRendererMixin",

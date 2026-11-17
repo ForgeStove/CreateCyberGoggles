@@ -11,6 +11,7 @@ import io.github.forgestove.create_cyber_goggles.foundation.events.*;
 import io.github.forgestove.create_cyber_goggles.foundation.util.CCGMods;
 import io.github.forgestove.create_cyber_goggles.foundation.util.CatnipConfigLocalization;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -52,6 +53,7 @@ public class CCGClient {
 		game.addListener(DraftingViewHandler::render);
 		game.addListener(EnderChestTooltipUtil::clear);
 		game.addListener(ImageActionProgress::onClientTick);
+		game.addListener(EventPriority.LOWEST, ContraptionRotationHandler::onClientTick);
 		game.addListener(SchematicPreviewInput::onMouseScrolled);
 		game.addListener(SchematicCommands::register);
 		CCGMods.simulated.executeIfInstalled(() -> {

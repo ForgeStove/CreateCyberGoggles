@@ -6,6 +6,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.*;
 import org.joml.*;
 
+import java.lang.Math;
 import java.lang.ref.WeakReference;
 public class ContraptionRotationTracker {
 	private static final Quaternionf currentRotation = new Quaternionf();
@@ -65,6 +66,31 @@ public class ContraptionRotationTracker {
 	}
 	public static void reset() {
 		tracked = null;
+	}
+	/** 当前是否站在结构上 */
+	public static boolean isOnContraption() {
+		return poseContraption.get() != null && poseRotation != null;
+	}
+	/** 结构绕世界 Y 轴的旋转角（弧度），用作边缘判定的局部坐标系 */
+	public static float frameYaw() {
+		var contraption = poseContraption.get();
+		if (contraption == null) return 0;
+		var xAxis = contraption.applyRotation(new Vec3(1, 0, 0), 1);
+		return (float) Math.atan2(-xAxis.z, xAxis.x);
+	}
+	/** 结构偏航系中的局部偏移 (x, z) 处是否踩空：既无世界方块也无结构支撑 */
+	public static boolean wouldSlideOff(Player player, Quaternionf frame, double x, double z, float distance) {
+		var movement = frame.transform(new Vector3f((float) x, 0, (float) z));
+		var bounds = player.getBoundingBox();
+		var probe = new AABB(
+			bounds.minX + movement.x,
+			bounds.minY - distance - 1.0E-5,
+			bounds.minZ + movement.z,
+			bounds.maxX + movement.x,
+			bounds.minY,
+			bounds.maxZ + movement.z
+		);
+		return player.level().noCollision(player, probe) && !hasSupport(player, probe);
 	}
 	public static boolean hasSupport(Player player, AABB probe) {
 		if (!player.isLocalPlayer()) return false;

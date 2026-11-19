@@ -46,9 +46,9 @@ public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen impleme
 	}
 	@Inject(method = "init", at = @At("TAIL"))
 	public void addMultiplyButton(CallbackInfo ci) {
-		if (!CCG.config.misc.multiplyAllValues) return;
+		if (!CCG.config.misc.multiplyAllValues || restocker) return;
 		addRenderableWidget(MultiplyScreen.createButton(
-			guiLeft + 31, guiTop + (restocker ? 67 : 87), factor -> {
+			guiLeft + 31, guiTop + 87, factor -> {
 				int max = CCG.config.misc.removeRequestLimit ? Integer.MAX_VALUE : 64;
 				if (!outputConfig.stack.isEmpty()) outputConfig.count = MultiplyScreen.scale(outputConfig.count, factor, 1, max);
 				for (BigItemStack stack : inputConfig)
@@ -71,7 +71,7 @@ public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen impleme
 		if (CCG.config.misc.quickRequestActions && CCGKey.stockRequestSetter.isDown()) {
 			var result = false;
 			var finished = false;
-			if (!craftingActive) {// 输出格（仅非 restocker 模式显示，原版位置 x+160, y+48）
+			if (!craftingActive) {
 				if (!restocker && !outputConfig.stack.isEmpty()) {
 					int outputX = guiLeft + 160;
 					int outputY = guiTop + 48;

@@ -59,9 +59,8 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 	@Inject(method = "init", at = @At("TAIL"))
 	private void ccg$addMultiplier(CallbackInfo ci) {
 		if (!CCG.config.misc.multiplyAllValues) return;
-		addRenderableWidget(MultiplyScreen.createButton(getGuiLeft() + 24, getGuiTop() + windowHeight - 26, this::ccg$multiplyAll));
+		addRenderableWidget(MultiplyScreen.createButton(getGuiLeft() + 179, getGuiTop() + windowHeight - 21, this::ccg$multiplyAll));
 	}
-	/** 物品订单与合成订单都乘倍数，各自截断到库存/材料上限 */
 	@Unique
 	private void ccg$multiplyAll(double factor) {
 		StockKeeperRequestScreen thiz = thiz();
@@ -78,7 +77,6 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 	public boolean containerTick(Player instance) {
 		return thiz().getMenu().containerId != -1;
 	}
-	/** 滚动条分支仅在无修饰键时启用，使 ctrl/alt 滚动也能修改数量 */
 	@WrapOperation(
 		method = "mouseScrolled",
 		at = @At(value = "INVOKE", target = "Lcom/simibubi/create/content/logistics/stockTicker/StockKeeperRequestScreen;hasShiftDown()Z")
@@ -135,7 +133,7 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 		Couple<Integer> hoveredSlot = getHoveredSlot((int) mouseX, (int) mouseY);
 		if (hoveredSlot != noneHovered) {
 			int group = hoveredSlot.getFirst();
-			int index = hoveredSlot.getSecond(); // 配方条使用自己的数量语义
+			int index = hoveredSlot.getSecond();
 			if (group == -2) {
 				CraftableBigItemStack cbis = thiz().recipesToOrder.get(index);
 				result = cbis == null || cbis.stack.isEmpty() ? null : cbis;

@@ -18,11 +18,9 @@ import org.lwjgl.glfw.GLFW;
 import java.util.function.DoubleConsumer;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.mc;
-/** 倍数额度输入弹窗：确认后把倍数交给调用方。 */
 public class MultiplyScreen extends AbstractSimiScreen {
 	private static final int WIDTH = 218;
 	private static final int HEIGHT = 79;
-	/** 上次成功应用的输入，跨界面保留 */
 	private static String lastValue = "2";
 	private final Screen parentScreen;
 	private final DoubleConsumer onApply;
@@ -32,7 +30,6 @@ public class MultiplyScreen extends AbstractSimiScreen {
 		this.onApply = onApply;
 		mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1));
 	}
-	/** 各界面统一用这个按钮打开弹窗 */
 	public static IconButton createButton(int x, int y, DoubleConsumer onApply) {
 		var button = new IconButton(x, y, AllIcons.I_MTD_CLOSE);
 		button.setToolTip(CCGLang.translateDirect("gui.multiplier.tooltip"));

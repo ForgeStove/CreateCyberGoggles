@@ -59,7 +59,7 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 	@Inject(method = "init", at = @At("TAIL"))
 	private void addMultiplier(CallbackInfo ci) {
 		if (!CCG.config.misc.multiplyAllValues) return;
-		addRenderableWidget(MultiplyScreen.createButton(getGuiLeft() + 50, getGuiTop() + 95, this::ccg$multiplyAll));
+		addRenderableWidget(MultiplyScreen.createButton(getGuiLeft() + 48, getGuiTop() + 95, this::ccg$multiplyAll));
 	}
 	/** 非空槽的数量统一乘倍数，上限与原版滚动一致 */
 	@Unique

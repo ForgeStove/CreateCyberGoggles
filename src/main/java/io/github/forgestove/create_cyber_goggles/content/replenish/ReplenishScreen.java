@@ -9,6 +9,7 @@ import io.github.forgestove.create_cyber_goggles.content.replenish.ReplenishGrou
 import io.github.forgestove.create_cyber_goggles.foundation.gui.*;
 import io.github.forgestove.create_cyber_goggles.foundation.lang.*;
 import io.github.forgestove.create_cyber_goggles.mixin.accessor.*;
+import io.github.forgestove.flexconfig.foundation.client.MinecraftRenderTarget;
 import io.github.forgestove.flexconfig.foundation.ui.core.*;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.minecraft.ChatFormatting;
@@ -289,8 +290,8 @@ public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 		scissorT = windowYOffset + BODY_TOP;
 		scissorR = windowXOffset + CONTENT_R;
 		scissorB = windowYOffset + BODY_TOP + Math.max(1, viewH);
-		ui.beginFrame(gui, partialTick, mouseX, mouseY);
-		scrollPane.render(ui);
+		ui.beginFrame(new MinecraftRenderTarget(gui), partialTick, mouseX, mouseY);
+		scrollPane.render(ui, gui);
 	}
 	@Override
 	protected void renderWindowForeground(@NotNull GuiGraphics gui, int mouseX, int mouseY, float partialTick) {

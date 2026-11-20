@@ -1,3 +1,1 @@
-- Fix the issue where players' camera view would incorrectly deflect on contraption
-- Optimize scaling quantity function
-- Optimize dynamic structure edge protection
+- Update flexconfig

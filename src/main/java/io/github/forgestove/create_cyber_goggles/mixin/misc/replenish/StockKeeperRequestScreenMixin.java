@@ -57,7 +57,7 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 		original.call(thiz, cbis, transfer);
 	}
 	@Inject(method = "init", at = @At("TAIL"))
-	private void ccg$addMultiplier(CallbackInfo ci) {
+	private void addMultiplier(CallbackInfo ci) {
 		if (!CCG.config.misc.multiplyAllValues) return;
 		addRenderableWidget(MultiplyScreen.createButton(getGuiLeft() + 179, getGuiTop() + windowHeight - 21, this::ccg$multiplyAll));
 	}

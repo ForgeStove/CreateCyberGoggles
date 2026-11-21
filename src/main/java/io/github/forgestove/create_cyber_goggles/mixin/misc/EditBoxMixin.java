@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class EditBoxMixin {
 	@Shadow private int maxLength;
 	@Inject(method = "setMaxLength", at = @At("HEAD"), cancellable = true)
-	private void setMaxLength(int maxLength, CallbackInfo ci) {
+	public void setMaxLength(int maxLength, CallbackInfo ci) {
 		if (!CCG.config.misc.infEditBoxLength) return;
 		ci.cancel();
 		this.maxLength = Integer.MAX_VALUE;

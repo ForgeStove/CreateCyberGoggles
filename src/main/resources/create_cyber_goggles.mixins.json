@@ -8,6 +8,7 @@
 		"accessor.DestinationSuggestionsAccessor",
 		"accessor.EntryAccessor",
 		"accessor.IconButtonAccessor",
+		"accessor.KineticBlockEntityAccessor",
 		"accessor.LabeledEntryAccessor",
 		"accessor.RedstoneRequesterScreenAccessor",
 		"accessor.RotationPropagatorAccessor",

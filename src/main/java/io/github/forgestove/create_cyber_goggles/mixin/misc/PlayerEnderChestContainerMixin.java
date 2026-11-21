@@ -9,11 +9,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(PlayerEnderChestContainer.class)
 public abstract class PlayerEnderChestContainerMixin implements Self<PlayerEnderChestContainer> {
 	@Inject(method = "startOpen", at = @At("TAIL"))
-	private void startOpen(Player player, CallbackInfo ci) {
+	public void startOpen(Player player, CallbackInfo ci) {
 		EnderChestTooltipUtil.capture(thiz());
 	}
 	@Inject(method = "stopOpen", at = @At("TAIL"))
-	private void stopOpen(Player player, CallbackInfo ci) {
+	public void stopOpen(Player player, CallbackInfo ci) {
 		EnderChestTooltipUtil.capture(thiz());
 	}
 }

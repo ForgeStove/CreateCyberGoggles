@@ -22,9 +22,12 @@ import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.item.TooltipHelper;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.compat.simulated.ExtraKineticsHelper;
 import io.github.forgestove.create_cyber_goggles.content.goggles.tooltip.data.*;
 import io.github.forgestove.create_cyber_goggles.foundation.events.CCGKey;
 import io.github.forgestove.create_cyber_goggles.foundation.lang.*;
+import io.github.forgestove.create_cyber_goggles.foundation.util.*;
+import io.github.forgestove.create_cyber_goggles.mixin.accessor.*;
 import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
@@ -33,23 +36,36 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.*;
 import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 
 import static net.minecraft.ChatFormatting.*;
 public class GoggleTooltipUtil {
-	public static void kinetic(List<Component> tooltip, @NotNull KineticBlockEntity be, float stress, float capacity) {
-		float speed = be.getTheoreticalSpeed();
+	public static boolean kinetic(List<Component> tooltip, @NotNull KineticBlockEntity be, float stress, float capacity) {
+		Direction face = hoveredFace(be);
+		KineticBlockEntity extra = face == null ? null : extraKinetics(be, face);
+		KineticBlockEntity shown = extra == null ? be : extra;
+		float speed = shown.getTheoreticalSpeed();
+		if (extra == null && face != null && isShaftFace(be, face)) speed *= RotationPropagatorAccessor.callGetAxisModifier(be, face);
+		if (CCG.config.goggles.hideStaticKineticInfo && speed == 0) return false;
+		if (extra != null) {
+			if (extra instanceof GeneratingKineticBlockEntity generating) generatingKinetic(tooltip, generating);
+			var accessor = (KineticBlockEntityAccessor) extra;
+			stress = accessor.getStress();
+			capacity = accessor.getCapacity();
+		}
 		LangBuilder su = CCGCreateLang.translate("generic.unit.stress");
 		if (StressImpact.isEnabled()) {
-			float stressAtBase = be.calculateStressApplied();
+			float stressAtBase = shown.calculateStressApplied();
 			if (!Mth.equal(stressAtBase, 0)) {
-				CCGCreateLang.translate("tooltip.stressImpact").style(GRAY).forGoggles(tooltip);
+				CCGCreateLang.translate("tooltip.stressImpact").style(tooltip.isEmpty() ? RESET : GRAY).forGoggles(tooltip);
 				CCGCreateLang.number(stressAtBase * Math.abs(speed))
 					.add(su)
 					.style(AQUA)
@@ -58,9 +74,9 @@ public class GoggleTooltipUtil {
 					.forGoggles(tooltip, 1);
 			}
 		}
-		CCGCreateLang.translate("gui.speedometer.title").style(GRAY).forGoggles(tooltip);
-		SpeedLevel.getFormattedSpeedText(speed, be.isOverStressed()).forGoggles(tooltip);
-		if (!CCGKey.showStress.isDown()) return;
+		CCGCreateLang.translate("gui.speedometer.title").style(tooltip.isEmpty() ? RESET : GRAY).forGoggles(tooltip);
+		SpeedLevel.getFormattedSpeedText(speed, shown.isOverStressed()).forGoggles(tooltip);
+		if (!CCGKey.showStress.isDown()) return true;
 		double stressFraction = stress / (capacity == 0 ? 1 : capacity);
 		CCGCreateLang.translate("gui.stressometer.title").style(GRAY).forGoggles(tooltip);
 		if (speed == 0) {
@@ -68,7 +84,7 @@ public class GoggleTooltipUtil {
 				.add(CCGCreateLang.translate("gui.stressometer.no_rotation"))
 				.style(DARK_GRAY)
 				.forGoggles(tooltip);
-			return;
+			return true;
 		}
 		StressImpact.getFormattedStressText(stressFraction).forGoggles(tooltip);
 		CCGCreateLang.translate("gui.stressometer.capacity").style(GRAY).forGoggles(tooltip);
@@ -76,6 +92,20 @@ public class GoggleTooltipUtil {
 		LangBuilder stressTip = CCGCreateLang.number(remainingCapacity).add(su).style(StressImpact.of(stressFraction).getRelativeColor());
 		if (remainingCapacity != capacity) stressTip.text(GRAY, " / ").add(CCGCreateLang.number(capacity).add(su).style(DARK_GRAY));
 		stressTip.forGoggles(tooltip, 1);
+		return true;
+	}
+	/** @return 玩家注视的面；射线命中的方块与 {@code be} 不一致时返回 {@code null} */
+	private static @Nullable Direction hoveredFace(@NotNull BlockEntity be) {
+		BlockHitResult hit = CCGUtil.getBlockHitResult();
+		return hit != null && hit.getBlockPos().equals(be.getBlockPos()) ? hit.getDirection() : null;
+	}
+	private static @Nullable KineticBlockEntity extraKinetics(KineticBlockEntity be, Direction face) {
+		if (!CCGMods.simulated.isLoaded()) return null;
+		return ExtraKineticsHelper.forFace(be, face);
+	}
+	private static boolean isShaftFace(KineticBlockEntity be, Direction face) {
+		BlockState state = be.getBlockState();
+		return state.getBlock() instanceof IRotate rotate && rotate.hasShaftTowards(be.getLevel(), be.getBlockPos(), state, face);
 	}
 	public static void generatingKinetic(List<Component> tooltip, @NotNull GeneratingKineticBlockEntity be) {
 		float stressBase = be.calculateAddedStressCapacity();

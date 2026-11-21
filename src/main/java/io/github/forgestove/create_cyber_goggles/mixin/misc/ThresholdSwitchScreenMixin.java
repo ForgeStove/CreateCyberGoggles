@@ -29,13 +29,13 @@ public abstract class ThresholdSwitchScreenMixin extends AbstractSimiScreen {
 		return Mth.clamp(Math.round((float) scaled / step) * step, min, max);
 	}
 	@Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
-	private void openPopup(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
+	public void openPopup(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
 		if (button != InputConstants.MOUSE_BUTTON_MIDDLE || !CCG.config.misc.quickRequestActions || !CCGKey.stockRequestSetter.isDown())
 			return;
 		if (ccg$openPopupForHoveredInput(mouseX, mouseY)) cir.setReturnValue(true);
 	}
 	@Unique
-	private boolean ccg$openPopupForHoveredInput(double mouseX, double mouseY) {
+	public boolean ccg$openPopupForHoveredInput(double mouseX, double mouseY) {
 		if (onAbove.visible && onAbove.isMouseOver(mouseX, mouseY)) {
 			ccg$openPopup(onAbove, true);
 			return true;
@@ -49,7 +49,7 @@ public abstract class ThresholdSwitchScreenMixin extends AbstractSimiScreen {
 	@Shadow
 	protected abstract int getValueStep();
 	@Unique
-	private void ccg$openPopup(ScrollInput input, boolean isOnAbove) {
+	public void ccg$openPopup(ScrollInput input, boolean isOnAbove) {
 		int valueStep = Math.max(1, getValueStep());
 		int max = (isOnAbove ? blockEntity.currentMaxLevel : blockEntity.currentMaxLevel - valueStep) / valueStep;
 		mc.setScreen(new RequestAmountScreen(
@@ -63,7 +63,7 @@ public abstract class ThresholdSwitchScreenMixin extends AbstractSimiScreen {
 	@Shadow
 	protected abstract void send(boolean invert);
 	@Unique
-	private void ccg$apply(ScrollInput input, int count, int valueStep, boolean isOnAbove) {
+	public void ccg$apply(ScrollInput input, int count, int valueStep, boolean isOnAbove) {
 		int state = isOnAbove
 			? Mth.clamp(count * valueStep, blockEntity.currentMinLevel + valueStep, blockEntity.currentMaxLevel)
 			: Mth.clamp(count * valueStep, blockEntity.currentMinLevel, blockEntity.currentMaxLevel - valueStep);
@@ -78,7 +78,7 @@ public abstract class ThresholdSwitchScreenMixin extends AbstractSimiScreen {
 			+ "Lcom/simibubi/create/foundation/gui/widget/ScrollInput;"
 	)
 	)
-	private ScrollInput ccg$modifyScrollStep(ScrollInput instance, Function<StepContext, Integer> step, Operation<ScrollInput> original) {
+	public ScrollInput modifyScrollStep(ScrollInput instance, Function<StepContext, Integer> step, Operation<ScrollInput> original) {
 		if (!CCG.config.misc.quickRequestActions) return original.call(instance, step);
 		Function<StepContext, Integer> modified = sc -> {
 			int amount = getModifiedScrollAmount();
@@ -89,20 +89,19 @@ public abstract class ThresholdSwitchScreenMixin extends AbstractSimiScreen {
 		return original.call(instance, modified);
 	}
 	@Inject(method = "init", at = @At("TAIL"))
-	private void ccg$addMultiplier(CallbackInfo ci) {
+	public void addMultiplier(CallbackInfo ci) {
 		if (!CCG.config.misc.multiplyAllValues) return;
 		addRenderableWidget(MultiplyScreen.createButton(guiLeft + 35, guiTop + 79, this::ccg$multiplyAll));
 	}
-	/** 覆写 Shift 滚动逻辑 */
 	@Inject(method = "updateInputBoxes", at = @At("TAIL"))
-	private void ccg$alignShiftStep(CallbackInfo ci) {
+	public void alignShiftStep(CallbackInfo ci) {
 		if (!CCG.config.misc.quickRequestActions) return;
 		int valueStep = getValueStep();
 		onAbove.withShiftStep(valueStep);
 		offBelow.withShiftStep(valueStep);
 	}
 	@Unique
-	private void ccg$multiplyAll(double factor) {
+	public void ccg$multiplyAll(double factor) {
 		int valueStep = Math.max(1, getValueStep());
 		int min = blockEntity.currentMinLevel;
 		int max = blockEntity.currentMaxLevel;

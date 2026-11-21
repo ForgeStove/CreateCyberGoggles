@@ -50,6 +50,9 @@ public final class IHaveGoggleInformationHook {
 		methodNode.instructions.clear();
 		methodNode.instructions.add(insns);
 		methodNode.tryCatchBlocks.clear();
+		if (methodNode.localVariables != null) methodNode.localVariables.clear();
+		if (methodNode.visibleLocalVariableAnnotations != null) methodNode.visibleLocalVariableAnnotations.clear();
+		if (methodNode.invisibleLocalVariableAnnotations != null) methodNode.invisibleLocalVariableAnnotations.clear();
 		methodNode.maxStack = 3;
 		methodNode.maxLocals = Math.max(methodNode.maxLocals, 4);
 	}

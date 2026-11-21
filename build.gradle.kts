@@ -1,10 +1,10 @@
 plugins {
 	id("net.neoforged.moddev.legacyforge") version "+"
-	id("me.modmuss50.mod-publish-plugin") version "+"
+	id("me.modmuss50.mod-publish-plugin") version "2.2.1" // https://plugins.gradle.org/m2/me/modmuss50/mod-publish-plugin/me.modmuss50.mod-publish-plugin.gradle.plugin/maven-metadata.xml
 }
-base.archivesName.set(p("modName"))
+base.archivesName.set(p("modId"))
 group = p("modGroupId")
-version = "${p("mcVersion")}-${p("modVersion")}-${p("loaderCap")}"
+version = "${p("mcVersion")}-${p("modVersion")}-${p("loader")}"
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(p("javaVersion")))
 java.withSourcesJar()
 tasks.jar {
@@ -16,14 +16,16 @@ val generateMetadata = tasks.register<ProcessResources>("generateMetadata") {
 	val values = project.extra.properties.mapValues { it.value.toString() }
 	inputs.properties(values)
 	expand(values)
-	from("src/main/templates")
-	into("build/generated/sources/modMetadata")
+	from(layout.projectDirectory.dir("src/main/templates"))
+	into(layout.buildDirectory.dir("generated/sources/modMetadata"))
 }
 sourceSets.main.get().resources.srcDir(generateMetadata)
 mixin {
 	add(sourceSets.main.get(), "${p("modId")}.refmap.json")
 	config("${p("modId")}.mixins.json")
 }
+val mixinAgentNotation = "dev.vfyjxf:mixin-hotswap-agent:${p("mixinAgentVersion")}"
+val mixinAgent = configurations.create("mixinAgent").defaultDependencies { add(dependencyFactory.create(mixinAgentNotation)) }
 legacyForge {
 	version = "${p("mcVersion")}-${p("loaderVersion")}"
 	parchment {
@@ -32,10 +34,18 @@ legacyForge {
 	}
 	runs {
 		create("client").client()
-		create("server").server()
+		create("server") {
+			server()
+			gameDirectory.set(file("run/server"))
+			programArgument("--nogui")
+		}
 		configureEach {
 			systemProperty("terminal.jline", "true")
-			jvmArguments.addAll("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition")
+			jvmArgument("-XX:+IgnoreUnrecognizedVMOptions")
+			jvmArgument("-XX:+AllowEnhancedClassRedefinition")
+			jvmArgument("-javaagent:${mixinAgent.files.first().toPath()}")
+			// jvmArgument("-XX:-OmitStackTraceInFastThrow") // uncomment when you get exceptions with null messages etc
+			// jvmArgument("-XX:+UnlockCommercialFeatures") // uncomment for profiling
 		}
 	}
 	mods.create(p("modId")).sourceSet(sourceSets.main.get())
@@ -59,6 +69,7 @@ dependencies {
 	annotationProcessor("io.github.llamalad7:mixinextras-common:${p("mixinExtrasVersion")}")
 	compileOnly("io.github.llamalad7:mixinextras-common:${p("mixinExtrasVersion")}")
 	runtimeOnly("io.github.llamalad7:mixinextras-${p("loader")}:${p("mixinExtrasVersion")}")
+	add("additionalRuntimeClasspath", mixinAgentNotation)
 }
 publishMods {
 	file.set(tasks.named("reobfJar").get().outputs.files.singleFile)
@@ -84,5 +95,5 @@ publishMods {
 		requires("create")
 	}
 }
-fun p(key: String) = property(key).toString()
+fun p(key: String) = extra[key].toString()
 println("Java: ${System.getProperty("java.version")}, JVM: ${System.getProperty("java.vm.version")} (${System.getProperty("java.vendor")}), Arch: ${System.getProperty("os.arch")}")

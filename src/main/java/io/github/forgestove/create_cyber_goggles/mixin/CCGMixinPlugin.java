@@ -4,8 +4,7 @@ import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.*;
 
 import java.util.*;
-public final class CCGMixinPlugin implements IMixinConfigPlugin {
-	//region
+public class CCGMixinPlugin implements IMixinConfigPlugin {
 	@Override
 	public void onLoad(String mixinPackage) {}
 	@Override
@@ -18,7 +17,6 @@ public final class CCGMixinPlugin implements IMixinConfigPlugin {
 	public List<String> getMixins() {return null;}
 	@Override
 	public void preApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {}
-	//endregion
 	@Override
 	public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
 		IHaveGoggleInformationHook.hook(targetClassName, targetClass, mixinClassName);

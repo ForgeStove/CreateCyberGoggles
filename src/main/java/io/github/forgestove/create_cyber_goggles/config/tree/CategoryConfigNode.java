@@ -6,7 +6,7 @@ import org.jetbrains.annotations.*;
 
 import java.util.Objects;
 import java.util.function.UnaryOperator;
-public final class CategoryConfigNode<C> implements ConfigNode<C> {
+public class CategoryConfigNode<C> implements ConfigNode<C> {
 	private String name;
 	private Component title;
 	private Component tooltip;

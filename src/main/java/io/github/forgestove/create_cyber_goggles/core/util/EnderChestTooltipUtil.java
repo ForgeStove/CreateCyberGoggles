@@ -5,7 +5,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-public final class EnderChestTooltipUtil {
+public class EnderChestTooltipUtil {
 	private static volatile boolean opened;
 	private static volatile List<ItemStack> cachedItems = List.of();
 	public static void capture(@NotNull PlayerEnderChestContainer container) {

@@ -10,7 +10,7 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Predicate;
-public final class RootConfigNode<C> implements ConfigNode<C> {
+public class RootConfigNode<C> implements ConfigNode<C> {
 	private final ImmutableList<CategoryConfigNode<C>> categories;
 	private RootConfigNode(ImmutableList<CategoryConfigNode<C>> categories) {
 		this.categories = categories;

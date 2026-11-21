@@ -11,7 +11,7 @@ import java.util.function.*;
  *
  * @param <T> Configuration class type
  */
-public final class ConfigHandler<T> {
+public class ConfigHandler<T> {
 	private final Class<T> configClass;
 	private final ConfigSerializer<T> serializer;
 	private final Logger logger;

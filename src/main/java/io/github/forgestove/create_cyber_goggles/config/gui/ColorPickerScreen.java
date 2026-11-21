@@ -10,12 +10,13 @@ import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
+import java.util.Objects;
 import java.util.function.IntConsumer;
 import java.util.regex.Pattern;
 /**
  * Color picker popup screen with optimized rendering
  */
-public final class ColorPickerScreen extends Screen {
+public class ColorPickerScreen extends Screen {
 	private static final int PICKER_SIZE = 128;
 	private static final int HUE_BAR_WIDTH = 16;
 	private static final int ALPHA_BAR_WIDTH = 16;
@@ -48,14 +49,14 @@ public final class ColorPickerScreen extends Screen {
 		updateHSBFromColor(initialColor);
 	}
 	private void updateHSBFromColor(int color) {
-		if (hasAlpha) this.alpha = ARGB32.alpha(color);
+		if (hasAlpha) alpha = ARGB32.alpha(color);
 		var r = ARGB32.red(color);
 		var g = ARGB32.green(color);
 		var b = ARGB32.blue(color);
 		var hsb = Color.RGBtoHSB(r, g, b, null);
-		this.hue = hsb[0];
-		this.saturation = hsb[1];
-		this.brightness = hsb[2];
+		hue = hsb[0];
+		saturation = hsb[1];
+		brightness = hsb[2];
 	}
 	private int colorFromHSB() {
 		var rgb = Color.HSBtoRGB(hue, saturation, brightness);
@@ -72,38 +73,6 @@ public final class ColorPickerScreen extends Screen {
 			}
 		}
 		cachedHue = hue;
-	}
-	@Override
-	protected void init() {
-		var totalWidth = PICKER_SIZE + BAR_GAP + HUE_BAR_WIDTH + (hasAlpha ? BAR_GAP + ALPHA_BAR_WIDTH : 0);
-		var totalHeight = PICKER_SIZE + PADDING + 24;
-		pickerX = (this.width - totalWidth) / 2 - PADDING;
-		pickerY = (this.height - totalHeight) / 2 - PADDING - 10;
-		svX = pickerX + PADDING;
-		svY = pickerY + PADDING + 16;
-		var buttonY = svY + PICKER_SIZE + PADDING;
-		var buttonWidth = 40;
-		if (minecraft == null) return;
-		// OK button
-		this.addRenderableWidget(Button.builder(
-			Component.translatable("gui.ok"), b -> {
-				onColorSelected.accept(colorFromHSB());
-				this.minecraft.setScreen(parent);
-			}
-		).bounds(svX, buttonY, buttonWidth, 20).build());
-		// Cancel button
-		this.addRenderableWidget(Button.builder(Component.translatable("gui.cancel"), b -> this.minecraft.setScreen(parent))
-			.bounds(svX + buttonWidth + 2, buttonY, buttonWidth, 20)
-			.build());
-		// Hex input field (after buttons)
-		var hexInputX = svX + buttonWidth * 2 + 6;
-		var hexInputWidth = hasAlpha ? 70 : 55;
-		hexInput = new EditBox(this.font, hexInputX, buttonY, hexInputWidth, 20, Component.literal("Hex"));
-		hexInput.setMaxLength(hasAlpha ? 8 : 6);
-		hexInput.setValue(formatHexColor());
-		hexInput.setFilter(s -> HEX_PATTERN.matcher(s).matches());
-		hexInput.setResponder(this::onHexInputChange);
-		this.addRenderableWidget(hexInput);
 	}
 	private String formatHexColor() {
 		var color = colorFromHSB();
@@ -135,7 +104,7 @@ public final class ColorPickerScreen extends Screen {
 		guiGraphics.fill(pickerX - 4, pickerY - 4, pickerX + totalWidth + 4, pickerY + totalHeight + 4, 0xF0101010);
 		guiGraphics.renderOutline(pickerX - 4, pickerY - 4, totalWidth + 8, totalHeight + 8, 0xFF404040);
 		// Title
-		guiGraphics.drawString(this.font, this.title, svX, pickerY + PADDING, 0xFFFFFF);
+		guiGraphics.drawString(font, title, svX, pickerY + PADDING, 0xFFFFFF);
 		// Rebuild SB cache if hue changed
 		if (cachedHue != hue) rebuildSBCache();
 		// Render SB square from cache
@@ -178,8 +147,104 @@ public final class ColorPickerScreen extends Screen {
 		);
 		guiGraphics.renderOutline(previewX, previewY, previewSize, previewSize, 0xFFA0A0A0);
 		// Render widgets at same Z level
-		for (var child : this.children())
+		for (var child : children())
 			if (child instanceof AbstractWidget widget) widget.render(guiGraphics, mouseX, mouseY, delta);
+	}
+	@Override
+	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+		var step = 0.01f; // 1% per key press
+		var intStep = 3; // 3 alpha per key press
+		// Shift for faster movement
+		if (hasShiftDown()) {
+			step = 0.05f;
+			intStep = 15;
+		}
+		// Arrow keys for SB square (saturation: left/right, brightness: up/down)
+		switch (keyCode) {
+			case 265 -> { // UP
+				brightness = Mth.clamp(brightness + step, 0f, 1f);
+				updateHexInput();
+				return true;
+			}
+			case 264 -> { // DOWN
+				brightness = Mth.clamp(brightness - step, 0f, 1f);
+				updateHexInput();
+				return true;
+			}
+			case 263 -> { // LEFT
+				saturation = Mth.clamp(saturation - step, 0f, 1f);
+				updateHexInput();
+				return true;
+			}
+			case 262 -> { // RIGHT
+				saturation = Mth.clamp(saturation + step, 0f, 1f);
+				updateHexInput();
+				return true;
+			}
+			case 266 -> { // PAGE_UP - increase hue
+				hue = Mth.clamp(hue - step, 0f, 1f);
+				updateHexInput();
+				return true;
+			}
+			case 267 -> { // PAGE_DOWN - decrease hue
+				hue = Mth.clamp(hue + step, 0f, 1f);
+				updateHexInput();
+				return true;
+			}
+			case 268 -> { // HOME - increase alpha
+				if (hasAlpha) {
+					alpha = Mth.clamp(alpha + intStep, 0, 255);
+					updateHexInput();
+					return true;
+				}
+			}
+			case 269 -> { // END - decrease alpha
+				if (hasAlpha) {
+					alpha = Mth.clamp(alpha - intStep, 0, 255);
+					updateHexInput();
+					return true;
+				}
+			}
+		}
+		return super.keyPressed(keyCode, scanCode, modifiers);
+	}
+	@Override
+	protected void init() {
+		var totalWidth = PICKER_SIZE + BAR_GAP + HUE_BAR_WIDTH + (hasAlpha ? BAR_GAP + ALPHA_BAR_WIDTH : 0);
+		var totalHeight = PICKER_SIZE + PADDING + 24;
+		pickerX = (width - totalWidth) / 2 - PADDING;
+		pickerY = (height - totalHeight) / 2 - PADDING - 10;
+		svX = pickerX + PADDING;
+		svY = pickerY + PADDING + 16;
+		var buttonY = svY + PICKER_SIZE + PADDING;
+		var buttonWidth = 40;
+		if (minecraft == null) return;
+		// OK button
+		addRenderableWidget(Button.builder(
+			Component.translatable("gui.ok"), b -> {
+				onColorSelected.accept(colorFromHSB());
+				Objects.requireNonNull(minecraft).setScreen(parent);
+			}
+		).bounds(svX, buttonY, buttonWidth, 20).build());
+		// Cancel button
+		addRenderableWidget(Button.builder(Component.translatable("gui.cancel"), b -> Objects.requireNonNull(minecraft).setScreen(parent))
+			.bounds(svX + buttonWidth + 2, buttonY, buttonWidth, 20)
+			.build());
+		// Hex input field (after buttons)
+		var hexInputX = svX + buttonWidth * 2 + 6;
+		var hexInputWidth = hasAlpha ? 70 : 55;
+		hexInput = new EditBox(font, hexInputX, buttonY, hexInputWidth, 20, Component.literal("Hex"));
+		hexInput.setMaxLength(hasAlpha ? 8 : 6);
+		hexInput.setValue(formatHexColor());
+		hexInput.setFilter(s -> HEX_PATTERN.matcher(s).matches());
+		hexInput.setResponder(this::onHexInputChange);
+		addRenderableWidget(hexInput);
+	}
+	@Override
+	public void resize(@NotNull Minecraft minecraft, int width, int height) {
+		// Resize parent screen first to keep it in sync
+		if (parent != null) parent.resize(minecraft, width, height);
+		super.resize(minecraft, width, height);
 	}
 	private void renderHorizontalArrow(GuiGraphics guiGraphics, int x, int y, int width) {
 		// Left arrow
@@ -249,14 +314,6 @@ public final class ColorPickerScreen extends Screen {
 		return super.mouseClicked(mouseX, mouseY, button);
 	}
 	@Override
-	public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-		if (button == 0 && (draggingSV || draggingHue || draggingAlpha)) {
-			updateFromMouse((int) mouseX, (int) mouseY);
-			return true;
-		}
-		return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
-	}
-	@Override
 	public boolean mouseReleased(double mouseX, double mouseY, int button) {
 		if (button == 0) {
 			draggingSV = false;
@@ -265,6 +322,14 @@ public final class ColorPickerScreen extends Screen {
 		}
 		return super.mouseReleased(mouseX, mouseY, button);
 	}
+	@Override
+	public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+		if (button == 0 && (draggingSV || draggingHue || draggingAlpha)) {
+			updateFromMouse((int) mouseX, (int) mouseY);
+			return true;
+		}
+		return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+	}
 	private void updateFromMouse(int mouseX, int mouseY) {
 		if (draggingSV) {
 			saturation = Mth.clamp((float) (mouseX - svX) / (PICKER_SIZE - 1), 0f, 1f);
@@ -272,69 +337,5 @@ public final class ColorPickerScreen extends Screen {
 		} else if (draggingHue) hue = Mth.clamp((float) (mouseY - svY) / (PICKER_SIZE - 1), 0f, 1f);
 		else if (draggingAlpha) alpha = 255 - Mth.clamp((mouseY - svY) * 255 / (PICKER_SIZE - 1), 0, 255);
 		updateHexInput();
-	}
-	@Override
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		var step = 0.01f; // 1% per key press
-		var intStep = 3; // 3 alpha per key press
-		// Shift for faster movement
-		if (hasShiftDown()) {
-			step = 0.05f;
-			intStep = 15;
-		}
-		// Arrow keys for SB square (saturation: left/right, brightness: up/down)
-		switch (keyCode) {
-			case 265 -> { // UP
-				brightness = Mth.clamp(brightness + step, 0f, 1f);
-				updateHexInput();
-				return true;
-			}
-			case 264 -> { // DOWN
-				brightness = Mth.clamp(brightness - step, 0f, 1f);
-				updateHexInput();
-				return true;
-			}
-			case 263 -> { // LEFT
-				saturation = Mth.clamp(saturation - step, 0f, 1f);
-				updateHexInput();
-				return true;
-			}
-			case 262 -> { // RIGHT
-				saturation = Mth.clamp(saturation + step, 0f, 1f);
-				updateHexInput();
-				return true;
-			}
-			case 266 -> { // PAGE_UP - increase hue
-				hue = Mth.clamp(hue - step, 0f, 1f);
-				updateHexInput();
-				return true;
-			}
-			case 267 -> { // PAGE_DOWN - decrease hue
-				hue = Mth.clamp(hue + step, 0f, 1f);
-				updateHexInput();
-				return true;
-			}
-			case 268 -> { // HOME - increase alpha
-				if (hasAlpha) {
-					alpha = Mth.clamp(alpha + intStep, 0, 255);
-					updateHexInput();
-					return true;
-				}
-			}
-			case 269 -> { // END - decrease alpha
-				if (hasAlpha) {
-					alpha = Mth.clamp(alpha - intStep, 0, 255);
-					updateHexInput();
-					return true;
-				}
-			}
-		}
-		return super.keyPressed(keyCode, scanCode, modifiers);
-	}
-	@Override
-	public void resize(@NotNull Minecraft minecraft, int width, int height) {
-		// Resize parent screen first to keep it in sync
-		if (this.parent != null) this.parent.resize(minecraft, width, height);
-		super.resize(minecraft, width, height);
 	}
 }

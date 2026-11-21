@@ -3,7 +3,7 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-public final class GoggleTooltipDedupUtil {
+public class GoggleTooltipDedupUtil {
 	public static @NotNull List<Component> dedupAdjacentLines(@NotNull List<Component> tooltip) {
 		if (tooltip.isEmpty()) return tooltip;
 		var deduped = new ArrayList<Component>(tooltip.size());

@@ -6,7 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
-public final class StockRequestAmountOverlay {
+public class StockRequestAmountOverlay {
 	private static final int POPUP_WIDTH = 120;
 	private static final int POPUP_HEIGHT = 82;
 	private static final int POPUP_PADDING = 8;

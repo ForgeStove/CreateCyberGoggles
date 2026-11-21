@@ -6,7 +6,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.*;
-public final class ConfigEntryList extends ContainerObjectSelectionList<ConfigEntry> {
+public class ConfigEntryList extends ContainerObjectSelectionList<ConfigEntry> {
 	private static final float ANIMATION_SPEED = 0.4f;
 	private final ConfigCategoryTab<?> tab;
 	@Nullable private EnumValueConfigEntry<?> expandedDropdown;

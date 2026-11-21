@@ -9,7 +9,7 @@ import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-public final class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum<?>, Enum<?>> {
+public class EnumValueConfigEntry<C> extends ValueConfigEntry<C, Enum<?>, Enum<?>> {
 	private static final int OPTION_HEIGHT = 18;
 	private static final int SCROLLBAR_WIDTH = 6;
 	private static final int DROPDOWN_PADDING = 2;

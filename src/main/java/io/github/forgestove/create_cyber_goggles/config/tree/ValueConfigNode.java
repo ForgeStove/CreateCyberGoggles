@@ -3,7 +3,7 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.*;
 
 import java.util.Objects;
-public final class ValueConfigNode<C, T, V> implements ConfigNode<C> {
+public class ValueConfigNode<C, T, V> implements ConfigNode<C> {
 	private String name;
 	private Component title;
 	private Component tooltip;

@@ -8,7 +8,7 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-public final class CategoryTitleConfigEntry extends ConfigEntry {
+public class CategoryTitleConfigEntry extends ConfigEntry {
 	private final Minecraft minecraft;
 	private final Component label;
 	public CategoryTitleConfigEntry(ConfigCategoryTab<?> tab, Component label) {

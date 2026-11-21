@@ -2,13 +2,13 @@ package io.github.forgestove.create_cyber_goggles.config;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory;
-import net.minecraftforge.fml.*;
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.slf4j.Logger;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-public final class Config {
+public class Config {
 	private static final Map<String, ConfigHandler<?>> HANDLERS = new ConcurrentHashMap<>();
 	private static final Map<String, Class<?>> CONFIG_TYPES = new ConcurrentHashMap<>();
 	public static <T> T getConfig(Class<T> configClass, String id, Logger logger) {

@@ -8,7 +8,7 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-public final class TextConfigEntry extends ConfigEntry {
+public class TextConfigEntry extends ConfigEntry {
 	private final MultiLineTextWidget textWidget;
 	private final List<MultiLineTextWidget> textWidgetAsList;
 	public TextConfigEntry(ConfigCategoryTab<?> tab, Component text) {

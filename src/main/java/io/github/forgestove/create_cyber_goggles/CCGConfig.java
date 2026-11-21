@@ -1,7 +1,7 @@
 package io.github.forgestove.create_cyber_goggles;
 import io.github.forgestove.create_cyber_goggles.config.annotation.*;
 import io.github.forgestove.create_cyber_goggles.core.factory.*;
-public final class CCGConfig {
+public class CCGConfig {
 	@Category public final Goggles goggles = new Goggles();
 	@Category public final Tooltip tooltip = new Tooltip();
 	@Category public final GameMode gameMode = new GameMode();

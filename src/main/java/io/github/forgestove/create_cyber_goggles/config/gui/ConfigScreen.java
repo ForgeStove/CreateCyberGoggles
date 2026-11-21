@@ -5,7 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.tabs.*;
-import net.minecraft.client.gui.layouts.*;
+import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.*;
 import net.minecraft.client.renderer.PanoramaRenderer;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Consumer;
-public final class ConfigScreen<C> extends Screen {
+public class ConfigScreen<C> extends Screen {
 	/** Cache for last selected tab index per config screen type */
 	private static final Map<String, Integer> lastSelectedTabCache = new HashMap<>();
 	private final RootConfigNode<C> root;

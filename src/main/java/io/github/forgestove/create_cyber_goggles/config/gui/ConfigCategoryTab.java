@@ -12,7 +12,7 @@ import org.jetbrains.annotations.*;
 
 import java.util.*;
 import java.util.function.Consumer;
-public final class ConfigCategoryTab<C> implements Tab {
+public class ConfigCategoryTab<C> implements Tab {
 	private static final Map<Class<?>, ConfigEntryFactory<?>> ENTRY_FACTORIES = Map.of(
 		Boolean.class,
 		(tab, node) -> new BooleanValueConfigEntry<>(tab, cast(node)),

@@ -8,7 +8,7 @@ import net.minecraft.network.chat.CommonComponents;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
-public final class BooleanValueConfigEntry<C> extends ValueConfigEntry<C, Boolean, Boolean> {
+public class BooleanValueConfigEntry<C> extends ValueConfigEntry<C, Boolean, Boolean> {
 	private final CycleButton<Boolean> valueButton;
 	public BooleanValueConfigEntry(ConfigCategoryTab<C> tab, ValueConfigNode<C, Boolean, Boolean> valueNode) {
 		super(tab, valueNode);

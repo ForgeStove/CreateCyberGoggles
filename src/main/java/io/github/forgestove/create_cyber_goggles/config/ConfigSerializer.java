@@ -13,7 +13,7 @@ import java.util.function.*;
  *
  * @param <T> Configuration class type
  */
-public final class ConfigSerializer<T> {
+public class ConfigSerializer<T> {
 	private final Class<T> configClass;
 	private final Supplier<Path> configPath;
 	private final String translationPrefix;

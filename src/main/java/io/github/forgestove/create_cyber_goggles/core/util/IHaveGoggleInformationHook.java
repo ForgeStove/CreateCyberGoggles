@@ -8,7 +8,7 @@ import org.objectweb.asm.*;
 import org.objectweb.asm.tree.*;
 
 import java.util.List;
-public final class IHaveGoggleInformationHook {
+public class IHaveGoggleInformationHook {
 	private static final String GOGGLE_INFO_MIXIN = "io.github.forgestove.create_cyber_goggles.mixin.goggles.IHaveGoggleInformationMixin";
 	private static final String TARGET_INTERFACE = "com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation";
 	private static final String METHOD_NAME = "containedFluidTooltip";

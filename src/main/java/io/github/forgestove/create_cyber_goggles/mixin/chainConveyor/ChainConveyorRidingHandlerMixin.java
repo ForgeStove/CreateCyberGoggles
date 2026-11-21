@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.function.Predicate;
 
 import static io.github.forgestove.create_cyber_goggles.core.util.CCGUtil.*;
-@Mixin(value = ChainConveyorRidingHandler.class, remap = false)
+@Mixin(ChainConveyorRidingHandler.class)
 public abstract class ChainConveyorRidingHandlerMixin {
 	@WrapOperation(
 		method = "clientTick", at = @At(
@@ -23,12 +23,12 @@ public abstract class ChainConveyorRidingHandlerMixin {
 		if (CCG.config.chainConveyor.preventFalling) ChainConveyorRidingHandler.catchingUp = 20;
 		return CCG.config.chainConveyor.alwaysAllowRiding || original.call(instance, predicate);
 	}
-	@Inject(method = "clientTick", at = @At(value = "TAIL"))
+	@Inject(method = "clientTick", at = @At(value = "TAIL"), remap = false)
 	private static void injectTail(CallbackInfo ci) {
 		if (!CCG.config.chainConveyor.cardBoardedYourself) return;
 		if (testForStealth()) sendAction(Action.PRESS_SHIFT_KEY);
 	}
-	@Inject(method = "stopRiding", at = @At("HEAD"))
+	@Inject(method = "stopRiding", at = @At("HEAD"), remap = false)
 	private static void stopRiding(CallbackInfo ci) {
 		sendAction(Action.RELEASE_SHIFT_KEY);
 	}

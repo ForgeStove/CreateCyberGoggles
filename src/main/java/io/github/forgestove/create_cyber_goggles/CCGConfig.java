@@ -121,7 +121,6 @@ public class CCGConfig {
 		public boolean liftLimitOfHandleRange = false;
 		public boolean customHandleMoveSublevelKey = false;
 		@WarnCheat public boolean alwaysAllowRidingRope = false;
-		@WarnCheat public boolean enablePhysicsStaff = false;
 		@Category public ForceOverlay forceOverlay = new ForceOverlay();
 		public static class ForceOverlay {
 			public boolean enableForceOverlay = true;

@@ -34,8 +34,6 @@
 	"create_cyber_goggles.config.option.aeronautics.alwaysShowMass.tooltip": "Show the mass of any blocks",
 	"create_cyber_goggles.config.option.aeronautics.customHandleMoveSublevelKey": "Custom Handle Move Sublevel Key",
 	"create_cyber_goggles.config.option.aeronautics.customHandleMoveSublevelKey.tooltip": "Enable custom handle movement Sublevel key",
-	"create_cyber_goggles.config.option.aeronautics.enablePhysicsStaff": "Enable Physics Staff",
-	"create_cyber_goggles.config.option.aeronautics.enablePhysicsStaff.tooltip": "Enable Physics Staff in any game mode",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.arrowSaturation": "Arrow Saturation",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.arrowSaturation.tooltip": "Controls how large forces map to arrow length (higher = smaller relative to gravity)",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.clusterAngleRadians": "Cluster Angle Threshold",

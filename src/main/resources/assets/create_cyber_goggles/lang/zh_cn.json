@@ -34,8 +34,6 @@
 	"create_cyber_goggles.config.option.aeronautics.alwaysShowMass.tooltip": "显示任何方块的质量",
 	"create_cyber_goggles.config.option.aeronautics.customHandleMoveSublevelKey": "自定义把手移动物理结构键",
 	"create_cyber_goggles.config.option.aeronautics.customHandleMoveSublevelKey.tooltip": "启用自定义把手移动物理结构键",
-	"create_cyber_goggles.config.option.aeronautics.enablePhysicsStaff": "启用物理法杖",
-	"create_cyber_goggles.config.option.aeronautics.enablePhysicsStaff.tooltip": "在任何游戏模式中都启用物理法杖",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.arrowSaturation": "箭头饱和度",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.arrowSaturation.tooltip": "控制大力映射到箭头长度的方式（值越大箭头相对重力越短）",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.clusterAngleRadians": "聚类角度阈值",

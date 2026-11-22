@@ -1,16 +1,9 @@
 package io.github.forgestove.create_cyber_goggles.mixin.compact.simulated;
-import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import dev.simulated_team.simulated.content.physics_staff.PhysicsStaffClientHandler;
 import dev.simulated_team.simulated.content.physics_staff.PhysicsStaffClientHandler.ClientDragSession;
-import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.content.goggles.ItemSwapUtil;
 import io.github.forgestove.create_cyber_goggles.foundation.events.CCGKey;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.joml.*;
 import org.spongepowered.asm.mixin.*;
@@ -39,20 +32,4 @@ public abstract class PhysicsStaffClientHandlerMixin {
 	}
 	@Shadow
 	protected abstract double clampDistance(double distance);
-	@WrapMethod(method = "lockSubLevel")
-	public void warpSendLockPacket(
-		SubLevel subLevel,
-		Vec3 hitLocation,
-		LocalPlayer player,
-		InteractionHand hand,
-		Operation<Void> original
-	) {
-		if (CCG.config.aeronautics.enablePhysicsStaff && mc.player != null && !mc.player.isCreative() && ItemSwapUtil.isSwapped()) return;
-		original.call(subLevel, hitLocation, player, hand);
-	}
-	@WrapMethod(method = "stopDragging")
-	public void wrapSendStopPacket(Operation<Void> original) {
-		if (CCG.config.aeronautics.enablePhysicsStaff && mc.player != null && !mc.player.isCreative() && ItemSwapUtil.isSwapped()) return;
-		original.call();
-	}
 }

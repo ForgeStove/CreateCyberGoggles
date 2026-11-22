@@ -29,8 +29,6 @@
 	"create_cyber_goggles.config.option.aeronautics.alwaysShowMass.tooltip": "Mostrar a massa de qualquer bloco",
 	"create_cyber_goggles.config.option.aeronautics.customHandleMoveSublevelKey": "Manipulação personalizada para subnível chave",
 	"create_cyber_goggles.config.option.aeronautics.customHandleMoveSublevelKey.tooltip": "Ativar o manuseio personalizado de movimento subvel",
-	"create_cyber_goggles.config.option.aeronautics.enablePhysicsStaff": "Habilitar Cajado de Física",
-	"create_cyber_goggles.config.option.aeronautics.enablePhysicsStaff.tooltip": "Habilite o Cajado físico em qualquer modo de jogo",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.arrowSaturation": "Saturação da Flecha",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.arrowSaturation.tooltip": "Controla como o mapa força o tamanho da seta (maior = menor em relação à gravidade)",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.clusterAngleRadians": "Limite de Ângulo de aglomeração",

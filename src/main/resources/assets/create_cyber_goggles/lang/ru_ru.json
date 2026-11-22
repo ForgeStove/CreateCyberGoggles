@@ -34,8 +34,6 @@
 	"create_cyber_goggles.config.option.aeronautics.alwaysShowMass.tooltip": "Показывать массу каждого блока",
 	"create_cyber_goggles.config.option.aeronautics.customHandleMoveSublevelKey": "Пользовательская клавиша для перемещения рукояткой",
 	"create_cyber_goggles.config.option.aeronautics.customHandleMoveSublevelKey.tooltip": "Включить пользовательскую клавишу для перемещения рукояткой",
-	"create_cyber_goggles.config.option.aeronautics.enablePhysicsStaff": "Включить физический посох",
-	"create_cyber_goggles.config.option.aeronautics.enablePhysicsStaff.tooltip": "Включить показ физического посоха в любом режиме игры.",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.arrowSaturation": "Насыщенность стрелки",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.arrowSaturation.tooltip": "Определяет зависимость длины стрелки от больших сил (выше = меньше относительно гравитации)",
 	"create_cyber_goggles.config.option.aeronautics.forceOverlay.clusterAngleRadians": "Угловой порог кластеризации",

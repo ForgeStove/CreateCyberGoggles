@@ -4,7 +4,7 @@ plugins {
 }
 base.archivesName.set(p("modId"))
 group = p("modGroupId")
-version = "${p("mcVersion")}-${p("modVersion")}-${p("loader")}"
+version = "${p("loader")}-${p("mcVersion")}-${p("modVersion")}"
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(p("javaVersion")))
 java.withSourcesJar()
 tasks.jar { from("LICENSE") }
@@ -53,7 +53,7 @@ repositories {
 		metadataSources { artifact() }
 	}
 	maven("https://maven.createmod.net") // Create, Ponder, Flywheel
-	maven("https://mvn.devos.one/snapshots") // Registrate
+	maven("https://maven.gegy.dev/releases") // Registrate
 	maven("https://maven.ryanhcode.dev/releases") // Aeronautics
 	maven("https://maven.blamejared.com") // JEI, Veil, Ars Nouveau
 	maven("https://maven.terraformersmc.com") // EMI
@@ -61,7 +61,7 @@ repositories {
 	maven("https://dl.zznty.ru/maven") // Create Factory Abstractions
 }
 dependencies {
-	implementation("io.github.forgestove:flexconfig:${p("mcVersion")}-${p("flexConfigVersion")}-${p("loader")}")?.let { jarJar(it) }
+	implementation("io.github.forgestove:flexconfig:${p("loader")}-${p("mcVersion")}-${p("flexConfigVersion")}")?.let { jarJar(it) }
 	//region Create
 	implementation("com.simibubi.create:create-${p("mcVersion")}:${p("createVersion")}") { isTransitive = false }
 	implementation("dev.engine-room.flywheel:flywheel-${p("loader")}-${p("mcVersion")}:${p("flywheelVersion")}")

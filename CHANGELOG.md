@@ -1,1 +1,3 @@
 - Update flexconfig
+- Optimize speed shown
+- Remove usePhysicsStaff option

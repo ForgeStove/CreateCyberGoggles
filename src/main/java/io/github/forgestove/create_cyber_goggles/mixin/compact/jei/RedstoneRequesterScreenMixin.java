@@ -24,21 +24,17 @@ import java.util.List;
 @Mixin(RedstoneRequesterScreen.class)
 public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainerScreen<RedstoneRequesterMenu>
 	implements Self<RedstoneRequesterScreen> {
-	/** 扩展交互（ghost 槽拖拽、撤销）委托给工具类 */
 	@Unique private RedstoneRequesterInteractions ccg$interactions;
 	public RedstoneRequesterScreenMixin(RedstoneRequesterMenu container, Inventory inv, Component title) {
 		super(container, inv, title);
 	}
-	/** 打开界面时把当前 Screen 关联到菜单，供 JEI 转移读取 */
 	@Inject(method = "init", at = @At("HEAD"))
 	private void linkScreen(CallbackInfo ci) {
 		RedstoneRequesterMenu requesterMenu = thiz().getMenu();
 		((ScreenReferenced) requesterMenu).ccg$setScreenReference(thiz());
-		// 打开界面时请求一次网络库存，供 JEI 转移按库存选择原料
 		if (CCG.config.misc.jei.redstoneRequesterJEIRequest && requesterMenu.contentHolder != null)
 			CatnipServices.NETWORK.sendToServer(new LogisticalStockRequestPacket(requesterMenu.contentHolder.getBlockPos()));
 	}
-	/** 在「完成」按钮左侧添加撤销按钮：点击恢复到打开界面时的初始内容 */
 	@Inject(method = "init", at = @At("TAIL"))
 	private void addUndoButton(CallbackInfo ci) {
 		int x = getGuiLeft();
@@ -49,8 +45,6 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 		undo.setToolTip(Component.translatable("flexconfig.undo.tooltip"));
 		undo.withCallback(() -> ccg$interactions.undo());
 		addRenderableWidget(undo);
-		// 首次进入时创建交互并缓存初始内容供撤销；从其他屏返回/窗口重排再次 init 只重绑按钮，
-		// 不覆盖已缓存的基准（否则被改动过的内容会成为新的存档，撤销丢失最初状态）
 		if (ccg$interactions == null) {
 			ccg$interactions = new RedstoneRequesterInteractions(thiz());
 			ccg$interactions.init(undo);
@@ -61,7 +55,6 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 		if (!CCG.config.misc.multiplyAllValues) return;
 		addRenderableWidget(MultiplyScreen.createButton(getGuiLeft() + 48, getGuiTop() + 95, this::ccg$multiplyAll));
 	}
-	/** 非空槽的数量统一乘倍数，上限与原版滚动一致 */
 	@Unique
 	private void ccg$multiplyAll(double factor) {
 		List<Integer> amounts = ((RedstoneRequesterScreenAccessor) thiz()).getAmounts();
@@ -89,7 +82,6 @@ public abstract class RedstoneRequesterScreenMixin extends AbstractSimiContainer
 		if (button == 0 && ccg$interactions.onRelease()) return true;
 		return super.mouseReleased(mouseX, mouseY, button);
 	}
-	/** 每帧更新撤销按钮可用状态并渲染悬空物品与源槽高亮 */
 	@Inject(method = "renderForeground", at = @At("TAIL"))
 	private void renderPicked(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
 		if (!CCG.config.misc.quickRequestActions) return;

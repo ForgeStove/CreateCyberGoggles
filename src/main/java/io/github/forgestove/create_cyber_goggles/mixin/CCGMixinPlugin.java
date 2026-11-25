@@ -17,10 +17,8 @@ public class CCGMixinPlugin implements IMixinConfigPlugin {
 	private static boolean satisfiesModCondition(String mixinClassName) {
 		ModConditions condition = readModCondition(mixinClassName);
 		if (condition == null) return true;
-		boolean applied =
-			condition.require().stream().allMatch(id -> LoadingModList.get().getModFileById(id) != null) && condition.conflict()
-			.stream()
-			.noneMatch(id -> LoadingModList.get().getModFileById(id) != null);
+		boolean applied = condition.require().stream().allMatch(id -> LoadingModList.get().getModFileById(id) != null)
+			&& condition.conflict().stream().noneMatch(id -> LoadingModList.get().getModFileById(id) != null);
 		LOGGER.info(
 			"Conditional Mixin {} {}: require={} conflict={}",
 			mixinClassName,
@@ -42,14 +40,10 @@ public class CCGMixinPlugin implements IMixinConfigPlugin {
 			if (node.visibleAnnotations == null) return null;
 			for (AnnotationNode annotation : node.visibleAnnotations) {
 				if (!MOD_CONDITION.equals(annotation.desc) || annotation.values == null) continue;
-				List<String> require = List.of();
-				List<String> conflict = List.of();
-				for (var i = 0; i < annotation.values.size(); i += 2) {
-					Object value = annotation.values.get(i + 1);
-					if ("require".equals(annotation.values.get(i))) require = enumConstants(value);
-					else if ("conflict".equals(annotation.values.get(i))) conflict = enumConstants(value);
-				}
-				return new ModConditions(require, conflict);
+				Map<String, List<String>> values = new HashMap<>(annotation.values.size() / 2);
+				for (var i = 0; i < annotation.values.size(); i += 2)
+					values.put((String) annotation.values.get(i), enumConstants(annotation.values.get(i + 1)));
+				return new ModConditions(values.getOrDefault("require", List.of()), values.getOrDefault("conflict", List.of()));
 			}
 			return null;
 		} catch (IOException e) {

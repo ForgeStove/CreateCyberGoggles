@@ -1,6 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.api;
 import com.simibubi.create.AllItems;
-import com.simibubi.create.content.logistics.filter.*;
 import io.github.forgestove.create_cyber_goggles.content.filterPreview.*;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.entity.player.Inventory;
@@ -9,20 +8,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-/**
- * 预览过滤器界面的工厂注册表，按物品查找；后注册者覆盖先注册者。
- * <p>仅客户端，注册应在客户端初始化阶段完成。</p>
- */
-@SuppressWarnings("unused")
 public class FilterPreview {
-	private static final Map<Item, FilterPreviewFactory> FACTORIES = new ConcurrentHashMap<>(Map.of(
-		AllItems.FILTER.get(),
-		(id, inv, stack) -> new ReadOnlyFilterScreen(FilterMenu.create(id, inv, stack), inv, stack.getHoverName()),
-		AllItems.ATTRIBUTE_FILTER.get(),
-		(id, inv, stack) -> new ReadOnlyAttributeFilterScreen(AttributeFilterMenu.create(id, inv, stack), inv, stack.getHoverName()),
-		AllItems.PACKAGE_FILTER.get(),
-		(id, inv, stack) -> new ReadOnlyPackageFilterScreen(PackageFilterMenu.create(id, inv, stack), inv, stack.getHoverName())
-	));
+	public static final byte previewId = -1;
+	private static final Map<Item, FilterPreviewFactory> FACTORIES = new ConcurrentHashMap<>();
+	static {
+		register(AllItems.FILTER.get(), ReadOnlyFilterScreen::new);
+		register(AllItems.ATTRIBUTE_FILTER.get(), ReadOnlyAttributeFilterScreen::new);
+		register(AllItems.PACKAGE_FILTER.get(), ReadOnlyPackageFilterScreen::new);
+	}
 	public static void register(Item item, FilterPreviewFactory factory) {
 		FACTORIES.put(Objects.requireNonNull(item, "item"), Objects.requireNonNull(factory, "factory"));
 	}

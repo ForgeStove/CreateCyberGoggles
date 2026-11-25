@@ -32,7 +32,7 @@ public class KeyInputEvents {
 		if (mc.player == null) return;
 		ItemStack itemStack = getSelectedFilter();
 		if (itemStack == null) return;
-		Screen screen = FilterPreview.create(-1, mc.player.getInventory(), itemStack.copy());
+		Screen screen = FilterPreview.create(FilterPreview.previewId, mc.player.getInventory(), itemStack.copy());
 		if (screen == null) {
 			mc.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.NOTE_BLOCK_BASS, 0.5F));
 			return;

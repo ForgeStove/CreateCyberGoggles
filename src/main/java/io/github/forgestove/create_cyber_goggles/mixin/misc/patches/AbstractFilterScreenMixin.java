@@ -1,7 +1,8 @@
-package io.github.forgestove.create_cyber_goggles.mixin;
+package io.github.forgestove.create_cyber_goggles.mixin.misc.patches;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.simibubi.create.content.logistics.filter.AbstractFilterScreen;
 import io.github.forgestove.create_cyber_goggles.CCG;
+import io.github.forgestove.create_cyber_goggles.api.FilterPreview;
 import io.github.forgestove.create_cyber_goggles.foundation.util.Self;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,6 +13,6 @@ public abstract class AbstractFilterScreenMixin implements Self<AbstractFilterSc
 		method = "containerTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;closeContainer()V")
 	)
 	public boolean containerTick(Player instance) {
-		return !CCG.config.misc.preventAutoCloseFilter && thiz().getMenu().containerId != -1;
+		return !CCG.config.misc.preventAutoCloseFilter && thiz().getMenu().containerId != FilterPreview.previewId;
 	}
 }

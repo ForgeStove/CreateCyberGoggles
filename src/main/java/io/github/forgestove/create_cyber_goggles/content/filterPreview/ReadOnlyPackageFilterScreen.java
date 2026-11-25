@@ -1,12 +1,12 @@
 package io.github.forgestove.create_cyber_goggles.content.filterPreview;
 import com.simibubi.create.content.logistics.filter.*;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.*;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.*;
 public class ReadOnlyPackageFilterScreen extends PackageFilterScreen {
-	public ReadOnlyPackageFilterScreen(PackageFilterMenu menu, Inventory inv, Component title) {
-		super(menu, inv, title);
+	public ReadOnlyPackageFilterScreen(int id, Inventory inv, ItemStack stack) {
+		super(PackageFilterMenu.create(id, inv, stack), inv, stack.getHoverName());
 	}
 	@Override
 	protected void init() {

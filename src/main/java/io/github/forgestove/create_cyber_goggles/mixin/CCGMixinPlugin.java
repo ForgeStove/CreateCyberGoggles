@@ -1,30 +1,44 @@
 package io.github.forgestove.create_cyber_goggles.mixin;
+import com.mojang.logging.LogUtils;
 import net.neoforged.fml.loading.LoadingModList;
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.*;
 import org.objectweb.asm.tree.*;
+import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.extensibility.*;
 
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 public class CCGMixinPlugin implements IMixinConfigPlugin {
+	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final String MOD_CONDITION = Type.getDescriptor(ModCondition.class);
 	private static final Map<String, Boolean> CACHE = new ConcurrentHashMap<>();
 	private static boolean satisfiesModCondition(String mixinClassName) {
-		var condition = readModCondition(mixinClassName);
-		for (String modId : condition.present())
-			if (LoadingModList.get().getModFileById(modId) == null) return false;
-		for (String modId : condition.absent())
-			if (LoadingModList.get().getModFileById(modId) != null) return false;
-		return true;
+		ModConditions condition = readModCondition(mixinClassName);
+		if (condition == null) return true;
+		boolean apply = condition.present().stream().allMatch(id -> LoadingModList.get().getModFileById(id) != null) && condition.absent()
+			.stream()
+			.noneMatch(id -> LoadingModList.get().getModFileById(id) != null);
+		LOGGER.info(
+			"Mixin {} @ModCondition present={} absent={} -> {}",
+			mixinClassName,
+			condition.present(),
+			condition.absent(),
+			apply ? "apply" : "skip"
+		);
+		return apply;
 	}
-	private static ModConditions readModCondition(String mixinClassName) {
+	private static @Nullable ModConditions readModCondition(String mixinClassName) {
 		String path = "/" + mixinClassName.replace('.', '/') + ".class";
 		try (InputStream in = CCGMixinPlugin.class.getResourceAsStream(path)) {
-			if (in == null) return ModConditions.EMPTY;
+			if (in == null) {
+				LOGGER.warn("Mixin class bytes not readable: {}", mixinClassName);
+				return null;
+			}
 			var node = new ClassNode();
 			new ClassReader(in).accept(node, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
-			if (node.visibleAnnotations == null) return ModConditions.EMPTY;
+			if (node.visibleAnnotations == null) return null;
 			for (AnnotationNode annotation : node.visibleAnnotations) {
 				if (!MOD_CONDITION.equals(annotation.desc) || annotation.values == null) continue;
 				List<String> present = List.of();
@@ -36,9 +50,10 @@ public class CCGMixinPlugin implements IMixinConfigPlugin {
 				}
 				return new ModConditions(present, absent);
 			}
-			return ModConditions.EMPTY;
+			return null;
 		} catch (IOException e) {
-			return ModConditions.EMPTY;
+			LOGGER.warn("Mixin class bytes not readable: {}", mixinClassName, e);
+			return null;
 		}
 	}
 	private static List<String> enumConstants(Object value) {
@@ -69,7 +84,5 @@ public class CCGMixinPlugin implements IMixinConfigPlugin {
 	public void preApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {}
 	@Override
 	public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {}
-	private record ModConditions(List<String> present, List<String> absent) {
-		private static final ModConditions EMPTY = new ModConditions(List.of(), List.of());
-	}
+	private record ModConditions(List<String> present, List<String> absent) {}
 }

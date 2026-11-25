@@ -17,14 +17,13 @@ public class CCGMixinPlugin implements IMixinConfigPlugin {
 	private static boolean satisfiesModCondition(String mixinClassName) {
 		ModConditions condition = readModCondition(mixinClassName);
 		if (condition == null) return true;
-		boolean apply = condition.present().stream().allMatch(id -> LoadingModList.get().getModFileById(id) != null) && condition.absent()
+		boolean apply =
+			condition.require().stream().allMatch(id -> LoadingModList.get().getModFileById(id) != null) && condition.conflict()
 			.stream()
 			.noneMatch(id -> LoadingModList.get().getModFileById(id) != null);
 		LOGGER.info(
-			"Mixin {} @ModCondition present={} absent={} -> {}",
-			mixinClassName,
-			condition.present(),
-			condition.absent(),
+			"Mixin {} @ModCondition require={} conflict={} -> {}",
+			mixinClassName, condition.require(), condition.conflict(),
 			apply ? "apply" : "skip"
 		);
 		return apply;
@@ -41,14 +40,14 @@ public class CCGMixinPlugin implements IMixinConfigPlugin {
 			if (node.visibleAnnotations == null) return null;
 			for (AnnotationNode annotation : node.visibleAnnotations) {
 				if (!MOD_CONDITION.equals(annotation.desc) || annotation.values == null) continue;
-				List<String> present = List.of();
-				List<String> absent = List.of();
+				List<String> require = List.of();
+				List<String> conflict = List.of();
 				for (var i = 0; i < annotation.values.size(); i += 2) {
 					Object value = annotation.values.get(i + 1);
-					if ("value".equals(annotation.values.get(i))) present = enumConstants(value);
-					else if ("absent".equals(annotation.values.get(i))) absent = enumConstants(value);
+					if ("require".equals(annotation.values.get(i))) require = enumConstants(value);
+					else if ("conflict".equals(annotation.values.get(i))) conflict = enumConstants(value);
 				}
-				return new ModConditions(present, absent);
+				return new ModConditions(require, conflict);
 			}
 			return null;
 		} catch (IOException e) {
@@ -84,5 +83,5 @@ public class CCGMixinPlugin implements IMixinConfigPlugin {
 	public void preApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {}
 	@Override
 	public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {}
-	private record ModConditions(List<String> present, List<String> absent) {}
+	private record ModConditions(List<String> require, List<String> conflict) {}
 }

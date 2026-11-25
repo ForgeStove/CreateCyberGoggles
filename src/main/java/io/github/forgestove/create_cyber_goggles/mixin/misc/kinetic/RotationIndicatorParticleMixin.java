@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.mc;
-@ModCondition(CCGMods.sable)
+@ModCondition(require = CCGMods.sable)
 @Mixin(RotationIndicatorParticle.class)
 public abstract class RotationIndicatorParticleMixin {
 	@WrapOperation(

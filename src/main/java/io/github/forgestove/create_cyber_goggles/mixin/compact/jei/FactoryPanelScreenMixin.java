@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.*;
-@ModCondition(absent = CCGMods.extra_gauges)
+@ModCondition(conflict = CCGMods.extra_gauges)
 @Mixin(FactoryPanelScreen.class)
 public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen {
 	@Shadow private boolean craftingActive;

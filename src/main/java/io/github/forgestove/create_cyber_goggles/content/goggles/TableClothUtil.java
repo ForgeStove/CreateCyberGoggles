@@ -2,7 +2,6 @@ package io.github.forgestove.create_cyber_goggles.content.goggles;
 import com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer;
 import com.simibubi.create.content.logistics.tableCloth.TableClothBlockEntity;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
-import io.github.forgestove.create_cyber_goggles.foundation.events.KeyInputEvents;
 import io.github.forgestove.create_cyber_goggles.foundation.util.Index;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.minecraft.client.gui.GuiGraphics;
@@ -14,6 +13,7 @@ import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.*;
 public class TableClothUtil {
+	public static int scrollDeltaY;
 	public static void clothStoreOverlay(GuiGraphics gui, int x, int y, @NotNull List<ItemStack> items) {
 		TableClothBlockEntity tcbe = getBlockEntity(TableClothBlockEntity.class);
 		if (tcbe == null) return;
@@ -35,8 +35,8 @@ public class TableClothUtil {
 	@Contract("_, null -> null")
 	public static @Nullable Integer getIndex(@NotNull List<ItemStack> items, TableClothBlockEntity tcbe) {
 		if (!(tcbe instanceof Index i)) return null;
-		int index = i.ccg$getIndex() - KeyInputEvents.scrollDeltaY;
-		KeyInputEvents.scrollDeltaY = 0;
+		int index = i.ccg$getIndex() - scrollDeltaY;
+		scrollDeltaY = 0;
 		int size = items.size();
 		if (index < 0) index = size - 1;
 		else if (index >= size) index = 0;

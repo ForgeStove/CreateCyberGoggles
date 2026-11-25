@@ -17,7 +17,6 @@ import java.util.List;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.*;
 public class KeyInputEvents {
-	public static int scrollDeltaY;
 	public static void key(Key ignoredEvent) {
 		openConfigScreen();
 		previewFilterScreen();
@@ -51,7 +50,7 @@ public class KeyInputEvents {
 		if (tcbe == null) return;
 		if (TableClothUtil.getItems(tcbe).size() <= 1) return;
 		if (hasActivedValueBox()) return;
-		scrollDeltaY = (int) event.getScrollDeltaY();
+		TableClothUtil.scrollDeltaY = (int) event.getScrollDeltaY();
 		event.setCanceled(true);
 	}
 	private static void tryScrollClipboardPage(MouseScrollingEvent event) {

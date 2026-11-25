@@ -113,6 +113,7 @@
 		"misc.factoryPanel.FactoryPanelSetItemScreenMixin",
 		"misc.font.FontMixin",
 		"misc.font.ItemCountFontMixin",
+		"misc.kinetic.RotationIndicatorParticleMixin",
 		"misc.patches.AbstractFilterScreenMixin",
 		"misc.patches.FilesHelperMixin",
 		"misc.patches.LibraryMixin",

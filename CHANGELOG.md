@@ -1,3 +1,1 @@
-- Update flexconfig
-- Optimize speed shown
-- Remove usePhysicsStaff option
+- Fix [#115](https://github.com/ForgeStove/CreateCyberGoggles/issues/115)

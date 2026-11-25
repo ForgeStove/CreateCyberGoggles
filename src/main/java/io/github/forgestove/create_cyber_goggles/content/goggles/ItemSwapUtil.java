@@ -80,9 +80,12 @@ public class ItemSwapUtil {
 			ItemStack currentMainHand = inventory.getItem(swappedHandSlot);
 			inventory.setItem(swappedHandSlot, preSwapMainHand);
 			inventory.setItem(swappedOriginSlot, currentMainHand);
-		} else // 本地生成 —— 恢复原始物品（仅客户端）
-			if (swappedOriginSlot == LOCAL_SPAWN) inventory.setItem(swappedHandSlot, preSwapMainHand);
-			else if (mc.gameMode != null) mc.gameMode.handleCreativeModeItemAdd(preSwapMainHand, 36 + swappedHandSlot); // 创造模式销毁
+		} else if (swappedOriginSlot == LOCAL_SPAWN) // 本地生成 —— 恢复原始物品（仅客户端）
+			inventory.setItem(swappedHandSlot, preSwapMainHand);
+		else { // 创造模式 —— 本地与服务器同时恢复
+			inventory.setItem(swappedHandSlot, preSwapMainHand.copy());
+			if (mc.gameMode != null) mc.gameMode.handleCreativeModeItemAdd(preSwapMainHand, 36 + swappedHandSlot);
+		}
 		// 通过数据包恢复
 		swapped = false;
 		swappedOriginSlot = -1;
@@ -136,6 +139,7 @@ public class ItemSwapUtil {
 		// 3) 背包中未找到
 		if (!isCreative || mc.gameMode == null) return;
 		swapped = true;
+		inventory.setItem(handSlot, target.copy());
 		mc.gameMode.handleCreativeModeItemAdd(target, 36 + handSlot);
 	}
 	private static LinkedHashMap<CCGKey, ItemStack> getDefaultItems() {

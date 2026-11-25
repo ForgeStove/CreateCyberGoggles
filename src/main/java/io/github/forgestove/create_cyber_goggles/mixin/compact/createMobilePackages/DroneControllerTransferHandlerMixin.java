@@ -7,15 +7,15 @@ import org.spongepowered.asm.mixin.injection.*;
 @Mixin(DroneControllerTransferHandler.class)
 public abstract class DroneControllerTransferHandlerMixin {
 	@ModifyConstant(method = "transferRecipeOnClient", constant = @Constant(intValue = 9))
-	private int ccg$allowLargeCrafting(int constant) {
+	private int allowLargeCrafting(int constant) {
 		return CCG.config.misc.jei.allowLargeCrafting ? 81 : constant;
 	}
 	@ModifyConstant(method = "transferRecipeOnClient", constant = @Constant(longValue = 9L))
-	private long ccg$allowLargeCraftingLong(long constant) {
+	private long allowLargeCraftingLong(long constant) {
 		return CCG.config.misc.jei.allowLargeCrafting ? 81L : constant;
 	}
 	@ModifyConstant(method = "canFitNewTypes", constant = @Constant(intValue = 9))
-	private int ccg$largeTypeLimit(int constant) {
+	private int largeTypeLimit(int constant) {
 		return CCG.config.misc.jei.allowLargeCrafting ? 81 : constant;
 	}
 }

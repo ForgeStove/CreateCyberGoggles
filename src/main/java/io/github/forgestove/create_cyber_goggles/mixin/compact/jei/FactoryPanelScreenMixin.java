@@ -6,6 +6,7 @@ import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelScreen;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.foundation.lang.CCGLang;
 import io.github.forgestove.create_cyber_goggles.foundation.util.CCGMods;
+import io.github.forgestove.create_cyber_goggles.mixin.ModCondition;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -16,15 +17,12 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.*;
+@ModCondition(absent = CCGMods.extra_gauges)
 @Mixin(FactoryPanelScreen.class)
 public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen {
 	@Shadow private boolean craftingActive;
 	@Shadow private CraftingRecipe availableCraftingRecipe;
 	@Shadow private List<BigItemStack> craftingIngredients;
-	/**
-	 * "使用动力合成"按钮只会在找到配方时显示；searchForCraftingRecipe 只搜 RecipeType.CRAFTING，
-	 * 动力合成配方（MECHANICAL_CRAFTING 类型）不会被识别。此处合并两类配方，使非 3x3 配方也能显示按钮。
-	 */
 	@WrapOperation(
 		method = "searchForCraftingRecipe", at = @At(
 		value = "INVOKE",
@@ -37,15 +35,14 @@ public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen {
 		RecipeType<Recipe<RecipeInput>> type,
 		Operation<List<RecipeHolder<Recipe<RecipeInput>>>> original
 	) {
-		if (!CCG.config.misc.jei.allowLargeCrafting || CCGMods.extra_gauges.isLoaded()) return original.call(instance, type);
+		if (!CCG.config.misc.jei.allowLargeCrafting) return original.call(instance, type);
 		var recipes = new ArrayList<>(original.call(instance, type));
 		recipes.addAll(instance.getAllRecipesFor(AllRecipeTypes.MECHANICAL_CRAFTING.getType()));
 		return recipes;
 	}
-	/** >3×3 配方改为在 3×3 区域内显示总计原料（避免完整网格出界）；悬停 3×3 框显示实际配方样式 */
 	@Inject(method = "renderInputItem", at = @At("HEAD"), cancellable = true)
 	private void renderLargeTotals(GuiGraphics gui, int slot, BigItemStack itemStack, int mouseX, int mouseY, CallbackInfo ci) {
-		if (!CCG.config.misc.jei.allowLargeCrafting || CCGMods.extra_gauges.isLoaded()) return;
+		if (!CCG.config.misc.jei.allowLargeCrafting) return;
 		if (!(craftingActive && availableCraftingRecipe instanceof ShapedRecipe shaped && shaped.getWidth() > 3)) return;
 		List<BigItemStack> totals = ccg$totals();
 		if (slot >= totals.size()) {
@@ -65,7 +62,6 @@ public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen {
 		}
 		ci.cancel();
 	}
-	/** >3×3 配方把原料按种类汇总（最多 9 格） */
 	@Unique
 	private List<BigItemStack> ccg$totals() {
 		List<BigItemStack> totals = new ArrayList<>();

@@ -37,7 +37,7 @@ public abstract class TunablePortableTickerScreenMixin extends AbstractSimiConta
 		if (ReplenishPlanner.clipboardOf(mc.player) == null) return;
 		ccg$schematicPending = true;
 		if (!CCG.config.misc.autoReplenishStock) return;
-		var btn = new IconButton(leftPos + imageWidth - 10, topPos + 8, AllIcons.I_ADD);
+		var btn = new IconButton(leftPos + imageWidth - 10, topPos + 14, AllIcons.I_ADD);
 		btn.withCallback(() -> {
 			List<ReplenishGroup> groups = ccg$buildGroups();
 			CCG.LOGGER.debug("AutoReplenish click: groups={}", groups.size());
@@ -77,7 +77,7 @@ public abstract class TunablePortableTickerScreenMixin extends AbstractSimiConta
 			+ "(Lcom/yision/phantom/content/logistics/tunablePortableTicker/TunablePortableTickerMenu;)V"
 	)
 	)
-	private void ccg$keepStockOnOverlay(TunablePortableTickerMenu menu, Operation<Void> original) {
+	private void keepStockOnOverlay(TunablePortableTickerMenu menu, Operation<Void> original) {
 		if (ccg$overlayOpening) {
 			ccg$overlayOpening = false;
 			return;

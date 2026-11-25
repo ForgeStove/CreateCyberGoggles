@@ -53,7 +53,7 @@ repositories {
 		metadataSources { artifact() }
 	}
 	maven("https://maven.createmod.net") // Create, Ponder, Flywheel
-	maven("https://maven.gegy.dev/releases") // Registrate
+	maven("https://mvn.devos.one/snapshots") // Registrate
 	maven("https://maven.ryanhcode.dev/releases") // Aeronautics
 	maven("https://maven.blamejared.com") // JEI, Veil, Ars Nouveau
 	maven("https://maven.terraformersmc.com") // EMI
@@ -64,17 +64,17 @@ dependencies {
 	implementation("io.github.forgestove:flexconfig:${p("loader")}-${p("mcVersion")}-${p("flexConfigVersion")}")?.let { jarJar(it) }
 	//region Create
 	implementation("com.simibubi.create:create-${p("mcVersion")}:${p("createVersion")}") { isTransitive = false }
-	implementation("dev.engine-room.flywheel:flywheel-${p("loader")}-${p("mcVersion")}:${p("flywheelVersion")}")
-	implementation("net.createmod.ponder:ponder-${p("loader")}:${p("ponderVersion")}+mc${p("mcVersion")}") { isTransitive = false }
-	implementation("com.tterrag.registrate:Registrate:${p("registrateVersion")}")
+	compileOnly("dev.engine-room.flywheel:flywheel-${p("loader")}-${p("mcVersion")}:${p("flywheelVersion")}")
+	compileOnly("net.createmod.ponder:ponder-${p("loader")}:${p("ponderVersion")}+mc${p("mcVersion")}")
+	compileOnly("com.tterrag.registrate:Registrate:${p("registrateVersion")}")
 	//endregion
 	//region Create Aeronautics
 	implementation("dev.simulated_team.simulated:simulated-${p("loader")}-${p("mcVersion")}:${p("areoVersion")}") { isTransitive = false }
 	implementation("dev.ryanhcode.offroad:offroad-${p("loader")}-${p("mcVersion")}:${p("areoVersion")}") { isTransitive = false }
 	implementation("dev.eriksonn.aeronautics:aeronautics-${p("loader")}-${p("mcVersion")}:${p("areoVersion")}") { isTransitive = false }
 	implementation("dev.ryanhcode.sable:sable-${p("loader")}-${p("mcVersion")}:${p("sableVersion")}") { isTransitive = false }
-	implementation("dev.ryanhcode.sable-companion:sable-companion-common-${p("mcVersion")}:${p("sableCompanionVersion")}") { isTransitive = false }
-	implementation("foundry.veil:veil-${p("loader")}-${p("mcVersion")}:${p("veilVersion")}")
+	compileOnly("dev.ryanhcode.sable-companion:sable-companion-common-${p("mcVersion")}:${p("sableCompanionVersion")}")
+	compileOnly("foundry.veil:veil-${p("loader")}-${p("mcVersion")}:${p("veilVersion")}")
 	//endregion
 	compileOnly("maven.modrinth:create-enchantment-industry:${p("ceiVersion")}")
 	compileOnly("maven.modrinth:create-dragons-plus:${p("dragonPlusVersion")}")
@@ -97,8 +97,8 @@ publishMods {
 	changelog.set(file("CHANGELOG.md").readText())
 	type.set(BETA)
 	version.set(project.version.toString())
-	displayName.set("[${p("loaderCap")}] ${p("modVersion")} for Create ${p("mcVersion")}-${p("createMinVersion")}")
-	modLoaders.addAll(p("loaderCap"))
+	displayName.set(version.get() + " for create ${p("createMinVersion")}")
+	modLoaders.addAll(p("loader"))
 	modrinth {
 		additionalFile(tasks.named<Jar>("sourcesJar")) { type.set(SOURCES_JAR) }
 		accessToken.set(providers.environmentVariable("MODRINTH_TOKEN"))

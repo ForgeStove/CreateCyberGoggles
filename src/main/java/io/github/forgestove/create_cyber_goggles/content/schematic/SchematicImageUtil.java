@@ -1,10 +1,10 @@
 package io.github.forgestove.create_cyber_goggles.content.schematic;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.logging.LogUtils;
 import com.simibubi.create.*;
 import com.simibubi.create.content.schematics.SchematicItem;
 import com.simibubi.create.content.schematics.client.ClientSchematicLoader;
-import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.compat.sable.SchematicSubLevelHelper;
 import io.github.forgestove.create_cyber_goggles.foundation.util.CCGMods;
 import net.createmod.catnip.animation.AnimationTickHolder;
@@ -17,6 +17,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 import java.io.*;
 import java.nio.file.*;
@@ -25,6 +26,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 public class SchematicImageUtil {
+	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final Set<String> IMAGE_EXTENSIONS = Set.of("png", "jpg", "jpeg", "gif", "bmp", "webp");
 	public static StructureTemplate loadTemplateFromSchematicName(String schematicName) {
 		Minecraft client = Minecraft.getInstance();
@@ -83,7 +85,7 @@ public class SchematicImageUtil {
 				throw new IOException("Failed to rename temporary image file: " + tempFile.getAbsolutePath());
 			return outputFile;
 		} catch (IOException e) {
-			if (!tempFile.delete()) CCG.LOGGER.error("Failed to delete temporary image file: {}", tempFile.getAbsolutePath());
+			if (!tempFile.delete()) LOGGER.warn("Failed to delete temporary image file: {}", tempFile.getAbsolutePath());
 			throw e;
 		}
 	}

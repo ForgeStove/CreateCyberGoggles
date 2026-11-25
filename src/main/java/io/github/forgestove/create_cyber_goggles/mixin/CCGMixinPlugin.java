@@ -17,22 +17,24 @@ public class CCGMixinPlugin implements IMixinConfigPlugin {
 	private static boolean satisfiesModCondition(String mixinClassName) {
 		ModConditions condition = readModCondition(mixinClassName);
 		if (condition == null) return true;
-		boolean apply =
+		boolean applied =
 			condition.require().stream().allMatch(id -> LoadingModList.get().getModFileById(id) != null) && condition.conflict()
 			.stream()
 			.noneMatch(id -> LoadingModList.get().getModFileById(id) != null);
 		LOGGER.info(
-			"Mixin {} @ModCondition require={} conflict={} -> {}",
-			mixinClassName, condition.require(), condition.conflict(),
-			apply ? "apply" : "skip"
+			"Conditional Mixin {} {}: require={} conflict={}",
+			mixinClassName,
+			applied ? "applied" : "skipped",
+			condition.require(),
+			condition.conflict()
 		);
-		return apply;
+		return applied;
 	}
 	private static @Nullable ModConditions readModCondition(String mixinClassName) {
 		String path = "/" + mixinClassName.replace('.', '/') + ".class";
 		try (InputStream in = CCGMixinPlugin.class.getResourceAsStream(path)) {
 			if (in == null) {
-				LOGGER.warn("Mixin class bytes not readable: {}", mixinClassName);
+				LOGGER.warn("Failed to read mixin class bytes: {}", mixinClassName);
 				return null;
 			}
 			var node = new ClassNode();
@@ -51,7 +53,7 @@ public class CCGMixinPlugin implements IMixinConfigPlugin {
 			}
 			return null;
 		} catch (IOException e) {
-			LOGGER.warn("Mixin class bytes not readable: {}", mixinClassName, e);
+			LOGGER.warn("Failed to read mixin class bytes: {}", mixinClassName, e);
 			return null;
 		}
 	}

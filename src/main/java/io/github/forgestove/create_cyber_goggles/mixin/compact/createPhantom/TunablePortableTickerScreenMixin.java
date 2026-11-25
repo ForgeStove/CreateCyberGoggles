@@ -1,5 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.mixin.compact.createPhantom;
 import com.llamalad7.mixinextras.injector.wrapoperation.*;
+import com.mojang.logging.LogUtils;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.stockTicker.*;
@@ -16,6 +17,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
+import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -27,6 +29,7 @@ import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.
 @Mixin(TunablePortableTickerScreen.class)
 public abstract class TunablePortableTickerScreenMixin extends AbstractSimiContainerScreen<TunablePortableTickerMenu>
 	implements Self<TunablePortableTickerScreen>, ReplenishTree {
+	@Unique private static final Logger CCG$LOGGER = LogUtils.getLogger();
 	@Unique private static boolean ccg$overlayOpening;
 	@Unique private boolean ccg$schematicPending;
 	public TunablePortableTickerScreenMixin(TunablePortableTickerMenu menu, Inventory playerInventory, Component title) {
@@ -40,7 +43,7 @@ public abstract class TunablePortableTickerScreenMixin extends AbstractSimiConta
 		var btn = new IconButton(leftPos + imageWidth - 10, topPos + 14, AllIcons.I_ADD);
 		btn.withCallback(() -> {
 			List<ReplenishGroup> groups = ccg$buildGroups();
-			CCG.LOGGER.debug("AutoReplenish click: groups={}", groups.size());
+			CCG$LOGGER.info("AutoReplenish opened with {} groups", groups.size());
 			ccg$overlayOpening = true;
 			mc.setScreen(new ReplenishScreen(thiz(), this, groups));
 		});
@@ -95,6 +98,6 @@ public abstract class TunablePortableTickerScreenMixin extends AbstractSimiConta
 		var itemsToOrder = ((StockKeeperRequestScreen) (Object) this).itemsToOrder;
 		itemsToOrder.clear();
 		itemsToOrder.addAll(orders);
-		CCG.LOGGER.debug("SchematicList: 便携界面按剪贴板清单填单 {} 项", orders.size());
+		CCG$LOGGER.info("Schematic: filled {} order entries from clipboard", orders.size());
 	}
 }

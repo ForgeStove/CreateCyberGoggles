@@ -52,7 +52,7 @@ public class ItemTooltip {
 				if (TooltipRenderer.class.isAssignableFrom(clazz))
 					OVERLAY_RENDERERS.add((TooltipRenderer) clazz.getDeclaredConstructor().newInstance());
 			} catch (Exception e) {
-				LOGGER.error("Unable to load tooltip renderer: {}", annoData.memberName(), e);
+				LOGGER.error("Failed to load tooltip renderer: {}", annoData.memberName(), e);
 			}
 		}));
 	}

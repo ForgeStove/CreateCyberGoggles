@@ -4,9 +4,9 @@ import com.mojang.blaze3d.platform.GlStateManager.*;
 import com.mojang.blaze3d.platform.*;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import com.mojang.logging.LogUtils;
 import com.mojang.math.Axis;
 import com.simibubi.create.content.schematics.client.SchematicRenderer;
-import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.content.schematic.SchematicRenderSettings.Orientation;
 import net.createmod.catnip.levelWrappers.SchematicLevel;
 import net.createmod.catnip.render.*;
@@ -23,11 +23,13 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.*;
 import net.minecraft.world.level.material.FluidState;
 import org.jetbrains.annotations.NotNull;
 import org.joml.*;
+import org.slf4j.Logger;
 
 import java.lang.Math;
 import java.util.*;
 import java.util.Map.Entry;
 public class SchematicImageRenderer {
+	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final int MARGIN_PX = 4;
 	private static final int MAX_FB_SIZE = 16384;
 	private static final float DEFAULT_NEAR_AND_FAR = 10_000F;
@@ -193,7 +195,7 @@ public class SchematicImageRenderer {
 			try {
 				if (renderTarget != null) renderTarget.destroyBuffers();
 			} catch (Exception e) {
-				CCG.LOGGER.error("Failed to destroy render target buffers", e);
+				LOGGER.error("Failed to destroy render target buffers", e);
 			}
 			mc.getMainRenderTarget().bindWrite(true);
 			RenderSystem.setProjectionMatrix(prevProjection, prevSorting);

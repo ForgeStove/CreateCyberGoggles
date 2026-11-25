@@ -70,7 +70,7 @@ public class TooltipOverlay {
 			if (getBlockEntity() instanceof ItemRenderable ir) return orEmpty(ir.ccg$getItemStack());
 			if (getEntity() instanceof ItemRenderable ir) return orEmpty(ir.ccg$getItemStack());
 		} catch (Throwable e) {
-			LOGGER.error("Failed to get item stack", e);
+			LOGGER.error("Failed to get item stack for overlay", e);
 		}
 		return ItemStack.EMPTY;
 	}

@@ -25,7 +25,7 @@ public class Outliner {
 		try {
 			cachedBE.entrySet().removeIf(Outliner::render);
 		} catch (Throwable throwable) {
-			LOGGER.error(throwable.getLocalizedMessage(), throwable);
+			LOGGER.error("Failed to update outlines", throwable);
 		}
 	}
 	private static boolean render(@NotNull Entry<BlockEntity, Integer> entry) {

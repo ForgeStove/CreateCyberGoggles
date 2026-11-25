@@ -1,15 +1,18 @@
 package io.github.forgestove.create_cyber_goggles.mixin.misc.patches;
 import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.mojang.blaze3d.audio.Library;
+import com.mojang.logging.LogUtils;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.ALC11;
+import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 
 import java.nio.IntBuffer;
 @Mixin(Library.class)
 public class LibraryMixin {
+	@Unique private static final Logger CCG$LOGGER = LogUtils.getLogger();
 	@Unique private static final int VANILLA_SOURCES = 255;
 	@WrapOperation(
 		method = "init", at = @At(
@@ -25,7 +28,7 @@ public class LibraryMixin {
 		extended.put(ALC11.ALC_MONO_SOURCES).put(want).put(0).flip();
 		long context = original.call(device, extended);
 		if (context != 0L) return context;
-		CCG.LOGGER.warn("Failed to allocate {} sound sources, falling back to vanilla", want);
+		CCG$LOGGER.warn("Failed to allocate {} sound sources, falling back to vanilla", want);
 		return original.call(device, attributes);
 	}
 	@ModifyArg(

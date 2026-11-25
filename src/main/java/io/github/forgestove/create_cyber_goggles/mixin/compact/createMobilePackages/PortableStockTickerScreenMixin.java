@@ -1,4 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.mixin.compact.createMobilePackages;
+import com.mojang.logging.LogUtils;
 import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrderWithCrafts;
@@ -15,6 +16,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
+import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -27,6 +29,7 @@ import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.
 @Mixin(PortableStockTickerScreen.class)
 public abstract class PortableStockTickerScreenMixin extends AbstractSimiContainerScreen<PortableStockTickerMenu>
 	implements Self<PortableStockTickerScreen>, ReplenishTree {
+	@Unique private static final Logger CCG$LOGGER = LogUtils.getLogger();
 	@Shadow public List<BigGenericStack> itemsToOrder;
 	@Unique private boolean ccg$schematicPending;
 	public PortableStockTickerScreenMixin(PortableStockTickerMenu menu, Inventory playerInventory, Component title) {
@@ -34,13 +37,13 @@ public abstract class PortableStockTickerScreenMixin extends AbstractSimiContain
 	}
 	@Inject(method = "init", at = @At("TAIL"))
 	private void portableReplenishInit(CallbackInfo ci) {
-		if (ReplenishPlanner.clipboardOf(mc.player) == null) return; // 没拿剪贴板则两个功能都不启用
+		if (ReplenishPlanner.clipboardOf(mc.player) == null) return;
 		ccg$schematicPending = true;
 		if (!CCG.config.misc.autoReplenishStock) return;
 		var btn = new IconButton(leftPos + imageWidth - 10, topPos + 20, AllIcons.I_ADD);
 		btn.withCallback(() -> {
 			List<ReplenishGroup> groups = ccg$buildGroups();
-			CCG.LOGGER.debug("AutoReplenish click: groups={} summary={}", groups.size(), ccg$summary() == null ? "null" : "ok");
+			CCG$LOGGER.info("AutoReplenish opened with {} groups", groups.size());
 			mc.setScreen(new ReplenishScreen(thiz(), this, groups));
 		});
 		btn.setToolTip(CCGLang.translateDirect("gui.auto_replenish.title"));
@@ -76,6 +79,6 @@ public abstract class PortableStockTickerScreenMixin extends AbstractSimiContain
 		if (orders.isEmpty()) return;
 		itemsToOrder.clear();
 		itemsToOrder.addAll(orders.stream().map(BigGenericStack::of).toList());
-		CCG.LOGGER.debug("SchematicList: 便携界面按剪贴板清单填单 {} 项", orders.size());
+		CCG$LOGGER.info("Schematic: filled {} order entries from clipboard", orders.size());
 	}
 }

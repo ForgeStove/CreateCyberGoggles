@@ -1,4 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.mixin.misc.replenish;
+import com.mojang.logging.LogUtils;
 import com.simibubi.create.content.equipment.clipboard.ClipboardEntry;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 import com.simibubi.create.content.logistics.stockTicker.*;
@@ -14,6 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
+import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -25,6 +27,7 @@ import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.
 @Mixin(StockKeeperRequestScreen.class)
 public abstract class StockKeeperReplenishEntryMixin extends AbstractSimiContainerScreen<StockKeeperRequestMenu>
 	implements Self<StockKeeperRequestScreen>, ReplenishTree {
+	@Unique private static final Logger CCG$LOGGER = LogUtils.getLogger();
 	@Shadow List<List<ClipboardEntry>> clipboardItem;
 	@Shadow StockTickerBlockEntity blockEntity;
 	public StockKeeperReplenishEntryMixin(StockKeeperRequestMenu container, Inventory inv, Component title) {
@@ -36,8 +39,7 @@ public abstract class StockKeeperReplenishEntryMixin extends AbstractSimiContain
 		var btn = new IconButton(leftPos + imageWidth - 10, topPos + 20, AllIcons.I_ADD);
 		btn.withCallback(() -> {
 			List<ReplenishGroup> groups = ccg$buildGroups();
-			InventorySummary summary = ccg$summary();
-			CCG.LOGGER.debug("AutoReplenish click: groups={} summary={}", groups.size(), summary == null ? "null" : "ok");
+			CCG$LOGGER.info("AutoReplenish opened with {} groups", groups.size());
 			mc.setScreen(new ReplenishScreen(thiz(), this, groups));
 		});
 		btn.setToolTip(CCGLang.translateDirect("gui.auto_replenish.title"));

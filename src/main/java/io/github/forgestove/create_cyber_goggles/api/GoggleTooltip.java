@@ -1,4 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.api;
+import com.mojang.logging.LogUtils;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.content.goggles.GoggleTooltipRegistry;
 import io.github.forgestove.create_cyber_goggles.foundation.util.CCGMods;
@@ -7,29 +8,17 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
 import java.util.*;
 import java.util.function.*;
-/**
- * 护目镜悬浮内容（goggle tooltip）条目注册表。
- * <p>
- * 条目以「目标方块实体类型 + 条目 id」登记，由 {@link #dispatch} 按注册顺序执行；
- * {@link #NATIVE} 占位标记目标类型原生内容的执行位置。
- * </p>
- * <p>
- * 条目只能向 tooltip 追加内容，不得清空或替换已有元素；CCG 配置开关仅控制内建条目。
- * {@code create_cyber_goggles} 命名空间视为内建条目，异常直接向调用方传播；其余条目捕获后跳过，
- * 同一 id 仅记录一次 WARN。
- * </p>
- */
-@SuppressWarnings("unused")
 public class GoggleTooltip {
-	/** 占位条目 id：标记目标类型原生内容的执行位置。 */
 	public static final ResourceLocation NATIVE = CCGMods.create.rl("native");
+	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final GoggleTooltipRegistry<Context> REGISTRY = new GoggleTooltipRegistry<>(
 		NATIVE.toString(), CCG.ID, (message, t) -> {
-		if (t == null) CCG.LOGGER.warn(message);
-		else CCG.LOGGER.warn(message, t);
+		if (t == null) LOGGER.warn(message);
+		else LOGGER.warn(message, t);
 	}
 	);
 	/** 在目标类型的条目列表末尾追加条目。 */

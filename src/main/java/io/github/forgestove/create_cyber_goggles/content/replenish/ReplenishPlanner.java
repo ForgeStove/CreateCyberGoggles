@@ -87,7 +87,7 @@ public class ReplenishPlanner {
 				spreadWant.put(itemId, want);
 				progressed = true;
 				LOGGER.debug(
-					"AutoReplenish expand: {} need={} have={} → want={} (单次产出 {})",
+					"AutoReplenish expand {}: need={} have={} → want={} ({} per craft)",
 					item.getHoverName().getString(),
 					needed,
 					have,
@@ -140,7 +140,7 @@ public class ReplenishPlanner {
 			}
 			times = Math.max(0, times);
 			if (limited != null) LOGGER.debug(
-				"AutoReplenish cap: {} 受限于 {} (可用 {} / 每次 {}) → cap={}",
+				"AutoReplenish cap {}: limited by {} (have {} of {} per craft) → {} crafts",
 				d.target().getHoverName().getString(),
 				limited.getDefaultInstance().getHoverName().getString(),
 				limitedAvail,
@@ -194,11 +194,11 @@ public class ReplenishPlanner {
 			var node = new Node(d.target().copy(), d.want(), d.recipe(), t, entries, nodeDepth, candidateCards(d.target(), summary));
 			if (t <= 0) {
 				blockedByType.computeIfAbsent(type, k -> new ArrayList<>()).add(node);
-				LOGGER.debug("Blocked: {}", d.target().getHoverName().getString());
+				LOGGER.debug("AutoReplenish node blocked: {} (0 crafts)", d.target().getHoverName().getString());
 				continue;
 			}
 			byType.computeIfAbsent(type, k -> new ArrayList<>()).add(node);
-			LOGGER.debug("Node: {} craft={}/{} depth={}", d.target().getHoverName().getString(), t, d.want(), nodeDepth);
+			LOGGER.debug("AutoReplenish node: {} crafts={}/{} depth={}", d.target().getHoverName().getString(), t, d.want(), nodeDepth);
 		}
 		for (String type : missingByType.keySet()) byType.computeIfAbsent(type, k -> new ArrayList<>());
 		for (String type : blockedByType.keySet()) byType.computeIfAbsent(type, k -> new ArrayList<>());
@@ -210,7 +210,18 @@ public class ReplenishPlanner {
 			out.add(new ReplenishGroup(type, byType.get(type), blockedByType.getOrDefault(type, List.of()), missingList));
 		}
 		missingByType.entrySet().removeIf(e -> e.getValue().isEmpty());
-		if (!missingByType.isEmpty()) LOGGER.debug("AutoReplenish missing: {}", missingByType);
+		missingByType.forEach((type, missing) -> missing.forEach((item, count) -> LOGGER.debug(
+			"AutoReplenish missing [{}]: {} ×{}",
+			type,
+			item.getDescription().getString(),
+			count
+		)));
+		LOGGER.info(
+			"AutoReplenish plan: {} groups, {} nodes, {} blocked",
+			out.size(),
+			out.stream().mapToInt(g -> g.nodes().size()).sum(),
+			out.stream().mapToInt(g -> g.blocked().size()).sum()
+		);
 		return out;
 	}
 	private static void ensureCacheOwner() {
@@ -328,7 +339,11 @@ public class ReplenishPlanner {
 			if (result.isEmpty() || result.getItem() != target.getItem()) continue;
 			for (Ingredient ing : recipe.getIngredients())
 				if (!ing.isEmpty() && ing.test(target)) {
-					LOGGER.debug("跳过自循环配方 {} (产物 {} 也是原料)", recipe.getType(), target.getHoverName().getString());
+					LOGGER.debug(
+						"AutoReplenish skip self-referencing recipe {}: {} is both output and input",
+						recipe.getType(),
+						target.getHoverName().getString()
+					);
 					continue outer;
 				}
 			var stocked = true;
@@ -356,7 +371,12 @@ public class ReplenishPlanner {
 			.thenComparing(c -> -c.raw()));
 		List<RecipeHolder<?>> out = new ArrayList<>(found.size());
 		found.forEach(c -> out.add(c.holder()));
-		if (!out.isEmpty()) LOGGER.debug("候选配方 {} 个，首选 {}", out.size(), out.getFirst().value().getType());
+		if (!out.isEmpty()) LOGGER.debug(
+			"AutoReplenish candidates for {}: {} (preferred {})",
+			target.getHoverName().getString(),
+			out.size(),
+			out.getFirst().value().getType()
+		);
 		return out;
 	}
 	private static Recipe<?> findAnyRecipeFor(ItemStack target, InventorySummary summary, Map<Item, Draft> drafts) {
@@ -370,11 +390,19 @@ public class ReplenishPlanner {
 		List<RecipeHolder<?>> candidates = candidates(target, summary);
 		for (RecipeHolder<?> holder : candidates)
 			if (!createsCycle(holder.value(), key, drafts)) {
-				LOGGER.debug("选中配方 {} (候选 {} 个)", holder.value().getType(), candidates.size());
+				LOGGER.debug(
+					"AutoReplenish selected recipe {} for {} ({} candidates)",
+					holder.value().getType(),
+					target.getHoverName().getString(),
+					candidates.size()
+				);
 				return holder.value();
 			}
-		if (!candidates.isEmpty())
-			LOGGER.debug("候选配方全部成环，{} 视为原材料 (候选 {} 个)", target.getHoverName().getString(), candidates.size());
+		if (!candidates.isEmpty()) LOGGER.debug(
+			"AutoReplenish treat {} as raw: all {} candidate recipes are cyclic",
+			target.getHoverName().getString(),
+			candidates.size()
+		);
 		return null;
 	}
 	private static boolean hasRecipe(ItemStack target) {

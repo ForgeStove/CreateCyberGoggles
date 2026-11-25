@@ -3,6 +3,7 @@ import com.mojang.blaze3d.platform.GlStateManager.*;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.logging.LogUtils;
 import com.mojang.math.Axis;
 import com.simibubi.create.content.schematics.client.SchematicRenderer;
 import com.simibubi.create.foundation.blockEntity.*;
@@ -22,7 +23,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.templatesystem.*;
+import org.slf4j.Logger;
 public class SchematicPreviewPanel {
+	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final int BORDER = 1;
 	private static final int CHECKER_SIZE = 10;
 	private static final int CHECKER_LIGHT = 0xFF7E90BD;
@@ -207,7 +210,7 @@ public class SchematicPreviewPanel {
 			schematicLevel = fakeSchematicLevel;
 			state = State.OK;
 		} catch (Exception e) {
-			CCG.LOGGER.warn("Failed to build schematic preview for '{}'", fileName, e);
+			LOGGER.warn("Failed to build schematic preview: {}", fileName, e);
 			renderer = null;
 			schematicLevel = null;
 			state = State.FAILED;

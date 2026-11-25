@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.content.schematic;
 import com.mojang.blaze3d.platform.NativeImage;
-import io.github.forgestove.create_cyber_goggles.CCG;
+import com.mojang.logging.LogUtils;
 import io.github.forgestove.create_cyber_goggles.content.schematic.SchematicRenderSettings.Builder;
 import io.github.forgestove.create_cyber_goggles.foundation.lang.CCGLang;
 import net.createmod.catnip.levelWrappers.SchematicLevel;
@@ -12,6 +12,7 @@ import net.minecraft.network.chat.*;
 import net.minecraft.network.chat.HoverEvent.Action;
 import net.minecraft.util.PngInfo;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
 import java.io.*;
 import java.util.concurrent.*;
@@ -26,6 +27,7 @@ public class SchematicImageHandler {
 		thread.setDaemon(true);
 		return thread;
 	});
+	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final Component RENDER_ERROR = SchematicLang.error("schematicImage");
 	private static final Component EXPORT_ERROR = SchematicLang.error("schematicExport");
 	private static final Component RENDER_FAILED = SchematicLang.error("schematicImage.renderFailed");
@@ -90,7 +92,7 @@ public class SchematicImageHandler {
 		if (cause != null) {
 			if (cause instanceof IOException) client.execute(() -> source.sendFailure(EXPORT_ERROR));
 			ImageActionProgress.setState(ImageActionProgress.EXPORT_FAILED);
-			CCG.LOGGER.error("Failed to export schematic image {}.", schematicName, e);
+			LOGGER.error("Failed to export schematic image: {}", schematicName, e);
 			return;
 		}
 		client.execute(() -> {
@@ -131,7 +133,7 @@ public class SchematicImageHandler {
 			else if (cause instanceof IOException) source.sendFailure(renderError.append(CONVERT_AND_VALIDATE_FAILED));
 			else if (cause instanceof TimeoutException) source.sendFailure(renderError.append(TIMED_OUT));
 		});
-		CCG.LOGGER.error("Failed to render schematic {}.", schematicName, e);
+		LOGGER.error("Failed to render schematic: {}", schematicName, e);
 		return null;
 	}
 }

@@ -16,16 +16,17 @@ class ReplenishSender {
 	static void sendAll(ReplenishTree host, List<ReplenishGroup> groups, List<String> addresses) {
 		Map<Item, Integer> remaining = new HashMap<>();
 		InventorySummary summary = host.ccg$summary();
+		var sent = 0;
 		for (var i = 0; i < groups.size(); i++) {
 			String addr = addresses.get(i);
 			for (Node n : groups.get(i).nodes()) {
 				if (n.craftTimes() <= 0 || n.items().isEmpty()) continue;
 				if (addr == null || addr.isBlank()) {
-					LOGGER.debug("未填地址, 跳过 {}", n.target().getHoverName().getString());
+					LOGGER.debug("AutoReplenish skip {}: no address", n.target().getHoverName().getString());
 					continue;
 				}
 				if (!hasMaterials(n, remaining, summary)) {
-					LOGGER.debug("原料不足, 跳过 {}", n.target().getHoverName().getString());
+					LOGGER.debug("AutoReplenish skip {}: insufficient materials", n.target().getHoverName().getString());
 					continue;
 				}
 				List<BigItemStack> order = new ArrayList<>();
@@ -40,16 +41,17 @@ class ReplenishSender {
 					List.of(new CraftingEntry(new PackageOrder(pattern), n.craftTimes()))
 				);
 				LOGGER.debug(
-					"Send: {} addr={} craft={}/{} order={}",
+					"AutoReplenish send {} → {}: {}/{} crafts, {} materials",
 					n.target().getHoverName().getString(),
 					addr,
 					n.craftTimes(),
-					n.wantTimes(),
-					order
+					n.wantTimes(), order.size()
 				);
 				host.ccg$sendOrder(packet, addr);
+				sent++;
 			}
 		}
+		if (sent > 0) LOGGER.info("AutoReplenish sent {} orders", sent);
 	}
 	private static boolean hasMaterials(Node n, Map<Item, Integer> remaining, InventorySummary summary) {
 		if (summary == null) return false;

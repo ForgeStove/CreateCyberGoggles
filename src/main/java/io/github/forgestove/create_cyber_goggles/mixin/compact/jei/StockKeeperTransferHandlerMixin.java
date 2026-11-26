@@ -14,14 +14,12 @@ import org.spongepowered.asm.mixin.injection.*;
 
 import java.util.*;
 import java.util.Map.Entry;
-/** 让仓库请求界面支持动力合成配方（原料数 10~81） */
 @Mixin(StockKeeperTransferHandler.class)
 public abstract class StockKeeperTransferHandlerMixin {
 	@ModifyConstant(method = "transferRecipeOnClient", constant = @Constant(intValue = 9))
 	private int transferRecipeOnClient(int constant) {
 		return CCG.config.misc.jei.allowLargeCrafting ? 81 : constant;
 	}
-	/** 网络物品过多时 getRecipeTransferOperations 全量遍历会卡顿；只传配方相关物品 */
 	@WrapOperation(
 		method = "transferRecipeOnClient", at = @At(
 		value = "INVOKE",

@@ -5,10 +5,6 @@ import io.github.forgestove.create_cyber_goggles.content.forceOverlay.ForceDataC
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-/**
- * 捕获接收到的 {@link DiagramDataPacket}，将力数据缓存供世界内覆盖层使用，
- * 无论图解界面是否打开。
- */
 @Pseudo
 @Mixin(DiagramDataPacket.class)
 public abstract class DiagramDataPacketMixin {

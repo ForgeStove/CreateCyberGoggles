@@ -24,13 +24,11 @@ import java.util.function.Function;
 @Mixin(StockKeeperRequestScreen.class)
 public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContainerScreen<StockKeeperRequestMenu>
 	implements Self<StockKeeperRequestScreen> {
-	/** 普通请求模式：由界面右下角按钮切换，static 缓存跨界面共享 */
 	@Unique private static boolean ccg$plainRequest;
 	@Shadow int windowWidth, windowHeight;
 	public StockKeeperRequestScreenMixin(StockKeeperRequestMenu container, Inventory inv, Component title) {
 		super(container, inv, title);
 	}
-	/** 仓库管理员发包去掉 ordered_crafts，使理包机不吞物品 */
 	@ModifyArg(
 		method = "sendIt", at = @At(
 		value = "INVOKE",
@@ -42,7 +40,6 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 		if (!CCG.config.misc.jei.allowLargeCrafting) return orderedCrafts;
 		return ccg$plainRequest ? List.of() : orderedCrafts;
 	}
-	/** 普通请求模式下 ordered_stacks 按配方连续组生成（与红石请求器一致，理包机输出有序） */
 	@ModifyArg(
 		method = "sendIt", at = @At(
 		value = "INVOKE",
@@ -85,7 +82,6 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 		}
 		return groups;
 	}
-	/** 网络物品过多时 maxCraftable 遍历全量会卡顿；把快照过滤为配方相关物品再计算 */
 	@WrapOperation(
 		method = "requestCraftable", at = @At(
 		value = "INVOKE",
@@ -120,7 +116,6 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 		}
 		return original.call(instance, cbis, filtered, countModifier, newTypeLimit);
 	}
-	/** create 的 resolveIngredientAmounts 按数量逐 1 递减，物品数量巨大时 O(总量) 卡顿；改为按共享引用数一次分摊 */
 	@Inject(method = "resolveIngredientAmounts", at = @At("HEAD"), cancellable = true)
 	private void fastResolve(List<List<BigItemStack>> validIngredients, CallbackInfoReturnable<List<List<BigItemStack>>> cir) {
 		if (!CCG.config.misc.jei.optimizeRecipeProcessing) return;
@@ -137,9 +132,8 @@ public abstract class StockKeeperRequestScreenMixin extends AbstractSimiContaine
 		}
 		cir.setReturnValue(resolved);
 	}
-	/** 在右下角添加动力合成切换按钮（复用工厂仪表动力合成按钮样式与 tooltip） */
 	@Inject(method = "init", at = @At("TAIL"))
-	private void ccg$addPlainRequestButton(CallbackInfo ci) {
+	private void addPlainRequestButton(CallbackInfo ci) {
 		if (!CCG.config.misc.jei.allowLargeCrafting) return;
 		StockKeeperRequestScreen thiz = thiz();
 		var button = new IconButton(thiz.getGuiLeft() + windowWidth - 29, thiz.getGuiTop() + windowHeight - 21, AllIcons.I_3x3);

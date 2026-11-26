@@ -15,10 +15,8 @@ import static io.github.forgestove.create_cyber_goggles.foundation.util.Sequence
 @Mixin(RecipeScreen.class)
 public abstract class RecipeScreenMixin {
 	@Shadow private List<WidgetGroup> currentPage;
-	// EMI 的 Widget 没有 mouseScrolled，滚轮只在 RecipeScreen 层处理；JEMI 又丢弃了
-	// IRecipeExtrasBuilder 里的 inputHandlers，因此副产物滚轮切换需在此拦截。
 	@Inject(method = "mouseScrolled", at = @At("HEAD"), cancellable = true)
-	private void ccg$mouseScrolled(double mouseX, double mouseY, double horizontal, double amount, CallbackInfoReturnable<Boolean> cir) {
+	private void mouseScrolled(double mouseX, double mouseY, double horizontal, double amount, CallbackInfoReturnable<Boolean> cir) {
 		if (!CCG.config.misc.jei.showScrapContent || amount == 0) return;
 		for (WidgetGroup group : currentPage) {
 			if (!(group.recipe instanceof JemiRecipe<?> jemi)) continue;

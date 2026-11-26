@@ -9,7 +9,6 @@ import org.spongepowered.asm.mixin.injection.At;
 @Pseudo
 @Mixin(ZiplineClientManager.class)
 public abstract class ZiplineClientManagerMixin {
-	@SuppressWarnings("MixinAnnotationTarget")
 	@WrapOperation(
 		method = "*",
 		at = @At(value = "INVOKE", target = "Lcom/simibubi/create/AllTags$AllItemTags;matches(Lnet/minecraft/world/item/ItemStack;)Z")

@@ -12,10 +12,6 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-/**
- * EMI 的侧栏点击按绑定精确匹配修饰键，按住 Alt 时 craft 绑定落空、左击会改为打开配方页；
- * <p>这里在红石请求器界面上强制触发填入。
- */
 @Pseudo
 @Mixin(EmiScreenManager.class)
 public abstract class EmiScreenManagerMixin {
@@ -27,7 +23,6 @@ public abstract class EmiScreenManagerMixin {
 		EmiStackInteraction hovered = EmiScreenManager.getHoveredStack((int) mouseX, (int) mouseY, false);
 		EmiRecipe recipe = hovered.getRecipeContext();
 		if (recipe == null) return;
-		// Shift 对应 EMI 的 craftAll 绑定
 		int amount = Screen.hasShiftDown() ? Integer.MAX_VALUE : 1;
 		if (EmiRecipeFiller.performFill(recipe, screen, Type.CRAFTABLE, Destination.NONE, amount)) cir.setReturnValue(true);
 	}

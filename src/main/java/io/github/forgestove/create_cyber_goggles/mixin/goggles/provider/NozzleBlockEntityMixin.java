@@ -40,13 +40,10 @@ public abstract class NozzleBlockEntityMixin
 			.lineWidth(1 / 16f)
 			.colored(color);
 		int numberOfFlowBoxes = Outliner.getNumberOfFlowBoxes(this.range);
+		long now = System.currentTimeMillis();
 		for (var i = 0; i < numberOfFlowBoxes; i++) {
-			double offsetScale = Outliner.getOffsetScale(i, numberOfFlowBoxes);
-			String id = "NozzleAirFlowBox" + this + i;
-			if (offsetScale > 0.98) {
-				outliner.remove(id);
-				continue;
-			}
+			double offsetScale = Outliner.getOffsetScale(now, i, numberOfFlowBoxes);
+			String id = "NozzleAirFlowBox%s_%d_%d".formatted(this, i, Outliner.getCycleIndex(now, i, numberOfFlowBoxes));
 			double radius = (pushing ? offsetScale : 1 - offsetScale) * range;
 			AABB flowBound = new AABB(center, center).inflate(radius);
 			outliner.chaseAABB(id, flowBound)

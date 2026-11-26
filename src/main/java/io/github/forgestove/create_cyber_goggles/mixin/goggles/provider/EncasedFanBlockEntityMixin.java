@@ -39,6 +39,7 @@ public abstract class EncasedFanBlockEntityMixin extends KineticBlockEntity
 		int numberOfFlowBoxes = Outliner.getNumberOfFlowBoxes(airCurrent.maxDistance);
 		Direction direction = airCurrent.direction;
 		if (direction == null) return;
+		long now = System.currentTimeMillis();
 		boolean useMinSide = airCurrent.pushing == direction.getAxisDirection().getStep() > 0;
 		Axis axis = direction.getAxis();
 		double axisMin = switch (axis) {
@@ -52,12 +53,8 @@ public abstract class EncasedFanBlockEntityMixin extends KineticBlockEntity
 			case Z -> bounds.maxZ;
 		};
 		for (var i = 0; i < numberOfFlowBoxes; i++) {
-			double offsetScale = Outliner.getOffsetScale(i, numberOfFlowBoxes);
-			String id = "FanAirFlowBox" + this + i;
-			if (offsetScale > 0.98) {
-				outliner.remove(id);
-				continue;
-			}
+			double offsetScale = Outliner.getOffsetScale(now, i, numberOfFlowBoxes);
+			String id = "FanAirFlowBox%s_%d_%d".formatted(this, i, Outliner.getCycleIndex(now, i, numberOfFlowBoxes));
 			double offsetDistance = airCurrent.maxDistance * offsetScale;
 			double pos = useMinSide ? axisMin + offsetDistance : axisMax - offsetDistance;
 			AABB flowBound = switch (axis) {

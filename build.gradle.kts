@@ -41,7 +41,6 @@ neoForge {
 			// jvmArgument("-XX:+UnlockCommercialFeatures") // uncomment for profiling
 		}
 	}
-	accessTransformers.publish(file("src/main/resources/META-INF/accesstransformer.cfg"))
 	mods.create(p("modId")).sourceSet(sourceSets.main.get())
 }
 repositories {

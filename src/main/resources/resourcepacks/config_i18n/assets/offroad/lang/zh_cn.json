@@ -1,0 +1,17 @@
+{
+	"offroad.config.category.blocks": "方块",
+	"offroad.config.category.kinetics": "动力学",
+	"offroad.config.category.kinetics.stressValues": "应力数值",
+	"offroad.config.category.kinetics.stressValues.v2": "应力数值 v2",
+	"offroad.config.category.kinetics.stressValues.v2.impact": "应力影响",
+	"offroad.config.option.blocks.borehead_bearing_rotation_divisor": "钻头轴承转速除数",
+	"offroad.config.option.blocks.borehead_bearing_rotation_divisor.tooltip": "用于确定连接的钻头装置最大速度的除数。",
+	"offroad.config.option.blocks.borehead_bearing_search_radius": "钻头轴承搜索半径",
+	"offroad.config.option.blocks.borehead_bearing_search_radius.tooltip": "钻头轴承收集方块时的搜索半径。",
+	"offroad.config.option.blocks.borehead_bearing_stall_recovery_ticks": "钻头轴承恢复刻数",
+	"offroad.config.option.blocks.borehead_bearing_stall_recovery_ticks.tooltip": "钻头轴承从物品堵塞中恢复所需的刻数。",
+	"offroad.config.option.blocks.borehead_bearing_stalling_enabled": "钻头轴承堵塞",
+	"offroad.config.option.blocks.borehead_bearing_stalling_enabled.tooltip": "钻头轴承没有足够空间接收挖掘的方块时是否堵塞。",
+	"offroad.config.option.kinetics.stressValues.v2.impact.borehead_bearing": "钻头轴承",
+	"offroad.config.option.kinetics.stressValues.v2.impact.wheel_mount": "车轮支架"
+}

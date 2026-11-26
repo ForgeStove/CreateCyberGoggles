@@ -1,0 +1,15 @@
+{
+	"flywheel.config.category.flw_backends": "内置后端",
+	"flywheel.config.enum.LightSmoothness.FLAT": "平坦",
+	"flywheel.config.enum.LightSmoothness.SMOOTH": "平滑",
+	"flywheel.config.enum.LightSmoothness.SMOOTH_INNER_FACE_CORRECTED": "平滑（内面校正）",
+	"flywheel.config.enum.LightSmoothness.TRI_LINEAR": "三线性",
+	"flywheel.config.option.backend": "渲染后端",
+	"flywheel.config.option.backend.tooltip": "选择要使用的后端。设为 DEFAULT 由 Flywheel 决定。",
+	"flywheel.config.option.flw_backends.lightSmoothness": "光照平滑度",
+	"flywheel.config.option.flw_backends.lightSmoothness.tooltip": "Flywheel 着色器光照的平滑程度。可能对性能影响较大。",
+	"flywheel.config.option.limitUpdates": "限制更新",
+	"flywheel.config.option.limitUpdates.tooltip": "启用或禁用基于距离的实例更新限制。",
+	"flywheel.config.option.workerThreads": "工作线程数",
+	"flywheel.config.option.workerThreads.tooltip": "使用的工作线程数量。设为 -1 由 Flywheel 决定，设为 0 禁用并行。需要重启游戏生效。"
+}

@@ -1,0 +1,14 @@
+{
+	"ponder.config.category.placementAssist": "放置辅助",
+	"ponder.config.enum.PlacementIndicatorSetting.NONE": "无",
+	"ponder.config.enum.PlacementIndicatorSetting.TEXTURE": "贴图",
+	"ponder.config.enum.PlacementIndicatorSetting.TRIANGLE": "三角形",
+	"ponder.config.option.comfyReading": "舒适阅读",
+	"ponder.config.option.comfyReading.tooltip": "屏幕上有文字时减慢思索场景。",
+	"ponder.config.option.editingMode": "编辑模式",
+	"ponder.config.option.editingMode.tooltip": "在思索视图中显示额外信息，并更频繁地重新加载场景脚本。",
+	"ponder.config.option.placementAssist.indicatorScale": "指示器大小",
+	"ponder.config.option.placementAssist.indicatorScale.tooltip": "按此倍率改变指示器的大小。",
+	"ponder.config.option.placementAssist.indicatorType": "指示器类型",
+	"ponder.config.option.placementAssist.indicatorType.tooltip": "显示辅助放置结果相对于准星位置时使用的指示器。\n选择 NONE 可关闭指示器。"
+}

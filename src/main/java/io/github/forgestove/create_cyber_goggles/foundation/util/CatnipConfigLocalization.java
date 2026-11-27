@@ -14,8 +14,8 @@ import net.neoforged.neoforge.common.ModConfigSpec.*;
 
 import java.util.*;
 public class CatnipConfigLocalization {
-	private static final CCGMods[] CONFIG_MODS = {
-		CCGMods.create, CCGMods.aeronautics, CCGMods.simulated, CCGMods.offroad, CCGMods.sable, CCGMods.flywheel, CCGMods.ponder
+	private static final Mods[] CONFIG_MODS = {
+		Mods.create, Mods.aeronautics, Mods.simulated, Mods.offroad, Mods.sable, Mods.flywheel, Mods.ponder
 	};
 	public static void registerSource() {
 		for (var mod : CONFIG_MODS)

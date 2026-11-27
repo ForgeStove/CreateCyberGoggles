@@ -100,7 +100,7 @@ public class GoggleTooltipUtil {
 		return hit != null && hit.getBlockPos().equals(be.getBlockPos()) ? hit.getDirection() : null;
 	}
 	private static @Nullable KineticBlockEntity extraKinetics(KineticBlockEntity be, Direction face) {
-		if (!CCGMods.simulated.isLoaded()) return null;
+		if (!Mods.simulated.isLoaded()) return null;
 		return ExtraKineticsHelper.forFace(be, face);
 	}
 	private static boolean isShaftFace(KineticBlockEntity be, Direction face) {

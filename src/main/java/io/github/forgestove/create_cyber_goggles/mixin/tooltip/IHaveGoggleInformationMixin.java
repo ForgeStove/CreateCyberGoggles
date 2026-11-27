@@ -5,7 +5,7 @@ import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.compat.thirst.WaterPurityHelper;
 import io.github.forgestove.create_cyber_goggles.foundation.lang.*;
-import io.github.forgestove.create_cyber_goggles.foundation.util.CCGMods;
+import io.github.forgestove.create_cyber_goggles.foundation.util.Mods;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -29,7 +29,7 @@ public interface IHaveGoggleInformationMixin {
 			FluidStack fluidStack = handler.getFluidInTank(i);
 			if (fluidStack.isEmpty()) continue;
 			int capacity = handler.getTankCapacity(i);
-			CCGMods.thirst.runIfInstalled(() -> WaterPurityHelper.getWaterPurity(fluidStack))
+			Mods.thirst.runIfInstalled(() -> WaterPurityHelper.getWaterPurity(fluidStack))
 				.ifPresentOrElse(
 					purify -> CCGLang.of().fluidEntry(fluidStack, capacity, purify.component()).forGoggles(tooltip),
 					() -> CCGLang.of().fluidEntry(fluidStack, capacity).forGoggles(tooltip)

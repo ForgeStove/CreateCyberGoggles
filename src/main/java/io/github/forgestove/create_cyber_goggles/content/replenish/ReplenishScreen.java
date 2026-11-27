@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.content.logistics.*;
 import com.simibubi.create.content.trains.schedule.DestinationSuggestions;
 import com.simibubi.create.foundation.gui.*;
-import io.github.forgestove.create_cyber_goggles.compat.jei.CCGJeiTitles;
+import io.github.forgestove.create_cyber_goggles.compat.jei.JeiTitles;
 import io.github.forgestove.create_cyber_goggles.content.replenish.ReplenishGroup.*;
 import io.github.forgestove.create_cyber_goggles.foundation.gui.*;
 import io.github.forgestove.create_cyber_goggles.foundation.lang.*;
@@ -151,7 +151,7 @@ public class ReplenishScreen extends AbstractSimiScreen implements ScissorArea {
 		if (typeId == null || typeId.isBlank()) return CCGLang.translateDirect("gui.auto_replenish.uncraftable");
 		// 原版配方类型没有命名空间，需要补 minecraft: 才能匹配 JEI 分类 uid。
 		String lookupKey = typeId.indexOf(':') < 0 ? "minecraft:" + typeId : typeId;
-		Component jeiTitle = CCGJeiTitles.get(lookupKey);
+		Component jeiTitle = JeiTitles.get(lookupKey);
 		if (jeiTitle != null) return jeiTitle;
 		int idx = typeId.indexOf(':');
 		if (idx <= 0) return Component.literal(typeId);

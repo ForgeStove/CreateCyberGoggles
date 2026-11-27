@@ -6,7 +6,7 @@ import com.simibubi.create.*;
 import com.simibubi.create.content.schematics.SchematicItem;
 import com.simibubi.create.content.schematics.client.ClientSchematicLoader;
 import io.github.forgestove.create_cyber_goggles.compat.sable.SchematicSubLevelHelper;
-import io.github.forgestove.create_cyber_goggles.foundation.util.CCGMods;
+import io.github.forgestove.create_cyber_goggles.foundation.util.Mods;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.levelWrappers.SchematicLevel;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
@@ -37,13 +37,13 @@ public class SchematicImageUtil {
 		return SchematicItem.loadSchematic(client.level, blueprint);
 	}
 	public static void attachSubLevels(StructureTemplate template, SchematicLevel target, Level level) {
-		CCGMods.sable.executeIfInstalled(() -> SchematicSubLevelHelper.attachSubLevels(template, target, level));
+		Mods.sable.executeIfInstalled(() -> SchematicSubLevelHelper.attachSubLevels(template, target, level));
 	}
 	public static boolean hasSubLevels(SchematicLevel level) {
-		return CCGMods.sable.runIfInstalled(() -> SchematicSubLevelHelper.hasSubLevels(level)).orElse(false);
+		return Mods.sable.runIfInstalled(() -> SchematicSubLevelHelper.hasSubLevels(level)).orElse(false);
 	}
 	public static void renderSubLevelBlockEntities(PoseStack ms, SuperRenderTypeBuffer buffers, SchematicLevel level) {
-		CCGMods.sable.executeIfInstalled(() -> SchematicSubLevelHelper.renderBlockEntities(
+		Mods.sable.executeIfInstalled(() -> SchematicSubLevelHelper.renderBlockEntities(
 			ms,
 			buffers,
 			level,
@@ -51,7 +51,7 @@ public class SchematicImageUtil {
 		));
 	}
 	public static BoundingBox frameBounds(SchematicLevel level) {
-		return CCGMods.sable.runIfInstalled(() -> SchematicSubLevelHelper.frameBounds(level)).orElseGet(level::getBounds);
+		return Mods.sable.runIfInstalled(() -> SchematicSubLevelHelper.frameBounds(level)).orElseGet(level::getBounds);
 	}
 	public static Optional<String> getSchematicNameFromIndex(int schematicIndex) {
 		List<Component> availableSchematics = CreateClient.SCHEMATIC_SENDER.getAvailableSchematics();

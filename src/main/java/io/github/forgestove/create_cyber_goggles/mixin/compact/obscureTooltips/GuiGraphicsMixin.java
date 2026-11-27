@@ -3,7 +3,7 @@ import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import io.github.forgestove.create_cyber_goggles.content.goggles.tooltip.ItemTooltip;
 import io.github.forgestove.create_cyber_goggles.foundation.util.*;
-import io.github.forgestove.create_cyber_goggles.mixin.ModCondition;
+import io.github.forgestove.create_cyber_goggles.mixin.MixinCondition;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.inventory.tooltip.*;
 import net.minecraft.world.item.ItemStack;
@@ -12,7 +12,7 @@ import net.neoforged.neoforge.client.event.RenderTooltipEvent.Pre;
 import org.spongepowered.asm.mixin.*;
 
 import java.util.List;
-@ModCondition(require = CCGMods.obscure_tooltips)
+@MixinCondition(require = Mods.obscure_tooltips)
 @Mixin(GuiGraphics.class)
 public abstract class GuiGraphicsMixin implements Self<GuiGraphics> {
 	@Shadow private ItemStack tooltipStack;

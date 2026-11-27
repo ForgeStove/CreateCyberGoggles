@@ -1,6 +1,6 @@
 package io.github.forgestove.create_cyber_goggles.foundation.events;
 import io.github.forgestove.create_cyber_goggles.CCG;
-import io.github.forgestove.create_cyber_goggles.foundation.util.CCGMods;
+import io.github.forgestove.create_cyber_goggles.foundation.util.Mods;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.network.chat.Component;
@@ -14,25 +14,25 @@ import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.
 public enum CCGKey {
 	clickPenetrate(Type.KEYSYM, KEY_LCONTROL),
 	clipboardPageScroll(Type.KEYSYM, KEY_LCONTROL),
-	correctionSublevel(Type.KEYSYM, KEY_LCONTROL, CCGMods.simulated),
-	handleMoveSublevel(Type.KEYSYM, KEY_LCONTROL, CCGMods.simulated),
+	correctionSublevel(Type.KEYSYM, KEY_LCONTROL, Mods.simulated),
+	handleMoveSublevel(Type.KEYSYM, KEY_LCONTROL, Mods.simulated),
 	interactOpposite(Type.KEYSYM, KEY_TAB),
 	openConfig(Type.KEYSYM, KEY_BACKSLASH),
 	previewFilter,
-	showHoneyGlue(CCGMods.simulated),
+	showHoneyGlue(Mods.simulated),
 	showStress(Type.KEYSYM, KEY_LSHIFT),
 	showSuperGlue,
 	stockRequestSelectAll(Type.KEYSYM, KEY_LALT),
 	stockRequestSetter(Type.MOUSE, MOUSE_BUTTON_MIDDLE),
 	toggleItemOverlay(Type.KEYSYM, KEY_LCONTROL),
-	usePhysicsStaff(CCGMods.simulated),
+	usePhysicsStaff(Mods.simulated),
 	useSchematic;
 	public final Lazy<KeyMapping> keyMapping;
-	private final CCGMods requiredMod;
+	private final Mods requiredMod;
 	CCGKey() {
 		this(UNKNOWN, null);
 	}
-	CCGKey(@NotNull Key key, CCGMods requiredMod) {
+	CCGKey(@NotNull Key key, Mods requiredMod) {
 		this.requiredMod = requiredMod;
 		keyMapping = Lazy.of(new KeyMapping(
 			CCG.ID + ".key." + name(),
@@ -41,13 +41,13 @@ public enum CCGKey {
 			"key.categories.create_cyber_goggles"
 		));
 	}
-	CCGKey(@NotNull CCGMods requiredMod) {
+	CCGKey(@NotNull Mods requiredMod) {
 		this(UNKNOWN, requiredMod);
 	}
 	CCGKey(@NotNull Type type, int key) {
 		this(type.getOrCreate(key), null);
 	}
-	CCGKey(@NotNull Type type, int key, CCGMods requiredMod) {
+	CCGKey(@NotNull Type type, int key, Mods requiredMod) {
 		this(type.getOrCreate(key), requiredMod);
 	}
 	public static void register(RegisterKeyMappingsEvent event) {

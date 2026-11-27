@@ -34,7 +34,7 @@ public class CCGClient {
 		mod.addListener(ClientFluidListTooltipComponent::register);
 		mod.addListener(ClientSchematicPreviewTooltipComponent::register);
 		mod.addListener(DraftingShaders::register);
-		CCGMods.simulated.executeIfInstalled(() -> mod.addListener(ForceTooltipOverlay::register));
+		Mods.simulated.executeIfInstalled(() -> mod.addListener(ForceTooltipOverlay::register));
 		IEventBus game = NeoForge.EVENT_BUS;
 		game.addListener(KeyInputEvents::key);
 		game.addListener(KeyInputEvents::mouseScroll);
@@ -56,7 +56,7 @@ public class CCGClient {
 		game.addListener(SchematicPreviewInput::onMouseScrolled);
 		game.addListener(EventPriority.HIGHEST, ReplenishScreen::onCharTyped);
 		game.addListener(SchematicCommands::register);
-		CCGMods.simulated.executeIfInstalled(() -> {
+		Mods.simulated.executeIfInstalled(() -> {
 			game.addListener(ForceOverlay::tick);
 			game.addListener(ForceOverlayRenderer::render);
 		});

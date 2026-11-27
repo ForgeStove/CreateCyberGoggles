@@ -16,7 +16,7 @@ import io.github.forgestove.create_cyber_goggles.content.goggles.tooltip.compone
 import io.github.forgestove.create_cyber_goggles.content.goggles.tooltip.component.ClientSchematicPreviewTooltipComponent.SchematicPreviewTooltip;
 import io.github.forgestove.create_cyber_goggles.foundation.events.CCGKey;
 import io.github.forgestove.create_cyber_goggles.foundation.lang.*;
-import io.github.forgestove.create_cyber_goggles.foundation.util.CCGMods;
+import io.github.forgestove.create_cyber_goggles.foundation.util.Mods;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screens.Screen;
@@ -121,7 +121,7 @@ public class ItemTooltip {
 	}
 	private static void navigationDistance(@NotNull ItemStack stack, List<Component> tooltip) {
 		if (!CCG.config.aeronautics.navigationDistance) return;
-		CCGMods.simulated.runIfInstalled(() -> NavigationDistanceHelper.line(stack)).ifPresent(line -> tooltip.add(1, line));
+		Mods.simulated.runIfInstalled(() -> NavigationDistanceHelper.line(stack)).ifPresent(line -> tooltip.add(1, line));
 	}
 	private static void schematicPreview(@NotNull ItemStack stack, List<Component> tooltip) {
 		Preview preview = CCG.config.schematic.preview;

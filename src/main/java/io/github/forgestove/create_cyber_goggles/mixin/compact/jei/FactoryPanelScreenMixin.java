@@ -5,8 +5,8 @@ import com.simibubi.create.content.logistics.BigItemStack;
 import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelScreen;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.foundation.lang.CCGLang;
-import io.github.forgestove.create_cyber_goggles.foundation.util.CCGMods;
-import io.github.forgestove.create_cyber_goggles.mixin.ModCondition;
+import io.github.forgestove.create_cyber_goggles.foundation.util.Mods;
+import io.github.forgestove.create_cyber_goggles.mixin.MixinCondition;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.*;
-@ModCondition(conflict = CCGMods.extra_gauges)
+@MixinCondition(conflict = Mods.extra_gauges)
 @Mixin(FactoryPanelScreen.class)
 public abstract class FactoryPanelScreenMixin extends AbstractSimiScreen {
 	@Shadow private boolean craftingActive;

@@ -12,7 +12,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.Optional;
 import java.util.function.Supplier;
-public enum CCGMods {
+public enum Mods {
 	aeronautics,
 	create,
 	createbigcannons,
@@ -28,7 +28,8 @@ public enum CCGMods {
 	simulated,
 	thirst;
 	private final String id;
-	CCGMods() {
+	private volatile boolean loaded;
+	Mods() {
 		id = Lang.asId(name());
 	}
 	/**
@@ -54,7 +55,8 @@ public enum CCGMods {
 		return RegisteredObjectsHelper.getKeyOrThrow(asItem).getNamespace().equals(id);
 	}
 	public boolean isLoaded() {
-		return LoadingModList.get().getModFileById(id) != null;
+		if (!loaded) loaded = LoadingModList.get().getModFileById(id) != null;
+		return loaded;
 	}
 	/**
 	 * 模组已加载时执行代码并返回结果

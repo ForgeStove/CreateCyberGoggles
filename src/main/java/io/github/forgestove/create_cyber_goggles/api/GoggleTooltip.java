@@ -2,7 +2,7 @@ package io.github.forgestove.create_cyber_goggles.api;
 import com.mojang.logging.LogUtils;
 import io.github.forgestove.create_cyber_goggles.CCG;
 import io.github.forgestove.create_cyber_goggles.content.goggles.GoggleTooltipRegistry;
-import io.github.forgestove.create_cyber_goggles.foundation.util.CCGMods;
+import io.github.forgestove.create_cyber_goggles.foundation.util.Mods;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import java.util.*;
 import java.util.function.*;
 public class GoggleTooltip {
-	public static final ResourceLocation NATIVE = CCGMods.create.rl("native");
+	public static final ResourceLocation NATIVE = Mods.create.rl("native");
 	private static final Logger LOGGER = LogUtils.getLogger();
 	private static final GoggleTooltipRegistry<Context> REGISTRY = new GoggleTooltipRegistry<>(
 		NATIVE.toString(), CCG.ID, (message, t) -> {

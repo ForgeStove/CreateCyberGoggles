@@ -2,14 +2,14 @@ package io.github.forgestove.create_cyber_goggles.mixin.misc.kinetic;
 import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.simibubi.create.content.kinetics.base.RotationIndicatorParticle;
 import dev.ryanhcode.sable.Sable;
-import io.github.forgestove.create_cyber_goggles.foundation.util.CCGMods;
-import io.github.forgestove.create_cyber_goggles.mixin.ModCondition;
+import io.github.forgestove.create_cyber_goggles.foundation.util.Mods;
+import io.github.forgestove.create_cyber_goggles.mixin.MixinCondition;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 import static io.github.forgestove.create_cyber_goggles.foundation.util.CCGUtil.mc;
-@ModCondition(require = CCGMods.sable)
+@MixinCondition(require = Mods.sable)
 @Mixin(RotationIndicatorParticle.class)
 public abstract class RotationIndicatorParticleMixin {
 	@WrapOperation(

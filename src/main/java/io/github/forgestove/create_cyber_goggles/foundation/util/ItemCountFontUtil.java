@@ -53,7 +53,7 @@ public class ItemCountFontUtil {
 		if (rl[0] == null || !rl[0].equals(FONT_CREATE)) return;
 		if (!dropShadow) return;
 		int shadowColor = CCG.config.misc.createStackCount.countOutlineColor;
-		if (!CCGMods.modernui.isLoaded()) font.drawInBatch8xOutline(text, x, y, color, shadowColor, matrix, buffer, packedLightCoords);
+		if (!Mods.modernui.isLoaded()) font.drawInBatch8xOutline(text, x, y, color, shadowColor, matrix, buffer, packedLightCoords);
 		else drawInBatch8xOutline(font, text, x, y, color, shadowColor, matrix, buffer, packedLightCoords);
 		cir.setReturnValue(font.width(text) + 1);
 	}

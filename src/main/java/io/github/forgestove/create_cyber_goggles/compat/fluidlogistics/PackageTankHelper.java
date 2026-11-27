@@ -1,5 +1,5 @@
 package io.github.forgestove.create_cyber_goggles.compat.fluidlogistics;
-import io.github.forgestove.create_cyber_goggles.foundation.util.CCGMods;
+import io.github.forgestove.create_cyber_goggles.foundation.util.Mods;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -7,7 +7,7 @@ import net.neoforged.neoforge.capabilities.Capabilities.FluidHandler;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 public class PackageTankHelper {
-	private static final ResourceLocation CFL_COMPRESSED_TANK_ID = CCGMods.fluidlogistics.rl("compressed_storage_tank");
+	private static final ResourceLocation CFL_COMPRESSED_TANK_ID = Mods.fluidlogistics.rl("compressed_storage_tank");
 	public static int getCFLTankAmount(ItemStack stack) {
 		if (!isCFLCompressedTank(stack)) return 0;
 		IFluidHandlerItem handler = stack.getCapability(FluidHandler.ITEM);

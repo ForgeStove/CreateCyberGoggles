@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 public class CCGMixinPlugin implements IMixinConfigPlugin {
 	private static final Logger LOGGER = LogUtils.getLogger();
-	private static final String MOD_CONDITION = Type.getDescriptor(ModCondition.class);
+	private static final String DESCRIPTOR = Type.getDescriptor(MixinCondition.class);
 	private static final Map<String, Boolean> CACHE = new ConcurrentHashMap<>();
 	private static boolean satisfiesModCondition(String mixinClassName) {
 		ModConditions condition = readModCondition(mixinClassName);
@@ -39,7 +39,7 @@ public class CCGMixinPlugin implements IMixinConfigPlugin {
 			new ClassReader(in).accept(node, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
 			if (node.visibleAnnotations == null) return null;
 			for (AnnotationNode annotation : node.visibleAnnotations) {
-				if (!MOD_CONDITION.equals(annotation.desc) || annotation.values == null) continue;
+				if (!DESCRIPTOR.equals(annotation.desc) || annotation.values == null) continue;
 				Map<String, List<String>> values = new HashMap<>(annotation.values.size() / 2);
 				for (var i = 0; i < annotation.values.size(); i += 2)
 					values.put((String) annotation.values.get(i), enumConstants(annotation.values.get(i + 1)));

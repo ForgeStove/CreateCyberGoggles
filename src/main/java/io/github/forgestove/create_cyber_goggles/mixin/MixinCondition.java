@@ -1,9 +1,9 @@
 package io.github.forgestove.create_cyber_goggles.mixin;
-import io.github.forgestove.create_cyber_goggles.foundation.util.CCGMods;
+import io.github.forgestove.create_cyber_goggles.foundation.util.Mods;
 
 import java.lang.annotation.*;
 /**
- * 根据以下条件控制 Mixin 是否应用：
+ * 当 Mixin 满足以下条件时应用：
  * <p>
  * {@link #require()} 中的模组全部已安装
  * <p>
@@ -11,7 +11,7 @@ import java.lang.annotation.*;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface ModCondition {
-	CCGMods[] require() default {};
-	CCGMods[] conflict() default {};
+public @interface MixinCondition {
+	Mods[] require() default {};
+	Mods[] conflict() default {};
 }

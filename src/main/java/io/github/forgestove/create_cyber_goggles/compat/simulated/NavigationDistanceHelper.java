@@ -30,7 +30,6 @@ public class NavigationDistanceHelper {
 		Resolved resolved = resolve(target, stack, level);
 		if (resolved == null) return null;
 		if (!resolved.sameDimension()) return CCGLang.translateDirect("tooltip.navigationDistance.otherDimension", ChatFormatting.GRAY);
-		// 玩家在飞船（sublevel）内时，坐标须先投影到世界系
 		Vector3d playerPos = Sable.HELPER.projectOutOfSubLevel(level, JOMLConversion.toJOML(player.position()));
 		double distance = playerPos.distance(resolved.pos().x, resolved.pos().y, resolved.pos().z);
 		return CCGLang.translateDirect(
@@ -59,9 +58,6 @@ public class NavigationDistanceHelper {
 		}
 		return level.getSharedSpawnPos().getCenter();
 	}
-	/**
-	 * 本地玩家取实时死亡点，其他玩家退回组件：{@code lastDeathLocation} 只在本人客户端同步。
-	 */
 	private static @Nullable GlobalPos deathLocation(ItemStack stack) {
 		UUID placer = stack.get(SimDataComponents.COMPASS_PLACER_UUID);
 		if (placer != null && mc.player != null && placer.equals(mc.player.getUUID())) return mc.player.getLastDeathLocation().orElse(null);

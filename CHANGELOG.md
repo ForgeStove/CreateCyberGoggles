@@ -1,1 +1,5 @@
-- Fix [#115](https://github.com/ForgeStove/CreateCyberGoggles/issues/115)
+- Fix particle rendering
+- Fix EMI compatibility
+- Improve the filter preview
+- Improve logging
+- Improve outline rendering for Encased Fans and Nozzles

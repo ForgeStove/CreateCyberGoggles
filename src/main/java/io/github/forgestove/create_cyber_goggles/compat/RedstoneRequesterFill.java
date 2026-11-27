@@ -14,7 +14,6 @@ import net.minecraft.world.item.crafting.*;
 
 import java.util.*;
 public class RedstoneRequesterFill {
-	/** 从原版配方取每格代表物品，空位为 {@link ItemStack#EMPTY}，有原料但无候选项为 {@code null} */
 	public static List<ItemStack> representatives(Recipe<?> recipe) {
 		List<ItemStack> reps = new ArrayList<>();
 		for (Ingredient ingredient : recipe.getIngredients()) {
@@ -27,7 +26,6 @@ public class RedstoneRequesterFill {
 		}
 		return reps;
 	}
-	/** 每格独立成组 */
 	public static List<BigItemStack> vanillaStyleGroups(List<ItemStack> reps, boolean maxTransfer) {
 		int count = maxTransfer ? 64 : 1;
 		List<BigItemStack> groups = new ArrayList<>();
@@ -40,7 +38,6 @@ public class RedstoneRequesterFill {
 		}
 		return groups;
 	}
-	/** 相邻同类原料合并成组；空位跳过不打断，无候选项断开当前组。组的数量=连续出现次数，按 Shift 时再乘一整组 */
 	public static List<BigItemStack> mechanicalStyleGroups(List<ItemStack> reps, boolean maxTransfer) {
 		int step = maxTransfer ? 64 : 1;
 		List<BigItemStack> groups = new ArrayList<>();
@@ -61,7 +58,6 @@ public class RedstoneRequesterFill {
 	public static int slotCount(RedstoneRequesterMenu container) {
 		return container.ghostInventory.getSlots();
 	}
-	/** 每行一条；每次调用都按当前按键状态重新求值 */
 	public static List<Component> hints() {
 		return List.of(
 			CCGKey.hint(CCGLang.translateDirect("gui.redstoneRequester.shiftHint", CCGKey.keyName("Shift", Screen.hasShiftDown()))),
